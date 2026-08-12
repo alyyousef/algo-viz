@@ -1,8 +1,27 @@
+---
+title: AUC (Area Under the Curve)
+description: A powerful aggregate mathematical metric that collapses the 2D ROC Curve into a single scalar value, evaluating a model's ability to separate classes across all thresholds.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AUC">
+<ConceptTemplate title="AUC (Area Under the Curve)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When evaluating a binary classifier (e.g., Cancer vs No Cancer), plotting the ROC Curve is highly informative, but you cannot easily mathematically compare two curves. 
+**AUC (Area Under the Receiver Operating Characteristic Curve)** solves this by calculating the literal 2D mathematical area beneath the ROC curve.
+
+## 1. The Mathematical Interpretation
+AUC provides a single scalar value between 0.0 and 1.0.
+- **AUC = 1.0**: The model is mathematically flawless. It perfectly separates the classes. 
+- **AUC = 0.5**: The model is mathematically worthless. It is a random coin flip. The ROC curve is a straight diagonal line ($y=x$), and the area under that triangle is exactly 0.5.
+- **AUC = 0.0**: The model is perfectly inverted. Every time it says Cancer, it means Healthy. (You can just flip the outputs to achieve 1.0).
+
+## 2. Threshold Independence
+The brilliance of AUC is that it is **threshold-independent**.
+If a Logistic Regression model outputs a probability (0.8), you normally have to pick a threshold (e.g., > 0.5 = Cancer). If you pick a bad threshold, the Accuracy plunges.
+AUC mathematically evaluates the model across *every single possible threshold* simultaneously. It measures the fundamental separability of the model's internal probability distributions, making it an infinitely superior metric to Accuracy during the initial model selection phase.
+
+## 3. The Probabilistic Meaning
+Beyond area, AUC has a fascinating statistical property related to the Mann-Whitney U test.
+If you mathematically select one random positive patient (Cancer) and one random negative patient (Healthy) from the dataset, the AUC represents the exact **probability** that the model will mathematically assign a higher risk score to the Cancer patient than to the Healthy patient.
 
 </ConceptTemplate>

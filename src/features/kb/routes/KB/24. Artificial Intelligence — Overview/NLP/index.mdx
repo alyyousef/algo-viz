@@ -1,8 +1,33 @@
+---
+title: Natural Language Processing (Overview)
+description: The intersection of linguistics and deep learning, teaching algorithms to mathematically parse, understand, and generate human language.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NLP">
+<ConceptTemplate title="Natural Language Processing (NLP)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Human language is mathematically chaotic. It relies on sarcasm, double meanings, context, and slang. **Natural Language Processing (NLP)** is the discipline of forcing this chaotic unstructured text into rigid mathematical structures that a computer can process.
+
+## 1. Classical NLP (Bag of Words)
+Before Deep Learning, NLP algorithms could not understand "meaning". 
+To analyze a sentence, they mathematically destroyed it using the **Bag of Words** model. 
+
+The sentence *"The quick brown fox"* was mathematically tokenized and mapped to a sparse vector matrix of 1s and 0s: `[1, 1, 1, 1, 0, 0]`. 
+This mathematical representation completely destroyed the word order and context. The algorithm did not know what a "fox" was; it just knew the vector appeared frequently in articles about animals.
+
+## 2. Word Embeddings (Word2Vec)
+In 2013, Google revolutionized NLP by inventing **Word2Vec**. 
+Instead of 1s and 0s, words were mathematically mapped into a dense, 300-dimensional vector space.
+
+Words with similar semantic meanings were mathematically clustered together in the vector space. Because meaning was now represented by pure geometry, you could perform literal algebra on words:
+$King - Man + Woman = Queen$. 
+The AI mathematically understood the concept of royalty and gender.
+
+## 3. The Transformer Revolution
+While Word Embeddings were brilliant, they were static. The word "Bank" had the exact same mathematical vector whether it meant "River Bank" or "Financial Bank".
+
+In 2017, the **Transformer Architecture (Attention is All You Need)** was invented. It introduced the mathematical concept of **Self-Attention**. 
+When reading the word "Bank", the neural network mathematically scans the entire surrounding sentence. If it sees the word "River" earlier in the sentence, it dynamically shifts the mathematical vector for "Bank" to represent nature instead of finance. 
+This dynamic mathematical context awareness unlocked the creation of Large Language Models (LLMs) like GPT-4, solving natural language generation forever.
 
 </ConceptTemplate>

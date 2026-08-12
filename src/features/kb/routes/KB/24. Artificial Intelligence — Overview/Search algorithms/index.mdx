@@ -1,0 +1,33 @@
+---
+title: Search Algorithms
+description: The foundational algorithmic discipline of mathematically exploring vast state spaces to find optimal paths or winning strategies.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Search Algorithms">
+
+If a Google Maps server needs to calculate the fastest route from New York to Los Angeles, it mathematically analyzes a graph containing billions of roads. This is the domain of **Search Algorithms**, the absolute foundation of classical AI.
+
+## 1. Uninformed Search (Blind Search)
+These algorithms have no knowledge of the goal's location. They mathematically blindly explore the graph.
+- **Breadth-First Search (BFS)**: Explores all neighboring nodes first before moving deeper. Mathematically guarantees finding the shortest path (if all roads take the same time), but consumes massive amounts of RAM.
+- **Depth-First Search (DFS)**: Plunges as deep as possible down a single path until it hits a dead end, then backtracks. Uses very little RAM, but mathematically provides zero guarantees of finding an optimal path.
+
+## 2. Informed Search (Heuristic Search)
+If you are driving to Los Angeles, you don't randomly drive to Canada first. You know LA is West. 
+Informed search uses a **Heuristic**—a mathematical "rule of thumb" that estimates how close you are to the goal.
+
+- **A* (A-Star) Search**: The undisputed king of pathfinding algorithms (used in video games and GPS routing). It mathematically evaluates a node based on two functions: $f(n) = g(n) + h(n)$.
+  - $g(n)$: The exact cost to travel from the start to the current node.
+  - $h(n)$: The Heuristic (e.g., straight-line mathematical distance to the goal).
+  As long as the heuristic is mathematically "admissible" (never overestimates the true cost), A* will flawlessly find the mathematically absolute shortest path while ignoring 90% of the irrelevant roads.
+
+## 3. Adversarial Search (Minimax)
+Used when playing a game against a human opponent (like Chess).
+The AI mathematically generates a massive tree of all possible future moves. 
+The **Minimax** algorithm assumes the human will always play perfectly. 
+- The AI mathematically attempts to **Maximize** its own score.
+- The AI assumes the human will take the path that **Minimizes** the AI's score.
+Because the game tree for Chess is larger than the number of atoms in the universe, the AI uses **Alpha-Beta Pruning** to mathematically chop off branches of the tree it knows are terrible without ever explicitly evaluating them, saving massive compute.
+
+</ConceptTemplate>

@@ -1,8 +1,44 @@
+---
+title: Apache Iceberg
+description: An open standard Table Format developed at Netflix for huge analytic tables, guaranteeing mathematical consistency at petabyte scale.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Apache Iceberg">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, Data Lakes tracked tables using the Hive Metastore, which physically mapped a "Table" to a "Directory" (e.g., `s3://bucket/table/year=2026/`). If that directory contained 100,000 Parquet files, a query engine had to execute a mathematically agonizing `list()` operation on the S3 API just to figure out what files existed before the query could even begin.
+
+**Apache Iceberg** was created by Netflix to mathematically replace this broken architecture. Instead of tracking directories, Iceberg tracks **individual files** at the metadata level.
+
+## 1. The Metadata Architecture
+Iceberg flips the paradigm: **The metadata defines the table, not the file system.**
+
+1. **Metadata File (JSON)**: Tracks the table schema, partition spec, and points to the current Snapshot.
+2. **Manifest List (Avro)**: Tracks all the individual Manifest files that make up the Snapshot.
+3. **Manifest Files (Avro)**: Physically lists the exact S3 paths of the raw data files (Parquet/ORC). Crucially, it stores column-level statistics (min/max values) for every single file.
+
+### Mathematical Pruning
+Because the Manifest Files store Min/Max stats, Iceberg achieves phenomenal speed. If a query requests `SELECT * WHERE age > 60`, Iceberg mathematically checks the Manifest. If a Parquet file has a Min Age of 12 and a Max Age of 45, Iceberg completely ignores the file. The query engine never even opens it.
+
+## 2. Core Features
+
+### Hidden Partitioning
+In legacy Hive, if you partitioned by Date, you had to physically alter your SQL queries to explicitly query the `date` column, forcing Data Analysts to understand the physical disk layout. 
+Iceberg hides this. You configure the table to partition by `day(timestamp)`, and Analysts simply query the `timestamp` column normally. Iceberg mathematically handles the partitioning invisibly in the background.
+
+### Schema Evolution
+In legacy systems, dropping a column or renaming a column was impossible without physically rewriting the petabytes of underlying data.
+Iceberg assigns mathematical, unique IDs to every column. If you rename a column from `client_id` to `customer_id`, Iceberg simply updates the JSON Metadata file. The underlying Parquet files are never touched.
+
+### Time Travel and Rollbacks
+Every commit to an Iceberg table creates a mathematically immutable **Snapshot**.
+You can physically query the exact state of the table from yesterday using time travel syntax. If a rogue ETL pipeline writes 500 million corrupted rows, you don't need a backup; you simply execute a rollback command to instantly revert the metadata pointer to the previous Snapshot.
+
+```sql
+-- Iceberg Time Travel via SQL
+SELECT count(*) FROM prod.db.events FOR SYSTEM_TIME AS OF '2026-01-01 10:00:00';
+```
+
+Iceberg is arguably the most widely adopted open-source Table Format today, supported natively by Snowflake, BigQuery, Databricks, and AWS Athena.
 
 </ConceptTemplate>

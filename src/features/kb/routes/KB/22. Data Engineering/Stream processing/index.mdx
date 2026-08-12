@@ -1,8 +1,32 @@
+---
+title: Stream Processing
+description: The paradigm of executing complex, stateful analytical computations over infinite, unbounded streams of events in real-time.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stream processing">
+<ConceptTemplate title="Stream Processing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For decades, organizations ran their analytics in Batch (e.g., executing a giant SQL query at midnight). However, modern digital applications (Uber's surge pricing, credit card fraud detection, algorithmic stock trading) cannot wait until midnight. They require **Stream Processing**: executing complex mathematical aggregations on data the exact millisecond it arrives.
+
+## 1. Unbounded Data
+The fundamental mathematical difference between Batch and Stream processing is the concept of boundaries.
+- **Bounded (Batch)**: A CSV file with 1 million rows. It has a start and an end.
+- **Unbounded (Stream)**: A Kafka topic capturing website clicks. It has a start, but mathematically, it never ends. 
+
+Because the stream never ends, you mathematically *cannot* execute a query like "Calculate the total average". You must apply **Windowing** (e.g., "Calculate the average over a 5-minute rolling window").
+
+## 2. The Hard Problems in Streaming
+Stream processing is mathematically the most difficult architecture in Data Engineering.
+
+### 1. State Management
+To calculate a 1-hour average, the streaming server must hold the running total in memory. If the server catches fire at minute 59, the state is destroyed. Modern frameworks (like Apache Flink) solve this mathematically by taking asynchronous, distributed snapshots of the RAM (using algorithms like Chandy-Lamport) and saving them to S3, guaranteeing fault-tolerant recovery.
+
+### 2. Out-of-Order Data (Event Time vs Processing Time)
+A user clicks a button on a train while inside a tunnel (no internet). The phone records the click at 10:00 AM (Event Time). The train exits the tunnel, and the event reaches the server at 10:15 AM (Processing Time).
+If the server mathematically calculates analytics based on Processing Time, the metrics are destroyed. Stream processing engines utilize **Watermarks** to temporarily hold windows open, wait for late-arriving data, and enforce mathematical correctness based strictly on Event Time.
+
+## 3. The Tech Stack
+- **The Storage Layer**: **Apache Kafka** is the undisputed king. It acts as the infinite, fault-tolerant buffer that holds the raw stream of events.
+- **The Processing Engine**: **Apache Flink** (for massive, stateful clusters) and **Kafka Streams** (for lightweight Java microservices) are the modern industry standards, completely replacing legacy systems like Apache Storm and Spark Streaming (Micro-batching).
 
 </ConceptTemplate>

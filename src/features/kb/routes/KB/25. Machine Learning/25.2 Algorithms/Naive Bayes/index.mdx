@@ -1,8 +1,34 @@
+---
+title: Naive Bayes
+description: A wildly fast, probabilistic classification algorithm based on Bayes' Theorem that assumes strict mathematical independence between all features.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Naive Bayes">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Naive Bayes** is a probabilistic classifier based entirely on **Bayes' Theorem**. It is the absolute foundational algorithm for classical NLP tasks, particularly Spam Filtering and Sentiment Analysis, due to its blazing mathematical speed and ability to handle massive sparse datasets.
+
+## 1. Bayes' Theorem
+The entire algorithm is a direct application of this mathematical equation:
+$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$
+
+If we are classifying an email as Spam ($A$) given the words in the email ($B$):
+- **$P(A|B)$ (Posterior)**: What is the probability this is Spam, given it contains the word "Viagra"?
+- **$P(B|A)$ (Likelihood)**: If we look at all historical Spam emails, how often does the word "Viagra" appear?
+- **$P(A)$ (Prior)**: Overall, what percentage of *all* emails are Spam?
+
+The algorithm mathematically calculates this probability for both Spam and Not Spam, and assigns the data point to the class with the highest probability.
+
+## 2. Why is it "Naive"?
+To calculate the exact probability of an email containing the words "Buy", "Cheap", and "Viagra", the algorithm would mathematically require thousands of historical emails containing that *exact combination* of words. This is computationally impossible (Data Sparsity).
+
+The algorithm solves this by making a mathematically "Naive" assumption: **Conditional Independence**. 
+It assumes that the probability of seeing the word "Cheap" is mathematically completely independent of seeing the word "Viagra". It simply multiplies the individual probabilities together: $P(Buy) \times P(Cheap) \times P(Viagra)$. 
+While this assumption is mathematically false in human language, the algorithm works surprisingly flawlessly in practice.
+
+## 3. Laplace Smoothing
+There is one fatal mathematical flaw in the Naive assumption. If a new email contains a word the algorithm has *never* seen before, the probability $P(Word|Spam)$ is exactly $0$. 
+Because the algorithm multiplies all probabilities together, a single $0$ mathematically destroys the entire equation, forcing the total probability to $0.0$.
+**Laplace Smoothing** mathematically fixes this by adding a tiny baseline value (e.g., $+1$) to all word counts, guaranteeing that no probability ever mathematically reaches exactly zero.
 
 </ConceptTemplate>

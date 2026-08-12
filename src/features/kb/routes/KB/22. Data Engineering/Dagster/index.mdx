@@ -1,8 +1,43 @@
+---
+title: Dagster
+description: The modern, Software-Defined Asset (SDA) orchestrator challenging Apache Airflow for Data Engineering pipelines.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Dagster">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For years, Apache Airflow completely dominated the orchestration landscape. However, Airflow is mathematically a **Task-based** orchestrator. It knows that "Task A" (a bash script) runs before "Task B" (a python script), but Airflow has absolutely no idea what data is physically moving between them.
+
+**Dagster** was built to solve this. It is a **Data-aware** orchestrator built around the concept of Software-Defined Assets.
+
+## 1. Software-Defined Assets (SDAs)
+In Dagster, you do not orchestrate generic tasks; you orchestrate **Assets**.
+An Asset is a mathematical declaration of a specific dataset (e.g., a Parquet file in S3, a Snowflake table, a trained ML model) and the Python function required to compute it.
+
+```python
+from dagster import asset
+
+# Dagster knows this function mathematically produces the "raw_users" asset
+@asset
+def raw_users():
+    return extract_from_api()
+
+# Dagster automatically detects the dependency because 'raw_users' is passed as an argument!
+@asset
+def cleaned_users(raw_users):
+    return clean_data(raw_users)
+```
+
+Because Dagster physically models the data lineage (not just the tasks), the UI is profoundly more powerful. You can click on the "cleaned_users" table in the Dagster UI and see exactly what code produced it, its upstream dependencies, and its historical execution state.
+
+## 2. Core Differences from Airflow
+- **Data Lineage**: In Airflow, debugging requires reading logs to figure out which table a task modified. In Dagster, the table *is* the task.
+- **Local Development**: Testing Airflow DAGs locally is notoriously agonizing, often requiring heavy Docker containers. Dagster is mathematically decoupled from its execution environment, allowing you to run pipelines purely in memory on your local laptop for rapid unit testing.
+- **Type Checking**: Dagster allows you to enforce strict Python types and Metadata on the inputs and outputs of every step, providing software engineering rigor to pipelines.
+
+## 3. The Modern Data Stack Integration
+Dagster integrates flawlessly with modern tools like **dbt**.
+When you integrate dbt into Airflow, Airflow typically sees the entire dbt run as a single giant "Task". If one dbt model fails, the whole task fails.
+When you integrate dbt into Dagster, Dagster mathematically parses the dbt graph and represents every single dbt SQL model as an individual Software-Defined Asset in the UI, allowing you to execute, monitor, and retry specific SQL models natively.
 
 </ConceptTemplate>

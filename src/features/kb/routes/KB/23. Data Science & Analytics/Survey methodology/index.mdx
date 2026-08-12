@@ -1,8 +1,30 @@
+---
+title: Survey Methodology
+description: The rigorous architectural discipline of designing questionnaires and sampling frameworks to extract unbiased, mathematically sound data from human populations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Survey methodology">
+<ConceptTemplate title="Survey Methodology">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Data Science is useless if the underlying data is mathematically corrupted by human bias. **Survey Methodology** is the discipline of designing data collection protocols to minimize psychological bias and maximize statistical validity.
+
+## 1. Sampling Architectures
+You cannot survey 300 million Americans. You must extract a Sample. 
+
+- **Simple Random Sampling**: The mathematical gold standard. Every single person has an exactly equal probability of being selected (like pulling names from a hat).
+- **Stratified Sampling**: If the population is 60% Female and 40% Male, random sampling might accidentally pick 80% Females. Stratified sampling mathematically forces the sample to exactly match the demographic ratios of the true population.
+- **Convenience Sampling**: Surveying whoever is easiest to reach (e.g., polling people on Twitter). This is mathematically worthless, as it induces massive Selection Bias (only highly-online, opinionated people will respond).
+
+## 2. Questionnaire Bias
+The physical wording of a question mathematically alters the statistical outcome.
+
+- **Leading Questions**: "Do you agree that our amazing new product is excellent?" This mathematically skews the data toward positivity.
+- **Double-Barreled Questions**: "Do you like our app's speed and design?" If the user loves the speed but hates the design, they cannot mathematically answer the question, corrupting the dataset.
+- **Acquiescence Bias**: Human psychology dictates that people generally want to be agreeable. If you ask Yes/No questions, you will artificially inflate the "Yes" count. Good survey architecture forces users to choose between two opposing statements.
+
+## 3. Non-Response Bias
+If you send out 10,000 surveys to a company, and only the 500 angriest employees respond, your dataset is mathematically destroyed by **Non-Response Bias**. 
+
+Data Scientists must mathematically account for this by attempting to contact non-responders to ensure their data (which is usually moderate) is included, or by mathematically weighting the responses to correct the demographic imbalances.
 
 </ConceptTemplate>

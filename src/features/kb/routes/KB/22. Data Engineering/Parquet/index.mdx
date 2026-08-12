@@ -1,8 +1,31 @@
+---
+title: Apache Parquet
+description: The undisputed industry standard columnar storage format, mathematically engineered to drastically reduce disk I/O for analytical queries.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Parquet">
+<ConceptTemplate title="Apache Parquet">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you store 10 Terabytes of data in CSV format, querying it is mathematically agonizing. CSV files are uncompressed, unstructured strings. To find the average age of a user, the CPU must scan every single comma in the 10TB file.
+
+**Apache Parquet** was created by Twitter and Cloudera to mathematically eradicate this bottleneck. It is the absolute foundation of the modern Data Engineering stack.
+
+## 1. Columnar Architecture
+Parquet is a **Column-Oriented** binary format.
+In a row-oriented format (CSV, JSON, Avro), data is stored physically sequentially on disk: `Name1, Age1, Name2, Age2`.
+In Parquet, data is stored mathematically by column: `Name1, Name2 ... Age1, Age2`.
+
+If a Data Analyst executes `SELECT SUM(revenue) FROM sales`, the query engine (Spark, Snowflake) uses the Parquet header metadata to locate the exact physical byte offset of the `revenue` column on the hard drive. It reads *only* that specific block of bytes, mathematically ignoring the 99% of the file containing irrelevant columns. This reduces Disk I/O from terabytes to megabytes.
+
+## 2. Mathematical Compression
+Because a Parquet column contains homogenous data (e.g., an array containing 5 million integers), it is mathematically perfect for compression algorithms.
+
+- **Dictionary Encoding**: It detects that the `country` column only contains 195 unique strings. It creates a dictionary `{"USA": 1, "UK": 2}`, and writes the 5 million rows as tiny 8-bit integers, shrinking the file size by 90%.
+- **Snappy Compression**: On top of the logical encodings, the entire binary block is physically compressed using algorithms like Snappy or Zstandard, providing massive space savings while ensuring the CPU can decompress it in milliseconds.
+
+## 3. Predicate Pushdown (Min/Max Stats)
+Parquet files mathematically store statistics in their footers. For every "Row Group" (chunk of data), the footer stores the Minimum and Maximum value of every column.
+
+If you execute `SELECT * FROM users WHERE age > 60`, the engine reads the Parquet footer. If the `age` column for that chunk has a Max value of 45, the engine mathematically **drops the entire block**, refusing to read it from disk. This is called Predicate Pushdown, and it is the secret to Parquet's blistering speed.
 
 </ConceptTemplate>

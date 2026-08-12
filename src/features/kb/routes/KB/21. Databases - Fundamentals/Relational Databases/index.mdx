@@ -1,0 +1,41 @@
+---
+title: Relational Databases & SQL
+description: The architecture of RDBMS (MySQL, PostgreSQL, Oracle). Documenting strict Normalization (1NF-3NF), B-Tree indexing, Foreign Keys, Query Planners, and Execution Plans.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Relational Databases & SQL">
+
+Relational Database Management Systems (RDBMS) have dominated software engineering since the 1970s. They store data in rigid tables with strictly defined mathematical schemas.
+
+## 1. Normalization (1NF - 3NF)
+Normalization is the mathematical process of structuring tables to eliminate data redundancy and prevent update anomalies.
+- **1NF (First Normal Form)**: Every column must contain atomic (indivisible) values. No arrays or comma-separated strings inside a column.
+- **2NF (Second Normal Form)**: Must be 1NF, and all non-key columns must depend on the *entire* Primary Key (important for composite keys).
+- **3NF (Third Normal Form)**: Must be 2NF, and all non-key columns must depend *only* on the Primary Key. (e.g., Don't store `UserAge` if you already store `UserDOB`, as Age depends on DOB).
+
+*Note: In massive enterprise systems, engineers sometimes intentionally **De-normalize** data (duplicate it) to dramatically speed up read queries at the cost of storage space.*
+
+## 2. B-Tree Indexes
+If you search for a user by name in a table of 100 million users, a **Full Table Scan** will take seconds.
+By creating an **Index**, the database constructs a **B-Tree** (Balanced Tree) data structure on the disk. A B-Tree reduces the search time complexity from $O(N)$ to $O(\log N)$. The database can traverse the tree to find the exact row location in 3 or 4 disk reads instead of 100 million.
+
+## 3. Query Planners & Execution Plans
+When you submit a SQL query, it is not executed directly. It goes to the **Query Planner**.
+The planner is a mathematical engine that analyzes the query, looks at the available Indexes, and calculates the absolute most efficient way to fetch the data. 
+
+```sql
+-- You can view the execution plan using EXPLAIN
+EXPLAIN ANALYZE 
+SELECT * FROM users JOIN orders ON users.id = orders.user_id WHERE users.country = 'UK';
+```
+
+The output of an Execution Plan will tell you if the database chose a "Hash Join", a "Nested Loop", or if it was forced to do a horrific "Sequential Scan" because you forgot to add an Index.
+
+## 4. The Giants
+- **PostgreSQL**: The modern open-source standard. Incredibly feature-rich, mathematically rigorous, and supports advanced JSONB indexing.
+- **MySQL (and MariaDB)**: The historical open-source standard. Extremely fast for read-heavy web applications.
+- **SQLite**: A self-contained, serverless database that stores the entire database in a single local file. Used natively in billions of iOS and Android phones.
+- **Oracle & SQL Server**: Massive, highly-expensive enterprise databases used by banks and governments.
+
+</ConceptTemplate>

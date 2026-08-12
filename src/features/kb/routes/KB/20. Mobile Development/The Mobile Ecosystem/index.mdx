@@ -1,0 +1,31 @@
+---
+title: The Mobile Ecosystem
+description: The mathematical trade-offs between Native performance and Cross-Platform development speed, and the complexity of the Mobile App Lifecycle.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="The Mobile Ecosystem (Native vs Cross-Platform)">
+
+Mobile Engineering is fundamentally different from Web Development. A web browser is a relatively safe sandbox, but a mobile application interacts directly with the operating system, device hardware (GPS, Camera, Bluetooth), and has strict limitations on battery usage and memory.
+
+## 1. Native vs Cross-Platform
+When a company decides to build an app, they face a massive architectural decision:
+
+### Native Development
+Writing the app twice: once in Swift for iOS, and once in Kotlin for Android.
+- **Pros**: Absolute maximum performance. Flawless hardware integration (ARKit, advanced Bluetooth). Instant access to the newest OS features on day one.
+- **Cons**: Requires two completely separate engineering teams. Extremely expensive. Code cannot be shared between the platforms.
+
+### Cross-Platform Development (React Native / Flutter)
+Writing the app once in a shared language (JavaScript or Dart), and deploying it to both iOS and Android.
+- **Pros**: Cuts development time and cost in half. Massive code reuse.
+- **Cons**: Performance is slightly worse than native. Difficult to implement highly advanced animations or complex hardware interactions. Relies on the framework developers to update the SDK when Apple or Google release new OS features.
+
+## 2. The App Lifecycle
+Unlike a website (which is just "open" or "closed"), a mobile OS aggressively manages app states to save battery life.
+1. **Active/Foreground**: The user is currently interacting with the app.
+2. **Background**: The user switched to another app. The OS grants the app a few seconds to save its state.
+3. **Suspended**: The OS freezes the app in RAM. It consumes zero CPU, but uses memory.
+4. **Terminated (Killed)**: If the user opens a heavy 3D game, the OS will violently kill suspended apps to free up RAM. The app must mathematically save its exact UI state so that when the user reopens it, it appears as if it was never killed.
+
+</ConceptTemplate>

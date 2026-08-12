@@ -1,8 +1,30 @@
+---
+title: Support Vector Machines (SVM)
+description: A mathematically rigorous algorithm that draws hyperplanes to perfectly separate data classes, using the Kernel Trick to conquer complex non-linear geometry.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SVM">
+<ConceptTemplate title="Support Vector Machines (SVM)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Deep Learning dominated the 2010s, **Support Vector Machines (SVM)** were the undisputed kings of Machine Learning. They are founded on brilliant, rigid mathematical geometry rather than the messy probabilistic approximations of early Neural Networks.
+
+## 1. The Mathematical Margin (The Street)
+If you plot Red dots and Blue dots on a 2D graph, you can draw infinite straight lines between them to classify them. 
+Logistic Regression just draws a line that "works". 
+SVM mathematically guarantees finding the **Optimal Hyperplane**. It finds the one specific line that maximizes the geometric distance (the Margin) between the line and the closest Red/Blue dots. 
+
+The closest data points that perfectly touch the edge of the Margin are called the **Support Vectors**. The mathematical brilliance of SVM is that the entire model is defined *exclusively* by these few Support Vectors. If you delete 99% of the other data points behind the margin, the mathematical equation of the SVM does not change at all.
+
+## 2. The Kernel Trick (Non-Linearity)
+If the Blue dots are in a dense circle, completely surrounded by a ring of Red dots, it is mathematically impossible to draw a straight line (Hyperplane) to separate them. 
+
+SVM solves this using the **Kernel Trick**. 
+Instead of trying to draw a curved line in 2D space, a Kernel (like the Radial Basis Function - RBF) mathematically calculates the distance of the points and projects the entire 2D dataset into 3D space (adding a Z-axis, like a gravity well). 
+In the 3D space, the Blue circle mathematically drops down, and the Red ring stays high. The SVM can now effortlessly draw a perfectly flat, straight 2D plane through the 3D space, separating the colors flawlessly. When you project that flat plane back down to 2D, it mathematically forms a perfect circle.
+
+## 3. The Hinge Loss
+SVMs do not use Mean Squared Error or Log Loss. They use **Hinge Loss**. 
+Hinge Loss mathematically states: "If a data point is correctly classified *and* is safely outside the Margin, the loss is exactly $0.0$." 
+It only mathematically punishes points that violate the Margin or cross the Hyperplane, ensuring the optimizer focuses entirely on the hardest, most ambiguous edge-cases.
 
 </ConceptTemplate>

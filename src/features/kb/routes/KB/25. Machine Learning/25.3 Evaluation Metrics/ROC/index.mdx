@@ -1,8 +1,30 @@
+---
+title: ROC Curve
+description: A 2D mathematical graph that plots a binary classifier's performance across every single possible decision threshold, visualizing the tradeoff between True Positives and False Positives.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ROC">
+<ConceptTemplate title="ROC Curve (Receiver Operating Characteristic)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Logistic Regression model doesn't output "Cancer". It outputs a probability, like 0.85. 
+To calculate Accuracy, a human must manually pick a Threshold (e.g., $>0.5 = \text{Cancer}$). But what if 0.5 is the wrong threshold? What if the optimal threshold is 0.7?
+
+The **ROC Curve** mathematically plots the model's exact performance across *every single possible threshold* from 0.0 to 1.0 simultaneously.
+
+## 1. The Mathematical Axes
+The ROC Curve is plotted on a 2D graph:
+- **Y-Axis (True Positive Rate / Recall)**: Out of all the people who actually have Cancer, what percentage did the model find? (We want this to be 1.0).
+- **X-Axis (False Positive Rate)**: Out of all the people who are actually Healthy, what percentage did the model accidentally misdiagnose with Cancer? (We want this to be 0.0).
+
+## 2. Reading the Curve
+The algorithm starts with a threshold of 1.0. It is extremely conservative. It diagnoses no one with Cancer. Both TPR and FPR are 0. (The bottom left corner).
+As you slowly lower the threshold (0.9, 0.8, 0.5...), the model gets more aggressive. It catches more real Cancer (TPR goes up), but it starts falsely diagnosing healthy people (FPR goes up).
+
+- A **mathematically perfect model** shoots straight up the Y-axis to 1.0 (catching all cancer) without moving right at all (0 false alarms), forming a perfect right angle in the top-left corner.
+- A **random guessing model** forms a perfect diagonal line from bottom-left to top-right. Gaining 10% more True Positives costs exactly 10% more False Positives.
+
+## 3. Threshold Tuning
+In production, Data Scientists look at the ROC curve to mathematically pick the optimal business threshold. 
+If diagnosing Cancer, they will slide their finger along the curve and pick a point far to the right. They mathematically accept a massive 40% False Positive Rate (causing anxiety for healthy patients) because the curve shows that is the mathematical requirement to achieve a 99% True Positive Rate (ensuring no one dies of missed cancer).
 
 </ConceptTemplate>

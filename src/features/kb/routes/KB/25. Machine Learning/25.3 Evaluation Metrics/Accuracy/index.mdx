@@ -1,8 +1,35 @@
+---
+title: Accuracy
+description: The simplest and most widely misunderstood evaluation metric, measuring the mathematical percentage of correct predictions across the entire dataset.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Accuracy">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Accuracy** is the most intuitive metric in Machine Learning, but is mathematically catastrophic if used blindly in production environments.
+
+## 1. The Mathematical Equation
+The formula is incredibly simple. It uses the components of the Confusion Matrix:
+- **True Positives (TP)**
+- **True Negatives (TN)**
+- **False Positives (FP)**
+- **False Negatives (FN)**
+
+$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$
+
+It is literally just: (Total Correct Predictions) / (Total Predictions).
+
+## 2. The Imbalanced Data Fallacy (The Accuracy Paradox)
+If you are building an AI to predict credit card fraud, the dataset is massively imbalanced. 99.9% of transactions are legitimate, and 0.1% are fraud.
+
+If a Data Scientist writes a broken Python script that mathematically ignores the data and just prints `"Legitimate"` for every single transaction, the script will achieve **99.9% Accuracy**. 
+If a CEO looks only at Accuracy, they will deploy the script, and the company will lose billions to the 0.1% of fraud that slipped through. This is the **Accuracy Paradox**. Accuracy is mathematically meaningless unless the target classes are perfectly 50/50 balanced.
+
+## 3. When to Actually Use Accuracy
+You should only rely on Accuracy when:
+1. The dataset is mathematically perfectly balanced (e.g., 5,000 pictures of Dogs and 5,000 pictures of Cats).
+2. The mathematical cost of a False Positive is exactly identical to the cost of a False Negative. (If predicting "Cat" when it's a "Dog" is just as harmless as predicting "Dog" when it's a "Cat").
+
+If identifying the positive class is highly critical (like cancer detection), Accuracy must be discarded in favor of Precision, Recall, and F1 Score.
 
 </ConceptTemplate>

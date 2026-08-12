@@ -1,8 +1,35 @@
+---
+title: Expert Systems
+description: The dominant AI architecture of the 1980s, utilizing massive, hardcoded knowledge bases and inference engines to simulate human decision-making.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Expert systems">
+<ConceptTemplate title="Expert Systems">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Long before Neural Networks could learn from data, the AI industry was dominated by **Expert Systems**. These systems did not "learn" anything; they were massive, rigidly coded databases of human knowledge, designed to simulate the decision-making ability of a human expert (like a doctor or a mechanic).
+
+## 1. The Architecture
+An Expert System is mathematically divided into two distinct components:
+
+### The Knowledge Base
+A vast repository of facts and rules, manually extracted from human experts by "Knowledge Engineers".
+The rules were typically formatted in strict First-Order Logic (If-Then statements).
+- *Rule 1*: IF Engine_Starts = False AND Battery_Voltage < 12 THEN Issue = "Dead Battery"
+
+### The Inference Engine
+The mathematical brain that processes the Knowledge Base.
+- **Forward Chaining**: Data-driven. You feed the system the data ("The battery is 10V"), and the engine cascades mathematically forward through the rules until it reaches a conclusion ("Dead Battery").
+- **Backward Chaining**: Goal-driven. The system asks "Is the battery dead?" and mathematically works backward through the rules, prompting the user for the necessary data to prove or disprove the goal.
+
+## 2. Famous Historical Systems
+- **MYCIN (1970s)**: An expert system developed at Stanford to diagnose blood infections. It possessed hundreds of complex rules and mathematically outperformed junior doctors in accuracy.
+- **XCON (1980s)**: Used by Digital Equipment Corporation (DEC) to automatically select computer components based on customer requirements, saving the company millions of dollars annually.
+
+## 3. The Collapse (The Knowledge Acquisition Bottleneck)
+Expert systems ultimately caused the Second AI Winter because they were incredibly brittle.
+- **The Bottleneck**: Extracting knowledge from a human expert and manually translating it into thousands of strict IF-THEN rules took years and cost millions of dollars.
+- **Brittleness**: If a patient had a symptom that fell even slightly outside the hardcoded rules, the Expert System would mathematically fail or output a catastrophic misdiagnosis. It had zero common sense or ability to adapt to new situations.
+
+Today, strict rule-based Expert Systems have been almost entirely replaced by probabilistic Machine Learning models, though their rule-engine descendants still exist in modern business logic software.
 
 </ConceptTemplate>

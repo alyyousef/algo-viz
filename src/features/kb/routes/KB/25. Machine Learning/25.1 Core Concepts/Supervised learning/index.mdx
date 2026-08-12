@@ -1,33 +1,29 @@
 ---
 title: Supervised Learning
-description: A machine learning paradigm where the model is trained on a labeled dataset.
+description: The dominant mathematical paradigm of Machine Learning where algorithms map inputs to outputs by learning from explicitly labeled training data.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Supervised Learning">
+<ConceptTemplate title="Supervised Learning">
 
-Supervised learning is the machine learning task of learning a function that maps an input to an output based on example input-output pairs. It infers a function from *labeled* training data consisting of a set of training examples.
+**Supervised Learning** is the workhorse of the modern AI industry. It is the mathematical process of deriving a function that maps an input to an output based on example input-output pairs. 
 
-<Callout icon="info" title="The Teacher Metaphor">
-  It is called "supervised" because the process of an algorithm learning from the training dataset can be thought of as a teacher supervising the learning process. We know the correct answers; the algorithm iteratively makes predictions on the training data and is corrected by the teacher.
-</Callout>
+In this paradigm, a human acts as the "Supervisor", providing the algorithm with the exact correct mathematical answers during training.
 
-## Classification vs Regression
+## 1. The Mathematical Objective
+You are given a dataset $D$ consisting of $N$ pairs of inputs ($X$) and targets ($Y$).
+$D = \{(x_1, y_1), (x_2, y_2), ..., (x_N, y_N)\}$
 
-Supervised learning problems can be further grouped into two main categories:
+The goal is to mathematically learn a function $f(X) \approx Y$.
+During training, the algorithm predicts a value $\hat{y}$. The **Loss Function** mathematically measures the distance between the prediction $\hat{y}$ and the true label provided by the human supervisor $y$. Optimization algorithms (like Gradient Descent) adjust the function $f$ until the Loss is mathematically minimized.
 
-<ComparisonTable 
-  headers={['Type', 'Description', 'Example']}
-  rows={[
-    ['Classification', 'The output variable is a category (discrete).', '"Is this email Spam or Not Spam?"'],
-    ['Regression', 'The output variable is a real value (continuous).', '"What will the price of this house be in dollars?"']
-  ]}
-/>
+## 2. Classification vs Regression
+Supervised Learning is split into two massive sub-branches depending on the mathematical shape of the target variable $Y$.
+- **Regression**: The target $Y$ is a continuous, infinite number (e.g., Predicting the price of a house: $543,211). Algorithms: Linear Regression, XGBoost Regressor.
+- **Classification**: The target $Y$ is a discrete category (e.g., Predicting if a transaction is Fraud or Not Fraud). Algorithms: Logistic Regression, Random Forest Classifier, Support Vector Machines.
 
-## Common Algorithms
-- Linear Regression
-- Logistic Regression
-- Support Vector Machines (SVM)
-- Random Forests
+## 3. The Data Bottleneck
+Because Supervised Learning relies entirely on the mathematical ground truth ($Y$), it is severely bottlenecked by human labor. 
+To train an autonomous vehicle using pure Supervised Learning, humans must manually draw strict mathematical bounding boxes around every single pedestrian, stop sign, and vehicle across 10 million video frames. This economic constraint led to the rise of Self-Supervised and Reinforcement Learning.
 
-</TechnologyTemplate>
+</ConceptTemplate>

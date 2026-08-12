@@ -1,8 +1,26 @@
+---
+title: Data Pipelines
+description: The automated software systems responsible for extracting, transforming, and loading data from operational systems into analytical environments.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data pipelines">
+<ConceptTemplate title="Data Pipelines">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Data Pipeline is the automated software plumbing that moves data from Point A to Point B. Without pipelines, Data Analysts would have to manually export CSVs from the production database and email them to the BI team every morning.
+
+## 1. The Stages of a Pipeline
+A standard pipeline executes three mathematical phases (ETL or ELT):
+
+1. **Ingestion (Extract)**: Pulling raw data from disparate sources. This could be a daily batch scrape of a PostgreSQL database, or a continuous real-time stream of JSON events from Apache Kafka.
+2. **Processing (Transform)**: The raw data is mathematically dirty. The pipeline cleans null values, enforces data types, joins tables together, and aggregates metrics. This is executed using engines like Apache Spark or Snowflake SQL.
+3. **Storage (Load)**: The pristine, transformed data is physically written to the target destination, such as a Data Warehouse (for BI dashboards) or a Data Lake (for Machine Learning).
+
+## 2. Types of Pipelines
+- **Batch Pipelines**: The vast majority of pipelines. They run on a chronological schedule (e.g., nightly) processing bounded datasets. They prioritize massive throughput over latency.
+- **Streaming Pipelines**: Operate on unbounded data. They run continuously 24/7, mathematically processing events (like credit card fraud detection) with sub-millisecond latency using engines like Apache Flink.
+- **Zero-ETL Pipelines**: A modern paradigm pioneered by cloud providers (like AWS). Instead of writing complex extraction scripts, the cloud provider mathematically syncs the operational database (Aurora) directly to the warehouse (Redshift) in real-time, completely bypassing the need for a traditional pipeline.
+
+## 3. The Orchestration Layer
+Because a Data Pipeline might consist of 50 different Python scripts and SQL queries that must execute in a strict mathematical order, they are managed by an Orchestrator (like **Apache Airflow** or **Dagster**). The orchestrator ensures that if the Extraction step fails, the Transformation step is mathematically halted to prevent data corruption.
 
 </ConceptTemplate>

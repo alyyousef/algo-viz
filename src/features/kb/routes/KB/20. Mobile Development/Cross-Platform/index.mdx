@@ -1,0 +1,32 @@
+---
+title: Cross-Platform (React Native & Flutter)
+description: How React Native bridges Javascript to native UI components, and how Flutter uses Dart and a C++ Skia engine to render its own pixels.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Cross-Platform (React Native & Flutter)">
+
+For companies that cannot afford two separate engineering teams, Cross-Platform frameworks mathematically allow one team to write one codebase that deploys to both iOS and Android.
+
+## 1. React Native (The Bridge Architecture)
+Created by Facebook. React Native allows web developers to use React and JavaScript to build mobile apps.
+
+**How it works**:
+It does *not* render web views (HTML/CSS). Instead, your JavaScript code runs on a background thread inside a JS engine (like Hermes). When you write `<View>` in React Native, the framework sends a JSON message across a "Bridge" to the native OS thread, telling it to instantiate an actual `UIView` (iOS) or `android.view.View` (Android).
+
+- **Pros**: Massive code reuse. Uses actual native components, so it feels 100% native.
+- **Cons**: The "Bridge" bottleneck. Sending thousands of JSON messages across the bridge per second (e.g., during complex animations) can cause severe frame drops (though the new JSI architecture is actively fixing this).
+
+### Expo
+React Native on its own is mathematically painful to set up (requiring complex Xcode/Android Studio configurations). **Expo** is a framework built around React Native that hides all the native complexity. It is the absolute industry standard for building React Native apps today.
+
+## 2. Flutter (The Canvas Architecture)
+Created by Google. Flutter takes a fundamentally different mathematical approach. It does not use native UI components at all.
+
+**How it works**:
+Flutter uses the **Dart** programming language. Instead of telling iOS to render an iOS Button, Flutter ships with a massive C++ graphics engine (Skia, or the newer Impeller). Flutter literally asks the OS for a blank canvas, and it mathematically paints every single pixel of the button itself at 60 or 120 frames per second.
+
+- **Pros**: The UI looks mathematically identical on every single device because Flutter controls the pixels. Unbelievable performance and incredibly smooth animations.
+- **Cons**: Doesn't always "feel" perfectly native (e.g., native iOS scrolling physics). Dart is a niche language outside of Flutter.
+
+</ConceptTemplate>

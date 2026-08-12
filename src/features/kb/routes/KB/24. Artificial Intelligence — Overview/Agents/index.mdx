@@ -1,8 +1,33 @@
+---
+title: AI Agents
+description: Autonomous software entities that perceive their environment, execute logic, and take actions using tools to achieve long-term goals.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agents">
+<ConceptTemplate title="AI Agents">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For decades, AI models were strictly passive. You gave a Neural Network an image, it classified it, and it stopped. 
+An **AI Agent** is an active, autonomous system. It does not just classify data; it mathematically pursues a goal over time, taking actions, observing the results, and adjusting its strategy.
+
+## 1. The Agent Architecture (PEAS)
+In classical AI, Agents are defined by the **PEAS** framework:
+- **Performance Measure**: The mathematical metric for success (e.g., getting a high score in Pac-Man).
+- **Environment**: The world the agent operates in (e.g., the Pac-Man grid).
+- **Actuators**: The mechanisms the agent uses to take action (e.g., moving Up, Down, Left, Right).
+- **Sensors**: How the agent perceives the world (e.g., reading the pixel coordinates of the ghosts).
+
+## 2. LLM-Based Agents (Modern Era)
+In the modern era, Large Language Models (LLMs) act as the "brain" of the agent.
+
+When given a goal ("Analyze our Q3 revenue and email the summary to the CEO"), the LLM Agent utilizes a framework like **ReAct (Reason + Act)**:
+1. **Thought**: The LLM writes out a plan: "First, I need to fetch the Q3 data from the PostgreSQL database."
+2. **Action (Tool Use)**: The LLM generates a SQL query and mathematically triggers an external API (a Tool) to execute it.
+3. **Observation**: The database returns the raw revenue numbers.
+4. **Thought**: The LLM reads the numbers and realizes: "Now I need to use the Email API to send this."
+
+By looping through Thought -> Action -> Observation, the Agent can autonomously operate a computer, browse the internet, and write code to achieve massive, multi-step goals.
+
+## 3. Challenges: Hallucination and Drifting
+Agents are incredibly powerful, but they suffer from drifting. Over a 50-step task, a slight hallucination in Step 4 can cause the Agent to mathematically diverge completely from the goal, resulting in an infinite loop of API errors. Fixing this requires complex memory systems (Vector Databases) and strict deterministic state machines.
 
 </ConceptTemplate>

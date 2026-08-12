@@ -1,8 +1,30 @@
+---
+title: Deep Learning (Overview)
+description: A powerful subfield of Machine Learning based on Artificial Neural Networks with multiple hidden layers, capable of modeling highly non-linear functions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Deep learning">
+<ConceptTemplate title="Deep Learning (Overview)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While classical Machine Learning (Random Forests, SVMs) requires humans to manually extract features (Feature Engineering), **Deep Learning** algorithms mathematically learn to extract the features themselves directly from raw data (images, text, audio).
+
+## 1. The Artificial Neuron
+The foundation of Deep Learning is the mathematical Artificial Neuron (Perceptron).
+It takes multiple inputs ($x_1, x_2$), multiplies them by adjustable Weights ($w_1, w_2$), adds a Bias ($b$), and passes the result through a non-linear **Activation Function** (like ReLU or Sigmoid).
+Equation: $y = \text{ReLU}(\sum (x_i \cdot w_i) + b)$
+
+By stacking hundreds of these neurons into multiple "Hidden Layers", the network becomes a Universal Function Approximator, mathematically capable of learning the relationship between *any* input (a picture of a cat) and *any* output (the word "Cat").
+
+## 2. The Engine: Backpropagation
+If you initialize a neural network with random weights, it will confidently declare that a picture of a Cat is a "Toaster".
+The network learns through **Backpropagation**:
+1. **Forward Pass**: The image goes through the network, outputting "Toaster" (Error = 100%).
+2. **Loss Function**: The network mathematically calculates how wrong it was.
+3. **Gradient Descent**: Using calculus (the Chain Rule), the network calculates the exact gradient (slope) for every single weight in the network. It mathematically asks: *"If I tweak Weight #523 slightly up, does the error go down?"*
+4. **Update**: It mathematically updates all 50 billion weights simultaneously to slightly reduce the error, repeating this loop millions of times.
+
+## 3. The Need for Massive Compute (GPUs)
+Deep Learning was invented in the 1980s, but failed because CPUs are too slow. A neural network forward pass requires millions of independent matrix multiplications. 
+In the 2010s, researchers realized that **GPUs (Graphics Processing Units)**—which were designed to calculate millions of independent pixels for video games—could mathematically calculate neural networks 100x faster than CPUs, sparking the entire modern AI revolution.
 
 </ConceptTemplate>

@@ -1,8 +1,28 @@
+---
+title: Dimensionality Reduction
+description: The mathematical process of compressing a massive number of input features (dimensions) into a smaller, dense representation while preserving the critical underlying signal.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dimensionality reduction">
+<ConceptTemplate title="Dimensionality Reduction">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you feed a Machine Learning model an image that is 1000x1000 pixels, that represents 1,000,000 mathematical dimensions. The algorithm will likely crash due to the **Curse of Dimensionality** (the mathematical phenomenon where the volume of the space increases so exponentially that the available data becomes uselessly sparse).
+
+**Dimensionality Reduction** mathematically shrinks 1,000,000 dimensions down to 100 dimensions, while retaining 95% of the important information.
+
+## 1. Feature Elimination vs Extraction
+- **Elimination**: Literally deleting columns that don't matter (e.g., deleting "Hair Color" when predicting "Credit Score").
+- **Extraction**: Mathematically creating entirely new, dense columns by blending the old ones. (e.g., Compressing 1,000,000 raw pixels into a 100-number vector that represents the "essence" of a face).
+
+## 2. Principal Component Analysis (PCA)
+PCA is the absolute mathematical king of linear dimensionality reduction.
+It relies on linear algebra (Eigenvectors and Eigenvalues). It mathematically rotates the high-dimensional axes to find the direction that contains the absolute maximum variance (spread) in the data. This direction becomes "Principal Component 1". It then finds a second, mathematically orthogonal (90 degree) direction for PC2. 
+
+You can drop a 1,000-column dataset down to just PC1 and PC2, which might mathematically capture 90% of all the variance in the original 1,000 columns, allowing you to easily plot it on a 2D graph.
+
+## 3. Non-Linear Reduction (t-SNE and UMAP)
+PCA is linear. If the data is twisted like a mathematical Swiss Roll, PCA will crush it and destroy the structure.
+
+**t-SNE** (t-Distributed Stochastic Neighbor Embedding) and **UMAP** are mathematically designed for highly non-linear data. They calculate the probability that two points are neighbors in high-dimensional space, and then mathematically force them to be neighbors in a new 2D space. They are the industry standard for visualizing massive datasets (like millions of Word Embeddings) in 2D scatter plots.
 
 </ConceptTemplate>

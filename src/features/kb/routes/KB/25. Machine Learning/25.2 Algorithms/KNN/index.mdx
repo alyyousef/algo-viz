@@ -1,8 +1,27 @@
+---
+title: K-Nearest Neighbors (KNN)
+description: A mathematically pure, non-parametric algorithm that performs classification and regression by executing distance calculations directly against the raw training data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="KNN">
+<ConceptTemplate title="K-Nearest Neighbors (KNN)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**K-Nearest Neighbors (KNN)** is known as a "Lazy Learning" algorithm. Unlike a Neural Network, KNN has mathematically zero training phase. It does not calculate weights or gradients. It simply memorizes the entire dataset, and executes all of its mathematics exclusively at the exact moment of prediction (inference).
+
+## 1. The Core Mathematics (Distance)
+If you want to classify a new, unknown data point, KNN relies purely on mathematical geometry.
+1. It calculates the strict mathematical distance (usually **Euclidean Distance**) from the new point to *every single row* in the historical dataset.
+2. It sorts the distances, and retrieves the top $K$ mathematically closest historical points (the "Neighbors").
+3. **For Classification**: The $K$ neighbors vote. If $K=5$, and 4 neighbors are "Dog" and 1 is "Cat", the algorithm mathematically outputs "Dog".
+4. **For Regression**: It takes the mathematical average of the target variables of the $K$ neighbors.
+
+## 2. The Curse of Dimensionality
+KNN is highly susceptible to the **Curse of Dimensionality**. 
+As the number of features (columns) increases past 15 or 20, the mathematical volume of the space expands exponentially. In high-dimensional space, the mathematical distance between *any* two points approaches equality. The concept of a "Nearest Neighbor" mathematically collapses, and the algorithm becomes equivalent to random guessing. PCA (Dimensionality Reduction) must be applied before using KNN on wide data.
+
+## 3. Time Complexity and KD-Trees
+Because it has zero training time, KNN's prediction time is catastrophic. To predict one point, it must mathematically calculate the distance to all 10 million historical points, making it $O(N)$.
+
+To solve this in production, engineers use specialized spatial data structures like **KD-Trees** or **Ball Trees**. These structures mathematically partition the dataset during "training", allowing the prediction algorithm to ignore 99% of the historical points, reducing the mathematical search time from $O(N)$ to $O(\log N)$.
 
 </ConceptTemplate>

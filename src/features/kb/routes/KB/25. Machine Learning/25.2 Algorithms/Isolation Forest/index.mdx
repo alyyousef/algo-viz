@@ -1,8 +1,33 @@
+---
+title: Isolation Forest
+description: An ingenious, tree-based unsupervised algorithm mathematically optimized specifically to isolate and detect anomalies rather than profile normal data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Isolation Forest">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Most anomaly detection algorithms (like Autoencoders or One-Class SVMs) attempt to mathematically profile "normal" data, and flag anything that doesn't fit. 
+
+**Isolation Forests** completely invert the mathematical paradigm. They do not care about normal data. They are explicitly mathematically designed to actively target and isolate the anomalies directly.
+
+## 1. The Mathematical Premise (Anomalies are Easy to Isolate)
+Anomalies, by mathematical definition, are "few and different". Because they are far away from the dense clusters of normal data, they are incredibly easy to isolate.
+
+If you have a dense cluster of 1,000 normal transactions, and 1 massive fraudulent transaction far away on the graph:
+- If you draw random lines (splits) through the data, the fraudulent transaction will be isolated into its own mathematical bucket after only 2 or 3 random splits.
+- The normal transactions will require 20 or 30 random splits before they are finally isolated from each other because they are so densely packed.
+
+## 2. The Algorithmic Flow
+1. The algorithm builds 100 **Isolation Trees**.
+2. Unlike a Decision Tree which calculates Information Gain, an Isolation Tree is mathematically random. It picks a random feature, picks a random threshold, and splits the data. It repeats this recursively until every point is isolated.
+3. For every single data point, the algorithm mathematically counts the **Path Length** (how many splits it took to isolate that specific point).
+4. It averages the Path Length across all 100 trees.
+
+## 3. The Anomaly Score
+The anomaly score is mathematically derived directly from the Path Length.
+- If the average Path Length is incredibly short (e.g., 2.5), the point is mathematically an **Anomaly**. It was insanely easy to isolate.
+- If the average Path Length is long (e.g., 25.0), the point is buried deep inside a dense cluster. It is mathematically **Normal**.
+
+Because it relies purely on random splits and does not calculate distance matrices, Isolation Forest has an incredibly fast $O(N)$ time complexity, making it the absolute industry standard for anomaly detection on massive real-time streams (like credit card fraud).
 
 </ConceptTemplate>

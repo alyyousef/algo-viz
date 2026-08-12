@@ -1,8 +1,28 @@
+---
+title: Principal Component Analysis (PCA)
+description: The industry standard for linear dimensionality reduction, mathematically transforming highly correlated data into independent orthogonal components.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PCA">
+<ConceptTemplate title="Principal Component Analysis (PCA)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**PCA** is not a prediction algorithm; it is a mathematical transformation. It is the absolute king of Dimensionality Reduction, allowing Data Scientists to compress 1,000 highly correlated columns down to 10 independent columns while retaining 95% of the statistical variance.
+
+## 1. The Mathematical Objective (Variance)
+PCA operates on the mathematical premise that **Variance is Information**. If a column has zero variance (all values are identical), it contains zero information. 
+PCA attempts to mathematically rotate the high-dimensional axes of the data to find the exact angle that captures the maximum possible variance (spread) of the data points.
+
+## 2. Eigenvectors and Eigenvalues
+The math of PCA is pure Linear Algebra:
+1. **Covariance Matrix**: PCA mathematically calculates the covariance (correlation) between every single column.
+2. **Eigen Decomposition**: It calculates the **Eigenvectors** (the mathematical direction) and **Eigenvalues** (the magnitude of variance) of the Covariance Matrix.
+3. **Principal Components**: The Eigenvector with the absolute highest Eigenvalue is **Principal Component 1 (PC1)**. It is a new, synthetic mathematical axis that points directly through the longest spread of the data.
+4. **Orthogonality**: PC2 is mathematically forced to be completely orthogonal (90 degrees perpendicular) to PC1, capturing the second most amount of variance. This guarantees that PC1 and PC2 have exactly $0.0$ correlation.
+
+## 3. The Power of Compression
+If you have an image dataset of faces with 10,000 pixels (dimensions), adjacent pixels are highly correlated. 
+By running PCA, you can mathematically project those 10,000 pixels onto the top 150 Principal Components (Eigenfaces). You have mathematically compressed the dataset size by 98%, removing the curse of dimensionality and allowing algorithms like SVM or KNN to train 100x faster, while still retaining enough mathematical variance to easily distinguish between different human faces.
+
+*Flaw*: PCA is strictly a linear mathematical rotation. If the data is curled in a non-linear shape (like a Swiss Roll), PCA will crush the data and destroy the topology.
 
 </ConceptTemplate>

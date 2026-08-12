@@ -1,8 +1,33 @@
+---
+title: Confusion Matrix
+description: The foundational mathematical grid that explicitly breaks down the exact classification errors of a model, exposing the critical difference between False Positives and False Negatives.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Confusion matrix">
+<ConceptTemplate title="Confusion Matrix">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a model has 90% accuracy, you know it got 10% wrong. But *how* did it get them wrong? Did it hallucinate diseases that didn't exist, or did it miss diseases that did exist?
+The **Confusion Matrix** is a strict $N \times N$ mathematical grid that exposes the exact topology of the errors.
+
+## 1. The 2x2 Binary Matrix
+For a Binary Classification problem (Disease vs Healthy), the matrix is $2 \times 2$.
+The True labels are on one axis, and the Predicted labels are on the other.
+
+- **True Positives (TP)**: Model predicted Disease, and the patient actually had the Disease. (Correct).
+- **True Negatives (TN)**: Model predicted Healthy, and the patient was Healthy. (Correct).
+- **False Positives (FP) / Type I Error**: Model predicted Disease, but the patient was actually Healthy. (A false alarm).
+- **False Negatives (FN) / Type II Error**: Model predicted Healthy, but the patient actually had the Disease. (A catastrophic failure).
+
+Every single mathematical metric in classification (Accuracy, Precision, Recall, F1) is derived algebraically directly from these 4 grid squares.
+
+## 2. The Business Asymmetry of Errors
+Mathematically, an error is an error. In the real world, the costs are heavily asymmetrical.
+- **Spam Filter**: A False Positive (sending a crucial email from your boss to the Spam folder) is a disaster. A False Negative (letting a spam email into your inbox) is a minor annoyance. The Confusion Matrix explicitly forces the Data Scientist to optimize the model to mathematically minimize the FP square.
+- **Cancer Detection**: A False Positive (telling a healthy patient they might have cancer) causes temporary anxiety until a biopsy clears them. A False Negative (telling a terminal cancer patient they are perfectly healthy) is fatal. The model must be mathematically optimized to minimize the FN square at all costs.
+
+## 3. Multi-Class Confusion Matrix
+If you are classifying 10 types of animals, the matrix is $10 \times 10$.
+The perfect model is a mathematically solid diagonal line of massive numbers from top-left to bottom-right (meaning all predictions matched the true labels). 
+If the model is confusing "Dogs" and "Wolves", you will mathematically see a massive cluster of numbers at the intersection of the Dog row and the Wolf column, instantly highlighting exactly which two classes the Neural Network is struggling to differentiate.
 
 </ConceptTemplate>

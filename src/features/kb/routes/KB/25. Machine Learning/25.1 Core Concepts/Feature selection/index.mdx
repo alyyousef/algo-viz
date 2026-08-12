@@ -1,8 +1,30 @@
+---
+title: Feature Selection
+description: The mathematical process of discarding irrelevant or redundant variables from a dataset to improve model accuracy, training speed, and interpretability.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Feature selection">
+<ConceptTemplate title="Feature Selection">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you feed a Machine Learning model 10,000 columns of data, and 9,000 of those columns are completely random noise (e.g., the user's astrological sign when predicting credit score), the model will mathematically overfit to the noise and fail. 
+
+**Feature Selection** is the mathematical discipline of identifying and keeping only the columns that actually matter.
+
+## 1. Filter Methods (Statistical Independence)
+Filter methods do not use a Machine Learning model. They use pure mathematics to evaluate the relationship between a Feature and the Target variable independently.
+
+- **Pearson Correlation**: Mathematically checks if a continuous feature (Age) linearly correlates with the continuous target (Income). If the correlation is 0, the feature is dropped.
+- **Chi-Square Test**: Mathematically checks if a categorical feature (Gender) is statistically independent of a categorical target (Purchased_Product).
+- **Variance Threshold**: Mathematically drops any column where 99% of the rows have the exact same value (e.g., a "Country" column where 99.9% of users are from the USA). It holds zero predictive variance.
+
+## 2. Wrapper Methods (Search Algorithms)
+Wrapper methods mathematically train a real Machine Learning model over and over again to test combinations of features.
+- **Recursive Feature Elimination (RFE)**: You train a model (like an SVM) on all 1,000 features. You look at the mathematical weights. You delete the 1 feature with the absolute lowest weight. You then re-train the model on 999 features. You repeat this loop mathematically until you reach the desired number of optimal features. Highly accurate, but computationally catastrophic.
+
+## 3. Embedded Methods (L1 Regularisation)
+Embedded methods perform feature selection *while* the model is training.
+The most famous is **L1 Regularisation (Lasso Regression)**. 
+
+During the mathematical gradient descent optimization, the L1 penalty mathematically forces the weights of irrelevant features to become exactly, literally $0.0$. By the time the model finishes training, it has mathematically deleted the irrelevant columns internally, providing built-in feature selection without requiring an external search loop.
 
 </ConceptTemplate>

@@ -1,8 +1,50 @@
+---
+title: dbt (Data Build Tool)
+description: The revolutionary framework that brings strict Software Engineering principles (CI/CD, testing, version control) to Data Engineering SQL pipelines.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="dbt">
+<ConceptTemplate title="dbt (Data Build Tool)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before dbt, Data Analysts were forced to maintain catastrophic 2,000-line SQL scripts inside Airflow to transform data. There was no version control, no modularity, and no testing. If a script broke, the entire data warehouse was corrupted.
+
+**dbt (Data Build Tool)** mathematically revolutionized the industry by bringing the rigor of Software Engineering directly to SQL. It is the undisputed standard for the **ELT (Extract, Load, Transform)** paradigm.
+
+## 1. Modular SQL & The DAG
+Instead of writing one massive script, dbt forces you to write small, atomic SQL queries (called Models).
+- You write a model that just cleans user data (`stg_users.sql`).
+- You write another model that aggregates revenue (`stg_payments.sql`).
+
+You mathematically link these models using the Jinja `{{ ref() }}` macro.
+```sql
+-- final_analytics.sql
+SELECT u.name, p.total
+FROM {{ ref('stg_users') }} u
+JOIN {{ ref('stg_payments') }} p ON u.id = p.user_id
+```
+
+When you execute `dbt run`, dbt parses the `ref()` macros, mathematically constructs a **Directed Acyclic Graph (DAG)** of all dependencies, and executes the SQL in the exact correct order inside the Data Warehouse (e.g., Snowflake, BigQuery).
+
+## 2. Software Engineering Rigor
+
+### Automated Testing
+In dbt, you can define mathematical assertions in a simple YAML file.
+```yaml
+models:
+  - name: stg_users
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+```
+Before deploying, dbt compiles these YAML rules into SQL tests. If the `user_id` column contains a null value, the dbt pipeline mathematically fails, preventing silent data corruption.
+
+### CI/CD and Version Control
+Because dbt models are just text files, the entire data pipeline is stored in Git. When a Data Analyst wants to modify a metric, they open a Pull Request. A CI/CD pipeline automatically executes the dbt models against a temporary "Dev" schema in Snowflake, mathematically proving the SQL works before merging it into Production.
+
+## 3. The Analytics Engineer
+dbt is so powerful that it created an entirely new job title: **The Analytics Engineer**. 
+It empowered people who only know SQL (Analysts) to mathematically build production-grade, fault-tolerant data pipelines without needing to know complex Python, Scala, or Apache Spark.
 
 </ConceptTemplate>

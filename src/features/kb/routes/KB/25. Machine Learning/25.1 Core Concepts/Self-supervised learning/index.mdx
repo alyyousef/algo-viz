@@ -1,8 +1,31 @@
+---
+title: Self-Supervised Learning
+description: A groundbreaking paradigm where models mathematically generate their own labels from the raw structure of the data, unlocking massive scale.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Self-supervised learning">
+<ConceptTemplate title="Self-Supervised Learning">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, Deep Learning required **Supervised Learning** (humans manually labeling millions of images). This caused a massive mathematical bottleneck: there is infinite data on the internet, but not enough humans to label it.
+
+**Self-Supervised Learning (SSL)** mathematically solved this. The algorithm creates its own labels by destroying parts of the input data and mathematically training itself to reconstruct the missing pieces.
+
+## 1. SSL in NLP (Masked Language Modeling)
+This mathematical breakthrough is responsible for the entire modern LLM revolution (BERT, GPT).
+You take a sentence from Wikipedia: *"The capital of France is Paris."*
+You mathematically mask (hide) a word: *"The capital of France is [MASK]."*
+
+You feed this broken sentence to the Neural Network. The network mathematically predicts what word belongs in the [MASK]. It then checks the original sentence to see if it was right. 
+Because the algorithm generates its own labels, you can download the entire internet, mask billions of words, and train a model with zero human intervention.
+
+## 2. SSL in Computer Vision (Contrastive Learning)
+You cannot easily "mask" pixels in an image to teach semantic meaning. Instead, Vision SSL uses **Contrastive Learning**.
+
+You take an unlabelled image of a Dog. You mathematically apply two random augmentations to it (e.g., crop one version, turn the other version black and white). 
+You feed both images into the Neural Network. The network mathematically calculates the vector embeddings for both images. 
+The Loss Function mathematically forces the network to pull the two vectors together (because they came from the same image), whilst simultaneously pushing the vectors away from all other images in the batch. The network mathematically learns the concept of a "Dog" without ever seeing a human label.
+
+## 3. The Future of AI Scale
+Self-Supervised Learning is the engine of "Foundation Models". By training mathematically on raw, unlabelled data at a planetary scale, the models learn the fundamental physics of reality or the grammar of language. Once trained, they only require a tiny fraction of human-labeled data (Fine-Tuning) to adapt to specific tasks.
 
 </ConceptTemplate>

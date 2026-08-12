@@ -1,8 +1,29 @@
+---
+title: Overfitting
+description: The catastrophic mathematical failure where a model perfectly memorizes the training data noise but utterly fails to generalize to the real world.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Overfitting">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Overfitting** is the most common and dangerous mathematical failure in all of Machine Learning. It occurs when a model is mathematically too complex for the amount of data provided. Instead of learning the underlying signal (the true trend), it mathematically memorizes the exact coordinates of every single data point, including the random noise.
+
+## 1. The Mathematical Symptoms
+You can mathematically diagnose overfitting by tracking the Loss Function (Error) during training.
+- **Training Error**: Plummets to zero. The model is predicting the training data with 99.9% accuracy.
+- **Validation Error**: Drops initially, but suddenly hits an inflection point and begins to rapidly *increase*. 
+
+This divergence is the absolute mathematical signature of overfitting. The model has become so hyper-specialized to the training data that its ability to generalize to unseen data is collapsing.
+
+## 2. Causes of Overfitting
+- **Model Complexity**: Using a massive Deep Neural Network with 10 million parameters to predict a simple CSV file with 500 rows. The network has so much mathematical capacity it will just memorize the 500 rows like a lookup table.
+- **Lack of Data**: If you only show the model 3 pictures of cats, and all 3 cats happen to be sitting on a red rug, the model will mathematically overfit, assuming the definition of a "Cat" requires a red rug.
+- **Too Many Epochs**: Training the model for too many loops. Eventually, it extracts all the true signal and starts mathematically extracting the noise.
+
+## 3. Mathematical Solutions (Regularisation)
+To stop overfitting, Data Scientists mathematically constrain the model.
+- **Early Stopping**: A script monitors the Validation Error. The exact millisecond the Validation Error stops decreasing and starts going up, the script terminates the training, mathematically freezing the weights at their optimal generalization point.
+- **L1/L2 Regularisation**: Adding a mathematical penalty to the Loss Function that punishes the model for having weights that are too large, forcing the model to remain simple.
+- **Dropout (Deep Learning)**: During training, randomly shutting off 50% of the neurons on every pass. This mathematically prevents the neurons from co-adapting and memorizing highly specific noise patterns.
 
 </ConceptTemplate>

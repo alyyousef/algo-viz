@@ -1,8 +1,28 @@
+---
+title: Calibration Metrics
+description: The mathematical evaluation of whether a model's predicted probabilities perfectly align with the actual, real-world frequencies of the predicted events.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Calibration metrics">
+<ConceptTemplate title="Calibration Metrics">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In high-stakes industries (Finance, Medicine), it is not enough for an AI to simply classify a patient as "Cancer". The doctor needs to know the exact probability. 
+If the Neural Network outputs a probability of 0.8 (80%), the mathematical law of **Calibration** dictates that if you gather 100 patients to whom the model assigned an 80% probability, exactly 80 of them should actually have Cancer in the real world. 
+If only 50 of them actually have cancer, the model is mathematically **Uncalibrated** (Overconfident).
+
+## 1. Reliability Diagrams (Calibration Curves)
+To mathematically evaluate calibration, Data Scientists plot a Reliability Diagram.
+1. The model's predictions (0.0 to 1.0) are mathematically binned into 10 buckets (e.g., 0.0-0.1, 0.1-0.2).
+2. For all the data points in the 0.8-0.9 bucket, you calculate the average predicted probability (e.g., 85%).
+3. You then mathematically calculate the *True Fraction of Positives* in that bucket. (Did 85% of those rows actually have the target class?)
+4. You plot the Predicted Probabilities vs the True Probabilities. A perfectly calibrated model forms a mathematically perfect $y=x$ diagonal line.
+
+## 2. Expected Calibration Error (ECE)
+You cannot compare curves easily, so the graph is mathematically collapsed into a scalar metric: **ECE**.
+ECE mathematically calculates the absolute difference between the predicted probability and the true accuracy in every single bin. It then calculates the weighted average of those differences across all bins. The closer ECE is to 0.0, the more perfectly calibrated the model is.
+
+## 3. Modern Neural Networks are Terrible at Calibration
+Deep Neural Networks (especially ResNets) are notorious for being mathematically highly accurate, but catastrophically uncalibrated. Because of massive depth and Batch Normalization, they tend to output probabilities like 99.9% even when they are completely wrong. 
+To fix this, engineers apply **Platt Scaling** or **Isotonic Regression** to mathematically recalibrate the Softmax outputs post-training, forcing the probabilities back into alignment with reality.
 
 </ConceptTemplate>

@@ -1,8 +1,32 @@
+---
+title: Delta Lake
+description: An open-source Table Format created by Databricks that brings ACID transactions and reliability to Data Lakes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Delta Lake">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Table Formats, Data Lakes were unreliable. If a Spark job crashed while writing 10,000 Parquet files to S3, your Data Lake was mathematically corrupted with partial data, destroying downstream analytics.
+
+**Delta Lake**, created by Databricks, mathematically solves this by introducing a transactional metadata layer directly on top of the raw Parquet files. It competes directly with Apache Iceberg and Apache Hudi.
+
+## 1. The Transaction Log (DeltaLog)
+The mathematical core of Delta Lake is the `_delta_log` directory, stored alongside the Parquet files.
+
+Instead of a query engine blindly listing files in a directory, it first reads the Delta Log. The log mathematically records exactly which Parquet files were added and removed in every single transaction.
+- **ACID Transactions**: If a Spark job crashes mid-write, the transaction is never committed to the Delta Log. The query engine simply ignores the partially written Parquet files.
+- **Optimistic Concurrency Control**: If two Spark jobs try to update the exact same table simultaneously, Delta Lake mathematically resolves the conflict, ensuring data is never corrupted.
+
+## 2. Advanced Features
+Because the entire history of the table is recorded in the Delta Log, you unlock massive architectural capabilities:
+
+- **Time Travel**: You can mathematically query the exact state of the table as it existed 5 days ago, or instantly rollback the table to recover from accidental deletions.
+```sql
+SELECT count(*) FROM events TIMESTAMP AS OF '2026-01-01'
+```
+
+- **Schema Evolution**: You can safely add new columns to a dataset without rewriting the petabytes of historical Parquet files. The Delta Log mathematically maps the schema changes.
+
+- **Unified Batch & Streaming**: Because Delta Lake handles transactions perfectly, a Delta Table can mathematically act as a streaming source (like Kafka). A downstream pipeline can explicitly query "Give me only the new rows appended since I last checked", enabling blazing-fast incremental ETL pipelines.
 
 </ConceptTemplate>

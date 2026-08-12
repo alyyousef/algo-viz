@@ -1,0 +1,39 @@
+---
+title: Database Concepts (ACID vs BASE)
+description: The mathematical guarantees of database systems. Explaining ACID properties, the CAP Theorem, BASE architecture, Transactions, Isolation Levels, and Deadlocks.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Database Concepts (ACID vs BASE)">
+
+A database is not just a place to store data; it is a mathematical engine designed to guarantee data integrity in the face of network failures, server crashes, and thousands of concurrent users.
+
+## 1. ACID Transactions (Relational Standard)
+Relational databases (like PostgreSQL) mathematically guarantee **ACID** properties:
+- **Atomicity**: "All or nothing." If a transaction has 5 steps and step 4 fails, the entire transaction is rolled back. No partial updates.
+- **Consistency**: The database must always mathematically move from one valid state to another. Constraints (like "Balance cannot be negative") are strictly enforced.
+- **Isolation**: Multiple concurrent transactions must not interfere with each other. If two users buy the last ticket simultaneously, the isolation level dictates who wins.
+- **Durability**: Once a transaction is committed, it is permanently written to physical disk. Even if the server instantly loses power, the data is safe.
+
+## 2. Isolation Levels & Deadlocks
+Isolation is mathematically difficult because it destroys performance.
+- **Read Uncommitted**: The fastest, but causes "Dirty Reads" (reading data from a transaction that hasn't finished yet).
+- **Read Committed**: The standard default. Prevents dirty reads.
+- **Repeatable Read**: Ensures that if you read a row twice in one transaction, it won't change in between.
+- **Serializable**: The strictest. The database literally locks the rows and forces transactions to execute sequentially.
+
+**Deadlocks**: Occur when Transaction A locks Row 1 and waits for Row 2, while Transaction B locks Row 2 and waits for Row 1. They wait forever. The database must mathematically detect this and kill one of the transactions.
+
+## 3. The CAP Theorem & BASE
+The **CAP Theorem** mathematically proves that in a distributed system, you can only pick two of the following three:
+- **Consistency**: Every read receives the most recent write.
+- **Availability**: Every request receives a non-error response (even if it's stale data).
+- **Partition Tolerance**: The system continues to operate despite network failures between nodes.
+Because networks *always* fail (Partition Tolerance is mandatory), databases must choose between CP or AP.
+
+To scale globally, NoSQL databases adopted the **BASE** philosophy (AP):
+- **B**asically **A**vailable
+- **S**oft state
+- **E**ventual consistency (The data will *eventually* propagate to all servers, but a user might read stale data for a few milliseconds).
+
+</ConceptTemplate>

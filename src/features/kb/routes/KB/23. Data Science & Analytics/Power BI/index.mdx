@@ -1,8 +1,32 @@
+---
+title: Power BI
+description: Microsoft's dominant enterprise Business Intelligence platform, tightly integrated into the Office 365 ecosystem and powered by the VertiPaq engine.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Power BI">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Power BI** is Microsoft's flagship analytics platform. Due to its deep integration into the enterprise Microsoft ecosystem (Excel, Azure, Active Directory), it is overwhelmingly the most deployed BI tool in corporate environments, competing directly with Tableau.
+
+## 1. The VertiPaq Engine (Analysis Services)
+Power BI is not just a visualization layer; it contains a massive, heavily optimized mathematical database engine under the hood called **VertiPaq**.
+
+When you import data into Power BI, it does not store it as raw rows. VertiPaq is an in-memory columnar database. It applies extreme mathematical compression (Value Encoding, Hash Encoding, and Run-Length Encoding). 
+A 10GB CSV file can mathematically be compressed into a 1GB Power BI model, loaded entirely into the computer's RAM, allowing for blistering-fast aggregations on millions of rows instantly.
+
+## 2. DAX (Data Analysis Expressions)
+To execute complex mathematical business logic, Power BI relies on **DAX**.
+DAX looks very similar to Excel formulas, but it is mathematically vastly more complex. It operates on columns and tables rather than cells.
+
+The defining feature of DAX is **Filter Context**. 
+```dax
+-- Calculate the Sales, but mathematically force the filter to ignore User Selections
+Total Sales (All Regions) = CALCULATE(SUM(Sales[Amount]), ALL(Region))
+```
+When a user clicks a specific Country on the dashboard, Power BI mathematically passes that Filter Context down into every single DAX equation. DAX allows engineers to explicitly override or modify that mathematical context to calculate complex metrics like "Percent of Total" or "Year-Over-Year Growth".
+
+## 3. Power Query (M Language)
+Before data enters the VertiPaq engine, it must be cleaned. 
+Power BI includes **Power Query**, an ETL tool powered by the functional **M Language**. It allows users to visually pivot, unpivot, clean, and join messy Excel sheets and SQL databases into pristine Star Schemas before the DAX calculations are ever applied.
 
 </ConceptTemplate>

@@ -1,8 +1,35 @@
+---
+title: F1 Score
+description: The harmonic mean of Precision and Recall, providing a single, robust mathematical metric that heavily punishes extreme imbalances in classification models.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="F1 score">
+<ConceptTemplate title="F1 Score">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When evaluating a classification model on imbalanced data, you cannot use Accuracy. You must use **Precision** and **Recall**. 
+However, Precision and Recall are mathematically opposed. If you tweak the model's threshold to increase Precision, Recall will mathematically plunge, and vice versa. 
+
+The **F1 Score** mathematically combines them into a single metric, forcing you to balance both.
+
+## 1. The Harmonic Mean
+The F1 Score is mathematically defined as the **Harmonic Mean** of Precision and Recall.
+$F1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$
+
+Why use the Harmonic Mean instead of a simple Arithmetic Mean (Average)?
+- **Arithmetic Mean Flaw**: If a model has 100% Precision and 0% Recall, the standard average is 50%. The model is completely broken, but 50% looks acceptable.
+- **Harmonic Mean Brilliance**: The Harmonic Mean heavily mathematically punishes extreme disparities. If a model has 1.0 Precision and 0.0 Recall, the numerator becomes $1.0 \times 0.0 = 0$. The entire equation mathematically collapses to exactly $0.0$, instantly flagging the model as useless. To get a high F1 score, both Precision and Recall must be mathematically high simultaneously.
+
+## 2. When to Optimize for F1
+F1 Score is the absolute industry standard metric when:
+1. You have heavily imbalanced data (e.g., Fraud Detection, rare diseases).
+2. The mathematical cost of a False Positive (Precision error) and a False Negative (Recall error) are relatively similar, and you want a model that performs robustly across both fronts.
+
+## 3. F-Beta Score (Adjusting the Balance)
+If the costs are *not* perfectly symmetrical, you use the generalized **$F_\beta$ Score**.
+$F_\beta = (1 + \beta^2) \times \frac{Precision \times Recall}{(\beta^2 \times Precision) + Recall}$
+
+- **$\beta = 1$**: This is the standard F1 Score. Precision and Recall are weighted equally.
+- **$\beta = 2$ (F2 Score)**: Mathematically weights Recall twice as heavily as Precision. Used in cancer detection where minimizing False Negatives is critical.
+- **$\beta = 0.5$ (F0.5 Score)**: Mathematically weights Precision twice as heavily as Recall. Used in spam filters where minimizing False Positives is paramount.
 
 </ConceptTemplate>

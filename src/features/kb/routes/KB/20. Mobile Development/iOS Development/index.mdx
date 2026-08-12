@@ -1,0 +1,36 @@
+---
+title: iOS Development
+description: Explains Xcode, the history of Objective-C vs Swift, and the transition from legacy UIKit to declarative SwiftUI.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="iOS Development (Swift & SwiftUI)">
+
+iOS is Apple's proprietary mobile operating system. Because it is a closed ecosystem, developing for iOS mathematically requires a Mac computer running macOS.
+
+## 1. The Language: Objective-C to Swift
+Historically, all Apple software (macOS and iOS) was written in **Objective-C**, a complex, legacy superset of C created in the 1980s. It utilized a bizarre bracket syntax (`[object method]`) and manual memory management.
+
+In 2014, Apple shocked the world by releasing **Swift**. Swift is a modern, mathematically beautiful, type-safe language. It eliminated pointers, introduced strict Optionals (null safety), and utilized ARC (Automatic Reference Counting) for memory management. Swift is now the undisputed absolute standard for all iOS development.
+
+## 2. Xcode & The iOS SDK
+- **Xcode**: Apple's massive, mandatory IDE. You literally cannot compile an iOS app or upload it to the App Store without Xcode. It includes the iOS Simulator, Interface Builder, and the Instruments profiling tool.
+- **The SDK**: Includes core frameworks like Foundation (basic data types), CoreLocation (GPS), and AVFoundation (Camera/Audio).
+
+## 3. UI Architecture: UIKit vs SwiftUI
+For over a decade, iOS UI was built using **UIKit** and Storyboards (visual drag-and-drop interfaces). UI was updated imperatively by mutating view controllers.
+
+### SwiftUI
+In 2019, Apple introduced **SwiftUI**, fundamentally mirroring the declarative revolution of React. You write Swift code to describe what the UI *should* look like based on a state variable. The framework automatically handles rendering and animations.
+
+```swift
+struct ContentView: View {
+    @State private var name = "World"
+    
+    var body: some View {
+        Text("Hello, (name)!")
+    }
+}
+```
+
+</ConceptTemplate>

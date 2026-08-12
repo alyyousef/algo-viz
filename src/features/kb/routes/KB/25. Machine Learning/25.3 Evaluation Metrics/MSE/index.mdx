@@ -1,8 +1,33 @@
+---
+title: MSE (Mean Squared Error)
+description: The foundational mathematical loss function for Regression, which squares the residuals to severely punish large predictive errors and outliers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MSE">
+<ConceptTemplate title="MSE (Mean Squared Error)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Mean Absolute Error (MAE) treats all errors linearly, **Mean Squared Error (MSE)** is mathematically designed to be hyper-sensitive to massive outliers. It is the absolute standard Loss Function used by Gradient Descent to train Regression algorithms (like Deep Neural Networks and Linear Regression).
+
+## 1. The Mathematical Equation
+$MSE = \frac{1}{n} sum_{i=1}^{n} (y_i - \hat{y}_i)^2$
+
+1. The algorithm predicts a value ($\hat{y} = 10$). The true value is ($y = 15$). 
+2. The error (Residual) is $5$. 
+3. It takes the **Square** of the error ($5^2 = 25$). 
+4. It sums up all the squared errors across the dataset, and divides by $n$ to find the mean.
+
+## 2. The Penalty for Outliers
+Why do we square the errors instead of just taking the absolute value (MAE)?
+- If the model makes two errors of $5$ and $5$, the MSE sum is $25 + 25 = 50$.
+- If the model makes two errors of $0$ and $10$, the MSE sum is $0 + 100 = 100$.
+
+Notice that in both scenarios, the total raw error is 10. But MSE mathematically views the second scenario as *twice as bad* as the first. 
+MSE explicitly instructs the Gradient Descent optimizer: *"It is mathematically better to make ten small errors than one catastrophic massive error."* This forces the algorithm to desperately adjust its weights to fix massive outliers.
+
+## 3. The Derivative Advantage (Calculus)
+The second major reason MSE dominates Machine Learning is pure calculus.
+To optimize a Neural Network, you must mathematically calculate the derivative (the slope) of the Loss Function. 
+- The absolute value function (used in MAE) creates a V-shape graph. At exactly $0$, the point is mathematically sharp, meaning the derivative is undefined (it doesn't exist).
+- The squared function (used in MSE) creates a U-shape parabola. It is perfectly smooth everywhere. The derivative is easy to calculate ($2x$), making mathematical optimization vastly more stable and efficient.
 
 </ConceptTemplate>

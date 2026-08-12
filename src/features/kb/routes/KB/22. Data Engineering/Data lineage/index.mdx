@@ -1,8 +1,32 @@
+---
+title: Data Lineage
+description: The mathematical mapping of data's journey across an organization, tracking transformations from raw source to final analytic dashboard.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data lineage">
+<ConceptTemplate title="Data Lineage">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a modern enterprise, data does not exist in isolation. A single metric on a CEO's dashboard (e.g., "Total Revenue") is the mathematical output of a massive chain of software dependencies.
+
+The production database is scraped by Fivetran, loaded into Snowflake, transformed by 5 layers of dbt SQL models, aggregated by Airflow, and visualized in Looker.
+**Data Lineage** is the mathematical Directed Acyclic Graph (DAG) tracking this exact journey.
+
+## 1. Why Lineage is Critical
+
+### Impact Analysis (Proactive)
+A Backend Software Engineer wants to rename the database column `usr_id` to `user_id`. In the past, they would rename it, and suddenly the data team's nightly Airflow pipeline would crash, destroying the company's financial reports.
+With proper lineage, the engineer queries the Lineage Graph and mathematically proves exactly which 14 downstream dbt models and 3 dashboards will break, allowing them to coordinate the change safely.
+
+### Root Cause Analysis (Reactive)
+A Data Analyst notices the "Daily Active Users" metric has dropped to zero on the dashboard. Without lineage, debugging requires manually reading hundreds of SQL scripts. With lineage, the analyst traces the DAG backwards visually, instantly identifying that the upstream `stg_stripe_payments` table failed to update this morning.
+
+## 2. How Lineage is Captured
+Capturing lineage across disparate tools is mathematically complex.
+
+- **SQL Parsing**: Tools parse the raw SQL queries executed in the warehouse. If the SQL is `INSERT INTO target SELECT * FROM source`, the parser mathematically draws an edge from `source` to `target`.
+- **Orchestrator APIs**: Tools like dbt inherently know their lineage because they compile the DAG to run the code. dbt generates a `manifest.json` file that explicitly maps the entire lineage graph.
+- **OpenLineage Standard**: An open-source framework. Instead of trying to parse SQL after the fact, systems (like Spark, Flink, and Airflow) natively emit JSON events to an OpenLineage backend every time a job runs, declaring exactly what inputs they read and what outputs they wrote.
+
+Data Lineage is visually surfaced to the organization via **Data Catalogs** (like DataHub or Alation), bringing strict mathematical observability to the data pipeline.
 
 </ConceptTemplate>

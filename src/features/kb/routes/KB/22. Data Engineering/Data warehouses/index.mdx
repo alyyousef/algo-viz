@@ -1,8 +1,29 @@
+---
+title: Data Warehouses
+description: Centralized, highly-structured relational databases optimized for complex OLAP analytics and Business Intelligence.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data warehouses">
+<ConceptTemplate title="Data Warehouses">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Data Warehouse** is the architectural backbone of enterprise analytics. It is a massive relational database designed specifically for **OLAP** (Online Analytical Processing) rather than OLTP (Online Transaction Processing).
+
+## 1. OLAP vs OLTP
+- **OLTP (PostgreSQL, MySQL)**: Designed to process 10,000 tiny transactions per second (e.g., updating a single user's password). They use Row-Oriented storage.
+- **OLAP (Snowflake, BigQuery)**: Designed to execute 5 massive, complex queries per hour (e.g., "Calculate the total revenue of all users across 10 years, grouped by country"). They use Column-Oriented storage to mathematically optimize these massive aggregations.
+
+## 2. Core Architecture
+- **Schema-on-Write**: Data Warehouses are rigidly structured. Before data can be inserted, it must be cleaned, transformed, and mapped to a strict relational schema.
+- **Data Modeling**: To optimize query performance, data is historically modeled using strict mathematical paradigms like the **Star Schema** (Fact tables containing metrics, surrounded by Dimension tables containing attributes) or the **Data Vault** methodology.
+
+## 3. The Cloud Revolution
+Legacy Data Warehouses (like Teradata or Oracle) required companies to buy physical server racks. The hardware tightly coupled Storage and Compute, meaning scaling was incredibly expensive.
+
+The industry was completely revolutionized by **Cloud Data Warehouses** (Snowflake, Google BigQuery, Amazon Redshift).
+They mathematically decoupled Storage from Compute.
+- You can store petabytes of data for pennies on cheap cloud storage.
+- You only pay for the massive Compute clusters during the exactly 15 seconds it takes to execute your SQL query. 
+
+This decoupling enabled the modern **ELT** paradigm, where the Warehouse itself has so much compute power that it is used to transform the raw data internally, replacing legacy external Spark clusters.
 
 </ConceptTemplate>

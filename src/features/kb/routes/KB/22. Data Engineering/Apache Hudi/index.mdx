@@ -1,8 +1,36 @@
+---
+title: Apache Hudi
+description: A modern Table Format that brings ACID transactions and massive update/delete capabilities to Data Lakes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Apache Hudi">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In legacy Data Lakes (like AWS S3 storing raw Parquet files), modifying existing data is mathematically catastrophic. If a user deletes their account (GDPR compliance), you cannot simply run a SQL `DELETE` query. You must write a massive Spark job to read a 10GB Parquet file, filter out the single user, and rewrite the entire 10GB file.
+
+**Apache Hudi** (Hadoop Upserts Deletes and Incrementals) was created by Uber to mathematically solve this problem, bringing ACID transactions to the Data Lake.
+
+## 1. Core Capabilities
+Hudi sits between your raw Parquet files and your query engine (like Presto, Spark, or Athena). It acts as a transactional metadata layer.
+
+- **Upserts**: Hudi mathematically merges new streaming records with existing historical records, overwriting old data without forcing you to manually orchestrate complex file rewrites.
+- **ACID Transactions**: Multiple Spark jobs can write to the same Hudi table simultaneously. Hudi uses optimistic concurrency control to ensure the data is never corrupted.
+- **Incremental Queries**: Instead of recalculating a daily aggregate from scratch, Hudi allows downstream consumers to query *only* the records that mathematically changed in the last 15 minutes.
+
+## 2. Storage Types
+Hudi mathematically optimizes disk I/O by offering two distinct storage formats, depending on whether your workload is Read-Heavy or Write-Heavy.
+
+### Copy on Write (CoW)
+- **Mechanism**: Every time an Update or Delete occurs, Hudi immediately reads the original Parquet file, applies the change in memory, and writes a completely new, mathematically perfect Parquet file.
+- **Advantage**: Queries are incredibly fast because they just read standard, contiguous Parquet files.
+- **Disadvantage**: Massive write amplification. Changing 1 row requires rewriting 1,000,000 rows.
+
+### Merge on Read (MoR)
+- **Mechanism**: When an Update occurs, Hudi quickly writes the change to a lightweight, row-based **Log File** (Avro format). It leaves the massive base Parquet file untouched.
+- **Advantage**: Writes are unbelievably fast (perfect for real-time streaming).
+- **Disadvantage**: Queries are slower, because the query engine (e.g., Presto) must mathematically merge the base Parquet file and the delta Log file *in memory* during the query. Periodically, Hudi executes a background **Compaction** job to permanently merge the logs into the base Parquet files.
+
+## 3. The Ecosystem
+Hudi is one of the three major titans in the modern "Lakehouse" architecture, fiercely competing with **Apache Iceberg** and **Delta Lake**. AWS heavily adopted Hudi early on, deeply integrating it into Amazon EMR and Amazon Athena.
 
 </ConceptTemplate>

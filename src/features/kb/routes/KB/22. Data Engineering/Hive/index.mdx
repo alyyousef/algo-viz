@@ -1,8 +1,34 @@
+---
+title: Apache Hive
+description: The framework that brought SQL to the Hadoop ecosystem, translating human-readable queries into complex MapReduce jobs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hive">
+<ConceptTemplate title="Apache Hive">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When Apache Hadoop was first created, extracting data required Data Engineers to write incredibly complex, mathematically verbose Java MapReduce jobs. A simple aggregation that took 1 line in a relational database required 200 lines of complex Java code. This completely locked Data Analysts out of the Big Data ecosystem.
+
+Facebook created **Apache Hive** to solve this.
+
+## 1. SQL on Hadoop
+Hive acts as a mathematical compiler. It allows users to write standard, human-readable SQL (called HiveQL). 
+
+When you submit a query like `SELECT country, COUNT(*) FROM users GROUP BY country`, Hive mathematically parses the SQL, generates a Directed Acyclic Graph (DAG) of the operations, and compiles it into the massive Java MapReduce jobs required to execute it across the distributed Hadoop cluster.
+
+This single invention democratized Big Data, allowing anyone who knew SQL to query petabytes of data on HDFS.
+
+## 2. The Hive Metastore
+While Hive's execution engine (MapReduce) is now largely obsolete, its architectural legacy—the **Hive Metastore**—remains the absolute bedrock of modern Data Engineering.
+
+HDFS is just a file system; it knows about raw Parquet files, but it does not know what a "Table" is.
+The Hive Metastore is a central relational database (usually MySQL/PostgreSQL) that mathematically maps structural Metadata to physical files. 
+It knows that the table `prod.users` physically maps to the HDFS directory `/user/hive/warehouse/users/`, and that it has 3 columns: ID (int), Name (string), and Age (int).
+
+Today, even if a company uses Apache Spark, Presto, or Databricks (completely abandoning MapReduce), they still universally use the Hive Metastore API to mathematically locate their Data Lake tables.
+
+## 3. Performance Limitations
+Because Hive natively compiles to MapReduce, it suffers from the same catastrophic Disk I/O bottlenecks. A simple query can take minutes to execute because it must spin up JVMs across the cluster.
+
+To solve this, modern engines like **Presto / Trino** and **Apache Impala** were created. They use the Hive Metastore to find the files, but execute the SQL using massive in-memory MPP (Massively Parallel Processing) engines, reducing query times from minutes to milliseconds.
 
 </ConceptTemplate>

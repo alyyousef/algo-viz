@@ -1,8 +1,35 @@
+---
+title: Cross-Validation
+description: A rigorous mathematical resampling procedure used to evaluate machine learning models on limited data, preventing overfitting and lucky splits.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cross-validation">
+<ConceptTemplate title="Cross-Validation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have 1,000 rows of data, the standard practice is to randomly split it: 80% for Training, 20% for Testing. 
+However, what if you get mathematically "lucky"? What if the random split puts all the easy-to-predict rows into the 20% Test set? Your model will report 99% accuracy, you will deploy it, and it will immediately fail in production. 
+
+**Cross-Validation (CV)** mathematically eliminates this risk.
+
+## 1. K-Fold Cross-Validation
+The absolute industry standard for model evaluation. Instead of splitting the data once, you split it $K$ times (usually $K = 5$ or $K = 10$).
+
+If $K=5$:
+1. The dataset is mathematically divided into 5 equal chunks (Folds).
+2. **Iteration 1**: The model trains on Folds 1, 2, 3, 4, and tests on Fold 5. It records the accuracy.
+3. **Iteration 2**: The model mathematically throws away its weights, trains from scratch on Folds 1, 2, 3, 5, and tests on Fold 4.
+4. This repeats 5 times, so *every single fold* has been used as the Test set exactly once.
+5. You mathematically average the 5 accuracy scores to get the true, unbiased performance of the model.
+
+## 2. Stratified K-Fold
+In Classification, standard K-Fold can mathematically destroy a model if the data is imbalanced. 
+If 90% of patients are Healthy and 10% have Cancer, a random Fold 5 might accidentally contain 0 Cancer patients. The model will test flawlessly by just guessing "Healthy".
+
+**Stratified K-Fold** mathematically forces the split. It guarantees that every single one of the 5 Folds maintains the exact 90/10 ratio of the original dataset, ensuring the mathematical integrity of the test.
+
+## 3. Leave-One-Out Cross-Validation (LOOCV)
+If your dataset is incredibly tiny (e.g., only 50 rows of a rare disease), splitting off 20% leaves you with almost no data to train on.
+In LOOCV, $K$ is mathematically set to the exact number of rows in the dataset ($K=50$). 
+The model trains on 49 rows and tests on 1 row. It loops 50 times. It maximizes the training data, but is computationally catastrophic for massive datasets.
 
 </ConceptTemplate>

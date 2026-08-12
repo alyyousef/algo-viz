@@ -1,8 +1,28 @@
+---
+title: Machine Learning (Overview)
+description: The foundational shift in AI where algorithms mathematically learn patterns directly from data, bypassing the need for explicit human programming.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Machine learning">
+<ConceptTemplate title="Machine Learning (Overview)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For 50 years, Software Engineering was governed by a strict mathematical paradigm: Humans write the Rules (code), supply the Data, and the CPU outputs the Answers. 
+
+**Machine Learning (ML)** mathematically reversed this paradigm: Humans supply the Data, supply the Answers, and the CPU outputs the Rules.
+
+## 1. Supervised Learning
+The most common ML paradigm. You feed the algorithm massive amounts of labeled data (e.g., thousands of pictures of houses, mathematically tagged with their final sale price). 
+The algorithm (like a Random Forest or Linear Regression) calculates the mathematical relationship between the features (Square Footage, Zip Code) and the target variable (Price). Once trained, you can feed it a new house, and it mathematically infers the correct price.
+
+## 2. Unsupervised Learning
+You feed the algorithm a massive dataset of user behavior, but you provide *zero answers* (no labels).
+The algorithm (like K-Means Clustering) mathematically explores the data on its own. It might independently calculate that the data perfectly clusters into 3 distinct groups. A human later inspects the math and realizes the AI successfully clustered users into "Bargain Hunters", "Luxury Shoppers", and "Window Shoppers", entirely on its own. This is heavily used for anomaly detection and market segmentation.
+
+## 3. The Math Under the Hood (Loss Functions)
+Machine Learning is not magic; it is optimization calculus.
+When training begins, the algorithm guesses randomly. It predicts a house is worth $10. 
+The mathematical engine calculates the **Loss Function** (e.g., Mean Squared Error): the exact difference between the $10 guess and the actual $500k price. 
+
+The algorithm then uses mathematical optimization (like Gradient Descent) to slightly adjust its internal equation to lower the Loss Function. It repeats this millions of times until the Loss is as close to zero as mathematically possible.
 
 </ConceptTemplate>

@@ -1,0 +1,34 @@
+---
+title: Hyperparameter Optimisation
+description: The mathematical search process required to find the absolute optimal configuration settings for a Machine Learning algorithm before training begins.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Hyperparameter Optimisation">
+
+In Machine Learning, a **Parameter** is a mathematical weight the algorithm learns internally during training (e.g., the slope of the line). 
+A **Hyperparameter** is an architectural configuration that the human must set *before* training begins (e.g., the depth of a Decision Tree, or the Learning Rate of a Neural Network).
+
+Because the human has no idea what the perfect Learning Rate is, Data Scientists must execute **Hyperparameter Optimisation**—a massive mathematical search algorithm to find the best settings.
+
+## 1. Grid Search (The Brute Force)
+The most mathematically basic search. You explicitly define a grid of values you want to test.
+- Learning Rate: `[0.1, 0.01, 0.001]`
+- Max Depth: `[3, 5, 7]`
+- Estimators: `[100, 500]`
+
+The algorithm mathematically generates every single possible combination ($3 \times 3 \times 2 = 18$ combinations). It trains 18 completely separate Machine Learning models, scores their accuracy using Cross-Validation, and returns the mathematically best combination. It guarantees finding the best configuration in your grid, but is computationally catastrophic for massive models.
+
+## 2. Random Search
+Instead of testing every combination, you provide a mathematical distribution (e.g., a uniform distribution between 0.001 and 0.1) and tell the algorithm: "Pick 50 random combinations and test them."
+
+Mathematically, Random Search is vastly superior to Grid Search. In a Grid Search, if the "Max Depth" parameter doesn't actually affect the model, you just wasted 60% of your compute time testing useless grid intersections. Random Search explores a much wider mathematical variance in the hyperparameter space in a fraction of the compute time.
+
+## 3. Bayesian Optimisation
+Grid and Random Search are mathematically blind. When Random Search tests Model #5 and it fails, it does not use that failure to inform Model #6.
+
+**Bayesian Optimisation** uses AI to tune the AI.
+It treats the hyperparameter search as a mathematical function to be solved. It trains a surrogate probability model (usually a Gaussian Process) to predict how well a combination will perform before it actually trains the massive AI. 
+If it tests a Learning Rate of 0.1 and gets 80% accuracy, and 0.05 gets 90% accuracy, the Bayesian math updates its posterior distribution and realizes: "I should mathematically concentrate my next search around 0.04", drastically reducing the total number of models that need to be trained.
+
+</ConceptTemplate>

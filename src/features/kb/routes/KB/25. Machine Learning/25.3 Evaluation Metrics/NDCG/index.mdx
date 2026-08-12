@@ -1,8 +1,34 @@
+---
+title: NDCG (Normalized Discounted Cumulative Gain)
+description: The most advanced mathematical metric for evaluating Recommender Systems, heavily punishing models that place highly relevant items lower in the ranking.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NDCG">
+<ConceptTemplate title="NDCG (Normalized Discounted Cumulative Gain)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When evaluating a search engine (like Google) or a Recommender System (like Netflix), it is not enough to simply ask "Are these movies relevant?" (Precision). You must mathematically ask: "Are the *most* relevant movies at the absolute top of the list?" 
+**NDCG** is the mathematical standard for evaluating ranked lists with graded relevance.
+
+## 1. Graded Relevance (CG)
+Unlike MAP (Mean Average Precision) which assumes relevance is binary (1 or 0), NDCG assumes relevance is a gradient (e.g., 0 to 3).
+- $3$: Perfect match (The exact movie the user searched for).
+- $2$: Highly relevant (A movie in the exact same franchise).
+- $1$: Marginally relevant (A movie in the same broad genre).
+- $0$: Irrelevant.
+
+**Cumulative Gain (CG)** simply sums the mathematical relevance of the top $K$ results. If the top 3 results are [3, 1, 2], the CG is $6$.
+*Flaw*: CG doesn't care about order. A ranking of [1, 2, 3] also gets a score of $6$, even though putting the best movie last is terrible.
+
+## 2. The Discount Factor (DCG)
+**Discounted Cumulative Gain (DCG)** introduces a mathematical penalty based on the Rank (position) in the list.
+$DCG = \sum \frac{relevance_i}{log_2(i + 1)}$
+
+By dividing the relevance by the mathematical logarithm of its rank ($i$), the algorithm brutally discounts items found lower in the list. 
+If a perfectly relevant movie (score 3) is at Rank 1, its value is barely touched. If that same movie is buried at Rank 10, the logarithmic denominator mathematically crushes its value down to almost nothing.
+
+## 3. Normalization (NDCG)
+If one user searches for "Star Wars" (which has 10 highly relevant movies) and another searches for a niche indie film (which only has 1 relevant movie), their raw DCG scores will be mathematically incomparable.
+
+**Normalized DCG** calculates the *Ideal DCG (IDCG)* by manually sorting the results into perfect descending order [3, 3, 2, 1, 0] and calculating the DCG of that perfect list. It then divides the model's actual DCG by the IDCG, resulting in a perfect, standardized mathematical metric between 0.0 and 1.0 that can be averaged across millions of diverse users.
 
 </ConceptTemplate>

@@ -1,8 +1,32 @@
+---
+title: Linear Regression
+description: The absolute foundational mathematical algorithm of statistics, predicting continuous variables by drawing an optimal line of best fit through high-dimensional space.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Linear regression">
+<ConceptTemplate title="Linear Regression">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Linear Regression** is arguably the oldest and most fundamental mathematical algorithm in Machine Learning. It predicts a continuous target variable by assuming a strict, linear mathematical relationship between the input features and the output.
+
+## 1. The Mathematical Equation
+The model is defined by a simple linear equation:
+$\hat{y} = w_1x_1 + w_2x_2 + ... + w_nx_n + b$
+- $x$: The input features (Square Footage, Number of Rooms).
+- $w$: The mathematical **Weights** (Coefficients / Slopes) the model must learn.
+- $b$: The **Bias** (Y-Intercept).
+
+## 2. Ordinary Least Squares (OLS)
+How does the algorithm mathematically discover the perfect weights? It uses OLS.
+1. The algorithm predicts a value ($\hat{y}$) and compares it to the true value ($y$). The difference is the **Residual**.
+2. It mathematically calculates the **Mean Squared Error (MSE)**: The sum of the squares of all residuals. (Squaring them ensures negative and positive errors don't cancel each other out, and heavily punishes massive outliers).
+3. Using Calculus (setting the derivative of the MSE to zero), or using matrix algebra, the algorithm mathematically solves for the exact weights that result in the absolute minimum possible MSE. 
+
+*(Unlike Neural Networks which guess and check using Gradient Descent, standard Linear Regression can be solved perfectly in a single step using the **Normal Equation** matrix inversion).*
+
+## 3. Mathematical Assumptions and Flaws
+Linear Regression is highly interpretable, but mathematically fragile because it requires strict assumptions:
+- **Linearity**: The relationship must actually be a straight line. If the data is U-shaped, the model fails.
+- **No Multicollinearity**: The input features cannot be highly correlated with each other. If you include both "Temperature in Celsius" and "Temperature in Fahrenheit", the matrix inversion mathematically collapses (Matrix becomes Singular), and the weights explode to infinity.
+- **Homoscedasticity**: The variance of the errors must be mathematically constant across all values.
 
 </ConceptTemplate>

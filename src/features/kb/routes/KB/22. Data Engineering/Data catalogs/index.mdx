@@ -1,8 +1,32 @@
+---
+title: Data Catalogs
+description: The metadata management layer required to solve the Data Swamp problem, enabling searchability, governance, and trust across petabytes of enterprise data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data catalogs">
+<ConceptTemplate title="Data Catalogs">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+As organizations scale, they dump thousands of tables into Snowflake and millions of Parquet files into S3 Data Lakes. When a new Data Analyst joins the company and is asked to "Find the daily revenue", they are confronted with tables named `rev_final`, `rev_final_v2`, and `old_rev_do_not_use`.
+
+Without mathematical organization, a Data Lake degenerates into a **Data Swamp**. The **Data Catalog** is the software system engineered to solve this.
+
+## 1. The Metadata Engine
+A Data Catalog (like Alation, Collibra, or open-source **DataHub** / **Amundsen**) is a centralized, searchable repository of all metadata in the organization.
+
+It mathematically crawls your databases (Snowflake, Postgres), BI tools (Tableau, Looker), and orchestrators (Airflow), indexing:
+- **Technical Metadata**: Column names, data types, primary keys.
+- **Operational Metadata**: When was this table last updated? Did the Airflow job fail this morning?
+- **Business Metadata**: Tagging a column as PII (Personally Identifiable Information), documenting the business definition of "Active User".
+
+## 2. Data Discovery and Lineage
+The primary UI of a Data Catalog resembles a Google Search engine. An analyst searches for "Revenue", and the catalog ranks the tables based on mathematical usage statistics (e.g., this table is queried 5,000 times a day, so it is the "Gold" standard).
+
+### Lineage Graphs
+Modern catalogs construct a massive mathematical Directed Acyclic Graph (DAG) of **Data Lineage**. 
+If a Data Engineer wants to drop a column in the `raw_sales` table, they check the catalog's Lineage Graph. The graph mathematically proves that dropping the column will break a dbt model, which will break a Tableau dashboard used by the CFO. This prevents catastrophic downstream outages.
+
+## 3. The Push vs Pull Architecture
+- **Pull-based Catalogs (Legacy)**: The catalog runs a cron job every midnight, hitting the Snowflake schema API to update its metadata. Problem: The catalog is often 24 hours out of date.
+- **Push-based Catalogs (Modern)**: Utilizing event-driven architectures. When a dbt job finishes modifying a table, dbt mathematically *pushes* an API event to the Data Catalog (e.g., using DataHub's Kafka integration), ensuring the catalog's metadata is accurate to the millisecond.
 
 </ConceptTemplate>

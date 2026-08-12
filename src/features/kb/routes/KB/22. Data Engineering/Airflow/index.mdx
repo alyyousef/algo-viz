@@ -1,8 +1,72 @@
+---
+title: Apache Airflow
+description: The industry standard platform for orchestrating complex data pipelines using Python Directed Acyclic Graphs (DAGs).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Airflow">
+<ConceptTemplate title="Apache Airflow">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created at Airbnb, **Apache Airflow** is the absolute industry standard for workflow orchestration. It allows Data Engineers to programmatically author, schedule, and monitor complex data pipelines using Python.
+
+## 1. Core Architecture
+Unlike cron jobs which blindly execute scripts at a specific time, Airflow mathematically models workflows as **Directed Acyclic Graphs (DAGs)**.
+
+- **Directed**: Execution flows strictly from upstream to downstream (e.g., Task A $\rightarrow$ Task B).
+- **Acyclic**: The graph cannot contain infinite loops. Task A cannot depend on Task B if Task B depends on Task A.
+- **Graph**: The mathematical representation of tasks (Nodes) and dependencies (Edges).
+
+Airflow operates on a robust architecture:
+- **Scheduler**: A daemon that mathematically evaluates all DAGs, determines which tasks have met their dependencies, and pushes them to the queue.
+- **Executor / Workers**: The processes that pull tasks from the queue and physically execute the code (e.g., Celery Workers, Kubernetes Pods).
+- **Webserver**: A Flask UI for visualizing the DAGs, checking logs, and triggering manual runs.
+- **Metadata Database**: A PostgreSQL/MySQL database that tracks the exact state, history, and variables of every single task execution.
+
+## 2. DAG Definition (Python)
+In Airflow, pipelines are declared completely in Python, allowing for dynamic generation, loop iteration, and standard software engineering practices (version control, CI/CD).
+
+```python
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.providers.snowflake.operators.snowflake import SnowflakeOperator
+from datetime import datetime, timedelta
+
+default_args = {
+    'owner': 'data_engineering',
+    'retries': 3,
+    'retry_delay': timedelta(minutes=5),
+}
+
+with DAG(
+    'daily_sales_pipeline',
+    default_args=default_args,
+    start_date=datetime(2026, 1, 1),
+    schedule_interval='@daily',
+    catchup=False
+) as dag:
+
+    # Task 1: Extract data using a Bash script
+    extract_data = BashOperator(
+        task_id='extract_sales_data',
+        bash_command='python /scripts/extract_sales.py'
+    )
+
+    # Task 2: Transform data via Snowflake SQL execution
+    transform_data = SnowflakeOperator(
+        task_id='transform_sales',
+        snowflake_conn_id='snowflake_prod',
+        sql="""
+            INSERT INTO prod.core.daily_sales
+            SELECT date, SUM(amount) FROM raw.sales GROUP BY date;
+        """
+    )
+
+    # Mathematical dependency definition (Bitshift operators)
+    extract_data >> transform_data
+```
+
+## 3. Advanced Features
+- **Sensors**: Special tasks that do not execute logic, but mathematically "wait" for an external event to occur (e.g., waiting for an S3 file to arrive) before allowing the DAG to proceed.
+- **XComs (Cross-Communication)**: A mechanism allowing tasks to pass small amounts of metadata (like a dynamic file path) to downstream tasks.
+- **Catchup**: If you create a daily DAG today, but set the start date to 10 days ago, Airflow will mathematically execute the past 10 days of pipelines to "catch up" to the current state.
 
 </ConceptTemplate>

@@ -1,8 +1,32 @@
+---
+title: Regression
+description: The supervised learning task of mathematically predicting a continuous, infinite numerical output based on input features.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Regression">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Supervised Machine Learning, if the target variable is a category ("Dog" vs "Cat"), it is Classification. If the target variable is a continuous numerical value (e.g., predicting the exact temperature tomorrow, the price of a house, or the stock market), it is mathematically defined as **Regression**.
+
+## 1. Linear Regression
+The absolute foundational algorithm of statistics and Machine Learning. 
+It attempts to draw a mathematically perfect straight line through a scatter plot of data.
+Equation: $y = mx + b$ (or for multiple variables, $y = w_1x_1 + w_2x_2 + b$).
+
+### Ordinary Least Squares (OLS)
+How does the algorithm mathematically find the perfect line? It uses OLS. 
+It calculates the distance (the Residual) from every single data point to the line. It mathematically squares those distances (to remove negative numbers and heavily punish massive outliers), and sums them up. The algorithm adjusts the slope ($w$) until that sum is the absolute mathematical minimum.
+
+## 2. Non-Linear Regression
+Linear Regression assumes the relationship between variables is a straight line. If the data forms a U-shape (e.g., age vs healthcare costs), Linear Regression mathematically fails.
+
+- **Polynomial Regression**: Mathematically squares or cubes the input features ($y = w_1x + w_2x^2 + b$), allowing the model to draw curves instead of straight lines.
+- **Tree-Based Regression**: Algorithms like Random Forest Regressors do not draw lines at all. They mathematically split the data into discrete buckets. If you want to predict a house price, it traverses the tree (Is it > 2000 sqft? Yes. Does it have a pool? No). It reaches a leaf node containing 5 historical houses, and outputs the mathematical average price of those 5 houses.
+
+## 3. Evaluation Metrics
+You cannot use "Accuracy" to evaluate Regression. (If the house is $500,000 and the model predicts $500,001, it is technically 0% "accurate").
+Instead, you mathematically measure the error distance:
+- **MAE (Mean Absolute Error)**: The average dollar amount the model was off by. Highly interpretable.
+- **RMSE (Root Mean Squared Error)**: Squares the errors before averaging them, mathematically punishing the model heavily for massive outliers.
 
 </ConceptTemplate>

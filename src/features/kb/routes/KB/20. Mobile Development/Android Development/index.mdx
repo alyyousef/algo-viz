@@ -1,0 +1,32 @@
+---
+title: Android Development
+description: Explains the Android SDK, the shift from Java to Kotlin, Android Studio, and the declarative revolution of Jetpack Compose.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Android Development (Kotlin & Compose)">
+
+Android is a Linux-based mobile operating system developed by Google. Historically, it was programmed exclusively in Java, but has undergone a massive architectural shift.
+
+## 1. The Language: Java to Kotlin
+For a decade, Android apps were written in Java. However, Java was highly verbose and prone to `NullPointerExceptions`.
+In 2017, Google announced **Kotlin** (developed by JetBrains) as an official language. In 2019, Google declared Android to be "Kotlin-first". Kotlin runs on the JVM, is fully interoperable with Java, but provides massive mathematical improvements like strict **Null Safety**, Coroutines (for concurrency), and a beautifully concise syntax. Today, practically all modern Android development is done in Kotlin.
+
+## 2. Android Studio & The SDK
+- **Android Studio**: The official IDE (Integrated Development Environment) built by JetBrains. It includes the Android Emulator, performance profilers, and the Gradle build system.
+- **The SDK (Software Development Kit)**: A massive collection of libraries (like `android.app` or `android.widget`) that allow Kotlin code to interact with the device hardware, camera, sensors, and file system.
+
+## 3. UI Architecture: XML vs Jetpack Compose
+Historically, Android UI was built using **XML Layouts**. You would define buttons and text in an XML file, and use `findViewById()` in your Java/Kotlin code to manually update them. This was deeply frustrating and prone to state-sync bugs.
+
+### Jetpack Compose
+Inspired by React, Google released **Jetpack Compose**. It completely killed XML. Compose is a modern, declarative UI toolkit written entirely in Kotlin. You write composable functions, pass in state, and the UI mathematically re-renders itself whenever the state changes.
+
+```kotlin
+@Composable
+fun Greeting(name: String) {
+    Text(text = "Hello $name!")
+}
+```
+
+</ConceptTemplate>

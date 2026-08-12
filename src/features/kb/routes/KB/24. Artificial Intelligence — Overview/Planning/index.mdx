@@ -1,8 +1,31 @@
+---
+title: AI Planning
+description: The computational subfield focused on mathematically calculating a sequence of actions required to transition a system from a starting state to a goal state.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Planning">
+<ConceptTemplate title="AI Planning">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In classical AI, an agent cannot act randomly. If a robotic arm needs to assemble a car engine, it must mathematically calculate the exact sequence of 5,000 movements required before it even moves its first actuator. This is the domain of **Automated Planning**.
+
+## 1. State-Space Representation
+To plan, the AI must mathematically represent the universe.
+- **Initial State**: The robot is at coordinates (0,0). The bolt is at (5,5).
+- **Goal State**: The bolt is attached to the engine block.
+- **Actions**: A mathematical list of everything the robot can do (Move, Grab, Rotate), accompanied by strict Preconditions and Effects.
+  - *Action: Grab(Bolt)*
+  - *Precondition*: Robot is at (5,5) AND Robot Hand is Empty.
+  - *Effect*: Robot Hand holds Bolt.
+
+## 2. The Planning Algorithm (STRIPS / PDDL)
+The AI uses languages like **PDDL (Planning Domain Definition Language)** to define the world.
+The Planning Engine mathematically searches through the massive tree of possible actions. It realizes it cannot execute *Grab(Bolt)* because the precondition (Robot is at 5,5) is false. Therefore, it mathematically works backward, realizing it must first insert a *Move(0,0 -> 5,5)* action into the sequence. 
+Once the entire sequence is mathematically proven to reach the goal state, the plan is executed.
+
+## 3. Real-World Complexity
+Classical planning works perfectly in a deterministic, observable environment (like Chess).
+However, the real world is chaotic. A human might step in front of the robotic arm. 
+
+Modern AI Planning utilizes **MDPs (Markov Decision Processes)**. Instead of calculating a single fragile sequence of steps, an MDP mathematically calculates a **Policy**. The Policy dictates the mathematically optimal action for the robot to take *regardless* of what state it accidentally ends up in, allowing it to dynamically recover from real-world chaos.
 
 </ConceptTemplate>

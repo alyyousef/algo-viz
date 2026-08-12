@@ -1,0 +1,29 @@
+---
+title: Deployment & CI-CD (Fastlane)
+description: The agonizing complexity of cryptographic App Signing, the App Store Review processes, and how Fastlane automates the entire pipeline.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Deployment & CI-CD">
+
+Deploying a website takes 30 seconds via Vercel. Deploying a mobile app takes days, cryptographic certificates, and human review.
+
+## 1. App Signing (Certificates & Provisioning)
+Apple and Google mathematically refuse to run code on their devices unless they know exactly who wrote it.
+- **Keystores (Android)**: You generate a cryptographic JKS file (Java KeyStore). You must sign your final `.aab` (Android App Bundle) with this key. If you lose this key, you literally cannot ever update your app again.
+- **Provisioning Profiles (iOS)**: The most notorious pain point in mobile engineering. You must generate a Certificate Signing Request, upload it to Apple, download a Certificate, register the specific Device UUIDs allowed to run the app, and bundle it all into a Provisioning Profile just to compile the app for a physical iPhone.
+
+## 2. The App Stores & Review Process
+- **Google Play Console**: The dashboard for Android apps. Generally faster automated reviews, but strictly enforces permissions and privacy policies.
+- **Apple App Store Connect**: The dashboard for iOS. Every app update goes through a rigorous human review process that can take 24 to 48 hours. If your app violates the Human Interface Guidelines (or tries to bypass Apple's 30% payment tax), the reviewer will explicitly reject your binary.
+
+## 3. Fastlane (Mobile CI/CD)
+Because compiling, signing, taking screenshots, and uploading to the stores is agonizing manual work, the industry uses **Fastlane**.
+Fastlane is an open-source tool (written in Ruby). You write a `Fastfile` that mathematically automates the entire process:
+1. Increment the version number.
+2. Run unit tests.
+3. Automatically download Apple Provisioning Profiles (via `match`).
+4. Build the `.ipa` (iOS) and `.aab` (Android).
+5. Automatically upload the binaries and release notes to TestFlight and Google Play Beta.
+
+</ConceptTemplate>

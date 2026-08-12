@@ -1,8 +1,29 @@
+---
+title: Autoencoders (Anomaly Detection)
+description: Utilizing unsupervised Deep Learning bottleneck architectures to mathematically model normal data and detect highly complex, non-linear anomalies.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Autoencoders for anomaly detection">
+<ConceptTemplate title="Autoencoders (Anomaly Detection)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An **Autoencoder** is a brilliant, unsupervised Deep Learning architecture designed to output exactly what was inputted. By forcing the data through a mathematical bottleneck, it becomes the ultimate tool for detecting anomalies in highly complex data like images or server logs.
+
+## 1. The Mathematical Bottleneck Architecture
+An Autoencoder consists of two neural networks stitched together:
+1. **The Encoder**: Takes a high-dimensional input (e.g., a 1000-pixel image of a normal server log) and mathematically compresses it into a tiny latent vector (e.g., 10 numbers). This is the **Bottleneck**.
+2. **The Decoder**: Takes those 10 numbers and mathematically attempts to reconstruct the original 1000-pixel image flawlessly.
+
+Because of the bottleneck, the network mathematically *cannot* memorize the data. It is forced to learn the fundamental underlying patterns (the essence) of the "normal" data in order to successfully decompress it.
+
+## 2. Using Reconstruction Loss for Anomalies
+You train the Autoencoder **only on normal, healthy data**.
+Once trained, the Autoencoder is a master at mathematically compressing and decompressing normal data. 
+- If you feed it a normal server log, it reconstructs it perfectly. The mathematical difference between the input and output (the **Reconstruction Loss**) is ~0.01.
+- If a hacker attacks the server and you feed the highly anomalous log into the Autoencoder, the network panics. It has never seen this mathematical pattern before, and the bottleneck destroys the information. The Decoder outputs garbage. 
+- The **Reconstruction Loss** spikes to 5.0. You simply set a mathematical threshold (e.g., Alert if Loss > 2.0) to instantly detect zero-day cyberattacks.
+
+## 3. Variational Autoencoders (VAEs)
+Standard Autoencoders can mathematically overfit to the training data.
+**Variational Autoencoders** introduce probability calculus. Instead of compressing the input into 10 hard numbers, the Encoder compresses the input into a mathematical probability distribution (Means and Standard Deviations). The Decoder then samples from this distribution. This forces the latent space to be continuous and smooth, drastically improving the mathematical robustness of the anomaly detection.
 
 </ConceptTemplate>

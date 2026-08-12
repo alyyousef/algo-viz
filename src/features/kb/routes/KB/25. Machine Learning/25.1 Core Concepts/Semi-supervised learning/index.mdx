@@ -1,8 +1,28 @@
+---
+title: Semi-Supervised Learning
+description: A mathematical approach that bridges supervised and unsupervised learning, leveraging a tiny amount of labeled data and a massive amount of unlabeled data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Semi-supervised learning">
+<ConceptTemplate title="Semi-Supervised Learning">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In many enterprise scenarios, acquiring unlabelled data is cheap (e.g., downloading 10 million medical X-rays), but acquiring labels is mathematically expensive (e.g., paying a doctor $500/hour to classify those X-rays as Cancer/No-Cancer).
+
+**Semi-Supervised Learning** uses a tiny labeled dataset (1,000 X-rays) to mathematically bootstrap learning across the massive unlabelled dataset (9,999,000 X-rays).
+
+## 1. Pseudo-Labeling
+The most common mathematical approach.
+1. You train a standard Supervised Learning model on the 1,000 labeled X-rays.
+2. You use that trained model to mathematically predict the labels for the 9.9 million unlabelled X-rays.
+3. You filter the results, keeping only the predictions where the model was mathematically incredibly confident (e.g., Probability > 99%). These are called **Pseudo-Labels**.
+4. You merge the Pseudo-Labels with the true labels, and retrain the model from scratch on the massive new dataset.
+
+## 2. Graph-Based Label Propagation
+Instead of training a neural network, this uses pure mathematical geometry.
+You mathematically plot all 10 million data points (labeled and unlabeled) in a high-dimensional space based on their features (using K-Nearest Neighbors). 
+You mathematically "inject" the labels into the 1,000 labeled nodes. The algorithm then mathematically diffuses (propagates) those labels through the graph. If an unlabelled point is mathematically surrounded by 5 points labeled "Cancer", the algorithm assumes that point is also "Cancer".
+
+## 3. Mathematical Assumptions
+Semi-Supervised Learning relies heavily on the **Cluster Assumption**: the mathematical belief that if two points are in the same local cluster (high density region), they likely share the same label. If the unlabelled data is mathematically uniformly distributed (no distinct clusters), Semi-Supervised Learning will fail catastrophically and actually degrade the model's performance.
 
 </ConceptTemplate>

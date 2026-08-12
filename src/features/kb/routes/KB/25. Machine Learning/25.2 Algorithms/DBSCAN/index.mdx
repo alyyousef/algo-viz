@@ -1,8 +1,30 @@
+---
+title: DBSCAN
+description: A powerful, density-based unsupervised clustering algorithm capable of mathematically discovering arbitrarily shaped clusters and filtering out noise.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="DBSCAN">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**DBSCAN (Density-Based Spatial Clustering of Applications with Noise)** is a foundational unsupervised clustering algorithm. While K-Means mathematically assumes all clusters are spherical and forces every single point into a cluster, DBSCAN excels at finding highly complex, twisted geometric shapes and explicitly identifying outliers.
+
+## 1. The Core Mathematical Parameters
+DBSCAN requires no assumption of the number of clusters ($K$). Instead, it relies on two strict mathematical parameters:
+- **Epsilon ($\epsilon$)**: The mathematical radius around a data point.
+- **MinPts**: The minimum number of data points that must exist within the $\epsilon$ radius for that region to be considered a "dense cluster".
+
+## 2. Point Classification
+The algorithm mathematically evaluates every single point in the dataset and assigns it to one of three categories:
+1. **Core Point**: A point that has at least *MinPts* neighbors within its $\epsilon$ radius. It is mathematically the dense heart of a cluster.
+2. **Border Point**: A point that has fewer than *MinPts* neighbors, but is physically within the $\epsilon$ radius of a Core Point. It is the outer edge of the cluster.
+3. **Noise Point (Outlier)**: A point that is mathematically isolated. It is neither a Core point, nor is it close to a Core point. DBSCAN explicitly tags this as an anomaly (-1) and ignores it.
+
+## 3. The Algorithmic Flow
+1. DBSCAN picks a random unvisited point.
+2. It mathematically calculates the distance (e.g., Euclidean) to all other points to find its $\epsilon$-neighbors.
+3. If it is a Core Point, a new cluster is born. 
+4. The algorithm then mathematically jumps to the neighbors, and then their neighbors, expanding the cluster like a sprawling vine as long as the density holds.
+5. If the density drops, the cluster terminates. 
+Because it only cares about local mathematical density, DBSCAN can perfectly cluster a dataset shaped like two interlocking horseshoes, a task where K-Means would fail catastrophically.
 
 </ConceptTemplate>

@@ -1,8 +1,28 @@
+---
+title: t-SNE
+description: A groundbreaking, highly non-linear dimensionality reduction algorithm mathematically famous for unspooling complex data into beautiful, clustered 2D visualizations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="t-SNE">
+<ConceptTemplate title="t-SNE (t-Distributed Stochastic Neighbor Embedding)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before UMAP, **t-SNE** was the absolute standard for visualizing high-dimensional embeddings (like Deep Learning activations or Word2Vec vectors). While PCA crushes non-linear data into useless overlapping blobs, t-SNE mathematically unspools complex manifolds into stunning, distinct 2D clusters.
+
+## 1. Stochastic Neighbor Embedding (The Probabilities)
+PCA focuses on preserving mathematical Variance. t-SNE focuses on preserving mathematical **Neighborhoods**.
+1. In the high-dimensional space (1,000 dimensions), t-SNE centers a Gaussian (Normal) distribution over a data point. 
+2. It mathematically calculates the probability that Point A would pick Point B as its neighbor. (Close points have incredibly high probabilities; distant points have near-zero probabilities).
+3. It repeats this, building a massive $N \times N$ probability matrix representing the "local neighborhoods" of every single point.
+
+## 2. The Student's t-Distribution (The Crowding Problem)
+When projecting 1,000 dimensions down to 2 dimensions, you mathematically run out of physical space. In 1000D space, a point can have 500 neighbors that are all exactly equidistant from it. In 2D space, you can only fit ~6 points equidistantly around a center. 
+If you try to map the high-dimensional Gaussian probabilities directly to 2D, the points will crush into a single black dot in the center of the graph (The Crowding Problem).
+
+t-SNE's mathematical genius is replacing the Gaussian distribution in the 2D space with a **Student's t-Distribution**. The t-distribution has "heavy tails". 
+This mathematical trick dictates that for two points to have the exact same low probability in 2D space as they did in high-D space, they must be pushed *much farther apart* in 2D space. This mathematically forces the different clusters to repel each other, exploding the data into beautifully separated visual islands.
+
+## 3. Kullback-Leibler (KL) Divergence
+To align the 2D map with the high-D map, t-SNE uses Gradient Descent to mathematically minimize the **KL Divergence** between the two probability matrices. 
+*Fatal Flaw*: The KL Divergence math heavily punishes placing local neighbors far apart, but it does *not* mathematically punish placing distant clusters close together. Therefore, the distance between the red cluster and the blue cluster on a t-SNE plot is mathematically meaningless.
 
 </ConceptTemplate>

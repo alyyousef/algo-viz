@@ -1,8 +1,26 @@
+---
+title: UMAP (Uniform Manifold Approximation)
+description: The modern state-of-the-art non-linear dimensionality reduction algorithm that mathematically preserves both local and global data topology vastly better than t-SNE.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="UMAP">
+<ConceptTemplate title="UMAP (Uniform Manifold Approximation and Projection)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While PCA is fantastic for linear compression, visualizing massive, non-linear text or image embeddings requires topology. For years, t-SNE was the standard, but it was notoriously slow and destroyed global structure. **UMAP** has entirely replaced t-SNE. Based heavily on algebraic topology, it mathematically guarantees a vastly superior compression of space.
+
+## 1. The Mathematical Foundation (Riemannian Geometry)
+UMAP assumes that the dataset is mathematically distributed uniformly, but on a complex, twisted, high-dimensional **Manifold** (like a wrinkled sheet of paper). 
+Because the real data is not uniform, UMAP mathematically defines a custom Riemannian geometry for every single point, distorting the concept of "distance" so that the data appears uniform. 
+
+It constructs a **Fuzzy Simplicial Complex** (a complex mathematical web connecting the points). In this web, local neighbors are connected by thick, high-probability edges, while distant points have thin, low-probability edges.
+
+## 2. The Low-Dimensional Projection
+Once the high-dimensional mathematical web is built, UMAP initializes a random 2D scatter plot. 
+It builds a second fuzzy mathematical web in the 2D space. 
+It then uses **Cross-Entropy Optimization (Stochastic Gradient Descent)** to forcefully push and pull the 2D points until the 2D web mathematically perfectly matches the complex high-dimensional web. 
+
+## 3. UMAP vs t-SNE
+- **Speed**: t-SNE requires calculating dense probabilities, making it $O(N^2)$ and mathematically catastrophic for datasets > 100k rows. UMAP uses mathematical graph theory approximations, running vastly faster.
+- **Global Structure**: t-SNE mathematically prioritizes *local* structure. It clusters similar points beautifully, but the distance between two clusters on a t-SNE plot is mathematically meaningless. UMAP preserves *global* topology. If Cluster A is closer to Cluster B than Cluster C on a UMAP plot, it mathematically means they are genuinely closer in the massive 1000-dimensional raw data. This makes UMAP a vastly superior tool for real scientific analysis.
 
 </ConceptTemplate>

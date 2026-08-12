@@ -1,8 +1,30 @@
+---
+title: R² (Coefficient of Determination)
+description: The ultimate statistical metric indicating exactly what percentage of the variance in the target variable is mathematically explained by the Regression model's features.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="R²">
+<ConceptTemplate title="R² (Coefficient of Determination)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+RMSE and MAE tell you exactly how many dollars or degrees your model is off by. But is an error of $50,000 good or bad? (If predicting the price of a $100M mansion, $50k is incredible. If predicting a $60k car, it is terrible).
+
+**$R^2$** mathematically normalizes the error into a percentage, making it universally interpretable regardless of the scale of the data.
+
+## 1. The Mathematical Equation
+$R^2$ compares your complex Machine Learning model against the absolute dumbest model possible (a model that just predicts the exact Average Mean of the dataset every single time).
+
+$R^2 = 1 - \frac{\text{Sum of Squared Errors (Your Model)}}{\text{Total Sum of Squares (Mean Model)}}$
+
+- If $R^2 = 1.0$: Your model is mathematical perfection. It explains 100% of the variance. Every single prediction is exactly correct.
+- If $R^2 = 0.0$: Your massive Deep Neural Network is mathematically no better than a script that just outputs the average value of the dataset.
+- If $R^2 < 0$: Your model is mathematically worse than just guessing the average. (You have severely overfit or inverted the logic).
+
+## 2. Interpretation (Explained Variance)
+An $R^2$ of **0.85** mathematically states: *"85% of the variance in house prices is perfectly explained by the features in our dataset (Square Footage, Zip Code). The remaining 15% is due to random noise or missing variables (like the color of the paint)."*
+
+## 3. The Flaw (Adjusted R²)
+$R^2$ has a fatal mathematical flaw. If you add completely random, useless columns to your dataset (like the homeowner's "Favorite Movie"), standard $R^2$ will mathematically *always increase* (or stay flat), never decrease. This encourages Data Scientists to dump 10,000 garbage columns into the model to artificially inflate the score.
+
+**Adjusted $R^2$** mathematically fixes this. It introduces a massive algebraic penalty for every new column added to the model. If you add a column and it doesn't significantly improve the predictions, Adjusted $R^2$ will mathematically *drop*, punishing you for increasing the complexity of the model without merit.
 
 </ConceptTemplate>

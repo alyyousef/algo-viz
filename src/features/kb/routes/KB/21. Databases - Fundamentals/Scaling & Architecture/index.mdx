@@ -1,0 +1,30 @@
+---
+title: Database Scaling & Architecture
+description: How databases handle petabytes of traffic. Explaining Sharding, Partitioning, Replication, Connection Pooling, and Change Data Capture (CDC).
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Database Scaling & Architecture">
+
+Scaling a stateless web server is easy: you just launch 10 more copies of it behind a Load Balancer. Scaling a database is mathematically the hardest problem in distributed systems, because databases contain *State*.
+
+## 1. Replication (Scaling Reads)
+If 100,000 users are trying to read from your database, a single server will melt.
+- **Master-Slave (Primary-Replica)**: All Writes go to exactly ONE Master server. The Master constantly streams the new data to 5 Read Replica servers. All Read queries are sent to the Replicas. This solves read-heavy bottlenecks.
+- **Multi-Master**: Extremely complex. Writes can go to *any* server, and they sync between each other. This often requires complex mathematical conflict resolution (like CRDTs) if two users update the exact same row on two different masters simultaneously.
+
+## 2. Sharding & Partitioning (Scaling Writes)
+If you have 10 billion users, you cannot store them on one hard drive, and a single Master server cannot handle the write volume.
+- **Partitioning**: Splitting a massive table into smaller physical tables on the *same* server (e.g., partitioning logs by Month).
+- **Sharding**: The ultimate mathematical scale. You split the database across entirely different physical servers. (e.g., Users A-M live on Server 1, Users N-Z live on Server 2). 
+  - *Warning*: Sharding destroys the ability to do simple JOIN queries across the whole dataset, vastly increasing application complexity.
+
+## 3. Connection Pooling
+Opening a TCP connection to a database requires a heavy mathematical cryptographic handshake (especially over SSL). If a web server opens a new connection for every single HTTP request, the database will instantly exhaust its RAM and crash.
+- **Connection Pools (PgBouncer, Prisma Accelerate)**: A middleware layer that maintains 100 permanently open, reusable connections to the database. When a web server needs data, it simply "borrows" a connection for 5 milliseconds and returns it.
+
+## 4. Change Data Capture (CDC)
+How do you copy data from your primary PostgreSQL database into your Elasticsearch engine without writing dual-write spaghetti code in your backend?
+- **CDC (Debezium)**: A CDC tool hooks directly into the database's internal **Transaction Log** (the WAL - Write Ahead Log). Every time a row is mathematically changed, CDC streams an event (e.g., via Apache Kafka) to update all downstream systems instantly.
+
+</ConceptTemplate>

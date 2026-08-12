@@ -1,0 +1,27 @@
+---
+title: Specialized Databases
+description: Modern niche architectures. Graph Databases (Neo4j) for relationships, Time-Series (InfluxDB) for metrics, and Vector Databases (Pinecone, Milvus) for LLMs and AI.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Specialized Databases">
+
+While Relational and standard NoSQL databases handle 95% of standard web applications, certain domains require mathematically specialized architectures.
+
+## 1. Graph Databases (Neo4j)
+If you are building a Social Network, a Recommendation Engine, or a Fraud Detection system, you need to query deep relationships: *"Find all friends of friends of Bob who have bought a Samsung TV in the last 30 days."*
+In a Relational database, this requires 5 levels of horrific `JOIN` queries, taking seconds to execute.
+- **Architecture**: Graph databases (like Neo4j) store data as **Nodes** (Entities) and **Edges** (Relationships). The relationships are pre-calculated physical pointers on the disk.
+- **Performance**: Graph queries execute in constant time $O(1)$, regardless of whether the database has 100 users or 100 million users.
+
+## 2. Time-Series Databases (InfluxDB, Prometheus)
+If you are logging CPU metrics for 10,000 servers every second, or tracking IoT sensor data from wind turbines, you will generate billions of rows a day. A standard relational database will mathematically choke on this write volume.
+- **Architecture**: Time-Series databases (TSDB) are optimized exclusively for sequential writes based on a Timestamp. They use massive data compression algorithms (like Gorilla compression) to shrink the data size by 90%.
+- **Use Case**: Application Monitoring, IoT, and Financial Stock Market data.
+
+## 3. Vector Databases (Pinecone, Milvus)
+The explosive rise of Large Language Models (LLMs) created the need for Vector Databases.
+- **Architecture**: You use an AI model (like OpenAI Embeddings) to convert a text document into a mathematical array of 1,536 floating-point numbers (a Vector). The Vector Database stores these embeddings in highly-optimized mathematical structures (like HNSW - Hierarchical Navigable Small World graphs).
+- **Use Case**: Semantic Search. You can query the database for *"How to fix a leaky faucet"*, and it will mathematically calculate the Cosine Similarity between your query vector and all 10 million vectors in the database in milliseconds, returning the most conceptually relevant documents.
+
+</ConceptTemplate>

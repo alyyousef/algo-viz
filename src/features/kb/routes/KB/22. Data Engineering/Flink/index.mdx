@@ -1,8 +1,30 @@
+---
+title: Apache Flink
+description: The absolute state-of-the-art framework for stateful, exactly-once stream processing over unbounded data streams.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Flink">
+<ConceptTemplate title="Apache Flink">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Apache Spark revolutionized Batch processing, it historically struggled with true real-time streaming (relying on "micro-batches" that caused seconds of latency).
+
+**Apache Flink** was engineered from the ground up as a native, true Stream Processing engine. It processes unbounded data streams (like Kafka events) with sub-millisecond latency, and is the absolute standard for companies like Uber, Netflix, and Alibaba.
+
+## 1. True Stream Processing
+Unlike Spark Streaming, Flink does not wait to collect a "batch" of data. It processes every single event individually the exact millisecond it arrives.
+
+The mathematical challenge of stream processing is **State**. If you are calculating the "Rolling 1-Hour Revenue", the Flink application must hold the current revenue mathematically in memory.
+- **State Checkpointing**: Flink uses a mathematical algorithm called Chandy-Lamport to take distributed, asynchronous snapshots of this memory state and save it to persistent storage (like S3) without pausing the stream. 
+- **Exactly-Once Semantics**: If a Flink server crashes and loses its RAM, a new server spins up, loads the state from the checkpoint, rewinds the Kafka offset, and mathematically guarantees that no financial transaction is ever double-counted or lost.
+
+## 2. Event Time & Watermarks
+Stream processing suffers from the "Out-of-Order" problem. An event triggered on a mobile phone might arrive at the server 10 minutes late due to a bad network connection.
+
+Flink mathematically solves this by distinguishing between **Processing Time** (when the server saw it) and **Event Time** (when the event actually happened).
+
+Flink utilizes **Watermarks**—a mathematical heuristic that tells the system: *"I am confident that all events older than 10:05 have now arrived."* Flink will buffer the 10:00-10:05 window in RAM, wait for the watermark to pass, and only then mathematically close the window and emit the perfectly accurate calculation.
+
+## 3. SQL on Streams
+Flink supports executing standard SQL directly on infinite streams. You can write a `SELECT` statement that continuously runs forever, dynamically updating a live dashboard the millisecond a new Kafka event arrives.
 
 </ConceptTemplate>

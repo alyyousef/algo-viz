@@ -1344,14 +1344,6 @@
     "matchText": "applied specialized cs domains 5 edtech healthtech legaltech domain applications telemedicine platforms kb 61 applied specialized cs domains 61 5 edtech healthtech legaltech domain applications telemedicine platforms"
   },
   {
-    "id": "./routes/KB/24. Artificial Intelligence — Overview/adversarial-minimax)/index.mdx",
-    "title": "adversarial-minimax)",
-    "breadcrumb": "Artificial Intelligence — Overview",
-    "route": "/kb/24-artificial-intelligence-overview/adversarial-minimax",
-    "routeLabel": "kb/24-artificial-intelligence-overview/adversarial-minimax",
-    "matchText": "artificial intelligence overview adversarial minimax kb 24 artificial intelligence overview adversarial minimax"
-  },
-  {
     "id": "./routes/KB/24. Artificial Intelligence — Overview/Agents/index.mdx",
     "title": "Agents",
     "breadcrumb": "Artificial Intelligence — Overview",
@@ -1440,14 +1432,6 @@
     "matchText": "artificial intelligence overview generative ai kb 24 artificial intelligence overview generative ai"
   },
   {
-    "id": "./routes/KB/24. Artificial Intelligence — Overview/informed/index.mdx",
-    "title": "informed",
-    "breadcrumb": "Artificial Intelligence — Overview",
-    "route": "/kb/24-artificial-intelligence-overview/informed",
-    "routeLabel": "kb/24-artificial-intelligence-overview/informed",
-    "matchText": "artificial intelligence overview informed kb 24 artificial intelligence overview informed"
-  },
-  {
     "id": "./routes/KB/24. Artificial Intelligence — Overview/Knowledge representation & reasoning/index.mdx",
     "title": "Knowledge representation & reasoning",
     "breadcrumb": "Artificial Intelligence — Overview",
@@ -1512,12 +1496,12 @@
     "matchText": "artificial intelligence overview robotics kb 24 artificial intelligence overview robotics"
   },
   {
-    "id": "./routes/KB/24. Artificial Intelligence — Overview/Search algorithms (uninformed/index.mdx",
-    "title": "Search algorithms (uninformed",
+    "id": "./routes/KB/24. Artificial Intelligence — Overview/Search algorithms/index.mdx",
+    "title": "Search algorithms",
     "breadcrumb": "Artificial Intelligence — Overview",
-    "route": "/kb/24-artificial-intelligence-overview/search-algorithms-uninformed",
-    "routeLabel": "kb/24-artificial-intelligence-overview/search-algorithms-uninformed",
-    "matchText": "artificial intelligence overview search algorithms uninformed kb 24 artificial intelligence overview search algorithms uninformed"
+    "route": "/kb/24-artificial-intelligence-overview/search-algorithms",
+    "routeLabel": "kb/24-artificial-intelligence-overview/search-algorithms",
+    "matchText": "artificial intelligence overview search algorithms kb 24 artificial intelligence overview search algorithms"
   },
   {
     "id": "./routes/KB/24. Artificial Intelligence — Overview/Symbolic AI (GOFAI)/index.mdx",
@@ -7432,14 +7416,6 @@
     "matchText": "data science and analytics causal inference kb 23 data science and analytics causal inference"
   },
   {
-    "id": "./routes/KB/23. Data Science & Analytics/Dashboarding (Tableau/index.mdx",
-    "title": "Dashboarding (Tableau",
-    "breadcrumb": "Data Science & Analytics",
-    "route": "/kb/23-data-science-and-analytics/dashboarding-tableau",
-    "routeLabel": "kb/23-data-science-and-analytics/dashboarding-tableau",
-    "matchText": "data science and analytics dashboarding tableau kb 23 data science and analytics dashboarding tableau"
-  },
-  {
     "id": "./routes/KB/23. Data Science & Analytics/Data cleaning/index.mdx",
     "title": "Data cleaning",
     "breadcrumb": "Data Science & Analytics",
@@ -7512,8 +7488,8 @@
     "matchText": "data science and analytics matplotlib kb 23 data science and analytics matplotlib"
   },
   {
-    "id": "./routes/KB/23. Data Science & Analytics/Metabase)/index.mdx",
-    "title": "Metabase)",
+    "id": "./routes/KB/23. Data Science & Analytics/Metabase/index.mdx",
+    "title": "Metabase",
     "breadcrumb": "Data Science & Analytics",
     "route": "/kb/23-data-science-and-analytics/metabase",
     "routeLabel": "kb/23-data-science-and-analytics/metabase",
@@ -7606,6 +7582,14 @@
     "route": "/kb/23-data-science-and-analytics/survey-methodology",
     "routeLabel": "kb/23-data-science-and-analytics/survey-methodology",
     "matchText": "data science and analytics survey methodology kb 23 data science and analytics survey methodology"
+  },
+  {
+    "id": "./routes/KB/23. Data Science & Analytics/Tableau/index.mdx",
+    "title": "Tableau",
+    "breadcrumb": "Data Science & Analytics",
+    "route": "/kb/23-data-science-and-analytics/tableau",
+    "routeLabel": "kb/23-data-science-and-analytics/tableau",
+    "matchText": "data science and analytics tableau kb 23 data science and analytics tableau"
   },
   {
     "id": "./routes/KB/5. Data Structures/5.1 Linear/Arrays/index.mdx",
@@ -8104,772 +8088,44 @@
     "matchText": "data structures 5 graphs zippers kb 5 data structures 5 5 graphs zippers"
   },
   {
-    "id": "./routes/KB/21. Databases - Fundamentals/ACID/index.mdx",
-    "title": "ACID",
+    "id": "./routes/KB/21. Databases - Fundamentals/Database Concepts/index.mdx",
+    "title": "Database Concepts",
     "breadcrumb": "Databases - Fundamentals",
-    "route": "/kb/21-databases-fundamentals/acid",
-    "routeLabel": "kb/21-databases-fundamentals/acid",
-    "matchText": "databases fundamentals acid kb 21 databases fundamentals acid"
+    "route": "/kb/21-databases-fundamentals/database-concepts",
+    "routeLabel": "kb/21-databases-fundamentals/database-concepts",
+    "matchText": "databases fundamentals database concepts kb 21 databases fundamentals database concepts"
   },
   {
-    "id": "./routes/KB/21. Databases - Fundamentals/NoSQL/index.mdx",
-    "title": "NoSQL",
+    "id": "./routes/KB/21. Databases - Fundamentals/NoSQL Databases/index.mdx",
+    "title": "NoSQL Databases",
     "breadcrumb": "Databases - Fundamentals",
-    "route": "/kb/21-databases-fundamentals/nosql",
-    "routeLabel": "kb/21-databases-fundamentals/nosql",
-    "matchText": "databases fundamentals nosql kb 21 databases fundamentals nosql"
+    "route": "/kb/21-databases-fundamentals/nosql-databases",
+    "routeLabel": "kb/21-databases-fundamentals/nosql-databases",
+    "matchText": "databases fundamentals nosql databases kb 21 databases fundamentals nosql databases"
   },
   {
-    "id": "./routes/KB/21. Databases - Fundamentals/SQL/index.mdx",
-    "title": "SQL",
+    "id": "./routes/KB/21. Databases - Fundamentals/Relational Databases/index.mdx",
+    "title": "Relational Databases",
     "breadcrumb": "Databases - Fundamentals",
-    "route": "/kb/21-databases-fundamentals/sql",
-    "routeLabel": "kb/21-databases-fundamentals/sql",
-    "matchText": "databases fundamentals sql kb 21 databases fundamentals sql"
+    "route": "/kb/21-databases-fundamentals/relational-databases",
+    "routeLabel": "kb/21-databases-fundamentals/relational-databases",
+    "matchText": "databases fundamentals relational databases kb 21 databases fundamentals relational databases"
   },
   {
-    "id": "./routes/KB/21. Databases - Fundamentals/Transactions/index.mdx",
-    "title": "Transactions",
+    "id": "./routes/KB/21. Databases - Fundamentals/Scaling & Architecture/index.mdx",
+    "title": "Scaling & Architecture",
     "breadcrumb": "Databases - Fundamentals",
-    "route": "/kb/21-databases-fundamentals/transactions",
-    "routeLabel": "kb/21-databases-fundamentals/transactions",
-    "matchText": "databases fundamentals transactions kb 21 databases fundamentals transactions"
-  },
-  {
-    "id": "./routes/KB/21. Databases - Fundamentals/21.1 Relational Databases/MySQL/index.mdx",
-    "title": "MySQL",
-    "breadcrumb": "Databases - Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/mysql",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/mysql",
-    "matchText": "databases fundamentals 1 relational databases mysql kb 21 databases fundamentals 21 1 relational databases mysql"
-  },
-  {
-    "id": "./routes/KB/21. Databases - Fundamentals/21.1 Relational Databases/PostgreSQL/index.mdx",
-    "title": "PostgreSQL",
-    "breadcrumb": "Databases - Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/postgresql",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/postgresql",
-    "matchText": "databases fundamentals 1 relational databases postgresql kb 21 databases fundamentals 21 1 relational databases postgresql"
-  },
-  {
-    "id": "./routes/KB/21. Databases - Fundamentals/21.2 NoSQL - Document - Key-Value/MongoDB/index.mdx",
-    "title": "MongoDB",
-    "breadcrumb": "Databases - Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/mongodb",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/mongodb",
-    "matchText": "databases fundamentals 2 nosql document key value mongodb kb 21 databases fundamentals 21 2 nosql document key value mongodb"
-  },
-  {
-    "id": "./routes/KB/21. Databases - Fundamentals/21.2 NoSQL - Document - Key-Value/Redis/index.mdx",
-    "title": "Redis",
-    "breadcrumb": "Databases - Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/redis",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/redis",
-    "matchText": "databases fundamentals 2 nosql document key value redis kb 21 databases fundamentals 21 2 nosql document key value redis"
-  },
-  {
-    "id": "./routes/KB/21. Databases - Fundamentals/21.5 Search Engines - Search Databases/Elasticsearch/index.mdx",
-    "title": "Elasticsearch",
-    "breadcrumb": "Databases - Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/elasticsearch",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/elasticsearch",
-    "matchText": "databases fundamentals 5 search engines search databases elasticsearch kb 21 databases fundamentals 21 5 search engines search databases elasticsearch"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/ACID/index.mdx",
-    "title": "ACID",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/acid",
-    "routeLabel": "kb/21-databases-fundamentals/acid",
-    "matchText": "databases fundamentals acid kb 21 databases fundamentals acid"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/BASE/index.mdx",
-    "title": "BASE",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/base",
-    "routeLabel": "kb/21-databases-fundamentals/base",
-    "matchText": "databases fundamentals base kb 21 databases fundamentals base"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/BCNF)/index.mdx",
-    "title": "BCNF)",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/bcnf",
-    "routeLabel": "kb/21-databases-fundamentals/bcnf",
-    "matchText": "databases fundamentals bcnf kb 21 databases fundamentals bcnf"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/bitmap/index.mdx",
-    "title": "bitmap",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/bitmap",
-    "routeLabel": "kb/21-databases-fundamentals/bitmap",
-    "matchText": "databases fundamentals bitmap kb 21 databases fundamentals bitmap"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Change data capture (CDC)/index.mdx",
-    "title": "Change data capture (CDC)",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/change-data-capture-cdc",
-    "routeLabel": "kb/21-databases-fundamentals/change-data-capture-cdc",
-    "matchText": "databases fundamentals change data capture cdc kb 21 databases fundamentals change data capture cdc"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Connection pooling/index.mdx",
-    "title": "Connection pooling",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/connection-pooling",
-    "routeLabel": "kb/21-databases-fundamentals/connection-pooling",
-    "matchText": "databases fundamentals connection pooling kb 21 databases fundamentals connection pooling"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Constraints/index.mdx",
-    "title": "Constraints",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/constraints",
-    "routeLabel": "kb/21-databases-fundamentals/constraints",
-    "matchText": "databases fundamentals constraints kb 21 databases fundamentals constraints"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/covering)/index.mdx",
-    "title": "covering)",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/covering",
-    "routeLabel": "kb/21-databases-fundamentals/covering",
-    "matchText": "databases fundamentals covering kb 21 databases fundamentals covering"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Database fundamentals/index.mdx",
-    "title": "Database fundamentals",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/database-fundamentals",
-    "routeLabel": "kb/21-databases-fundamentals/database-fundamentals",
-    "matchText": "databases fundamentals database fundamentals kb 21 databases fundamentals database fundamentals"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/DBMS/index.mdx",
-    "title": "DBMS",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/dbms",
-    "routeLabel": "kb/21-databases-fundamentals/dbms",
-    "matchText": "databases fundamentals dbms kb 21 databases fundamentals dbms"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Deadlocks/index.mdx",
-    "title": "Deadlocks",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/deadlocks",
-    "routeLabel": "kb/21-databases-fundamentals/deadlocks",
-    "matchText": "databases fundamentals deadlocks kb 21 databases fundamentals deadlocks"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Denormalisation/index.mdx",
-    "title": "Denormalisation",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/denormalisation",
-    "routeLabel": "kb/21-databases-fundamentals/denormalisation",
-    "matchText": "databases fundamentals denormalisation kb 21 databases fundamentals denormalisation"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Execution plans/index.mdx",
-    "title": "Execution plans",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/execution-plans",
-    "routeLabel": "kb/21-databases-fundamentals/execution-plans",
-    "matchText": "databases fundamentals execution plans kb 21 databases fundamentals execution plans"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Foreign keys/index.mdx",
-    "title": "Foreign keys",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/foreign-keys",
-    "routeLabel": "kb/21-databases-fundamentals/foreign-keys",
-    "matchText": "databases fundamentals foreign keys kb 21 databases fundamentals foreign keys"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/hash/index.mdx",
-    "title": "hash",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/hash",
-    "routeLabel": "kb/21-databases-fundamentals/hash",
-    "matchText": "databases fundamentals hash kb 21 databases fundamentals hash"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Indexes (B-tree/index.mdx",
-    "title": "Indexes (B-tree",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/indexes-b-tree",
-    "routeLabel": "kb/21-databases-fundamentals/indexes-b-tree",
-    "matchText": "databases fundamentals indexes b tree kb 21 databases fundamentals indexes b tree"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Isolation levels/index.mdx",
-    "title": "Isolation levels",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/isolation-levels",
-    "routeLabel": "kb/21-databases-fundamentals/isolation-levels",
-    "matchText": "databases fundamentals isolation levels kb 21 databases fundamentals isolation levels"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Locks (pessimistic/index.mdx",
-    "title": "Locks (pessimistic",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/locks-pessimistic",
-    "routeLabel": "kb/21-databases-fundamentals/locks-pessimistic",
-    "matchText": "databases fundamentals locks pessimistic kb 21 databases fundamentals locks pessimistic"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Materialized views/index.mdx",
-    "title": "Materialized views",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/materialized-views",
-    "routeLabel": "kb/21-databases-fundamentals/materialized-views",
-    "matchText": "databases fundamentals materialized views kb 21 databases fundamentals materialized views"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/multi-master)/index.mdx",
-    "title": "multi-master)",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/multi-master",
-    "routeLabel": "kb/21-databases-fundamentals/multi-master",
-    "matchText": "databases fundamentals multi master kb 21 databases fundamentals multi master"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/NewSQL/index.mdx",
-    "title": "NewSQL",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/newsql",
-    "routeLabel": "kb/21-databases-fundamentals/newsql",
-    "matchText": "databases fundamentals newsql kb 21 databases fundamentals newsql"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Normalisation (1NF–5NF/index.mdx",
-    "title": "Normalisation (1NF–5NF",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/normalisation-1nf-5nf",
-    "routeLabel": "kb/21-databases-fundamentals/normalisation-1nf-5nf",
-    "matchText": "databases fundamentals normalisation 1nf 5nf kb 21 databases fundamentals normalisation 1nf 5nf"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/NoSQL/index.mdx",
-    "title": "NoSQL",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/nosql",
-    "routeLabel": "kb/21-databases-fundamentals/nosql",
-    "matchText": "databases fundamentals nosql kb 21 databases fundamentals nosql"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/optimistic)/index.mdx",
-    "title": "optimistic)",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/optimistic",
-    "routeLabel": "kb/21-databases-fundamentals/optimistic",
-    "matchText": "databases fundamentals optimistic kb 21 databases fundamentals optimistic"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Partitioning/index.mdx",
-    "title": "Partitioning",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/partitioning",
-    "routeLabel": "kb/21-databases-fundamentals/partitioning",
-    "matchText": "databases fundamentals partitioning kb 21 databases fundamentals partitioning"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Primary keys/index.mdx",
-    "title": "Primary keys",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/primary-keys",
-    "routeLabel": "kb/21-databases-fundamentals/primary-keys",
-    "matchText": "databases fundamentals primary keys kb 21 databases fundamentals primary keys"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Query optimisation/index.mdx",
-    "title": "Query optimisation",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/query-optimisation",
-    "routeLabel": "kb/21-databases-fundamentals/query-optimisation",
-    "matchText": "databases fundamentals query optimisation kb 21 databases fundamentals query optimisation"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Query planners/index.mdx",
-    "title": "Query planners",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/query-planners",
-    "routeLabel": "kb/21-databases-fundamentals/query-planners",
-    "matchText": "databases fundamentals query planners kb 21 databases fundamentals query planners"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/RDBMS/index.mdx",
-    "title": "RDBMS",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/rdbms",
-    "routeLabel": "kb/21-databases-fundamentals/rdbms",
-    "matchText": "databases fundamentals rdbms kb 21 databases fundamentals rdbms"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Replication (master-slave/index.mdx",
-    "title": "Replication (master-slave",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/replication-master-slave",
-    "routeLabel": "kb/21-databases-fundamentals/replication-master-slave",
-    "matchText": "databases fundamentals replication master slave kb 21 databases fundamentals replication master slave"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Sharding/index.mdx",
-    "title": "Sharding",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/sharding",
-    "routeLabel": "kb/21-databases-fundamentals/sharding",
-    "matchText": "databases fundamentals sharding kb 21 databases fundamentals sharding"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/SQL/index.mdx",
-    "title": "SQL",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/sql",
-    "routeLabel": "kb/21-databases-fundamentals/sql",
-    "matchText": "databases fundamentals sql kb 21 databases fundamentals sql"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Stored procedures/index.mdx",
-    "title": "Stored procedures",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/stored-procedures",
-    "routeLabel": "kb/21-databases-fundamentals/stored-procedures",
-    "matchText": "databases fundamentals stored procedures kb 21 databases fundamentals stored procedures"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Transactions/index.mdx",
-    "title": "Transactions",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/transactions",
-    "routeLabel": "kb/21-databases-fundamentals/transactions",
-    "matchText": "databases fundamentals transactions kb 21 databases fundamentals transactions"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Triggers/index.mdx",
-    "title": "Triggers",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/triggers",
-    "routeLabel": "kb/21-databases-fundamentals/triggers",
-    "matchText": "databases fundamentals triggers kb 21 databases fundamentals triggers"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/Views/index.mdx",
-    "title": "Views",
-    "breadcrumb": "Databases — Fundamentals",
-    "route": "/kb/21-databases-fundamentals/views",
-    "routeLabel": "kb/21-databases-fundamentals/views",
-    "matchText": "databases fundamentals views kb 21 databases fundamentals views"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/Amazon Aurora/index.mdx",
-    "title": "Amazon Aurora",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/amazon-aurora",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/amazon-aurora",
-    "matchText": "databases fundamentals 1 relational databases amazon aurora kb 21 databases fundamentals 21 1 relational databases amazon aurora"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/CockroachDB/index.mdx",
-    "title": "CockroachDB",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/cockroachdb",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/cockroachdb",
-    "matchText": "databases fundamentals 1 relational databases cockroachdb kb 21 databases fundamentals 21 1 relational databases cockroachdb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/IBM Db2/index.mdx",
-    "title": "IBM Db2",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/ibm-db2",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/ibm-db2",
-    "matchText": "databases fundamentals 1 relational databases ibm db2 kb 21 databases fundamentals 21 1 relational databases ibm db2"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/MariaDB/index.mdx",
-    "title": "MariaDB",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/mariadb",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/mariadb",
-    "matchText": "databases fundamentals 1 relational databases mariadb kb 21 databases fundamentals 21 1 relational databases mariadb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/Microsoft SQL Server/index.mdx",
-    "title": "Microsoft SQL Server",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/microsoft-sql-server",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/microsoft-sql-server",
-    "matchText": "databases fundamentals 1 relational databases microsoft sql server kb 21 databases fundamentals 21 1 relational databases microsoft sql server"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/MySQL/index.mdx",
-    "title": "MySQL",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/mysql",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/mysql",
-    "matchText": "databases fundamentals 1 relational databases mysql kb 21 databases fundamentals 21 1 relational databases mysql"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/Oracle Database/index.mdx",
-    "title": "Oracle Database",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/oracle-database",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/oracle-database",
-    "matchText": "databases fundamentals 1 relational databases oracle database kb 21 databases fundamentals 21 1 relational databases oracle database"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/PostgreSQL/index.mdx",
-    "title": "PostgreSQL",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/postgresql",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/postgresql",
-    "matchText": "databases fundamentals 1 relational databases postgresql kb 21 databases fundamentals 21 1 relational databases postgresql"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/SQLite/index.mdx",
-    "title": "SQLite",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/sqlite",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/sqlite",
-    "matchText": "databases fundamentals 1 relational databases sqlite kb 21 databases fundamentals 21 1 relational databases sqlite"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/TiDB/index.mdx",
-    "title": "TiDB",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/tidb",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/tidb",
-    "matchText": "databases fundamentals 1 relational databases tidb kb 21 databases fundamentals 21 1 relational databases tidb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.1 Relational Databases/YugabyteDB/index.mdx",
-    "title": "YugabyteDB",
-    "breadcrumb": "Databases — Fundamentals / 1 Relational Databases",
-    "route": "/kb/21-databases-fundamentals/21-1-relational-databases/yugabytedb",
-    "routeLabel": "kb/21-databases-fundamentals/21-1-relational-databases/yugabytedb",
-    "matchText": "databases fundamentals 1 relational databases yugabytedb kb 21 databases fundamentals 21 1 relational databases yugabytedb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/Cassandra/index.mdx",
-    "title": "Cassandra",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/cassandra",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/cassandra",
-    "matchText": "databases fundamentals 2 nosql document key value cassandra kb 21 databases fundamentals 21 2 nosql document key value cassandra"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/Couchbase/index.mdx",
-    "title": "Couchbase",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/couchbase",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/couchbase",
-    "matchText": "databases fundamentals 2 nosql document key value couchbase kb 21 databases fundamentals 21 2 nosql document key value couchbase"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/CouchDB/index.mdx",
-    "title": "CouchDB",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/couchdb",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/couchdb",
-    "matchText": "databases fundamentals 2 nosql document key value couchdb kb 21 databases fundamentals 21 2 nosql document key value couchdb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/DynamoDB/index.mdx",
-    "title": "DynamoDB",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/dynamodb",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/dynamodb",
-    "matchText": "databases fundamentals 2 nosql document key value dynamodb kb 21 databases fundamentals 21 2 nosql document key value dynamodb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/etcd/index.mdx",
-    "title": "etcd",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/etcd",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/etcd",
-    "matchText": "databases fundamentals 2 nosql document key value etcd kb 21 databases fundamentals 21 2 nosql document key value etcd"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/Firestore/index.mdx",
-    "title": "Firestore",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/firestore",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/firestore",
-    "matchText": "databases fundamentals 2 nosql document key value firestore kb 21 databases fundamentals 21 2 nosql document key value firestore"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/HBase/index.mdx",
-    "title": "HBase",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/hbase",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/hbase",
-    "matchText": "databases fundamentals 2 nosql document key value hbase kb 21 databases fundamentals 21 2 nosql document key value hbase"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/MongoDB/index.mdx",
-    "title": "MongoDB",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/mongodb",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/mongodb",
-    "matchText": "databases fundamentals 2 nosql document key value mongodb kb 21 databases fundamentals 21 2 nosql document key value mongodb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/Redis/index.mdx",
-    "title": "Redis",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/redis",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/redis",
-    "matchText": "databases fundamentals 2 nosql document key value redis kb 21 databases fundamentals 21 2 nosql document key value redis"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/Riak/index.mdx",
-    "title": "Riak",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/riak",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/riak",
-    "matchText": "databases fundamentals 2 nosql document key value riak kb 21 databases fundamentals 21 2 nosql document key value riak"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.2 NoSQL - Document - Key-Value/ScyllaDB/index.mdx",
-    "title": "ScyllaDB",
-    "breadcrumb": "Databases — Fundamentals / 2 NoSQL - Document - Key-Value",
-    "route": "/kb/21-databases-fundamentals/21-2-nosql-document-key-value/scylladb",
-    "routeLabel": "kb/21-databases-fundamentals/21-2-nosql-document-key-value/scylladb",
-    "matchText": "databases fundamentals 2 nosql document key value scylladb kb 21 databases fundamentals 21 2 nosql document key value scylladb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/Amazon Neptune/index.mdx",
-    "title": "Amazon Neptune",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/amazon-neptune",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/amazon-neptune",
-    "matchText": "databases fundamentals 3 graph databases amazon neptune kb 21 databases fundamentals 21 3 graph databases amazon neptune"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/ArangoDB/index.mdx",
-    "title": "ArangoDB",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/arangodb",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/arangodb",
-    "matchText": "databases fundamentals 3 graph databases arangodb kb 21 databases fundamentals 21 3 graph databases arangodb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/Cypher/index.mdx",
-    "title": "Cypher",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/cypher",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/cypher",
-    "matchText": "databases fundamentals 3 graph databases cypher kb 21 databases fundamentals 21 3 graph databases cypher"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/Graph modelling/index.mdx",
-    "title": "Graph modelling",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/graph-modelling",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/graph-modelling",
-    "matchText": "databases fundamentals 3 graph databases graph modelling kb 21 databases fundamentals 21 3 graph databases graph modelling"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/Gremlin/index.mdx",
-    "title": "Gremlin",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/gremlin",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/gremlin",
-    "matchText": "databases fundamentals 3 graph databases gremlin kb 21 databases fundamentals 21 3 graph databases gremlin"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/JanusGraph/index.mdx",
-    "title": "JanusGraph",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/janusgraph",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/janusgraph",
-    "matchText": "databases fundamentals 3 graph databases janusgraph kb 21 databases fundamentals 21 3 graph databases janusgraph"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/Neo4j/index.mdx",
-    "title": "Neo4j",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/neo4j",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/neo4j",
-    "matchText": "databases fundamentals 3 graph databases neo4j kb 21 databases fundamentals 21 3 graph databases neo4j"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.3 Graph Databases/TigerGraph/index.mdx",
-    "title": "TigerGraph",
-    "breadcrumb": "Databases — Fundamentals / 3 Graph Databases",
-    "route": "/kb/21-databases-fundamentals/21-3-graph-databases/tigergraph",
-    "routeLabel": "kb/21-databases-fundamentals/21-3-graph-databases/tigergraph",
-    "matchText": "databases fundamentals 3 graph databases tigergraph kb 21 databases fundamentals 21 3 graph databases tigergraph"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.4 Time-Series/InfluxDB/index.mdx",
-    "title": "InfluxDB",
-    "breadcrumb": "Databases — Fundamentals / 4 Time-Series",
-    "route": "/kb/21-databases-fundamentals/21-4-time-series/influxdb",
-    "routeLabel": "kb/21-databases-fundamentals/21-4-time-series/influxdb",
-    "matchText": "databases fundamentals 4 time series influxdb kb 21 databases fundamentals 21 4 time series influxdb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.4 Time-Series/OpenTSDB/index.mdx",
-    "title": "OpenTSDB",
-    "breadcrumb": "Databases — Fundamentals / 4 Time-Series",
-    "route": "/kb/21-databases-fundamentals/21-4-time-series/opentsdb",
-    "routeLabel": "kb/21-databases-fundamentals/21-4-time-series/opentsdb",
-    "matchText": "databases fundamentals 4 time series opentsdb kb 21 databases fundamentals 21 4 time series opentsdb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.4 Time-Series/Prometheus (as TSDB)/index.mdx",
-    "title": "Prometheus (as TSDB)",
-    "breadcrumb": "Databases — Fundamentals / 4 Time-Series",
-    "route": "/kb/21-databases-fundamentals/21-4-time-series/prometheus-as-tsdb",
-    "routeLabel": "kb/21-databases-fundamentals/21-4-time-series/prometheus-as-tsdb",
-    "matchText": "databases fundamentals 4 time series prometheus as tsdb kb 21 databases fundamentals 21 4 time series prometheus as tsdb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.4 Time-Series/QuestDB/index.mdx",
-    "title": "QuestDB",
-    "breadcrumb": "Databases — Fundamentals / 4 Time-Series",
-    "route": "/kb/21-databases-fundamentals/21-4-time-series/questdb",
-    "routeLabel": "kb/21-databases-fundamentals/21-4-time-series/questdb",
-    "matchText": "databases fundamentals 4 time series questdb kb 21 databases fundamentals 21 4 time series questdb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.4 Time-Series/TimescaleDB/index.mdx",
-    "title": "TimescaleDB",
-    "breadcrumb": "Databases — Fundamentals / 4 Time-Series",
-    "route": "/kb/21-databases-fundamentals/21-4-time-series/timescaledb",
-    "routeLabel": "kb/21-databases-fundamentals/21-4-time-series/timescaledb",
-    "matchText": "databases fundamentals 4 time series timescaledb kb 21 databases fundamentals 21 4 time series timescaledb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.5 Search Engines - Search Databases/Algolia/index.mdx",
-    "title": "Algolia",
-    "breadcrumb": "Databases — Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/algolia",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/algolia",
-    "matchText": "databases fundamentals 5 search engines search databases algolia kb 21 databases fundamentals 21 5 search engines search databases algolia"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.5 Search Engines - Search Databases/Apache Lucene/index.mdx",
-    "title": "Apache Lucene",
-    "breadcrumb": "Databases — Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/apache-lucene",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/apache-lucene",
-    "matchText": "databases fundamentals 5 search engines search databases apache lucene kb 21 databases fundamentals 21 5 search engines search databases apache lucene"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.5 Search Engines - Search Databases/Elasticsearch/index.mdx",
-    "title": "Elasticsearch",
-    "breadcrumb": "Databases — Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/elasticsearch",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/elasticsearch",
-    "matchText": "databases fundamentals 5 search engines search databases elasticsearch kb 21 databases fundamentals 21 5 search engines search databases elasticsearch"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.5 Search Engines - Search Databases/Meilisearch/index.mdx",
-    "title": "Meilisearch",
-    "breadcrumb": "Databases — Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/meilisearch",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/meilisearch",
-    "matchText": "databases fundamentals 5 search engines search databases meilisearch kb 21 databases fundamentals 21 5 search engines search databases meilisearch"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.5 Search Engines - Search Databases/OpenSearch/index.mdx",
-    "title": "OpenSearch",
-    "breadcrumb": "Databases — Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/opensearch",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/opensearch",
-    "matchText": "databases fundamentals 5 search engines search databases opensearch kb 21 databases fundamentals 21 5 search engines search databases opensearch"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.5 Search Engines - Search Databases/Solr/index.mdx",
-    "title": "Solr",
-    "breadcrumb": "Databases — Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/solr",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/solr",
-    "matchText": "databases fundamentals 5 search engines search databases solr kb 21 databases fundamentals 21 5 search engines search databases solr"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.5 Search Engines - Search Databases/Typesense/index.mdx",
-    "title": "Typesense",
-    "breadcrumb": "Databases — Fundamentals / 5 Search Engines - Search Databases",
-    "route": "/kb/21-databases-fundamentals/21-5-search-engines-search-databases/typesense",
-    "routeLabel": "kb/21-databases-fundamentals/21-5-search-engines-search-databases/typesense",
-    "matchText": "databases fundamentals 5 search engines search databases typesense kb 21 databases fundamentals 21 5 search engines search databases typesense"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/Chroma/index.mdx",
-    "title": "Chroma",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/chroma",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/chroma",
-    "matchText": "databases fundamentals 6 vector databases chroma kb 21 databases fundamentals 21 6 vector databases chroma"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/FAISS/index.mdx",
-    "title": "FAISS",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/faiss",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/faiss",
-    "matchText": "databases fundamentals 6 vector databases faiss kb 21 databases fundamentals 21 6 vector databases faiss"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/LanceDB/index.mdx",
-    "title": "LanceDB",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/lancedb",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/lancedb",
-    "matchText": "databases fundamentals 6 vector databases lancedb kb 21 databases fundamentals 21 6 vector databases lancedb"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/Milvus/index.mdx",
-    "title": "Milvus",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/milvus",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/milvus",
-    "matchText": "databases fundamentals 6 vector databases milvus kb 21 databases fundamentals 21 6 vector databases milvus"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/pgvector/index.mdx",
-    "title": "pgvector",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/pgvector",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/pgvector",
-    "matchText": "databases fundamentals 6 vector databases pgvector kb 21 databases fundamentals 21 6 vector databases pgvector"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/Pinecone/index.mdx",
-    "title": "Pinecone",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/pinecone",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/pinecone",
-    "matchText": "databases fundamentals 6 vector databases pinecone kb 21 databases fundamentals 21 6 vector databases pinecone"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/Qdrant/index.mdx",
-    "title": "Qdrant",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/qdrant",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/qdrant",
-    "matchText": "databases fundamentals 6 vector databases qdrant kb 21 databases fundamentals 21 6 vector databases qdrant"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/Vespa/index.mdx",
-    "title": "Vespa",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/vespa",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/vespa",
-    "matchText": "databases fundamentals 6 vector databases vespa kb 21 databases fundamentals 21 6 vector databases vespa"
-  },
-  {
-    "id": "./routes/KB/21. Databases — Fundamentals/21.6 Vector Databases/Weaviate/index.mdx",
-    "title": "Weaviate",
-    "breadcrumb": "Databases — Fundamentals / 6 Vector Databases",
-    "route": "/kb/21-databases-fundamentals/21-6-vector-databases/weaviate",
-    "routeLabel": "kb/21-databases-fundamentals/21-6-vector-databases/weaviate",
-    "matchText": "databases fundamentals 6 vector databases weaviate kb 21 databases fundamentals 21 6 vector databases weaviate"
+    "route": "/kb/21-databases-fundamentals/scaling-and-architecture",
+    "routeLabel": "kb/21-databases-fundamentals/scaling-and-architecture",
+    "matchText": "databases fundamentals scaling and architecture kb 21 databases fundamentals scaling and architecture"
+  },
+  {
+    "id": "./routes/KB/21. Databases - Fundamentals/Specialized Databases/index.mdx",
+    "title": "Specialized Databases",
+    "breadcrumb": "Databases - Fundamentals",
+    "route": "/kb/21-databases-fundamentals/specialized-databases",
+    "routeLabel": "kb/21-databases-fundamentals/specialized-databases",
+    "matchText": "databases fundamentals specialized databases kb 21 databases fundamentals specialized databases"
   },
   {
     "id": "./routes/KB/26. Deep Learning/Activation functions (ReLU/index.mdx",
@@ -13880,28 +13136,12 @@
     "matchText": "linux and shell administration zypper kb 12 linux and shell administration zypper"
   },
   {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Bayesian optimisation)/index.mdx",
-    "title": "Bayesian optimisation)",
-    "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/bayesian-optimisation",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/bayesian-optimisation",
-    "matchText": "machine learning 1 core concepts bayesian optimisation kb 25 machine learning 25 1 core concepts bayesian optimisation"
-  },
-  {
     "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Bias-variance tradeoff/index.mdx",
     "title": "Bias-variance tradeoff",
     "breadcrumb": "Machine Learning / 1 Core Concepts",
     "route": "/kb/25-machine-learning/25-1-core-concepts/bias-variance-tradeoff",
     "routeLabel": "kb/25-machine-learning/25-1-core-concepts/bias-variance-tradeoff",
     "matchText": "machine learning 1 core concepts bias variance tradeoff kb 25 machine learning 25 1 core concepts bias variance tradeoff"
-  },
-  {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/boosting/index.mdx",
-    "title": "boosting",
-    "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/boosting",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/boosting",
-    "matchText": "machine learning 1 core concepts boosting kb 25 machine learning 25 1 core concepts boosting"
   },
   {
     "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Classification/index.mdx",
@@ -13936,28 +13176,12 @@
     "matchText": "machine learning 1 core concepts dimensionality reduction kb 25 machine learning 25 1 core concepts dimensionality reduction"
   },
   {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/dropout)/index.mdx",
-    "title": "dropout)",
+    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Ensembles/index.mdx",
+    "title": "Ensembles",
     "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/dropout",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/dropout",
-    "matchText": "machine learning 1 core concepts dropout kb 25 machine learning 25 1 core concepts dropout"
-  },
-  {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/elastic net/index.mdx",
-    "title": "elastic net",
-    "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/elastic-net",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/elastic-net",
-    "matchText": "machine learning 1 core concepts elastic net kb 25 machine learning 25 1 core concepts elastic net"
-  },
-  {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Ensembles (bagging/index.mdx",
-    "title": "Ensembles (bagging",
-    "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/ensembles-bagging",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/ensembles-bagging",
-    "matchText": "machine learning 1 core concepts ensembles bagging kb 25 machine learning 25 1 core concepts ensembles bagging"
+    "route": "/kb/25-machine-learning/25-1-core-concepts/ensembles",
+    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/ensembles",
+    "matchText": "machine learning 1 core concepts ensembles kb 25 machine learning 25 1 core concepts ensembles"
   },
   {
     "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Feature engineering/index.mdx",
@@ -13976,20 +13200,12 @@
     "matchText": "machine learning 1 core concepts feature selection kb 25 machine learning 25 1 core concepts feature selection"
   },
   {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Hyperparameter optimisation (grid search/index.mdx",
-    "title": "Hyperparameter optimisation (grid search",
+    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Hyperparameter optimisation/index.mdx",
+    "title": "Hyperparameter optimisation",
     "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/hyperparameter-optimisation-grid-search",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/hyperparameter-optimisation-grid-search",
-    "matchText": "machine learning 1 core concepts hyperparameter optimisation grid search kb 25 machine learning 25 1 core concepts hyperparameter optimisation grid search"
-  },
-  {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/L2/index.mdx",
-    "title": "L2",
-    "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/l2",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/l2",
-    "matchText": "machine learning 1 core concepts l2 kb 25 machine learning 25 1 core concepts l2"
+    "route": "/kb/25-machine-learning/25-1-core-concepts/hyperparameter-optimisation",
+    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/hyperparameter-optimisation",
+    "matchText": "machine learning 1 core concepts hyperparameter optimisation kb 25 machine learning 25 1 core concepts hyperparameter optimisation"
   },
   {
     "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Model evaluation/index.mdx",
@@ -14016,14 +13232,6 @@
     "matchText": "machine learning 1 core concepts overfitting kb 25 machine learning 25 1 core concepts overfitting"
   },
   {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/random search/index.mdx",
-    "title": "random search",
-    "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/random-search",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/random-search",
-    "matchText": "machine learning 1 core concepts random search kb 25 machine learning 25 1 core concepts random search"
-  },
-  {
     "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Regression/index.mdx",
     "title": "Regression",
     "breadcrumb": "Machine Learning / 1 Core Concepts",
@@ -14032,12 +13240,12 @@
     "matchText": "machine learning 1 core concepts regression kb 25 machine learning 25 1 core concepts regression"
   },
   {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Regularisation (L1/index.mdx",
-    "title": "Regularisation (L1",
+    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Regularisation/index.mdx",
+    "title": "Regularisation",
     "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/regularisation-l1",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/regularisation-l1",
-    "matchText": "machine learning 1 core concepts regularisation l1 kb 25 machine learning 25 1 core concepts regularisation l1"
+    "route": "/kb/25-machine-learning/25-1-core-concepts/regularisation",
+    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/regularisation",
+    "matchText": "machine learning 1 core concepts regularisation kb 25 machine learning 25 1 core concepts regularisation"
   },
   {
     "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Self-supervised learning/index.mdx",
@@ -14054,14 +13262,6 @@
     "route": "/kb/25-machine-learning/25-1-core-concepts/semi-supervised-learning",
     "routeLabel": "kb/25-machine-learning/25-1-core-concepts/semi-supervised-learning",
     "matchText": "machine learning 1 core concepts semi supervised learning kb 25 machine learning 25 1 core concepts semi supervised learning"
-  },
-  {
-    "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/stacking)/index.mdx",
-    "title": "stacking)",
-    "breadcrumb": "Machine Learning / 1 Core Concepts",
-    "route": "/kb/25-machine-learning/25-1-core-concepts/stacking",
-    "routeLabel": "kb/25-machine-learning/25-1-core-concepts/stacking",
-    "matchText": "machine learning 1 core concepts stacking kb 25 machine learning 25 1 core concepts stacking"
   },
   {
     "id": "./routes/KB/25. Machine Learning/25.1 Core Concepts/Supervised learning/index.mdx",
@@ -14656,284 +13856,60 @@
     "matchText": "mlops and llmops weights and biases kb 34 mlops and llmops weights and biases"
   },
   {
-    "id": "./routes/KB/20. Mobile Development/.NET MAUI/index.mdx",
-    "title": ".NET MAUI",
+    "id": "./routes/KB/20. Mobile Development/Android Development/index.mdx",
+    "title": "Android Development",
     "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/net-maui",
-    "routeLabel": "kb/20-mobile-development/net-maui",
-    "matchText": "mobile development net maui kb 20 mobile development net maui"
+    "route": "/kb/20-mobile-development/android-development",
+    "routeLabel": "kb/20-mobile-development/android-development",
+    "matchText": "mobile development android development kb 20 mobile development android development"
   },
   {
-    "id": "./routes/KB/20. Mobile Development/Android architecture components (ViewModel/index.mdx",
-    "title": "Android architecture components (ViewModel",
+    "id": "./routes/KB/20. Mobile Development/Cross-Platform/index.mdx",
+    "title": "Cross-Platform",
     "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/android-architecture-components-viewmodel",
-    "routeLabel": "kb/20-mobile-development/android-architecture-components-viewmodel",
-    "matchText": "mobile development android architecture components viewmodel kb 20 mobile development android architecture components viewmodel"
+    "route": "/kb/20-mobile-development/cross-platform",
+    "routeLabel": "kb/20-mobile-development/cross-platform",
+    "matchText": "mobile development cross platform kb 20 mobile development cross platform"
   },
   {
-    "id": "./routes/KB/20. Mobile Development/Android SDK/index.mdx",
-    "title": "Android SDK",
+    "id": "./routes/KB/20. Mobile Development/Deployment & CI-CD/index.mdx",
+    "title": "Deployment & CI-CD",
     "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/android-sdk",
-    "routeLabel": "kb/20-mobile-development/android-sdk",
-    "matchText": "mobile development android sdk kb 20 mobile development android sdk"
+    "route": "/kb/20-mobile-development/deployment-and-ci-cd",
+    "routeLabel": "kb/20-mobile-development/deployment-and-ci-cd",
+    "matchText": "mobile development deployment and ci cd kb 20 mobile development deployment and ci cd"
   },
   {
-    "id": "./routes/KB/20. Mobile Development/Android Studio/index.mdx",
-    "title": "Android Studio",
+    "id": "./routes/KB/20. Mobile Development/Hybrid Web Apps/index.mdx",
+    "title": "Hybrid Web Apps",
     "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/android-studio",
-    "routeLabel": "kb/20-mobile-development/android-studio",
-    "matchText": "mobile development android studio kb 20 mobile development android studio"
+    "route": "/kb/20-mobile-development/hybrid-web-apps",
+    "routeLabel": "kb/20-mobile-development/hybrid-web-apps",
+    "matchText": "mobile development hybrid web apps kb 20 mobile development hybrid web apps"
   },
   {
-    "id": "./routes/KB/20. Mobile Development/App signing/index.mdx",
-    "title": "App signing",
+    "id": "./routes/KB/20. Mobile Development/iOS Development/index.mdx",
+    "title": "iOS Development",
     "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/app-signing",
-    "routeLabel": "kb/20-mobile-development/app-signing",
-    "matchText": "mobile development app signing kb 20 mobile development app signing"
+    "route": "/kb/20-mobile-development/ios-development",
+    "routeLabel": "kb/20-mobile-development/ios-development",
+    "matchText": "mobile development ios development kb 20 mobile development ios development"
   },
   {
-    "id": "./routes/KB/20. Mobile Development/App Store review process/index.mdx",
-    "title": "App Store review process",
+    "id": "./routes/KB/20. Mobile Development/Mobile Architecture/index.mdx",
+    "title": "Mobile Architecture",
     "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/app-store-review-process",
-    "routeLabel": "kb/20-mobile-development/app-store-review-process",
-    "matchText": "mobile development app store review process kb 20 mobile development app store review process"
+    "route": "/kb/20-mobile-development/mobile-architecture",
+    "routeLabel": "kb/20-mobile-development/mobile-architecture",
+    "matchText": "mobile development mobile architecture kb 20 mobile development mobile architecture"
   },
   {
-    "id": "./routes/KB/20. Mobile Development/Capacitor/index.mdx",
-    "title": "Capacitor",
+    "id": "./routes/KB/20. Mobile Development/The Mobile Ecosystem/index.mdx",
+    "title": "The Mobile Ecosystem",
     "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/capacitor",
-    "routeLabel": "kb/20-mobile-development/capacitor",
-    "matchText": "mobile development capacitor kb 20 mobile development capacitor"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Combine framework/index.mdx",
-    "title": "Combine framework",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/combine-framework",
-    "routeLabel": "kb/20-mobile-development/combine-framework",
-    "matchText": "mobile development combine framework kb 20 mobile development combine framework"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Cordova/index.mdx",
-    "title": "Cordova",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/cordova",
-    "routeLabel": "kb/20-mobile-development/cordova",
-    "matchText": "mobile development cordova kb 20 mobile development cordova"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Core Data)/index.mdx",
-    "title": "Core Data)",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/core-data",
-    "routeLabel": "kb/20-mobile-development/core-data",
-    "matchText": "mobile development core data kb 20 mobile development core data"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Cross-platform vs native trade-offs/index.mdx",
-    "title": "Cross-platform vs native trade-offs",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/cross-platform-vs-native-trade-offs",
-    "routeLabel": "kb/20-mobile-development/cross-platform-vs-native-trade-offs",
-    "matchText": "mobile development cross platform vs native trade offs kb 20 mobile development cross platform vs native trade offs"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Dart/index.mdx",
-    "title": "Dart",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/dart",
-    "routeLabel": "kb/20-mobile-development/dart",
-    "matchText": "mobile development dart kb 20 mobile development dart"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Deep linking/index.mdx",
-    "title": "Deep linking",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/deep-linking",
-    "routeLabel": "kb/20-mobile-development/deep-linking",
-    "matchText": "mobile development deep linking kb 20 mobile development deep linking"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Expo/index.mdx",
-    "title": "Expo",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/expo",
-    "routeLabel": "kb/20-mobile-development/expo",
-    "matchText": "mobile development expo kb 20 mobile development expo"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Flutter/index.mdx",
-    "title": "Flutter",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/flutter",
-    "routeLabel": "kb/20-mobile-development/flutter",
-    "matchText": "mobile development flutter kb 20 mobile development flutter"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Google Play Console/index.mdx",
-    "title": "Google Play Console",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/google-play-console",
-    "routeLabel": "kb/20-mobile-development/google-play-console",
-    "matchText": "mobile development google play console kb 20 mobile development google play console"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Ionic/index.mdx",
-    "title": "Ionic",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/ionic",
-    "routeLabel": "kb/20-mobile-development/ionic",
-    "matchText": "mobile development ionic kb 20 mobile development ionic"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/iOS/index.mdx",
-    "title": "iOS",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/ios",
-    "routeLabel": "kb/20-mobile-development/ios",
-    "matchText": "mobile development ios kb 20 mobile development ios"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Java (Android)/index.mdx",
-    "title": "Java (Android)",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/java-android",
-    "routeLabel": "kb/20-mobile-development/java-android",
-    "matchText": "mobile development java android kb 20 mobile development java android"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Jetpack Compose/index.mdx",
-    "title": "Jetpack Compose",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/jetpack-compose",
-    "routeLabel": "kb/20-mobile-development/jetpack-compose",
-    "matchText": "mobile development jetpack compose kb 20 mobile development jetpack compose"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Kotlin/index.mdx",
-    "title": "Kotlin",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/kotlin",
-    "routeLabel": "kb/20-mobile-development/kotlin",
-    "matchText": "mobile development kotlin kb 20 mobile development kotlin"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/LiveData/index.mdx",
-    "title": "LiveData",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/livedata",
-    "routeLabel": "kb/20-mobile-development/livedata",
-    "matchText": "mobile development livedata kb 20 mobile development livedata"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Local storage (SQLite/index.mdx",
-    "title": "Local storage (SQLite",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/local-storage-sqlite",
-    "routeLabel": "kb/20-mobile-development/local-storage-sqlite",
-    "matchText": "mobile development local storage sqlite kb 20 mobile development local storage sqlite"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Mobile app lifecycle/index.mdx",
-    "title": "Mobile app lifecycle",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/mobile-app-lifecycle",
-    "routeLabel": "kb/20-mobile-development/mobile-app-lifecycle",
-    "matchText": "mobile development mobile app lifecycle kb 20 mobile development mobile app lifecycle"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Mobile CI-CD (Fastlane)/index.mdx",
-    "title": "Mobile CI-CD (Fastlane)",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/mobile-ci-cd-fastlane",
-    "routeLabel": "kb/20-mobile-development/mobile-ci-cd-fastlane",
-    "matchText": "mobile development mobile ci cd fastlane kb 20 mobile development mobile ci cd fastlane"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/NativeScript/index.mdx",
-    "title": "NativeScript",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/nativescript",
-    "routeLabel": "kb/20-mobile-development/nativescript",
-    "matchText": "mobile development nativescript kb 20 mobile development nativescript"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Objective-C/index.mdx",
-    "title": "Objective-C",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/objective-c",
-    "routeLabel": "kb/20-mobile-development/objective-c",
-    "matchText": "mobile development objective c kb 20 mobile development objective c"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Push notifications/index.mdx",
-    "title": "Push notifications",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/push-notifications",
-    "routeLabel": "kb/20-mobile-development/push-notifications",
-    "matchText": "mobile development push notifications kb 20 mobile development push notifications"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/React Native/index.mdx",
-    "title": "React Native",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/react-native",
-    "routeLabel": "kb/20-mobile-development/react-native",
-    "matchText": "mobile development react native kb 20 mobile development react native"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Realm/index.mdx",
-    "title": "Realm",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/realm",
-    "routeLabel": "kb/20-mobile-development/realm",
-    "matchText": "mobile development realm kb 20 mobile development realm"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Room)/index.mdx",
-    "title": "Room)",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/room",
-    "routeLabel": "kb/20-mobile-development/room",
-    "matchText": "mobile development room kb 20 mobile development room"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Swift/index.mdx",
-    "title": "Swift",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/swift",
-    "routeLabel": "kb/20-mobile-development/swift",
-    "matchText": "mobile development swift kb 20 mobile development swift"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/SwiftUI/index.mdx",
-    "title": "SwiftUI",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/swiftui",
-    "routeLabel": "kb/20-mobile-development/swiftui",
-    "matchText": "mobile development swiftui kb 20 mobile development swiftui"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/UIKit/index.mdx",
-    "title": "UIKit",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/uikit",
-    "routeLabel": "kb/20-mobile-development/uikit",
-    "matchText": "mobile development uikit kb 20 mobile development uikit"
-  },
-  {
-    "id": "./routes/KB/20. Mobile Development/Xcode/index.mdx",
-    "title": "Xcode",
-    "breadcrumb": "Mobile Development",
-    "route": "/kb/20-mobile-development/xcode",
-    "routeLabel": "kb/20-mobile-development/xcode",
-    "matchText": "mobile development xcode kb 20 mobile development xcode"
+    "route": "/kb/20-mobile-development/the-mobile-ecosystem",
+    "routeLabel": "kb/20-mobile-development/the-mobile-ecosystem",
+    "matchText": "mobile development the mobile ecosystem kb 20 mobile development the mobile ecosystem"
   },
   {
     "id": "./routes/KB/27. Natural Language Processing/abstractive)/index.mdx",

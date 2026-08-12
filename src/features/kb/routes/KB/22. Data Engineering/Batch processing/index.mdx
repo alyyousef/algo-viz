@@ -1,8 +1,33 @@
+---
+title: Batch Processing
+description: The paradigm of executing massive, high-latency computational jobs over bounded datasets at scheduled intervals.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Batch processing">
+<ConceptTemplate title="Batch Processing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Data Engineering is broadly bifurcated into two mathematical paradigms: Stream Processing and Batch Processing. 
+
+**Batch Processing** is the execution of complex transformations against a massive, static, mathematically **bounded** dataset (a dataset that has a defined start and end).
+
+## 1. The Paradigm
+Unlike Stream processing (which must respond to events in milliseconds), Batch processing accepts high latency in exchange for massive throughput.
+
+- **Schedule**: Batch jobs run on a strict chronological schedule (e.g., midnight, hourly) orchestrated by tools like Apache Airflow.
+- **Completeness**: A batch job mathematically assumes it has access to the *entire* dataset. If you are calculating the "Daily Total Revenue", the job runs at 1:00 AM, assuming all transactions for the previous day have securely landed on disk.
+- **Fault Tolerance**: If a batch job fails halfway through a 5-hour run, the entire job is typically retried. Modern engines (like Spark) mitigate this by caching checkpoints, but the fundamental mathematical property is that the pipeline halts and retries.
+
+## 2. Core Use Cases
+Despite the massive hype around real-time streaming, 90% of enterprise data engineering is executed in Batch.
+- **ETL/ELT**: Extracting 50GB of daily updates from a PostgreSQL replica, transforming it, and loading it into Snowflake.
+- **Machine Learning Training**: Reading 10 years of historical Parquet files from an S3 Data Lake to mathematically calculate weights for a Deep Learning model.
+- **Financial Reporting**: Generating the strict, legally compliant End-of-Month revenue dashboards.
+
+## 3. The Architecture Stack
+The architecture for Batch Processing has evolved through three distinct eras:
+
+1. **The Legacy Era (2000s)**: On-premise Data Warehouses (Teradata) executing massive stored SQL procedures overnight. Highly expensive and rigid.
+2. **The Big Data Era (2010s)**: Apache Hadoop and MapReduce. Data was dumped into cheap HDFS storage, and Java MapReduce jobs executed over hours. It introduced horizontal scaling but suffered from horrific Disk I/O bottlenecks.
+3. **The Modern Era (2020s)**: **Apache Spark** and **Cloud Data Warehouses** (Snowflake/BigQuery). Spark executes the DAGs entirely in RAM for blistering speed, while tools like **dbt** (Data Build Tool) execute ELT batch transformations directly inside the Cloud Data Warehouse using massive parallel SQL execution.
 
 </ConceptTemplate>

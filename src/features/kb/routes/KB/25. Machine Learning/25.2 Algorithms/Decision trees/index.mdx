@@ -1,8 +1,29 @@
+---
+title: Decision Trees
+description: A highly interpretable, non-linear Machine Learning algorithm that mathematically partitions data using a hierarchy of IF-THEN rules.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Decision trees">
+<ConceptTemplate title="Decision Trees">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Decision Trees** are the foundational building block for the most powerful tabular algorithms in existence (Random Forests, XGBoost). They are non-linear models that mathematically recursively split the dataset into smaller, homogeneous buckets.
+
+## 1. The Mathematical Splitting Criteria
+A Decision Tree starts at the Root Node containing all 10,000 rows. It must mathematically decide exactly which feature (and what threshold) to split the data on (e.g., Age > 30).
+It does this by looping through every single feature and calculating a mathematical metric of "Purity".
+
+- **Gini Impurity (Classification)**: Mathematically measures how often a randomly chosen element would be incorrectly labeled if it was randomly labeled according to the distribution of labels in the node. The algorithm searches for the split that mathematically minimizes Gini Impurity (creating buckets that are purely 100% Cat or 100% Dog).
+- **Entropy & Information Gain**: An alternative to Gini, derived from Claude Shannon's Information Theory. It mathematically measures the chaos in the node. The tree chooses the split that mathematically reduces the entropy the most.
+- **MSE (Regression)**: For predicting continuous numbers (Price), the tree mathematically calculates the Variance of the target variable in the proposed child nodes, choosing the split that minimizes the Mean Squared Error.
+
+## 2. Interpretability (White Box)
+Decision Trees are mathematically exact and perfectly interpretable. 
+If a bank uses a Deep Neural Network to deny a loan, it cannot legally explain why. If it uses a Decision Tree, it can trace the exact mathematical path: 
+*Root (Income < $50k) $ightarrow$ Left Branch (Credit Score < 600) $ightarrow$ Leaf Node (Deny)*. 
+This transparency makes them mandatory in highly regulated industries.
+
+## 3. The Overfitting Catastrophe
+An unconstrained Decision Tree will mathematically continue splitting the data until every single leaf node contains exactly 1 row. It will achieve 0.0 Loss on the training data, completely memorizing the noise, and fail catastrophically in production.
+Data Scientists mathematically constrain trees using **Pruning**: setting strict Hyperparameters like `max_depth=5` or `min_samples_split=20` to force the tree to stop growing before it memorizes the noise.
 
 </ConceptTemplate>

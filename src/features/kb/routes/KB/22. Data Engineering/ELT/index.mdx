@@ -1,8 +1,29 @@
+---
+title: ELT (Extract, Load, Transform)
+description: The modern Data Engineering paradigm that leverages the immense compute power of Cloud Data Warehouses to transform data in-place.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ELT">
+<ConceptTemplate title="ELT (Extract, Load, Transform)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For decades, the standard architectural paradigm was ETL. With the advent of Cloud Data Warehouses (Snowflake, BigQuery), the industry experienced a massive mathematical paradigm shift to **ELT**.
+
+## 1. The Paradigm Shift
+In legacy systems, Data Warehouse storage and compute were incredibly expensive. You could not afford to store raw, dirty data. You had to use a massive external Apache Spark cluster to transform the data *before* loading it.
+
+Cloud Data Warehouses mathematically decoupled compute and storage. Storage on S3 is practically free, and Cloud Compute can scale to thousands of cores in milliseconds.
+Therefore, the architecture flipped:
+1. **Extract**: Pull raw data from the operational database via tools like Fivetran or Airbyte.
+2. **Load**: Dump the data *completely raw and unmodified* directly into the Cloud Data Warehouse.
+3. **Transform**: Use the immense, dynamically-scaling SQL execution engine of the Warehouse *itself* to mathematically transform the raw data into clean analytical tables.
+
+## 2. The Advantages of ELT
+- **Simplicity**: You completely eliminate the need to maintain, tune, and debug complex, distributed Apache Spark clusters for daily batch transformations.
+- **Democratization (SQL)**: In ETL, transformations were written in complex Scala or PySpark by specialized Data Engineers. In ELT, the data is already in the warehouse, so transformations are written in pure **SQL**. This allows Data Analysts to mathematically build pipelines themselves.
+- **Raw Data Retention**: Because you load the raw data first, if a transformation logic was flawed (e.g., calculating revenue incorrectly), you mathematically possess the raw data to replay and fix the calculation instantly.
+
+## 3. The Rise of dbt
+ELT directly spawned the creation of **dbt (Data Build Tool)**. 
+Because all transformations were now executing as SQL queries inside Snowflake, engineers needed a way to orchestrate thousands of SQL scripts. dbt mathematically models these SQL transformations as a Directed Acyclic Graph (DAG), bringing strict Software Engineering CI/CD practices to ELT pipelines.
 
 </ConceptTemplate>

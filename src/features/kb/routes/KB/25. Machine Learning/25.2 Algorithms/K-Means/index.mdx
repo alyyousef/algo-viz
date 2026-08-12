@@ -1,8 +1,27 @@
+---
+title: K-Means Clustering
+description: The foundational unsupervised clustering algorithm that mathematically partitions data into K distinct spherical clusters based on geometric centroids.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="K-Means">
+<ConceptTemplate title="K-Means Clustering">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**K-Means** is the most famous, heavily utilized, and mathematically simple unsupervised clustering algorithm in existence. It is designed to partition an unlabeled dataset into $K$ distinct, non-overlapping clusters.
+
+## 1. The Mathematical Objective
+The mathematical goal of K-Means is to minimize the **Within-Cluster Sum of Squares (WCSS)**. 
+It attempts to mathematically ensure that the distance from every data point to its assigned cluster center (Centroid) is as small as possible, creating incredibly tight, dense clusters.
+
+## 2. Lloyd's Algorithm (The Loop)
+Because finding the absolute perfect mathematical clusters is NP-Hard (computationally impossible for large data), K-Means uses an iterative heuristic called Lloyd's Algorithm:
+1. **Initialization**: The user explicitly defines $K$. The algorithm places $K$ random Centroids in the high-dimensional space.
+2. **Assignment Step**: Using Euclidean Distance, the algorithm mathematically calculates the distance from every single data point to all $K$ centroids. It assigns the point to the closest centroid.
+3. **Update Step**: The algorithm mathematically calculates the exact mean (average) coordinates of all the points assigned to Cluster 1. It physically moves the Centroid for Cluster 1 to that exact coordinate.
+4. **Convergence**: It loops the Assignment and Update steps. The centroids mathematically drift toward the dense areas of the data. When the centroids stop moving, the algorithm terminates.
+
+## 3. The Elbow Method (Finding K)
+The fatal flaw of K-Means is that it mathematically forces you to guess $K$. If there are 3 real clusters, but you set $K=10$, it will violently chop the data into 10 meaningless pieces.
+
+To find the mathematically optimal $K$, Data Scientists use the **Elbow Method**. They run K-Means for $K=1$, $K=2$, $K=3...$, calculating the WCSS Loss for each. They plot the Loss on a graph. The curve rapidly plunges, then abruptly flattens out, forming an "Elbow". The exact mathematical point of the Elbow represents the optimal number of clusters before the algorithm starts overfitting the noise.
 
 </ConceptTemplate>

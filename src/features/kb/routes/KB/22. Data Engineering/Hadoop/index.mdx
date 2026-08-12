@@ -1,8 +1,34 @@
+---
+title: Apache Hadoop
+description: The foundational Big Data framework that pioneered distributed storage (HDFS) and distributed processing (MapReduce).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hadoop">
+<ConceptTemplate title="Apache Hadoop">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 2004, Google published a whitepaper detailing how they stored and indexed the entire internet. Doug Cutting and Mike Cafarella used this paper to create **Apache Hadoop**, birthing the entire modern Big Data industry.
+
+## 1. The Core Components
+Hadoop is not a database; it is a mathematical framework consisting of three core pillars:
+
+1. **HDFS (Hadoop Distributed File System)**: The storage layer. It mathematically slices massive files into 128MB blocks and replicates them across thousands of cheap commodity hard drives for infinite scale and fault tolerance.
+2. **YARN (Yet Another Resource Negotiator)**: The cluster operating system. When 50 different data scientists submit massive jobs simultaneously, YARN mathematically schedules the CPU and RAM allocation across the thousands of servers to prevent the cluster from crashing.
+3. **MapReduce**: The execution engine.
+
+## 2. The MapReduce Paradigm
+Moving 10 Terabytes of data across a network to a central CPU for processing is mathematically impossible due to network bandwidth limitations.
+MapReduce solves this by **moving the compute to the data**. 
+
+- **Map Phase**: A tiny 10KB Java program is sent to every single server that holds a slice of the data. The servers execute the logic locally on their own hard drives in parallel.
+- **Shuffle Phase**: The servers mathematically route their intermediate results across the network (e.g., all data for "User A" goes to Server 1, "User B" goes to Server 2).
+- **Reduce Phase**: The final aggregation is calculated and written back to disk.
+
+## 3. The Decline of Hadoop
+While Hadoop was revolutionary, it had a fatal architectural flaw: **Disk I/O**.
+MapReduce mathematically forced data to be written to the physical spinning hard drive between every single processing step. For complex algorithms (like Machine Learning), this extreme disk latency made jobs take hours or days.
+
+Because of this, MapReduce was almost entirely replaced by **Apache Spark**, which performs the exact same distributed execution, but keeps the execution graph mathematically in **RAM**, making it 100x faster. 
+
+Today, raw Hadoop is considered legacy architecture, having been largely superseded by Spark, Databricks, and Cloud Data Warehouses (Snowflake).
 
 </ConceptTemplate>

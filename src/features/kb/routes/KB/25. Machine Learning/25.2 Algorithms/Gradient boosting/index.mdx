@@ -1,8 +1,29 @@
+---
+title: Gradient Boosting
+description: The foundational mathematical framework for sequentially chaining weak algorithms, where each new model is explicitly trained to minimize the residual errors of the previous ensemble.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gradient boosting">
+<ConceptTemplate title="Gradient Boosting">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Random Forests build 1,000 deep trees independently in parallel, **Gradient Boosting** builds 1,000 shallow trees sequentially. It is a mathematical optimization algorithm that treats Machine Learning as a game of golf: the first tree takes a massive swing to get close to the hole, and every subsequent tree takes a tiny putt to mathematically close the remaining distance (the error).
+
+## 1. The Mathematical Engine (Residuals)
+1. **Tree 1 (The Initial Guess)**: The algorithm mathematically predicts the average of the target variable for every single row. The error is massive.
+2. **Calculating Residuals**: The algorithm calculates the exact mathematical difference between the true value and Tree 1's prediction. (True = 100, Predicted = 60, Residual = 40).
+3. **Tree 2**: Here is the brilliant mathematical leap. Tree 2 is *not* trained to predict the target (100). Tree 2 is mathematically trained *only to predict the Residual (40)*. 
+4. **The Ensemble**: To get the final prediction, you mathematically sum the output of the trees: $Prediction = Tree_1 + (Learning_Rate \times Tree_2)$. 
+
+## 2. Gradient Descent in Function Space
+Why is it called *Gradient* Boosting? 
+Because predicting the Residuals is mathematically identical to calculating the negative gradient of the Mean Squared Error (MSE) Loss Function. 
+
+The algorithm is mathematically executing **Gradient Descent**. But instead of updating numerical weights (like a Neural Network), it is updating the prediction by mathematically adding a new Tree (a function) that points in the exact direction of the steepest descent toward zero error.
+
+## 3. The Need for Shrinkage (Learning Rate)
+If Tree 2 perfectly predicts the Residual of 40, the error immediately drops to 0, and the model mathematically overfits instantly. 
+To prevent this, Gradient Boosting uses a mathematical hyperparameter called the **Learning Rate (Shrinkage)**. 
+Instead of adding the full value of Tree 2, it multiplies it by a tiny number (e.g., 0.1). $60 + (40 \times 0.1) = 64$. 
+The algorithm is mathematically forced to take 1,000 tiny, highly constrained steps to reach the target, resulting in unparalleled accuracy and robustness on tabular data.
 
 </ConceptTemplate>

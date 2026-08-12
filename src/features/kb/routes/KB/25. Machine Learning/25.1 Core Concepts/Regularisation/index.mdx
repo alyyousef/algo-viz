@@ -1,0 +1,32 @@
+---
+title: Regularisation (L1/L2)
+description: The mathematical technique of modifying the Loss Function to penalize excessive model complexity, strictly preventing overfitting.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Regularisation (L1/L2)">
+
+Left to its own devices, a complex Machine Learning model will mathematically memorize the training data. The weights (slopes) in its mathematical equation will explode in magnitude (e.g., $y = 50,000x_1 - 49,999x_2$). This makes the model hyper-sensitive to noise. 
+
+**Regularisation** prevents this by mathematically punishing the model for having large weights.
+
+## 1. L2 Regularisation (Ridge)
+L2 Regularisation adds a penalty term to the Loss Function equal to the **mathematical square of the magnitude of the coefficients**.
+
+- **Formula**: $Loss = MSE + \lambda \sum w_i^2$
+- **Mathematical Effect**: Because the weights are squared, a weight of 10 results in a massive penalty of 100. To minimize the Loss Function, Gradient Descent is mathematically forced to shrink all the weights down so they are very close to zero.
+- **Result**: The weights never reach exactly zero. All features are kept, but their mathematical influence is smoothed out, preventing any single feature from dominating the model and preventing overfitting.
+
+## 2. L1 Regularisation (Lasso)
+L1 Regularisation adds a penalty term equal to the **mathematical absolute value of the magnitude of the coefficients**.
+
+- **Formula**: $Loss = MSE + \lambda \sum |w_i|$
+- **Mathematical Effect**: Because it uses the absolute value, the derivative of the penalty is constant. This causes a fascinating mathematical phenomenon: Gradient Descent will force the weights of irrelevant features to become **exactly 0.0**.
+- **Result**: L1 performs automatic **Feature Selection**. If you feed it 10,000 columns, it might output a model where 9,900 of the weights are exactly zero, leaving you with a highly interpretable model using only the 100 most important columns.
+
+## 3. Elastic Net
+Elastic Net mathematically combines L1 and L2 regularisation into a single Loss Function.
+- **Formula**: $Loss = MSE + lambda_1 \sum |w_i| + lambda_2 \sum w_i^2$
+- **Mathematical Effect**: It gives you the best of both worlds. It drops completely useless features to exactly 0 (like L1), but if two features are highly correlated (like "Square Footage" and "Number of Rooms"), L1 would randomly drop one of them. Elastic Net (via the L2 penalty) mathematically keeps both, shrinking their weights together.
+
+</ConceptTemplate>

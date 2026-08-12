@@ -1,8 +1,31 @@
+---
+title: Kafka Connect
+description: The mathematical framework for streaming data reliably between Apache Kafka and massive external systems (Databases, S3, ElasticSearch).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Kafka Connect">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a Data Engineer needs to stream every single UPDATE from a PostgreSQL database into Apache Kafka, and then stream those Kafka events into an Elasticsearch cluster, writing custom Python consumers/producers is a terrible idea. Custom scripts fail at handling network partitions, retries, and offset management.
+
+**Kafka Connect** is the official framework included with Apache Kafka to mathematically automate the continuous, reliable streaming of data between Kafka and external systems.
+
+## 1. The Architecture
+Kafka Connect operates entirely outside of your application code. It is a standalone, distributed cluster of worker nodes that physically execute **Connectors**.
+
+- **Source Connectors**: Mathematically pull data *from* an external system (e.g., PostgreSQL, MongoDB, Twitter API) and push it into a Kafka Topic.
+- **Sink Connectors**: Mathematically pull data *from* a Kafka Topic and push it into an external system (e.g., AWS S3, Snowflake, Elasticsearch).
+
+## 2. Change Data Capture (CDC) with Debezium
+The most powerful and prevalent use of Kafka Connect is CDC.
+If you simply write a Source Connector that queries `SELECT * FROM users WHERE updated_at > NOW()` every 5 seconds, you will mathematically crush the database CPU, and you will miss any rows that were updated and then deleted within those 5 seconds.
+
+**Debezium** is an industry-standard suite of Kafka Connectors that solves this mathematically. 
+Instead of running SQL queries, Debezium hooks directly into the database's internal **Transaction Log** (the WAL in Postgres, or the Binlog in MySQL). 
+Every time a row changes on disk, Debezium instantly streams an event to Kafka. It mathematically guarantees that absolutely zero database changes are ever missed, and it puts almost zero load on the database CPU.
+
+## 3. Distributed Fault Tolerance
+Because Kafka Connect runs as a distributed cluster, it mathematically inherits Kafka's resilience. 
+If a Kafka Connect Worker node crashes while streaming 100,000 events to Snowflake, the cluster instantly detects the failure. It mathematically reassigns the Sink Connector to a surviving Worker node, retrieves the exact Kafka Offset where it left off, and resumes streaming without dropping or duplicating a single row.
 
 </ConceptTemplate>

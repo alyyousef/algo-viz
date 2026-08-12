@@ -1,8 +1,28 @@
+---
+title: Precision
+description: A critical mathematical classification metric measuring the absolute trustworthiness of a model when it claims a data point is positive.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Precision">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In binary classification, Accuracy is dangerously misleading on imbalanced datasets. **Precision** isolates a highly specific mathematical question: *"Out of all the times the model screamed 'Positive!', how many times was it actually right?"*
+
+## 1. The Mathematical Equation
+Precision relies on the False Positives (FP) from the Confusion Matrix.
+$Precision = \frac{True Positives}{True Positives + False Positives}$
+
+If a spam filter flags 100 emails as "Spam", and 90 of them are actually spam, but 10 of them are legitimate emails from your boss, the Precision is $90 / 100 = 0.90$ (90%).
+
+## 2. When to Optimize for Precision (The Cost of False Positives)
+You must mathematically force your model to optimize for Precision when the business cost of a **False Positive** is catastrophic.
+
+- **Spam Filters**: If an email is mistakenly flagged as spam (False Positive), you might miss a million-dollar contract. The system must be highly Precise. It is better to let 10 real spam emails into the inbox (low Recall) than to falsely ban 1 real email.
+- **Death Penalty AI**: If an AI predicts if someone is guilty of murder, a False Positive means executing an innocent person. The model must theoretically have 100% Precision.
+
+## 3. The Tradeoff with Recall
+In Machine Learning, Precision and Recall are mathematically locked in a see-saw. 
+A model outputs probabilities (e.g., 0.85). If you want to increase Precision, you mathematically raise the decision threshold (e.g., "Only predict 'Spam' if you are 99% sure"). 
+Because the model is now extremely conservative, the few times it does predict Spam, it will be absolutely correct (High Precision). However, it will now miss thousands of obvious 90% spam emails, meaning its Recall mathematically plunges to near zero.
 
 </ConceptTemplate>

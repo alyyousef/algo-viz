@@ -1,8 +1,31 @@
+---
+title: HDBSCAN
+description: An advanced hierarchical density-based clustering algorithm that mathematically eliminates the fatal flaw of DBSCAN by dynamically adapting to clusters of varying densities.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="HDBSCAN">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+DBSCAN is a brilliant clustering algorithm, but it has one fatal mathematical flaw: the $\epsilon$ (Epsilon) radius is globally fixed. If a dataset contains a highly dense cluster of points, and a second, very loose, "fluffy" cluster of points, DBSCAN mathematically fails. If you set $\epsilon$ small, the fluffy cluster shatters into noise. If you set $\epsilon$ large, the dense clusters merge into a single blob.
+
+**HDBSCAN (Hierarchical DBSCAN)** solves this mathematically by sweeping through all possible values of $\epsilon$ simultaneously.
+
+## 1. Core Distance and Mutual Reachability
+Instead of using raw Euclidean distance, HDBSCAN mathematically transforms the space using **Mutual Reachability Distance**. 
+It calculates the "Core Distance" (how far you have to travel to find $K$ neighbors). The Mutual Reachability Distance between Point A and Point B is mathematically defined as the absolute maximum of:
+1. Core Distance of A
+2. Core Distance of B
+3. Raw distance between A and B
+
+This mathematical transformation forcefully pushes outliers far away from the dense regions, making the true clusters much more mathematically pronounced.
+
+## 2. Building the Minimum Spanning Tree
+HDBSCAN mathematically links all points together using a Minimum Spanning Tree (MST), where the edges are weighted by the Mutual Reachability Distance. 
+It then systematically sorts the edges by weight and starts mathematically "cutting" the heaviest edges first. This organically builds a massive **Cluster Hierarchy (Dendrogram)**, simulating the effect of running DBSCAN with an $\epsilon$ that shrinks continuously from infinity down to zero.
+
+## 3. Cluster Extraction (The Condensation)
+The final brilliant mathematical step is extracting the clusters from the massive tree. 
+Instead of a human cutting the tree horizontally, HDBSCAN mathematically defines cluster "Stability" over volume. It asks: *"Does this cluster persist for a long time as $\epsilon$ shrinks, or does it immediately shatter into noise?"* 
+It mathematically selects the most persistent, stable clusters, perfectly isolating clusters of vastly varying densities without requiring the human to guess the $\epsilon$ parameter.
 
 </ConceptTemplate>

@@ -1,31 +1,24 @@
 ---
 title: Unsupervised Learning
-description: A machine learning paradigm where the model is trained on an unlabeled dataset.
+description: A paradigm where algorithms mathematically deduce hidden structures, patterns, and anomalies in massive datasets without any human-provided labels.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Unsupervised Learning">
+<ConceptTemplate title="Unsupervised Learning">
 
-Unsupervised learning is a type of machine learning that looks for previously undetected patterns in a data set with no pre-existing labels and with a minimum of human supervision.
+In **Unsupervised Learning**, the dataset consists entirely of inputs ($X$). There are mathematically zero target outputs ($Y$) or labels provided by humans. The algorithm is left entirely alone to mathematically discover the hidden structure of the data.
 
-<Callout icon="tip" title="Finding Hidden Structure">
-  Unlike Supervised Learning, there are no "correct answers" provided. The algorithm's job is simply to group the data, find anomalies, or compress the data by discovering inherent structures within it.
-</Callout>
+## 1. Clustering
+The most prominent mathematical task in Unsupervised Learning.
+You feed the algorithm a database of 1 million customer purchasing records. You do not tell the algorithm anything about the customers. 
+The algorithm (e.g., K-Means) mathematically calculates the high-dimensional distance between all users. It discovers that the users mathematically cluster into three distinct groups. A human later analyzes the clusters and realizes the algorithm successfully grouped "Budget Shoppers", "Luxury Shoppers", and "Bulk Buyers" entirely on its own.
 
-## Common Use Cases
+## 2. Dimensionality Reduction
+Massive datasets suffer from the Curse of Dimensionality. Unsupervised algorithms (like PCA or t-SNE) mathematically compress 1,000 features down to 3 features by finding the mathematical directions of maximum variance. This allows humans to visualize massive datasets in 3D space, instantly revealing hidden separations between data points that were invisible in the raw 1,000-dimensional matrix.
 
-<ComparisonTable 
-  headers={['Type', 'Description', 'Example']}
-  rows={[
-    ['Clustering', 'Grouping unlabeled data into subsets based on similarity.', 'Customer Segmentation (grouping shoppers by purchasing habits).'],
-    ['Anomaly Detection', 'Identifying rare items or events which raise suspicions by differing significantly from the majority of the data.', 'Credit Card Fraud Detection.'],
-    ['Dimensionality Reduction', 'Compressing data while retaining its core mathematical essence.', 'Principal Component Analysis (PCA).']
-  ]}
-/>
+## 3. Anomaly Detection
+Unsupervised learning is the absolute mathematical core of cybersecurity and fraud detection.
+Because fraudulent transactions are incredibly rare, there are often no labeled examples to train a Supervised model on.
+Instead, an Unsupervised algorithm (like Isolation Forests) mathematically models the "normal" behavior of a credit card based on millions of transactions. If a new transaction mathematically falls severely outside that normal distribution, the algorithm instantly flags it as an **Anomaly**, even though it was never explicitly taught what fraud looks like.
 
-## Common Algorithms
-- K-Means Clustering
-- Hierarchical Clustering
-- Autoencoders
-
-</TechnologyTemplate>
+</ConceptTemplate>

@@ -1,8 +1,31 @@
+---
+title: Random Forests
+description: The ultimate, hyper-robust ensemble algorithm that mathematically combines hundreds of independent Decision Trees to eliminate overfitting and capture extreme non-linearities.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Random forests">
+<ConceptTemplate title="Random Forests">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An individual Decision Tree is mathematically brittle and heavily prone to overfitting. **Random Forests** solve this by generating an ensemble (a "forest") of hundreds of trees, forcing them to be mathematically uncorrelated, and averaging their predictions.
+
+## 1. The Power of Bagging (Bootstrapping)
+If you train 100 trees on the exact same dataset, you just get 100 identical trees. 
+Random Forest relies on **Bagging (Bootstrap Aggregating)**. 
+
+To train Tree 1, the algorithm mathematically generates a new dataset by randomly sampling rows from the original data *with replacement*. (This means some rows are duplicated, and ~37% of rows are left out completely). Tree 1 is trained on this unique subset. Tree 2 is trained on a completely different random subset. This mathematical variance ensures the trees all learn slightly different interpretations of the data.
+
+## 2. The Brilliant "Random" Feature Split
+Bagging is not enough. If there is one extremely dominant feature (e.g., "Credit Score"), all 100 trees will mathematically use "Credit Score" as their very first root split, making them highly correlated.
+
+Random Forests introduce a second layer of randomness. When a tree is trying to find the best mathematical split at a node, **it is not allowed to look at all the features**. It is only mathematically permitted to select from a tiny, random subset of features (usually $\sqrt{\text{Total Features}}$). 
+By artificially blinding the trees, it forces them to discover subtle mathematical patterns hidden in the weaker features.
+
+## 3. The Ensemble Vote and OOB Error
+Once trained, a new data point is passed through all 100 trees. 
+- For Classification, the trees mathematically vote (Majority Wins).
+- For Regression, the outputs are mathematically averaged.
+Because the trees are uncorrelated, their individual overfitting noise mathematically cancels out in the average, leaving only the true signal.
+
+Additionally, because every tree left out ~37% of the data during Bootstrapping (the "Out-of-Bag" data), the Random Forest can mathematically test itself *during training* without requiring a separate Validation set, calculating the highly accurate **OOB Error**.
 
 </ConceptTemplate>

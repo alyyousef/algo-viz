@@ -1,8 +1,58 @@
+---
+title: Apache Beam
+description: A unified, mathematically rigorous programming model for executing both Batch and Streaming data processing pipelines.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Apache Beam">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, Data Engineers had to write two completely separate codebases: one using Apache Spark for daily Batch processing, and another using Apache Flink for real-time Stream processing. This was a maintenance nightmare.
+
+**Apache Beam** (Batch + strEAM) mathematically unifies these two paradigms.
+
+## 1. The Unified Paradigm
+Apache Beam is an API, not an execution engine. You write your pipeline logic *once* using the Beam SDK (Python, Java, Go). 
+You then compile that logic and send it to a **Runner** (the physical execution engine).
+
+Supported Runners include:
+- **Google Cloud Dataflow** (The most common, natively built for Beam)
+- **Apache Flink**
+- **Apache Spark**
+- **DirectRunner** (For local testing)
+
+Because the pipeline is decoupled from the execution engine, you can mathematically port your code from an on-premise Spark cluster to a serverless Google Dataflow cluster without changing a single line of business logic.
+
+## 2. Core Concepts
+Beam operates on a highly abstract, mathematically rigorous foundation.
+
+- **PCollection (Parallel Collection)**: The foundational dataset. It is immutable and massively distributed. A PCollection can represent a finite dataset (Batch) or an infinite, unbounded dataset (Stream).
+- **PTransform (Parallel Transform)**: The mathematical operations applied to a PCollection (e.g., `ParDo`, `GroupByKey`, `Filter`).
+- **Pipeline**: The DAG (Directed Acyclic Graph) encapsulating all PCollections and PTransforms.
+
+```python
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+
+# A simple Batch pipeline to count word frequencies
+with beam.Pipeline(options=PipelineOptions()) as p:
+    (
+        p
+        | 'Read Text File' >> beam.io.ReadFromText('gs://my-bucket/input.txt')
+        | 'Extract Words' >> beam.FlatMap(lambda line: line.split())
+        | 'Pair with 1' >> beam.Map(lambda word: (word, 1))
+        | 'Group and Sum' >> beam.CombinePerKey(sum)
+        | 'Write Output' >> beam.io.WriteToText('gs://my-bucket/output.txt')
+    )
+```
+
+## 3. Streaming and Windowing
+Where Beam truly shines is its mathematical handling of time in infinite streams.
+If you are streaming IoT sensor data, you cannot calculate an average because the stream never ends. You must apply **Windowing**.
+
+- **Fixed Windows**: Every 5 minutes (e.g., 10:00 - 10:05).
+- **Sliding Windows**: Every 5 minutes, starting every 1 minute (overlapping).
+- **Session Windows**: Dynamic windows defined by user activity (e.g., 30 minutes of inactivity closes the window).
+
+Beam utilizes **Watermarks** to handle out-of-order data (Event Time vs Processing Time) and **Triggers** to determine when to mathematically emit the results of a window before it closes.
 
 </ConceptTemplate>

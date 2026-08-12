@@ -1,8 +1,28 @@
+---
+title: ETL (Extract, Transform, Load)
+description: The traditional data pipeline paradigm where data is processed in external compute clusters before being loaded into the warehouse.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ETL">
+<ConceptTemplate title="ETL (Extract, Transform, Load)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**ETL** was the absolute architectural standard for Data Engineering for over two decades. While much of the industry has shifted to ELT for structured data, ETL is still mathematically mandatory for complex Machine Learning and streaming workloads.
+
+## 1. The Three Phases
+1. **Extract**: Data is extracted from disparate source systems (PostgreSQL databases, external APIs, massive flat files).
+2. **Transform**: The data is loaded into an external, heavy-duty processing engine (like **Apache Spark** or legacy Informatica). The engine mathematically cleanses the data, filters out PII, joins datasets together, and aggregates metrics.
+3. **Load**: The pristine, highly-structured data is finally written into the target Data Warehouse (like Teradata or Redshift).
+
+## 2. Why ETL was Historically Required
+Before the Cloud, Data Warehouses were physically constrained. If you had a Teradata rack with a fixed CPU limit, and you executed a massive data transformation query, the CPU would peg at 100%, and the CEO's BI Dashboard would mathematically timeout and crash. 
+
+To protect the Warehouse, transformations *had* to be executed outside the warehouse on a completely separate cluster.
+
+## 3. Where ETL Still Dominates Today
+While ELT is vastly superior for standard SQL analytics, ETL remains mathematically necessary in specific architectural scenarios:
+
+- **Heavy Unstructured Data**: If you are extracting 10 Terabytes of raw PDF documents or Image files, a SQL Data Warehouse cannot process them. You mathematically *must* use a Spark cluster (ETL) to parse the PDFs using Python NLP libraries, extract the text, and only load the structured text into the warehouse.
+- **Strict Compliance (PII)**: In healthcare or banking, dumping raw data containing Social Security Numbers into a centralized Data Warehouse is illegal. The data must be mathematically obfuscated (hashed or masked) in an external ETL layer *before* it ever touches the warehouse disk.
+- **Real-Time Streaming**: Transforming an infinite stream of Kafka events using Apache Flink before saving it to a database is inherently an ETL paradigm.
 
 </ConceptTemplate>

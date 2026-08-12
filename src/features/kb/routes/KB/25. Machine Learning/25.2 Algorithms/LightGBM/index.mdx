@@ -1,8 +1,27 @@
+---
+title: LightGBM
+description: A hyper-fast, leaf-wise gradient boosting framework developed by Microsoft that mathematically optimizes histogram-based decision trees for massive scale.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="LightGBM">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**LightGBM (Light Gradient Boosting Machine)** is an incredibly popular algorithm developed by Microsoft. It is designed to solve the mathematical memory constraints and slow training times of traditional XGBoost, making it the industry standard for extreme-scale tabular datasets.
+
+## 1. Histogram-Based Splitting
+Standard Decision Trees (and older versions of XGBoost) are mathematically slow because, to find the best split (e.g., Age > 35), they must mathematically sort every single continuous value in a column. Sorting 100 million floats is an $O(N \log N)$ operation that destroys training time.
+
+LightGBM mathematically bypasses this using **Histograms**. 
+It discretizes (buckets) continuous floating-point values into discrete bins (e.g., 255 bins). 
+Instead of sorting 100 million values, the algorithm mathematically iterates over the 255 bins, transforming the time complexity from $O(N \log N)$ to $O(Bins)$. This reduces memory usage drastically and speeds up training by 10x with almost zero loss in mathematical accuracy.
+
+## 2. Leaf-Wise Growth Strategy
+Most trees (like Random Forests) grow **Level-Wise**. They mathematically split all nodes at depth 1, then all nodes at depth 2, keeping the tree perfectly symmetrical.
+
+LightGBM grows **Leaf-Wise (Best-First)**. It ignores symmetry completely. It mathematically searches all current leaf nodes, finds the single node with the absolute maximum mathematical Loss (the node with the most error), and splits only that node. This asymmetrical growth mathematically minimizes the global loss function vastly faster than level-wise growth, though it is highly prone to overfitting on small datasets if `max_depth` is not capped.
+
+## 3. GOSS (Gradient-based One-Side Sampling)
+When training a boosting model, many data points are mathematically "easy" to predict (their gradients are near 0). Training on them again wastes compute.
+**GOSS** mathematically drops the easy data points entirely during training. It keeps all instances with large gradients (hard predictions), and mathematically random-samples the small gradients, multiplying them by a constant to preserve the original data distribution. This massively accelerates the mathematics of gradient descent.
 
 </ConceptTemplate>
