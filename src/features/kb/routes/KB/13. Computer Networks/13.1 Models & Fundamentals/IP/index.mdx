@@ -1,47 +1,40 @@
 ---
 title: Internet Protocol (IP)
-description: The principal communications protocol for relaying datagrams across network boundaries, establishing the Internet.
+description: The mathematical addressing system that binds the entire global internet, allowing packets to route across thousands of disconnected networks.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="Internet Protocol (IP)">
+<ConceptTemplate title="Internet Protocol (IP)">
 
-The Internet Protocol (IP) is the foundational routing protocol of the entire Internet. Operating at the Network Layer (Layer 3) of the OSI model, IP is responsible for addressing hosts and routing packets from a source network to a destination network.
+Operating at Layer 3 (Network), the **Internet Protocol (IP)** is the primary architectural foundation of the internet. Its sole mathematical purpose is to provide logical addressing and to route individual packets across a chaotic web of millions of independent routers.
 
-<Callout icon="info" title="The Postal Service of the Internet">
-  If TCP is the certified mail process that guarantees delivery, IP is the actual postal service network. It puts the sender's address and the receiver's address on the envelope (packet) and figures out which roads (routers) to take to get the envelope to the right city.
-</Callout>
+## 1. Logical Addressing
+At Layer 2, devices communicate using hardcoded MAC addresses. However, a MAC address is mathematically flat; it provides absolutely zero geographical or topological information (like a Social Security Number). You cannot use MAC addresses to route traffic across the globe.
 
-## The Role of IP
+IP Addresses are **Logical** and **Hierarchical** (like a Zip Code). They mathematically define exactly where in the global network topology a device resides.
 
-IP has two primary responsibilities:
+## 2. IPv4 vs IPv6
 
-1. **Addressing**: Every device connected to an IP network must have a unique IP address. This acts as the logical identifier for the device.
-2. **Routing**: When a packet is sent to an IP address outside of the local network, routers inspect the destination IP address in the packet header and use routing tables to forward the packet closer to its final destination.
+The internet originally ran on **IPv4**, which uses 32-bit mathematical addresses (e.g., `192.168.1.1`). 
+A 32-bit space mathematically yields exactly `2^32` (4.3 billion) unique addresses. In the 1980s, this seemed infinite. By 2011, the world officially ran out of IPv4 addresses.
 
-## Connectionless and Unreliable
+To save the internet, engineers deployed **IPv6**, which uses massive 128-bit mathematical addresses (e.g., `2001:0db8:85a3:0000:0000:8a2e:0370:7334`). 
+A 128-bit space yields `2^128` addresses. This is a number so mathematically incomprehensible that we could assign an IP address to every single atom on the surface of the Earth, and still have enough addresses left for a trillion other planets.
 
-Crucially, the Internet Protocol itself is **connectionless** and provides **"best-effort"** delivery. 
-- It does not establish a connection before sending.
-- It does not guarantee that the packet will arrive.
-- It does not guarantee that packets will arrive in the correct order.
+<ComparisonTable 
+  headers={['Feature', 'IPv4', 'IPv6']} 
+  rows={[
+    ['Address Length', '32 bits (4.3 billion addresses)', '128 bits (340 undecillion addresses)'],
+    ['Format', 'Dotted Decimal (192.168.1.1)', 'Hexadecimal (2001:db8::ff00:42:8329)'],
+    ['Header Size', 'Variable (20-60 bytes)', 'Fixed (40 bytes), heavily optimized for routers.'],
+    ['NAT (Network Address Translation)', 'Absolutely critical to share public IPs and delay exhaustion.', 'Mathematically obsolete. Every device gets a true Public IP.']
+  ]} 
+/>
 
-Reliability is strictly the responsibility of the upper-layer protocol (like TCP). If you use UDP over IP, the entire transmission is completely unreliable.
+## 3. Best-Effort Delivery
+It is critical to understand that IP is a **Connectionless, Best-Effort** protocol.
+IP does absolutely nothing to guarantee that a packet actually arrives. It does not retransmit lost packets, and it does not care if packets arrive completely out of order. 
+It relies entirely on Layer 4 (TCP) to handle reliability and error-checking. The IP protocol's only job is to look at the destination IP address, look at its local routing table, and throw the packet out the correct physical port toward the next hop.
 
-## The IP Packet Header
-
-When data from the Transport layer (TCP/UDP) comes down to the Network layer, IP encapsulates it by adding an IP Header. This header contains vital routing information.
-
-Key fields in an IPv4 header include:
-- **Source IP Address**: The sender's logical address.
-- **Destination IP Address**: The receiver's logical address.
-- **Time to Live (TTL)**: A counter that decrements by 1 every time the packet passes through a router. If TTL hits 0, the packet is destroyed. This prevents packets from looping infinitely if there is a routing error.
-- **Protocol**: Indicates what layer 4 protocol is inside the payload (e.g., 6 for TCP, 17 for UDP).
-
-## Versions: IPv4 vs IPv6
-
-The Internet currently operates on two versions of IP simultaneously:
-- **IPv4**: The original standard. Uses 32-bit addresses (e.g., `192.168.1.1`). It mathematically ran out of unique addresses years ago, but is kept alive via NAT (Network Address Translation).
-- **IPv6**: The modern replacement. Uses 128-bit addresses (e.g., `2001:0db8:85a3:0000:0000:8a2e:0370:7334`), providing enough unique addresses for every atom on the surface of the earth.
-
-</TechnologyTemplate>
+</ConceptTemplate>

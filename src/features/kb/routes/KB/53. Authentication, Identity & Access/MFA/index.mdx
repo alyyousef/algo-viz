@@ -1,28 +1,41 @@
 ---
 title: Multi-Factor Authentication (MFA)
-description: An electronic authentication method in which a user is granted access only after successfully presenting two or more pieces of evidence.
+description: A security mechanism requiring users to provide two or more distinct verification factors to gain access to a resource, drastically mitigating credential theft.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Multi-Factor Authentication (MFA)">
+<ConceptTemplate title="Multi-Factor Authentication (MFA)">
 
-Multi-factor authentication (MFA) is an electronic authentication method in which a computer user is granted access to a website or application only after successfully presenting two or more pieces of evidence (or factors) to an authentication mechanism.
+Passwords are fundamentally broken. They are reused across websites, leaked in massive data breaches, guessed via brute force, or stolen via phishing emails. 
 
-<Callout icon="success" title="99.9% Protection">
-  Microsoft reported that enabling MFA blocks 99.9% of all automated, mass-scale account compromise attacks. If a hacker guesses your password, they are still stopped dead without your phone.
-</Callout>
+**Multi-Factor Authentication (MFA)** solves this by forcing the attacker to compromise multiple independent dimensions of security simultaneously to breach an account.
 
-## The Three Factors
-
-To be true MFA, you must require elements from at least TWO DIFFERENT categories below (Requiring two passwords is just Single-Factor Authentication done twice).
+## 1. The Three Factors
+True MFA must combine two or more of the following distinct categories. (Combining two passwords is just Two-Step Verification, not MFA).
 
 <ComparisonTable 
-  headers={['Factor', 'Description', 'Examples']}
+  headers={['Factor Type', 'Definition', 'Examples']} 
   rows={[
-    ['Knowledge (Something you know)', 'Information only the user possesses.', 'Passwords, PINs, Security Questions.'],
-    ['Possession (Something you have)', 'A physical object the user carries.', 'Smartphone (Google Authenticator TOTP), Hardware Security Key (YubiKey), Smartcard.'],
-    ['Inherence (Something you are)', 'Biological characteristics of the user.', 'Fingerprint, FaceID, Retina Scan.']
-  ]}
+    ['Knowledge (Something you know)', 'Information memorized by the user.', 'Passwords, PIN codes, Security Questions (deprecated).'],
+    ['Possession (Something you have)', 'A physical or cryptographic object held by the user.', 'Smartphones (Authenticator Apps), SMS Codes, YubiKey hardware tokens.'],
+    ['Inherence (Something you are)', 'A biological metric unique to the user.', 'Fingerprint scans (TouchID), Facial recognition (FaceID), Retina scans.']
+  ]} 
 />
 
-</TechnologyTemplate>
+## 2. The SMS Vulnerability (SIM Swapping)
+Historically, the most common MFA was sending a 6-digit code via SMS text message. 
+**This is now considered highly insecure.**
+Attackers perform "SIM Swapping" by calling the victim's telecom provider, pretending to be the victim, and tricking the customer service rep into porting the phone number to the attacker's SIM card. The attacker now receives all of the victim's MFA SMS codes directly.
+
+## 3. Time-Based One-Time Passwords (TOTP)
+The modern software standard for MFA is **TOTP** (e.g., Google Authenticator, Authy).
+When setting up TOTP, the server and your phone securely share a secret cryptographic seed (usually via a QR code). 
+Both the server and your phone independently run a hashing algorithm combining the secret seed with the *current Unix timestamp*. Every 30 seconds, a new 6-digit code is generated simultaneously on both devices. Because it relies purely on math and time, TOTP works entirely offline and is immune to SIM swapping.
+
+<Callout icon="warning" title="Phishing Susceptibility">
+While TOTP is immune to SIM swapping, it is still vulnerable to **Real-Time Phishing (AiTM - Adversary in the Middle)**. If a user is tricked into logging into a fake website (`g00gle.com`), the attacker simply asks for the 6-digit TOTP code, immediately forwards it to the real Google, and intercepts the session cookie. Only hardware security keys (FIDO2/WebAuthn) can defeat real-time phishing.
+</Callout>
+
+</ConceptTemplate>

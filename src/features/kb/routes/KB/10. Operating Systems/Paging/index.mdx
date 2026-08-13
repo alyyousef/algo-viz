@@ -1,33 +1,42 @@
 ---
 title: Paging
-description: The mechanical implementation of Virtual Memory, chopping RAM into tiny, manageable blocks to eliminate fragmentation.
+description: The specific mathematical mechanism used by the OS and MMU to chop Virtual Memory into uniform blocks, enabling efficient translation and eliminating external fragmentation.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Paging">
 
-How does the Operating System actually map 16 Exabytes of fake Virtual Memory down to 8 Gigabytes of real Physical RAM? It uses a system called **Paging**.
+To implement Virtual Memory, the OS must track the translation mapping from Virtual Addresses to Physical Addresses. If the OS tracked every single byte individually, the translation map would be larger than the RAM itself. 
 
-Instead of trying to map memory byte-by-byte (which would require a map larger than the RAM itself), the OS chops all of memory into identical, fixed-size blocks called **Pages**. 
-On almost all modern systems, a Page is exactly **4 Kilobytes**.
+**Paging** solves this by chopping memory into larger, uniform blocks (usually 4 Kilobytes).
 
-## The Page Table
+## 1. Pages and Frames
+- **Pages**: Virtual Memory is mathematically chopped into 4KB blocks called Pages.
+- **Frames**: Physical RAM is physically chopped into 4KB blocks called Frames.
 
-The OS Kernel maintains a massive dictionary in RAM called the **Page Table**. 
-The Page Table maps *Virtual Pages* to *Physical Frames*.
+The OS maintains a massive mathematical array called the **Page Table**. 
+When a process wants to write to a Virtual Address, the CPU splits the address into two parts: the **Page Number** and the **Offset**.
+1. It uses the Page Number to look up the array index in the Page Table.
+2. The Page Table returns the physical Frame Number.
+3. It attaches the Offset to the Frame Number to pinpoint the exact byte in the RAM stick.
 
-1. When a program asks for 12 KB of memory, the OS allocates three 4KB Virtual Pages.
-2. The OS finds three empty 4KB Physical Frames on the RAM sticks. (Crucially, these physical frames do *not* need to be next to each other).
-3. The OS writes the translation into the Page Table.
+## 2. Multi-Level Page Tables
+On a 64-bit system, a single, flat Page Table would require Petabytes of RAM just to store the translation mappings (which is physically impossible). 
+Modern OS architecture uses **Multi-Level Paging** (usually 4 levels deep). The OS only creates the lowest-level tables if the process is *actually* using that specific memory, saving massive amounts of RAM.
 
-<Callout icon="warning" title="The TLB (Translation Lookaside Buffer)">
-  Because every single memory read requires a lookup in the Page Table, memory speeds would theoretically be cut in half. To fix this, CPUs have a highly specialized hardware cache called the **TLB**. The TLB stores the 100 most recent Page Table translations directly inside the CPU silicon, allowing translation to happen in zero clock cycles.
+<ComparisonTable 
+  headers={['Problem', 'Paging Solution']} 
+  rows={[
+    ['External Fragmentation', 'Completely eliminated. Because all physical Frames are exactly 4KB, any free Frame perfectly fits any Virtual Page.'],
+    ['Internal Fragmentation', 'Still exists. If a process needs 1 byte of memory, the OS MUST give it an entire 4KB Page, wasting 4095 bytes.'],
+    ['Translation Speed', 'Reading the Page Table in RAM takes time. Hardware mitigates this using a massive cache called the TLB.']
+  ]} 
+/>
+
+<Callout icon="tip" title="Translation Lookaside Buffer (TLB)">
+Every time the CPU reads memory, it must first read the Page Table to translate it, meaning 1 memory request actually takes 2 memory cycles (50% slower). The hardware **TLB** is an ultra-fast associative cache physically built into the CPU silicon. It memorizes the most recent Page-to-Frame translations. If a TLB Hit occurs, the translation happens in 1 nanosecond.
 </Callout>
-
-## Eliminating Fragmentation
-
-Historically, memory suffered from **External Fragmentation**. If a program needed a 10MB chunk of RAM, the OS had to find a contiguous 10MB empty space. If the RAM was scattered with tiny gaps, the allocation would fail, even if there was 100MB of total free space.
-
-Paging permanently solves this. Because Virtual Memory is an illusion, the OS can take 2,500 heavily scattered 4KB physical frames, map them consecutively in the Page Table, and the program will see a perfectly contiguous 10MB block of Virtual Memory.
 
 </ConceptTemplate>

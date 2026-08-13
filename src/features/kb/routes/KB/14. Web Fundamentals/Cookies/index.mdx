@@ -1,28 +1,34 @@
 ---
-title: Cookies
-description: The original, fundamental mechanism used to track state and remember users across the inherently stateless HTTP protocol.
+title: HTTP Cookies
+description: Small pieces of data sent by the server and stored in the user's browser, fundamentally enabling stateful sessions over the stateless HTTP protocol.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Cookies">
+<ConceptTemplate title="HTTP Cookies">
 
-HTTP is mathematically stateless. Every request is completely isolated. If you log into Amazon, and then click "View Cart", the server has completely forgotten who you are.
+The HTTP protocol is fundamentally **stateless**. The server has no memory of past requests. If you login on Request 1, the server will completely forget who you are on Request 2. 
+**Cookies** were invented in 1994 by Netscape to solve this, introducing State to the Web.
 
-In 1994, Netscape invented **Cookies** to solve this.
+## 1. How Cookies Work
+1. **Setting the Cookie**: You send your username and password. The server validates them and sends back an HTTP Response Header: `Set-Cookie: session_id=abc123`.
+2. **Browser Storage**: The browser intercepts this header and silently saves the `session_id` onto the hard drive, tying it to the domain (e.g., `amazon.com`).
+3. **Automatic Transmission**: For every single subsequent HTTP request the browser makes to `amazon.com` (even for images or CSS), it automatically attaches the header: `Cookie: session_id=abc123`. The server reads this and remembers who you are.
 
-## How Cookies Work
-A Cookie is a tiny piece of text data (max 4KB) stored directly on the user's hard drive.
+## 2. Critical Security Flags
+Because cookies are automatically attached to requests, they are highly vulnerable to attack vectors like XSS (Cross-Site Scripting) and CSRF (Cross-Site Request Forgery). 
 
-1. **The Set-Cookie Header**: When you log in, the server generates a random Session ID (e.g., `xyz123`) and sends it in the HTTP Response header: 
-   `Set-Cookie: session=xyz123`
-2. **The Automatic Attachment**: The browser saves this cookie to disk. **Crucially, the browser will automatically inject this Cookie into the headers of every single future HTTP request sent to that specific domain.**
-3. **The Retrieval**: When you click "View Cart", the server reads the Cookie header, sees `session=xyz123`, checks its database, and remembers that you are Alice.
+To secure them, you must append strict flags when setting the cookie:
+- `HttpOnly`: Mathematically prevents client-side JavaScript (`document.cookie`) from reading the cookie. This utterly defeats XSS attacks trying to steal the session token.
+- `Secure`: Forces the browser to *only* send the cookie over encrypted HTTPS connections, preventing packet-sniffing on public WiFi.
+- `SameSite=Strict`: Prevents the browser from sending the cookie if the request originated from a different domain. This absolutely obliterates CSRF attacks.
 
-## Critical Security Flags
-Because cookies contain authentication tokens, they are the primary target for hackers.
+## 3. Size and Limitations
+Cookies are small. They are strictly limited to **4 Kilobytes** of data per cookie, and usually max out at ~50 cookies per domain. 
+Furthermore, because they are sent back and forth on *every single request*, storing massive amounts of data in a cookie will severely bloat your network bandwidth and destroy web performance.
 
-- **HttpOnly**: By default, JavaScript can read cookies via `document.cookie`. If a hacker injects malicious JS into your site (XSS), they can steal the cookie. The `HttpOnly` flag completely bans JavaScript from touching the cookie. The browser will still attach it to network requests, but JS cannot read it.
-- **Secure**: Ensures the cookie is only ever transmitted over an encrypted HTTPS connection. If the user accidentally types `http://`, the browser will refuse to send the cookie, preventing packet sniffers from stealing it over open Wi-Fi.
-- **SameSite**: Defends against CSRF (Cross-Site Request Forgery) attacks by dictating exactly when cookies should be sent in cross-origin requests.
+<Callout icon="warning" title="Third-Party Cookies">
+A First-Party cookie is set by the domain you are currently visiting. A Third-Party cookie is set by an iframe or tracking pixel (like Facebook Ads) embedded on that page. Due to severe privacy concerns (cross-site tracking), modern browsers (Safari, Firefox, and soon Chrome) are aggressively blocking all Third-Party cookies by default.
+</Callout>
 
 </ConceptTemplate>

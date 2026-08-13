@@ -1,31 +1,36 @@
 ---
 title: Processes
-description: A running instance of a computer program, acting as an isolated container for code, memory, and resources.
+description: The fundamental unit of execution in an Operating System, containing a program's code, memory space, and hardware context.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Processes">
 
-When you write a Python script or compile a C++ `.exe`, that file is just a static collection of bytes sitting dormant on your hard drive. It is a **Program**.
+When you double-click an application (like Google Chrome), the Operating System reads the static executable file from the hard drive and loads it into RAM. The moment that code begins executing, it becomes a **Process**.
 
-When you double-click that file and the OS loads it into RAM to execute it, it becomes a **Process**. A Process is an *active, running instance* of a program. 
+## 1. Process Anatomy
+A process is heavily isolated by the OS. It believes it is the *only* program running on the computer. It consists of:
+1. **Text Segment**: The compiled binary machine code (Read-only).
+2. **Data Segment**: Global and static variables initialized by the programmer.
+3. **Heap**: Memory dynamically allocated at runtime (e.g., using `malloc()` in C or `new` in Java). Grows upward.
+4. **Stack**: Temporary storage for function parameters, return addresses, and local variables. Grows downward.
 
-<Callout icon="success" title="The Container Illusion">
-  A Process is fundamentally a container. The OS provides each process with the illusion that it is the only program running on the computer. It believes it has the CPU all to itself, and it believes it has a massive, empty RAM space all to itself.
+## 2. The Process Control Block (PCB)
+The OS must track thousands of processes. It does this using a massive C-struct called the **PCB**. 
+The PCB stores:
+- **Process ID (PID)**: The unique integer identifying the process.
+- **Process State**: Is it *Running*, *Waiting*, or *Terminated*?
+- **CPU Registers**: The exact state of the CPU when the process was last paused (Program Counter, Stack Pointer).
+- **Memory Limits**: The start and end physical addresses this process is allowed to access.
+
+## 3. Process Isolation
+Because every process has its own isolated memory space, Process A cannot mathematically access the memory of Process B. If Process A has a buffer overflow and crashes, Process B is completely unaffected. 
+If they *need* to talk, they must use OS-mediated **Inter-Process Communication (IPC)** (like Pipes or Sockets), which is slow but incredibly secure.
+
+<Callout icon="warning" title="Zombie Processes">
+When a process finishes execution, it sends an `exit()` system call. The OS clears its memory but leaves the PCB intact so the Parent Process can read its exit status. If the parent forgets to read it (using `wait()`), the dead process remains in the process table forever as a **Zombie**.
 </Callout>
-
-## What is inside a Process?
-
-The OS tracks every process using a massive data structure called the **Process Control Block (PCB)**. A process contains:
-1. **Memory Space**: Its own private Virtual Memory, divided into the Code (Text), Data, Heap (dynamic memory), and Stack (function calls).
-2. **Execution State**: The current values of all CPU registers and the Program Counter (exactly which line of code it is currently executing).
-3. **Resources**: A list of open file descriptors, network sockets, and permissions.
-
-## Process Isolation
-
-The most important feature of a process is **Isolation**. 
-Because every process has its own Virtual Memory space (managed by hardware Paging), it is physically impossible for Process A to read or overwrite the memory of Process B. 
-
-If you open two instances of Notepad, they are two completely separate Processes. If one instance encounters a fatal error and crashes, the other instance is completely unaffected because their memory spaces are violently isolated by the Kernel.
 
 </ConceptTemplate>

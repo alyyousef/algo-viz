@@ -1,32 +1,36 @@
 ---
 title: JSON Web Tokens (JWT)
-description: A compact, URL-safe means of representing claims to be transferred between two parties.
+description: A compact, URL-safe, cryptographically signed token standard used heavily in modern web authentication to securely transmit information as a JSON object.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="JSON Web Tokens (JWT)">
+<ConceptTemplate title="JSON Web Tokens (JWT)">
 
-JSON Web Token (JWT, pronounced "jot") is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. This information can be verified and trusted because it is digitally signed.
+A **JSON Web Token (JWT)** is the backbone of modern stateless authentication. It allows a server to verify a user's identity without ever having to look up a session ID in a database.
 
-<Callout icon="error" title="JWTs are NOT Encrypted">
-  Unless you explicitly use JWE (JSON Web Encryption), the payload of a JWT is simply Base64 encoded, meaning anyone who captures it can instantly decode and read it. **Never put passwords or Social Security Numbers inside a JWT payload.**
+## 1. The Three-Part Structure
+A JWT looks like a long string of gibberish: `xxxx.yyyy.zzzz`. It is composed of three Base64Url-encoded parts separated by periods:
+
+1. **Header (xxxx)**: Contains metadata, such as the algorithm used to sign the token (e.g., `{"alg": "HS256", "typ": "JWT"}`).
+2. **Payload (yyyy)**: The actual JSON data (Claims). This contains the user ID (`sub`), role (`admin`), and expiration time (`exp`).
+3. **Signature (zzzz)**: The cryptographic hash of the Header + Payload + a Secret Key known only to the backend server.
+
+## 2. Stateless Verification
+When a user logs in, the server generates a JWT and signs it using its Secret Key. It sends the JWT to the browser.
+On the next request, the browser sends the JWT back to the server.
+
+The server does **not** query the database. It simply takes the Header and Payload from the incoming JWT, recalculates the hash using its Secret Key, and compares it to the Signature on the token. 
+If they match, the token is perfectly authentic and mathematically proven to be untampered with.
+
+## 3. The Revocation Problem
+Because JWTs are stateless, they are completely autonomous. If a hacker steals a JWT, they can impersonate the user until the token's `exp` (expiration time) is reached. 
+You cannot simply "delete" the session from the database, because the server doesn't check the database!
+
+To fix this, architects use **Short-Lived Access Tokens (e.g., 15 minutes)** paired with **Long-Lived Refresh Tokens**. If an Access Token is stolen, it becomes useless in 15 minutes. The Refresh Token is stored securely (usually as an HttpOnly Cookie) and used to generate new Access Tokens.
+
+<Callout icon="warning" title="JWTs are NOT Encrypted">
+A standard JWT is only Base64 encoded, meaning anyone can trivially decode the Payload and read the JSON data. **Never put passwords, credit card numbers, or PII inside a JWT payload.** If you need absolute secrecy, you must use JWE (JSON Web Encryption), which encrypts the payload entirely.
 </Callout>
 
-## Structure of a JWT
-
-A JWT consists of three parts separated by dots (`.`):
-
-<ComparisonTable 
-  headers={['Part', 'Description', 'Example Content']}
-  rows={[
-    ['Header', 'Defines the type of token and the signing algorithm used (like HMAC SHA256 or RSA).', `{"alg": "HS256", "typ": "JWT"}`],
-    ['Payload (Claims)', 'The actual data you want to transmit (e.g., User ID, roles, expiration timestamp).', `{"userId": "123", "role": "admin", "exp": 1690000000}`],
-    ['Signature', 'A cryptographic hash of the Header + Payload + Your Secret Server Key. This proves the token was not tampered with.', `SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`]
-  ]}
-/>
-
-## Statelessness
-
-Because the JWT contains the signature, the Backend API does not need to query the database to check if the user's session is valid. It simply runs the math to verify the signature. This makes scaling APIs horizontally incredibly easy.
-
-</TechnologyTemplate>
+</ConceptTemplate>

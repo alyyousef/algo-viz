@@ -1,59 +1,36 @@
 ---
 title: API Gateways
-description: The single entry point for all clients into a microservices architecture.
+description: The centralized architectural entry point for microservice ecosystems, handling routing, authentication, and cross-cutting concerns at the edge.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="API Gateways">
+<ConceptTemplate title="API Gateways">
 
-An API Gateway sits between clients and services. It acts as a reverse proxy, routing requests from clients to services. It may also perform various cross-cutting tasks such as authentication, SSL termination, and rate limiting.
+In a modern Microservices architecture, a single mobile app might need data from the User Service, the Billing Service, and the Inventory Service. 
+If the mobile app talks directly to all 3 services, it creates a chaotic, tightly-coupled web of IP addresses, SSL certificates, and authentication tokens. 
 
-<Callout icon="tip" title="Decoupling">
-  By using an API Gateway, the client doesn't need to know the IP address or hostnames of 50 different microservices. It just talks to one endpoint (e.g., `api.example.com`), and the Gateway handles the internal routing.
+An **API Gateway** solves this by acting as the single, unified entry point for all external traffic.
+
+## 1. The Reverse Proxy (Routing)
+The primary function of an API Gateway is routing. The mobile app makes a single request to `api.mycompany.com/billing`. 
+The Gateway mathematically inspects the URL path, looks up its internal routing table, and proxies the request into the private subnet to the specific Billing Microservice IP address. 
+The external client never knows how many microservices exist behind the wall.
+
+## 2. Cross-Cutting Concerns
+If you have 50 microservices, writing JWT Authentication logic, Rate Limiting logic, and SSL Termination logic 50 times in 50 different languages is an architectural disaster. 
+The API Gateway centralizes these **Cross-Cutting Concerns** at the edge of the network:
+
+1. **SSL Termination**: The Gateway decrypts the HTTPS traffic, saving massive CPU cycles for the internal microservices (which communicate over fast, unencrypted HTTP within the private VPC).
+2. **Authentication**: The Gateway verifies the JWT token. If it is invalid, it instantly drops the request, ensuring unauthenticated traffic never even touches the internal network.
+3. **Rate Limiting**: The Gateway blocks malicious bots before they can harm the delicate microservices.
+
+## 3. Request Aggregation
+If a mobile client needs to render a complex dashboard, it might require 5 different REST endpoints. This forces the mobile client to make 5 slow network hops over a weak 4G connection. 
+Advanced API Gateways (or specific **BFFs - Backends for Frontends**) can execute **Request Aggregation**: The mobile client makes 1 request to the Gateway. The Gateway makes 5 parallel, ultra-fast requests to the internal microservices, stitches the JSON together into a single massive payload, and sends it back to the mobile client in 1 hop.
+
+<Callout icon="tip" title="Industry Standards">
+Popular open-source API Gateways include **Kong** (built on NGINX), **Traefik**, and **Envoy**. Cloud providers offer managed solutions like **AWS API Gateway**, which natively trigger serverless Lambda functions.
 </Callout>
 
-## Core Responsibilities
-
-An API Gateway does much more than simple routing.
-
-<ComparisonTable 
-  headers={['Feature', 'Description']}
-  rows={[
-    ['Routing', 'Mapping `/users` to the User Service and `/orders` to the Order Service.'],
-    ['Authentication / Authorization', 'Validating JWTs before the request even reaches the internal service.'],
-    ['Rate Limiting', 'Preventing DDoS attacks or API abuse by throttling requests per IP/User.'],
-    ['Request Aggregation', 'Hitting 3 different microservices and returning a single, unified JSON response to the client.']
-  ]}
-/>
-
-## API Gateway vs Load Balancer
-
-While they sound similar, they solve different problems.
-
-- **Load Balancers** are dumb pipes. They don't care *what* the request is, they just want to distribute it evenly to prevent servers from crashing.
-- **API Gateways** are smart. They understand the business logic of the request (e.g., "Is this user allowed to access the /admin endpoint?").
-
-## Architecture
-
-<ArchitectureDiagram chart={`
-graph TD
-  Mobile[Mobile App]
-  Web[Web App]
-  
-  Gateway{API Gateway\n(Kong / AWS API Gateway)}
-  
-  subgraph Internal Microservices
-    Auth[Auth Service]
-    User[User Service]
-    Order[Order Service]
-  end
-  
-  Mobile --> Gateway
-  Web --> Gateway
-  
-  Gateway -- /auth --> Auth
-  Gateway -- /users --> User
-  Gateway -- /orders --> Order
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

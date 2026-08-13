@@ -1,51 +1,44 @@
 ---
 title: Digital Signatures
-description: A mathematical scheme for verifying the authenticity and integrity of digital messages or documents.
+description: Utilizing asymmetric cryptography in reverse to mathematically prove identity, authenticity, and non-repudiation.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Digital Signatures">
+<ConceptTemplate title="Digital Signatures">
 
-A digital signature is a mathematical technique used to validate the authenticity and integrity of a message, software, or digital document. It is the digital equivalent of a handwritten signature or stamped seal, but it offers far more inherent security.
+**Digital Signatures** are the mathematical equivalent of a physical signature, but infinitely more secure. They mathematically guarantee three things:
+1. **Authentication**: The sender is exactly who they claim to be.
+2. **Data Integrity**: The message was not mathematically altered in transit.
+3. **Non-Repudiation**: The sender cannot mathematically deny sending the message later.
 
-<Callout icon="info" title="The Triad of Trust">
-  Digital signatures provide three vital cryptographic guarantees:
-  1. **Authentication**: Proves the sender is who they claim to be.
-  2. **Integrity**: Proves the document was not altered in transit.
-  3. **Non-repudiation**: The sender cannot later deny that they signed the document.
+## 1. Reversing Asymmetric Encryption
+In normal Asymmetric Encryption, you encrypt with a Public Key, and decrypt with a Private Key.
+Digital Signatures mathematically invert this paradigm: **You encrypt with the Private Key, and verify with the Public Key.**
+
+Because *only* you possess your Private Key, if someone can successfully decrypt a message using your Public Key, it mathematically proves that *you* must have been the one to encrypt it.
+
+## 2. The Step-by-Step Mathematical Process
+Encrypting a 5GB PDF document with a slow RSA Private Key would take hours. Therefore, Digital Signatures combine Hashing and Asymmetric Encryption.
+
+**Signing (Alice's Computer):**
+1. Alice writes a contract (a PDF).
+2. Alice mathematically runs the PDF through a Hash Function (like SHA-256), resulting in a tiny 256-bit string.
+3. Alice encrypts *only the 256-bit Hash* using her **Private Key**. This encrypted hash is the **Digital Signature**.
+4. Alice sends the original plaintext PDF and the Digital Signature to Bob.
+
+**Verifying (Bob's Computer):**
+1. Bob receives the PDF and the Digital Signature.
+2. Bob mathematically runs the exact same Hash Function (SHA-256) on the plaintext PDF to generate his own local hash.
+3. Bob uses Alice's **Public Key** to decrypt the Digital Signature, revealing the hash Alice calculated.
+4. Bob mathematically compares his local hash with Alice's decrypted hash.
+
+### The Conclusion:
+- If the hashes match perfectly, the signature is mathematically valid. The file is un-tampered, and Alice definitely sent it.
+- If a hacker changed a single comma in the PDF, Bob's local hash would change (Avalanche Effect), the hashes would mathematically fail to match, and the signature is rejected.
+
+<Callout icon="info" title="JWTs (JSON Web Tokens)">
+Modern web architecture relies on Digital Signatures for authentication. When you log in, the server generates a JSON object (JWT) containing your User ID, and signs it using the Server's Private Key. The JWT is stored in your browser cookies. On subsequent requests, the server mathematically verifies the signature on the JWT, proving you are authenticated without needing to query a database.
 </Callout>
 
-## How It Works (The Math)
-
-Digital signatures rely on **Asymmetric Encryption** (Public/Private key pairs) and **Hashing**. 
-
-However, they use asymmetric keys in reverse. Normally, you encrypt with a Public Key to ensure only the owner of the Private Key can read it (Confidentiality). 
-With signatures, you **encrypt with the Private Key** so that anyone with the Public Key can verify it (Authenticity).
-
-### Signing a Document (The Sender)
-Alice wants to send a signed contract to Bob.
-1. Alice uses a hashing algorithm (like SHA-256) on the contract to generate a tiny fixed-length hash.
-2. Alice **encrypts that hash using her Private Key**. This encrypted hash is the "Digital Signature."
-3. Alice sends the plain text contract AND the Digital Signature to Bob.
-
-### Verifying the Document (The Receiver)
-Bob receives the contract and the signature.
-1. Bob uses Alice's openly available **Public Key to decrypt the signature**, revealing the hash Alice generated. (If it decrypts successfully, it *proves* Alice's Private Key signed it).
-2. Bob runs the exact same hashing algorithm on the plain text contract he received, generating his own hash.
-3. Bob compares his hash to Alice's decrypted hash. If they match exactly, it *proves* the contract was not altered by a single comma during transit.
-
-<ArchitectureDiagram chart={`
-graph TD
-  Doc[Document] --> HashAlg(Hashing Algorithm)
-  HashAlg --> DocHash[Document Hash]
-  DocHash --> Encrypt{Encrypt with Private Key}
-  Encrypt --> Sig[Digital Signature]
-`} />
-
-## Why Hash First?
-
-Why not just encrypt the entire PDF with the private key? 
-Asymmetric encryption (like RSA) is mathematically intense and incredibly slow. Encrypting a 50MB PDF document with a 2048-bit key would require excessive CPU time and RAM. 
-Hashing the 50MB PDF down to a 256-bit string takes a fraction of a second. The CPU then only has to asymmetrically encrypt those 256 bits, which is instantaneous.
-
-</TechnologyTemplate>
+</ConceptTemplate>

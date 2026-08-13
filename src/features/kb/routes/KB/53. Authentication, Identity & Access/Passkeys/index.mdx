@@ -1,8 +1,43 @@
+---
+title: Passkeys
+description: The consumer-friendly evolution of WebAuthn, allowing cryptographic private keys to be securely synced across devices via cloud ecosystems (Apple, Google, Microsoft).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Passkeys">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+WebAuthn (FIDO2) is a cryptographic masterpiece, but it had a massive consumer UX flaw: if you registered your MacBook's TouchID as your authenticator, the Private Key was physically trapped inside that laptop. If you dropped the laptop in a lake, you lost your Private Key and were permanently locked out of your accounts.
+
+**Passkeys** solve this by making WebAuthn keys syncable across your devices.
+
+## 1. The Cloud Sync Paradigm
+A Passkey is fundamentally just a WebAuthn credential (a Private Key). However, instead of being permanently locked to one piece of hardware, the Private Key is stored securely within a **Platform Credential Manager** (like Apple iCloud Keychain, Google Password Manager, or 1Password).
+
+If you create a Passkey on your iPhone for Amazon, iCloud seamlessly encrypts and syncs that Private Key to your iPad and MacBook. You can now log into Amazon from any of your Apple devices using FaceID, with zero setup.
+
+## 2. Cross-Ecosystem Authentication
+What if you create an iCloud Passkey on your iPhone, but you want to log into Amazon on a public Windows PC?
+Passkeys support a protocol called **CTAP2 (Client to Authenticator Protocol)**. 
+1. The Windows PC displays a QR code on the screen.
+2. You scan the QR code with your iPhone's camera.
+3. Your iPhone establishes a localized, secure Bluetooth/WiFi Direct connection with the Windows PC.
+4. Your iPhone uses FaceID to sign the cryptographic challenge and passes the signature back to the Windows PC, logging you in.
+
+## 3. Passkeys vs Passwords
+
+<ComparisonTable 
+  headers={['Feature', 'Passwords', 'Passkeys']} 
+  rows={[
+    ['Security', 'Terrible. Easily guessed, phished, or leaked in server breaches.', 'Perfect. Cryptographically strong and completely immune to phishing.'],
+    ['Server Breaches', 'Catastrophic. Hackers steal the password hashes.', 'Harmless. Servers only hold the Public Key, which is useless to attackers.'],
+    ['User Experience', 'Frustrating. Requires memorizing complex strings or managing password managers.', 'Seamless. Requires only a quick FaceID or Fingerprint scan.']
+  ]} 
+/>
+
+<Callout icon="warning" title="The Walled Garden Problem">
+Currently, syncing Passkeys *across* ecosystems is challenging. A Passkey created in iCloud does not automatically sync to your Google Account. While QR-code roaming works, the industry is still working on seamless credential export APIs to prevent users from being locked into a single tech giant's ecosystem.
+</Callout>
 
 </ConceptTemplate>

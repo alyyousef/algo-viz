@@ -1,8 +1,47 @@
+---
+title: Segment Trees
+description: A highly specialized algorithmic tree designed to mathematically execute lightning-fast range queries over an array while supporting rapid updates.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Segment trees">
+<ConceptTemplate title="Segment Trees">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine you have a massive array of 100,000 numbers. You need to repeatedly answer queries like, *"What is the sum of all numbers between index 400 and index 90,000?"* 
+
+If you just run a mathematical `for` loop, the query takes `O(N)` time. If you do this 100,000 times, your algorithm becomes `O(N^2)` and your server times out. 
+
+A **Segment Tree** mathematically pre-calculates the answers to segments of the array, allowing you to answer any range query in **`O(log N)`** time.
+
+## 1. Mathematical Construction
+A Segment Tree is a perfectly balanced Binary Tree. 
+- The Root node mathematically contains the sum (or Min/Max) of the *entire* array `[0, N-1]`.
+- The Root splits the array in half. The Left child handles `[0, N/2]`, the Right child handles `[N/2 + 1, N-1]`.
+- This recursive mathematical splitting continues until the Leaf nodes, which each represent a single array index.
+
+## 2. Why Not Just Prefix Sums?
+You might think, *"I can just pre-calculate a Prefix Sum array in `O(N)`, and then answer range queries in `O(1)` by subtracting prefix[R] - prefix[L-1]."*
+
+This works perfectly... **if the array never changes**. 
+But what if the user constantly updates the array? *"Change the value at index 500 to 99."*
+If you update an array, a Prefix Sum array must mathematically be recalculated from index 500 all the way to 100,000, taking `O(N)` time per update.
+
+<ComparisonTable 
+  headers={['Data Structure', 'Update Time', 'Range Query Time']} 
+  rows={[
+    ['Standard Array (For Loop)', 'O(1)', 'O(N)'],
+    ['Prefix Sum Array', 'O(N)', 'O(1)'],
+    ['Segment Tree', 'O(log N)', 'O(log N)']
+  ]} 
+/>
+
+## 3. The Power of Segment Trees
+Segment Trees provide a mathematically perfect compromise. When you update a value at a leaf, you only need to traverse up the tree to the root, updating the sums of its parents. Because the tree is balanced, this takes exactly `O(log N)` time.
+
+<Callout icon="info" title="Lazy Propagation">
+Standard Segment Trees update one element at a time. What if you need to execute a Range Update? *"Add +5 to all numbers between index 1,000 and 9,000."* Updating 8,000 leaves individually takes `O(N log N)`. 
+Advanced algorithms use **Lazy Propagation**: the tree mathematically applies the +5 to a high-level parent node, flags it as "lazy", and stops. It only mathematically pushes the +5 down to the children later if a specific query demands it, bringing Range Updates back to a blistering `O(log N)`.
+</Callout>
 
 </ConceptTemplate>

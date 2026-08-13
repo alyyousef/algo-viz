@@ -1,8 +1,41 @@
+---
+title: Time Complexity & Big O Notation
+description: A rigorous mathematical foundation of algorithmic efficiency, asymptotic behavior, and upper bounds using Big O notation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Time complexity">
+<ConceptTemplate title="Time Complexity & Big O Notation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Time complexity is the mathematical study of how the runtime of an algorithm scales as the size of the input (`n`) approaches infinity. It does not measure the exact execution time in seconds, but rather the **rate of growth** in the number of fundamental operations performed.
+
+## 1. Asymptotic Analysis
+When analyzing algorithms, we are rarely concerned with constant factors or lower-order terms. If an algorithm takes `f(n) = 3n^2 + 5n + 10` operations, the `n^2` term will mathematically dominate as `n` grows massive. We say this algorithm has a quadratic time complexity.
+
+### Big O Notation (O)
+Big O notation defines the **asymptotic upper bound** of an algorithm. It guarantees that the runtime will not grow faster than a specific mathematical function, up to a constant factor.
+
+**Formal Definition**: 
+`f(n) = O(g(n))` if there exist positive constants `c` and `n_0` such that `0 <= f(n) <= c * g(n)` for all `n >= n_0`.
+
+## 2. Common Complexity Classes
+
+<ComparisonTable 
+  headers={['Complexity', 'Name', 'Example Algorithm']} 
+  rows={[
+    ['O(1)', 'Constant', 'Accessing an array element by index'],
+    ['O(log n)', 'Logarithmic', 'Binary Search'],
+    ['O(n)', 'Linear', 'Finding the max element in an unsorted array'],
+    ['O(n log n)', 'Linearithmic', 'Merge Sort, Quick Sort (average)'],
+    ['O(n^2)', 'Quadratic', 'Bubble Sort, Insertion Sort'],
+    ['O(2^n)', 'Exponential', 'Naive recursive Fibonacci'],
+    ['O(n!)', 'Factorial', 'Generating all permutations of a string']
+  ]} 
+/>
+
+<Callout icon="warning" title="The Curse of Exponential Growth">
+An O(2^n) algorithm might seem manageable for n=10, taking a fraction of a millisecond. However, at n=100, the universe will mathematically end before the algorithm completes execution on the fastest supercomputer.
+</Callout>
 
 </ConceptTemplate>

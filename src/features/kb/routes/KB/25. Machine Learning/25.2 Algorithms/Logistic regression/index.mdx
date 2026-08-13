@@ -1,30 +1,39 @@
 ---
 title: Logistic Regression
-description: The foundational binary classification algorithm that mathematically bounds linear output between 0 and 1 using the Sigmoid function to output probabilities.
+description: The core statistical model for binary classification, utilizing the Sigmoid function and Cross-Entropy loss.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Logistic Regression">
 
-Despite the word "Regression" in its name, **Logistic Regression** is strictly a **Classification** algorithm. It is the mathematical solution to the problem that standard Linear Regression cannot output bounded probabilities.
+Despite its name, Logistic Regression is **not** a regression algorithm; it is the fundamental algorithm for **Binary Classification**. It outputs a mathematical probability between 0 and 1.
 
 ## 1. The Sigmoid Function
-If you use Linear Regression to classify if an email is Spam (1) or Not Spam (0), the mathematical line of best fit will extend infinitely. For extreme emails, the algorithm might output a probability of $2.5$ or $-1.2$, which is mathematically meaningless for probability.
+If we used standard Linear Regression for classification, the output could be `-5.2` or `42.7`, which mathematically makes no sense as a probability.
 
-Logistic Regression solves this by wrapping the linear equation inside a **Sigmoid (Logistic) Function**:
-$\sigma(z) = \frac{1}{1 + e^{-z}}$
+To fix this, Logistic Regression wraps the linear output `θ^T x` in the **Sigmoid (Logistic) Function**:
 
-The Sigmoid function mathematically forces any input value (from $-\infty$ to $\infty$) to be compressed precisely between $0.0$ and $1.0$, creating a beautiful S-curve. The output can now be mathematically interpreted as the true probability that the class is 1.
+**`σ(z) = 1 / (1 + e^-z)`**
 
-## 2. Log Loss (Cross-Entropy)
-Because of the non-linear Sigmoid function, you cannot use Mean Squared Error (MSE) to train Logistic Regression; the mathematical landscape becomes non-convex (full of local minimum traps).
+The Sigmoid function asymptotes at exactly 0 and 1. If `σ(z) >= 0.5`, we predict Class 1. If `σ(z) < 0.5`, we predict Class 0.
 
-Instead, it uses **Log Loss (Binary Cross-Entropy)**:
-$Loss = - [y \log(\hat{y}) + (1 - y) \log(1 - \hat{y})]$
-This brilliant mathematical equation ensures that if the true label is 1, and the model predicts 0.001, the $\log$ function mathematically explodes to infinity, massively punishing the model for being confidently wrong, ensuring rapid convergence during Gradient Descent.
+## 2. The Log Loss (Cross-Entropy) Cost Function
+We cannot use Mean Squared Error (MSE) for Logistic Regression because wrapping MSE with the Sigmoid function creates a non-convex mathematical landscape filled with local minima, trapping Gradient Descent.
 
-## 3. Interpretability (Log Odds)
-Logistic Regression remains the absolute standard in the medical and financial industries due to its mathematical interpretability. 
-The learned weights ($w$) represent the **Log-Odds**. If the weight for the "Smoking" feature is 1.5, a doctor can mathematically calculate the exact exponential increase in the probability of a patient developing cancer simply by plugging the weight into $e^{1.5}$, providing a highly robust, explainable risk metric.
+Instead, we use the **Binary Cross-Entropy (Log Loss)** cost function:
+
+`J(θ) = -1/m * Σ [ y^(i) * log(h_θ(x^(i))) + (1 - y^(i)) * log(1 - h_θ(x^(i))) ]`
+
+### Why this works:
+- If the true label `y = 1`, the second half of the equation zeros out. The cost becomes `-log(h_θ(x))`. If our model predicts `0.001`, `-log(0.001)` approaches infinity. We massively penalize confident, wrong predictions.
+- If the true label `y = 0`, the first half zeros out, and the inverse logic applies.
+
+## 3. Multiclass Classification (Softmax)
+To extend Logistic Regression beyond two classes (e.g., predicting whether an image is a Cat, Dog, or Bird), we mathematically generalize the Sigmoid function into the **Softmax Function**, which converts a vector of raw scores (logits) into a normalized probability distribution where all values sum to 1.
+
+<Callout icon="tip" title="Linearly Separable Data">
+Logistic Regression fundamentally draws a single straight line (or hyperplane) to separate classes. If your data is geometrically concentric (e.g., a circle of Class 1 surrounded by a ring of Class 0), Logistic Regression will completely fail without feature engineering (like polynomial features).
+</Callout>
 
 </ConceptTemplate>

@@ -1,42 +1,43 @@
 ---
-title: SHA Family (Secure Hash Algorithm)
-description: The prevailing suite of cryptographic hash functions published by the NIST.
+title: The SHA Family (Secure Hash Algorithms)
+description: The evolution of NIST-standardized hash functions from the broken SHA-1 to the modern mathematical standards of SHA-2 and SHA-3.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="SHA Family (Secure Hash Algorithm)">
+<ConceptTemplate title="The SHA Family">
 
-The Secure Hash Algorithm (SHA) is a family of cryptographic hash functions published by the National Institute of Standards and Technology (NIST) as a U.S. Federal Information Processing Standard (FIPS). Over the decades, as computational power increased and cryptographic vulnerabilities were discovered, the family evolved.
+The **Secure Hash Algorithm (SHA)** family is a set of cryptographic hash functions published by the United States National Institute of Standards and Technology (NIST). They form the mathematical backbone of global digital signatures, certificates, and blockchain networks.
 
-## Evolution of the Family
+## 1. SHA-1 (The Fallen Standard)
+Designed by the NSA in 1995, SHA-1 produces a 160-bit hash. For a decade, it secured the entire internet (SSL certificates).
 
-### SHA-0 (1993)
-The original version. It was withdrawn shortly after publication due to an undisclosed "significant flaw" and replaced by SHA-1.
+However, by the mid-2000s, cryptographers discovered mathematical weaknesses. In 2017, Google executed a devastating **SHAttered attack**, generating two completely different PDF files that mathematically resulted in the exact same SHA-1 hash. 
+**SHA-1 is mathematically compromised and strictly forbidden in modern systems.**
 
-### SHA-1 (1995)
-Produced a 160-bit hash value. It was the absolute standard of the internet for over a decade, heavily used in SSL/TLS certificates and Git version control.
-- **Status**: **BROKEN**. In 2017, Google researchers executed the first successful "collision attack" against SHA-1 (producing two different PDF files that resulted in the exact same SHA-1 hash). It is officially deprecated and insecure for cryptography.
+## 2. SHA-2 (The Current Global Standard)
+Published in 2001, the SHA-2 family consists of multiple mathematical variants, most notably **SHA-256** and **SHA-512** (named after the bit-length of their output).
 
-### SHA-2 (2001)
-A family of two similar hash functions with different block sizes: **SHA-256** and **SHA-512**. 
-- **Status**: **SECURE**. This is the current global standard. SHA-256 is ubiquitous across the modern internet. It is used to secure HTTPS certificates, verify software downloads, and is the core hashing algorithm that runs the Bitcoin blockchain.
+Despite being built on a similar mathematical structure to SHA-1 (the Merkle-Damgård construction), the increased bit-length and modified mathematical constants make SHA-2 completely secure against all known computational attacks.
+- **SHA-256** mathematically secures the Bitcoin network and is the standard for most JWTs and digital signatures today.
 
-### SHA-3 (2015)
-Produced by a public competition (won by an algorithm named Keccak). 
-- **Status**: **SECURE**. Unlike SHA-1 and SHA-2, which use a Merkle-Damgård construction, SHA-3 uses a completely different internal structure called a "sponge construction." It was standardized not because SHA-2 was broken, but as a backup plan in case a catastrophic math flaw is ever discovered in the SHA-2 architecture.
+## 3. SHA-3 (The Backup Plan)
+In 2007, NIST was terrified that because SHA-2 shared structural similarities with SHA-1, it might also fall to mathematical cryptanalysis. NIST hosted a global competition to design a replacement. The winner (Keccak) was standardized as **SHA-3**.
 
-## Visualizing the Output
-
-Because hashes are raw binary data, they are almost always represented to humans as hexadecimal (hex) strings (using numbers 0-9 and letters a-f).
+SHA-3 uses a wildly different mathematical architecture called the **Sponge Construction**. It "absorbs" the input data into a massive internal state matrix, scrambles it using complex permutations, and then "squeezes" out the hash.
 
 <ComparisonTable 
-  headers={['Algorithm', 'Bit Length', 'Hex Character Length', 'Status']}
+  headers={['Algorithm', 'Architecture', 'Current Status']} 
   rows={[
-    ['MD5 (Not SHA)', '128 bits', '32 characters', 'Critically Broken'],
-    ['SHA-1', '160 bits', '40 characters', 'Broken'],
-    ['SHA-256', '256 bits', '64 characters', 'Highly Secure (Current Standard)'],
-    ['SHA-512', '512 bits', '128 characters', 'Highly Secure (Used for extreme security)']
-  ]}
+    ['SHA-1', 'Merkle-Damgård', 'Broken (Collisions found). Do not use.'],
+    ['SHA-2 (SHA-256)', 'Merkle-Damgård', 'Secure. The absolute industry standard.'],
+    ['SHA-3', 'Sponge Construction', 'Secure. Kept as a mathematical failsafe in case SHA-2 is ever broken.']
+  ]} 
 />
 
-</TechnologyTemplate>
+<Callout icon="tip" title="Don't Hash Passwords with SHA">
+While SHA-256 is incredible for data integrity, it is a catastrophic choice for hashing passwords. SHA-256 is mathematically designed to be as fast as possible on hardware (GPUs can calculate billions of hashes per second). This allows hackers to trivially brute-force user passwords. Passwords must be hashed using slow, memory-hard mathematical algorithms like **Argon2** or **Bcrypt**.
+</Callout>
+
+</ConceptTemplate>

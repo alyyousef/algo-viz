@@ -1,48 +1,43 @@
 ---
 title: Advanced Encryption Standard (AES)
-description: The global standard for symmetric block cipher encryption.
+description: The mathematical breakdown of the gold-standard symmetric block cipher that secures the entire global internet.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Advanced Encryption Standard (AES)">
+<ConceptTemplate title="Advanced Encryption Standard (AES)">
 
-The Advanced Encryption Standard (AES) is a symmetric block cipher chosen by the U.S. government in 2001 to protect classified information. It is implemented in software and hardware throughout the world to encrypt sensitive data.
+In 2001, the U.S. National Institute of Standards and Technology (NIST) adopted the Rijndael algorithm as the **Advanced Encryption Standard (AES)**. Today, it mathematically secures almost every encrypted byte on Earth, from TLS connections to classified military hard drives.
 
-<Callout icon="info" title="The Origins (Rijndael)">
-  In 1997, the NIST announced a global competition to find a replacement for the aging, easily broken DES (Data Encryption Standard). Two Belgian cryptographers, Joan Daemen and Vincent Rijmen, submitted a cipher called "Rijndael" (a portmanteau of their names). It won the competition and was renamed AES.
-</Callout>
+## 1. The Mathematical Engine
+AES is a **Symmetric Block Cipher**. It ingests exactly 128 bits (16 bytes) of plaintext at a time and mathematically scrambles it across multiple "Rounds".
 
-## How AES Works (Block Cipher)
+Depending on the key size, AES executes a specific number of rounds:
+- **AES-128**: 10 rounds.
+- **AES-192**: 12 rounds.
+- **AES-256**: 14 rounds.
 
-AES is a **symmetric** cipher, meaning it uses the exact same key to encrypt and decrypt. 
-It is a **block** cipher, meaning it doesn't encrypt data one letter at a time; it chops the data into fixed 128-bit blocks (16 bytes) and encrypts each block independently.
+In each round, four complex mathematical transformations are applied to the 4x4 matrix of bytes:
+1. **SubBytes**: A non-linear substitution step that swaps every byte using a strict mathematical lookup table (S-box), destroying linearity.
+2. **ShiftRows**: Shifts the rows of the matrix, mathematically ensuring that data is diffused across columns.
+3. **MixColumns**: A highly complex matrix multiplication step over a Galois Field, mathematically mixing the data vertically.
+4. **AddRoundKey**: A bitwise XOR between the data matrix and the specific mathematical sub-key for that round.
 
-AES supports three specific key lengths, which dictate the number of internal "rounds" (mathematical transformations) applied to the data:
-- **AES-128**: 128-bit key, 10 rounds.
-- **AES-192**: 192-bit key, 12 rounds.
-- **AES-256**: 256-bit key, 14 rounds. (Often mandated for Top Secret government data).
-
-### The Substitution-Permutation Network
-
-During each "round," AES applies four distinct mathematical operations to scramble the 128-bit block:
-1. **SubBytes**: Non-linear substitution (swapping bytes using a lookup table).
-2. **ShiftRows**: Cyclically shifting the rows of the data matrix.
-3. **MixColumns**: Combining the bytes in each column mathematically.
-4. **AddRoundKey**: XORing the data with a piece of the secret key.
-
-By repeating this chaos 10 to 14 times, the resulting ciphertext appears completely random and mathematically unrelated to the plaintext.
-
-## AES Modes of Operation
-
-Because AES only encrypts exactly 128 bits, we need a "Mode of Operation" to tell it how to handle a massive 1GB video file.
+## 2. Block Cipher Modes of Operation
+Because AES mathematically only encrypts 128 bits at a time, you cannot just run it sequentially on a 10MB file without a "Mode of Operation."
 
 <ComparisonTable 
-  headers={['Mode', 'Description', 'Verdict']}
+  headers={['Mode', 'Mechanism', 'Security Assessment']} 
   rows={[
-    ['ECB (Electronic Codebook)', 'Encrypts every block identically. If two blocks have the same plaintext, they produce the same ciphertext. Creates visual patterns.', 'Insecure. Do not use.'],
-    ['CBC (Cipher Block Chaining)', 'XORs the previous ciphertext block into the next plaintext block before encrypting. Requires an Initialization Vector (IV).', 'Secure, but cannot be parallelized (slow).'],
-    ['GCM (Galois/Counter Mode)', 'Turns the block cipher into a stream cipher. Also provides built-in authentication (AEAD) to prove data wasn\'t tampered with.', 'The modern gold standard. Used in TLS/HTTPS.']
-  ]}
+    ['ECB (Electronic Codebook)', 'Encrypts each 128-bit block completely independently.', 'CATASTROPHICALLY INSECURE. Identical plaintext blocks produce identical ciphertext blocks, leaving visual patterns (The famous "ECB Penguin"). Never use.'],
+    ['CBC (Cipher Block Chaining)', 'XORs each plaintext block with the ciphertext of the previous block before encrypting.', 'Secure, but strictly sequential. Cannot be mathematically parallelized across CPU cores.'],
+    ['GCM (Galois/Counter Mode)', 'Turns AES into a Stream Cipher using a counter. Mathematically includes an authentication tag (AEAD).', 'THE INDUSTRY STANDARD. Massively parallelizable and guarantees data has not been tampered with.']
+  ]} 
 />
 
-</TechnologyTemplate>
+<Callout icon="warning" title="Quantum Threat">
+While RSA and ECC are mathematically destroyed by Quantum Computers, AES is remarkably resistant. Grover's Algorithm halves the effective key space of symmetric ciphers. Therefore, AES-128 is theoretically vulnerable to quantum attacks, but **AES-256 remains mathematically impenetrable even against theoretical quantum supercomputers**.
+</Callout>
+
+</ConceptTemplate>

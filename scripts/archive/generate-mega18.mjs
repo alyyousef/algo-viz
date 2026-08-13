@@ -1,548 +1,312 @@
 import fs from 'fs/promises'
 import path from 'path'
 
+const TICK3 = '```'
+const TICK1 = '`'
+
 const contentMap = {
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/C/index.mdx': `---
-title: C
-description: A foundational, low-level imperative programming language that powers modern operating systems.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="C Programming Language" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/1/18/C_Programming_Language.svg"
->
-
-**C** is arguably the most important programming language in history. Created by Dennis Ritchie at Bell Labs in 1972 to build the UNIX operating system, it strikes a balance between low-level hardware control (like Assembly) and high-level human readability.
-
-<Callout icon="warning" title="With Great Power...">
-  C is famous for providing direct memory access via **Pointers** and manual memory management (using \`malloc\` and \`free\`). The compiler trusts the programmer completely. If you accidentally write data past the end of an array, C will not stop you; it will simply overwrite whatever happens to be in RAM at that location, leading to the infamous "Segmentation Fault" or severe security vulnerabilities.
-</Callout>
-
-## Key Characteristics
-
-- **Compiled and Procedural**: Code is compiled directly into raw machine code for a specific CPU architecture. It relies heavily on functions and structural blocks.
-- **Minimalist**: The language itself is extremely small, leaving tasks like string manipulation, math, and I/O to the Standard Library (\`libc\`).
-- **Zero Overhead**: C does not have a Garbage Collector. It has no hidden background processes running. What you write is exactly what the CPU executes, making it blazing fast.
-
-## Use Cases
-
-Despite its age, C is absolutely dominant today in areas where performance and resource constraints are critical:
-- **Operating Systems**: The Linux, Windows, and macOS kernels are predominantly written in C.
-- **Embedded Systems**: Microcontrollers in cars, microwaves, and pacemakers.
-- **Language Interpreters**: The Python interpreter (CPython) and Ruby interpreter are written in C.
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/C++/index.mdx': `---
-title: C++
-description: A high-performance, compiled language that extends C with object-oriented and generic programming features.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="C++" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg"
->
-
-**C++** was created by Bjarne Stroustrup in 1979 as "C with Classes." It was designed to add Object-Oriented Programming (OOP) paradigms to the lightning-fast, low-level C language, enabling developers to build massive, complex software systems without sacrificing hardware performance.
-
-<Callout icon="info" title="The Complexity Behemoth">
-  C++ is notoriously one of the most difficult languages to master. Over 40 years, it has accumulated features from multiple paradigms: Procedural, Object-Oriented, Generic (Templates), and Functional. You have the raw, dangerous power of C pointers, alongside massive, zero-overhead abstractions.
-</Callout>
-
-## Key Features
-
-1. **Object-Oriented**: Introduced Classes, Encapsulation, Inheritance (including multiple inheritance), and Polymorphism to C.
-2. **Templates (Generic Programming)**: Allows you to write functions and classes that operate on generic types, evaluated entirely at compile-time (Turing-complete at compile-time).
-3. **RAII (Resource Acquisition Is Initialization)**: The core C++ philosophy for managing memory without a Garbage Collector. When an object goes out of scope, its Destructor is automatically called, instantly freeing memory and releasing file handles.
-4. **Zero-Cost Abstractions**: The compiler is designed so that high-level abstractions (like using a highly generic Template class) compile down to machine code that is just as fast as hand-written, low-level C code.
-
-## Where is it used?
-
-C++ is the undisputed king of performance-critical applications:
-- **Video Games**: Unreal Engine and virtually all AAA game engines are written in C++.
-- **High-Frequency Trading**: Wall Street financial engines where microseconds equal millions of dollars.
-- **Web Browsers**: Google Chrome (V8 engine) and Mozilla Firefox (Gecko).
-- **Desktop Software**: Adobe Photoshop, Microsoft Office.
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Java/index.mdx': `---
-title: Java
-description: A class-based, object-oriented programming language designed to have as few implementation dependencies as possible.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="Java" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg"
->
-
-Created by James Gosling at Sun Microsystems in 1995, **Java** revolutionized the software industry with its core philosophy: *"Write Once, Run Anywhere" (WORA).*
-
-Before Java, code had to be compiled specifically for Windows, Mac, or Linux. Java introduced the **Java Virtual Machine (JVM)**. You compile your Java code into intermediate "bytecode," and the JVM on the user's machine translates that bytecode into native machine instructions on the fly.
-
-<Callout icon="success" title="Enterprise Dominance">
-  Java is famous for its strict, verbose Object-Oriented structure. Everything must be inside a Class. While this can feel tedious for small scripts, it makes Java incredibly predictable and maintainable for massive, multi-million-line enterprise codebases maintained by hundreds of developers.
-</Callout>
-
-## Key Characteristics
-
-- **Strictly Object-Oriented**: Heavily relies on classes, interfaces, inheritance, and encapsulation.
-- **Statically Typed**: Variables must declare their type at compile-time, catching errors early.
-- **Garbage Collected**: Developers do not manually free memory. A background process (the Garbage Collector) automatically destroys objects that are no longer being used, eliminating Memory Leaks and Segmentation Faults.
-- **Massive Ecosystem**: The Java ecosystem (Spring Boot, Maven, Gradle) is arguably the most robust and mature in the software industry.
-
-## Where is it used?
-
-- **Enterprise Backend Systems**: The vast majority of Fortune 500 companies use Java (specifically the Spring framework) for their core banking, e-commerce, and billing APIs.
-- **Android Development**: Historically, Java was the exclusive native language for writing Android mobile applications (now sharing space with Kotlin).
-- **Big Data**: Foundational big data frameworks like Apache Hadoop, Kafka, and Spark run on the JVM.
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Python/index.mdx': `---
-title: Python
-description: An interpreted, high-level, general-purpose programming language known for its extreme readability and massive ecosystem.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="Python" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg"
->
-
-Created by Guido van Rossum in 1991, **Python** is an interpreted, dynamically typed language that prioritizes developer experience, extreme readability, and rapid prototyping. Its syntax heavily uses whitespace indentation rather than curly braces to define code blocks.
-
-<Callout icon="info" title="The Python Paradox (Slow but Popular)">
-  Because Python is interpreted dynamically at runtime and lacks true multi-threading (due to the Global Interpreter Lock - GIL), it is notoriously **slow** compared to C++ or Java. 
-  However, it is the most popular language in the world for AI because Python acts as "glue." The heavy math is executed by highly optimized C/C++ libraries running under the hood (like NumPy or PyTorch), while the developer gets to write the high-level logic in beautiful, simple Python.
-</Callout>
-
-## Key Characteristics
-
-1. **Batteries Included**: The Python Standard Library is massive, offering built-in modules for everything from parsing JSON to launching a local HTTP server.
-2. **Dynamically Typed**: You do not declare variable types (e.g., \`x = 10\`). The interpreter figures out the type at runtime. This speeds up writing code but makes large codebases harder to refactor.
-3. **Multi-Paradigm**: Supports Procedural, Object-Oriented, and Functional programming styles.
-4. **Interpreted**: You run the source code directly (\`python script.py\`) without a separate compilation step.
-
-## Where is it used?
-
-- **Artificial Intelligence & Data Science**: The undisputed king. TensorFlow, PyTorch, Pandas, and Scikit-Learn make Python mandatory for Machine Learning.
-- **Backend Web Development**: Frameworks like Django and FastAPI power massive websites (e.g., Instagram, Spotify).
-- **Automation & Scripting**: The go-to language for DevOps engineers and system administrators to automate cloud infrastructure and CI/CD pipelines.
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/JavaScript/index.mdx': `---
-title: JavaScript
-description: A high-level, just-in-time compiled language that enables interactive web pages and is an essential part of web applications.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="JavaScript (JS)" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/9/99/Unofficial_JavaScript_logo_2.svg"
->
-
-Created by Brendan Eich in just 10 days in 1995, **JavaScript** (no relation to Java) was designed as a simple scripting language to add basic interactivity (like form validation) to Netscape Navigator. 
-
-Today, it is the absolute monopoly language of the Web Browser, powering complex Single Page Applications (React, Vue), and has broken out of the browser to conquer the backend (Node.js).
-
-<Callout icon="warning" title="The Quirks of JS">
-  Because JS had to maintain 100% backwards compatibility for 30 years, it carries historical baggage and bizarre type-coercion rules. For example, \`[] + [] === ""\` and \`0 == "0"\` is true, but \`0 === "0"\` is false. 
-</Callout>
-
-## Key Characteristics
-
-1. **The Event Loop**: JS is single-threaded. It achieves incredibly high concurrency by being heavily asynchronous. Instead of waiting for a database to reply and freezing the thread, JS uses Callbacks/Promises and the Event Loop to handle other tasks while waiting.
-2. **First-Class Functions**: Functions are treated like any other variable. They can be passed as arguments into other functions (callbacks) and returned from functions.
-3. **Prototypal Inheritance**: Instead of traditional OOP classes, JS historically used prototypes (objects inheriting directly from other objects). (Modern JS added the \`class\` keyword as syntactic sugar over prototypes).
-4. **JIT Compiled**: Modern browser engines (like V8) do not interpret JS line-by-line. They use Just-In-Time compilation to instantly translate the JS into optimized machine code on the fly.
-
-## The Ecosystem
-
-- **Frontend**: The only language that natively runs in the browser. Powered by frameworks like React, Angular, and Svelte.
-- **Backend**: Node.js allows running JS on the server, perfect for highly concurrent, I/O bound APIs (like chat applications).
-- **NPM**: The Node Package Manager is the largest software registry in the world.
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/TypeScript/index.mdx': `---
-title: TypeScript
-description: A strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="TypeScript (TS)" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/4/4c/Typescript_logo_2020.svg"
->
-
-**TypeScript** is a language created by Microsoft in 2012 to solve the biggest problem with JavaScript: writing and maintaining massive applications in a dynamically typed language is a nightmare.
-
-TypeScript is a **strict syntactical superset** of JavaScript. This means any valid JS code is automatically valid TS code. TypeScript simply adds an advanced Static Type System on top of JS.
-
-<Callout icon="success" title="The Build-Step Eraser">
-  Browsers cannot execute TypeScript. Before running the code, the TS Compiler (\`tsc\`) strips away all the types and transpiles the code back down to pure, standard JavaScript. Therefore, TypeScript has **zero runtime overhead**. It exists purely to catch errors in your IDE before you even run the code.
-</Callout>
-
-## Why TypeScript?
-
-If you misspell a property in JavaScript (e.g., \`user.emial\`), the code will run, crash in production, and anger your customers.
-In TypeScript, you define an \`interface User { email: string }\`. If you type \`user.emial\`, the IDE immediately throws a red underline error, completely preventing the bug from reaching production.
-
-## Key Features
-
-1. **Interfaces and Types**: Define the strict shape of objects, API responses, and function parameters.
-2. **Generics**: Write reusable components that can safely work over a variety of types (e.g., \`Array<T>\`).
-3. **Union and Intersection Types**: Express complex logic (e.g., \`type Status = "success" | "error" | "loading"\`).
-4. **Gradual Adoption**: You can introduce TS into an existing JS codebase one file at a time.
-
-## Industry Adoption
-
-TypeScript has largely "won" the frontend ecosystem. It is the default language for Angular, is overwhelmingly preferred for React/Next.js projects, and is increasingly the standard for Node.js backends. 
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Go/index.mdx': `---
-title: Go (Golang)
-description: A statically typed, compiled programming language designed at Google for simplicity, speed, and massive concurrency.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="Go (Golang)" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/0/05/Go_Logo_Blue.svg"
->
-
-Created by Google engineers (including UNIX legend Ken Thompson) in 2009, **Go** was designed to solve Google's massive backend scaling problems. They needed a language that was fast to compile (unlike C++), performant, safely garbage-collected, and ridiculously easy to write highly concurrent code for multi-core processors.
-
-<Callout icon="info" title="Brutally Simple">
-  Go's defining characteristic is its lack of features. It intentionally excludes inheritance, classes, exceptions, and map/filter functions. The creators believe that giving developers fewer ways to do things results in highly readable, uniform code across massive engineering teams.
-</Callout>
-
-## Key Characteristics
-
-1. **Goroutines (Concurrency)**: The crown jewel of Go. Instead of heavy OS threads, Go uses incredibly lightweight green threads called "Goroutines." You can easily spawn 100,000 Goroutines simultaneously on a standard laptop by simply putting the word \`go\` in front of a function call.
-2. **Channels**: Instead of sharing memory and dealing with dangerous Mutex locks, Goroutines communicate by passing messages through "Channels." (*"Do not communicate by sharing memory; instead, share memory by communicating."*)
-3. **Lightning Fast Compilation**: Go compiles directly to statically linked, native machine code binaries (no JVM required). It compiles so fast it feels like a scripting language.
-4. **Garbage Collected**: Unlike Rust or C++, Go manages memory for you, accepting a tiny latency hit in exchange for massive developer productivity.
-
-## Where is it used?
-
-Go is the undisputed language of the **Cloud and Microservices**:
-- **Docker and Kubernetes**: The core infrastructure of the modern cloud is written entirely in Go.
-- **Backend Microservices**: Uber, Twitch, and Netflix use Go to write highly concurrent APIs that route millions of network requests per second.
-- **CLI Tools**: Because it compiles down to a single, portable executable binary, it is perfect for terminal applications (like Terraform).
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Rust/index.mdx': `---
-title: Rust
-description: A systems programming language focused on memory safety, fearless concurrency, and blazing-fast performance.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="Rust" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/d/d5/Rust_programming_language_black_logo.svg"
->
-
-Started by Mozilla in 2010, **Rust** was created to solve the 50-year-old nightmare of C and C++: Memory Leaks and Buffer Overflows. It offers the exact same low-level hardware control and blazing speed as C++, but it mathematically guarantees memory safety and thread safety at compile-time.
-
-For nearly a decade, Rust has been voted the "Most Loved Programming Language" by developers worldwide.
-
-<Callout icon="success" title="The Borrow Checker">
-  Rust achieves memory safety **without a Garbage Collector**. 
-  It uses a revolutionary concept called the **Borrow Checker**. The compiler tracks the "Ownership" and "Lifetimes" of every variable in your code. If two threads try to write to the same memory simultaneously, the compiler simply refuses to compile the code. If your code compiles in Rust, you are mathematically guaranteed to have zero Segfaults and zero Data Races.
-</Callout>
-
-## Key Characteristics
-
-1. **Zero-Cost Abstractions**: Like C++, high-level language features compile down to maximally optimized machine code.
-2. **Fearless Concurrency**: Because the compiler prevents data races, developers can aggressively write multi-threaded code without the fear of untraceable production crashes.
-3. **Modern Tooling**: The \`cargo\` package manager and build system is universally praised as one of the best in the industry.
-4. **Pattern Matching & Result Types**: Rust handles errors natively via the \`Result<T, E>\` enum rather than throwing exceptions, forcing the developer to explicitly handle both the success and error cases.
-
-## The Learning Curve
-
-Rust has a notoriously brutal learning curve. Fighting the Borrow Checker is a rite of passage. The compiler acts as a strict mentor, forcing you to design your memory architecture perfectly before it allows you to run the code.
-
-## Where is it used?
-
-- **Systems & OS**: Parts of the Linux Kernel and Windows OS are being actively rewritten in Rust.
-- **WebAssembly (WASM)**: Rust is the premier language for compiling high-performance code to run inside the web browser.
-- **Blockchain & Web3**: Foundational language for Solana and Polkadot smart contracts.
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Csharp/index.mdx': `---
-title: C# (C-Sharp)
-description: A modern, object-oriented, and type-safe programming language developed by Microsoft as part of its .NET initiative.
----
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-
-<TechnologyTemplate 
-  title="C# (C-Sharp)" 
-  category="Programming Languages" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/0/0d/C_Sharp_wordmark.svg"
->
-
-Created by Microsoft in 2000 (led by Anders Hejlsberg), **C#** was originally designed as Microsoft's answer to Java. Today, it has evolved into a highly expressive, modern, multi-paradigm language running on the open-source, cross-platform **.NET Core** runtime.
-
-<Callout icon="info" title="The LINQ Revolution">
-  C# is heavily praised for its elegant syntax and rapid adoption of modern features. One of its crown jewels is **LINQ (Language Integrated Query)**, which allows developers to write SQL-like queries directly into the language syntax to filter and map over arrays and databases with absolute type safety.
-</Callout>
-
-## Key Characteristics
-
-- **Object-Oriented & Component-Oriented**: Like Java, it is heavily OOP, but adds features like Properties and Events natively to support UI component development.
-- **Managed Execution**: C# compiles to Intermediate Language (IL) which is executed by the Common Language Runtime (CLR), providing automatic Garbage Collection and memory safety.
-- **Async/Await**: C# pioneered the modern \`async/await\` syntax in 2012, which has since been adopted by JavaScript, Python, and Rust to handle asynchronous I/O cleanly.
-- **Value Types vs Reference Types**: Gives developers fine-grained control over memory, allowing data to be allocated on the Stack (structs) for performance, or the Heap (classes).
-
-## Where is it used?
-
-- **Enterprise Web Backends**: ASP.NET Core is one of the fastest and most popular web frameworks on the market, dominating corporate enterprise software.
-- **Game Development**: The primary scripting language for the **Unity Game Engine**, making it the most used language in indie game development and mobile gaming.
-- **Desktop Applications**: The undisputed standard for building native Windows desktop applications (WPF, WinForms, MAUI).
-
-</TechnologyTemplate>
-`,
-
-  'src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Imperative programming/index.mdx': `---
-title: Imperative Programming
-description: A paradigm that uses statements that change a program's state, focusing on describing HOW a program should achieve a result.
+  'src/features/kb/routes/KB/10. Operating Systems/Processes/index.mdx': `---
+title: Processes
+description: The fundamental unit of execution in an Operating System, containing a program's code, memory space, and hardware context.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Imperative Programming">
+<ConceptTemplate title="Processes">
 
-**Imperative Programming** is the oldest and most fundamental programming paradigm. It is closely tied to the physical architecture of computers (the von Neumann architecture).
+When you double-click an application (like Google Chrome), the Operating System reads the static executable file from the hard drive and loads it into RAM. The moment that code begins executing, it becomes a **Process**.
 
-In the imperative paradigm, the programmer writes code that describes **exactly HOW** the computer should perform a task, step-by-step. It relies heavily on statements that change the underlying memory state of the computer (mutating variables).
+## 1. Process Anatomy
+A process is heavily isolated by the OS. It believes it is the *only* program running on the computer. It consists of:
+1. **Text Segment**: The compiled binary machine code (Read-only).
+2. **Data Segment**: Global and static variables initialized by the programmer.
+3. **Heap**: Memory dynamically allocated at runtime (e.g., using TICK1malloc()TICK1 in C or TICK1newTICK1 in Java). Grows upward.
+4. **Stack**: Temporary storage for function parameters, return addresses, and local variables. Grows downward.
 
-<Callout icon="info" title="The Recipe Analogy">
-  Imperative programming is like giving someone a recipe:
-  1. Take a bowl.
-  2. Put 2 eggs in the bowl.
-  3. While the eggs are not whisked, stir the eggs.
-  4. Pour the bowl into a pan.
+## 2. The Process Control Block (PCB)
+The OS must track thousands of processes. It does this using a massive C-struct called the **PCB**. 
+The PCB stores:
+- **Process ID (PID)**: The unique integer identifying the process.
+- **Process State**: Is it *Running*, *Waiting*, or *Terminated*?
+- **CPU Registers**: The exact state of the CPU when the process was last paused (Program Counter, Stack Pointer).
+- **Memory Limits**: The start and end physical addresses this process is allowed to access.
+
+## 3. Process Isolation
+Because every process has its own isolated memory space, Process A cannot mathematically access the memory of Process B. If Process A has a buffer overflow and crashes, Process B is completely unaffected. 
+If they *need* to talk, they must use OS-mediated **Inter-Process Communication (IPC)** (like Pipes or Sockets), which is slow but incredibly secure.
+
+<Callout icon="warning" title="Zombie Processes">
+When a process finishes execution, it sends an TICK1exit()TICK1 system call. The OS clears its memory but leaves the PCB intact so the Parent Process can read its exit status. If the parent forgets to read it (using TICK1wait()TICK1), the dead process remains in the process table forever as a **Zombie**.
 </Callout>
-
-## Core Concepts
-
-1. **State Mutation**: The program is built around variables whose values change over time (e.g., \`counter = counter + 1\`).
-2. **Control Flow**: Explicitly defining the path of execution using loops (\`for\`, \`while\`) and conditional branches (\`if\`, \`else\`, \`switch\`).
-3. **Sequence**: The order of operations matters entirely. Line 2 executes, then changes state, then Line 3 executes using that new state.
-
-## Example
-
-Filtering an array of numbers to only include evens (Imperative approach):
-
-\`\`\`javascript
-const numbers = [1, 2, 3, 4];
-const evens = []; // Mutable state
-
-// Explicit control flow and mutation
-for (let i = 0; i < numbers.length; i++) {
-  if (numbers[i] % 2 === 0) {
-    evens.push(numbers[i]);
-  }
-}
-\`\`\`
-
-## Strengths and Weaknesses
-
-- **Strengths**: It maps directly to how the CPU actually executes machine code, making it highly performant and intuitive for low-level memory manipulation (C, Assembly).
-- **Weaknesses**: As systems grow massively complex, tracking the constantly changing "State" of hundreds of variables leads to severe bugs and makes concurrent (multi-threaded) programming incredibly dangerous.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Declarative programming/index.mdx': `---
-title: Declarative Programming
-description: A paradigm that focuses on WHAT the program should accomplish without specifying exactly HOW to achieve it.
+  'src/features/kb/routes/KB/10. Operating Systems/Threads/index.mdx': `---
+title: Threads
+description: Lightweight units of execution that exist within a Process, sharing the same memory space to enable ultra-fast concurrent execution.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Declarative Programming">
+<ConceptTemplate title="Threads">
 
-**Declarative Programming** is an umbrella paradigm (which includes Functional and Logic programming) that stands in direct contrast to Imperative programming.
+Creating a completely new Process is incredibly expensive. It requires the OS to allocate massive blocks of memory, construct a new PCB, and establish security boundaries. 
+If a web server needs to handle 10,000 users simultaneously, creating 10,000 isolated processes will instantly crash the OS out of memory. 
 
-In the declarative paradigm, the programmer writes code that describes **WHAT** the desired outcome is, leaving the complex, step-by-step implementation details (the "HOW") to the underlying language compiler or engine.
+The solution is **Threads**. 
 
-<Callout icon="success" title="The Restaurant Analogy">
-  Declarative programming is like ordering at a restaurant. You tell the waiter: "I want a medium-rare steak with fries." (The **WHAT**). 
-  You do *not* go into the kitchen and tell the chef to turn the stove to 400 degrees, cook for 5 minutes, flip, and plate (The **HOW**).
+## 1. The Shared Memory Model
+A Thread is a "lightweight process". Multiple threads can live *inside* a single Process. 
+
+Crucially, all threads within a process **share the exact same Heap, Data Segment, and Code**. 
+However, because they execute independently, each thread gets its very own isolated **Stack** and **Program Counter** (to track what line of code it is currently executing).
+
+<ComparisonTable 
+  headers={['Metric', 'Processes', 'Threads']} 
+  rows={[
+    ['Memory Overhead', 'Massive. Every process has its own isolated memory.', 'Minimal. All threads share the parent process memory.'],
+    ['Creation Speed', 'Extremely slow (requires heavy OS intervention).', 'Blazingly fast.'],
+    ['Communication', 'Slow. Requires complex Inter-Process Communication (IPC).', 'Instant. They share the same variables in RAM.'],
+    ['Security / Fault Tolerance', 'High. If one process crashes, the others survive.', 'Low. If one thread triggers a Segmentation Fault, the entire Process (and all its threads) crashes instantly.']
+  ]} 
+/>
+
+## 2. Multi-Threading and Multi-Core CPUs
+Modern CPUs have multiple physical cores (e.g., 8 cores). If your Process only has 1 thread, it can only execute on 1 core, meaning 87% of your CPU is physically idle. By spawning 8 threads, the OS can mathematically map one thread to each physical core, achieving true parallel execution and drastically increasing performance.
+
+<Callout icon="warning" title="The Race Condition Nightmare">
+Because threads instantly share the same memory, they are fundamentally dangerous. If Thread A and Thread B try to update the exact same global variable at the exact same microsecond, the data mathematically corrupts. This requires extreme architectural synchronization using **Mutexes** and **Semaphores**.
 </Callout>
-
-## Classic Examples
-
-The most famous declarative languages are not general-purpose programming languages, but domain-specific ones:
-
-- **SQL**: You declare \`SELECT * FROM users WHERE age > 18\`. You don't write a \`for\` loop to iterate over the database sectors. The SQL engine figures out the fastest way to fetch it.
-- **HTML/CSS**: You declare \`<button>Click</button>\`. You don't write the imperative C++ code to draw a rectangle on the screen pixel-by-pixel.
-- **React**: Modern UI frameworks are declarative. You declare "When the state is X, the UI should look like Y." React automatically handles the complex DOM manipulations to make it happen.
-
-## Example
-
-Filtering an array of numbers to only include evens (Declarative approach using JavaScript's functional methods):
-
-\`\`\`javascript
-const numbers = [1, 2, 3, 4];
-
-// We declare WHAT we want (filter for evens).
-// The JS engine handles the looping mechanism under the hood.
-const evens = numbers.filter(n => n % 2 === 0);
-\`\`\`
-
-## Strengths and Weaknesses
-
-- **Strengths**: Code is significantly shorter, more readable, and less prone to off-by-one errors. It is highly composable and allows the underlying engine to aggressively optimize the execution.
-- **Weaknesses**: When performance is highly critical, or the underlying engine's abstraction "leaks," you may lose the fine-grained control needed to optimize the hardware usage.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Procedural programming/index.mdx': `---
-title: Procedural Programming
-description: A programming paradigm derived from imperative programming, based on the concept of the procedure call.
+  'src/features/kb/routes/KB/10. Operating Systems/Context switching/index.mdx': `---
+title: Context Switching
+description: The intense OS mechanism that rapidly pauses one process and resumes another, creating the illusion of infinite simultaneous multitasking.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Procedural Programming">
+<ConceptTemplate title="Context Switching">
 
-**Procedural Programming** is a specific, structured type of Imperative Programming. As early programs grew in size, writing thousands of lines of sequential code (often relying on dangerous \`GOTO\` statements) resulted in unmaintainable "spaghetti code."
+If your CPU only has 4 physical cores, it can mathematically only execute 4 instructions at the exact same time. Yet, you can have Spotify, Chrome, Slack, and Discord all running smoothly. 
+The OS achieves this using **Time Slicing** and **Context Switching**.
 
-The Procedural paradigm solved this by introducing the concept of the **Procedure** (also known as routines, subroutines, or functions). It dictates that a program should be broken down into a series of smaller, reusable computational steps.
+## 1. The Illusion of Concurrency
+The OS gives Process A control of the CPU for a tiny fraction of a second (e.g., 10 milliseconds). When the timer expires, a physical hardware interrupt fires. The CPU instantly halts Process A and gives control back to the OS Kernel. 
 
-<Callout icon="info" title="The Foundation of Software Engineering">
-  Procedural programming was the first major step toward modern software architecture. It introduced the idea of **Modularity** and **Scoping**—allowing variables to live locally inside a function rather than existing in a massive, global state.
+The OS must now pause Process A and resume Process B.
+
+## 2. The Mechanics of the Switch
+A Context Switch is computationally expensive because the OS must physically save and load the state of the CPU.
+
+1. **Save State**: The OS takes the exact values of the CPU's registers (Program Counter, Stack Pointer, General Registers) and saves them into Process A's Process Control Block (PCB) in RAM.
+2. **Scheduler Decision**: The OS runs a scheduling algorithm to mathematically determine which process should run next (Process B).
+3. **Restore State**: The OS reads Process B's PCB, takes its saved registers, and physically loads them back into the CPU.
+4. **Flush TLB**: The OS must flush the Translation Lookaside Buffer (hardware cache mapping virtual to physical memory) to ensure Process B cannot illegally read Process A's memory.
+
+## 3. The Performance Cost
+A Context Switch takes roughly 1 to 5 microseconds. This sounds fast, but if a CPU is doing 100,000 context switches per second, the OS is spending 50% of its total processing power just swapping things in and out, rather than actually running your code (a phenomenon called **Thrashing**).
+
+<Callout icon="tip" title="Thread vs Process Switching">
+Context switching between two Threads in the *same* process is blazingly fast. Because they share the same memory space, the OS does **not** need to flush the TLB or swap out the massive memory page tables. It only needs to swap the registers.
 </Callout>
-
-## Core Concepts
-
-1. **Functions/Procedures**: Blocks of code that take inputs (arguments), perform a specific sequence of operations, and return an output.
-2. **Modularity**: Complex problems are decomposed into a hierarchy of smaller, manageable functions. (e.g., \`main()\` calls \`read_file()\`, which calls \`parse_data()\`).
-3. **Data and Logic Separation**: In procedural code, data structures (like structs or records) and the functions that operate on them are kept completely separate. (This is the primary difference from Object-Oriented Programming).
-
-## C: The Procedural King
-
-The **C** programming language is the ultimate example of procedural programming. 
-
-\`\`\`c
-// The Data
-struct Rectangle {
-    int width;
-    int height;
-};
-
-// The Procedure (Logic is separate from Data)
-int calculateArea(struct Rectangle rect) {
-    return rect.width * rect.height;
-}
-\`\`\`
-
-## Evolution into OOP
-
-Procedural programming works incredibly well for algorithms and system-level code (like the Linux Kernel). However, in massive business applications (like building a GUI or an RPG game), keeping hundreds of global variables and thousands of disconnected functions synchronized became chaotic. This limitation led directly to the creation of **Object-Oriented Programming**.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Object-oriented programming/index.mdx': `---
-title: Object-Oriented Programming (OOP)
-description: A programming paradigm based on the concept of "objects", which contain both data and the code that manipulates it.
+  'src/features/kb/routes/KB/10. Operating Systems/Virtual memory/index.mdx': `---
+title: Virtual Memory
+description: The foundational OS architecture that abstracts physical RAM, giving every process the illusion of having a massive, contiguous, and isolated block of memory.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Object-Oriented Programming (OOP)">
+<ConceptTemplate title="Virtual Memory">
 
-**Object-Oriented Programming (OOP)** is the dominant programming paradigm in the enterprise software industry (popularized by Java, C++, and C#). 
+In early computers, if an application needed 10MB of RAM, it literally wrote data to physical silicon addresses 0 through 10,000,000. 
+This was catastrophic:
+1. If Chrome and Spotify both try to write to address 500, they corrupt each other.
+2. If Chrome needs a 10MB contiguous block of memory, but the RAM is fragmented into tiny 1MB chunks, Chrome cannot launch (even if 50MB is technically free).
 
-Unlike Procedural programming, which separates data from logic, OOP organizes software design around **Objects**—entities that bundle both the state (data/attributes) and the behavior (functions/methods) into a single cohesive unit.
+**Virtual Memory** mathematically solves all of this by lying to the processes.
 
-<Callout icon="info" title="Modeling the Real World">
-  OOP attempts to map code to real-world concepts. If you are building a banking app, you create a \`BankAccount\` Class. This class holds the data (\`balance\`) and the logic (\`deposit()\`, \`withdraw()\`). You cannot access the balance directly; you must interact with the object's methods.
+## 1. The Grand Illusion
+When a 64-bit Process launches, the OS tells it: *"You are the only program running, and you have exactly 16 Exabytes of perfect, contiguous memory all to yourself, starting at address 0."*
+
+When the Process writes data to Virtual Address TICK10x0400TICK1, the hardware **Memory Management Unit (MMU)** intercepts the request on the motherboard. It mathematically translates that fake Virtual Address into a real Physical Address (e.g., TICK10xFFAATICK1) before it hits the RAM stick.
+
+## 2. Benefits of Virtual Memory
+1. **Total Isolation**: Because the OS strictly controls the MMU translation map, it is mathematically impossible for Chrome to generate a virtual address that translates into Spotify's physical RAM. The hardware will physically block it (Segmentation Fault).
+2. **Defeating Fragmentation**: A process might believe its 10MB array is perfectly contiguous in Virtual Memory. In reality, the MMU has physically scattered those 10MB into thousands of tiny, non-contiguous chunks across the physical RAM sticks. 
+
+## 3. The Swapping Failsafe
+What happens if you have 8GB of physical RAM, but you open 16GB worth of Chrome tabs? 
+Without Virtual Memory, the PC crashes. With Virtual Memory, the OS simply takes 8GB of RAM, mathematically packages it, and writes it to your physical Hard Drive (the Swap File / Pagefile). The Virtual Addresses remain perfectly valid, but the physical data is hiding on the SSD. If Chrome requests that memory, the OS triggers a **Page Fault**, freezes Chrome, reads the data off the SSD back into RAM, and resumes.
+
+<Callout icon="warning" title="Thrashing">
+If your RAM is 100% full, the OS will spend all its time constantly swapping data back and forth between the RAM and the SSD. Because SSDs are 1,000x slower than RAM, the entire computer will grind to an absolute halt. This is known as Thrashing.
 </Callout>
-
-## The Four Pillars of OOP
-
-1. **Encapsulation**: Bundling data and methods into a Class, and hiding the internal state from the outside world using access modifiers (\`private\`, \`public\`). This protects the data from unauthorized mutation.
-2. **Abstraction**: Exposing only the essential, high-level mechanisms to the user, hiding the complex, underlying implementation details. (e.g., You press the gas pedal; you don't need to know how the fuel injector works).
-3. **Inheritance**: Allowing a new Class to absorb the properties and methods of an existing Class, promoting massive code reusability. (e.g., A \`Dog\` class inherits from an \`Animal\` class).
-4. **Polymorphism**: The ability for different objects to be treated as instances of the same class through a common interface. (e.g., Calling \`.makeSound()\` on an array of Animals, and letting the specific Dog or Cat object decide how to implement the sound).
-
-## Strengths and Weaknesses
-
-- **Strengths**: Exceptional for organizing massive, complex codebases (millions of lines of code) maintained by huge teams. It enforces modularity and code reuse.
-- **Weaknesses**: OOP can lead to over-engineering. Codebases often suffer from the "Gorilla Banana" problem (where to get a reusable banana, you must also inherit the gorilla holding it, and the entire jungle). It also introduces significant performance overhead due to pointer chasing and virtual method dispatches.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Functional programming/index.mdx': `---
-title: Functional Programming (FP)
-description: A declarative programming paradigm where programs are constructed by applying and composing pure mathematical functions.
+  'src/features/kb/routes/KB/10. Operating Systems/Paging/index.mdx': `---
+title: Paging
+description: The specific mathematical mechanism used by the OS and MMU to chop Virtual Memory into uniform blocks, enabling efficient translation and eliminating external fragmentation.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Functional Programming (FP)">
+<ConceptTemplate title="Paging">
 
-**Functional Programming (FP)** is a declarative paradigm that treats computation as the evaluation of mathematical functions. It strictly avoids changing state and mutating data. 
+To implement Virtual Memory, the OS must track the translation mapping from Virtual Addresses to Physical Addresses. If the OS tracked every single byte individually, the translation map would be larger than the RAM itself. 
 
-While languages like Haskell, Lisp, and Clojure are pure functional languages, FP concepts have heavily influenced modern multi-paradigm languages like JavaScript, Rust, and Python.
+**Paging** solves this by chopping memory into larger, uniform blocks (usually 4 Kilobytes).
 
-<Callout icon="success" title="The Antidote to Complexity">
-  In Object-Oriented programming, bugs usually occur because the "State" of an object is modified unpredictably by different parts of the system. 
-  Functional programming eliminates this class of bugs entirely by making State **Immutable**. If you can never change a variable once it is created, you can never have a race condition in a multi-threaded app!
+## 1. Pages and Frames
+- **Pages**: Virtual Memory is mathematically chopped into 4KB blocks called Pages.
+- **Frames**: Physical RAM is physically chopped into 4KB blocks called Frames.
+
+The OS maintains a massive mathematical array called the **Page Table**. 
+When a process wants to write to a Virtual Address, the CPU splits the address into two parts: the **Page Number** and the **Offset**.
+1. It uses the Page Number to look up the array index in the Page Table.
+2. The Page Table returns the physical Frame Number.
+3. It attaches the Offset to the Frame Number to pinpoint the exact byte in the RAM stick.
+
+## 2. Multi-Level Page Tables
+On a 64-bit system, a single, flat Page Table would require Petabytes of RAM just to store the translation mappings (which is physically impossible). 
+Modern OS architecture uses **Multi-Level Paging** (usually 4 levels deep). The OS only creates the lowest-level tables if the process is *actually* using that specific memory, saving massive amounts of RAM.
+
+<ComparisonTable 
+  headers={['Problem', 'Paging Solution']} 
+  rows={[
+    ['External Fragmentation', 'Completely eliminated. Because all physical Frames are exactly 4KB, any free Frame perfectly fits any Virtual Page.'],
+    ['Internal Fragmentation', 'Still exists. If a process needs 1 byte of memory, the OS MUST give it an entire 4KB Page, wasting 4095 bytes.'],
+    ['Translation Speed', 'Reading the Page Table in RAM takes time. Hardware mitigates this using a massive cache called the TLB.']
+  ]} 
+/>
+
+<Callout icon="tip" title="Translation Lookaside Buffer (TLB)">
+Every time the CPU reads memory, it must first read the Page Table to translate it, meaning 1 memory request actually takes 2 memory cycles (50% slower). The hardware **TLB** is an ultra-fast associative cache physically built into the CPU silicon. It memorizes the most recent Page-to-Frame translations. If a TLB Hit occurs, the translation happens in 1 nanosecond.
 </Callout>
 
-## Core Concepts
+</ConceptTemplate>
+`,
 
-1. **Pure Functions**: A function must adhere to two rules:
-   - Given the exact same input, it will *always* return the exact same output.
-   - It produces **no side effects** (it does not modify global variables, write to a database, or print to the console).
-2. **Immutability**: Once a variable or data structure is created, it can never be modified. To "change" data, you must create a brand new copy of the data structure with the updated values.
-3. **First-Class and Higher-Order Functions**: Functions are treated as data. They can be assigned to variables, passed as arguments into other functions (like \`map\`, \`filter\`, \`reduce\`), and returned from functions.
+  'src/features/kb/routes/KB/10. Operating Systems/Mutexes/index.mdx': `---
+title: Mutexes (Mutual Exclusion)
+description: The fundamental synchronization lock that mathematically guarantees only a single thread can execute a critical section of code at any given time.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-## Example
+<ConceptTemplate title="Mutexes (Mutual Exclusion)">
 
-Updating a user's age:
+When multiple Threads run concurrently, they share the same physical RAM. If two threads try to modify a shared variable (e.g., TICK1bank_balance += 100TICK1) at the exact same microsecond, the CPU instructions interleave, and the data is mathematically destroyed. This is a **Race Condition**.
 
-\`\`\`javascript
-// OOP / Imperative (Mutation)
-const user = { name: "Alice", age: 25 };
-user.age = 26; // Mutates original state
+A **Mutex (Mutual Exclusion object)** is a strict architectural lock that solves this by enforcing serialized access.
 
-// Functional (Immutability)
-const user = { name: "Alice", age: 25 };
-const updatedUser = { ...user, age: 26 }; // Creates a pure copy
-\`\`\`
+## 1. The Locking Mechanism
+A Mutex acts like the single key to a public restroom.
+1. Thread A wants to enter the **Critical Section** (the code that modifies the shared variable).
+2. Thread A calls TICK1mutex.lock()TICK1. It takes the key and proceeds.
+3. Thread B arrives and calls TICK1mutex.lock()TICK1. Because the key is missing, the OS instantly physically freezes (blocks) Thread B.
+4. Thread A finishes and calls TICK1mutex.unlock()TICK1. 
+5. The OS wakes up Thread B, hands it the key, and allows it to proceed.
 
-## Strengths and Weaknesses
+## 2. Hardware Level Atomicity
+How does the TICK1mutex.lock()TICK1 function itself avoid a race condition? If two threads call TICK1lock()TICK1 at the same time, who wins?
+Mutexes mathematically rely on specialized CPU hardware instructions, such as **Compare-And-Swap (CAS)** or **Test-And-Set**. These instructions execute entirely inside the silicon in a single, uninterruptible clock cycle. They are mathematically atomic.
 
-- **Strengths**: Code is incredibly predictable, highly testable (pure functions need no mock databases), and naturally thread-safe for parallel processing.
-- **Weaknesses**: Strict immutability means constantly copying massive arrays or objects in memory, which can lead to high memory usage and Garbage Collection pauses if the language engine isn't heavily optimized for it.
+<Callout icon="warning" title="The Threat of Deadlocks">
+Mutexes are dangerous. If Thread A locks Mutex 1, and Thread B locks Mutex 2... and then Thread A attempts to lock Mutex 2, and Thread B attempts to lock Mutex 1, they will both freeze. They are permanently waiting for each other to release the locks. This is a **Deadlock**, and it permanently crashes the application.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/10. Operating Systems/Semaphores/index.mdx': `---
+title: Semaphores
+description: A generalized signaling mechanism invented by Dijkstra that uses mathematical counters to control thread access to a finite pool of shared resources.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate title="Semaphores">
+
+Invented by Edsger W. Dijkstra in 1965, a **Semaphore** is a synchronization primitive. While a Mutex strictly protects a *single* resource (0 or 1), a Semaphore protects a *finite pool* of resources using a mathematical counter (N).
+
+## 1. The Mathematical Counter
+A semaphore is initialized with an integer \`N\` (e.g., 5 database connections).
+
+It has two atomic operations (historically named by Dijkstra as P and V):
+- **wait() / acquire()**: If the counter is > 0, it mathematically subtracts 1 and proceeds. If the counter is exactly 0, the thread is frozen by the OS.
+- **signal() / release()**: Mathematically adds 1 to the counter. If any threads are currently frozen waiting, the OS instantly wakes exactly one of them up.
+
+## 2. Mutex vs Semaphore
+
+<ComparisonTable 
+  headers={['Property', 'Mutex', 'Semaphore']} 
+  rows={[
+    ['Capacity', 'Strictly binary (0 or 1). Protects a single resource.', 'Can be initialized to any number N. Protects a pool of resources.'],
+    ['Ownership', 'Strict Ownership. The thread that locked the Mutex is the ONLY thread allowed to unlock it.', 'No Ownership. Thread A can call TICK1wait()TICK1, and Thread B can completely independently call TICK1signal()TICK1 to wake it up.'],
+    ['Primary Use Case', 'Preventing Race Conditions on shared variables.', 'Signaling between threads (Producer-Consumer problems).']
+  ]} 
+/>
+
+## 3. The Producer-Consumer Problem
+Semaphores are the mathematical backbone of Producer-Consumer architectures (like Thread Pools or Job Queues).
+- You initialize a Semaphore to 0.
+- 10 Worker Threads call TICK1wait()TICK1. Because it is 0, they all freeze.
+- A Master Thread receives a web request. It puts the job in a queue and calls TICK1signal()TICK1. 
+- The Semaphore hits 1. The OS instantly wakes up exactly one Worker Thread, who takes the job.
+
+<Callout icon="info" title="Binary Semaphores">
+If you initialize a Semaphore to exactly 1, it acts very similarly to a Mutex. However, because it lacks strict Ownership, it is still architecturally different. You should never use a Semaphore to protect a simple shared variable; always use a Mutex.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/10. Operating Systems/System calls/index.mdx': `---
+title: System Calls (Syscalls)
+description: The highly secure, hardware-enforced mathematical bridge that allows User Space applications to request privileged actions from the OS Kernel.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate title="System Calls (Syscalls)">
+
+Modern CPUs physically enforce two modes of operation:
+1. **User Mode (Ring 3)**: Unprivileged. Chrome, Spotify, and your Python scripts run here. They cannot access the hard drive, the network card, or memory outside their sandbox.
+2. **Kernel Mode (Ring 0)**: God mode. The OS Kernel runs here. It has absolute physical control over the hardware.
+
+If your Python script wants to read a file from the SSD, it is mathematically incapable of doing it. It must ask the OS Kernel to do it on its behalf. This request is a **System Call**.
+
+## 1. The Trap Instruction
+A System Call is not a standard function call. A user program cannot simply jump into Kernel memory (the MMU would block it and crash the program). 
+Instead, the program executes a special hardware CPU instruction called a **Trap** (or Software Interrupt).
+
+1. The program places the ID of the specific Syscall (e.g., TICK1read()TICK1 is ID 0 in Linux) into a specific CPU register.
+2. It executes the TICK1syscallTICK1 machine instruction.
+3. The CPU hardware instantly and violently halts the program, elevates its physical privilege level to Ring 0, and jumps to a pre-defined OS memory address called the Interrupt Vector Table.
+4. The OS looks at the register, realizes you want to read a file, verifies your permissions, reads the file, and then demotes the CPU back to User Mode.
+
+## 2. The Performance Cost
+Because a System Call triggers hardware-level context switching, privilege escalation, and security checks, it is incredibly slow compared to a normal function call.
+If your code calls TICK1console.log()TICK1 or TICK1printf()TICK1 one million times in a loop, it will trigger one million Syscalls (TICK1write()TICK1), catastrophically destroying performance. 
+This is why all standard libraries (like libc) heavily **Buffer** their I/O. They wait until they have a large chunk of text, and then issue a single Syscall to print it all at once.
+
+<Callout icon="tip" title="Bypassing the Kernel">
+In extreme high-performance environments (like High-Frequency Trading or Massive Network Routers), the latency of Syscalls is unacceptable. Advanced architectures use **Kernel Bypass** technologies (like DPDK), directly mapping the physical network card memory into User Space, completely eliminating the OS from the critical path.
+</Callout>
 
 </ConceptTemplate>
 `,
@@ -552,7 +316,12 @@ async function main() {
   for (const [filePath, content] of Object.entries(contentMap)) {
     const fullPath = path.resolve(filePath)
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
-    await fs.writeFile(fullPath, content.trim() + '\n', 'utf-8')
+
+    // Safely replace TICK1 and TICK3 placeholders with actual backticks
+    let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
+
+    // Append a safe newline
+    await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8')
     console.log('Wrote ' + filePath)
   }
 }

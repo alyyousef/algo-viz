@@ -1,46 +1,41 @@
 ---
 title: Binary Search Trees (BST)
-description: A node-based binary tree data structure with strict ordering rules.
+description: The fundamental non-linear data structure enabling O(log n) search, insertion, and deletion by enforcing a strict sorted property.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Binary Search Trees (BST)">
+<ConceptTemplate title="Binary Search Trees (BST)">
 
-A Binary Search Tree (BST) is a tree data structure where each node has at most two child nodes (left and right). It enforces a strict mathematical property:
+A **Binary Search Tree (BST)** is a node-based data structure where each node has at most two children (Left and Right). It enforces a strict mathematical property: 
+For any given node, all elements in its **Left Subtree** must be strictly less than the node's value, and all elements in its **Right Subtree** must be strictly greater than the node's value.
 
-1. The left subtree of a node contains only nodes with keys **lesser** than the node's key.
-2. The right subtree of a node contains only nodes with keys **greater** than the node's key.
+## 1. The Core Operations
 
-<Callout icon="error" title="The Unbalanced Nightmare">
-  If you insert sorted data into a standard BST (1, 2, 3, 4, 5), it degenerates into a Linked List! The O(log n) lookup time collapses to O(n). This is why self-balancing trees like AVL and Red-Black trees were invented.
-</Callout>
-
-## Time Complexity
+If the tree is perfectly balanced, a BST allows you to instantly discard half of the remaining data at every step (similar to Binary Search on an array).
 
 <ComparisonTable 
-  headers={['Operation', 'Average Case (Balanced)', 'Worst Case (Unbalanced)']}
+  headers={['Operation', 'Time Complexity (Average)', 'Time Complexity (Worst)']} 
   rows={[
     ['Search', 'O(log n)', 'O(n)'],
     ['Insert', 'O(log n)', 'O(n)'],
     ['Delete', 'O(log n)', 'O(n)']
-  ]}
+  ]} 
 />
 
-## Architecture
+### In-Order Traversal
+Because of the BST property, performing an **In-Order Traversal** (Left -> Root -> Right) on a BST will naturally visit every single node in perfectly sorted, ascending order in exactly `O(n)` time.
 
-<ArchitectureDiagram chart={`
-graph TD
-  8((8)) --> 3((3))
-  8 --> 10((10))
-  
-  3 --> 1((1))
-  3 --> 6((6))
-  
-  6 --> 4((4))
-  6 --> 7((7))
-  
-  10 --> 14((14))
-  14 --> 13((13))
-`} />
+## 2. The Worst-Case Nightmare
+The Achilles' heel of a standard BST is that it has no self-balancing mechanism. 
+If you insert data that is already sorted (e.g., inserting 1, 2, 3, 4, 5 into a new BST), every new node is attached to the Right child. 
 
-</TechnologyTemplate>
+The BST violently degenerates into a **Linked List**. 
+Your `O(log n)` tree operations mathematically collapse into `O(n)`. Searching for "5" requires traversing every single node. 
+
+<Callout icon="warning" title="The Balancing Solution">
+Because a standard BST is mathematically vulnerable to `O(n)` degeneration, it is almost never used in production software. Instead, engineers use **Self-Balancing BSTs** (like AVL Trees or Red-Black Trees) which detect when the tree is becoming lopsided and mathematically rotate the nodes to guarantee `O(log n)` worst-case performance.
+</Callout>
+
+</ConceptTemplate>

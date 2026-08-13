@@ -1,8 +1,38 @@
+---
+title: NP-Complete
+description: Understanding the hardest problems in NP. The linchpin of complexity theory where solving one solves them all.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="NP-complete">
+<ConceptTemplate title="NP-Complete">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Within the universe of **NP** problems (problems whose solutions can be verified efficiently), there exists an elite, mathematically terrifying sub-category: the **NP-Complete** problems.
+
+## 1. The Definition
+A problem is mathematically classified as **NP-Complete** if it satisfies two strict conditions:
+1. It is in the class **NP** (a given solution can be verified in polynomial time).
+2. Every other problem in NP can be mathematically reduced (transformed) into this problem in polynomial time.
+
+## 2. The Universal Skeleton Key
+The second condition is what makes NP-Complete profound. 
+Because *every* problem in NP can be transformed into an NP-Complete problem, an NP-Complete problem is mathematically proven to be the **absolute hardest problem in NP**.
+
+<Callout icon="tip" title="The Domino Effect">
+If you ever discover an efficient, polynomial-time algorithm (class **P**) to solve just **ONE** NP-Complete problem, you have mathematically proven that P = NP. Your algorithm could be instantly used to efficiently solve every other NP problem in existence.
+</Callout>
+
+## 3. Famous NP-Complete Problems
+Thousands of seemingly distinct problems have been mathematically proven to be identical (NP-Complete).
+
+- **Boolean Satisfiability (SAT)**: The first problem ever proven to be NP-Complete (Cook-Levin Theorem, 1971). Given a complex boolean logic circuit, is there an input of 1s and 0s that outputs a 1?
+- **Traveling Salesman (Decision Version)**: "Does there exist a path visiting all cities exactly once with a distance less than X?"
+- **Knapsack Problem (Decision Version)**: "Can a subset of these items fit in the bag and yield a value greater than V?"
+- **Graph Coloring**: "Can we color the nodes of this massive map with exactly 3 colors such that no two adjacent nodes share a color?"
+
+## 4. How Engineers Handle NP-Complete Problems
+If you are writing software and realize your task maps to an NP-Complete problem, **STOP**. Do not try to invent an efficient exact algorithm; you will fail. Instead, you must rely on:
+1. **Heuristics / Approximation Algorithms**: Accept an answer that is "good enough" (e.g., within 5% of the optimal solution).
+2. **Small Inputs**: The exponential explosion only kills you on massive datasets. For small inputs (N < 20), a brute-force `O(2^n)` algorithm is perfectly fine.
 
 </ConceptTemplate>

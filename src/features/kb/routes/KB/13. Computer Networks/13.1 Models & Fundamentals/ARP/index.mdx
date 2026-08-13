@@ -1,28 +1,32 @@
 ---
-title: ARP (Address Resolution Protocol)
-description: The critical Layer 2 protocol used to mathematically translate a known Layer 3 IP address into an unknown Layer 2 MAC address.
+title: Address Resolution Protocol (ARP)
+description: The critical Layer 2 / Layer 3 glue that mathematically maps a logical IP address to a physical hardware MAC address on a local network.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="ARP (Address Resolution Protocol)">
+<ConceptTemplate title="Address Resolution Protocol (ARP)">
 
-Your computer knows it wants to talk to a printer at IP address `192.168.1.50`. 
-However, Switches (Layer 2) do not understand IP addresses. They only understand MAC addresses. 
+When your computer wants to send data across the internet to Google, it relies on IP routing (Layer 3). But when your computer wants to send a packet to your actual home router (the default gateway sitting 10 feet away), it MUST use Layer 2 Ethernet Frames. 
 
-Your computer cannot put the IP packet onto the Ethernet cable until it knows the exact, physical MAC address of the printer. 
-It uses **ARP (Address Resolution Protocol)** to find it.
+Ethernet Frames require a physical **MAC Address**. 
+You know your router's IP address (`192.168.1.1`), but your network card mathematically cannot build the Ethernet Frame because it doesn't know the router's physical MAC address. **ARP solves this exact problem.**
 
-## The ARP Process
+## 1. The ARP Broadcast
+**ARP (Address Resolution Protocol)** acts as the mathematical translator between Layer 3 (IP) and Layer 2 (MAC).
 
-1. **The ARP Request (Broadcast)**: 
-   Your computer blasts a message to every single device on the local network (using the broadcast MAC address `FF:FF:FF:FF:FF:FF`). It yells: *"WHO HAS IP 192.168.1.50? PLEASE TELL ME YOUR MAC ADDRESS."*
-2. **The ARP Reply (Unicast)**: 
-   Every computer ignores the shout except the printer. The printer replies directly back to your computer: *"I have 192.168.1.50! My MAC address is 00:1A:2B:3C:4D:5E."*
-3. **The ARP Cache**: 
-   Your computer saves this answer in its local RAM (the ARP Table) for a few minutes so it doesn't have to keep shouting every time it wants to print a page.
+1. **The Question (ARP Request)**: Your computer mathematically generates an ARP Request packet saying: *"Who has IP `192.168.1.1`? Tell `192.168.1.50`."*
+2. **The Broadcast**: It sends this request to the special MAC Broadcast Address (`FF:FF:FF:FF:FF:FF`). The network switch physically duplicates this frame and blasts it out to every single device on the local network.
+3. **The Answer (ARP Reply)**: Every device receives the broadcast. Your printer sees it and ignores it (wrong IP). Your router sees it, confirms the IP matches its own, and mathematically generates an ARP Reply: *"I have `192.168.1.1`! My MAC address is `00:1A:2B:3C:4D:5E`."* This reply is sent directly (unicast) back to your computer.
+
+## 2. The ARP Cache
+Because broadcasting to the entire network is computationally loud and wastes bandwidth, operating systems aggressively cache the results. 
+Once your computer learns the router's MAC address, it stores the mapping in its local RAM **ARP Cache** (or ARP Table). For the next few minutes, it can mathematically generate Ethernet frames instantly without needing to broadcast.
 
 <Callout icon="warning" title="ARP Spoofing (Poisoning)">
-  ARP was designed in the 1980s. It has zero authentication. If your computer asks "Who has the Router's IP?", a hacker on the same Wi-Fi network can instantly reply, *"I am the Router! Give me your traffic!"* Your computer will unquestioningly overwrite its ARP table, sending all its Internet traffic (and passwords) directly to the hacker. This is the foundation of Man-In-The-Middle (MITM) attacks.
+ARP was designed in the 1980s and has absolutely zero built-in security or cryptographic authentication. 
+If a hacker is on the same Starbucks Wi-Fi as you, they can aggressively spam the network with fake ARP Replies saying, *"I am the Router, my MAC is [Hacker's MAC]."* 
+Your computer's ARP cache is mathematically poisoned, and it begins sending all of its internet traffic directly to the hacker's laptop instead of the real router, executing a devastating **Man-In-The-Middle (MITM)** attack.
 </Callout>
 
 </ConceptTemplate>

@@ -1,502 +1,316 @@
 import fs from 'fs/promises'
 import path from 'path'
 
+const TICK3 = '```'
+const TICK1 = '`'
+
 const contentMap = {
-  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.2 Software Architecture/Microservices/index.mdx': `---
-title: Microservices
-description: An architectural style that structures an application as a collection of loosely coupled, independently deployable services.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/BFS/index.mdx': `---
+title: Breadth-First Search (BFS)
+description: The fundamental graph traversal algorithm that mathematically explores a graph level-by-level, discovering the shortest path in unweighted networks.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Microservices">
+<ConceptTemplate title="Breadth-First Search (BFS)">
 
-**Microservices Architecture** is an approach to software development where a large application is built as a suite of small, modular services. Each service runs a unique process and communicates through a well-defined, lightweight mechanism (usually HTTP REST APIs or gRPC).
+**Breadth-First Search (BFS)** is an algorithm for traversing or searching tree and graph data structures. It mathematically guarantees that it explores all neighbor nodes at the present depth prior to moving on to the nodes at the next depth level.
 
-<Callout icon="info" title="The Anti-Monolith">
-  In a traditional **Monolithic Architecture**, the UI, business logic, and database access are all bundled into a single massive codebase and deployed as a single unit. If the billing module has a bug, you must re-deploy the entire application. In a microservices architecture, the billing module is its own standalone application. It can be written in a different language, use a different database, and be deployed independently.
+## 1. The Queue Data Structure
+The entire mathematical mechanism of BFS relies on a **Queue** (First-In-First-Out / FIFO). 
+
+**The Algorithm:**
+1. Enqueue the starting node and mark it as 'Visited'.
+2. While the queue is not empty:
+   - Dequeue a node.
+   - For every unvisited neighbor of that node: mark it as 'Visited' and Enqueue it.
+
+Because a Queue processes nodes in the exact order they were discovered, BFS mathematically ripples outward from the starting point like a shockwave.
+
+## 2. Shortest Path Guarantee
+In an **unweighted graph** (where every edge has a cost of exactly 1), BFS mathematically guarantees that the very first time it discovers a target node, it has found the **absolute shortest path** to that node.
+
+If Alice is connected to Bob (Distance 1), and Bob is connected to Charlie (Distance 2), BFS will completely mathematically exhaust all of Alice's direct friends before it is even allowed to look at Charlie.
+
+<Callout icon="warning" title="Memory Complexity">
+While BFS is mathematically brilliant for finding shortest paths, its spatial complexity is extremely dangerous. At the bottom of a massive tree, BFS might have to hold half of the entire tree's nodes in its Queue simultaneously. The space complexity is exactly TICK1O(V)TICK1 (or specifically, the maximum width of the graph), which can cause Out-Of-Memory (OOM) crashes on deep networks.
 </Callout>
-
-## Key Characteristics
-
-1. **Independent Deployability**: The core tenet. You can update the "Search" microservice without touching the "Checkout" microservice.
-2. **Organized Around Business Capabilities**: Conway's Law states that software design reflects a company's communication structures. Microservices align perfectly with small, cross-functional teams (e.g., "The Payments Team").
-3. **Decentralized Data Management**: Each microservice should own its own database. The Payments service has a payments DB; the User service has a users DB. They do not share databases directly (to avoid coupling).
-4. **Polyglot Persistence/Programming**: Teams can choose the best tool for the job. The AI Recommendation service can be written in Python, while the high-throughput API gateway is written in Go.
-
-## The Hidden Costs
-
-Microservices solve organizational scaling problems, but they introduce massive technical complexity:
-
-- **Network Latency**: Calling a function in a monolith takes nanoseconds. Calling a microservice takes milliseconds over the network.
-- **Distributed Transactions**: How do you guarantee a transaction if it requires updating data in three different microservices? (You usually have to use complex Saga patterns).
-- **Operational Complexity**: Instead of monitoring 1 application, you are now monitoring, logging, and orchestrating 500 applications (requiring tools like Kubernetes and Istio).
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.2 Software Architecture/Event-driven architecture/index.mdx': `---
-title: Event-Driven Architecture
-description: A software architecture paradigm promoting the production, detection, and consumption of events.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/DFS/index.mdx': `---
+title: Depth-First Search (DFS)
+description: The aggressive graph traversal algorithm that plunges as deep as mathematically possible down a single branch before backtracking.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Event-Driven Architecture (EDA)">
+<ConceptTemplate title="Depth-First Search (DFS)">
 
-**Event-Driven Architecture (EDA)** is a design pattern where the flow of the system is determined by "Events"—significant changes in state. Instead of services directly calling each other synchronously (like a traditional REST API), services communicate asynchronously by broadcasting and listening to events.
+While BFS ripples outward slowly, **Depth-First Search (DFS)** is mathematically aggressive. It selects a single branch and plunges down it as far as physically possible. When it hits a dead end, it mathematically **backtracks** up the branch and tries the next available path.
 
-<Callout icon="success" title="The Power of Decoupling">
-  In a traditional system, when a user registers, the \`UserService\` must synchronously call the \`EmailService\` to send a welcome email. The \`UserService\` is now hard-coupled to the \`EmailService\`. If the \`EmailService\` crashes, the user registration fails.
-  In EDA, the \`UserService\` simply broadcasts an event: \`UserRegistered(id: 123)\` to a Message Broker. It doesn't care who listens. The \`EmailService\` listens to that broker and sends the email asynchronously. Total decoupling.
+## 1. The Stack Data Structure
+The mathematical engine of DFS is the **Stack** (Last-In-First-Out / LIFO). 
+In most implementations, developers do not explicitly write a Stack; they rely on the CPU's native **Call Stack** via Recursion.
+
+**The Recursive Algorithm:**
+1. Mark the current node as 'Visited'.
+2. For every neighbor of the current node:
+   - If the neighbor is not visited, recursively call DFS on that neighbor.
+
+## 2. Why use DFS over BFS?
+
+<ComparisonTable 
+  headers={['Property', 'BFS (Queue)', 'DFS (Stack)'] }
+  rows={[
+    ['Shortest Path?', 'YES (in unweighted graphs).', 'NO. DFS might find a path that is 100 hops long, even if a 2-hop path exists.'],
+    ['Memory Usage', 'Massive. Must store entire levels in RAM. O(Width).', 'Minimal. Only stores the current path back to the root. O(Height).'],
+    ['Best Use Case', 'Finding the closest node, Peer-to-Peer networks, Web Crawlers.', 'Solving Mazes, Topological Sorting, Cycle Detection, Backtracking algorithms (Sudoku).']
+  ]} 
+/>
+
+<Callout icon="info" title="Cycle Detection">
+DFS is the mathematically superior algorithm for detecting cycles in a Directed Graph. If during a DFS traversal you encounter a node that is currently sitting in your active recursion stack, you have mathematically proven the existence of a back-edge (a cycle).
 </Callout>
-
-## Core Components
-
-1. **Event Producers**: Applications or IoT devices that detect a state change and publish an event to the router. (e.g., "Item Added to Cart").
-2. **Event Routers / Brokers**: The middleware infrastructure that ingests, stores, and routes the events. (e.g., Apache Kafka, AWS EventBridge, RabbitMQ).
-3. **Event Consumers**: Services that subscribe to specific event types. When they receive an event, they execute their business logic.
-
-## Types of Event-Driven Patterns
-
-- **Pub/Sub (Publish-Subscribe)**: Producers publish events to a "Topic". Multiple consumers can subscribe to the topic. Every consumer receives a copy of the event.
-- **Event Streaming**: Events are written to an append-only log (like Kafka). Consumers read from the stream at their own pace. Events are strictly ordered and persistent, allowing consumers to "replay" history.
-- **Event Sourcing**: Instead of storing the current state of a database entity, the system stores every single event that mutated the entity. The current state is derived by replaying the events (similar to how Git tracks commits, or a bank tracks ledger transactions).
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Load balancing/index.mdx': `---
-title: Load Balancing
-description: The process of distributing incoming network traffic across multiple servers to ensure high availability and reliability.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/Dijkstra/index.mdx': `---
+title: Dijkstra's Algorithm
+description: The legendary greedy algorithm that mathematically calculates the shortest path in a weighted graph using a Priority Queue.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Load Balancing">
+<ConceptTemplate title="Dijkstra's Algorithm">
 
-**Load Balancing** is the critical networking technique of distributing incoming user traffic across a pool of backend servers (a "server farm"). It ensures that no single server bears too much demand, improving responsiveness and maximizing application availability.
+Invented by Edsger W. Dijkstra in 1956, this algorithm mathematically finds the absolute shortest path from a starting node to all other nodes in a **Weighted Graph**. 
+Unlike BFS which assumes every road takes 1 minute to drive, Dijkstra understands that Highway A takes 10 minutes, and Highway B takes 50 minutes.
 
-<Callout icon="info" title="The Traffic Cop">
-  Think of a Load Balancer as a traffic cop standing in front of 5 toll booths. As cars (web requests) arrive, the cop directs each car to the toll booth with the shortest line. If a toll booth breaks down, the cop immediately stops sending cars to it.
+## 1. The Priority Queue (Min-Heap)
+Dijkstra's algorithm is essentially BFS, but instead of using a standard Queue, it mathematically uses a **Priority Queue (Min-Heap)**.
+
+1. Create a distance table. Set the start node distance to 0, and all other nodes to Infinity.
+2. Push the start node into the Min-Heap.
+3. While the Min-Heap is not empty:
+   - Extract the node with the **current smallest distance**.
+   - For every neighbor of this node, calculate the mathematical cost: TICK1Cost = Current Node's Distance + Edge WeightTICK1.
+   - If this new Cost is strictly less than the neighbor's known distance, update the table and push the neighbor into the Min-Heap.
+
+## 2. The Greedy Mathematical Proof
+Dijkstra is a **Greedy Algorithm**. When it extracts a node from the Min-Heap, it mathematically assumes that it has found the absolute shortest possible path to that node. 
+Why is this mathematically true? Because it always processes the cheapest available node first. If a cheaper path existed, the Min-Heap would have extracted that path earlier.
+
+<Callout icon="warning" title="The Fatal Flaw: Negative Weights">
+Dijkstra mathematically relies on the assumption that adding edges can only increase the total cost (like driving a car: you cannot drive a road that gives you -5 gallons of gas). If the graph contains **Negative Edge Weights**, Dijkstra's greedy assumption catastrophically fails and it will return the wrong answer. You must use the Bellman-Ford algorithm instead.
 </Callout>
-
-## Load Balancing Algorithms
-
-How does the load balancer decide which server gets the next request?
-- **Round Robin**: Requests are distributed sequentially. Server A, then B, then C, then back to A.
-- **Least Connections**: Sends the request to the server with the fewest active, open connections. Best for long-lived connections (like WebSockets).
-- **IP Hash**: The client's IP address is mathematically hashed to consistently map them to a specific server. Useful if you need "sticky sessions" (ensuring the user always hits the server holding their session data).
-
-## Layer 4 vs. Layer 7 Load Balancing
-
-Load balancers operate at different layers of the OSI model:
-
-- **Layer 4 (Transport Layer)**: Routes traffic based purely on network data (IP addresses and TCP ports). It is blazingly fast because it does not inspect the contents of the HTTP request. It simply forwards the raw packets. (e.g., AWS Network Load Balancer).
-- **Layer 7 (Application Layer)**: Inspects the actual contents of the HTTP/HTTPS request. It can route traffic based on the URL path, HTTP headers, or cookies. For example, it can send all requests for \`/api/video\` to a cluster of powerful video-encoding servers, and \`/api/text\` to cheaper servers. (e.g., NGINX, AWS Application Load Balancer).
-
-## Health Checks
-
-A load balancer continuously pings its backend servers (usually by hitting a \`/health\` endpoint). If a server fails to respond within a timeout, the load balancer removes it from the pool, ensuring user traffic is never routed to a dead server.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Consistent hashing/index.mdx': `---
-title: Consistent Hashing
-description: A distributed hashing scheme that minimizes data reorganization when servers are added or removed from a cluster.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/A/index.mdx': `---
+title: A* Search Algorithm
+description: The pinnacle of pathfinding algorithms, utilizing mathematical heuristics to drastically optimize Dijkstra's search space.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Consistent Hashing">
+<ConceptTemplate title="A* Search Algorithm">
 
-**Consistent Hashing** is an elegant algorithm used in distributed systems (like distributed caches or NoSQL databases) to distribute data evenly across a cluster of servers, while minimizing the disruption caused when servers crash or new servers are added.
+While Dijkstra's Algorithm mathematically guarantees the shortest path, it is "blind". It searches equally in all directions, wasting massive CPU cycles exploring the completely wrong side of a map. 
 
-<Callout icon="error" title="The Problem with Standard Hashing">
-  Normally, to route a request for user \`Bob\` to a server, you hash his name and modulo the number of servers: \`hash("Bob") % 4 servers = Server 2\`. 
-  But what happens if you add a 5th server? The formula becomes \`hash("Bob") % 5\`. The result changes completely. Adding a single server causes nearly 100% of the data to remap to entirely different servers, resulting in a catastrophic cache miss storm.
+The **A* (A-Star)** algorithm mathematically optimizes Dijkstra by giving it a "brain" (a Heuristic). It directs the search aggressively toward the target.
+
+## 1. The Mathematical Formula
+Like Dijkstra, A* uses a Priority Queue. However, instead of ordering the queue purely by the known distance from the start, A* orders the queue using a composite mathematical function:
+
+TICK1f(n) = g(n) + h(n)TICK1
+
+- **TICK1g(n)TICK1**: The exact, known mathematical cost from the Start node to Node N (This is literally just Dijkstra).
+- **TICK1h(n)TICK1**: The **Heuristic**. An estimated, calculated guess of the cost from Node N to the Target.
+
+## 2. The Heuristic (h)
+In a 2D video game grid, the Heuristic TICK1h(n)TICK1 is usually calculated using Euclidean Distance (a straight line) or Manhattan Distance. 
+Because A* knows exactly where the target physically is, it mathematically prioritizes exploring nodes that physically move it closer to the target, ignoring nodes that move away.
+
+<ComparisonTable 
+  headers={['Algorithm', 'Mathematical Behavior', 'Speed']} 
+  rows={[
+    ['Dijkstra (h=0)', 'Expands purely outward in a perfect circle (or sphere). Guarantees shortest path.', 'Very Slow (Explores massive unnecessary areas).'],
+    ['Greedy Best-First (g=0)', 'Ignores the start distance, blindly rushes the target using only the Heuristic.', 'Blazingly Fast, but often gets trapped by walls and returns terrible, sub-optimal paths.'],
+    ['A* (g + h)', 'Mathematically balances both. Guarantees the absolute shortest path while minimizing wasted exploration.', 'Fast and Perfect.']
+  ]} 
+/>
+
+<Callout icon="tip" title="Admissibility">
+For A* to mathematically guarantee finding the absolute shortest path, the Heuristic MUST be **Admissible**. This means the heuristic must never overestimate the true cost. If the straight-line distance to the target is 10 miles, but your heuristic mathematically guesses it is 50 miles, A* will break and return a sub-optimal path.
 </Callout>
-
-## The Hash Ring
-
-Consistent Hashing solves this by mapping both the **Data Keys** and the **Servers** themselves onto a conceptual circle (the Hash Ring), typically representing the output range of a hash function (e.g., $0$ to $2^{32}-1$).
-
-1. **Place the Servers**: Hash the IP addresses of your 4 servers. Plot them as 4 points on the ring.
-2. **Place the Data**: Hash the key "Bob". Plot it on the same ring.
-3. **Routing Rule**: To find which server owns "Bob", start at Bob's position on the ring and move clockwise. The first Server you hit is the owner.
-
-## Handling Node Churn
-
-The brilliance of Consistent Hashing is revealed when the cluster changes:
-- **Adding a Server**: If a new server is added to the ring, it only takes over the keys that fall between it and the previous server counter-clockwise. Only a tiny fraction ($1/N$) of the data needs to move.
-- **Removing a Server**: If a server crashes, its data is naturally inherited by the next server clockwise on the ring. The rest of the cluster is entirely unaffected.
-
-## Virtual Nodes
-
-A raw hash ring can lead to uneven data distribution (e.g., servers randomly clustering together, leaving one server responsible for 50% of the ring). 
-To fix this, systems use **Virtual Nodes**. Instead of mapping Server A to the ring once, they map it 100 times (e.g., \`hash(ServerA_1)\`, \`hash(ServerA_2)\`). This interleaves the servers across the ring, guaranteeing a perfectly balanced load.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Horizontal scaling/index.mdx': `---
-title: Horizontal Scaling (Scaling Out)
-description: Scaling a system by adding more independent machines to a resource pool.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/Bellman-Ford/index.mdx': `---
+title: Bellman-Ford Algorithm
+description: The mathematical failsafe for shortest-path problems, capable of handling negative edge weights and detecting catastrophic negative cycles.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Horizontal Scaling">
+<ConceptTemplate title="Bellman-Ford Algorithm">
 
-**Horizontal Scaling** (also known as "Scaling Out") is the process of expanding a system's capacity by adding more distinct computers (nodes) to the cluster, rather than upgrading the hardware of a single computer.
+When a graph contains **Negative Edge Weights** (e.g., representing a financial transaction where you make money instead of spending it), Dijkstra's Algorithm mathematically collapses. The **Bellman-Ford Algorithm** is specifically designed to solve this.
 
-<Callout icon="success" title="The Cloud Native Way">
-  Horizontal scaling is the foundation of modern cloud architecture. If your web server is overwhelmed by traffic, you don't buy a $50,000 supercomputer. You spin up 10 cheap, generic Linux servers and put a Load Balancer in front of them.
+## 1. The Relaxation Principle
+Instead of using a clever Priority Queue, Bellman-Ford uses a mathematical brute-force technique called **Edge Relaxation**. 
+
+To "relax" an edge TICK1(u, v)TICK1 means to mathematically check if traveling through TICK1uTICK1 provides a shorter path to TICK1vTICK1 than the currently known path.
+TICK1If Distance(u) + Weight(u, v) < Distance(v), then update Distance(v).TICK1
+
+## 2. The Mathematical Proof of V-1
+The algorithm is shockingly simple:
+1. Initialize the start node distance to 0, and all others to Infinity.
+2. Loop exactly **TICK1V - 1TICK1** times (where V is the total number of Vertices/Nodes in the graph).
+3. Inside the loop, mathematically **relax every single edge** in the entire graph.
+
+Why TICK1V - 1TICK1? 
+Mathematically, the longest possible path in a graph without traversing in a circle (a cycle) can only contain at most TICK1V - 1TICK1 edges. If you relax all edges TICK1V - 1TICK1 times, you mathematically guarantee that the absolute shortest path has successfully propagated to every single node.
+
+## 3. Detecting Negative Cycles
+A Negative Cycle is a loop in the graph where the total weight is negative. If you drive around this loop infinitely, your total cost approaches Negative Infinity. If a Negative Cycle exists, the concept of a "Shortest Path" mathematically ceases to exist.
+
+Bellman-Ford can detect this:
+After running the TICK1V - 1TICK1 loops, run the loop exactly **one more time**. 
+If any edge can *still* be mathematically relaxed, you have absolutely proven that a Negative Cycle exists in the graph.
+
+<Callout icon="warning" title="Time Complexity">
+Because it brute-forces every edge repeatedly, Bellman-Ford is catastrophically slow. Its mathematical time complexity is **TICK1O(V * E)TICK1**. On a dense graph, this approaches TICK1O(V^3)TICK1. Only use Bellman-Ford if you absolutely know you have negative edge weights; otherwise, always use Dijkstra.
 </Callout>
-
-## Advantages
-
-1. **Infinite Theoretical Capacity**: Unlike vertical scaling, which is limited by the maximum size of a motherboard, you can theoretically add an infinite number of servers to a cluster (like Google or Netflix do).
-2. **Fault Tolerance / High Availability**: If you have 50 servers and 2 of them experience hardware failures, the load balancer routes around them. The user experiences zero downtime.
-3. **Cost Elasticity**: You can automatically scale out (add servers) during Black Friday traffic spikes, and automatically scale in (destroy servers) at 3 AM to save money.
-
-## The Challenge: State
-
-Horizontal scaling is incredibly easy for **Stateless** applications (like a web server that just renders HTML). Because the servers don't store any data locally, a request can be sent to any server safely.
-
-However, horizontal scaling is incredibly difficult for **Stateful** applications (like Databases). 
-If you have 5 database servers, how do you ensure that data written to Server A is immediately visible to a user reading from Server B? This requires complex distributed systems engineering, such as Replication, Sharding, and Consensus Algorithms, which bring massive complexity and latency overhead.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Vertical scaling/index.mdx': `---
-title: Vertical Scaling (Scaling Up)
-description: Scaling a system by adding more power (CPU, RAM) to an existing machine.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/Floyd-Warshall/index.mdx': `---
+title: Floyd-Warshall Algorithm
+description: The elegant Dynamic Programming algorithm that mathematically computes the shortest path between every single pair of nodes in O(V³) time.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Vertical Scaling">
+<ConceptTemplate title="Floyd-Warshall Algorithm">
 
-**Vertical Scaling** (also known as "Scaling Up") is the process of increasing a system's capacity by upgrading the hardware components of a single computer. This usually means installing a faster CPU, adding more RAM, or upgrading from HDDs to NVMe SSDs.
+Dijkstra and Bellman-Ford are **Single-Source** Shortest Path algorithms (they find paths from exactly one starting node). 
+The **Floyd-Warshall Algorithm** is an **All-Pairs** Shortest Path algorithm. In a single execution, it mathematically calculates the absolute shortest path between *every single possible pair of nodes* in the entire graph.
 
-<Callout icon="info" title="The Simplicity Tax">
-  Vertical scaling is the easiest way to solve a performance problem. You don't have to rewrite any code, you don't need load balancers, and you don't have to worry about distributed data consistency. You just pay AWS to upgrade your instance from \`t3.medium\` (2 vCPUs) to \`m5.24xlarge\` (96 vCPUs).
+## 1. The Dynamic Programming Core
+Floyd-Warshall represents the graph as a 2D mathematical Adjacency Matrix TICK1D[i][j]TICK1, where the value is the edge weight from node TICK1iTICK1 to node TICK1jTICK1.
+
+The algorithm relies on a brilliant Dynamic Programming sub-problem:
+*"Is the shortest path from TICK1iTICK1 to TICK1jTICK1 faster if I physically route through node TICK1kTICK1?"*
+
+## 2. The 4-Line Algorithm
+The entire mathematical algorithm can be written in four lines of code using three nested loops:
+
+TICK3javascript
+for (let k = 0; k < V; k++) {
+  for (let i = 0; i < V; i++) {
+    for (let j = 0; j < V; j++) {
+      if (D[i][k] + D[k][j] < D[i][j]) {
+        D[i][j] = D[i][k] + D[k][j]; // Update the matrix!
+      }
+    }
+  }
+}
+TICK3
+
+The outermost loop (TICK1kTICK1) represents the "intermediate" node. As TICK1kTICK1 increases from 0 to V, the matrix is mathematically refined, considering more and more complex detour routes, until it perfectly stabilizes.
+
+<Callout icon="tip" title="Time and Space Complexity">
+Because it requires three nested loops iterating over every vertex, the Time Complexity is strictly and mathematically **TICK1O(V^3)TICK1**. Because it requires a 2D matrix, the Space Complexity is **TICK1O(V^2)TICK1**. This makes Floyd-Warshall absolutely magnificent for small, dense graphs (V < 500), but completely impossible to run on large graphs (like a social network with 1 million users).
 </Callout>
-
-## Advantages
-
-1. **Zero Code Changes**: The application remains a monolith. There is no network latency between nodes or complex distributed transactions.
-2. **Easy Administration**: You only have one operating system to patch, secure, and monitor.
-3. **Strong Consistency**: Since all data resides in one machine's memory/disk, you never have to worry about stale data or replication lag.
-
-## Limitations
-
-1. **The Hardware Ceiling**: There is a strict physical limit to how powerful a single machine can be. Once you buy the most expensive mainframe available, you cannot scale any further.
-2. **Single Point of Failure (SPOF)**: If your entire application runs on one massive server, and the power supply on that server blows out, your entire company is offline until the hardware is replaced. There is no redundancy.
-3. **Downtime**: Upgrading hardware often requires shutting down the server, replacing the RAM/CPU, and rebooting, resulting in unavoidable downtime for users.
-4. **Diminishing Returns**: Upgrading from 4GB to 8GB of RAM might cost $20. Upgrading from 1TB to 2TB of RAM on a specialized enterprise server might cost $20,000. Hardware costs scale exponentially at the high end.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Rate limiting/index.mdx': `---
-title: Rate Limiting
-description: The practice of controlling the rate of traffic sent or received on a network to prevent abuse and protect backend services.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/Kruskal/index.mdx': `---
+title: Kruskal's Algorithm
+description: A greedy mathematical algorithm that builds the Minimum Spanning Tree (MST) of a graph by sorting edges and utilizing a Disjoint Set (Union-Find).
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Rate Limiting">
+<ConceptTemplate title="Kruskal's Algorithm">
 
-**Rate Limiting** is a defensive system design mechanism used to control the amount of incoming traffic an API or network service will accept within a specified time window. 
+Given a massive map of cities and the cost to lay fiber-optic cable between them, how do you physically connect every single city together while spending the absolute minimum amount of money? 
+This mathematical problem is called the **Minimum Spanning Tree (MST)**. **Kruskal's Algorithm** elegantly solves it.
 
-If a user exceeds the allowed limit (e.g., 100 requests per minute), the server rejects subsequent requests and returns an HTTP status code \`429 Too Many Requests\`.
+## 1. The Greedy Strategy
+Kruskal’s Algorithm does not care about starting nodes or complex traversals. It strips the graph down to a mathematical list of raw edges.
 
-<Callout icon="success" title="Why is it necessary?">
-  1. **Preventing DDoS**: Stops malicious actors from flooding your servers with millions of requests to take down your application.
-  2. **Cost Control**: Prevents a single user's buggy script from burning through your expensive cloud computing budget.
-  3. **Fairness**: Ensures that one extremely active user doesn't starve the system's resources, keeping the app fast for everyone else.
+1. **Sort all edges** in the entire graph in ascending order based on their weight (cheapest first).
+2. Create an empty set to hold the final MST.
+3. Iterate through the sorted edges one by one.
+4. If adding the edge to the MST **does not form a cycle**, add it. 
+5. If it does form a cycle, throw the edge in the trash and evaluate the next one.
+6. Stop when the MST contains exactly TICK1V - 1TICK1 edges.
+
+## 2. Cycle Detection via Union-Find
+The entire performance bottleneck of Kruskal's algorithm is Step 4: *"Does this edge form a cycle?"* 
+Running DFS to check for cycles on every single edge would be mathematically catastrophic for performance TICK1O(E * V)TICK1.
+
+Instead, Kruskal's relies on a highly advanced secondary data structure: The **Disjoint Set (Union-Find)**. 
+Using the mathematical optimizations of *Path Compression* and *Union by Rank*, the Union-Find structure can determine if two nodes are already connected in essentially **TICK1O(1)TICK1** amortized time.
+
+<Callout icon="info" title="Kruskal vs Prim">
+The other famous MST algorithm is Prim's Algorithm (which works similarly to Dijkstra). 
+- Use **Kruskal's Algorithm** when the graph is **Sparse** (few edges). Sorting the edges TICK1O(E log E)TICK1 is extremely fast.
+- Use **Prim's Algorithm** when the graph is **Dense** (millions of edges). Prim's uses a Priority Queue and avoids sorting the massive list of edges upfront.
 </Callout>
-
-## Common Rate Limiting Algorithms
-
-There are several mathematical approaches to enforcing limits, usually implemented in API Gateways or in-memory caches like Redis:
-
-### 1. Token Bucket
-Imagine a bucket that holds a maximum of 100 tokens. The system drops a new token into the bucket every second. Every time a user makes a request, they must remove a token. If the bucket is empty, the request is dropped. This allows for short "bursts" of traffic.
-
-### 2. Leaky Bucket
-Requests are placed into a queue (the bucket). The server pulls requests out of the queue at a strictly constant, fixed rate (the leak). If the queue is full, new requests spill over and are rejected. This enforces a perfectly smooth, constant output rate.
-
-### 3. Fixed Window Counter
-The system tracks the number of requests per minute (e.g., 12:00:00 to 12:00:59). If the counter hits 100, requests are blocked until 12:01:00. **Flaw**: A user can send 100 requests at 12:00:59, and another 100 at 12:01:01, resulting in 200 requests hitting the server in 2 seconds (the "burst" problem).
-
-### 4. Sliding Window Log
-Records the exact timestamp of every single request. To check if a request is valid, it sums all timestamps in the last 60 seconds. This is perfectly accurate and avoids the boundary flaw of the Fixed Window, but storing millions of timestamps consumes massive amounts of RAM.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Database replication/index.mdx': `---
-title: Database Replication
-description: The process of maintaining identical copies of a database across multiple servers to ensure high availability and read scalability.
+  'src/features/kb/routes/KB/6. Algorithms/6.2 Graph Algorithms/Topological sorting/index.mdx': `---
+title: Topological Sorting
+description: The mathematical process of linearly ordering a Directed Acyclic Graph (DAG) such that every parent node strictly precedes its children.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Database Replication">
+<ConceptTemplate title="Topological Sorting">
 
-**Database Replication** is the process of copying data from a central database to one or more auxiliary databases in real-time. This is the primary method for scaling databases horizontally for read-heavy workloads and providing disaster recovery.
+Imagine a massive university degree program. You must take Calculus I before Calculus II, and you must take Algebra before Calculus I. This dependency structure mathematically forms a **Directed Acyclic Graph (DAG)**. 
 
-<Callout icon="info" title="The Leader-Follower Pattern">
-  The most common replication topology is **Leader-Follower** (formerly Master-Slave). 
-  - The **Leader** node handles 100% of the WRITE requests (INSERT, UPDATE, DELETE).
-  - The **Follower** nodes receive a constant stream of changes from the Leader. They handle READ requests (SELECT). 
-  Because web apps are typically 90% reads and 10% writes, you can scale indefinitely just by adding more Follower nodes.
+**Topological Sorting** is the algorithm that flattens this complex graph into a simple, linear, 1D array (a valid schedule of classes) such that no mathematical dependency rules are broken.
+
+## 1. The Core Restriction: DAGs Only
+Topological Sorting is mathematically impossible if the graph contains a Cycle. If Class A requires Class B, and Class B requires Class A, the graph cannot be resolved. The graph must strictly be a **DAG**.
+
+## 2. Algorithm 1: Kahn's Algorithm (BFS based)
+Kahn's algorithm relies on calculating the **In-Degree** (number of incoming dependency edges) for every node.
+
+1. Calculate the In-Degree of all nodes.
+2. Find all nodes with an In-Degree of exactly 0 (these are classes with no prerequisites) and push them into a Queue.
+3. While the Queue is not empty:
+   - Dequeue a node and append it to the final sorted array.
+   - For every child of that node, mathematically subtract 1 from its In-Degree (you just satisfied one of its prerequisites).
+   - If a child's In-Degree hits 0, push it into the Queue.
+
+## 3. Algorithm 2: DFS Based
+You can also use a standard Depth-First Search. 
+
+1. Run a recursive DFS on a node.
+2. The absolute most critical step: **Do not add the node to the array until AFTER the recursive DFS has completely finished exploring all of its children.**
+3. This guarantees that a node is only logged after all its dependencies are mathematically resolved.
+4. When the entire graph is explored, simply **reverse** the array to get the valid Topological Sort.
+
+<Callout icon="tip" title="Real World Application: Build Systems">
+Every time you run TICK1npm installTICK1, TICK1makeTICK1, or compile a massive C++ codebase, the compiler physically constructs a DAG of every file and its dependencies. It then runs Topological Sort to mathematically determine the exact order it must compile the files so that no 'missing dependency' errors occur.
 </Callout>
-
-## Synchronous vs. Asynchronous Replication
-
-How does the Leader send data to the Followers?
-
-- **Synchronous**: When a user writes data, the Leader forces the Follower to acknowledge receipt of the data *before* telling the user "Success". This guarantees zero data loss if the Leader explodes, but it makes writes significantly slower (due to network latency).
-- **Asynchronous**: The Leader writes the data to its own disk, immediately tells the user "Success", and then sends the data to the Followers in the background. This is incredibly fast, but if the Leader explodes before the background sync finishes, data is permanently lost. (This is the industry default).
-
-## Replication Lag
-
-Because replication is usually asynchronous, there is a tiny delay (perhaps 500 milliseconds) between the Leader updating and the Follower updating. This is called **Replication Lag**.
-
-If a user updates their profile picture (which writes to the Leader) and immediately refreshes the page (which reads from a Follower), they might see their old picture. This is a classic violation of "Read-After-Write Consistency" caused by replication lag.
-
-## Multi-Leader and Leaderless
-
-- **Multi-Leader (Active-Active)**: Multiple nodes accept writes. Excellent for geographically distributed systems (a write node in the US, a write node in the EU). Incredibly difficult to resolve conflicts when two users update the same row on different continents.
-- **Leaderless (Dynamo/Cassandra)**: Any node can accept writes. The client writes to multiple nodes simultaneously and considers the write successful if a "quorum" (majority) of nodes acknowledge it. 
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Sharding/index.mdx': `---
-title: Sharding
-description: A horizontal scaling technique that partitions a massive database into smaller, faster, easily managed pieces.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Sharding">
-
-**Sharding** is a database architecture pattern that involves separating a single, massive dataset into multiple smaller, independent databases (called **Shards**). It is the ultimate tool for Horizontal Scaling of database writes.
-
-<Callout icon="warning" title="Replication vs. Sharding">
-  - **Replication** copies the *same* data to multiple servers to scale READS.
-  - **Sharding** splits *different* data across multiple servers to scale WRITES and storage capacity.
-  If you have 10TB of data, Shard A holds the first 5TB, and Shard B holds the other 5TB.
-</Callout>
-
-## The Shard Key
-
-To implement sharding, you must choose a **Shard Key** (or Partition Key)—a column in your database that dictates how the data is distributed.
-
-For example, if you are building a global chat app, you might shard by \`user_id\`.
-- All messages for Users 1 to 10,000 are routed to Database Server A.
-- All messages for Users 10,001 to 20,000 are routed to Database Server B.
-
-## Sharding Strategies
-
-1. **Range-Based Sharding**: Splitting by a sequential range (e.g., Dates or IDs). Easy to implement, but can lead to "hotspots". If you shard by date, the server holding "Today's" data will be overwhelmed with 99% of the traffic, while 2015's server sits idle.
-2. **Hash-Based Sharding**: You run the Shard Key through a hash function (e.g., \`hash(user_id) % 4\`). This perfectly randomizes the data, guaranteeing an even distribution across all servers, completely eliminating hotspots. (This often utilizes **Consistent Hashing**).
-3. **Directory-Based Sharding**: A central lookup table explicitly tells the application which shard holds which data (e.g., "Tenant A is on Shard 4").
-
-## The Nightmares of Sharding
-
-Sharding should be avoided until absolutely necessary because it introduces severe architectural complexity:
-- **No Cross-Shard Joins**: You cannot perform a SQL \`JOIN\` between a table on Server A and a table on Server B. 
-- **Resharding**: If Shard A becomes completely full, you must split it into two new shards and migrate terabytes of data while the system is live.
-- **Celebrity Problem**: In hash-based sharding, if Justin Bieber is on Shard 3, every time he posts, millions of fans query Shard 3 simultaneously, bringing it down, even though the data is technically "evenly distributed".
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.2 Distributed Systems Theory/CAP theorem/index.mdx': `---
-title: CAP Theorem
-description: A fundamental theorem of distributed computing stating that a distributed database can only provide two of three guarantees.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="CAP Theorem">
-
-Formulated by Eric Brewer in 2000, the **CAP Theorem** is the foundational principle of distributed systems design. It states that it is mathematically impossible for a distributed data store to simultaneously provide more than two of the following three guarantees:
-
-1. **Consistency (C)**: Every read receives the most recent write, or an error. (If I update my password, any subsequent read on any node in the world *must* reflect the new password).
-2. **Availability (A)**: Every request receives a non-error response, without the guarantee that it contains the most recent write. (The system will never refuse to answer, even if the answer is slightly outdated).
-3. **Partition Tolerance (P)**: The system continues to operate despite an arbitrary number of network failures (partitions) between nodes.
-
-<Callout icon="warning" title="The Illusion of Choice">
-  CAP is often explained as "Pick any 2." This is dangerously misleading. In the real world, network cables get cut, switches fail, and packets drop. **Network Partitions (P) are a physical reality, not a choice.** Therefore, distributed systems must always support Partition Tolerance.
-  The real choice is: **When a network partition happens, do you choose Consistency or Availability?**
-</Callout>
-
-## CP vs. AP Systems
-
-When the network breaks, leaving Node A unable to talk to Node B, and a user tries to read data from Node A:
-
-### CP Systems (Consistency + Partition Tolerance)
-Node A knows it cannot talk to Node B to verify if it has the most recent data. Therefore, to protect **Consistency**, Node A completely shuts down and returns an error to the user. 
-- *Best for*: Financial systems, billing ledgers. (It is better to be offline than to show an incorrect bank balance).
-- *Examples*: MongoDB, HBase, Redis Cluster.
-
-### AP Systems (Availability + Partition Tolerance)
-Node A knows it cannot talk to Node B, but it prioritizes **Availability**. It responds to the user with whatever stale data it currently has in its local memory. 
-- *Best for*: Social media, shopping carts, metrics. (It is better to show an old Facebook comment than to show a crashing error page).
-- *Examples*: Cassandra, DynamoDB, CouchDB.
-
-## The Limitation of CAP
-
-CAP is heavily criticized today because it is too binary. It only describes what a system does *during a catastrophic network failure*. It completely ignores what the system does 99.9% of the time when the network is perfectly fine. This led to the creation of the **PACELC Theorem**.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.2 Distributed Systems Theory/PACELC theorem/index.mdx': `---
-title: PACELC Theorem
-description: An extension to the CAP Theorem that addresses the trade-off between Latency and Consistency during normal operation.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="PACELC Theorem">
-
-The **PACELC Theorem**, formulated by Daniel Abadi in 2010, is a modern extension of the CAP Theorem. 
-
-While CAP focuses exclusively on how a database behaves during a rare network outage, PACELC acknowledges that distributed systems face a constant, everyday trade-off even when the network is perfectly healthy: the trade-off between **Latency** and **Consistency**.
-
-<Callout icon="info" title="Decoding the Acronym">
-  **PACELC** stands for:
-  If there is a **P**artition, how does the system trade off **A**vailability and **C**onsistency?
-  **E**lse (during normal operation), how does the system trade off **L**atency and **C**onsistency?
-</Callout>
-
-## The "E-L-C" Tradeoff (Normal Operation)
-
-Imagine a globally distributed database with nodes in New York and Tokyo. The network is working perfectly. A user in New York updates their profile.
-
-- **Prioritize Consistency (PC/EC)**: The New York node must pause, send the data to Tokyo over the undersea fiber-optic cable, wait for Tokyo to acknowledge receipt, and then tell the user "Success." This guarantees perfect consistency worldwide, but introduces massive **Latency** (hundreds of milliseconds).
-- **Prioritize Latency (PA/EL)**: The New York node saves the data locally and immediately tells the user "Success" (zero latency). It then syncs to Tokyo in the background. For a brief window, the system is perfectly fast, but Tokyo is serving stale data (sacrificing Consistency).
-
-## Database Classifications under PACELC
-
-PACELC allows us to classify NoSQL databases much more accurately:
-
-- **DynamoDB, Cassandra, Riak (PA/EL)**: When a partition happens, they prioritize Availability. When the network is fine, they prioritize low Latency (by using asynchronous replication). They are built for extreme speed and uptime.
-- **MongoDB, HBase (PC/EC)**: When a partition happens, they prioritize Consistency (by electing a new primary and refusing writes until it's ready). When the network is fine, they prioritize Consistency (writes must be acknowledged by a quorum).
-- **VoltDB, CockroachDB (PC/EC)**: NewSQL databases designed explicitly for perfect, global consistency at the cost of latency.
-
-PACELC proves that in distributed systems, the speed of light is your ultimate enemy. You cannot have instantaneous writes (low latency) and instant global replication (high consistency) at the same time.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.2 Distributed Systems Theory/Eventual consistency/index.mdx': `---
-title: Eventual Consistency
-description: A consistency model which guarantees that, if no new updates are made, all replicas will eventually converge to the same value.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Eventual Consistency">
-
-**Eventual Consistency** is a data consistency model used in highly available distributed systems. It provides a weak but practical guarantee: if no new updates are made to a specific piece of data, all database nodes will "eventually" synchronize and return the exact same value.
-
-<Callout icon="info" title="The DNS Analogy">
-  The Internet's Domain Name System (DNS) is the most famous eventually consistent system. When you buy a new domain name, the registrar warns you that it might take up to 48 hours to "propagate" worldwide. During that time, a user in London might see your new website, while a user in Japan still sees an error. *Eventually*, everyone sees the website.
-</Callout>
-
-## Why use Eventual Consistency? (High Availability)
-
-According to the CAP and PACELC theorems, enforcing perfect, immediate consistency across multiple geographical servers requires synchronous blocking, which introduces massive latency and risks downtime.
-
-Eventual consistency is chosen when **Availability** and **Low Latency** are more important than absolute correctness. 
-- *Social Media*: If you "Like" a photo on Instagram, it is written to the US server. Your friend in Europe might not see your "Like" for another 3 seconds. Nobody cares. The system feels instantaneous.
-- *Amazon Shopping Cart*: Amazon famously engineered Dynamo to be eventually consistent. They decided it was better for a user to occasionally see a deleted item reappear in their cart (a consistency anomaly) than to block the user from checking out due to a database lock.
-
-## Dealing with Conflicts
-
-The primary technical challenge of eventual consistency is **Conflict Resolution**. 
-
-Because nodes do not lock data during writes, two users can update the exact same record on two different servers at the exact same nanosecond. When the servers sync in the background, they discover a conflict.
-
-Systems resolve this using:
-1. **Last Write Wins (LWW)**: Using timestamps, the server simply overwrites the older data with the newer data. (Prone to clock drift issues).
-2. **Vector Clocks**: A mathematical algorithm that tracks the exact causal history of edits to determine which version is truly the latest.
-3. **Application-Level Resolution**: The database gives both conflicting versions to the application code and forces the developer to write custom logic to merge them (e.g., merging two shopping carts together).
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.2 Distributed Systems Theory/Strong consistency/index.mdx': `---
-title: Strong Consistency
-description: A consistency model guaranteeing that any read operation will always return the value of the most recently completed write operation.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Strong Consistency">
-
-**Strong Consistency** (often referred to as Linearizability in theoretical computer science) is the most intuitive and strict data consistency model. It provides a simple guarantee: once a write operation is successfully acknowledged to the user, any subsequent read operation, from anywhere in the world, will return that updated value.
-
-<Callout icon="success" title="The Illusion of a Single Server">
-  The goal of Strong Consistency is to make a massive, globally distributed cluster of 100 database servers behave exactly as if it were just one single machine sitting on your desk. There are no "stale reads," no "propagation delays," and no "conflict resolutions."
-</Callout>
-
-## How is it achieved? (Synchronous Replication)
-
-To guarantee that no user ever reads stale data, the database must use **Synchronous Replication** or **Consensus Algorithms** (like Raft or Paxos).
-
-When a user updates a bank balance on the Primary Node:
-1. The Primary Node locks the row.
-2. The Primary Node sends the new balance to all Replica Nodes.
-3. The Primary Node **halts and waits**.
-4. The Replica Nodes write the data and send an acknowledgement back.
-5. Only after a majority (quorum) of replicas have confirmed the write does the Primary Node tell the user "Success" and unlock the row.
-
-## The Cost of Strong Consistency
-
-According to the PACELC theorem, Strong Consistency comes with severe architectural penalties:
-
-1. **Massive Latency**: Because the Primary Node must wait for network acknowledgements from other servers (potentially across oceans), write operations are inherently slow. You cannot beat the speed of light.
-2. **Reduced Availability**: If a network cable is cut and the Primary Node cannot reach the Replicas to form a quorum, it mathematically cannot guarantee consistency. Therefore, it must refuse all write requests and go offline (favoring Consistency over Availability).
-
-## Use Cases
-
-Strong consistency is mandatory when data correctness is critical and human lives, money, or inventory are at stake:
-- **Banking & Finance**: You cannot have an eventually consistent bank ledger where an ATM reads a stale balance and dispenses cash you don't have.
-- **E-Commerce Inventory**: If there is only 1 concert ticket left, 10,000 people clicking "Buy" simultaneously must be strictly serialized to ensure only one person gets it.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.2 Distributed Systems Theory/Consensus algorithms/index.mdx': `---
-title: Consensus Algorithms
-description: Protocols used by distributed systems to agree on a single data value or network state, even in the presence of node failures.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Consensus Algorithms">
-
-In distributed systems, a **Consensus Algorithm** is a complex mathematical protocol that allows a cluster of independent computers to agree on a single truth, even if network cables are unplugged, servers crash, or messages are delayed.
-
-<Callout icon="info" title="The Problem of Agreement">
-  Imagine a 5-node database cluster. The user sends a command: \`SET x = 10\`. Node A receives it, but before it can tell the others, it crashes. Did the write happen? Node B thinks \`x=5\`. Node C thinks \`x=10\`. If they don't agree, the database is corrupted. Consensus algorithms ensure that the cluster moves forward as a single, unified entity.
-</Callout>
-
-## The Goal: Replicated State Machines
-
-Most consensus algorithms are designed to build a **Replicated State Machine**. The goal is to ensure that every server in the cluster executes the exact same sequence of commands, in the exact same order. If they all start at the same state and execute the same commands in the same order, they will all end up with perfectly identical data.
-
-## Paxos (The Pioneer)
-
-Invented by Leslie Lamport in 1989, **Paxos** is the theoretical grandfather of all consensus algorithms. It mathematically proved that consensus is possible in asynchronous networks. 
-However, Paxos is notoriously difficult to understand and even harder to implement correctly in code. It relies on Proposers, Acceptors, and Learners passing multiple rounds of complex messages.
-
-## Raft (The Industry Standard)
-
-Because Paxos was so incredibly difficult to implement, researchers at Stanford created **Raft** in 2013, designed explicitly for "understandability." Raft is now the industry standard, powering systems like Kubernetes (etcd), MongoDB, and Consul.
-
-Raft achieves consensus by dividing the problem into three pieces:
-1. **Leader Election**: The cluster automatically holds an election. One node becomes the Leader. The others become Followers. If the Leader crashes, the Followers detect the timeout and immediately elect a new Leader.
-2. **Log Replication**: All user writes are sent exclusively to the Leader. The Leader appends the command to its log and sends it to the Followers.
-3. **Safety (Quorum)**: The Leader only commits the write to the database *after* a majority (Quorum) of the Followers reply that they have successfully logged the command. This guarantees that even if a minority of servers explode, the data is safe.
 
 </ConceptTemplate>
 `,
@@ -506,7 +320,12 @@ async function main() {
   for (const [filePath, content] of Object.entries(contentMap)) {
     const fullPath = path.resolve(filePath)
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
-    await fs.writeFile(fullPath, content.trim() + '\n', 'utf-8')
+
+    // Safely replace TICK1 and TICK3 placeholders with actual backticks
+    let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
+
+    // Append a safe newline
+    await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8')
     console.log('Wrote ' + filePath)
   }
 }

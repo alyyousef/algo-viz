@@ -1,32 +1,46 @@
 ---
-title: Routing (Static & Dynamic)
-description: The Layer 3 mechanisms used by routers to calculate the fastest path across the global Internet.
+title: IP Routing (Static vs Dynamic)
+description: The mathematical algorithms and protocols routers use to calculate the absolute shortest path across the global internet topology.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Routing (Static & Dynamic)">
+<ConceptTemplate title="IP Routing">
 
-A **Router** (Layer 3) is fundamentally a highly specialized computer designed to read the Destination IP address of an incoming packet, check its internal **Routing Table**, and instantly forward the packet out of the correct physical port toward the destination.
+When a router receives an IP packet, it looks at the Destination IP, looks at its internal **Routing Table**, and forwards the packet out the correct physical port. But how does a router mathematically build that routing table? How does a router in Tokyo know the exact path to a server in London?
 
-But how does the Router know which port is the correct path?
+## 1. Static Routing
+In **Static Routing**, a human network engineer logs into the router via CLI and manually types the exact mathematical route.
+- *"If a packet is destined for `10.5.0.0/16`, throw it out Port 2."*
+- **Pros**: Mathematically zero CPU overhead. Absolute security (nobody can inject fake routes).
+- **Cons**: Catastrophically unscalable. If the router connected to Port 2 physically catches on fire, the static route is completely broken, and all traffic is dropped. The internet could not exist using Static Routing.
 
-## Static Routing
+## 2. Dynamic Routing Protocols
+In **Dynamic Routing**, routers mathematically talk to each other. They constantly exchange topology maps, allowing algorithms to automatically recalculate the fastest paths if a cable is cut.
 
-**Static Routing** means a human Sysadmin manually logged into the router and typed a permanent rule:
-*"If you see a packet destined for `10.5.5.0/24`, send it out of Port 3."*
+Dynamic protocols are mathematically divided into two categories:
 
-This is perfect for small networks. However, if the cable on Port 3 gets cut by a backhoe, the static route is permanently broken, and traffic blackholes until a human manually fixes it.
+### A. Interior Gateway Protocols (IGP)
+Used *inside* a single organization's network (an Autonomous System, like Google's internal data center or a university campus).
 
-## Dynamic Routing Protocols
+<ComparisonTable 
+  headers={['Protocol', 'Algorithm', 'Mechanism']} 
+  rows={[
+    ['OSPF (Open Shortest Path First)', 'Dijkstra’s Algorithm (Link-State)', 'Every router mathematically builds a complete 3D map of the entire network topology. They calculate the absolute shortest path based on Link Cost (bandwidth). A 10Gbps fiber link mathematically costs less than a 100Mbps copper link.'],
+    ['EIGRP (Enhanced Interior Gateway Routing Protocol)', 'DUAL Algorithm (Distance-Vector)', 'Cisco proprietary (mostly). Routers only know what their direct neighbors tell them. They calculate metrics based on a complex mathematical formula involving Bandwidth and Delay. Extremely fast convergence when a link fails.']
+  ]} 
+/>
 
-The Internet is too massive for humans to write static routes. Instead, routers run **Dynamic Routing Protocols** (like OSPF, BGP, or EIGRP). 
-Routers automatically talk to each other, constantly exchanging maps of the network. 
+### B. Exterior Gateway Protocols (EGP)
+Used *between* different organizations. This is the protocol that mathematically glues the global internet together.
 
-1. **OSPF (Open Shortest Path First)**: Used internally within large corporate networks (IGP). Routers use complex Dijkstra math to calculate the fastest path to a destination based on bandwidth (e.g., preferring a 10Gbps fiber link over a 1Gbps copper link).
-2. **BGP (Border Gateway Protocol)**: The absolute backbone of the Internet (EGP). BGP is used to route traffic between massive ISPs (like Comcast and AT&T). If an underwater fiber cable connecting London to New York is cut, BGP automatically recalculates the global routing table in seconds, silently rerouting the world's traffic through South America to avoid the outage.
+**BGP (Border Gateway Protocol)**: 
+BGP is the only EGP in use today. When Comcast's network connects to AT&T's network, they use BGP.
+Unlike OSPF which calculates the fastest path based on link speed, BGP is a **Path-Vector** protocol. It mathematically calculates the path based on *business policies* and *AS-Path length* (the number of different companies the packet must hop through). 
 
 <Callout icon="warning" title="BGP Hijacking">
-  Because BGP assumes all ISPs are trustworthy, it is vulnerable to hijacking. If a malicious ISP falsely broadcasts to the world, *"I am the fastest route to YouTube!"*, the global internet will unquestioningly overwrite its routing tables and funnel all YouTube traffic to the malicious ISP in a matter of minutes.
+Like ARP, BGP was built on trust. If a telecom in Russia accidentally (or maliciously) broadcasts a BGP message claiming, *"I am the absolute best mathematical route to YouTube's IP addresses,"* the global internet routers will blindly believe it and instantly reroute 100% of global YouTube traffic into a Russian data center blackhole. This has happened multiple times, bringing down massive sections of the internet.
 </Callout>
 
 </ConceptTemplate>

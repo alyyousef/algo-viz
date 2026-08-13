@@ -1,8 +1,40 @@
+---
+title: Topological Sorting
+description: The mathematical process of linearly ordering a Directed Acyclic Graph (DAG) such that every parent node strictly precedes its children.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Topological sorting">
+<ConceptTemplate title="Topological Sorting">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine a massive university degree program. You must take Calculus I before Calculus II, and you must take Algebra before Calculus I. This dependency structure mathematically forms a **Directed Acyclic Graph (DAG)**. 
+
+**Topological Sorting** is the algorithm that flattens this complex graph into a simple, linear, 1D array (a valid schedule of classes) such that no mathematical dependency rules are broken.
+
+## 1. The Core Restriction: DAGs Only
+Topological Sorting is mathematically impossible if the graph contains a Cycle. If Class A requires Class B, and Class B requires Class A, the graph cannot be resolved. The graph must strictly be a **DAG**.
+
+## 2. Algorithm 1: Kahn's Algorithm (BFS based)
+Kahn's algorithm relies on calculating the **In-Degree** (number of incoming dependency edges) for every node.
+
+1. Calculate the In-Degree of all nodes.
+2. Find all nodes with an In-Degree of exactly 0 (these are classes with no prerequisites) and push them into a Queue.
+3. While the Queue is not empty:
+   - Dequeue a node and append it to the final sorted array.
+   - For every child of that node, mathematically subtract 1 from its In-Degree (you just satisfied one of its prerequisites).
+   - If a child's In-Degree hits 0, push it into the Queue.
+
+## 3. Algorithm 2: DFS Based
+You can also use a standard Depth-First Search. 
+
+1. Run a recursive DFS on a node.
+2. The absolute most critical step: **Do not add the node to the array until AFTER the recursive DFS has completely finished exploring all of its children.**
+3. This guarantees that a node is only logged after all its dependencies are mathematically resolved.
+4. When the entire graph is explored, simply **reverse** the array to get the valid Topological Sort.
+
+<Callout icon="tip" title="Real World Application: Build Systems">
+Every time you run `npm install`, `make`, or compile a massive C++ codebase, the compiler physically constructs a DAG of every file and its dependencies. It then runs Topological Sort to mathematically determine the exact order it must compile the files so that no 'missing dependency' errors occur.
+</Callout>
 
 </ConceptTemplate>

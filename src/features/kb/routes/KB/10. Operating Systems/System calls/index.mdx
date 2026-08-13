@@ -1,28 +1,34 @@
 ---
 title: System Calls (Syscalls)
-description: The secure API that User Space programs use to request privileged operations from the Kernel.
+description: The highly secure, hardware-enforced mathematical bridge that allows User Space applications to request privileged actions from the OS Kernel.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="System Calls">
+<ConceptTemplate title="System Calls (Syscalls)">
 
-A **System Call (Syscall)** is the only legal way for a User Space program (Ring 3) to ask the Kernel (Ring 0) to do something privileged, like reading a file, opening a network socket, or allocating more RAM.
+Modern CPUs physically enforce two modes of operation:
+1. **User Mode (Ring 3)**: Unprivileged. Chrome, Spotify, and your Python scripts run here. They cannot access the hard drive, the network card, or memory outside their sandbox.
+2. **Kernel Mode (Ring 0)**: God mode. The OS Kernel runs here. It has absolute physical control over the hardware.
 
-<Callout icon="warning" title="Crossing the Boundary">
-  You cannot simply execute a standard function call (like `goto` or `call`) into Kernel memory. The CPU's hardware will block it with a Segmentation Fault. The boundary must be crossed using a highly orchestrated hardware trap.
+If your Python script wants to read a file from the SSD, it is mathematically incapable of doing it. It must ask the OS Kernel to do it on its behalf. This request is a **System Call**.
+
+## 1. The Trap Instruction
+A System Call is not a standard function call. A user program cannot simply jump into Kernel memory (the MMU would block it and crash the program). 
+Instead, the program executes a special hardware CPU instruction called a **Trap** (or Software Interrupt).
+
+1. The program places the ID of the specific Syscall (e.g., `read()` is ID 0 in Linux) into a specific CPU register.
+2. It executes the `syscall` machine instruction.
+3. The CPU hardware instantly and violently halts the program, elevates its physical privilege level to Ring 0, and jumps to a pre-defined OS memory address called the Interrupt Vector Table.
+4. The OS looks at the register, realizes you want to read a file, verifies your permissions, reads the file, and then demotes the CPU back to User Mode.
+
+## 2. The Performance Cost
+Because a System Call triggers hardware-level context switching, privilege escalation, and security checks, it is incredibly slow compared to a normal function call.
+If your code calls `console.log()` or `printf()` one million times in a loop, it will trigger one million Syscalls (`write()`), catastrophically destroying performance. 
+This is why all standard libraries (like libc) heavily **Buffer** their I/O. They wait until they have a large chunk of text, and then issue a single Syscall to print it all at once.
+
+<Callout icon="tip" title="Bypassing the Kernel">
+In extreme high-performance environments (like High-Frequency Trading or Massive Network Routers), the latency of Syscalls is unacceptable. Advanced architectures use **Kernel Bypass** technologies (like DPDK), directly mapping the physical network card memory into User Space, completely eliminating the OS from the critical path.
 </Callout>
-
-## The Anatomy of a Syscall
-
-Imagine a C program calls `write(fd, "Hello", 5)`. Here is what actually happens:
-
-1. **The Wrapper**: The C Standard Library (glibc) prepares the request. It puts the arguments (the file descriptor, the text pointer, the length) into specific CPU registers.
-2. **The Syscall Number**: glibc places the exact ID number of the `write` syscall (e.g., ID `1`) into the `RAX` register.
-3. **The Trap (`SYSCALL`)**: The program executes a special assembly instruction (`SYSCALL` on modern x86, or `INT 0x80` historically).
-4. **Hardware Switch**: The CPU completely suspends the program. It elevates its privilege level to Ring 0 (Kernel Mode) and jumps to a specific, predefined memory address (The Syscall Handler).
-5. **Validation and Execution**: The Kernel looks at the `RAX` register, sees ID `1` (`write`), validates that the file descriptor is valid, and executes the physical hard drive write.
-6. **Return (`SYSRET`)**: The Kernel places the result code (e.g., bytes written) into a register, drops its privileges back to Ring 3, and resumes the user program exactly where it left off.
-
-This process is inherently slow. A single System Call takes hundreds of clock cycles due to the massive context switch and hardware state changes required. High-performance software goes to great lengths to batch operations to minimize syscall overhead.
 
 </ConceptTemplate>

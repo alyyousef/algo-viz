@@ -1,29 +1,42 @@
 ---
-title: OSI Model
-description: The foundational 7-layer conceptual framework used to understand and standardize how different computer systems communicate.
+title: The OSI Model
+description: The conceptual 7-layer framework that standardized global telecommunications and network architecture.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="OSI Model">
+<ConceptTemplate title="The OSI Model">
 
-The **Open Systems Interconnection (OSI) Model** was developed by the ISO in 1984. It does not dictate exactly how hardware should be built; rather, it provides a universal, conceptual 7-layer framework to describe the functions of a networking system.
+Before the **Open Systems Interconnection (OSI) Model** was published in 1984, computer networks were entirely proprietary. An IBM computer physically could not talk to an Apple computer. The OSI Model solved this by mathematically slicing networking into 7 distinct, abstract layers. 
 
-If a network engineer says, *"We are experiencing a Layer 2 loop"*, every other engineer immediately knows exactly which hardware and protocols are involved.
+## The 7 Layers (Top to Bottom)
 
-## The 7 Layers
+<ComparisonTable 
+  headers={['Layer', 'Name', 'Function & Protocols']} 
+  rows={[
+    ['7', 'Application', 'End-user layer. Where the software operates. (HTTP, FTP, SMTP, DNS)'],
+    ['6', 'Presentation', 'Translates, encrypts, and compresses data. (TLS/SSL, ASCII, JPEG)'],
+    ['5', 'Session', 'Establishes, manages, and terminates connections between applications. (NetBIOS)'],
+    ['4', 'Transport', 'Reliable data transfer, segmentation, and error checking. (TCP, UDP)'],
+    ['3', 'Network', 'Logical addressing and routing packets across the internet. (IP, ICMP, IPSec)'],
+    ['2', 'Data Link', 'Physical MAC addressing and framing across a local area network (LAN). (Ethernet, Switches)'],
+    ['1', 'Physical', 'The actual physical hardware transmitting raw 0s and 1s over cables/radio. (Cables, Hubs, Wi-Fi)']
+  ]} 
+/>
 
-From bottom (hardware) to top (software):
+## Encapsulation
+When you send an email, the data starts at Layer 7 and travels **down** the stack. 
+As it passes through each layer, that layer attaches its own mathematical metadata (a header) to the payload. 
+- At Layer 4, the data becomes a **Segment**.
+- At Layer 3, it becomes a **Packet** (adding IP addresses).
+- At Layer 2, it becomes a **Frame** (adding MAC addresses).
+- At Layer 1, it is converted into raw **Bits** (electrical voltages).
 
-1. **Physical (Layer 1)**: The absolute raw hardware. Cables, electrical voltages, radio frequencies, and fiber optic light pulses. (Hubs, Cables).
-2. **Data Link (Layer 2)**: Node-to-node data transfer within the *same* local network. Handles physical addressing. (MAC Addresses, Switches, Ethernet).
-3. **Network (Layer 3)**: Routing data *between different* networks across the globe. Handles logical addressing. (IP Addresses, Routers).
-4. **Transport (Layer 4)**: Ensures data arrives reliably, in order, and assigns it to the correct application via Ports. (TCP, UDP).
-5. **Session (Layer 5)**: Establishes, manages, and terminates persistent connections between two computers.
-6. **Presentation (Layer 6)**: Formats, encrypts, and compresses data so the application can read it (e.g., SSL/TLS encryption, JPEG formatting).
-7. **Application (Layer 7)**: The software interface the user actually interacts with. (HTTP, FTP, SMTP, DNS).
+When the receiving computer gets the Bits, it performs **De-encapsulation**, traveling **up** the stack, stripping the headers one by one until the raw email hits Layer 7.
 
-<Callout icon="info" title="Encapsulation (The Russian Doll)">
-  When you send an email (Layer 7), the data travels *down* the stack on your computer. Each layer adds its own specific "Header" to the data. By the time it hits Layer 1, it is a massive nested package (encapsulation). When the server receives it, the data travels *up* the stack, with each layer stripping off its respective header (decapsulation).
+<Callout icon="info" title="Is the OSI Model actually used?">
+Strictly speaking, the modern internet does **not** use the OSI model; it uses the simpler 4-layer TCP/IP model. However, the OSI model is the universal language of Network Engineering. If an engineer says "We have a Layer 3 problem," they universally mean a routing/IP issue.
 </Callout>
 
 </ConceptTemplate>

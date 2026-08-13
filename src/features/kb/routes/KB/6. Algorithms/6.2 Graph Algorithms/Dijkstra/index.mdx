@@ -1,37 +1,31 @@
 ---
 title: Dijkstra's Algorithm
-description: An algorithm for finding the shortest paths between nodes in a graph.
+description: The legendary greedy algorithm that mathematically calculates the shortest path in a weighted graph using a Priority Queue.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Dijkstra's Algorithm">
+<ConceptTemplate title="Dijkstra's Algorithm">
 
-Dijkstra's algorithm is an algorithm for finding the shortest paths between nodes in a graph, which may represent, for example, road networks. It was conceived by computer scientist Edsger W. Dijkstra in 1956 and published three years later.
+Invented by Edsger W. Dijkstra in 1956, this algorithm mathematically finds the absolute shortest path from a starting node to all other nodes in a **Weighted Graph**. 
+Unlike BFS which assumes every road takes 1 minute to drive, Dijkstra understands that Highway A takes 10 minutes, and Highway B takes 50 minutes.
 
-<Callout icon="error" title="No Negative Weights">
-  Dijkstra's algorithm strictly cannot handle graphs with negative edge weights. Once a node is marked as "visited", its shortest path is considered final. A negative weight could provide a shorter path later, breaking this greedy assumption. (Use Bellman-Ford for negative weights).
+## 1. The Priority Queue (Min-Heap)
+Dijkstra's algorithm is essentially BFS, but instead of using a standard Queue, it mathematically uses a **Priority Queue (Min-Heap)**.
+
+1. Create a distance table. Set the start node distance to 0, and all other nodes to Infinity.
+2. Push the start node into the Min-Heap.
+3. While the Min-Heap is not empty:
+   - Extract the node with the **current smallest distance**.
+   - For every neighbor of this node, calculate the mathematical cost: `Cost = Current Node's Distance + Edge Weight`.
+   - If this new Cost is strictly less than the neighbor's known distance, update the table and push the neighbor into the Min-Heap.
+
+## 2. The Greedy Mathematical Proof
+Dijkstra is a **Greedy Algorithm**. When it extracts a node from the Min-Heap, it mathematically assumes that it has found the absolute shortest possible path to that node. 
+Why is this mathematically true? Because it always processes the cheapest available node first. If a cheaper path existed, the Min-Heap would have extracted that path earlier.
+
+<Callout icon="warning" title="The Fatal Flaw: Negative Weights">
+Dijkstra mathematically relies on the assumption that adding edges can only increase the total cost (like driving a car: you cannot drive a road that gives you -5 gallons of gas). If the graph contains **Negative Edge Weights**, Dijkstra's greedy assumption catastrophically fails and it will return the wrong answer. You must use the Bellman-Ford algorithm instead.
 </Callout>
 
-## How it Works
-
-1. Mark all nodes unvisited. Create a set of all the unvisited nodes.
-2. Assign to every node a tentative distance value: set it to zero for our initial node and to infinity for all other nodes.
-3. For the current node, consider all of its unvisited neighbors and calculate their tentative distances through the current node.
-4. When we are done considering all of the unvisited neighbors of the current node, mark the current node as visited. A visited node will never be checked again.
-5. If the destination node has been marked visited, then stop.
-
-## Architecture
-
-<ArchitectureDiagram chart={`
-graph LR
-  A((A)) -- 4 --> B((B))
-  A -- 2 --> C((C))
-  B -- 5 --> C
-  B -- 10 --> D((D))
-  C -- 3 --> D
-  
-  style A fill:#bfb,stroke:#333,stroke-width:2px
-  style C fill:#ff9,stroke:#333,stroke-width:2px
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

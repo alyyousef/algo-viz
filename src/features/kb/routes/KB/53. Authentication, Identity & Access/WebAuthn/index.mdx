@@ -1,8 +1,35 @@
+---
+title: WebAuthn (FIDO2)
+description: The official W3C web standard for passwordless, phishing-resistant authentication utilizing public-key cryptography and hardware authenticators.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="WebAuthn">
+<ConceptTemplate title="WebAuthn (FIDO2)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Despite MFA and TOTP, sophisticated attackers still breach accounts using real-time proxy phishing pages. 
+**WebAuthn** (part of the FIDO2 project) was engineered to completely eradicate passwords and neutralize phishing permanently by moving authentication from the user's brain to cryptographic hardware.
+
+## 1. Public-Key Cryptography
+WebAuthn relies entirely on Asymmetric Cryptography (Public/Private Keys).
+During registration, the user's hardware device (like a YubiKey, Apple TouchID, or Windows Hello) generates a mathematically linked keypair.
+1. The **Public Key** is sent to the backend server and saved in the database.
+2. The **Private Key** is permanently burned into the secure enclave (TPM) of the hardware device. It never leaves the device.
+
+## 2. The Authentication Ceremony (The Challenge)
+When the user attempts to log in, there is no password box.
+1. The server generates a random string of bytes (a cryptographic Challenge) and sends it to the browser.
+2. The browser passes the Challenge to the hardware authenticator (prompting the user to scan their fingerprint or tap their YubiKey).
+3. The hardware uses the burned-in Private Key to digitally sign the Challenge, and sends the Signature back to the server.
+4. The server uses the stored Public Key to mathematically verify the Signature. If it matches, the user is authenticated.
+
+## 3. Perfect Phishing Resistance
+WebAuthn is the only protocol mathematically immune to phishing. 
+When the browser asks the hardware device to sign the challenge, it strictly binds the signature to the **Origin URL**. 
+If a user is tricked onto `g00gle.com`, the hardware device signs the challenge for `g00gle.com`. When the attacker forwards that signature to the real `google.com`, the real server detects the Origin mismatch and instantly rejects the login. The phishing attack catastrophically fails.
+
+<Callout icon="tip" title="Platform vs Roaming Authenticators">
+WebAuthn supports two types of devices: **Platform Authenticators** (built directly into the laptop, like a MacBook's TouchID or Windows Hello camera) and **Roaming Authenticators** (USB devices like YubiKeys that you carry on your keychain and plug into any computer).
+</Callout>
 
 </ConceptTemplate>

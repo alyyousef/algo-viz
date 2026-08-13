@@ -1,8 +1,42 @@
+---
+title: OpenID Connect (OIDC)
+description: A standardized authentication layer built on top of the OAuth 2.0 protocol, providing identity verification and user profiles via ID Tokens.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="OpenID Connect">
+<ConceptTemplate title="OpenID Connect (OIDC)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because OAuth 2.0 only provided *Access Tokens* (keys to a door), developers started hacking the protocol to perform Authentication (figuring out who holds the key). This led to fractured, insecure implementations.
+
+In 2014, **OpenID Connect (OIDC)** was released. It sits directly on top of OAuth 2.0 and introduces a standardized way to prove identity: the **ID Token**.
+
+## 1. The ID Token (JWT)
+When you use "Sign in with Google", you are using OIDC. 
+Alongside the standard OAuth Access Token, the server also returns an **ID Token**.
+
+The ID Token is always a cryptographically signed **JSON Web Token (JWT)**. When the Client decodes it, it finds standardized profile information (claims) about the user:
+- `sub`: The unique user ID.
+- `email`: The user's email address.
+- `name`: The user's full name.
+- `exp`: When the token expires.
+
+## 2. OIDC vs OAuth 2.0
+
+<ComparisonTable 
+  headers={['Protocol', 'Purpose', 'Token Type', 'Analogy']} 
+  rows={[
+    ['OAuth 2.0', 'Authorization (What can you do?)', 'Access Token (Opaque String)', 'A hotel keycard. It opens room 402, but the door doesn\'t know your name.'],
+    ['OpenID Connect', 'Authentication (Who are you?)', 'ID Token (JWT)', 'A driver\'s license. It proves your identity, age, and name.']
+  ]} 
+/>
+
+## 3. The UserInfo Endpoint
+Sometimes the ID Token doesn't contain enough information (to keep the JWT payload small). OIDC standardizes the `/userinfo` API endpoint. The Client can take the standard OAuth Access Token it received, make a request to `/userinfo`, and retrieve extended profile details (like the user's profile picture or phone number).
+
+<Callout icon="tip" title="Implementation">
+If you are building an application and want users to "Log In with Apple/Google/Microsoft", you must look for an identity provider that explicitly supports the **OIDC standard**. Never attempt to build custom authentication directly on top of raw OAuth 2.0.
+</Callout>
 
 </ConceptTemplate>

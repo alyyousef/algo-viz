@@ -1,561 +1,303 @@
 import fs from 'fs/promises'
 import path from 'path'
 
+const TICK3 = '```'
+const TICK1 = '`'
+
 const contentMap = {
-  'src/features/kb/routes/KB/9. Computer Architecture/CPU/index.mdx': `---
-title: Central Processing Unit (CPU)
-description: The primary component of a computer that acts as its "brain," responsible for executing instructions and orchestrating hardware.
+  'src/features/kb/routes/KB/14. Web Fundamentals/DOM/index.mdx': `---
+title: The Document Object Model (DOM)
+description: The programming interface for HTML and XML documents, representing the page as a logical tree of objects that can be manipulated by JavaScript.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Central Processing Unit (CPU)">
+<ConceptTemplate title="The Document Object Model (DOM)">
 
-The **Central Processing Unit (CPU)** is the electronic circuitry that executes instructions comprising a computer program. Often referred to as the "brain" of the computer, the CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions in the program.
+When a browser downloads an HTML file, the raw text bytes are fundamentally useless to JavaScript. The browser's Rendering Engine parses that HTML and mathematically converts it into a massive, live, in-memory data structure: the **Document Object Model (DOM)**.
 
-<Callout icon="info" title="The Instruction Cycle">
-  The fundamental operation of most CPUs, regardless of the physical form they take, is to execute a sequence of stored instructions. This sequence is executed in a continuous loop called the **Fetch-Decode-Execute** cycle.
+## 1. The Tree Architecture
+The DOM is a classic Tree data structure. 
+- The root node is the TICK1DocumentTICK1 object.
+- Every HTML tag (like TICK1<body>TICK1 or TICK1<p>TICK1) becomes an **Element Node**.
+- The text inside those tags becomes a **Text Node**.
+- The attributes (like TICK1class="btn"TICK1) become properties on those objects.
+
+Because it is a Tree, it inherits standard tree traversal properties: TICK1parentNodeTICK1, TICK1childNodesTICK1, TICK1nextSiblingTICK1.
+
+## 2. The JavaScript Bridge
+The DOM is *not* JavaScript. It is a Web API (usually written in C++ within the browser). 
+JavaScript simply provides a bridge to interact with it. When you type TICK1document.getElementById('app')TICK1, the JS engine pauses, reaches across the bridge into the C++ DOM structure, finds the specific node, and returns a JavaScript object wrapper that allows you to manipulate it.
+
+## 3. DOM Manipulation Costs
+Traversing the bridge between JavaScript and the C++ DOM is computationally expensive.
+If you run a TICK1forTICK1 loop 10,000 times, and inside that loop you update TICK1element.innerHTMLTICK1, the browser will likely freeze. 
+
+<Callout icon="tip" title="The Virtual DOM">
+Modern frameworks like React solved this performance nightmare by inventing the **Virtual DOM**. React creates a lightweight JavaScript copy of the C++ DOM. When data changes, React updates the fast JS copy, mathematically calculates the exact differences (diffing), and then reaches across the bridge to update the real C++ DOM exactly *once*.
 </Callout>
-
-## Core Components
-
-While modern multi-core processors are incredibly complex, a traditional CPU is conceptually broken down into three primary components:
-
-1. **ALU (Arithmetic Logic Unit)**: The calculator. It performs all mathematical (addition, subtraction) and logical (\\\`AND\\\`, \\\`OR\\\`, \\\`NOT\\\`) operations.
-2. **Control Unit (CU)**: The traffic cop. It extracts instructions from memory, decodes them, and directs the ALU, memory, and I/O devices on how to respond.
-3. **Registers**: Extremely small, blazing-fast memory locations housed directly on the CPU. They hold the immediate data the ALU is currently calculating and keep track of the next instruction to execute.
-
-## Clock Speed
-
-The CPU's operation is synchronized by a central **Clock**. Every tick of the clock allows the CPU to perform one fundamental step of the Fetch-Decode-Execute cycle. 
-
-Clock speed is measured in Hertz (Hz). A modern CPU running at **4.0 GHz** (Gigahertz) is ticking **4 billion times per second**. While a higher clock speed generally implies a faster CPU, the amount of work completed per tick (Instructions Per Clock, IPC) is equally important when comparing different architectures.
-
-## The Bottleneck Problem
-
-In modern computing, the CPU is so incomprehensibly fast that it spends a massive percentage of its time simply waiting for data to arrive from the main memory (RAM). To solve this, engineers introduced **Caches** (L1, L2, L3) — layers of fast, expensive SRAM placed physically closer to the CPU cores to feed them data as quickly as possible.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/ALU/index.mdx': `---
-title: Arithmetic Logic Unit (ALU)
-description: The digital circuit within the CPU that performs all arithmetic and bitwise logical operations.
+  'src/features/kb/routes/KB/14. Web Fundamentals/CSSOM/index.mdx': `---
+title: CSS Object Model (CSSOM)
+description: The tree structure parallel to the DOM that contains all computed styling information for every node on the page.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Arithmetic Logic Unit (ALU)">
+<ConceptTemplate title="CSS Object Model (CSSOM)">
 
-The **Arithmetic Logic Unit (ALU)** is the computational heart of the CPU. While the Control Unit handles moving data around, the ALU is the component that actually *does the math*. It is a complex digital circuit composed entirely of basic logic gates (\\\`AND\\\`, \\\`OR\\\`, \\\`NOT\\\`) configured into adders, multiplexers, and shifters.
+Just as HTML is parsed into the DOM tree, CSS is parsed into the **CSS Object Model (CSSOM)** tree. The Rendering Engine absolutely requires both trees to exist before it can draw a single pixel on the screen.
 
-<Callout icon="success" title="Everything is Math">
-  Under the hood, almost all computational tasks reduce down to simple integer mathematics and bit-shifting. Moving a window across your screen, rendering text, or encrypting a password all eventually rely on the ALU crunching raw binary numbers.
+## 1. The Cascade and Inheritance
+CSS rules are inherited hierarchically. If you apply TICK1font-size: 16pxTICK1 to the TICK1<body>TICK1, that rule must mathematically cascade down the CSSOM tree to every single child paragraph and span. 
+This is why deeply nested CSS selectors (e.g., TICK1div.container ul li a spanTICK1) are computationally expensive. The browser must traverse the CSSOM tree backwards, verifying the parent hierarchy for every single span on the page to determine if the rule applies.
+
+## 2. Render Blocking
+The CSSOM is **Render-Blocking**. 
+Because CSS rules can dramatically alter the geometry of the page (e.g., hiding a massive div), the browser will intentionally halt the rendering process and stare at a blank white screen until the CSSOM is completely built. 
+If your HTML contains a TICK1<link rel="stylesheet" href="massive.css">TICK1 tag in the TICK1<head>TICK1, the browser will not paint anything until that massive file is fully downloaded and parsed.
+
+## 3. Combining the Trees
+Once the DOM and the CSSOM are fully built, the browser merges them together to create the **Render Tree**. 
+The Render Tree only contains nodes that will actually be printed to the screen. If a DOM node has TICK1display: noneTICK1 in the CSSOM, it is mathematically excluded from the Render Tree, saving massive amounts of Layout and Paint calculations.
+
+<Callout icon="warning" title="Critical CSS">
+To fix render-blocking delays, advanced architectures use **Critical CSS**. They extract only the CSS required to style the "Above-the-Fold" content (the top of the page), inline it directly into the HTML TICK1<head>TICK1, and defer the downloading of the remaining CSS until later. This results in incredibly fast visual load times.
 </Callout>
-
-## The Two Halves of the ALU
-
-As its name suggests, the ALU handles two distinct types of operations:
-
-1. **Arithmetic Operations**: Addition, subtraction, and sometimes multiplication/division. (Note: Many modern CPUs offload complex floating-point decimals to a specialized FPU — Floating-Point Unit).
-2. **Logical Operations**: Bitwise operations like \\\`AND\\\`, \\\`OR\\\`, \\\`XOR\\\`, and \\\`NOT\\\`, as well as bit-shifting (moving all 1s and 0s to the left or right, which is a highly optimized way to multiply or divide by 2).
-
-## How the ALU Operates
-
-The ALU takes in three primary inputs:
-- **Operands**: The two pieces of data being calculated (e.g., the number \\\`5\\\` and the number \\\`3\\\`), usually pulled directly from the CPU's Registers.
-- **Opcode (Operation Code)**: A binary signal from the Control Unit telling the ALU exactly *what* to do with the operands (e.g., \\\`001\\\` might mean ADD, while \\\`010\\\` might mean subtract).
-
-It produces two outputs:
-- **Result**: The mathematical answer (e.g., \\\`8\\\`), which is immediately stored back into a register.
-- **Status Flags**: A set of 1-bit indicators that inform the Control Unit about the result. Common flags include:
-  - **Zero Flag (Z)**: Set to \\\`1\\\` if the result of the calculation was exactly zero. (Used constantly in \\\`if/else\\\` statements).
-  - **Negative Flag (N)**: Set to \\\`1\\\` if the result was a negative number.
-  - **Overflow Flag (V)**: Set to \\\`1\\\` if the result was too large to fit in the physical hardware (e.g., trying to store \\\`300\\\` in an 8-bit register that maxes out at \\\`255\\\`).
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Control unit/index.mdx': `---
-title: Control Unit (CU)
-description: The component of the CPU that directs the operation of the processor, acting as the orchestra conductor for the hardware.
+  'src/features/kb/routes/KB/14. Web Fundamentals/CORS/index.mdx': `---
+title: Cross-Origin Resource Sharing (CORS)
+description: The strict browser security mechanism that restricts a webpage from making HTTP requests to a different domain than the one that served it.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Control Unit (CU)">
+<ConceptTemplate title="Cross-Origin Resource Sharing (CORS)">
 
-If the ALU is the calculator of the CPU, the **Control Unit (CU)** is the orchestrator. It does not perform any actual data processing or math; instead, it is entirely responsible for directing the flow of data across the motherboard and ensuring the correct components activate at the exact right microsecond.
+Imagine you are logged into your bank (TICK1bank.comTICK1). The browser holds your secure authentication cookie. 
+You then open a malicious website (TICK1evil.comTICK1) in another tab. If a JavaScript script on TICK1evil.comTICK1 silently makes an HTTP TICK1POSTTICK1 request to TICK1api.bank.com/transferTICK1, the browser would automatically attach your bank cookie, and your money would be stolen.
 
-<Callout icon="info" title="The Orchestra Conductor">
-  Think of the Control Unit like a conductor of a symphony. The conductor doesn't play an instrument (perform math), but they read the sheet music (the program code) and point their baton at the violins (the ALU) or the cellos (the RAM) telling them exactly when to play and how loud.
+**CORS** is the browser-level shield that prevents this exact catastrophe.
+
+## 1. The Same-Origin Policy
+By default, the browser enforces the **Same-Origin Policy (SOP)**. 
+A JavaScript file loaded from TICK1https://my-app.comTICK1 can only make API requests to TICK1https://my-app.comTICK1. If it attempts to fetch data from TICK1https://api.other-app.comTICK1, the browser intercepts the request, blocks the JavaScript from reading the response, and throws a massive red CORS error in the console.
+
+## 2. Bypassing SOP with CORS
+What if your Frontend is hosted on TICK1my-app.comTICK1, but your legitimate Backend API is hosted on TICK1api.my-app.comTICK1? Because the subdomains differ, the browser blocks the request. 
+
+To fix this, the Backend Server must explicitly whitelist the Frontend by sending specific HTTP Response Headers:
+- TICK1Access-Control-Allow-Origin: https://my-app.comTICK1
+
+When the browser sees this header, it relaxes the Same-Origin Policy and allows the JavaScript to read the data.
+
+## 3. Preflight Requests (OPTIONS)
+For "complex" requests (like a TICK1PUTTICK1 request, or a request with a custom TICK1AuthorizationTICK1 header), the browser is terrified of even sending the request to the backend. 
+Before sending the real request, the browser automatically sends a hidden, invisible HTTP TICK1OPTIONSTICK1 request (the Preflight). 
+It asks the backend: *"Hey, are you going to allow this TICK1PUTTICK1 request from this origin?"*
+If the server responds positively, the browser then sends the real request.
+
+<Callout icon="warning" title="CORS is a Browser Policy">
+CORS does **not** protect your API from being hacked via tools like Postman, curl, or a Python script. Those tools simply ignore CORS. CORS only exists inside standard web browsers to protect end-users from malicious cross-site scripts.
 </Callout>
-
-## The Fetch-Decode-Execute Cycle
-
-The CU spends its entire existence looping through a strict three-step cycle:
-
-1. **Fetch**: The CU looks at the Program Counter (a register holding the memory address of the next instruction). It sends a signal to the RAM to fetch the binary instruction stored at that address, and places it into the Instruction Register.
-2. **Decode**: The CU reads the binary instruction (e.g., \\\`10110000\\\`). It translates this binary into specific hardware signals. It determines "This is an ADD instruction, and it needs data from Register A and Register B."
-3. **Execute**: The CU sends electrical signals across the CPU's control bus. It might tell the memory to send a byte of data, tell the ALU to add two numbers, or tell a register to save a result. 
-
-## Hardwired vs. Microprogrammed
-
-Historically, there are two ways engineers design Control Units:
-
-- **Hardwired Control**: The logic is literally physically wired into the silicon using complex logic gates. It is incredibly fast, but completely rigid. If a bug is found in the instruction set, the physical chip must be thrown in the garbage.
-- **Microprogrammed Control**: A mini-computer inside the computer. Complex instructions are broken down into smaller "micro-instructions" stored in a tiny read-only memory (ROM) inside the CPU. This is slower, but allows CPU manufacturers (like Intel or AMD) to patch CPU bugs via "microcode updates" downloaded over the internet without changing the physical silicon.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Registers/index.mdx': `---
-title: CPU Registers
-description: The smallest, fastest, and most expensive tier of memory, located directly on the CPU die.
+  'src/features/kb/routes/KB/14. Web Fundamentals/Same-origin policy/index.mdx': `---
+title: Same-Origin Policy (SOP)
+description: The most critical security model in web browsers, strictly isolating documents, scripts, and data belonging to different origins.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="CPU Registers">
+<ConceptTemplate title="Same-Origin Policy (SOP)">
 
-While RAM provides gigabytes of storage, the CPU cannot do math directly on data sitting in RAM. The data must first be pulled all the way across the motherboard and placed directly inside the CPU. 
-The holding cells where this data sits are called **Registers**.
+The **Same-Origin Policy (SOP)** is the foundational security boundary of the modern web. Without it, the internet would be a lawless wasteland where any website could steal data from any other open tab.
 
-Registers are the absolute top of the memory hierarchy. They are built out of Flip-Flop circuits, meaning they can be read from and written to in a single tick of the CPU clock (zero latency). Because they are so large and expensive to manufacture, a standard CPU only has a few dozen registers, often holding just 64 bits (8 bytes) of data each.
+## 1. Defining an "Origin"
+An Origin is strictly defined as the mathematical combination of three things:
+**Scheme + Hostname + Port**.
 
-<Callout icon="success" title="The 64-Bit Architecture">
-  When you download a "64-bit" operating system or program, it means the software is specifically compiled to utilize a CPU where the General Purpose Registers are exactly 64 bits wide. This allows the CPU to process massively larger numbers in a single cycle compared to older 32-bit architecture.
+<ComparisonTable 
+  headers={['URL being compared to: http://store.company.com/dir/page.html', 'Outcome', 'Reason']} 
+  rows={[
+    ['TICK1http://store.company.com/dir2/other.htmlTICK1', '✅ Same Origin', 'Only the path differs.'],
+    ['TICK1https://store.company.com/dir/page.htmlTICK1', '❌ Different Origin', 'Different Scheme (HTTPS vs HTTP).'],
+    ['TICK1http://news.company.com/dir/page.htmlTICK1', '❌ Different Origin', 'Different Hostname (news vs store).'],
+    ['TICK1http://store.company.com:81/dir/page.htmlTICK1', '❌ Different Origin', 'Different Port (81 vs 80).']
+  ]} 
+/>
+
+## 2. What does SOP restrict?
+SOP places ironclad walls between different origins within the browser:
+1. **DOM Access**: An iframe loading TICK1evil.comTICK1 cannot use JavaScript to read the DOM or keypresses of the parent window TICK1bank.comTICK1.
+2. **Data Storage**: A script on TICK1origin-a.comTICK1 is mathematically barred from reading the LocalStorage, IndexedDB, or Cookies belonging to TICK1origin-b.comTICK1.
+3. **Network Requests**: AJAX/Fetch requests to different origins are blocked from reading the response (unless relaxed by CORS headers).
+
+## 3. Exceptions to SOP
+SOP intentionally allows certain cross-origin interactions because the web would be unusable without them:
+- **Linking**: You can freely embed TICK1<img src="different-origin.com/image.jpg">TICK1. 
+- **Scripts**: You can load TICK1<script src="cdn.com/react.js">TICK1. (However, the script executes entirely within the context and permissions of the *hosting* page).
+
+<Callout icon="tip" title="PostMessage">
+If you legitimately need two different origins to communicate (e.g., a secure payment iframe communicating with the parent e-commerce site), you must use the strict TICK1window.postMessage()TICK1 API. This allows controlled, explicitly verified message passing across the SOP boundary.
 </Callout>
-
-## Types of Registers
-
-Registers are divided into two main categories: those the programmer can use, and those the CPU uses internally.
-
-### General Purpose Registers (GPR)
-These are the temporary scratchpads used by the ALU to do math. In x86 assembly language, you will see these named things like \\\`RAX\\\`, \\\`RBX\\\`, \\\`RCX\\\`. If you want to add 5 and 3, you move \\\`5\\\` into \\\`RAX\\\`, move \\\`3\\\` into \\\`RBX\\\`, and tell the ALU to add them.
-
-### Special Purpose Registers
-These are internal state-trackers critical to the CPU's operation.
-- **Program Counter (PC) / Instruction Pointer (IP)**: Holds the exact memory address in RAM of the *next* instruction to be executed.
-- **Instruction Register (IR)**: Holds the actual binary instruction that is *currently* being decoded by the Control Unit.
-- **Stack Pointer (SP)**: Points to the top of the Call Stack in RAM, crucial for keeping track of function calls and local variables.
-- **Status Register / Flags**: A collection of 1-bit booleans updated by the ALU (e.g., "Was the last calculation zero?", "Did the last calculation overflow?").
-
-## The Assembly Bottleneck
-
-Because there are only ~16 to 32 General Purpose Registers, compiler engineers spend massive amounts of time writing "Register Allocation" algorithms. The goal of a C++ or Rust compiler is to intelligently juggle variables in and out of these 16 registers to ensure the CPU never wastes time waiting for data to fetch from RAM.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Cache (L1-L2-L3)/index.mdx': `---
-title: CPU Cache (L1, L2, L3)
-description: The high-speed memory hierarchy designed to bridge the massive speed gap between the blazing fast CPU and the agonizingly slow main RAM.
+  'src/features/kb/routes/KB/14. Web Fundamentals/Cookies/index.mdx': `---
+title: HTTP Cookies
+description: Small pieces of data sent by the server and stored in the user's browser, fundamentally enabling stateful sessions over the stateless HTTP protocol.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="CPU Cache (L1, L2, L3)">
+<ConceptTemplate title="HTTP Cookies">
 
-Over the last three decades, CPU speeds increased exponentially (following Moore's Law), but RAM speeds did not keep up. 
+The HTTP protocol is fundamentally **stateless**. The server has no memory of past requests. If you login on Request 1, the server will completely forget who you are on Request 2. 
+**Cookies** were invented in 1994 by Netscape to solve this, introducing State to the Web.
 
-Today, a CPU takes about **1 nanosecond** to execute an instruction. However, fetching data from Main Memory (RAM) takes roughly **100 nanoseconds**. If the CPU had to wait for RAM on every single instruction, it would spend 99% of its life doing absolutely nothing. 
-To solve this "Memory Wall," engineers introduced the **Cache Hierarchy**.
+## 1. How Cookies Work
+1. **Setting the Cookie**: You send your username and password. The server validates them and sends back an HTTP Response Header: TICK1Set-Cookie: session_id=abc123TICK1.
+2. **Browser Storage**: The browser intercepts this header and silently saves the TICK1session_idTICK1 onto the hard drive, tying it to the domain (e.g., TICK1amazon.comTICK1).
+3. **Automatic Transmission**: For every single subsequent HTTP request the browser makes to TICK1amazon.comTICK1 (even for images or CSS), it automatically attaches the header: TICK1Cookie: session_id=abc123TICK1. The server reads this and remembers who you are.
 
-<Callout icon="info" title="The Desk Analogy">
-  - **Registers**: What you are currently holding in your hands (instant).
-  - **L1/L2 Cache**: Papers sitting on your desk (fast, but limited space).
-  - **RAM**: A filing cabinet across the room (slow, but holds thousands of papers).
-  - **Hard Drive**: A warehouse across town (massive, but takes days to retrieve).
+## 2. Critical Security Flags
+Because cookies are automatically attached to requests, they are highly vulnerable to attack vectors like XSS (Cross-Site Scripting) and CSRF (Cross-Site Request Forgery). 
+
+To secure them, you must append strict flags when setting the cookie:
+- TICK1HttpOnlyTICK1: Mathematically prevents client-side JavaScript (TICK1document.cookieTICK1) from reading the cookie. This utterly defeats XSS attacks trying to steal the session token.
+- TICK1SecureTICK1: Forces the browser to *only* send the cookie over encrypted HTTPS connections, preventing packet-sniffing on public WiFi.
+- TICK1SameSite=StrictTICK1: Prevents the browser from sending the cookie if the request originated from a different domain. This absolutely obliterates CSRF attacks.
+
+## 3. Size and Limitations
+Cookies are small. They are strictly limited to **4 Kilobytes** of data per cookie, and usually max out at ~50 cookies per domain. 
+Furthermore, because they are sent back and forth on *every single request*, storing massive amounts of data in a cookie will severely bloat your network bandwidth and destroy web performance.
+
+<Callout icon="warning" title="Third-Party Cookies">
+A First-Party cookie is set by the domain you are currently visiting. A Third-Party cookie is set by an iframe or tracking pixel (like Facebook Ads) embedded on that page. Due to severe privacy concerns (cross-site tracking), modern browsers (Safari, Firefox, and soon Chrome) are aggressively blocking all Third-Party cookies by default.
 </Callout>
-
-## The Cache Hierarchy
-
-Caches are made of SRAM (Static RAM), which is incredibly fast but physically massive and incredibly expensive, meaning we can only fit a tiny amount on the CPU die. Modern CPUs use a tiered approach:
-
-1. **L1 Cache (Level 1)**: 
-   - **Size**: ~64 KB per core.
-   - **Speed**: ~1-2 nanoseconds (instant).
-   - **Location**: Physically integrated directly inside the execution core. Often split into L1i (Instruction Cache) and L1d (Data Cache).
-2. **L2 Cache (Level 2)**:
-   - **Size**: ~256 KB to 1 MB per core.
-   - **Speed**: ~3-10 nanoseconds.
-   - **Location**: Typically dedicated per-core, but sitting slightly outside the immediate execution pipeline.
-3. **L3 Cache (Level 3)**:
-   - **Size**: ~10 MB to 64+ MB (Massive).
-   - **Speed**: ~10-20 nanoseconds.
-   - **Location**: **Shared** across all CPU cores. If Core 1 fetches a webpage, Core 2 can instantly access that data from the shared L3 cache.
-
-## Hits and Misses
-
-When the CPU needs data, it checks the caches in order: L1 $\\rightarrow$ L2 $\\rightarrow$ L3.
-- **Cache Hit**: The data was found! The CPU proceeds without stalling.
-- **Cache Miss**: The data was not found. The CPU halts entirely, reaching out to the slow RAM. When the data finally arrives from RAM, it is copied into the L3, L2, and L1 caches simultaneously in case it is needed again soon.
-
-## Spatial and Temporal Locality
-
-Caches are highly predictive, relying on two computer science principles:
-1. **Temporal Locality**: If a program accesses a variable \\\`x\\\`, it is highly likely it will access \\\`x\\\` again very soon (e.g., a counter in a \\\`for\\\` loop).
-2. **Spatial Locality**: If a program accesses memory address \\\`1000\\\`, it is highly likely it will access address \\\`1001\\\` immediately after (e.g., iterating through an Array). Therefore, when a CPU suffers a Cache Miss for address \\\`1000\\\`, it doesn't just pull 1 byte from RAM; it pulls an entire 64-byte "Cache Line," pre-fetching the surrounding data for free.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Virtual memory/index.mdx': `---
-title: Virtual Memory
-description: The operating system abstraction that gives every program the illusion it has a massive, contiguous block of RAM entirely to itself.
+  'src/features/kb/routes/KB/14. Web Fundamentals/LocalStorage/index.mdx': `---
+title: LocalStorage
+description: A synchronous Web Storage API allowing web applications to persistently store simple key-value string data directly in the browser across sessions.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Virtual Memory">
+<ConceptTemplate title="LocalStorage">
 
-In the early days of computing, if you opened a program, it was loaded directly into physical RAM. If Program A was loaded at address \\\`0\\\` and Program B was loaded at address \\\`1000\\\`, a bug in Program A could easily overwrite Program B's data, causing the entire computer to crash. Furthermore, if you only had 16 MB of RAM, and you tried to open 20 MB of programs, the OS would simply refuse.
+While Cookies are heavily tied to HTTP requests and servers, **LocalStorage** is a pure Client-Side storage mechanism. It allows JavaScript to save data directly into the browser's hard drive without ever sending it to the backend server.
 
-**Virtual Memory** is arguably the most brilliant abstraction in operating system design, completely solving both of these problems.
+## 1. Persistent Key-Value Storage
+LocalStorage is incredibly simple. It operates as a synchronous dictionary (Key-Value store). 
+- TICK1localStorage.setItem('theme', 'dark')TICK1
+- TICK1const theme = localStorage.getItem('theme')TICK1
 
-<Callout icon="success" title="The Grand Illusion">
-  With Virtual Memory, a program never touches actual physical RAM. Instead, the OS lies to every program, giving it a "Virtual Address Space" starting at address 0. Program A thinks it owns all the memory in the world. Program B thinks it owns all the memory in the world. The hardware secretly translates these fake virtual addresses into real physical addresses on the fly.
+Critically, LocalStorage is **persistent**. If the user closes the tab, closes the browser, or restarts their computer, the data remains perfectly intact forever (until explicitly deleted by JavaScript or the user clearing their browser cache).
+
+## 2. Architecture & Limitations
+<ComparisonTable 
+  headers={['Property', 'Details']} 
+  rows={[
+    ['Capacity', 'Significantly larger than Cookies. Usually 5MB to 10MB per origin.'],
+    ['Data Types', 'Strictly Strings. If you want to store a JSON object, you must use TICK1JSON.stringify()TICK1 and TICK1JSON.parse()TICK1.'],
+    ['Network Overhead', 'Zero. Unlike cookies, LocalStorage data is never automatically attached to HTTP requests.'],
+    ['Synchronous Blocking', 'The API is entirely synchronous. Reading a massive 5MB string from LocalStorage will physically block the Main Thread and drop frame rates.']
+  ]} 
+/>
+
+## 3. Security Vulnerabilities (XSS)
+LocalStorage is inherently vulnerable to **Cross-Site Scripting (XSS)**. 
+Because LocalStorage is universally accessible by any JavaScript running on the domain, if a hacker manages to inject a malicious script onto your page, they can trivially execute TICK1console.log(localStorage.getItem('jwt_token'))TICK1 and steal the user's authentication credentials. 
+
+<Callout icon="warning" title="Never Store Secrets">
+You must never store highly sensitive information (like JWT Access Tokens, Passwords, or PII) in LocalStorage. For secure authentication sessions, always use HTTP-Only, Secure cookies, which are mathematically immune to XSS token theft.
 </Callout>
-
-## Paging and the Page Table
-
-The OS chops the Virtual Memory and Physical RAM into fixed-size chunks called **Pages** (typically 4 KB each). 
-
-The OS maintains a massive dictionary in RAM called the **Page Table**. 
-When Program A asks to read from Virtual Address \\\`0x0000\\\`, the CPU pauses, looks up \\\`0x0000\\\` in the Page Table, discovers it actually maps to Physical RAM Address \\\`0x8F00\\\`, and transparently routes the request there. 
-
-### Security via Isolation
-If Program A tries to read from a virtual address that the OS hasn't mapped, or tries to read memory belonging to Program B, the CPU hardware triggers a fatal exception (a **Segmentation Fault**) and instantly kills the malicious program, keeping the rest of the OS perfectly safe.
-
-## Swapping (Paging to Disk)
-
-What happens if you have 16 GB of physical RAM, but you open 30 GB of Google Chrome tabs? 
-
-Because of Virtual Memory, the OS doesn't crash. Instead, it looks at the Page Table and finds "Cold Pages" — data belonging to programs you haven't clicked on in a while. The OS copies those 4 KB pages out of RAM and saves them onto your slow Hard Drive (the Swap File / Pagefile). It then hands that newly freed physical RAM to your active Chrome tab.
-
-If you switch back to the old program, the CPU suffers a **Page Fault**. The OS pauses the program, reads the data off the hard drive back into RAM, updates the Page Table, and resumes the program. This allows you to run far more software than your physical RAM could ever hold, albeit at the cost of hard drive latency.
-
-## The TLB (Translation Lookaside Buffer)
-
-Translating a Virtual Address to a Physical Address requires looking up the Page Table. But the Page Table is stored in RAM! This means every memory request would require *two* trips to RAM (one to translate the address, one to fetch the actual data), slashing performance in half. 
-To fix this, the CPU has a specialized hardware cache called the **TLB (Translation Lookaside Buffer)**. The TLB caches recent translations. If the translation is in the TLB (a TLB Hit), the CPU resolves the address instantly without checking the Page Table.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Von Neumann vs Harvard architecture/index.mdx': `---
-title: Von Neumann vs Harvard Architecture
-description: The two foundational paradigms of computer architecture dictating how instructions and data are stored and accessed in memory.
+  'src/features/kb/routes/KB/14. Web Fundamentals/SessionStorage/index.mdx': `---
+title: SessionStorage
+description: A volatile, tab-specific Web Storage API identical to LocalStorage, but automatically cleared the moment the browser tab is closed.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Von Neumann vs Harvard Architecture">
+<ConceptTemplate title="SessionStorage">
 
-At the dawn of computing, engineers had to solve a fundamental problem: A computer needs to store two entirely different things to function:
-1. **Instructions**: The actual code/program telling the computer what to do.
-2. **Data**: The variables, strings, and numbers being manipulated.
+**SessionStorage** shares the exact same API and 5MB capacity as LocalStorage (TICK1setItemTICK1, TICK1getItemTICK1), but its architectural lifespan and isolation scope are fundamentally different.
 
-How should this memory be physically wired? This debate birthed two distinct architectures that still dictate modern hardware design today.
+## 1. The Lifespan (Volatility)
+LocalStorage lives forever. **SessionStorage is volatile.** 
+The data only survives for the duration of the "Page Session". 
+- If the user reloads the page, the data survives.
+- If the user closes the specific browser Tab, the data is instantly and permanently destroyed by the browser.
 
----
+## 2. Tab-Level Isolation
+LocalStorage is tied to the Origin (Domain). If you open 5 tabs of TICK1amazon.comTICK1, all 5 tabs physically share the exact same LocalStorage database. If Tab A updates a value, Tab B can instantly read it.
 
-## The Von Neumann Architecture
+**SessionStorage is tied to the specific Tab.**
+If you open 5 tabs of TICK1amazon.comTICK1, you spawn 5 completely isolated, parallel SessionStorage databases. Tab A is mathematically barred from reading the SessionStorage of Tab B, even though they share the exact same origin.
 
-Defined by John von Neumann in 1945, this architecture is brilliantly simple: **Instructions and Data share the exact same memory space and the exact same data bus.**
+## 3. Use Cases
+Because of its strict isolation, SessionStorage is the perfect tool for maintaining state that should not leak across multiple windows.
+- **Multi-Tab Workflows**: Imagine a user booking two different flights simultaneously in two different tabs. If you store the "current_flight_id" in LocalStorage, Tab A will overwrite Tab B's data, causing a catastrophic booking error. SessionStorage mathematically prevents this collision.
+- **Form Data Recovery**: Saving a long draft of an email so it survives an accidental page refresh, but vanishes when the user successfully closes the tab.
 
-If you look at the RAM in your laptop, it contains both your compiled C++ code and the images you are editing. 
-
-### Advantages:
-- **Simplicity & Cost**: You only need one physical memory chip and one set of wires (bus) connecting the CPU to the RAM.
-- **Flexibility**: If your program is small, you have massive amounts of RAM left over for data. If your program is huge, you can sacrifice data space. The system dynamically adapts.
-
-### The Von Neumann Bottleneck:
-Because both instructions and data share a single wire to the CPU, the CPU can only fetch *either* an instruction *or* a piece of data at any given microsecond. It cannot fetch both simultaneously. As CPUs became blisteringly fast, this shared bus became the ultimate bottleneck, starving the CPU of data.
-
----
-
-## The Harvard Architecture
-
-Developed around the same time for the Harvard Mark I, this architecture enforces strict physical separation. **There is one physical memory chip for Instructions, and a completely separate physical memory chip for Data.** 
-
-### Advantages:
-- **Zero Bottleneck**: The CPU has two separate wires (buses). It can fetch the next instruction from the Instruction Memory *at the exact same time* it fetches a variable from the Data Memory, effectively doubling throughput.
-- **Security**: Because the Data Memory is physically disconnected from the Instruction Memory, it is impossible for a hacker to trick the CPU into executing a malicious variable as code (preventing many Buffer Overflow attacks).
-
-### Disadvantages:
-- **Rigidity**: If you have 10 MB of Instruction Memory and 10 MB of Data Memory, and you write a program that is 11 MB of code, it will crash. It does not matter that the Data Memory is completely empty; the spaces cannot be shared.
-
----
-
-## The Modern Compromise: Modified Harvard Architecture
-
-If you look at modern Intel/AMD processors, they use a brilliant hybrid approach called the **Modified Harvard Architecture**.
-
-- **Main Memory (RAM)**: Out in the motherboard, the system uses the cheap, flexible **Von Neumann** architecture. All code and data share your 16 GB of RAM.
-- **L1 CPU Cache**: Deep inside the CPU silicon, where speed is critical, the architecture splits into strict **Harvard**. The L1 cache is explicitly divided into an \\\`L1i\\\` (Instruction Cache) and an \\\`L1d\\\` (Data Cache). This allows the CPU execution core to fetch instructions and data simultaneously at lightning speed, getting the best of both worlds!
+<Callout icon="tip" title="Duplicating Tabs">
+There is one exception to the Tab Isolation rule: If a user right-clicks a tab and selects "Duplicate Tab" (or uses a TICK1target="_blank"TICK1 link), modern browsers will deeply clone the existing SessionStorage into the new tab. However, from that exact millisecond onward, the two databases diverge and become isolated.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Instruction set architecture (ISA)/index.mdx': `---
-title: Instruction Set Architecture (ISA)
-description: The critical bridge between hardware and software, defining the exact vocabulary of commands a specific CPU understands.
+  'src/features/kb/routes/KB/14. Web Fundamentals/IndexedDB/index.mdx': `---
+title: IndexedDB
+description: A massive, asynchronous, transactional, NoSQL database built directly into modern web browsers for storing complex structural data.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Instruction Set Architecture (ISA)">
+<ConceptTemplate title="IndexedDB">
 
-A CPU is just a rock of silicon that reacts to electrical pulses. It does not understand C++, Python, or Java. It only understands raw binary \\\`1\\\`s and \\\`0\\\`s. 
+Cookies hold 4KB. LocalStorage holds 5MB of raw strings. 
+What if you are building an offline-first web application (like Google Docs or a massive 3D game) and you need to store 500 Megabytes of complex JavaScript objects, images, and binary Blobs directly on the user's hard drive?
 
-But *which* binary patterns mean what? If you send the binary \\\`10101010\\\` to the CPU, does it add two numbers, or does it reboot the computer? 
-The answer is defined by the **Instruction Set Architecture (ISA)**.
+You use **IndexedDB**.
 
-<Callout icon="info" title="The Contract">
-  The ISA is the ultimate contract between software engineers and hardware engineers. 
-  Hardware engineers agree: "If you build your silicon to react to these specific binary patterns, it will run the code."
-  Software engineers (Compiler writers) agree: "If we compile our C++ code into these specific binary patterns, the hardware will execute it correctly."
+## 1. The Architecture
+IndexedDB is a genuine NoSQL database embedded in the browser engine.
+- **Object Stores**: Instead of SQL tables, it uses Object Stores (similar to MongoDB Collections).
+- **Complex Data Types**: You don't need to TICK1JSON.stringify()TICK1. IndexedDB natively stores raw JavaScript Objects, Arrays, Dates, and even massive binary TICK1ArrayBufferTICK1 and TICK1BlobTICK1 objects (perfect for caching HD videos or audio files).
+- **Indexes**: You can create high-performance indexes on specific object properties (e.g., rapidly searching for all users where TICK1age > 18TICK1 without scanning the entire database).
+
+## 2. Asynchronous and Transactional
+Because reading 500MB of data would instantly freeze the Main UI Thread, the IndexedDB API is strictly **Asynchronous**. It relies entirely on callbacks and Promises to execute queries in the background.
+
+Furthermore, it guarantees **ACID-compliant Transactions**. 
+If you execute a massive database update across multiple Object Stores, and step 4 fails, the entire transaction automatically rolls back. The database is never left in a corrupted, half-written state.
+
+## 3. The API Nightmare
+IndexedDB is notoriously one of the most painful, low-level, and complex APIs in web development. A simple query requires opening connections, handling version upgrades, spawning transactions, and attaching multiple event listeners.
+
+<Callout icon="tip" title="Abstraction Libraries">
+No senior engineer uses the raw IndexedDB API in production. You should absolutely always use a modern, Promise-based abstraction library like **LocalForage**, **Dexie.js**, or **Idb**. These wrappers compress 50 lines of complex transaction boilerplate into a single beautiful TICK1await db.users.add({name: "John"})TICK1 line.
 </Callout>
-
-## What does an ISA define?
-
-An ISA serves as the API for the hardware. It explicitly defines:
-1. **The Instructions**: The exact list of commands the CPU can execute (e.g., \\\`ADD\\\`, \\\`SUB\\\`, \\\`JUMP\\\`, \\\`LOAD\\\`, \\\`STORE\\\`).
-2. **The Registers**: How many General Purpose Registers exist, and how large they are (e.g., 16 registers, 64-bit wide).
-3. **Addressing Modes**: The specific rules for how the CPU can interact with RAM (e.g., can it read directly from RAM, or must it load data into a register first?).
-4. **Data Types**: Whether the hardware natively understands floating-point decimals, or only integers.
-
-## Assembly Language
-
-Because humans cannot read raw binary (\\\`10001011 01000101...\\\`), we created **Assembly Language**. Assembly is simply a human-readable text representation of the ISA. Every single Assembly command (like \\\`MOV EAX, 1\\\`) maps 1-to-1 to a raw binary instruction.
-
-Because different ISAs have different vocabularies, Assembly code is *not* portable. Assembly written for an Intel CPU (x86) will look completely different and fail to run on an Apple Silicon CPU (ARM).
-
-## The Big Two ISAs
-
-Today, the entire world is dominated by two primary ISAs, representing two entirely different design philosophies:
-
-1. **x86-64 (Intel & AMD)**: The absolute king of Desktop PCs, Laptops, and Cloud Servers. It is a **CISC** (Complex Instruction Set Computer) architecture, containing thousands of complex instructions.
-2. **ARM (Apple, Qualcomm, Samsung)**: The absolute king of Mobile Phones, IoT devices, and increasingly MacBooks (Apple Silicon). It is a **RISC** (Reduced Instruction Set Computer) architecture, focusing on power efficiency and simplicity.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/CISC/index.mdx': `---
-title: CISC (Complex Instruction Set Computer)
-description: A CPU design philosophy that emphasizes complex, multi-step instructions that can perform heavy memory operations in a single line of code.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="CISC (Complex Instruction Set Computer)">
-
-In the 1970s and 1980s, computer memory (RAM) was incredibly expensive, costing hundreds of dollars for a few kilobytes. Compilers (software that translates high-level code to assembly) were also very primitive. 
-
-Because memory was so scarce, hardware engineers needed a way to write programs using as few bytes as possible. This birthed the **CISC (Complex Instruction Set Computer)** philosophy.
-
-<Callout icon="info" title="The CISC Philosophy">
-  The goal of CISC is to give the CPU a massive vocabulary of incredibly complex, specialized instructions. Instead of requiring the software to execute 5 simple instructions to multiply two numbers stored in RAM, the hardware provides a single, complex \\\`MULTIPLY\\\` instruction that does it all in one line.
-</Callout>
-
-## Characteristics of CISC
-
-1. **Complex Instructions**: A single instruction can span multiple cycles. It can fetch data from memory, perform math on it, and store it back into memory, all within one command.
-2. **Variable-Length Instructions**: To save memory space, simple instructions might be 1 byte long, while complex instructions might be 15 bytes long.
-3. **Heavy Silicon / Microcode**: Because the instructions are so complex, the physical CPU silicon is massive. The Control Unit must use a "Microprogram" (a tiny interpreter inside the CPU) to break the complex instructions down into smaller steps the hardware can actually execute.
-4. **Fewer Registers**: Because instructions can operate directly on RAM, the CPU doesn't need to juggle as many local registers.
-
-## The x86 Monopoly
-
-The most famous CISC architecture in the world is **x86**, created by Intel in 1978 and expanded to 64-bit by AMD. 
-For 40 years, x86 has dominated the Desktop, Laptop, and Server markets. Because of strict backwards compatibility, a modern Intel i9 processor still physically contains the circuitry to run 16-bit code written for MS-DOS in the 1980s. 
-
-Because of this historical baggage, x86 is a sprawling, incredibly complex ISA with thousands of instructions (including bizarre, highly specific instructions for video decoding and string manipulation).
-
-## The Decline of Pure CISC
-
-As memory became dirt-cheap in the 1990s, the primary advantage of CISC (saving memory space) vanished. Furthermore, complex, variable-length instructions made it incredibly difficult to implement **Pipelining** (running multiple instructions overlapping at the same time). 
-
-Modern Intel and AMD processors are no longer "pure" CISC. While they accept complex x86 instructions from the software, the hardware immediately translates them into simple, RISC-like "Micro-Ops" behind the scenes before executing them.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/RISC/index.mdx': `---
-title: RISC (Reduced Instruction Set Computer)
-description: A CPU design philosophy that emphasizes a small, highly optimized set of simple instructions, resulting in blazing fast and power-efficient processors.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="RISC (Reduced Instruction Set Computer)">
-
-As memory became cheap in the 1980s, computer scientists at IBM and UC Berkeley realized a fundamental flaw in the CISC (Complex Instruction Set Computer) philosophy: 
-*Compilers almost never used the complex instructions.* 
-
-Hardware engineers were wasting massive amounts of silicon designing specialized instructions that were too difficult for compilers to actually utilize. The CPU was huge, hot, and power-hungry for no reason. 
-This realization birthed the **RISC (Reduced Instruction Set Computer)** revolution.
-
-<Callout icon="success" title="The RISC Philosophy">
-  Strip away all the complex, multi-step instructions. Give the CPU a very small vocabulary of extremely simple instructions that execute in exactly one clock cycle. The programs will require more lines of code (using more RAM), but the physical CPU will be so small and fast that it will outperform CISC.
-</Callout>
-
-## Characteristics of RISC
-
-1. **Simple, Single-Cycle Instructions**: Every instruction takes exactly one tick of the CPU clock to execute.
-2. **Fixed-Length Instructions**: Every instruction is exactly the same size (e.g., exactly 32 bits long). This makes fetching and decoding blazing fast, because the CPU knows exactly where one instruction ends and the next begins.
-3. **Load/Store Architecture**: The ALU is strictly forbidden from doing math on data sitting in RAM. You must explicitly \\\`LOAD\\\` data from RAM into a Register, do the math inside the CPU, and explicitly \\\`STORE\\\` it back. 
-4. **Many Registers**: Because everything must be loaded into the CPU before math can be done, RISC architectures provide a massive amount of General Purpose Registers (usually 32 or more) to act as a scratchpad.
-5. **Pipelining Excellence**: Because every instruction takes exactly one cycle, it is incredibly easy for the CPU to overlap them on an assembly line (Pipelining), achieving massive throughput.
-
-## The ARM Revolution
-
-The most famous RISC architecture is **ARM** (Advanced RISC Machines). 
-Because RISC processors require significantly fewer transistors than CISC processors, they draw a fraction of the electricity and produce almost no heat. 
-
-This made ARM the undisputed king of mobile computing. Every single smartphone on earth (Apple or Android) uses a RISC processor. Recently, Apple transitioned their entire laptop and desktop line away from Intel (CISC) to Apple Silicon (M1/M2/M3 chips), proving that RISC can match and beat CISC in high-performance desktop computing while preserving massive battery life.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/x86/index.mdx': `---
-title: x86 Architecture
-description: The dominant CISC architecture powering the vast majority of the world's desktop PCs, laptops, and cloud infrastructure.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="x86 Architecture">
-
-The **x86** architecture is the most successful and enduring Instruction Set Architecture (ISA) in the history of computing. Developed by Intel in 1978 with the release of the 16-bit 8086 processor, it has evolved into the absolute monopoly of the PC and Server markets, jointly controlled today by Intel and AMD.
-
-<Callout icon="warning" title="The Burden of Backwards Compatibility">
-  The defining characteristic of x86 is its unwavering commitment to backwards compatibility. If you take a compiled \\\`.exe\\\` program from 1985 written for MS-DOS, it will run natively on a modern 24-core Intel i9 processor. The silicon physically retains all the legacy instructions, quirks, and memory addressing modes from the last 40 years.
-</Callout>
-
-## The Evolution of x86
-
-- **16-bit Era (1978)**: The original Intel 8086. It introduced the foundational architecture and the famous registers still used today (AX, BX, CX, DX).
-- **32-bit Era (x86-32 / IA-32) (1985)**: Introduced with the Intel 80386. It expanded the registers to 32 bits (EAX, EBX) and introduced proper Virtual Memory, ushering in the modern era of computing and Windows 95.
-- **64-bit Era (x86-64 / AMD64) (2003)**: In a shocking twist, AMD beat Intel to the 64-bit market. Intel tried to release a brand new, non-compatible 64-bit architecture called Itanium, which failed spectacularly. AMD simply extended the existing x86 architecture to 64-bit (expanding registers to RAX, RBX). Intel was forced to license AMD's design, which is why 64-bit Windows installers are still named \\\`amd64.exe\\\` regardless of whether you have an Intel or AMD chip.
-
-## Under the Hood: CISC masking as RISC
-
-x86 is deeply rooted in the **CISC** (Complex Instruction Set) philosophy. It has thousands of massive, variable-length instructions ranging from 1 to 15 bytes long. 
-
-However, complex instructions are impossible to run efficiently at high clock speeds. Therefore, modern x86 processors (since the Pentium Pro in 1995) perform a magic trick in hardware:
-When the CPU fetches a complex x86 instruction, a massive hardware decoder instantly breaks it apart into tiny, simple, RISC-like instructions called **Micro-Ops**. The internal execution engine of an Intel or AMD chip is actually a highly advanced RISC processor, hiding behind an incredibly complex x86 translator!
-
-## The Duopoly
-
-Building a high-performance x86 processor is incredibly difficult due to the sheer complexity of the decoder, and legally impossible for most companies because Intel and AMD hold a cross-licensing duopoly on the patents. If a company like Google or Amazon wants to build their own custom cloud processors, they cannot build x86 chips—which is exactly why the industry is shifting rapidly toward ARM.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/ARM/index.mdx': `---
-title: ARM Architecture
-description: The dominant RISC architecture powering all smartphones, IoT devices, and increasingly, modern high-performance laptops and cloud servers.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="ARM Architecture">
-
-While x86 dominates the desktop, **ARM (Advanced RISC Machines)** is the most widely manufactured CPU architecture in human history. 
-
-Rooted in the **RISC** (Reduced Instruction Set Computer) philosophy, ARM was designed from day one to execute simple instructions efficiently. Because it lacks the massive, complex decoding hardware required by x86, ARM processors require significantly fewer transistors. This results in chips that draw a fraction of the electricity and produce minimal heat, making them the undisputed kings of battery-powered devices.
-
-<Callout icon="info" title="A Business Model, Not a Chip Maker">
-  Unlike Intel or AMD, the company ARM Holdings does not manufacture physical silicon chips. Instead, they design the architecture (the blueprints) and **license** the Intellectual Property (IP) to other companies. Apple, Qualcomm, Samsung, and Amazon pay ARM a fee to use the instruction set, and then manufacture their own highly customized physical chips.
-</Callout>
-
-## Why ARM Conquered the World
-
-1. **Power Efficiency**: An Intel x86 chip running at full load might draw 100 to 200 Watts of power, requiring massive fans to prevent melting. A high-end ARM chip in an iPad draws 5 to 15 Watts, requiring no fan at all while delivering incredible performance.
-2. **Customization**: Because companies license the architecture, they can build custom **SoCs (System on a Chip)**. Apple doesn't just build a CPU; they glue the ARM CPU, their custom GPU, an AI Neural Engine, and the RAM all onto a single piece of silicon to maximize speed.
-3. **The big.LITTLE Architecture**: ARM pioneered the concept of putting two completely different types of cores on the same chip. An 8-core smartphone chip will have 4 "Performance Cores" (fast, battery-draining) and 4 "Efficiency Cores" (slow, battery-sipping). The OS dynamically shifts background tasks to the efficiency cores to maximize battery life.
-
-## The ARM Invasion of Desktop and Server
-
-For 20 years, the tech industry believed ARM was only for low-power mobile phones, while x86 was required for "real" high-performance computing. 
-
-**Apple Silicon (M1/M2/M3)** shattered this myth in 2020. By transitioning MacBooks from Intel x86 to custom ARM chips, Apple proved that a properly designed, heavily cached ARM processor could completely destroy x86 processors in raw speed while preserving 18+ hours of battery life.
-
-Simultaneously, **AWS (Amazon)** introduced their custom ARM-based Graviton server chips, offering cloud customers the same compute performance as Intel servers but at a 40% lower electricity/cooling cost, sparking a massive shift in backend infrastructure toward ARM.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/RISC-V/index.mdx': `---
-title: RISC-V Architecture
-description: The open-source, royalty-free Instruction Set Architecture that threatens to disrupt the x86 and ARM duopolies.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="RISC-V Architecture">
-
-For decades, if a hardware startup or university wanted to build a custom CPU, they faced a massive legal wall. 
-If they wanted to use **x86**, it was legally impossible (locked down by Intel and AMD). 
-If they wanted to use **ARM**, they had to pay millions of dollars in licensing fees and sign strict NDAs before they could even look at the architecture.
-
-In 2010, researchers at UC Berkeley decided to fix this by creating **RISC-V** (pronounced "Risk-Five"), a completely open-source, royalty-free Instruction Set Architecture.
-
-<Callout icon="success" title="The Linux of Hardware">
-  Just as Linux commoditized the operating system (allowing anyone to run servers for free without paying Microsoft), RISC-V threatens to commoditize CPU hardware. Any student, startup, or nation-state can download the RISC-V specification and physically manufacture a CPU without paying a single cent to anyone.
-</Callout>
-
-## The Modular Design
-
-The genius of RISC-V is its strict modularity. The base specification (RV32I) is incredibly tiny, containing fewer than 50 basic integer instructions. This allows students to build a functioning processor on an FPGA in a single semester.
-
-If a company wants to build a smartwatch, they use the base integer set. If a company wants to build a supercomputer, they take the base set and snap on standardized "Extensions":
-- **M**: Integer Multiplication and Division
-- **A**: Atomic Instructions (for multi-core locking)
-- **F**: Single-Precision Floating-Point math
-- **V**: Vector Operations (for AI and graphics)
-
-This prevents the "instruction bloat" seen in x86, where every single CPU is forced to carry 40 years of legacy instructions.
-
-## Geopolitical Implications
-
-CPU architectures are heavily tied to national security. Because x86 (Intel/AMD) and ARM (UK-based, heavily US-influenced) are controlled by Western corporations, countries facing US technology sanctions (like China or Russia) are cut off from licensing modern CPU architectures.
-
-RISC-V is governed by an independent foundation in Switzerland, completely immune to US export controls. Because of this, billions of dollars are currently being poured into RISC-V research by Chinese tech giants (Alibaba, Huawei) to achieve complete silicon independence.
-
-## The Future
-
-While x86 dominates PCs and ARM dominates smartphones, RISC-V is rapidly taking over the **Embedded/IoT market** (smartwatches, hard drive controllers, microwaves). Western companies like Western Digital and Nvidia are actively replacing internal ARM management chips with RISC-V to save hundreds of millions in licensing fees.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/GPUs/index.mdx': `---
-title: Graphics Processing Units (GPUs)
-description: Highly specialized, massively parallel processors designed to handle thousands of simultaneous mathematical operations.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Graphics Processing Units (GPUs)">
-
-The **Central Processing Unit (CPU)** is a generalist. It is designed to execute complex, branching logic (\\\`if/else\\\`, loops, memory management) incredibly fast. A high-end CPU might have 16 or 24 massive cores.
-
-The **Graphics Processing Unit (GPU)** is a specialist. It is designed to do one extremely simple math problem, but do it 10,000 times simultaneously. A high-end GPU might have **16,000 tiny cores**.
-
-<Callout icon="info" title="The Ferrari vs. The Bus">
-  A CPU is a Ferrari. It can move 2 passengers (data) at 200 mph. It is perfect for complex, sequential tasks.
-  A GPU is a fleet of 50 city buses. They only move at 40 mph, but they can transport 3,000 passengers at once. It is perfect for massive, parallel tasks.
-</Callout>
-
-## The Origin: Rendering Graphics
-
-Rendering a 3D video game running at 4K resolution (3840 $\\times$ 2160 pixels) at 60 frames per second is a staggering mathematical challenge. Every single frame, the computer must calculate the light reflection, shadow, and color of **8.2 million pixels**. 
-
-Doing this sequentially on a 16-core CPU is impossible; the CPU would choke. However, calculating the color of Pixel A has absolutely nothing to do with Pixel B. The math is completely independent. 
-GPUs were designed as massively parallel architectures (SIMD - Single Instruction, Multiple Data) to crunch the lighting algebra for thousands of pixels at the exact same microsecond.
-
-## The AI Revolution (GPGPU)
-
-In the late 2000s, scientists realized that the massively parallel math used for rendering 3D graphics (matrix multiplication) was the exact same math required for training Artificial Neural Networks.
-
-Nvidia released **CUDA**, a software layer that allowed programmers to write C++ code and execute it directly on the GPU for non-graphical tasks. This birthed General Purpose GPU (GPGPU) computing.
-
-Almost every major breakthrough in Artificial Intelligence (including the training of Large Language Models like ChatGPT) is strictly the result of stringing thousands of Nvidia GPUs together in massive server farms. A CPU would take decades to train a modern AI; a cluster of GPUs can do it in weeks.
-
-## CPU vs GPU Architecture
-
-- **Cores**: CPUs have few, highly complex cores with massive L3 caches and advanced Branch Prediction to handle unpredictable \\\`if/else\\\` logic. GPUs have thousands of very simple, "dumb" cores that all execute the exact same instruction simultaneously on different pieces of data.
-- **Memory (VRAM)**: GPUs require so much data so quickly that standard motherboard RAM is too slow. GPUs feature their own dedicated, ultra-high-bandwidth memory (GDDR or HBM) physically wired directly next to the GPU die, capable of moving terabytes of data per second.
 
 </ConceptTemplate>
 `,
@@ -565,7 +307,12 @@ async function main() {
   for (const [filePath, content] of Object.entries(contentMap)) {
     const fullPath = path.resolve(filePath)
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
-    await fs.writeFile(fullPath, content.trim() + '\n', 'utf-8')
+
+    // Safely replace TICK1 and TICK3 placeholders with actual backticks
+    let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
+
+    // Append a safe newline
+    await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8')
     console.log('Wrote ' + filePath)
   }
 }

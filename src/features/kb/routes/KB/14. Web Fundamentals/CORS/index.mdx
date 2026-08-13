@@ -1,29 +1,37 @@
 ---
-title: CORS (Cross-Origin Resource Sharing)
-description: The controlled bypass mechanism that allows legitimate frontend applications to securely bypass the Same-Origin Policy and access external APIs.
+title: Cross-Origin Resource Sharing (CORS)
+description: The strict browser security mechanism that restricts a webpage from making HTTP requests to a different domain than the one that served it.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="CORS (Cross-Origin Resource Sharing)">
+<ConceptTemplate title="Cross-Origin Resource Sharing (CORS)">
 
-The Same-Origin Policy (SOP) is brilliant for security, but it breaks modern web development. 
-If your React frontend is hosted on `https://my-app.com`, and your Node.js backend is hosted on `https://api.my-app.com`, they are different origins. The SOP will violently block the React app from reading its own API!
+Imagine you are logged into your bank (`bank.com`). The browser holds your secure authentication cookie. 
+You then open a malicious website (`evil.com`) in another tab. If a JavaScript script on `evil.com` silently makes an HTTP `POST` request to `api.bank.com/transfer`, the browser would automatically attach your bank cookie, and your money would be stolen.
 
-To fix this, the backend server uses **CORS (Cross-Origin Resource Sharing)** to explicitly grant permission to the frontend.
+**CORS** is the browser-level shield that prevents this exact catastrophe.
 
-## The CORS Headers
+## 1. The Same-Origin Policy
+By default, the browser enforces the **Same-Origin Policy (SOP)**. 
+A JavaScript file loaded from `https://my-app.com` can only make API requests to `https://my-app.com`. If it attempts to fetch data from `https://api.other-app.com`, the browser intercepts the request, blocks the JavaScript from reading the response, and throws a massive red CORS error in the console.
 
-When the React app (`my-app.com`) attempts to fetch data from the API, the API server must include a specific HTTP Response Header:
-`Access-Control-Allow-Origin: https://my-app.com`
+## 2. Bypassing SOP with CORS
+What if your Frontend is hosted on `my-app.com`, but your legitimate Backend API is hosted on `api.my-app.com`? Because the subdomains differ, the browser blocks the request. 
 
-When the browser receives this response, it checks the header. Because the header explicitly matches the React app's origin, the browser bypasses the SOP and allows the JavaScript to read the data. (If you want a public API that anyone can access, you set it to the wildcard `*`).
+To fix this, the Backend Server must explicitly whitelist the Frontend by sending specific HTTP Response Headers:
+- `Access-Control-Allow-Origin: https://my-app.com`
 
-## The Preflight Request (OPTIONS)
+When the browser sees this header, it relaxes the Same-Origin Policy and allows the JavaScript to read the data.
 
-If the React app tries to do something dangerous (like sending a `DELETE` request, or attaching custom `Authorization` headers), the browser will panic. 
-Before sending the actual request, the browser will silently send an invisible **Preflight Request** using the HTTP `OPTIONS` method. 
+## 3. Preflight Requests (OPTIONS)
+For "complex" requests (like a `PUT` request, or a request with a custom `Authorization` header), the browser is terrified of even sending the request to the backend. 
+Before sending the real request, the browser automatically sends a hidden, invisible HTTP `OPTIONS` request (the Preflight). 
+It asks the backend: *"Hey, are you going to allow this `PUT` request from this origin?"*
+If the server responds positively, the browser then sends the real request.
 
-The browser asks the backend, *"Hey, my-app.com wants to send a DELETE request. Is that allowed?"*
-The backend must respond with `Access-Control-Allow-Methods: GET, POST, DELETE`. Only after receiving this permission will the browser send the actual DELETE request.
+<Callout icon="warning" title="CORS is a Browser Policy">
+CORS does **not** protect your API from being hacked via tools like Postman, curl, or a Python script. Those tools simply ignore CORS. CORS only exists inside standard web browsers to protect end-users from malicious cross-site scripts.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,53 @@
+---
+title: The Master Theorem
+description: The mathematical formula for instantly determining the time complexity of Divide and Conquer recurrence relations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Master theorem">
+<ConceptTemplate title="The Master Theorem">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When analyzing the time complexity of recursive **Divide and Conquer** algorithms (like Merge Sort or Binary Search), you encounter mathematical Recurrence Relations (e.g., `T(n) = 2T(n/2) + O(n)`).
+
+The **Master Theorem** provides a fast, direct mathematical formula for asymptotically solving these recurrences without expanding the recursive tree by hand.
+
+## 1. The Standard Form
+The Master Theorem applies to recurrences of the strict mathematical form:
+
+**`T(n) = aT(n/b) + f(n)`**
+
+Where:
+- `n` = Size of the problem
+- `a` = Number of subproblems in the recursion (must be >= 1)
+- `b` = The factor by which the problem size is divided (must be > 1)
+- `f(n)` = The cost of the work done *outside* the recursive calls (usually merging or dividing), represented as `O(n^d)`.
+
+## 2. The Three Mathematical Cases
+To solve the recurrence, you compare the work done at the leaves of the recursion tree against the work done combining them. We calculate the critical exponent: **`c_{crit} = log_b(a)`**.
+
+<ComparisonTable 
+  headers={['Case', 'Mathematical Condition', 'Time Complexity T(n)']} 
+  rows={[
+    ['1. Leaves Dominate', 'd < log_b(a)', 'O(n^{log_b(a)})'],
+    ['2. Work is Evenly Distributed', 'd = log_b(a)', 'O(n^d * log(n))'],
+    ['3. Root Dominates', 'd > log_b(a)', 'O(f(n)) or O(n^d)']
+  ]} 
+/>
+
+## 3. Practical Examples
+
+### Example A: Merge Sort
+The recurrence is `T(n) = 2T(n/2) + O(n)`.
+- `a = 2`, `b = 2`, `f(n) = O(n^1)` so `d = 1`.
+- `log_2(2) = 1`.
+- Since `d = 1` and `log_2(2) = 1`, we are in **Case 2**.
+- Complexity: `O(n^1 * log(n)) = O(n log n)`.
+
+### Example B: Binary Search
+The recurrence is `T(n) = 1T(n/2) + O(1)`.
+- `a = 1`, `b = 2`, `f(n) = O(n^0)` so `d = 0`.
+- `log_2(1) = 0`.
+- Since `d = 0` and `log_2(1) = 0`, we are in **Case 2**.
+- Complexity: `O(n^0 * log(n)) = O(log n)`.
 
 </ConceptTemplate>

@@ -1,8 +1,36 @@
+---
+title: Defence in Depth
+description: "A cybersecurity strategy that uses multiple, independent layers of security controls to protect information, ensuring that if one layer fails, others will catch the breach."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Defence in depth">
+<ConceptTemplate title="Defence in Depth">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Also known as the "Castle Approach," **Defence in Depth** is the principle that no single security control is perfect. Every firewall has a zero-day vulnerability; every encryption protocol eventually breaks; every employee can be phished.
+
+To secure a system, you must layer independent defenses.
+
+## 1. The Castle Analogy
+Imagine a medieval castle protecting the King (the Data):
+1. **The Moat (Perimeter Security)**: The outer firewall blocking malicious IP addresses.
+2. **The High Walls (Network Security)**: VPC Subnets ensuring only specific servers can talk to each other.
+3. **The Guards (Access Control)**: IAM roles and MFA requiring strict authentication to enter the Keep.
+4. **The Safe (Encryption)**: Even if an assassin reaches the King's room, the King is locked inside an impenetrable titanium safe (AES-256 Data-at-Rest Encryption).
+
+## 2. Layers of Modern IT Security
+A robust enterprise architecture implements controls at every layer of the OSI model:
+- **Physical Layer**: Badge scanners, biometric locks, and security guards at the AWS data center.
+- **Network Layer**: Firewalls, VPNs, and Network Access Control Lists (NACLs).
+- **Application Layer**: Web Application Firewalls (WAF), input validation, and SQL injection prevention.
+- **Endpoint Layer**: Antivirus (EDR), Mobile Device Management (MDM), and restricted USB ports on employee laptops.
+- **Data Layer**: Full disk encryption (BitLocker), database column encryption, and strict database permissions.
+
+## 3. The Swiss Cheese Model
+In risk management, this is known as the "Swiss Cheese Model." Every layer of security has holes (vulnerabilities). However, if you stack enough slices of cheese together, the holes do not align, and a threat cannot pass all the way through.
+
+<Callout icon="tip" title="Zero-Day Mitigation">
+Defence in Depth is the primary mitigation against zero-day exploits. If a critical vulnerability is discovered in your Web Server software (allowing arbitrary code execution), the attacker still cannot steal the database if the database is in a completely isolated, firewalled private subnet that the web server is physically forbidden from accessing.
+</Callout>
 
 </ConceptTemplate>

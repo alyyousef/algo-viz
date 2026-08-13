@@ -1,8 +1,37 @@
+---
+title: Depth-First Search (DFS)
+description: The aggressive graph traversal algorithm that plunges as deep as mathematically possible down a single branch before backtracking.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="DFS">
+<ConceptTemplate title="Depth-First Search (DFS)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While BFS ripples outward slowly, **Depth-First Search (DFS)** is mathematically aggressive. It selects a single branch and plunges down it as far as physically possible. When it hits a dead end, it mathematically **backtracks** up the branch and tries the next available path.
+
+## 1. The Stack Data Structure
+The mathematical engine of DFS is the **Stack** (Last-In-First-Out / LIFO). 
+In most implementations, developers do not explicitly write a Stack; they rely on the CPU's native **Call Stack** via Recursion.
+
+**The Recursive Algorithm:**
+1. Mark the current node as 'Visited'.
+2. For every neighbor of the current node:
+   - If the neighbor is not visited, recursively call DFS on that neighbor.
+
+## 2. Why use DFS over BFS?
+
+<ComparisonTable 
+  headers={['Property', 'BFS (Queue)', 'DFS (Stack)'] }
+  rows={[
+    ['Shortest Path?', 'YES (in unweighted graphs).', 'NO. DFS might find a path that is 100 hops long, even if a 2-hop path exists.'],
+    ['Memory Usage', 'Massive. Must store entire levels in RAM. O(Width).', 'Minimal. Only stores the current path back to the root. O(Height).'],
+    ['Best Use Case', 'Finding the closest node, Peer-to-Peer networks, Web Crawlers.', 'Solving Mazes, Topological Sorting, Cycle Detection, Backtracking algorithms (Sudoku).']
+  ]} 
+/>
+
+<Callout icon="info" title="Cycle Detection">
+DFS is the mathematically superior algorithm for detecting cycles in a Directed Graph. If during a DFS traversal you encounter a node that is currently sitting in your active recursion stack, you have mathematically proven the existence of a back-edge (a cycle).
+</Callout>
 
 </ConceptTemplate>

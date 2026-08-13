@@ -1,29 +1,36 @@
 ---
 title: OAuth 2.0
-description: The industry-standard protocol for authorization.
+description: The industry-standard protocol for authorization, allowing users to grant third-party applications secure, delegated access to their resources without sharing passwords.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="OAuth 2.0">
+<ConceptTemplate title="OAuth 2.0">
 
-OAuth 2.0 is the industry-standard protocol for authorization. It allows a user to grant a third-party website or application access to their protected resources, without necessarily revealing their long-term credentials or even their identity.
+Before **OAuth 2.0**, if you wanted a new app to read your Gmail contacts, you had to type your actual Google password into the app. This was a catastrophic security risk because the new app now had god-level access to your entire Google account.
 
-<Callout icon="success" title="The Problem it Solves">
-  Before OAuth, if you wanted a new app to read your Google Contacts, you literally had to give the app your Google Password. The app could then read your emails, delete your photos, or lock you out.
-  
-  OAuth fixes this by issuing a **scopable, revocable Access Token** (e.g., "This token can ONLY read contacts, and expires in 1 hour").
+OAuth 2.0 solved this by introducing **Delegated Authorization** via Access Tokens.
+
+## 1. The Core Roles
+The OAuth specification defines four distinct entities:
+1. **Resource Owner (You)**: The human user who owns the data.
+2. **Client (The App)**: The third-party application requesting access to your data (e.g., a CRM app).
+3. **Authorization Server**: The secure identity provider that issues tokens (e.g., Google's login server).
+4. **Resource Server**: The API holding the actual data (e.g., Google Contacts API).
+
+## 2. The Authorization Code Flow
+This is the most secure and common flow for web applications.
+
+1. **The Redirect**: The Client redirects you to Google's Authorization Server (`https://accounts.google.com/auth`).
+2. **The Consent**: You log into Google and see a prompt: *"App X wants to read your contacts."* You click "Allow".
+3. **The Code**: Google redirects you back to the Client with a temporary **Authorization Code** in the URL.
+4. **The Token Exchange**: The Client takes that Code, attaches its own secret API key, and makes a hidden backend HTTP request to Google to exchange the Code for an **Access Token**.
+5. **The API Call**: The Client uses the Access Token to securely fetch your contacts from the Resource Server.
+
+## 3. OAuth is NOT Authentication
+<Callout icon="warning" title="The Biggest Misconception">
+OAuth 2.0 is strictly an **Authorization** protocol (granting access). It is explicitly *not* an Authentication protocol (proving who you are). It provides no standard way for the Client to get your email address or verify your identity. If you want Authentication, you must use **OpenID Connect (OIDC)**, which is built on top of OAuth 2.0.
 </Callout>
 
-## The Four Roles
-
-<ComparisonTable 
-  headers={['Role', 'Description', 'Example']}
-  rows={[
-    ['Resource Owner', 'The user who authorizes an application to access their account.', 'You.'],
-    ['Client', 'The application making the request on behalf of the Resource Owner.', 'Spotify (wanting to post to your Facebook timeline).'],
-    ['Authorization Server', 'The server issuing access tokens to the client after successfully authenticating the resource owner.', 'accounts.google.com'],
-    ['Resource Server', 'The server hosting the protected resources, capable of accepting and responding to protected resource requests using access tokens.', 'The Google Contacts API.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

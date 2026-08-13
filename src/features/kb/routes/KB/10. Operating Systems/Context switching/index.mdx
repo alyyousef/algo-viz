@@ -1,31 +1,33 @@
 ---
 title: Context Switching
-description: The heavy computational process of saving one program's state and loading another's so the CPU can multitask.
+description: The intense OS mechanism that rapidly pauses one process and resumes another, creating the illusion of infinite simultaneous multitasking.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Context Switching">
 
-A single CPU core can only execute exactly one instruction for one program at any given nanosecond. Yet, your computer runs 500 processes seemingly simultaneously. 
+If your CPU only has 4 physical cores, it can mathematically only execute 4 instructions at the exact same time. Yet, you can have Spotify, Chrome, Slack, and Discord all running smoothly. 
+The OS achieves this using **Time Slicing** and **Context Switching**.
 
-This illusion is created via **Context Switching**. The OS Kernel uses a hardware timer interrupt that fires every few milliseconds. When the timer fires, the Kernel forcibly pauses the current process, kicks it off the CPU, and puts a different process on the CPU.
+## 1. The Illusion of Concurrency
+The OS gives Process A control of the CPU for a tiny fraction of a second (e.g., 10 milliseconds). When the timer expires, a physical hardware interrupt fires. The CPU instantly halts Process A and gives control back to the OS Kernel. 
 
-<Callout icon="warning" title="Pure Overhead">
-  Context Switching is pure overhead. While the CPU is performing a context switch, it is not executing user code, not rendering graphics, and not calculating math. It is just doing OS administrative paperwork. An OS must balance switching fast enough to feel responsive, but slow enough to not waste all the CPU's power on switching.
+The OS must now pause Process A and resume Process B.
+
+## 2. The Mechanics of the Switch
+A Context Switch is computationally expensive because the OS must physically save and load the state of the CPU.
+
+1. **Save State**: The OS takes the exact values of the CPU's registers (Program Counter, Stack Pointer, General Registers) and saves them into Process A's Process Control Block (PCB) in RAM.
+2. **Scheduler Decision**: The OS runs a scheduling algorithm to mathematically determine which process should run next (Process B).
+3. **Restore State**: The OS reads Process B's PCB, takes its saved registers, and physically loads them back into the CPU.
+4. **Flush TLB**: The OS must flush the Translation Lookaside Buffer (hardware cache mapping virtual to physical memory) to ensure Process B cannot illegally read Process A's memory.
+
+## 3. The Performance Cost
+A Context Switch takes roughly 1 to 5 microseconds. This sounds fast, but if a CPU is doing 100,000 context switches per second, the OS is spending 50% of its total processing power just swapping things in and out, rather than actually running your code (a phenomenon called **Thrashing**).
+
+<Callout icon="tip" title="Thread vs Process Switching">
+Context switching between two Threads in the *same* process is blazingly fast. Because they share the same memory space, the OS does **not** need to flush the TLB or swap out the massive memory page tables. It only needs to swap the registers.
 </Callout>
-
-## The Anatomy of a Switch
-
-When the Kernel switches the CPU from Process A to Process B, it must perfectly preserve Process A's state so it can be resumed later without it ever knowing it was paused.
-
-1. **Save State**: The Kernel copies every single CPU Register (EAX, EBX, the Program Counter) and saves them into Process A's Process Control Block (PCB) in RAM.
-2. **Memory Map Swap (The Heavy Part)**: The Kernel must reprogram the CPU's Memory Management Unit (MMU). It flushes the Translation Lookaside Buffer (TLB) and swaps out Process A's Page Table for Process B's Page Table. This is the most computationally expensive part of the switch.
-3. **Restore State**: The Kernel reads Process B's PCB, copies its saved registers back into the physical CPU hardware, and points the Program Counter at Process B's next instruction. 
-4. **Resume**: The CPU resumes executing Process B.
-
-## Thread vs Process Switching
-
-- **Process Context Switch**: Brutally slow. Requires a full MMU Page Table swap and TLB flush because the memory spaces are different.
-- **Thread Context Switch**: Much faster. Because two threads within the same process share the same memory space, the Kernel only has to swap the CPU registers. The MMU and TLB remain untouched.
 
 </ConceptTemplate>

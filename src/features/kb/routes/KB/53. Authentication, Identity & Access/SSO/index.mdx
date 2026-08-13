@@ -1,27 +1,41 @@
 ---
 title: Single Sign-On (SSO)
-description: An authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems.
+description: An authentication paradigm allowing a user to log in once with a single set of credentials to access multiple independent software applications.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Single Sign-On (SSO)">
+<ConceptTemplate title="Single Sign-On (SSO)">
 
-Single sign-on (SSO) is an authentication scheme that allows a user to log in with a single ID and password to any of several related, yet independent, software systems. True single sign-on allows the user to log in once and access services without re-entering authentication factors.
+In a corporate environment, a single employee might use Gmail, Salesforce, Slack, Jira, and Workday. Forcing them to memorize 5 different strong passwords results in password fatigue, sticky notes on monitors, and massive security vulnerabilities.
 
-<Callout icon="success" title="Enterprise Security">
-  SSO is mandatory for large enterprises. Instead of an employee having 50 different passwords for Jira, Slack, Zoom, and Workday, they log into the Identity Provider (Okta, Azure AD) once. If the employee is fired, IT disables the central account, instantly revoking access to all 50 apps.
-</Callout>
+**Single Sign-On (SSO)** solves this. The user logs into a central Identity Provider (IdP) exactly once, and is automatically authenticated across all 5 applications.
 
-## Underlying Protocols
+## 1. The Architecture
+SSO relies on a strict trust relationship between two parties:
+- **Identity Provider (IdP)**: The central authority that holds the passwords and verifies the user (e.g., Okta, Microsoft Entra ID, Ping Identity).
+- **Service Provider (SP)**: The application the user actually wants to use (e.g., Salesforce).
 
-SSO is not a protocol itself; it is a concept implemented using specific protocols:
+When the user attempts to access Salesforce, Salesforce redirects them to Okta. The user logs into Okta. Okta then sends a cryptographically signed token back to Salesforce declaring: *"I mathematically guarantee this user is John Doe."* Salesforce trusts Okta and grants access.
+
+## 2. Common SSO Protocols
 
 <ComparisonTable 
-  headers={['Protocol', 'Best For', 'Format']}
+  headers={['Protocol', 'Format', 'Primary Use Case']} 
   rows={[
-    ['SAML (Security Assertion Markup Language)', 'Legacy Enterprise Apps, XML-based. Very heavy but extremely secure.', 'XML'],
-    ['OpenID Connect (OIDC)', 'Modern Web Apps and Mobile Apps. Built on top of OAuth 2.0. Lightweight.', 'JSON / JWT']
-  ]}
+    ['SAML 2.0', 'XML', 'The legacy enterprise standard. Used heavily by massive B2B corporate applications and older internal networks.'],
+    ['OIDC (OpenID Connect)', 'JSON (JWT)', 'The modern standard. Much lighter and easier to implement for modern web and mobile applications.'],
+    ['Kerberos', 'Tickets', 'Strictly used for internal OS-level authentication within Windows Active Directory networks.']
+  ]} 
 />
 
-</TechnologyTemplate>
+## 3. Benefits and Risks
+- **Benefits**: Massively reduces IT support tickets for forgotten passwords. Allows IT to instantly revoke an ex-employee's access to all 50 corporate apps with a single click in the IdP.
+- **Risks**: The IdP becomes a **Single Point of Failure**. If Okta goes offline, your entire company is completely locked out of every single application. Furthermore, if a hacker breaches the IdP, they gain instant, unfettered access to the user's entire digital life (hence why MFA is mandatory for IdPs).
+
+<Callout icon="tip" title="Enterprise Readiness">
+If you are building a B2B SaaS application, implementing SAML/OIDC SSO is not an optional feature. Fortune 500 companies will flat-out refuse to purchase your software unless it integrates natively with their central Identity Provider.
+</Callout>
+
+</ConceptTemplate>

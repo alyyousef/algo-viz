@@ -1,8 +1,38 @@
+---
+title: Service Workers
+description: A specialized background script acting as a programmable network proxy, enabling offline capabilities, push notifications, and advanced caching.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Service Workers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Service Worker** is a specialized type of Web Worker. While normal Web Workers are used for heavy math, Service Workers are used for **Network Control**. 
+
+They sit physically between your web application and the internet, acting as a programmable proxy server running entirely inside the user's browser.
+
+## 1. The Superpowers
+Service Workers are the foundational technology behind **Progressive Web Apps (PWAs)**.
+- **Offline Mode**: If the user loses WiFi, the Service Worker can intercept the HTTP request for `index.html` and instantly serve a cached version from the device's hard drive.
+- **Push Notifications**: Because the Service Worker runs in the background (even when the tab is closed), it can receive push events from your server and trigger an OS-level notification.
+- **Background Sync**: If a user sends a chat message while in a tunnel, the Service Worker holds it in a queue, waiting until the WiFi reconnects to seamlessly dispatch the HTTP request.
+
+## 2. The Lifecycle
+Service Workers have an incredibly strict, event-driven lifecycle to prevent breaking the live website.
+
+<ComparisonTable 
+  headers={['Phase', 'Action']} 
+  rows={[
+    ['1. Registration', 'The Main Thread calls `navigator.serviceWorker.register()`.'],
+    ['2. Install Event', 'The worker downloads and caches critical static assets (HTML, CSS, Logos).'],
+    ['3. Activate Event', 'The worker takes control. This is the perfect time to delete old cache versions to free up disk space.'],
+    ['4. Fetch Event', 'The worker actively intercepts every single HTTP request made by the browser.']
+  ]} 
+/>
+
+<Callout icon="warning" title="HTTPS Requirement">
+Because Service Workers have god-tier proxy capabilities (they can intercept and modify every single network request, steal passwords, or inject malicious scripts), browsers strictly mandate that they can **only be registered on secure HTTPS connections** (with an exception for `localhost` during development).
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,35 @@
+---
+title: Web Workers
+description: A browser API that allows JavaScript to spawn genuine OS-level background threads, enabling heavy computation without blocking the main UI thread.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Web Workers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because JavaScript is single-threaded, running a heavy mathematical computation (like processing a 50MB image, encrypting a massive string, or calculating Fibonacci) will freeze the browser tab. The user cannot scroll, click, or type.
+
+**Web Workers** solve this by allowing you to spawn true, separate OS-level threads.
+
+## 1. The Architectural Sandbox
+When you spawn a Web Worker (`new Worker('worker.js')`), it runs in a completely isolated global context. 
+Because true multithreading introduces catastrophic Race Conditions, the browser severely restricts the Worker:
+- **No DOM Access**: The Worker cannot read or modify the HTML. `document.getElementById` will throw an error.
+- **No Window Access**: It has no access to the `window` object.
+
+## 2. Message Passing (PostMessage)
+Because the Main Thread and the Worker Thread do not share the same physical memory space, they cannot simply read each other's variables. 
+They communicate via **Message Passing**.
+
+1. The Main Thread serializes an object (via structured cloning) and sends it using `worker.postMessage(data)`.
+2. The Worker receives the data via the `onmessage` event, does the heavy math, and sends the result back via `self.postMessage(result)`.
+
+## 3. SharedArrayBuffer (Advanced)
+Serialization via `postMessage` is slow for massive datasets (like 500MB of 3D rendering data). 
+Modern browsers support **SharedArrayBuffer**, which actually allows the Main Thread and the Worker to physically share the exact same block of RAM. Because this introduces true multithreading Race Conditions, JavaScript introduced `Atomics` to enforce Mutex-like synchronization.
+
+<Callout icon="info" title="Dedicated vs Shared Workers">
+A standard Web Worker is tied to a single browser tab. If you close the tab, it dies. A **Shared Worker** can be accessed by multiple different tabs of the same website, allowing them to share a single websocket connection or compute pool.
+</Callout>
 
 </ConceptTemplate>

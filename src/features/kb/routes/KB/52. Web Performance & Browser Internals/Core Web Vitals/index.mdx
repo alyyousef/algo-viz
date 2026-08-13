@@ -1,8 +1,37 @@
+---
+title: Core Web Vitals
+description: Google's standardized metrics for measuring real-world user experience on the web, directly impacting Search Engine Optimization (SEO) rankings.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Core Web Vitals">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, developers measured performance using "Page Load Time" (when the `window.onload` event fired). This was fundamentally flawed. A page might technically finish "loading", but remain a blank white screen for 3 more seconds while JavaScript executed.
+
+In 2020, Google introduced **Core Web Vitals**, a set of three user-centric metrics that measure how fast a page *feels*, not just how fast it loads.
+
+## 1. Largest Contentful Paint (LCP)
+**Measures: Loading Performance.**
+LCP tracks how long it takes for the largest visual element (usually a hero image or a massive block of text) to physically paint onto the screen.
+- **Target**: Under **2.5 seconds**.
+- **How to fix**: Preload critical images, use CDNs, minimize Server Response Time (TTFB), and implement Server-Side Rendering (SSR).
+
+## 2. Interaction to Next Paint (INP)
+*(Replaced First Input Delay - FID in 2024)*.
+**Measures: Interactivity & Responsiveness.**
+When a user clicks a button, how long does the browser take to visually update the screen? INP measures the worst latency of *all* interactions across the entire lifespan of the page.
+- **Target**: Under **200 milliseconds**.
+- **How to fix**: The Main Thread is blocked. You must break up massive JavaScript tasks using `setTimeout`, Web Workers, or reduce third-party analytics scripts.
+
+## 3. Cumulative Layout Shift (CLS)
+**Measures: Visual Stability.**
+Have you ever tried to click a link, but an image suddenly loads in, pushing the link down, and you accidentally click an ad? That is a Layout Shift. CLS measures the mathematical distance elements unexpectedly move on screen.
+- **Target**: Under **0.1**.
+- **How to fix**: Always explicitly declare `width` and `height` attributes on `<img>` tags. Reserve space for dynamic ads before they load. Never inject content above existing content.
+
+<Callout icon="tip" title="The SEO Impact">
+Core Web Vitals are an official Google Search ranking factor. If your competitor has slightly worse content, but vastly superior Web Vitals, they will outrank you. You can measure your Vitals using Google Lighthouse or the Chrome UX Report (CrUX) API.
+</Callout>
 
 </ConceptTemplate>

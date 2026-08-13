@@ -1,8 +1,36 @@
+---
+title: Kruskal's Algorithm
+description: A greedy mathematical algorithm that builds the Minimum Spanning Tree (MST) of a graph by sorting edges and utilizing a Disjoint Set (Union-Find).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Kruskal">
+<ConceptTemplate title="Kruskal's Algorithm">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Given a massive map of cities and the cost to lay fiber-optic cable between them, how do you physically connect every single city together while spending the absolute minimum amount of money? 
+This mathematical problem is called the **Minimum Spanning Tree (MST)**. **Kruskal's Algorithm** elegantly solves it.
+
+## 1. The Greedy Strategy
+Kruskal’s Algorithm does not care about starting nodes or complex traversals. It strips the graph down to a mathematical list of raw edges.
+
+1. **Sort all edges** in the entire graph in ascending order based on their weight (cheapest first).
+2. Create an empty set to hold the final MST.
+3. Iterate through the sorted edges one by one.
+4. If adding the edge to the MST **does not form a cycle**, add it. 
+5. If it does form a cycle, throw the edge in the trash and evaluate the next one.
+6. Stop when the MST contains exactly `V - 1` edges.
+
+## 2. Cycle Detection via Union-Find
+The entire performance bottleneck of Kruskal's algorithm is Step 4: *"Does this edge form a cycle?"* 
+Running DFS to check for cycles on every single edge would be mathematically catastrophic for performance `O(E * V)`.
+
+Instead, Kruskal's relies on a highly advanced secondary data structure: The **Disjoint Set (Union-Find)**. 
+Using the mathematical optimizations of *Path Compression* and *Union by Rank*, the Union-Find structure can determine if two nodes are already connected in essentially **`O(1)`** amortized time.
+
+<Callout icon="info" title="Kruskal vs Prim">
+The other famous MST algorithm is Prim's Algorithm (which works similarly to Dijkstra). 
+- Use **Kruskal's Algorithm** when the graph is **Sparse** (few edges). Sorting the edges `O(E log E)` is extremely fast.
+- Use **Prim's Algorithm** when the graph is **Dense** (millions of edges). Prim's uses a Priority Queue and avoids sorting the massive list of edges upfront.
+</Callout>
 
 </ConceptTemplate>

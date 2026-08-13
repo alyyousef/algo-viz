@@ -1,651 +1,334 @@
 import fs from 'fs/promises'
 import path from 'path'
 
+const TICK3 = '```'
+const TICK1 = '`'
+
 const contentMap = {
-  'src/features/kb/routes/KB/5. Data Structures/5.3 Trees/B-trees/index.mdx': `---
-title: B-Trees
-description: A self-balancing search tree optimized for systems that read and write large blocks of data, like databases and file systems.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/OSI model/index.mdx': `---
+title: The OSI Model
+description: The conceptual 7-layer framework that standardized global telecommunications and network architecture.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="B-Trees">
+<ConceptTemplate title="The OSI Model">
 
-A **B-Tree** is a generalized self-balancing search tree. Unlike a standard Binary Search Tree where each node has at most two children, a node in a B-Tree can have a large, variable number of keys and children (often hundreds or thousands).
+Before the **Open Systems Interconnection (OSI) Model** was published in 1984, computer networks were entirely proprietary. An IBM computer physically could not talk to an Apple computer. The OSI Model solved this by mathematically slicing networking into 7 distinct, abstract layers. 
 
-<Callout icon="info" title="The Disk Optimization">
-  B-Trees were explicitly invented to solve the "Disk I/O problem." Reading from a physical hard drive is incredibly slow compared to reading from RAM. A standard binary search tree is deep, requiring many separate disk reads. A B-Tree is extremely wide and shallow, allowing massive amounts of data to be searched with very few disk reads.
-</Callout>
-
-## Properties of a B-Tree
-
-A B-Tree of order $m$ satisfies the following properties:
-1. **Node Capacity**: Every node has at most $m$ children.
-2. **Minimum Capacity**: Every internal node (except the root) has at least $\\lceil m/2 \\rceil$ children.
-3. **Key Count**: A node with $k$ children contains exactly $k-1$ sorted keys.
-4. **Leaf Depth**: All leaf nodes appear on the exact same level (the tree is perfectly balanced).
-
-## How Searching Works
-
-Searching a B-Tree is similar to a binary search tree, just generalized:
-1. Start at the root node.
-2. Compare your target value to the sorted keys in the current node.
-3. If the value matches a key, return it.
-4. If the value is less than the first key, follow the leftmost child pointer.
-5. If the value falls between two keys, follow the pointer between them.
-6. Repeat until the value is found or you hit a leaf node and the value isn't there.
-
-## Time Complexity
+## The 7 Layers (Top to Bottom)
 
 <ComparisonTable 
-  headers={['Operation', 'Average Case', 'Worst Case']}
+  headers={['Layer', 'Name', 'Function & Protocols']} 
   rows={[
-    ['Search', '$O(\\log n)$', '$O(\\log n)$'],
-    ['Insert', '$O(\\log n)$', '$O(\\log n)$'],
-    ['Delete', '$O(\\log n)$', '$O(\\log n)$']
-  ]}
+    ['7', 'Application', 'End-user layer. Where the software operates. (HTTP, FTP, SMTP, DNS)'],
+    ['6', 'Presentation', 'Translates, encrypts, and compresses data. (TLS/SSL, ASCII, JPEG)'],
+    ['5', 'Session', 'Establishes, manages, and terminates connections between applications. (NetBIOS)'],
+    ['4', 'Transport', 'Reliable data transfer, segmentation, and error checking. (TCP, UDP)'],
+    ['3', 'Network', 'Logical addressing and routing packets across the internet. (IP, ICMP, IPSec)'],
+    ['2', 'Data Link', 'Physical MAC addressing and framing across a local area network (LAN). (Ethernet, Switches)'],
+    ['1', 'Physical', 'The actual physical hardware transmitting raw 0s and 1s over cables/radio. (Cables, Hubs, Wi-Fi)']
+  ]} 
 />
 
-*(Note: The base of the logarithm is the branching factor of the tree, which is often very large, making the tree depth extremely shallow).*
+## Encapsulation
+When you send an email, the data starts at Layer 7 and travels **down** the stack. 
+As it passes through each layer, that layer attaches its own mathematical metadata (a header) to the payload. 
+- At Layer 4, the data becomes a **Segment**.
+- At Layer 3, it becomes a **Packet** (adding IP addresses).
+- At Layer 2, it becomes a **Frame** (adding MAC addresses).
+- At Layer 1, it is converted into raw **Bits** (electrical voltages).
+
+When the receiving computer gets the Bits, it performs **De-encapsulation**, traveling **up** the stack, stripping the headers one by one until the raw email hits Layer 7.
+
+<Callout icon="info" title="Is the OSI Model actually used?">
+Strictly speaking, the modern internet does **not** use the OSI model; it uses the simpler 4-layer TCP/IP model. However, the OSI model is the universal language of Network Engineering. If an engineer says "We have a Layer 3 problem," they universally mean a routing/IP issue.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.3 Trees/B+ trees/index.mdx': `---
-title: B+ Trees
-description: A crucial variation of the B-Tree where all values are stored in the leaf nodes, forming the backbone of modern relational databases.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/TCP-IP model/index.mdx': `---
+title: The TCP/IP Model
+description: The practical, 4-layer architecture that actually powers the modern global internet.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="B+ Trees">
+<ConceptTemplate title="The TCP/IP Model">
 
-A **B+ Tree** is an advanced variation of a B-Tree. It is the absolute standard data structure used by almost all relational databases (like MySQL, PostgreSQL, and SQL Server) to store and index tables.
+While the OSI model is a beautiful theoretical framework, it was over-engineered. The United States Department of Defense (DoD) funded the ARPANET project, which resulted in the **TCP/IP Model**—a leaner, meaner, 4-layer stack that physically powers the modern internet.
 
-<Callout icon="success" title="The Key Difference">
-  In a standard B-Tree, both keys and actual data records can be stored in *any* node (internal or leaf). 
-  In a **B+ Tree**, internal nodes ONLY store keys for routing. The actual data records are ONLY stored in the leaf nodes. Furthermore, the leaf nodes are linked together in a doubly-linked list.
-</Callout>
+## The 4 Layers
 
-## Why is it better for databases?
-
-### 1. Higher Fanout (Shallower Tree)
-Because internal nodes don't waste space storing actual data records, they can store vastly more routing keys per block. This means a B+ Tree has a much higher "fanout" (branching factor) than a B-Tree. 
-A B+ Tree with millions of records might only be 3 or 4 levels deep, meaning finding any record requires a maximum of 4 disk reads.
-
-### 2. Fast Range Queries
-Databases frequently need to execute range queries (e.g., \`SELECT * FROM Users WHERE Age > 20 AND Age < 30\`). 
-In a standard B-Tree, finding all these users requires constantly traversing up and down the tree branches. 
-In a B+ Tree, you simply traverse down to find the first user (Age 21), and because the leaves form a linked list, you just sequentially read across the leaf nodes until you hit Age 30. It is incredibly fast.
-
-<ArchitectureDiagram chart={\`
-graph TD
-  Root[Internal Node: Keys Only] --> Child1[Internal Node: Keys Only]
-  Root --> Child2[Internal Node: Keys Only]
-  Child1 --> Leaf1[Leaf: Data Records]
-  Child1 --> Leaf2[Leaf: Data Records]
-  Child2 --> Leaf3[Leaf: Data Records]
-  Child2 --> Leaf4[Leaf: Data Records]
-  Leaf1 <--> Leaf2
-  Leaf2 <--> Leaf3
-  Leaf3 <--> Leaf4
-\`} />
-
-## Time Complexity
+The TCP/IP model mathematically collapses the 7 OSI layers into 4 highly practical layers.
 
 <ComparisonTable 
-  headers={['Operation', 'Time Complexity', 'Explanation']}
+  headers={['TCP/IP Layer', 'Equivalent OSI Layers', 'Function & Protocols']} 
   rows={[
-    ['Search (Exact Match)', '$O(\\log n)$', 'Traverse down the tree to the specific leaf node.'],
-    ['Search (Range)', '$O(\\log n + k)$', 'Traverse to the start of the range, then sequential read $k$ elements via the linked list.'],
-    ['Insert/Delete', '$O(\\log n)$', 'Leaf node splitting or merging might cascade up to the root, but the depth is logarithmic.']
-  ]}
+    ['4. Application', 'Application (7), Presentation (6), Session (5)', 'Handles all high-level software protocols. Data formatting and encryption happen natively here. (HTTP, HTTPS, SSH, FTP, DNS)'],
+    ['3. Transport', 'Transport (4)', 'Provides end-to-end communication control. Dictates if the connection needs to be highly reliable (TCP) or blazing fast (UDP).'],
+    ['2. Internet', 'Network (3)', 'Handles logical addressing and routing. Ensures packets can navigate across thousands of routers to reach a destination on the other side of the planet. (IPv4, IPv6, ICMP)'],
+    ['1. Network Access', 'Data Link (2), Physical (1)', 'Handles the physical hardware and local network frames. (Ethernet cables, MAC addresses, Wi-Fi waves).']
+  ]} 
 />
+
+## Why did TCP/IP win?
+In the 1980s, the "Protocol Wars" raged between the OSI model and TCP/IP. 
+OSI was heavily backed by European telecoms and government bureaucracies, resulting in sluggish standard development. 
+TCP/IP was backed by UNIX researchers. It was lightweight, open-source, and crucially, **it actually worked**. The internet organically adopted TCP/IP because developers could immediately build real applications on it, completely killing the OSI protocol suite.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.3 Trees/Tries/index.mdx': `---
-title: Tries (Prefix Trees)
-description: A specialized tree data structure used for efficient retrieval of strings and prefix matching.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/TCP/index.mdx': `---
+title: Transmission Control Protocol (TCP)
+description: The foundational protocol of the internet that guarantees perfect, ordered delivery of data via the Three-Way Handshake.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Tries (Prefix Trees)">
+<ConceptTemplate title="Transmission Control Protocol (TCP)">
 
-A **Trie** (pronounced "try", from the word re*trie*val) is a specialized tree data structure designed to store a dynamic set of strings. Unlike a binary search tree, nodes in a trie do not store the key associated with that node; instead, its position in the tree defines the key with which it is associated.
+When you download a 5GB video game or load a webpage, you cannot afford a single missing byte. The **Transmission Control Protocol (TCP)** operates at Layer 4 (Transport) and mathematically guarantees that every single bit of data is delivered perfectly, and in the correct order.
 
-<Callout icon="info" title="The Autocomplete Structure">
-  If you have ever used a search engine or texted on a smartphone, you have used a Trie. They are the underlying data structure used to power fast **autocomplete** and spell-checking features.
+## 1. The Three-Way Handshake
+TCP is a **Connection-Oriented** protocol. Before Alice can send a single byte of actual data to Bob, their computers must mathematically establish a stateful connection via a 3-step ritual:
+
+1. **SYN (Synchronize)**: Alice sends a packet to Bob with the TICK1SYNTICK1 flag set to 1, and a random initial Sequence Number (e.g., 5000). She is asking, *"Can we talk?"*
+2. **SYN-ACK (Synchronize-Acknowledge)**: Bob receives the SYN. He replies with a packet where both TICK1SYNTICK1 and TICK1ACKTICK1 flags are set. He acknowledges Alice's sequence number (5001) and provides his own random Sequence Number (e.g., 9000). He says, *"Yes, I hear you, can you hear me?"*
+3. **ACK (Acknowledge)**: Alice receives the SYN-ACK. She replies with an TICK1ACKTICK1 packet acknowledging Bob's sequence number (9001). The connection is now mathematically established.
+
+## 2. Guaranteed Delivery & Ordering
+The internet is a chaotic place. When Alice sends a 10MB image, TCP chops it into thousands of tiny Segments. These segments might take completely different physical paths across the planet. 
+
+- **Ordering**: TCP mathematically assigns a **Sequence Number** to every segment. If Segment 4 arrives before Segment 2, Bob's TCP stack holds Segment 4 in a RAM buffer and waits, mathematically reassembling them in perfect order before handing them to the Application Layer.
+- **Retransmission**: When Bob receives Segment 1, he mathematically sends an **ACK** back to Alice. If Alice does not receive an ACK within a specific mathematical timeout (RTO), she assumes the packet was destroyed by a router and aggressively resends it.
+
+## 3. Congestion Control
+TCP is mathematically polite. If a server blasts data at 10 Gigabits per second, but the client is on a 3G mobile phone, the packets will instantly drop. 
+TCP uses a **Sliding Window** protocol. Bob dynamically tells Alice exactly how many bytes he can handle in his current RAM buffer. Alice mathematically throttles her transmission speed to perfectly match Bob's capacity, preventing network collapse.
+
+<Callout icon="warning" title="The Cost of Reliability">
+The mathematical overhead of TCP is massive. The 3-way handshake adds huge latency before the first byte of actual data is even sent (head-of-line blocking). Furthermore, the 20-byte TCP header is heavy. This makes TCP completely useless for real-time multiplayer video games or Zoom calls.
 </Callout>
 
-## How a Trie Works
+</ConceptTemplate>
+`,
 
-1. **The Root**: The root node represents an empty string.
-2. **Edges**: Each edge represents a single character.
-3. **Nodes**: Each node represents the string prefix formed by the path from the root to that node.
-4. **Word Termination**: A boolean flag (or a special character) is stored at specific nodes to indicate that the path to this node constitutes a complete, valid word.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/UDP/index.mdx': `---
+title: User Datagram Protocol (UDP)
+description: The blazing-fast, connectionless alternative to TCP, where raw speed is prioritized over guaranteed delivery.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-### Example
-If we insert the words "CAT", "CAR", and "DOG" into a Trie:
-- The root will have two children: 'C' and 'D'.
-- 'C' will have a child 'A'.
-- 'A' will have two children: 'T' (marked as a complete word) and 'R' (marked as a complete word).
+<ConceptTemplate title="User Datagram Protocol (UDP)">
 
-## Time Complexity
+While TCP is a meticulous librarian ensuring every page of a book arrives perfectly, the **User Datagram Protocol (UDP)** is a firehose. It operates at Layer 4 (Transport) and mathematically prioritizes absolute speed and minimal latency above all else.
 
-The major advantage of a Trie over a Hash Table or Binary Search Tree is its time complexity regarding string length.
+## 1. Fire and Forget (Connectionless)
+UDP completely eliminates the mathematical overhead of TCP. 
+There is **no Three-Way Handshake**. If Alice wants to send data to Bob via UDP, she simply constructs the packet and blasts it onto the internet. 
+
+Because it is connectionless, UDP has zero concept of state. 
+- It does **not** track Sequence Numbers.
+- It does **not** wait for ACKs (Acknowledgments).
+- If a packet hits a congested router and is deleted, UDP mathematically doesn't care. It will never retransmit the packet.
+
+## 2. The Minimal Header
+Because it strips out congestion control, sliding windows, and sequence tracking, the mathematical footprint of UDP is tiny. 
+While a TCP header is 20 bytes (and highly complex to process), a UDP header is exactly **8 bytes**:
+- Source Port (16 bits)
+- Destination Port (16 bits)
+- Length (16 bits)
+- Checksum (16 bits)
+
+## 3. Why Use UDP?
 
 <ComparisonTable 
-  headers={['Operation', 'Time Complexity', 'Variables']}
+  headers={['Use Case', 'Why TCP Fails', 'Why UDP Excels']} 
   rows={[
-    ['Insert', '$O(m)$', '$m$ = length of the string being inserted.'],
-    ['Search (Exact Word)', '$O(m)$', '$m$ = length of the string being searched for.'],
-    ['Search (Prefix)', '$O(m)$', '$m$ = length of the prefix. Very fast for finding all words starting with "app".']
-  ]}
+    ['Multiplayer Gaming (FPS)', 'If packet 4 is dropped, TCP halts packet 5 and 6 (Head-of-Line Blocking) while it retransmits 4. By the time packet 4 arrives 100ms later, the player has already moved, rendering the data mathematically useless. This causes severe lag.', 'UDP simply drops packet 4 and immediately processes packet 5. The player models might jitter for 1 frame, but the game remains perfectly real-time.'],
+    ['Video Streaming (Twitch/Zoom)', 'Retransmitting a lost video frame 500ms later causes the stream to violently freeze and buffer.', 'UDP drops the frame. The video might display a minor visual glitch (artifacting) for a fraction of a second, but the audio and stream continue uninterrupted.'],
+    ['DNS Lookups', 'Setting up a 3-way handshake just to ask for a single IP address adds massive, unnecessary latency.', 'UDP blasts a single packet asking for the IP, and receives a single packet back instantly.']
+  ]} 
 />
 
-*Notice that the time complexity is entirely independent of $n$ (the total number of words in the Trie). Searching a dictionary of 10 words takes the exact same time as searching a dictionary of 10 million words.*
-
-## Space Complexity Trade-off
-
-The primary downside of a standard Trie is its high memory consumption. If you have many words that don't share common prefixes, you end up creating a massive amount of nodes, each allocating an array of pointers (e.g., 26 pointers for the English alphabet), most of which are null. Variations like the **Radix Tree** (Compressed Trie) are often used to merge single-child nodes and save space.
+<Callout icon="tip" title="Modern Protocols (QUIC / HTTP/3)">
+For 30 years, HTTP strictly used TCP. However, Google mathematically realized that TCP's head-of-line blocking was a catastrophic bottleneck for modern web speeds. They invented **QUIC (HTTP/3)**, which shockingly abandons TCP entirely. HTTP/3 runs on **UDP**, implementing its own highly-optimized, multiplexed congestion control purely in the application layer.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.3 Trees/Red-black trees/index.mdx': `---
-title: Red-Black Trees
-description: A self-balancing binary search tree that ensures $O(\\log n)$ operations using color properties.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/IP/index.mdx': `---
+title: Internet Protocol (IP)
+description: The mathematical addressing system that binds the entire global internet, allowing packets to route across thousands of disconnected networks.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Red-Black Trees">
+<ConceptTemplate title="Internet Protocol (IP)">
 
-A **Red-Black Tree** is a sophisticated type of self-balancing binary search tree. In a standard binary search tree, inserting sorted data can cause the tree to degrade into a linked list, ruining performance to $O(n)$. Red-Black Trees solve this by strictly enforcing a set of coloring rules that guarantee the tree remains relatively balanced.
+Operating at Layer 3 (Network), the **Internet Protocol (IP)** is the primary architectural foundation of the internet. Its sole mathematical purpose is to provide logical addressing and to route individual packets across a chaotic web of millions of independent routers.
 
-<Callout icon="info" title="Industry Adoption">
-  Red-Black trees are one of the most practically used data structures in computer science. They are the underlying implementation for the \`std::map\` and \`std::set\` in C++, the \`TreeMap\` in Java, and the Completely Fair Scheduler (CFS) used in the Linux Kernel.
-</Callout>
+## 1. Logical Addressing
+At Layer 2, devices communicate using hardcoded MAC addresses. However, a MAC address is mathematically flat; it provides absolutely zero geographical or topological information (like a Social Security Number). You cannot use MAC addresses to route traffic across the globe.
 
-## The 5 Rules of Red-Black Trees
+IP Addresses are **Logical** and **Hierarchical** (like a Zip Code). They mathematically define exactly where in the global network topology a device resides.
 
-Every node in the tree contains an extra bit of data denoting its color (Red or Black). The tree maintains its balance by rigorously enforcing these rules during every insertion and deletion:
+## 2. IPv4 vs IPv6
 
-1. Every node is colored either **Red** or **Black**.
-2. The root node is always **Black**.
-3. All leaf nodes (NIL nodes) are considered **Black**.
-4. If a node is **Red**, both of its children must be **Black**. *(No two consecutive red nodes on a path).*
-5. Every path from a node to any of its descendant NIL leaves must contain the **exact same number of Black nodes**. (This is called the "Black Depth").
+The internet originally ran on **IPv4**, which uses 32-bit mathematical addresses (e.g., TICK1192.168.1.1TICK1). 
+A 32-bit space mathematically yields exactly TICK12^32TICK1 (4.3 billion) unique addresses. In the 1980s, this seemed infinite. By 2011, the world officially ran out of IPv4 addresses.
 
-## Balancing Operations
-
-When you insert a new node, it is initially colored Red. If this violates Rule 4 (its parent is also Red), the tree must rebalance itself using two operations:
-1. **Recoloring**: Flipping the colors of the parent, uncle, and grandparent nodes.
-2. **Rotations**: Changing the structural pointers (Left-Rotate or Right-Rotate) to restructure the tree while preserving binary search ordering.
-
-## Time Complexity
-
-Because of Rule 4 and Rule 5, the longest possible path from the root to a leaf is no more than twice as long as the shortest possible path. Therefore, the tree is guaranteed to be $O(\\log n)$ in depth.
+To save the internet, engineers deployed **IPv6**, which uses massive 128-bit mathematical addresses (e.g., TICK12001:0db8:85a3:0000:0000:8a2e:0370:7334TICK1). 
+A 128-bit space yields TICK12^128TICK1 addresses. This is a number so mathematically incomprehensible that we could assign an IP address to every single atom on the surface of the Earth, and still have enough addresses left for a trillion other planets.
 
 <ComparisonTable 
-  headers={['Operation', 'Worst-Case Time Complexity']}
+  headers={['Feature', 'IPv4', 'IPv6']} 
   rows={[
-    ['Search', '$O(\\log n)$'],
-    ['Insert', '$O(\\log n)$'],
-    ['Delete', '$O(\\log n)$']
-  ]}
+    ['Address Length', '32 bits (4.3 billion addresses)', '128 bits (340 undecillion addresses)'],
+    ['Format', 'Dotted Decimal (192.168.1.1)', 'Hexadecimal (2001:db8::ff00:42:8329)'],
+    ['Header Size', 'Variable (20-60 bytes)', 'Fixed (40 bytes), heavily optimized for routers.'],
+    ['NAT (Network Address Translation)', 'Absolutely critical to share public IPs and delay exhaustion.', 'Mathematically obsolete. Every device gets a true Public IP.']
+  ]} 
 />
 
-Compared to AVL Trees, Red-Black Trees are slightly less strictly balanced. This means searches might take slightly longer, but insertions and deletions are faster because fewer structural rotations are required.
+## 3. Best-Effort Delivery
+It is critical to understand that IP is a **Connectionless, Best-Effort** protocol.
+IP does absolutely nothing to guarantee that a packet actually arrives. It does not retransmit lost packets, and it does not care if packets arrive completely out of order. 
+It relies entirely on Layer 4 (TCP) to handle reliability and error-checking. The IP protocol's only job is to look at the destination IP address, look at its local routing table, and throw the packet out the correct physical port toward the next hop.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.3 Trees/AVL trees/index.mdx': `---
-title: AVL Trees
-description: The first invented self-balancing binary search tree, optimized for fast lookups.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/DNS (Records, Resolution, Zones)/index.mdx': `---
+title: Domain Name System (DNS)
+description: The decentralized global phonebook of the internet, mapping human-readable domain names to mathematical IP addresses.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="AVL Trees">
+<ConceptTemplate title="Domain Name System (DNS)">
 
-Invented in 1962 by Adelson-Velsky and Landis (hence "AVL"), the **AVL Tree** was the first data structure designed to solve the problem of unbalanced binary search trees.
+Computers exclusively communicate using mathematical IP addresses (e.g., TICK1142.250.190.46TICK1). Humans cannot memorize billions of IP addresses. The **Domain Name System (DNS)** was invented to map human-readable names (TICK1google.comTICK1) to machine-readable IPs.
 
-An AVL tree is a self-balancing binary search tree where the difference in heights between the left and right subtrees of *any* node is at most 1.
+## 1. The Recursive Resolution Process
+When you type TICK1www.example.comTICK1 into your browser, an incredibly complex, globally decentralized query process occurs in milliseconds:
 
-<Callout icon="info" title="The Balance Factor">
-  Every node in an AVL tree maintains a "Balance Factor," which is calculated as:
-  \`BalanceFactor = Height(Left Subtree) - Height(Right Subtree)\`
-  In a valid AVL tree, the Balance Factor of every node must be either -1, 0, or 1.
-</Callout>
+1. **Local Cache / OS**: The browser checks its local cache. If missing, it checks the OS cache.
+2. **Recursive Resolver**: The OS queries a Recursive DNS Server (usually provided by your ISP or Google's TICK18.8.8.8TICK1). The Resolver's job is to hunt down the IP.
+3. **Root Nameservers**: The Resolver queries one of the 13 mathematical Root Servers globally. The Root server says, *"I don't know the IP, but I know who handles the TICK1.comTICK1 domains."*
+4. **TLD Nameservers**: The Resolver queries the Top-Level Domain (TLD) server for TICK1.comTICK1. The TLD server says, *"I don't know the IP, but I know the specific authoritative server for TICK1example.comTICK1."*
+5. **Authoritative Nameserver**: The Resolver queries the final Authoritative server (e.g., hosted on AWS Route53). This server holds the actual mathematical record and returns TICK193.184.216.34TICK1.
+6. The Resolver hands the IP back to your browser, and the HTTP request begins.
 
-## How it Maintains Balance (Rotations)
-
-When a node is inserted or deleted, the heights of the ancestors are updated. If any ancestor's Balance Factor becomes -2 or +2, the tree is unbalanced and must immediately fix itself using **Tree Rotations**.
-
-There are four cases of imbalance, solved by four specific rotations:
-1. **Left-Left (LL) Case**: Solved by a single Right Rotation.
-2. **Right-Right (RR) Case**: Solved by a single Left Rotation.
-3. **Left-Right (LR) Case**: Solved by a Left Rotation on the child, followed by a Right Rotation on the parent.
-4. **Right-Left (RL) Case**: Solved by a Right Rotation on the child, followed by a Left Rotation on the parent.
-
-## AVL vs. Red-Black Trees
-
-Both AVL and Red-Black trees provide $O(\\log n)$ worst-case time complexity, but they are used in different scenarios based on their structural strictness.
+## 2. Common DNS Record Types
 
 <ComparisonTable 
-  headers={['Feature', 'AVL Trees', 'Red-Black Trees']}
+  headers={['Record Type', 'Function', 'Example Target']} 
   rows={[
-    ['Balancing Strictness', 'Very strict (height diff max 1).', 'Less strict (longest path max 2x shortest).'],
-    ['Lookup Speed', 'Faster (due to stricter balance/shorter depth).', 'Slightly slower.'],
-    ['Insert/Delete Speed', 'Slower (requires more rotations to maintain strict balance).', 'Faster (requires fewer rotations).'],
-    ['Memory Overhead', 'Requires storing an integer (height) per node.', 'Requires storing a single bit (color) per node.'],
-    ['Ideal Use Case', 'Read-heavy applications (e.g., dictionaries).', 'Write-heavy applications (e.g., OS schedulers).']
-  ]}
+    ['A (Address)', 'Maps a domain name directly to an IPv4 address.', '192.168.1.50'],
+    ['AAAA (Quad-A)', 'Maps a domain name directly to an IPv6 address.', '2001:db8::1'],
+    ['CNAME (Canonical Name)', 'Maps a domain name to another domain name (an alias). Cannot be placed at the root apex (example.com).', 'www.example.com -> myapp.herokuapp.com'],
+    ['MX (Mail Exchange)', 'Directs email to a specific mail server for the domain.', 'mail.google.com'],
+    ['TXT (Text)', 'Stores arbitrary text data. Critically used for security verification (SPF, DKIM, DMARC, SSL validation).', 'v=spf1 include:_spf.google.com ~all']
+  ]} 
 />
 
-</ConceptTemplate>
-`,
+## 3. DNS Zones
+A **DNS Zone** is a contiguous portion of the global domain name space for which administrative responsibility has been delegated to a single manager. For instance, you might own the zone for TICK1example.comTICK1, allowing you to mathematically create infinite subdomains (TICK1api.example.comTICK1, TICK1dev.example.comTICK1) within your authoritative zone file.
 
-  'src/features/kb/routes/KB/5. Data Structures/5.2 Hash-Based/Bloom filters/index.mdx': `---
-title: Bloom Filters
-description: A space-efficient probabilistic data structure used to test set membership.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Bloom Filters">
-
-A **Bloom filter** is a highly space-efficient probabilistic data structure invented by Burton Howard Bloom in 1970. It is used to answer a very specific question: **"Is this element a member of a set?"**
-
-<Callout icon="warning" title="The Probabilistic Trade-off">
-  Because Bloom filters use a fraction of the memory of a hash table, they make a mathematical compromise:
-  - **False Positives are possible**: The filter might say "Yes, the item is in the set" when it actually isn't.
-  - **False Negatives are impossible**: If the filter says "No, the item is not in the set", it is 100% guaranteed to not be there.
+<Callout icon="warning" title="Security and Latency">
+DNS traditionally runs on UDP port 53 in **plaintext**. This means ISPs and hackers on public Wi-Fi can mathematically observe exactly what websites you visit, even if the actual website traffic is encrypted via HTTPS. Modern web architectures are aggressively adopting **DNS over HTTPS (DoH)** to mathematically encrypt the DNS queries themselves, closing this massive privacy loophole.
 </Callout>
-
-## How it Works
-
-A Bloom filter consists of two things:
-1. A bit array of $m$ bits, all initially set to 0.
-2. $k$ different hash functions.
-
-### Insertion
-To add the word "apple" to the filter:
-1. Run "apple" through all $k$ hash functions.
-2. Each hash function outputs an index number between $0$ and $m-1$.
-3. Go to the bit array and change the bits at those $k$ specific indices to 1.
-
-### Checking Membership
-To check if "banana" is in the filter:
-1. Run "banana" through the exact same $k$ hash functions.
-2. Check the bit array at the resulting indices.
-3. If **ANY** of the bits are 0, "banana" is definitively NOT in the set.
-4. If **ALL** of the bits are 1, "banana" *might* be in the set. (It is a false positive if those bits were accidentally flipped to 1 by the prior insertions of other words).
-
-## Practical Use Cases
-
-Bloom filters are used to prevent expensive operations (like a slow database query or a slow disk read) by putting a fast Bloom filter in front of them.
-
-1. **Malicious URLs (Web Browsers)**: Chrome used to use a Bloom filter to check if a URL was malicious. If the filter said "No", Chrome loaded the page instantly. If the filter said "Yes", Chrome would do a slower network request to Google's servers to verify if it was a true positive.
-2. **Databases (Cassandra / Postgres)**: Before doing an expensive disk seek to find a row, the database checks a Bloom filter in RAM. If the filter says "No", it skips the disk read entirely.
-3. **Username Registration**: Checking if "user123" is already taken without hitting the central database.
-
-## Tuning the Filter
-
-You can control the false positive rate by tuning the size of the bit array ($m$) and the number of hash functions ($k$) relative to how many items you expect to insert ($n$). A larger bit array results in fewer false positives but uses more RAM.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.2 Hash-Based/Hash tables/index.mdx': `---
-title: Hash Tables
-description: A data structure that implements an associative array abstract data type, mapping keys to values using a hash function.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/ARP/index.mdx': `---
+title: Address Resolution Protocol (ARP)
+description: The critical Layer 2 / Layer 3 glue that mathematically maps a logical IP address to a physical hardware MAC address on a local network.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Hash Tables">
+<ConceptTemplate title="Address Resolution Protocol (ARP)">
 
-A **Hash Table** is one of the most important and frequently used data structures in computer science. It implements the associative array (dictionary) abstract data type, allowing you to map keys to values with extraordinary speed.
+When your computer wants to send data across the internet to Google, it relies on IP routing (Layer 3). But when your computer wants to send a packet to your actual home router (the default gateway sitting 10 feet away), it MUST use Layer 2 Ethernet Frames. 
 
-<Callout icon="success" title="The Magic of O(1)">
-  In an array, finding a specific value by scanning takes $O(n)$ time. A Hash Table allows you to find, insert, or delete a value based on its key in **$O(1)$ average time**, meaning it is practically instantaneous regardless of whether the table has 10 items or 10 billion items.
+Ethernet Frames require a physical **MAC Address**. 
+You know your router's IP address (TICK1192.168.1.1TICK1), but your network card mathematically cannot build the Ethernet Frame because it doesn't know the router's physical MAC address. **ARP solves this exact problem.**
+
+## 1. The ARP Broadcast
+**ARP (Address Resolution Protocol)** acts as the mathematical translator between Layer 3 (IP) and Layer 2 (MAC).
+
+1. **The Question (ARP Request)**: Your computer mathematically generates an ARP Request packet saying: *"Who has IP TICK1192.168.1.1TICK1? Tell TICK1192.168.1.50TICK1."*
+2. **The Broadcast**: It sends this request to the special MAC Broadcast Address (TICK1FF:FF:FF:FF:FF:FFTICK1). The network switch physically duplicates this frame and blasts it out to every single device on the local network.
+3. **The Answer (ARP Reply)**: Every device receives the broadcast. Your printer sees it and ignores it (wrong IP). Your router sees it, confirms the IP matches its own, and mathematically generates an ARP Reply: *"I have TICK1192.168.1.1TICK1! My MAC address is TICK100:1A:2B:3C:4D:5ETICK1."* This reply is sent directly (unicast) back to your computer.
+
+## 2. The ARP Cache
+Because broadcasting to the entire network is computationally loud and wastes bandwidth, operating systems aggressively cache the results. 
+Once your computer learns the router's MAC address, it stores the mapping in its local RAM **ARP Cache** (or ARP Table). For the next few minutes, it can mathematically generate Ethernet frames instantly without needing to broadcast.
+
+<Callout icon="warning" title="ARP Spoofing (Poisoning)">
+ARP was designed in the 1980s and has absolutely zero built-in security or cryptographic authentication. 
+If a hacker is on the same Starbucks Wi-Fi as you, they can aggressively spam the network with fake ARP Replies saying, *"I am the Router, my MAC is [Hacker's MAC]."* 
+Your computer's ARP cache is mathematically poisoned, and it begins sending all of its internet traffic directly to the hacker's laptop instead of the real router, executing a devastating **Man-In-The-Middle (MITM)** attack.
 </Callout>
-
-## The Anatomy of a Hash Table
-
-A Hash Table consists of three primary components:
-1. **The Array (Buckets)**: The underlying data structure that stores the actual data in indexed slots.
-2. **The Hash Function**: A mathematical algorithm that takes a key (like a string "user_id") and scrambles it into an integer.
-3. **The Modulo Operation**: The integer is divided by the size of the array, and the remainder is used as the exact index where the value will be stored.
-
-\`Index = hash_function(key) % array_size\`
-
-## Hash Collisions
-
-Because the array has a limited size, and there are an infinite number of possible keys, it is a mathematical certainty (Pigeonhole Principle) that eventually, two different keys will hash to the exact same index. This is called a **Collision**.
-
-Hash Tables must implement a strategy to resolve collisions.
-
-### 1. Separate Chaining
-Instead of storing the value directly in the array slot, each array slot holds a pointer to a Linked List. If a collision occurs, the new key-value pair is simply appended to the end of the linked list at that slot.
-- **Pros**: Easy to implement; the table never physically fills up.
-- **Cons**: Cache performance is poor due to pointers; if many collisions happen, lookup degrades to $O(n)$ as you traverse the linked list.
-
-### 2. Open Addressing (Linear Probing)
-All values are stored directly within the array. If a collision occurs at Index 5, the algorithm simply looks at Index 6. If 6 is full, it looks at 7, and so on, until it finds an empty slot.
-- **Pros**: Excellent CPU cache performance (memory locality).
-- **Cons**: Subject to "clustering" (long continuous blocks of filled slots) which drastically slows down future insertions.
-
-## The Load Factor and Resizing
-
-The **Load Factor** is the ratio of stored items to the total size of the array ($n/k$). 
-
-If a hash table using Open Addressing has a capacity of 100 slots and you insert 95 items, every new insertion will cause massive collision chains. To prevent this, when the Load Factor reaches a certain threshold (usually 0.7 or 70%), the Hash Table will automatically **Resize**.
-
-It allocates a new array double the size of the old one, and completely re-hashes every single item from the old array into the new one. This is an expensive $O(n)$ operation, but because it happens infrequently, the *amortized* cost of insertion remains $O(1)$.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.2 Hash-Based/Hash maps/index.mdx': `---
-title: Hash Maps
-description: The specific implementation and API of a Hash Table used in modern programming languages.
+  'src/features/kb/routes/KB/13. Computer Networks/13.1 Models & Fundamentals/Routing (Static & Dynamic)/index.mdx': `---
+title: IP Routing (Static vs Dynamic)
+description: The mathematical algorithms and protocols routers use to calculate the absolute shortest path across the global internet topology.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Hash Maps">
+<ConceptTemplate title="IP Routing">
 
-While "Hash Table" refers to the underlying algorithmic data structure, a **Hash Map** generally refers to the specific API and object implementation provided by standard libraries in modern programming languages (e.g., \`HashMap\` in Java, \`dict\` in Python, \`Map\` in JavaScript, \`unordered_map\` in C++).
+When a router receives an IP packet, it looks at the Destination IP, looks at its internal **Routing Table**, and forwards the packet out the correct physical port. But how does a router mathematically build that routing table? How does a router in Tokyo know the exact path to a server in London?
 
-<Callout icon="info" title="Terminology Nuance">
-  In general computer science discussions, Hash Table and Hash Map are used interchangeably. However, in specific ecosystems (like Java), there are historical differences: \`Hashtable\` is an older, thread-safe (synchronized) class that doesn't allow nulls, while \`HashMap\` is newer, unsynchronized (faster), and permits null keys.
-</Callout>
+## 1. Static Routing
+In **Static Routing**, a human network engineer logs into the router via CLI and manually types the exact mathematical route.
+- *"If a packet is destined for TICK110.5.0.0/16TICK1, throw it out Port 2."*
+- **Pros**: Mathematically zero CPU overhead. Absolute security (nobody can inject fake routes).
+- **Cons**: Catastrophically unscalable. If the router connected to Port 2 physically catches on fire, the static route is completely broken, and all traffic is dropped. The internet could not exist using Static Routing.
 
-## Common Operations
+## 2. Dynamic Routing Protocols
+In **Dynamic Routing**, routers mathematically talk to each other. They constantly exchange topology maps, allowing algorithms to automatically recalculate the fastest paths if a cable is cut.
 
-A Hash Map provides a key-value mapping interface. The underlying structure handles hashing, collision resolution, and resizing transparently to the developer.
+Dynamic protocols are mathematically divided into two categories:
+
+### A. Interior Gateway Protocols (IGP)
+Used *inside* a single organization's network (an Autonomous System, like Google's internal data center or a university campus).
 
 <ComparisonTable 
-  headers={['Operation', 'Description', 'Average Time']}
+  headers={['Protocol', 'Algorithm', 'Mechanism']} 
   rows={[
-    ['Put / Set', 'Inserts a new key-value pair, or overwrites the value if the key already exists.', '$O(1)$'],
-    ['Get', 'Retrieves the value associated with a specific key. Returns null/undefined if not found.', '$O(1)$'],
-    ['Delete / Remove', 'Removes the key-value pair from the map.', '$O(1)$'],
-    ['Contains Key', 'Checks if a specific key exists in the map without retrieving its value.', '$O(1)$']
-  ]}
+    ['OSPF (Open Shortest Path First)', 'Dijkstra’s Algorithm (Link-State)', 'Every router mathematically builds a complete 3D map of the entire network topology. They calculate the absolute shortest path based on Link Cost (bandwidth). A 10Gbps fiber link mathematically costs less than a 100Mbps copper link.'],
+    ['EIGRP (Enhanced Interior Gateway Routing Protocol)', 'DUAL Algorithm (Distance-Vector)', 'Cisco proprietary (mostly). Routers only know what their direct neighbors tell them. They calculate metrics based on a complex mathematical formula involving Bandwidth and Delay. Extremely fast convergence when a link fails.']
+  ]} 
 />
 
-## When NOT to use a Hash Map
+### B. Exterior Gateway Protocols (EGP)
+Used *between* different organizations. This is the protocol that mathematically glues the global internet together.
 
-Despite their incredible speed, Hash Maps are not the solution to every problem:
+**BGP (Border Gateway Protocol)**: 
+BGP is the only EGP in use today. When Comcast's network connects to AT&T's network, they use BGP.
+Unlike OSPF which calculates the fastest path based on link speed, BGP is a **Path-Vector** protocol. It mathematically calculates the path based on *business policies* and *AS-Path length* (the number of different companies the packet must hop through). 
 
-1. **Ordering**: Standard Hash Maps do not maintain the insertion order of elements. If you iterate over the keys, they will come out in seemingly random order based on their hash values. (Note: Some modern implementations, like Python 3.7+ \`dict\` and JS \`Map\`, maintain insertion order via an auxiliary linked list, but standard theory hash maps do not).
-2. **Range Queries**: You cannot easily ask a Hash Map for "all keys between 10 and 20". You would have to scan the entire map $O(n)$. If you need range queries, use a Tree-based map (like Java's \`TreeMap\` which uses a Red-Black Tree).
-3. **Memory Overhead**: Hash Maps require allocating a large underlying array, much of which remains empty to maintain a low Load Factor. They use significantly more memory than a standard array.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/5. Data Structures/5.5 Graphs/Directed graphs/index.mdx': `---
-title: Directed Graphs (Digraphs)
-description: A graph data structure where the edges have a specific direction.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Directed Graphs (Digraphs)">
-
-A **Directed Graph** (often abbreviated as **Digraph**) is a set of vertices (nodes) connected by edges, where the edges have a direction associated with them. 
-
-<Callout icon="info" title="The One-Way Street">
-  Think of a directed graph like a city map with only one-way streets. If there is a road from City A to City B, you can drive from A to B, but you cannot drive from B to A unless there is a separate road pointing back.
+<Callout icon="warning" title="BGP Hijacking">
+Like ARP, BGP was built on trust. If a telecom in Russia accidentally (or maliciously) broadcasts a BGP message claiming, *"I am the absolute best mathematical route to YouTube's IP addresses,"* the global internet routers will blindly believe it and instantly reroute 100% of global YouTube traffic into a Russian data center blackhole. This has happened multiple times, bringing down massive sections of the internet.
 </Callout>
-
-## Representation
-
-In a directed graph, an edge is represented as an ordered pair $(u, v)$, meaning the edge strictly originates at vertex $u$ and terminates at vertex $v$. 
-- $u$ is the **tail**.
-- $v$ is the **head**.
-
-### Indegree and Outdegree
-Because edges have direction, we measure the connections of a vertex in two ways:
-- **Indegree**: The number of edges pointing *in* to a vertex.
-- **Outdegree**: The number of edges pointing *out* from a vertex.
-
-## Common Use Cases
-
-Directed graphs are used to model relationships that are fundamentally asymmetrical or one-way:
-
-1. **The World Wide Web**: A web page (vertex) contains a hyperlink (directed edge) to another web page.
-2. **Twitter/X Followers**: You follow a celebrity (directed edge), but they do not necessarily follow you back.
-3. **State Machines**: Modeling the transitions from one state to another.
-4. **Task Scheduling**: A task cannot begin until its prerequisite task is finished (this specifically requires a DAG—a directed graph with no cycles).
-
-## Traversal
-
-Traversing a directed graph requires algorithms like **Breadth-First Search (BFS)** or **Depth-First Search (DFS)**. 
-However, algorithms must be careful to track which nodes have been visited. Because edges only flow in one direction, it is entirely possible that a DFS starting at Node A cannot reach Node B, even though both exist in the same graph. Furthermore, directed cycles (A -> B -> C -> A) can cause infinite loops if visited nodes are not tracked.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/5. Data Structures/5.5 Graphs/Undirected graphs/index.mdx': `---
-title: Undirected Graphs
-description: A graph data structure where the edges represent bidirectional relationships.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Undirected Graphs">
-
-An **Undirected Graph** is a set of vertices (nodes) connected by edges, where the edges have no specific direction. The relationship between the two connected nodes is entirely symmetric.
-
-<Callout icon="info" title="The Two-Way Street">
-  Think of an undirected graph like a standard two-way road. If a road connects City A and City B, you can freely travel from A to B, and you can freely travel from B to A.
-</Callout>
-
-## Representation
-
-In an undirected graph, an edge is represented as an unordered pair $\{u, v\}$. It implies that $u$ is adjacent to $v$, and $v$ is adjacent to $u$.
-
-Because the relationship is symmetric, we do not separate "indegree" and "outdegree." We only measure the **Degree** of a vertex, which is the total number of edges connected to it.
-
-## Common Use Cases
-
-Undirected graphs model relationships that are inherently mutual or bidirectional:
-
-1. **Facebook Friends**: If Alice is friends with Bob, then Bob is inherently friends with Alice. (Compared to Twitter, which is a Directed Graph).
-2. **Computer Networks**: If a physical Ethernet cable connects Router A and Router B, data can flow in both directions.
-3. **Map Routing**: Standard road networks (ignoring one-way streets) for GPS navigation algorithms like Dijkstra's or A*.
-4. **Social Network Analysis**: Finding clusters or cliques of people who all know each other.
-
-## Data Structures in Code
-
-To implement an undirected graph in code, you generally use one of two representations:
-
-### 1. Adjacency Matrix
-A 2D array of size $V \\times V$ (where $V$ is the number of vertices). If there is an edge between $i$ and $j$, \`matrix[i][j]\` is set to 1.
-- Because the graph is undirected, the matrix is perfectly symmetric across its diagonal (\`matrix[i][j] == matrix[j][i]\`).
-- **Pros**: $O(1)$ edge lookup.
-- **Cons**: $O(V^2)$ memory usage (terrible for sparse graphs).
-
-### 2. Adjacency List
-An array (or hash map) of lists. Each vertex has a list containing all its adjacent vertices.
-- Because the graph is undirected, every edge is stored twice. If $\{A, B\}$ exists, B is added to A's list, and A is added to B's list.
-- **Pros**: Optimal $O(V + E)$ memory usage for most real-world sparse graphs.
-- **Cons**: $O(E)$ worst-case to check if a specific edge exists.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/5. Data Structures/5.5 Graphs/DAGs/index.mdx': `---
-title: Directed Acyclic Graphs (DAGs)
-description: A directed graph with no directed cycles, fundamentally used for modeling dependencies and topological sorting.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Directed Acyclic Graphs (DAGs)">
-
-A **Directed Acyclic Graph (DAG)** is a specific type of Directed Graph that has absolutely **no directed cycles**. This means if you start at any vertex $v$ and follow the one-way edges, it is mathematically impossible to ever loop back to vertex $v$.
-
-<Callout icon="success" title="The Dependency Structure">
-  DAGs are the ultimate data structure for modeling **dependencies**. If Task A must be done before Task B, you draw an arrow A -> B. Because it is a DAG, you are guaranteed that there are no circular dependencies (e.g., A needs B, B needs C, C needs A), which would make execution impossible.
-</Callout>
-
-## Topological Sorting
-
-The defining algorithm associated with DAGs is the **Topological Sort**. 
-
-A topological sort takes a DAG and produces a linear, flat list of the vertices such that for every directed edge $u \\to v$, vertex $u$ comes before vertex $v$ in the list.
-
-- **Example**: If the DAG represents a university course prerequisite structure, the topological sort gives you the exact order you should take the classes semester by semester to graduate.
-- **Note**: A topological sort is *only possible* if the graph is a DAG. If a cycle exists, the sort is impossible.
-
-## Real-World Use Cases
-
-DAGs are everywhere in modern software engineering:
-
-1. **Git Version Control**: The history of Git commits forms a DAG. Branches diverge and merge, but time only flows forward; a commit cannot be its own ancestor.
-2. **Build Systems (Make, Webpack, Maven)**: When you compile code, the build tool creates a DAG of file dependencies to figure out exactly which order to compile the files.
-3. **Data Engineering Pipelines**: Tools like Apache Airflow explicitly use DAGs to orchestrate ETL jobs (Extract, Transform, Load).
-4. **Spreadsheets**: When you type a formula in Excel, it builds a DAG of cell dependencies to know what other cells need to be recalculated when one changes. (If you create a circular dependency, Excel throws an error).
-
-## Finding Cycles
-
-To verify if a directed graph is a valid DAG, you use **Depth-First Search (DFS)**. During the traversal, you keep track of the current path in a "recursion stack." If you ever encounter a node that is already currently in the recursion stack, you have found a back-edge, proving a cycle exists and the graph is not a DAG.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/5. Data Structures/5.5 Graphs/Disjoint sets - Union-Find/index.mdx': `---
-title: Disjoint Sets (Union-Find)
-description: A data structure that tracks a set of elements partitioned into a number of disjoint (non-overlapping) subsets.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Disjoint Sets (Union-Find)">
-
-The **Disjoint Set** data structure (often called the **Union-Find** data structure) is a specialized tool used to keep track of a set of elements partitioned into non-overlapping subsets. It provides near-instantaneous answers to the question: "Are these two items in the same group?"
-
-<Callout icon="info" title="The Core Operations">
-  The structure is defined by two primary operations:
-  1. **Find**: Determine which subset a particular element is in. This is usually implemented by returning a "representative" or "root" element of that subset.
-  2. **Union**: Join two subsets into a single subset.
-</Callout>
-
-## How it Works (Tree Representation)
-
-Unlike traditional trees, Union-Find is often implemented using a simple flat array where \`parent[i]\` points to the parent of node \`i\`.
-- Initially, every element is in its own subset, so \`parent[i] = i\` (every node is its own root).
-- To **Union** $A$ and $B$, you find the root of $A$'s tree, and point it to the root of $B$'s tree.
-
-## The Two Crucial Optimizations
-
-A naive Union-Find implementation can degrade into a linked list, making operations $O(n)$. However, two brilliant optimizations make the time complexity practically constant.
-
-### 1. Path Compression (Optimizing \`Find\`)
-When you execute \`Find(x)\`, the algorithm traverses up the tree to find the root. **Path Compression** modifies the tree during this traversal: every node visited along the way is directly reattached to the root node. The next time you call \`Find\` on any of those nodes, it takes $O(1)$ time.
-
-### 2. Union by Rank (Optimizing \`Union\`)
-When joining two trees, if you attach a tall tree under a short tree, the overall height increases. **Union by Rank** keeps track of the depth (rank) of each tree. It always attaches the root of the shorter tree to the root of the taller tree, ensuring the tree remains as flat as possible.
-
-## Time Complexity (Inverse Ackermann)
-
-By combining Path Compression and Union by Rank, the time complexity of operations becomes $O(\\alpha(n))$, where $\\alpha$ is the **Inverse Ackermann function**.
-This function grows so incredibly slowly that for all practical values of $n$ (even the number of atoms in the universe), $\\alpha(n) < 5$. Therefore, the operations take **amortized $O(1)$ time**.
-
-## Practical Use Cases
-
-1. **Kruskal's Algorithm**: Finding the Minimum Spanning Tree of a graph. Union-Find is used to quickly check if adding an edge will create a cycle.
-2. **Cycle Detection**: Quickly detecting cycles in an undirected graph.
-3. **Image Processing**: Finding connected components (like the "paint bucket" fill tool in Photoshop).
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/5. Data Structures/5.4 Heaps/Binary heaps/index.mdx': `---
-title: Binary Heaps
-description: A complete binary tree that satisfies the heap property, commonly used for priority queues.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Binary Heaps">
-
-A **Binary Heap** is a specialized tree-based data structure that satisfies two specific properties: the Shape Property and the Heap Property. It is the most common implementation of a **Priority Queue**.
-
-## The Two Rules of a Heap
-
-1. **Shape Property (Complete Binary Tree)**: The tree is completely filled on all levels except possibly the lowest, which is filled from left to right. This guarantees the tree is perfectly balanced and its height is exactly $\\log_2(n)$.
-2. **Heap Property**: 
-   - **Max-Heap**: The key of a node is always $\\ge$ the keys of its children. The absolute largest element is always at the root.
-   - **Min-Heap**: The key of a node is always $\\le$ the keys of its children. The absolute smallest element is always at the root.
-
-<Callout icon="info" title="The Array Implementation">
-  Because a binary heap is a *complete* tree, it is almost never implemented with node objects and pointers. It is implemented flatly inside a standard **Array**.
-  For an element at index $i$:
-  - Left child is at index $2i + 1$
-  - Right child is at index $2i + 2$
-  - Parent is at index $\\lfloor (i - 1) / 2 \\rfloor$
-</Callout>
-
-## Operations
-
-### Insert: $O(\\log n)$
-1. Add the new element to the very end of the array (bottom-right of the tree).
-2. **"Bubble Up" (Heapify-up)**: Compare the new element with its parent. If it violates the heap property (e.g., it is larger than its parent in a Max-Heap), swap them. Repeat until the property is restored.
-
-### Extract Max/Min: $O(\\log n)$
-1. Remove the root element (index 0).
-2. Take the very last element in the array and move it to the root.
-3. **"Bubble Down" (Heapify-down)**: Compare the new root with its children. Swap it with the larger child (in a Max-Heap). Repeat until the property is restored.
-
-## The Genius of Heapify: $O(n)$
-
-If you have an unsorted array of $n$ elements and you want to turn it into a heap, you could insert them one by one, taking $O(n \\log n)$ time.
-However, there is an algorithm called **Floyd's \`build_heap\`** which can take an entire unsorted array and reorganize it into a valid heap in strictly **$O(n)$ time** by running "Bubble Down" on internal nodes starting from the bottom up. This is a common technical interview trivia point.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/5. Data Structures/5.4 Heaps/Fibonacci heaps/index.mdx': `---
-title: Fibonacci Heaps
-description: A collection of trees satisfying the minimum heap property, optimized for theoretical amortized time complexity.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Fibonacci Heaps">
-
-A **Fibonacci Heap** is a highly advanced data structure for priority queues. Invented by Michael L. Fredman and Robert E. Tarjan in 1984, it was specifically designed to improve the asymptotic running time of network optimization algorithms like Dijkstra's shortest path and Prim's minimum spanning tree.
-
-<Callout icon="warning" title="Theory vs. Practice">
-  Fibonacci heaps are famous for having spectacular theoretical $O(1)$ time complexity for operations that take $O(\\log n)$ in standard Binary Heaps. However, they are notoriously complex to code and have high constant-factor overhead (lots of pointers and memory management). In real-world software, simpler data structures (like standard Binary Heaps or Pairing Heaps) often run faster in practice.
-</Callout>
-
-## Structure
-
-Unlike a Binary Heap (which is a single tree in an array), a Fibonacci Heap is a **lazy, unstructured forest of trees**.
-- It consists of a circular doubly linked list of tree roots.
-- The trees are not necessarily binary; a node can have any number of children.
-- It maintains a single pointer to the Minimum Node in the entire forest.
-
-## The "Lazy" Philosophy
-
-The genius of the Fibonacci heap is its laziness. When you insert items, it doesn't bother doing the hard math to organize them into trees immediately. It just lazily throws them into the root list. It only pays the computational price to consolidate and organize the trees when you force it to by extracting the minimum element.
-
-## Time Complexity Comparison
-
-The primary reason Fibonacci Heaps exist is the **Decrease Key** operation. In Dijkstra's algorithm, you frequently find a shorter path to a node and need to decrease its distance in the priority queue. 
-A Binary Heap takes $O(\\log n)$ to do this. A Fibonacci Heap does it in $O(1)$ amortized time, mathematically dropping Dijkstra's time complexity from $O(E \\log V)$ down to $O(E + V \\log V)$.
-
-<ComparisonTable 
-  headers={['Operation', 'Binary Heap (Worst-Case)', 'Fibonacci Heap (Amortized)']}
-  rows={[
-    ['Find Minimum', '$O(1)$', '$O(1)$'],
-    ['Insert', '$O(\\log n)$', '$O(1)$'],
-    ['Decrease Key', '$O(\\log n)$', '$O(1)$  ⭐'],
-    ['Merge (Meld)', '$O(n)$', '$O(1)$'],
-    ['Extract Min', '$O(\\log n)$', '$O(\\log n)$']
-  ]}
-/>
-
-*(Note: Amortized means that some individual operations might be very slow, but mathematically over a long sequence of operations, the average cost per operation is bounded to $O(1)$).*
 
 </ConceptTemplate>
 `,
@@ -655,7 +338,12 @@ async function main() {
   for (const [filePath, content] of Object.entries(contentMap)) {
     const fullPath = path.resolve(filePath)
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
-    await fs.writeFile(fullPath, content.trim() + '\n', 'utf-8')
+
+    // Safely replace TICK1 and TICK3 placeholders with actual backticks
+    let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
+
+    // Append a safe newline
+    await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8')
     console.log('Wrote ' + filePath)
   }
 }

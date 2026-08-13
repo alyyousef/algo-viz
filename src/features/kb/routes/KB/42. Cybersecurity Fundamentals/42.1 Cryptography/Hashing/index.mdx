@@ -1,48 +1,42 @@
 ---
-title: Hashing
-description: A one-way mathematical function that maps data of arbitrary size to a fixed-size bit string.
+title: Cryptographic Hashing
+description: The mathematical one-way function that guarantees data integrity, turning infinite data into a fixed-size digital fingerprint.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Hashing">
+<ConceptTemplate title="Cryptographic Hashing">
 
-A cryptographic hash function is a mathematical algorithm that takes an input (or 'message') of any size and produces a fixed-size string of bytes, known as the hash value, message digest, or simply the hash.
+A **Cryptographic Hash Function** is an essential mathematical algorithm that takes an input (or 'message') of absolute arbitrary length (from a 1-character password to a 50 Terabyte database) and mathematically squashes it into a fixed-size string of bytes (the 'hash' or 'digest').
 
-<Callout icon="warning" title="Hashing vs. Encryption">
-  Encryption is a two-way function designed to be decrypted (reversed) using a key. **Hashing is a one-way function.** It is mathematically impossible to take a hash and "decrypt" it back into the original data. There is no key.
-</Callout>
+**Crucially, hashing is NOT encryption.** Encryption is a two-way mathematical function (you can decrypt it). Hashing is a strict **one-way** mathematical function. Once data is hashed, it is mathematically impossible to reverse-engineer the original data from the hash.
 
-## The 4 Golden Rules of Hashing
+## 1. The Core Mathematical Properties
+For a hash function to be considered cryptographically secure, it must mathematically guarantee four properties:
 
-For a hash function to be considered cryptographically secure, it must adhere to four strict properties:
+1. **Deterministic**: The exact same input must always mathematically yield the exact same output hash.
+2. **Quick to Compute**: The hardware must be able to calculate the hash rapidly.
+3. **Pre-image Resistance (One-Way)**: Given a hash, it is mathematically infeasible to determine the original input.
+4. **Collision Resistance**: It must be mathematically infeasible to find two completely different inputs that result in the exact same output hash.
+
+## 2. The Avalanche Effect
+A secure hash function must exhibit the **Avalanche Effect**. 
+If you mathematically alter a single bit of a 1 Terabyte file, the resulting hash should be wildly, completely different from the original hash. You cannot use the hash to deduce "how close" two files are.
+
+## 3. Real-World Applications
 
 <ComparisonTable 
-  headers={['Property', 'Explanation']}
+  headers={['Application', 'How Hashing is Used']} 
   rows={[
-    ['Deterministic', 'The exact same input must ALWAYS produce the exact same output hash. (e.g., hash("apple") always yields "abc123X")'],
-    ['Quick Computation', 'The algorithm must be capable of returning the hash of a massive file quickly.'],
-    ['Pre-image Resistance (One-Way)', 'It should be computationally impossible to reverse engineer the original input if you only have the hash output.'],
-    ['Collision Resistance', 'It should be computationally impossible to find two totally different inputs that accidentally produce the exact same output hash.']
-  ]}
+    ['Password Storage', 'Databases NEVER store plaintext passwords. They store the Hash of the password. When you log in, the system hashes your input and mathematically compares the two hashes.'],
+    ['Data Integrity', 'When you download a Linux ISO, the website provides a SHA-256 hash. You hash the downloaded file on your CPU. If the hashes match exactly, the file was not corrupted or mathematically altered by a hacker.'],
+    ['Blockchain (Bitcoin)', 'Bitcoin relies entirely on SHA-256. Miners mathematically burn electricity to find a hash output that starts with a specific number of zeroes (Proof of Work).']
+  ]} 
 />
 
-## The Avalanche Effect
+<Callout icon="warning" title="MD5 and SHA-1 are Broken">
+Historically, developers used MD5 or SHA-1 for hashing. Both are now mathematically broken. Hackers can execute **Collision Attacks**, mathematically engineering a malicious virus file that outputs the exact same MD5 hash as a legitimate software update. Never use them.
+</Callout>
 
-A crucial feature of a good hash function is the "Avalanche Effect." A microscopic change to the input should result in a completely unrecognizable and vastly different output.
-
-Example (using SHA-256):
-- Input: `The quick brown fox jumps over the lazy dog`
-- Hash: `d7a8fbb307d2809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592`
-
-- Input: `The quick brown fox jumps over the lazy dog.` (Added a period)
-- Hash: `ef537f25c895bfa782526529a9b63d97aa631564d5d789c2b765448c8635fb6c`
-
-Notice that adding a single period changed almost every single character in the resulting hash.
-
-## Common Use Cases
-
-1. **File Integrity**: When you download a Linux ISO, the website provides the SHA-256 hash. After downloading, you hash the file on your PC. If the hashes match exactly, you know the file wasn't corrupted or injected with malware during transit.
-2. **Digital Signatures**: You don't encrypt an entire PDF to sign it; you hash the PDF and encrypt the tiny hash.
-3. **Password Storage**: Databases should never store plaintext passwords. They store the hash of the password.
-
-</TechnologyTemplate>
+</ConceptTemplate>

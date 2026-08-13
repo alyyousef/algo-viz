@@ -1,47 +1,35 @@
 ---
 title: Tries (Prefix Trees)
-description: A specialized tree data structure used for efficient retrieval of strings and prefix matching.
+description: A highly specialized, multi-way tree structure optimized exclusively for string manipulation, autocomplete, and prefix-matching.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Tries (Prefix Trees)">
 
-A **Trie** (pronounced "try", from the word re*trie*val) is a specialized tree data structure designed to store a dynamic set of strings. Unlike a binary search tree, nodes in a trie do not store the key associated with that node; instead, its position in the tree defines the key with which it is associated.
+A **Trie** (pronounced "try", from re**trie**val) is a deterministic finite automaton represented as a tree. Unlike a BST where a node mathematically contains an entire word (e.g., "APPLE"), in a Trie, each node represents a **single mathematical character** (e.g., 'A'). 
 
-<Callout icon="info" title="The Autocomplete Structure">
-  If you have ever used a search engine or texted on a smartphone, you have used a Trie. They are the underlying data structure used to power fast **autocomplete** and spell-checking features.
+The word is defined by the mathematical *path* taken from the Root to the Leaf.
+
+## 1. The Structure
+1. The Root node is empty.
+2. Each node contains an array (or hash map) of pointers to its children (e.g., 26 pointers for the English alphabet).
+3. Each node contains a boolean `isEndOfWord` flag.
+
+If you insert "CAT" and "CAR", the tree mathematically shares the 'C' and 'A' nodes. At the 'A' node, it branches: one pointer leads to 'T' (where `isEndOfWord = true`), and another leads to 'R' (where `isEndOfWord = true`).
+
+## 2. Time Complexity Magic
+If you store 10 million English words in a Binary Search Tree, searching for a word takes `O(log N)` string comparisons, where `N` is 10 million.
+
+If you store 10 million words in a Trie, searching for a word mathematically takes **`O(L)`**, where `L` is the length of the word you are searching for (e.g., 5 characters). It is completely, mathematically independent of how many millions of words are in the dictionary. It is blisteringly fast.
+
+## 3. Autocomplete (Prefix Matching)
+If a user types "APP" into a search bar, a database `LIKE 'APP%'` query requires scanning thousands of rows. 
+
+In a Trie, you mathematically traverse down to the 'P' node (3 operations). To provide autocomplete suggestions, you simply execute a Depth-First Search (DFS) from that 'P' node downward, immediately yielding "APPLE", "APPLICATION", and "APPROACH".
+
+<Callout icon="warning" title="The Memory Cost">
+Tries trade mathematical time complexity for extreme memory consumption. If every node contains a 26-element array of pointers, and most pointers are null, the tree wastes massive amounts of RAM. Modern engines optimize this by using **Compressed Tries (Radix Trees)**, which mathematically merge long chains of single-child nodes (e.g., merging 'A'->'P'->'P'->'L'->'E' into a single "APPLE" node) to save space.
 </Callout>
-
-## How a Trie Works
-
-1. **The Root**: The root node represents an empty string.
-2. **Edges**: Each edge represents a single character.
-3. **Nodes**: Each node represents the string prefix formed by the path from the root to that node.
-4. **Word Termination**: A boolean flag (or a special character) is stored at specific nodes to indicate that the path to this node constitutes a complete, valid word.
-
-### Example
-If we insert the words "CAT", "CAR", and "DOG" into a Trie:
-- The root will have two children: 'C' and 'D'.
-- 'C' will have a child 'A'.
-- 'A' will have two children: 'T' (marked as a complete word) and 'R' (marked as a complete word).
-
-## Time Complexity
-
-The major advantage of a Trie over a Hash Table or Binary Search Tree is its time complexity regarding string length.
-
-<ComparisonTable 
-  headers={['Operation', 'Time Complexity', 'Variables']}
-  rows={[
-    ['Insert', '$O(m)$', '$m$ = length of the string being inserted.'],
-    ['Search (Exact Word)', '$O(m)$', '$m$ = length of the string being searched for.'],
-    ['Search (Prefix)', '$O(m)$', '$m$ = length of the prefix. Very fast for finding all words starting with "app".']
-  ]}
-/>
-
-*Notice that the time complexity is entirely independent of $n$ (the total number of words in the Trie). Searching a dictionary of 10 words takes the exact same time as searching a dictionary of 10 million words.*
-
-## Space Complexity Trade-off
-
-The primary downside of a standard Trie is its high memory consumption. If you have many words that don't share common prefixes, you end up creating a massive amount of nodes, each allocating an array of pointers (e.g., 26 pointers for the English alphabet), most of which are null. Variations like the **Radix Tree** (Compressed Trie) are often used to merge single-child nodes and save space.
 
 </ConceptTemplate>

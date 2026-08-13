@@ -1,32 +1,45 @@
 ---
-title: UDP (User Datagram Protocol)
-description: The blazing fast, connectionless Layer 4 protocol that sacrifices reliability in exchange for absolute minimum latency.
+title: User Datagram Protocol (UDP)
+description: The blazing-fast, connectionless alternative to TCP, where raw speed is prioritized over guaranteed delivery.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="UDP (User Datagram Protocol)">
+<ConceptTemplate title="User Datagram Protocol (UDP)">
 
-TCP is perfect, but perfection takes time. The 3-way handshake, sequence tracking, and retransmissions introduce heavy latency. 
-If you are playing a fast-paced multiplayer video game or on a live Zoom call, you do not want perfection. If a frame of video is dropped by a router, you don't want TCP to pause the video stream for 500ms to re-download the old frame; you want to immediately see the next frame.
+While TCP is a meticulous librarian ensuring every page of a book arrives perfectly, the **User Datagram Protocol (UDP)** is a firehose. It operates at Layer 4 (Transport) and mathematically prioritizes absolute speed and minimal latency above all else.
 
-You use **UDP (User Datagram Protocol)**.
+## 1. Fire and Forget (Connectionless)
+UDP completely eliminates the mathematical overhead of TCP. 
+There is **no Three-Way Handshake**. If Alice wants to send data to Bob via UDP, she simply constructs the packet and blasts it onto the internet. 
 
-## Fire and Forget
+Because it is connectionless, UDP has zero concept of state. 
+- It does **not** track Sequence Numbers.
+- It does **not** wait for ACKs (Acknowledgments).
+- If a packet hits a congested router and is deleted, UDP mathematically doesn't care. It will never retransmit the packet.
 
-UDP is a "Connectionless" protocol. There is no 3-way handshake. There are no sequence numbers. There are no Acknowledgments.
+## 2. The Minimal Header
+Because it strips out congestion control, sliding windows, and sequence tracking, the mathematical footprint of UDP is tiny. 
+While a TCP header is 20 bytes (and highly complex to process), a UDP header is exactly **8 bytes**:
+- Source Port (16 bits)
+- Destination Port (16 bits)
+- Length (16 bits)
+- Checksum (16 bits)
 
-If a server wants to send data via UDP, it simply slaps an IP address on the packet and blasts it onto the network. It has no idea if the packet arrived, if it arrived in the wrong order, or if the destination computer is even turned on. It is "Fire and Forget."
+## 3. Why Use UDP?
 
-## Primary Use Cases
+<ComparisonTable 
+  headers={['Use Case', 'Why TCP Fails', 'Why UDP Excels']} 
+  rows={[
+    ['Multiplayer Gaming (FPS)', 'If packet 4 is dropped, TCP halts packet 5 and 6 (Head-of-Line Blocking) while it retransmits 4. By the time packet 4 arrives 100ms later, the player has already moved, rendering the data mathematically useless. This causes severe lag.', 'UDP simply drops packet 4 and immediately processes packet 5. The player models might jitter for 1 frame, but the game remains perfectly real-time.'],
+    ['Video Streaming (Twitch/Zoom)', 'Retransmitting a lost video frame 500ms later causes the stream to violently freeze and buffer.', 'UDP drops the frame. The video might display a minor visual glitch (artifacting) for a fraction of a second, but the audio and stream continue uninterrupted.'],
+    ['DNS Lookups', 'Setting up a 3-way handshake just to ask for a single IP address adds massive, unnecessary latency.', 'UDP blasts a single packet asking for the IP, and receives a single packet back instantly.']
+  ]} 
+/>
 
-Because the UDP header is microscopic (8 bytes vs TCP's 20+ bytes), and it requires zero tracking overhead, it is used where speed is the only metric that matters:
-
-1. **Real-Time Streaming**: Voice over IP (VoIP), Zoom, Twitch streaming, and Multiplayer Gaming.
-2. **Micro-Transactions**: DNS uses UDP for lookups. When you ask for the IP of `google.com`, setting up a complex TCP handshake would take longer than the actual question. The computer just blasts the UDP question; if it doesn't get an answer in 2 seconds, it blasts it again.
-3. **Network Discovery**: DHCP uses UDP to blast its broadcast packets across the local subnet.
-
-<Callout icon="success" title="Application-Layer Reliability">
-  Just because UDP is "unreliable" doesn't mean your app is broken. Modern protocols (like the revolutionary **QUIC/HTTP3** protocol built by Google) actually use UDP at Layer 4 for massive speed gains, and then manually implement highly optimized error-checking and reliability directly inside the Application Layer (Layer 7).
+<Callout icon="tip" title="Modern Protocols (QUIC / HTTP/3)">
+For 30 years, HTTP strictly used TCP. However, Google mathematically realized that TCP's head-of-line blocking was a catastrophic bottleneck for modern web speeds. They invented **QUIC (HTTP/3)**, which shockingly abandons TCP entirely. HTTP/3 runs on **UDP**, implementing its own highly-optimized, multiplexed congestion control purely in the application layer.
 </Callout>
 
 </ConceptTemplate>

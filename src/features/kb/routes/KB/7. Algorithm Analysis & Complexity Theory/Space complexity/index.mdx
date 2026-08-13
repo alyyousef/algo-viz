@@ -1,8 +1,38 @@
+---
+title: Space Complexity
+description: Understanding auxiliary memory consumption, the trade-off between time and space, and memory allocation limits in algorithms.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Space complexity">
+<ConceptTemplate title="Space Complexity">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Time Complexity measures execution speed, **Space Complexity** mathematically quantifies the total amount of memory (RAM) an algorithm requires as a function of the input size `n`.
+
+## 1. Auxiliary Space vs Total Space
+- **Total Space**: The total memory required, including the memory used to simply store the input dataset.
+- **Auxiliary Space**: The extra, temporary memory allocated *exclusively* by the algorithm during its execution (e.g., creating a hash map, utilizing the call stack for recursion).
+
+When comparing algorithms, we typically analyze **Auxiliary Space**. If an algorithm modifies the input array in-place, its auxiliary space is `O(1)`.
+
+## 2. The Call Stack (Implicit Space)
+A critical pitfall in space complexity analysis is forgetting the **Call Stack** during recursion.
+
+```python
+# Naive Recursive Factorial
+def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+```
+
+Although no explicit arrays or data structures are created, this function has an auxiliary space complexity of `O(n)`. The operating system mathematically pushes `n` execution frames onto the call stack before returning. If `n` is 1,000,000, this will trigger a catastrophic **Stack Overflow**.
+
+## 3. Time-Space Tradeoff
+In Computer Science, there is a fundamental mathematical tension between time and space. You can often dramatically reduce an algorithm's execution time by consuming significantly more memory.
+
+<Callout icon="tip" title="Dynamic Programming">
+Dynamic Programming is the ultimate realization of the Time-Space tradeoff. By allocating an extra array `O(n)` to cache intermediate subproblems (Memoization), we can mathematically reduce an algorithm's time complexity from `O(2^n)` down to `O(n)`.
+</Callout>
 
 </ConceptTemplate>

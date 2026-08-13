@@ -1,473 +1,348 @@
 import fs from 'fs/promises'
 import path from 'path'
 
+const TICK3 = '```'
+const TICK1 = '`'
+
 const contentMap = {
-  'src/features/kb/routes/KB/10. Operating Systems/OS fundamentals/index.mdx': `---
-title: Operating System Fundamentals
-description: The essential role of an Operating System as the supreme manager of hardware resources and provider of software abstractions.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/IaaS/index.mdx': `---
+title: Infrastructure as a Service (IaaS)
+description: "The foundational layer of cloud computing, providing raw, virtualized computing resources like servers, storage, and networking over the internet."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Operating System Fundamentals">
+<ConceptTemplate title="Infrastructure as a Service (IaaS)">
 
-An **Operating System (OS)** is the most complex and critical piece of software running on a computer. It sits directly between the physical hardware (CPU, RAM, Hard Drives) and the user applications (Chrome, Video Games).
+**Infrastructure as a Service (IaaS)** is the most basic cloud computing model. Instead of buying physical Dell servers, racking them in a data center, and wiring them to routers, you rent virtual servers and virtual networks from a cloud provider (like AWS, Azure, or GCP).
 
-Without an OS, every software developer would have to write their own custom machine code to spin the hard drive platters and physically address the RAM chips just to save a text file.
+With IaaS, you rent the *hardware*, but you are still responsible for installing and managing the Operating System, the runtime environment, the database software, and your application code.
 
-<Callout icon="info" title="The Two Core Roles">
-  1. **The Resource Manager**: The OS violently controls the hardware. It dictates exactly which program gets to use the CPU, how much RAM a program is allowed to consume, and prevents one crashing program from taking down the entire machine.
-  2. **The Illusionist (Abstractions)**: The OS lies to user programs. It provides the illusion that a program has the entire CPU to itself (via Processes), that it has infinite memory (via Virtual Memory), and that the spinning magnetic disk is just a neat collection of folders (Filesystems).
-</Callout>
+## 1. Core IaaS Components
+- **Compute**: Virtual Machines (VMs). You choose the CPU cores, RAM, and base OS image (e.g., Ubuntu, Windows Server).
+  - *Examples*: AWS EC2, Azure Virtual Machines, Google Compute Engine (GCE).
+- **Storage**: Raw block storage attached to the VMs, or object storage for files.
+  - *Examples*: AWS EBS (Elastic Block Store), AWS S3.
+- **Networking**: Virtual Private Clouds (VPCs), subnets, routing tables, and firewalls (Security Groups).
+  - *Examples*: AWS VPC, Azure Virtual Network.
 
-## The Key Components
+## 2. The Shared Responsibility Model
+In IaaS, security is a shared responsibility:
+- **The Cloud Provider** is responsible for the "Security *of* the Cloud" (physical data center locks, hypervisor security, cooling, power).
+- **You (The Customer)** are responsible for the "Security *in* the Cloud" (patching the Linux kernel on your VM, configuring firewall rules, encrypting your data, managing user access).
 
-Every modern operating system (Windows, Linux, macOS) is built on a few foundational pillars:
-- **The Kernel**: The invincible core of the OS that runs in privileged mode and talks directly to the hardware.
-- **Process Management**: The scheduler that rapidly switches the CPU between hundreds of different programs to create the illusion of multitasking.
-- **Memory Management**: The system (Virtual Memory/Paging) that safely allocates RAM and prevents programs from reading each other's data.
-- **I/O and Filesystems**: The drivers and structures that allow software to interact with hard drives, keyboards, and network cards using simple commands like \\\`open()\\\`, \\\`read()\\\`, and \\\`write()\\\`.
+<ComparisonTable 
+  headers={['Pros of IaaS', 'Cons of IaaS']} 
+  rows={[
+    ['Ultimate Control: You have root/admin access to the OS.', 'High Management Overhead: You must patch OS updates and manage security.'],
+    ['Flexibility: You can run legacy software that requires specific OS tweaks.', 'Scaling Complexity: You must manually configure Auto Scaling groups and Load Balancers.'],
+    ['No Hardware CapEx: Pay-as-you-go instead of buying $10k servers upfront.', 'Skill Barrier: Requires experienced System Administrators/DevOps engineers.']
+  ]} 
+/>
 
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/10. Operating Systems/Kernel/index.mdx': `---
-title: The Kernel
-description: The omnipotent core of the operating system that wields absolute power over the computer's hardware.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="The Kernel">
-
-The **Kernel** is the absolute core of the Operating System. It is the very first program loaded into RAM during the boot process (after the bootloader), and it remains in RAM until the computer is turned off. 
-
-The Kernel is the ultimate dictator of the machine. It is the only software on the computer that has direct, unrestricted access to the CPU's hardware instructions, the MMU (Memory Management Unit), and the physical peripherals.
-
-<Callout icon="warning" title="Absolute Power">
-  If a normal user program (like a web browser) has a bug and tries to divide by zero or access restricted memory, the Kernel immediately catches the fault and terminates the browser. But if the **Kernel itself** has a bug and faults, there is no higher authority to catch it. The entire system instantly halts, resulting in a Kernel Panic or a Blue Screen of Death (BSOD).
-</Callout>
-
-## What does the Kernel do?
-
-The Kernel is responsible for the lowest-level orchestration of the machine:
-1. **Interrupt Handling**: It responds to hardware jolts (e.g., a keyboard press) in microseconds.
-2. **Process Scheduling**: It decides which program gets to use which CPU core, and for exactly how many milliseconds.
-3. **Memory Management**: It programs the CPU's MMU to map Virtual Memory to Physical RAM.
-4. **Hardware Interfacing**: It contains (or loads) the Device Drivers necessary to talk to graphics cards, network interfaces, and storage controllers.
-
-Because the Kernel is so powerful, modern CPUs enforce strict hardware boundaries to protect it from malicious or buggy user software. This is implemented via **Protection Rings** (Kernel Space vs User Space).
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/10. Operating Systems/Kernel space/index.mdx': `---
-title: Kernel Space (Ring 0)
-description: The highly privileged, hardware-enforced memory boundary where the core Operating System runs.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Kernel Space">
-
-Modern x86 processors implement hardware security called **Protection Rings**. 
-- **Ring 0** is the most privileged state.
-- **Ring 3** is the least privileged state.
-
-**Kernel Space** is the chunk of physical RAM where the Kernel code and data are stored. When the CPU is executing code located in Kernel Space, it physically switches its internal hardware state to **Ring 0**. 
-
-<Callout icon="warning" title="God Mode">
-  When the CPU is in Ring 0, it is in "God Mode". It is allowed to execute *any* machine instruction, including highly dangerous commands like halting the processor, rewriting the Page Tables, or writing raw bytes directly to a hard drive controller.
-</Callout>
-
-## Hardware Enforcement
-
-The division between Kernel Space and User Space is not a software suggestion; it is a physical hardware wall. 
-If a user program running in Ring 3 tries to read a memory address that belongs to Kernel Space, the CPU hardware instantly blocks the read and throws a **Segmentation Fault**, forcing the OS to terminate the offending program. 
-
-This strict separation is what makes modern operating systems stable. In the MS-DOS and Windows 95 era, there was no true hardware enforcement. A badly written video game could accidentally overwrite the OS's memory in Kernel Space, instantly crashing the entire computer. Today, a crashing game only crashes itself.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/10. Operating Systems/User space/index.mdx': `---
-title: User Space (Ring 3)
-description: The restricted, heavily monitored sandbox where all standard applications and software run.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="User Space">
-
-While the OS Kernel lives in Ring 0 (Kernel Space), every other program on your computer—Google Chrome, Microsoft Word, Steam, and even your terminal—runs in **User Space (Ring 3)**.
-
-User Space is a heavily restricted sandbox. When the CPU is operating in Ring 3, it intentionally disables its most powerful hardware instructions.
-
-<Callout icon="success" title="The Sandbox Restrictions">
-  A program running in User Space **cannot**:
-  - Talk directly to the hard drive, network card, or keyboard.
-  - See or modify the physical memory of any other program.
-  - Disable hardware interrupts.
-  - Modify the CPU's memory management unit (MMU).
-</Callout>
-
-## How does anything get done?
-
-If a User Space program isn't allowed to talk to the hard drive, how does it save a file? 
-It must politely ask the Kernel to do it on its behalf.
-
-It does this via a **System Call**. The program triggers a specific software interrupt (e.g., \\\`SYSCALL\\\`). The CPU immediately pauses the program, switches into Ring 0 (Kernel Mode), and jumps to a secure, pre-approved piece of OS code. The OS verifies that the user program has the correct permissions (e.g., "Are they allowed to write to this folder?"), and if so, the OS physically writes to the hard drive, switches back to Ring 3, and returns control to the program.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/10. Operating Systems/Monolithic vs microkernel/index.mdx': `---
-title: Monolithic vs Microkernel
-description: The fundamental architectural debate regarding how much code should actually live inside the highly privileged Kernel Space.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Monolithic vs Microkernel">
-
-Since any bug in Kernel Space crashes the entire computer, OS architects face a massive design decision: *How much code should we actually put in the Kernel?*
-
-This resulted in a famous architectural war in the 1990s between Linus Torvalds (creator of Linux) and Andrew Tanenbaum (creator of MINIX).
-
-## 1. The Monolithic Kernel (Linux, Windows)
-In a Monolithic architecture, **everything** runs in Kernel Space (Ring 0). This includes the core scheduler, the memory manager, the file system drivers (NTFS, EXT4), and every single device driver (Graphics cards, USB controllers). 
-- **Pros**: It is blisteringly fast. Because everything is in the same memory space, the components can talk to each other instantly without overhead. 
-- **Cons**: It is incredibly dangerous. If a third-party USB mouse driver has a bug, it crashes the entire server because it is running in Ring 0. The kernel binary is massive (millions of lines of code).
-
-## 2. The Microkernel (MINIX, QNX, L4)
-In a Microkernel architecture, the Kernel is stripped down to the absolute bare minimum: just CPU scheduling and basic IPC (Inter-Process Communication). 
-Everything else—file systems, network stacks, and device drivers—runs as standard programs in **User Space (Ring 3)**.
-- **Pros**: It is virtually indestructible. If the graphics driver crashes, the system doesn't BSOD. The Microkernel just notices the driver died and restarts it, all while the rest of the OS continues running flawlessly.
-- **Cons**: It is slow. Because drivers and filesystems are in User Space, they must constantly use IPC to send messages to the microkernel and to each other, resulting in thousands of high-overhead context switches per second.
-
-<Callout icon="info" title="Who Won?">
-  For desktop and server computing, **Monolithic won**. Linux and Windows are monolithic (though Windows uses a hybrid approach to push some drivers to user-space). 
-  However, for mission-critical systems (like pacemakers, fighter jets, and the OS running inside Intel's Management Engine), **Microkernels won** due to their mathematical provability and supreme stability.
+<Callout icon="tip" title="When to use IaaS">
+Use IaaS when you are migrating legacy on-premise applications to the cloud via a "Lift and Shift" strategy, or when you require strict, low-level control over the operating system kernel and network stack.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/10. Operating Systems/System calls/index.mdx': `---
-title: System Calls (Syscalls)
-description: The secure API that User Space programs use to request privileged operations from the Kernel.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/PaaS/index.mdx': `---
+title: Platform as a Service (PaaS)
+description: "A cloud computing model that abstracts away infrastructure management, providing a ready-to-use platform for developers to deploy and run applications."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="System Calls">
+<ConceptTemplate title="Platform as a Service (PaaS)">
 
-A **System Call (Syscall)** is the only legal way for a User Space program (Ring 3) to ask the Kernel (Ring 0) to do something privileged, like reading a file, opening a network socket, or allocating more RAM.
+**Platform as a Service (PaaS)** sits one layer above IaaS. With PaaS, you no longer manage the Operating System, the runtime (like Node.js or Java), or the server updates. 
 
-<Callout icon="warning" title="Crossing the Boundary">
-  You cannot simply execute a standard function call (like \\\`goto\\\` or \\\`call\\\`) into Kernel memory. The CPU's hardware will block it with a Segmentation Fault. The boundary must be crossed using a highly orchestrated hardware trap.
+You simply upload your source code, and the PaaS provider handles the provisioning, load balancing, and scaling of the underlying servers automatically.
+
+## 1. The Developer Experience
+In an IaaS environment (like AWS EC2), deploying a Node.js app requires: 
+1. Provisioning a Linux VM.
+2. SSHing into the VM.
+3. Installing Node.js, NPM, and PM2.
+4. Configuring Nginx as a reverse proxy.
+5. Cloning the Git repo and starting the app.
+
+In a PaaS environment (like Heroku or AWS Elastic Beanstalk), deploying requires one command:
+TICK1git push heroku masterTICK1. The platform automatically detects the language, installs dependencies, provisions a container, routes traffic, and handles SSL certificates.
+
+## 2. Examples of PaaS
+- **Application PaaS**: Heroku, AWS Elastic Beanstalk, Google App Engine, Azure App Service, Vercel, Netlify.
+- **Database PaaS (DBaaS)**: Amazon RDS, Azure SQL Database. (You don't install PostgreSQL on a Linux server; you just click a button and AWS gives you a connection string to a fully managed, automatically backed-up PostgreSQL instance).
+
+## 3. The Trade-off: Control vs Velocity
+
+<ComparisonTable 
+  headers={['IaaS', 'PaaS']} 
+  rows={[
+    ['You manage the OS, runtime, and infrastructure.', 'You manage ONLY your application code and data.'],
+    ['Slower time-to-market due to infrastructure setup.', 'Extremely fast time-to-market.'],
+    ['Maximum control and flexibility.', 'Vendor lock-in; restricted to the runtimes the platform supports.'],
+    ['Generally cheaper per compute hour.', 'Generally more expensive (you are paying a premium for the automation).']
+  ]} 
+/>
+
+<Callout icon="warning" title="The Escape Hatch">
+The biggest risk of PaaS is outgrowing the platform. If your application requires a custom C++ library installed on the OS, or requires tweaking the kernel TCP limits, you cannot do it on a PaaS. You will be forced to migrate back down to IaaS or Containers (Kubernetes).
 </Callout>
-
-## The Anatomy of a Syscall
-
-Imagine a C program calls \\\`write(fd, "Hello", 5)\\\`. Here is what actually happens:
-
-1. **The Wrapper**: The C Standard Library (glibc) prepares the request. It puts the arguments (the file descriptor, the text pointer, the length) into specific CPU registers.
-2. **The Syscall Number**: glibc places the exact ID number of the \\\`write\\\` syscall (e.g., ID \\\`1\\\`) into the \\\`RAX\\\` register.
-3. **The Trap (\\\`SYSCALL\\\`)**: The program executes a special assembly instruction (\\\`SYSCALL\\\` on modern x86, or \\\`INT 0x80\\\` historically).
-4. **Hardware Switch**: The CPU completely suspends the program. It elevates its privilege level to Ring 0 (Kernel Mode) and jumps to a specific, predefined memory address (The Syscall Handler).
-5. **Validation and Execution**: The Kernel looks at the \\\`RAX\\\` register, sees ID \\\`1\\\` (\\\`write\\\`), validates that the file descriptor is valid, and executes the physical hard drive write.
-6. **Return (\\\`SYSRET\\\`)**: The Kernel places the result code (e.g., bytes written) into a register, drops its privileges back to Ring 3, and resumes the user program exactly where it left off.
-
-This process is inherently slow. A single System Call takes hundreds of clock cycles due to the massive context switch and hardware state changes required. High-performance software goes to great lengths to batch operations to minimize syscall overhead.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/10. Operating Systems/Boot process (BIOS-UEFI/index.mdx': `---
-title: The Boot Process (BIOS / UEFI)
-description: The sequence of hardware and firmware events that occur the moment you press the power button on a computer.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/SaaS/index.mdx': `---
+title: Software as a Service (SaaS)
+description: "The highest level of cloud abstraction, delivering fully managed software applications over the internet on a subscription basis."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Boot Process (BIOS / UEFI)">
+<ConceptTemplate title="Software as a Service (SaaS)">
 
-When a computer is powered off, the RAM is completely empty. The CPU has absolutely no code to execute. The process of pulling the Operating System off the hard drive and into RAM is called **Bootstrapping** (or "Booting", from the phrase "pulling oneself up by one's bootstraps").
+**Software as a Service (SaaS)** is the model most familiar to end-users. In SaaS, the cloud provider manages absolutely everything: the servers, the network, the operating system, the database, and the application code itself.
 
-## Step 1: Power-On and The Reset Vector
-When you press the power button, the motherboard's power supply stabilizes. Once stable, it sends a "Power Good" signal to the CPU. The CPU instantly wakes up, hardcodes its instruction pointer to a specific physical memory address called the **Reset Vector** (usually \\\`0xFFFFFFF0\\\`), and executes whatever code is there. 
-This address is permanently wired to a ROM chip on the motherboard containing the BIOS or UEFI.
+The customer simply opens a web browser, logs in, and uses the software.
 
-## Step 2: BIOS / UEFI
-**BIOS (Basic Input/Output System)** was the 16-bit standard from the 1980s. 
-**UEFI (Unified Extensible Firmware Interface)** is the modern 32/64-bit standard.
+## 1. The SaaS Business Model
+Instead of buying a CD-ROM with Microsoft Office 2010, installing it locally, and buying a new CD five years later, customers pay a recurring monthly or annual subscription fee (e.g., Microsoft 365). 
 
-The firmware performs the following:
-1. **POST (Power-On Self Test)**: It sends electrical pulses to the RAM, GPU, and keyboard to ensure the hardware is physically present and functioning.
-2. **Hardware Initialization**: It configures basic clock speeds and memory timings.
-3. **Boot Device Selection**: It checks its settings to see which hard drive, USB, or Network it should attempt to boot from.
+This is incredibly lucrative for software companies (recurring revenue) and beneficial for customers (zero maintenance, instant updates).
 
-## Step 3: Finding the Bootloader
-The UEFI firmware cannot load Windows or Linux directly; it doesn't know how to parse complex filesystems like NTFS or EXT4. Its only job is to find a tiny, specialized piece of software called a **Bootloader** (like GRUB or Windows Boot Manager) located on the hard drive, load that tiny program into RAM, and hand control over to it.
+## 2. Classic SaaS Examples
+- **Enterprise SaaS**: Salesforce (CRM), Workday (HR), Slack/Microsoft Teams (Communication), Jira (Project Management).
+- **Consumer SaaS**: Gmail, Netflix, Dropbox, Spotify.
+
+## 3. The Pizza as a Service Analogy
+To understand the relationship between IaaS, PaaS, and SaaS, consider the "Pizza as a Service" analogy:
+- **On-Premise (Legacy)**: Making pizza at home. You provide the oven, the gas, the dough, the cheese, and do the cooking.
+- **IaaS**: Buying a frozen pizza. You use your own oven and gas to cook it.
+- **PaaS**: Pizza Delivery. They cook it using their oven and ingredients, but you provide the dining table and drinks at your house.
+- **SaaS**: Dining out at a Pizzeria. They provide the pizza, the table, the drinks, and do the dishes. You just eat.
+
+<Callout icon="tip" title="The Build vs Buy Decision">
+In modern software engineering, the default stance is to "Buy" SaaS for commodity business functions (like email, CRM, HR) and only "Build" software that provides a core competitive advantage. A hospital shouldn't spend millions engineering a custom chat application when they can just buy Slack (SaaS).
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/10. Operating Systems/bootloaders)/index.mdx': `---
-title: Bootloaders (GRUB & Bootmgr)
-description: The specialized software responsible for loading the massive OS Kernel into RAM and transitioning the CPU into protected mode.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/Serverless/index.mdx': `---
+title: Serverless Computing
+description: "An execution model where the cloud provider dynamically manages the allocation of machine resources, allowing developers to run code without provisioning or managing servers, and billing only for exact execution time."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Bootloaders">
+<ConceptTemplate title="Serverless Computing">
 
-Once the motherboard's firmware (UEFI) finishes its hardware checks, it hands execution control over to the **Bootloader**. 
+Despite the name, **Serverless** does not mean there are no servers. It means the developer *thinks* about servers less. 
 
-The bootloader is a highly specialized piece of software (like **GRUB** for Linux, or **Windows Boot Manager**) that sits on a special partition of your hard drive (the EFI System Partition). 
+In a traditional architecture, a server runs 24/7 waiting for requests. You pay for it even if no one is using your app at 3:00 AM. In a Serverless architecture, your code is asleep (costing $0.00). When an HTTP request arrives, the cloud provider instantly spins up a tiny container, runs your code, returns the response, and kills the container. You are billed in increments of 1 millisecond.
 
-<Callout icon="info" title="Why do we need a Bootloader?">
-  The motherboard firmware is too simple to understand complex operating systems. It doesn't know what a Kernel is, and it doesn't know how to read advanced filesystems. The Bootloader acts as the crucial middleman: it is smart enough to read the hard drive's filesystem, find the massive OS Kernel file, and load it into RAM.
+## 1. Function as a Service (FaaS)
+The core of Serverless compute is **FaaS**. 
+You write a single function (e.g., in Node.js or Python) and upload it to the cloud. You configure a trigger (e.g., "Run this function when someone uploads an image to S3").
+- **AWS**: AWS Lambda
+- **Azure**: Azure Functions
+- **GCP**: Google Cloud Functions
+
+## 2. Serverless vs PaaS
+While PaaS abstracts away OS management, a PaaS application is still generally a long-running process that requires you to specify the number of instances and scale them up/down. Serverless is strictly event-driven and scales automatically from 0 to 10,000 concurrent executions without any configuration.
+
+## 3. The Cold Start Problem
+Because Serverless functions "go to sleep" when not in use, the very first request that wakes them up experiences a delay (often 200ms to 2 seconds) while the cloud provider provisions the container and loads the runtime environment. This is called a **Cold Start**. Subsequent requests hit the warm container and execute in milliseconds.
+
+<ComparisonTable 
+  headers={['Metric', 'Traditional Server (EC2)', 'Serverless (Lambda)']} 
+  rows={[
+    ['Billing', 'Per Hour / Per Second (while running 24/7).', 'Per Millisecond of exact execution time.'],
+    ['Scaling', 'Manual or Auto-Scaling Groups (takes minutes to spin up new VMs).', 'Instantaneous, per-request scaling.'],
+    ['Idle Cost', 'High (paying for idle compute).', 'Zero (if no traffic, cost is exactly $0).'],
+    ['State', 'Can store state on local disk.', 'Completely Stateless (must use external DB like DynamoDB).']
+  ]} 
+/>
+
+<Callout icon="warning" title="Vendor Lock-in">
+Serverless architectures are highly prone to vendor lock-in. An AWS Lambda function is often deeply integrated with AWS API Gateway, AWS S3, and Amazon DynamoDB. Migrating a fully Serverless application from AWS to Azure requires a near-complete rewrite of the infrastructure code.
 </Callout>
-
-## The Bootloader's Job
-
-1. **Filesystem Drivers**: The bootloader contains just enough code to read basic filesystems (like FAT32 or EXT4). 
-2. **The Menu**: If you have multiple operating systems installed (e.g., Dual Booting Linux and Windows), the bootloader presents a menu allowing you to choose which OS to boot.
-3. **Loading the Kernel**: It locates the OS Kernel file (e.g., \\\`vmlinuz\\\` on Linux or \\\`ntoskrnl.exe\\\` on Windows) and copies it from the SSD into main RAM.
-4. **Setting up the Environment**: Historically, CPUs boot in 16-bit "Real Mode" for backwards compatibility. The bootloader is responsible for switching the CPU into 32-bit or 64-bit "Protected Mode" and enabling basic Paging.
-5. **The Handoff**: Once the Kernel is in RAM and the CPU is configured, the bootloader points the CPU's instruction pointer at the very first line of Kernel code and permanently exits. 
-
-From that millisecond forward, the Operating System Kernel is awake, in RAM, and in total control of the machine.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/10. Operating Systems/Processes/index.mdx': `---
-title: Processes
-description: A running instance of a computer program, acting as an isolated container for code, memory, and resources.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/Regions/index.mdx': `---
+title: Cloud Regions
+description: "Distinct geographic locations worldwide where cloud providers cluster their physical data centers to reduce latency and comply with data sovereignty laws."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Processes">
+<ConceptTemplate title="Cloud Regions">
 
-When you write a Python script or compile a C++ \\\`.exe\\\`, that file is just a static collection of bytes sitting dormant on your hard drive. It is a **Program**.
+When you deploy a virtual machine in "The Cloud," it physically exists on a silicon rack in a massive, highly secure warehouse. A **Region** is the broad geographic area where those warehouses are located.
 
-When you double-click that file and the OS loads it into RAM to execute it, it becomes a **Process**. A Process is an *active, running instance* of a program. 
+Examples of AWS Regions:
+- TICK1us-east-1TICK1 (N. Virginia, USA)
+- TICK1eu-west-1TICK1 (Ireland)
+- TICK1ap-northeast-1TICK1 (Tokyo, Japan)
 
-<Callout icon="success" title="The Container Illusion">
-  A Process is fundamentally a container. The OS provides each process with the illusion that it is the only program running on the computer. It believes it has the CPU all to itself, and it believes it has a massive, empty RAM space all to itself.
+## 1. Why Regions Matter
+When architecting a cloud application, selecting the correct Region is the first and most critical decision, governed by three factors:
+
+### Latency
+Data cannot travel faster than the speed of light. If your users are entirely based in Australia, deploying your servers in TICK1us-east-1TICK1 (Virginia) means every API request must cross the Pacific Ocean twice, adding ~250ms of lag. You should deploy in TICK1ap-southeast-2TICK1 (Sydney) to achieve &lt;20ms latency.
+
+### Data Sovereignty and Compliance
+Many countries have strict privacy laws (like the EU's GDPR) stipulating that citizen data must not physically leave the country. A German bank must deploy their databases in TICK1eu-central-1TICK1 (Frankfurt) to ensure legal compliance.
+
+### Cost
+Electricity, real estate, and taxation vary wildly across the globe. Therefore, the exact same Virtual Machine costs different amounts depending on the Region. (e.g., TICK1sa-east-1TICK1 in São Paulo is traditionally much more expensive than TICK1us-east-1TICK1 in Virginia).
+
+## 2. Region Independence
+Cloud Regions are designed to be entirely independent and isolated from one another. If a massive natural disaster wipes out the TICK1ap-northeast-1TICK1 (Tokyo) region, TICK1us-east-1TICK1 will continue operating perfectly. They share no fate.
+
+<Callout icon="tip" title="Global Services">
+While most cloud services (like EC2 VMs) are "Region-scoped" (they exist only in the region you selected), a few services are "Global." For example, AWS IAM (Identity and Access Management) and Route 53 (DNS) are global services that span across all regions simultaneously.
 </Callout>
-
-## What is inside a Process?
-
-The OS tracks every process using a massive data structure called the **Process Control Block (PCB)**. A process contains:
-1. **Memory Space**: Its own private Virtual Memory, divided into the Code (Text), Data, Heap (dynamic memory), and Stack (function calls).
-2. **Execution State**: The current values of all CPU registers and the Program Counter (exactly which line of code it is currently executing).
-3. **Resources**: A list of open file descriptors, network sockets, and permissions.
-
-## Process Isolation
-
-The most important feature of a process is **Isolation**. 
-Because every process has its own Virtual Memory space (managed by hardware Paging), it is physically impossible for Process A to read or overwrite the memory of Process B. 
-
-If you open two instances of Notepad, they are two completely separate Processes. If one instance encounters a fatal error and crashes, the other instance is completely unaffected because their memory spaces are violently isolated by the Kernel.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/10. Operating Systems/Threads/index.mdx': `---
-title: Threads
-description: The smallest unit of execution within an operating system, allowing a single process to do multiple things simultaneously.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/Availability zones/index.mdx': `---
+title: Availability Zones (AZs)
+description: "Isolated, highly redundant physical data centers located within a single Cloud Region, designed to provide fault tolerance against localized failures."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Threads">
+<ConceptTemplate title="Availability Zones (AZs)">
 
-A Process is a heavy, isolated container. However, what if a single program (like a Web Browser) needs to do two things at once? It needs to render the webpage on the screen, while simultaneously downloading a file in the background. 
+If a **Region** is a geographic area (like "Northern Virginia"), an **Availability Zone (AZ)** is a specific, physical data center (or cluster of adjacent data centers) within that Region.
 
-If it creates a second Process to handle the download, the two processes are violently isolated from each other. They cannot easily share variables or memory. 
+Every modern cloud Region contains a minimum of three AZs (e.g., TICK1us-east-1aTICK1, TICK1us-east-1bTICK1, TICK1us-east-1cTICK1).
 
-The solution is **Threads**. A Thread is a lightweight unit of execution that lives *inside* a Process. 
+## 1. Fault Isolation
+The primary purpose of an AZ is **Fault Tolerance**.
+AZs within the same Region are physically separated by miles. They are positioned on different power grids, different flood plains, and utilize different internet transit providers. 
 
-<Callout icon="success" title="Shared Memory">
-  While multiple Processes share nothing, multiple Threads *inside the same process* share everything. They share the same Code, the same open files, and crucially, the same Heap memory. 
+If a hurricane, massive power outage, or fire destroys the TICK1us-east-1aTICK1 data center, TICK1us-east-1bTICK1 and TICK1us-east-1cTICK1 remain completely unaffected.
+
+## 2. Multi-AZ Architecture
+Because AZs are so close together (typically &lt;60 miles apart), they are connected via dedicated, ultra-high-speed fiber optic cables, resulting in single-digit millisecond latency between them.
+
+This allows architects to build **Synchronous Multi-AZ** applications.
+For a production database (like AWS RDS), you should always enable Multi-AZ deployment. The cloud provider will place the Primary Database in AZ-A, and a Standby Replica in AZ-B. Every time a user writes data, it is synchronously copied to both buildings before confirming success. 
+If AZ-A suddenly loses power, the cloud automatically fails over to AZ-B in seconds with zero data loss.
+
+## 3. Region vs AZ
+
+<ComparisonTable 
+  headers={['Metric', 'Region', 'Availability Zone (AZ)']} 
+  rows={[
+    ['Definition', 'A large geographic area (e.g., Ireland).', 'A single, isolated data center building within that area.'],
+    ['Distance Apart', 'Thousands of miles.', 'Tens of miles.'],
+    ['Latency Between', 'High (50ms - 200ms).', 'Ultra-Low (&lt;2ms).'],
+    ['Disaster Protection', 'Protects against entire country/coastline catastrophes.', 'Protects against local fires, floods, and power grid failures.']
+  ]} 
+/>
+
+<Callout icon="warning" title="Data Transfer Costs">
+While transferring data *within* the same AZ is usually free, cloud providers charge money for data flowing *between* AZs (e.g., $0.01 per GB). For massive Big Data applications processing petabytes of traffic, poorly optimizing AZ-to-AZ traffic can result in shocking monthly bills.
 </Callout>
-
-## The Anatomy of a Thread
-
-If a Process has 3 threads, what do those threads actually own individually?
-Every thread gets its own:
-1. **Program Counter**: Thread 1 might be executing line 50, while Thread 2 is executing line 500.
-2. **CPU Registers**: The thread's current mathematical calculations.
-3. **The Stack**: Every thread gets its own private Stack memory to keep track of its own local function calls and local variables.
-
-## Concurrency vs Parallelism
-
-Threads allow for two distinct behaviors:
-- **Concurrency (Single-Core CPU)**: The OS rapidly switches the CPU between Thread 1 and Thread 2 thousands of times a second. They aren't actually running at the exact same time, but the switching is so fast it creates the illusion of simultaneous execution.
-- **Parallelism (Multi-Core CPU)**: The OS schedules Thread 1 to run physically on Core A, and Thread 2 to run physically on Core B. They execute at the exact same nanosecond.
-
-Because threads share the same Heap memory, programming with them is incredibly dangerous. If Thread 1 and Thread 2 try to modify the same variable in memory at the exact same time, data corruption (a Race Condition) occurs. 
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/10. Operating Systems/Fibers/index.mdx': `---
-title: Fibers (Green Threads)
-description: Ultra-lightweight threads managed entirely by user-space software rather than the OS kernel, allowing for massive concurrency.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/Autoscaling/index.mdx': `---
+title: Autoscaling
+description: "A cloud computing feature that automatically and dynamically adjusts the amount of computational resources allocated to an application based on real-time traffic demand."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Fibers (Green Threads)">
+<ConceptTemplate title="Autoscaling">
 
-Standard threads (Kernel Threads) are powerful, but they are heavy. If you try to spawn 100,000 standard threads in Java or C++, your computer will crash. The OS kernel requires massive amounts of RAM to track 100,000 thread states, and the CPU will spend 99% of its time performing expensive Context Switches rather than actually doing work.
+In the on-premise era, if an e-commerce website expected massive traffic on Black Friday, they had to physically purchase and install 20 expensive servers in October. For the other 11 months of the year, 18 of those servers sat completely idle, wasting money and electricity.
 
-To solve this, developers use **Fibers** (also known as Green Threads, Coroutines, or Goroutines).
+The cloud solves this via **Elasticity and Autoscaling**.
 
-<Callout icon="info" title="The Key Difference">
-  - **Kernel Threads**: Managed by the OS Kernel in Ring 0. Heavy, true parallel execution.
-  - **Fibers**: Managed by a software runtime (like the Go runtime) in User Space (Ring 3). The OS Kernel has no idea they exist.
+## 1. How Autoscaling Works
+An Autoscaling Group (ASG) monitors metrics (like CPU utilization) across a fleet of Virtual Machines. 
+
+- **Scale Out (Provisioning)**: If average CPU spikes above 80% due to a viral marketing campaign, the ASG automatically provisions 5 new VMs, registers them with the Load Balancer, and distributes the traffic.
+- **Scale In (De-provisioning)**: When the viral traffic subsides and average CPU drops below 30%, the ASG safely terminates the 5 excess VMs, instantly stopping the hourly billing for those machines.
+
+## 2. Horizontal vs Vertical Scaling
+
+<ComparisonTable 
+  headers={['Type', 'Definition', 'Cloud Example', 'Limitations']} 
+  rows={[
+    ['Horizontal Scaling (Scaling OUT/IN)', 'Adding or removing MORE machines to a cluster.', 'Autoscaling Group adding 5 new EC2 instances.', 'Application must be designed to be Stateless (e.g., storing sessions in Redis, not on local disk).'],
+    ['Vertical Scaling (Scaling UP/DOWN)', 'Increasing the size (CPU/RAM) of an EXISTING machine.', 'Stopping a 2GB RAM VM and changing it to a 64GB RAM VM.', 'Requires downtime (reboot). Has a hard physical limit (you can only buy a server so big).']
+  ]} 
+/>
+
+*In modern cloud architecture, Horizontal Scaling is vastly preferred for web applications, while Vertical Scaling is often necessary for massive monolithic databases.*
+
+## 3. Types of Scaling Policies
+- **Target Tracking**: "Always keep the average CPU of the fleet exactly at 50%." (The easiest and most common policy).
+- **Step Scaling**: "If CPU > 70%, add 2 instances. If CPU > 90%, add 10 instances."
+- **Scheduled Scaling**: "Every Friday at 9:00 AM, scale out to 20 instances because we know our marketing email goes out then."
+- **Predictive Scaling**: The cloud provider uses Machine Learning to analyze historical traffic patterns and proactively scales up *before* the spike hits.
+
+<Callout icon="tip" title="Stateless Architecture">
+Autoscaling absolutely requires a **Stateless Architecture**. If User A logs into Web Server 1, and the session token is saved on Web Server 1's local hard drive, User A will be logged out if the Load Balancer routes their next request to Web Server 2. Sessions must be stored in a centralized database or cache (like Redis) so any server can handle any request.
 </Callout>
-
-## How Fibers Work
-
-Imagine a Go program spawns 10,000 Goroutines (Fibers). 
-The OS Kernel only sees the Go program as a standard Process with maybe 4 standard Kernel Threads. 
-The Go runtime includes its own mini-scheduler in User Space. It multiplexes those 10,000 Fibers onto the 4 Kernel Threads. 
-
-If Fiber #1 makes a network request and has to wait for a response, the Go runtime instantly pauses Fiber #1, saves its tiny state, and swaps Fiber #2 onto the Kernel thread to do work. 
-
-## Advantages
-Because Fibers are managed in User Space, swapping between them does not require a System Call or a Context Switch into Ring 0. The swap takes nanoseconds instead of microseconds. Furthermore, a Fiber only requires a few kilobytes of RAM for its stack, whereas a Kernel thread requires Megabytes. This allows modern languages (like Go, Erlang, or Kotlin with Coroutines) to easily handle millions of concurrent connections on a single server.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/10. Operating Systems/Context switching/index.mdx': `---
-title: Context Switching
-description: The heavy computational process of saving one program's state and loading another's so the CPU can multitask.
+  'src/features/kb/routes/KB/35. Cloud Computing — Fundamentals/High availability/index.mdx': `---
+title: High Availability (HA)
+description: "A system design approach and associated service implementation that ensures a prearranged level of operational performance will be met during a contractual measurement period."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Context Switching">
+<ConceptTemplate title="High Availability (HA)">
 
-A single CPU core can only execute exactly one instruction for one program at any given nanosecond. Yet, your computer runs 500 processes seemingly simultaneously. 
+In distributed systems, everything fails eventually. Hard drives crash, power lines are severed, and network switches burn out. **High Availability (HA)** is the architectural discipline of ensuring an application remains accessible to users *despite* these inevitable hardware and software failures.
 
-This illusion is created via **Context Switching**. The OS Kernel uses a hardware timer interrupt that fires every few milliseconds. When the timer fires, the Kernel forcibly pauses the current process, kicks it off the CPU, and puts a different process on the CPU.
+## 1. Measuring HA (The "Nines")
+HA is measured as a percentage of uptime per year. Engineers refer to this as the "number of nines." Every additional "nine" requires exponentially more complex and expensive engineering.
 
-<Callout icon="warning" title="Pure Overhead">
-  Context Switching is pure overhead. While the CPU is performing a context switch, it is not executing user code, not rendering graphics, and not calculating math. It is just doing OS administrative paperwork. An OS must balance switching fast enough to feel responsive, but slow enough to not waste all the CPU's power on switching.
+<ComparisonTable 
+  headers={['Uptime %', 'Colloquial Name', 'Downtime per Year', 'Typical Use Case']} 
+  rows={[
+    ['99.0%', 'Two Nines', '3 days, 15 hours', 'Internal batch processing scripts.'],
+    ['99.9%', 'Three Nines', '8.76 hours', 'Standard corporate web applications.'],
+    ['99.99%', 'Four Nines', '52.6 minutes', 'E-commerce, consumer SaaS, payments.'],
+    ['99.999%', 'Five Nines', '5.26 minutes', 'Telecommunications, aviation, critical cloud infrastructure.']
+  ]} 
+/>
+
+## 2. Core HA Principles
+To achieve HA, you must eliminate **Single Points of Failure (SPOF)**.
+1. **Redundancy**: Deploying a minimum of two Virtual Machines behind a Load Balancer. If VM 1 crashes, the Load Balancer detects the failure via a Health Check and routes all traffic to VM 2.
+2. **Multi-AZ Deployment**: Placing VM 1 in Availability Zone A, and VM 2 in Availability Zone B. If an entire data center catches fire, the application survives.
+3. **Failover**: For stateful databases, utilizing an Active-Passive setup. The primary database replicates data synchronously to a secondary standby database. If the primary dies, DNS automatically routes traffic to the standby.
+
+## 3. SLAs (Service Level Agreements)
+HA is a business contract. Cloud providers offer SLAs guaranteeing specific uptimes (e.g., AWS guarantees 99.99% uptime for EC2 instances deployed across multiple AZs). 
+If the provider fails to meet the SLA, they are legally obligated to issue financial credits to your account.
+
+<Callout icon="warning" title="Cost of Five Nines">
+Business stakeholders often demand "100% uptime," not realizing the engineering cost. Moving an application from 99.9% (Single Region, Multi-AZ) to 99.999% (Multi-Region, Active-Active Global database replication) will often multiply the infrastructure and engineering costs by 10x.
 </Callout>
-
-## The Anatomy of a Switch
-
-When the Kernel switches the CPU from Process A to Process B, it must perfectly preserve Process A's state so it can be resumed later without it ever knowing it was paused.
-
-1. **Save State**: The Kernel copies every single CPU Register (EAX, EBX, the Program Counter) and saves them into Process A's Process Control Block (PCB) in RAM.
-2. **Memory Map Swap (The Heavy Part)**: The Kernel must reprogram the CPU's Memory Management Unit (MMU). It flushes the Translation Lookaside Buffer (TLB) and swaps out Process A's Page Table for Process B's Page Table. This is the most computationally expensive part of the switch.
-3. **Restore State**: The Kernel reads Process B's PCB, copies its saved registers back into the physical CPU hardware, and points the Program Counter at Process B's next instruction. 
-4. **Resume**: The CPU resumes executing Process B.
-
-## Thread vs Process Switching
-
-- **Process Context Switch**: Brutally slow. Requires a full MMU Page Table swap and TLB flush because the memory spaces are different.
-- **Thread Context Switch**: Much faster. Because two threads within the same process share the same memory space, the Kernel only has to swap the CPU registers. The MMU and TLB remain untouched.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/10. Operating Systems/Real-time operating systems (RTOS)/index.mdx': `---
-title: Real-Time Operating Systems (RTOS)
-description: Specialized operating systems designed to guarantee absolute, mathematical predictability and strict timing deadlines.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Real-Time Operating Systems (RTOS)">
-
-Standard operating systems like Windows, Linux, and macOS are **General Purpose OSs**. They are designed for "fairness" and "throughput." If you open Microsoft Word, the OS might take 5 milliseconds to respond, or it might take 500 milliseconds if the CPU is busy updating the system. You, the human, barely notice.
-
-However, if the software is controlling the anti-lock brakes on a car, a robotic surgical arm, or the flight flaps of a fighter jet, a 500-millisecond delay results in death. 
-
-These systems require a **Real-Time Operating System (RTOS)** (e.g., VxWorks, FreeRTOS, QNX).
-
-<Callout icon="warning" title="Real-Time does NOT mean Fast">
-  A common misconception is that an RTOS is "faster" than Linux. It is not. 
-  "Real-Time" means **Predictable and Deterministic**. An RTOS mathematically guarantees that a specific task will be executed within a strict, non-negotiable time deadline (e.g., exactly 2.0 milliseconds), every single time, without fail.
-</Callout>
-
-## Hard vs Soft Real-Time
-
-- **Hard Real-Time**: Missing a deadline causes catastrophic system failure. (e.g., A pacemaker failing to send an electrical pulse at the exact required millisecond).
-- **Soft Real-Time**: Missing a deadline is bad, but the system survives. (e.g., A video decoding system dropping a frame, causing a slight visual stutter).
-
-## How an RTOS works
-
-To achieve absolute determinism, an RTOS fundamentally changes how the Kernel operates:
-1. **Strict Preemption**: In an RTOS, if a high-priority task wakes up, it instantly, violently preempts (interrupts) any lower-priority task, even if that lower task is currently executing inside the Kernel.
-2. **No Virtual Memory (Usually)**: Many RTOSs disable Paging entirely. Page Faults take unpredictable amounts of time (fetching data from a disk). In an RTOS, everything is pinned directly to physical RAM.
-3. **No Garbage Collection**: Memory is strictly managed manually or pre-allocated at boot, because garbage collection pauses are unpredictable.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/10. Operating Systems/Hypervisor-level concerns/index.mdx': `---
-title: Hypervisors & Virtualization
-description: The technology that allows multiple full Operating Systems to run simultaneously on a single physical machine.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Hypervisors & Virtualization">
-
-Traditionally, a single physical computer runs a single Operating System (OS). The OS has absolute, unquestioned control over the hardware. 
-
-**Virtualization** changes this. It allows you to run multiple separate "Guest" Operating Systems (e.g., Windows and Linux) on the same physical hardware at the exact same time. This is the foundational technology that powers modern Cloud Computing (AWS, Azure).
-
-To do this, we use a **Hypervisor** (also known as a Virtual Machine Monitor - VMM).
-
-<Callout icon="success" title="The Illusion of Hardware">
-  Just as an OS creates the illusion of infinite memory for a *Process*, a Hypervisor creates the illusion of an entire physical motherboard (CPU, RAM, Hard Drive) for a *Guest OS*. The Guest OS genuinely believes it is running on bare metal.
-</Callout>
-
-## Type 1 vs Type 2 Hypervisors
-
-### Type 1: Bare-Metal (ESXi, Proxmox, Hyper-V)
-The Hypervisor is the Operating System. It is installed directly onto the bare metal of the server. It is incredibly thin and its only job is to slice up the CPU and RAM into Virtual Machines (VMs) and run Guest OSs on top of them. Because there is no middleman, this is incredibly fast and used in enterprise data centers.
-
-### Type 2: Hosted (VirtualBox, VMware Workstation)
-You install a normal Host OS (like Windows 11). You then install the Hypervisor as a standard User Space application. The Hypervisor runs Guest VMs inside a window on your desktop. This is easier for consumers, but significantly slower because every hardware request from the Guest VM must be translated through the Hypervisor, and then translated *again* by the Host OS Kernel.
-
-## Hardware-Assisted Virtualization (Intel VT-x / AMD-V)
-
-In the early days, Hypervisors had to use insane software hacks (Binary Translation) to intercept privileged Ring 0 commands issued by the Guest OS, because you can't have two OSs in Ring 0 at the same time. 
-Modern CPUs solved this by adding **Ring -1**. The physical CPU hardware natively understands virtualization. The Hypervisor runs in Ring -1 (Absolute God Mode), allowing the Guest OS to safely run in Ring 0 without actually controlling the physical host hardware.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/10. Operating Systems/Device drivers/index.mdx': `---
-title: Device Drivers
-description: Specialized software modules that translate generic OS commands into the proprietary electrical signals required by specific hardware peripherals.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Device Drivers">
-
-When you plug a brand new, RGB-lit mechanical gaming keyboard into your computer, the Operating System Kernel has absolutely no idea what it is. The Kernel only knows how to speak "Generic OS". It doesn't know the proprietary electrical language required to talk to this specific piece of plastic and silicon.
-
-A **Device Driver** is the translator. It is a piece of software provided by the hardware manufacturer (e.g., Razer, Nvidia) that acts as an adapter between the OS Kernel and the physical device.
-
-<Callout icon="warning" title="The Weakest Link">
-  In monolithic kernels (like Windows and Linux), Device Drivers run directly in Ring 0 (Kernel Space) for maximum performance. This means a bug in a 3rd-party graphics or network driver can (and frequently does) crash the entire Operating System via a Blue Screen of Death.
-</Callout>
-
-## How Drivers Work
-
-The OS defines a generic API. For example, it demands that every storage device must implement a function called \\\`read_block()\\\`.
-
-1. **The Request**: A user program asks to read a file. The OS Kernel figures out the file is on an NVMe SSD. The OS calls the generic \\\`read_block()\\\` function.
-2. **The Translation**: The NVMe Device Driver intercepts this generic command. It translates it into the highly proprietary, complex sequence of PCIe register writes required by that specific brand of SSD.
-3. **The Execution**: The hardware performs the electrical read. It sends a Hardware Interrupt back to the CPU.
-4. **The Response**: The Driver catches the interrupt, translates the proprietary SSD data back into a generic block of bytes, and hands it back to the OS Kernel.
-
-## Plug and Play (PnP)
-
-In the MS-DOS era, installing hardware was a nightmare. The user had to manually type in the physical memory addresses and IRQ (Interrupt Request) numbers for every sound card. 
-
-Modern systems use **Plug and Play**. When you plug in a USB device, the motherboard hardware detects the electrical connection and asks the device for its **Hardware ID** (Vendor ID & Product ID). The OS takes this ID, searches its driver store (or Windows Update) for a matching driver, dynamically loads the driver into Kernel memory on the fly, and the device instantly starts working without a reboot.
 
 </ConceptTemplate>
 `,
@@ -477,7 +352,12 @@ async function main() {
   for (const [filePath, content] of Object.entries(contentMap)) {
     const fullPath = path.resolve(filePath)
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
-    await fs.writeFile(fullPath, content.trim() + '\n', 'utf-8')
+
+    // Safely replace TICK1 and TICK3 placeholders with actual backticks
+    let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
+
+    // Append a safe newline
+    await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8')
     console.log('Wrote ' + filePath)
   }
 }

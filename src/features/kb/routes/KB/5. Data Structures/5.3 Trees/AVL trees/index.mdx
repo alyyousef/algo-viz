@@ -1,44 +1,36 @@
 ---
 title: AVL Trees
-description: The first invented self-balancing binary search tree, optimized for fast lookups.
+description: The first self-balancing Binary Search Tree, mathematically guaranteeing a strict height differential to ensure O(log n) performance.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="AVL Trees">
 
-Invented in 1962 by Adelson-Velsky and Landis (hence "AVL"), the **AVL Tree** was the first data structure designed to solve the problem of unbalanced binary search trees.
+Invented in 1962 by Adelson-Velsky and Landis, the **AVL Tree** mathematically solves the primary flaw of a standard Binary Search Tree (degeneration into a Linked List).
 
-An AVL tree is a self-balancing binary search tree where the difference in heights between the left and right subtrees of *any* node is at most 1.
+## 1. The Balance Factor
+To prevent degeneration, an AVL tree tracks the height of every node's subtrees. It defines a mathematical **Balance Factor**:
+`Balance Factor = Height(Left Subtree) - Height(Right Subtree)`
 
-<Callout icon="info" title="The Balance Factor">
-  Every node in an AVL tree maintains a "Balance Factor," which is calculated as:
-  `BalanceFactor = Height(Left Subtree) - Height(Right Subtree)`
-  In a valid AVL tree, the Balance Factor of every node must be either -1, 0, or 1.
+An AVL tree enforces a strict mathematical invariant: **The Balance Factor of every single node must ALWAYS be -1, 0, or 1.**
+If an insertion or deletion causes any node's balance factor to become 2 or -2, the tree instantly halts and performs a geometric **Rotation**.
+
+## 2. Tree Rotations
+Rotations are `O(1)` pointer swaps that mathematically flatten the tree without breaking the BST sorted property.
+There are four types of imbalances, solved by four specific rotations:
+1. **Left-Left (LL)**: Fixed with a Single Right Rotation.
+2. **Right-Right (RR)**: Fixed with a Single Left Rotation.
+3. **Left-Right (LR)**: Fixed with a Left Rotation on the child, then a Right Rotation on the parent.
+4. **Right-Left (RL)**: Fixed with a Right Rotation on the child, then a Left Rotation on the parent.
+
+## 3. The Performance Tradeoff
+Because the AVL tree mathematically guarantees that the tree is strictly balanced, lookups are blazingly fast. **Search is guaranteed `O(log n)` worst-case.**
+
+However, this strictness comes at a computational cost during writes. Every single insertion or deletion might trigger multiple cascading rotations all the way up to the root, burning CPU cycles.
+
+<Callout icon="info" title="When to use AVL Trees?">
+AVL Trees are heavily optimized for **Read-Heavy** workloads. If your application searches a database a billion times a second but only inserts data once an hour (like an in-memory language dictionary), AVL trees mathematically outperform Red-Black trees because their strict balancing creates slightly shorter trees.
 </Callout>
-
-## How it Maintains Balance (Rotations)
-
-When a node is inserted or deleted, the heights of the ancestors are updated. If any ancestor's Balance Factor becomes -2 or +2, the tree is unbalanced and must immediately fix itself using **Tree Rotations**.
-
-There are four cases of imbalance, solved by four specific rotations:
-1. **Left-Left (LL) Case**: Solved by a single Right Rotation.
-2. **Right-Right (RR) Case**: Solved by a single Left Rotation.
-3. **Left-Right (LR) Case**: Solved by a Left Rotation on the child, followed by a Right Rotation on the parent.
-4. **Right-Left (RL) Case**: Solved by a Right Rotation on the child, followed by a Left Rotation on the parent.
-
-## AVL vs. Red-Black Trees
-
-Both AVL and Red-Black trees provide $O(\log n)$ worst-case time complexity, but they are used in different scenarios based on their structural strictness.
-
-<ComparisonTable 
-  headers={['Feature', 'AVL Trees', 'Red-Black Trees']}
-  rows={[
-    ['Balancing Strictness', 'Very strict (height diff max 1).', 'Less strict (longest path max 2x shortest).'],
-    ['Lookup Speed', 'Faster (due to stricter balance/shorter depth).', 'Slightly slower.'],
-    ['Insert/Delete Speed', 'Slower (requires more rotations to maintain strict balance).', 'Faster (requires fewer rotations).'],
-    ['Memory Overhead', 'Requires storing an integer (height) per node.', 'Requires storing a single bit (color) per node.'],
-    ['Ideal Use Case', 'Read-heavy applications (e.g., dictionaries).', 'Write-heavy applications (e.g., OS schedulers).']
-  ]}
-/>
 
 </ConceptTemplate>

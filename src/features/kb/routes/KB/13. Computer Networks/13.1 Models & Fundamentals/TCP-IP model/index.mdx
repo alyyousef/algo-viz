@@ -1,30 +1,31 @@
 ---
-title: TCP/IP Model
-description: The concise, practical 4-layer network model that the modern Internet is actually built upon, favored by the Department of Defense.
+title: The TCP/IP Model
+description: The practical, 4-layer architecture that actually powers the modern global internet.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="TCP/IP Model">
+<ConceptTemplate title="The TCP/IP Model">
 
-While the 7-layer OSI model is the gold standard for academic teaching and network troubleshooting, the Internet is not actually built on the OSI model. 
-
-The Internet was built by DARPA (the U.S. Department of Defense) using the **TCP/IP Model** (sometimes called the DoD Model). It is a much simpler, highly practical 4-layer architecture.
+While the OSI model is a beautiful theoretical framework, it was over-engineered. The United States Department of Defense (DoD) funded the ARPANET project, which resulted in the **TCP/IP Model**—a leaner, meaner, 4-layer stack that physically powers the modern internet.
 
 ## The 4 Layers
 
-The TCP/IP model condenses the verbose OSI model down to its absolute essentials:
+The TCP/IP model mathematically collapses the 7 OSI layers into 4 highly practical layers.
 
-1. **Network Access Layer (OSI Layers 1 & 2)**: 
-   Combines the Physical and Data Link layers. It handles everything required to move raw bits across local hardware (Ethernet, Wi-Fi, MAC addresses).
-2. **Internet Layer (OSI Layer 3)**: 
-   Maps perfectly to the OSI Network layer. It is responsible for global routing across disparate networks using the Internet Protocol (IP).
-3. **Transport Layer (OSI Layer 4)**: 
-   Maps perfectly to the OSI Transport layer. It handles reliable (TCP) and unreliable (UDP) data delivery.
-4. **Application Layer (OSI Layers 5, 6, & 7)**: 
-   TCP/IP condenses Session, Presentation, and Application into one massive layer. The philosophy is that if an application (like a web browser) needs encryption or session tracking, it should build it into the software itself (HTTPS), rather than relying on the operating system.
+<ComparisonTable 
+  headers={['TCP/IP Layer', 'Equivalent OSI Layers', 'Function & Protocols']} 
+  rows={[
+    ['4. Application', 'Application (7), Presentation (6), Session (5)', 'Handles all high-level software protocols. Data formatting and encryption happen natively here. (HTTP, HTTPS, SSH, FTP, DNS)'],
+    ['3. Transport', 'Transport (4)', 'Provides end-to-end communication control. Dictates if the connection needs to be highly reliable (TCP) or blazing fast (UDP).'],
+    ['2. Internet', 'Network (3)', 'Handles logical addressing and routing. Ensures packets can navigate across thousands of routers to reach a destination on the other side of the planet. (IPv4, IPv6, ICMP)'],
+    ['1. Network Access', 'Data Link (2), Physical (1)', 'Handles the physical hardware and local network frames. (Ethernet cables, MAC addresses, Wi-Fi waves).']
+  ]} 
+/>
 
-<Callout icon="success" title="Why TCP/IP Won">
-  The OSI model was heavily bureaucratic, trying to define perfect standards for every possible edge case before a single piece of hardware was built. The TCP/IP model was built by engineers trying to solve immediate problems. They built working code (TCP and IP protocols) first, and defined the model based on what actually survived in the real world.
-</Callout>
+## Why did TCP/IP win?
+In the 1980s, the "Protocol Wars" raged between the OSI model and TCP/IP. 
+OSI was heavily backed by European telecoms and government bureaucracies, resulting in sluggish standard development. 
+TCP/IP was backed by UNIX researchers. It was lightweight, open-source, and crucially, **it actually worked**. The internet organically adopted TCP/IP because developers could immediately build real applications on it, completely killing the OSI protocol suite.
 
 </ConceptTemplate>

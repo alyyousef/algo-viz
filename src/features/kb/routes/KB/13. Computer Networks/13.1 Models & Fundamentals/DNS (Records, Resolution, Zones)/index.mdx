@@ -1,33 +1,43 @@
 ---
-title: DNS (Records, Resolution, Zones)
-description: The Domain Name System, a hierarchical, distributed database that translates human-readable hostnames into machine-routable IP addresses.
+title: Domain Name System (DNS)
+description: The decentralized global phonebook of the internet, mapping human-readable domain names to mathematical IP addresses.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="DNS (Records, Resolution, Zones)">
+<ConceptTemplate title="Domain Name System (DNS)">
 
-Computers strictly route traffic using IP addresses. Humans are terrible at memorizing IP addresses, so we use domain names like `google.com`. 
-**DNS (Layer 7)** is the Phonebook of the Internet. It translates domains into IPs.
+Computers exclusively communicate using mathematical IP addresses (e.g., `142.250.190.46`). Humans cannot memorize billions of IP addresses. The **Domain Name System (DNS)** was invented to map human-readable names (`google.com`) to machine-readable IPs.
 
-## The Recursive Resolution Process
+## 1. The Recursive Resolution Process
+When you type `www.example.com` into your browser, an incredibly complex, globally decentralized query process occurs in milliseconds:
 
-When you type `amazon.com` into your browser, an incredibly complex lookup occurs in milliseconds:
-1. **Local Cache**: Your OS checks its local memory. If it doesn't know the IP, it asks your ISP's Recursive Resolver.
-2. **Root Servers**: The Resolver asks the global Root Servers (`.`). The Root server says, *"I don't know the IP, but I know who manages all `.com` domains. Ask the TLD server."*
-3. **TLD Servers**: The Resolver asks the `.com` Top-Level Domain server. The TLD says, *"I know who registered `amazon.com`. Ask their specific Authoritative Name Server."*
-4. **Authoritative Server**: The Resolver asks Amazon's server, which finally replies: *"The IP for `amazon.com` is 54.239.28.85."*
+1. **Local Cache / OS**: The browser checks its local cache. If missing, it checks the OS cache.
+2. **Recursive Resolver**: The OS queries a Recursive DNS Server (usually provided by your ISP or Google's `8.8.8.8`). The Resolver's job is to hunt down the IP.
+3. **Root Nameservers**: The Resolver queries one of the 13 mathematical Root Servers globally. The Root server says, *"I don't know the IP, but I know who handles the `.com` domains."*
+4. **TLD Nameservers**: The Resolver queries the Top-Level Domain (TLD) server for `.com`. The TLD server says, *"I don't know the IP, but I know the specific authoritative server for `example.com`."*
+5. **Authoritative Nameserver**: The Resolver queries the final Authoritative server (e.g., hosted on AWS Route53). This server holds the actual mathematical record and returns `93.184.216.34`.
+6. The Resolver hands the IP back to your browser, and the HTTP request begins.
 
-## DNS Records
+## 2. Common DNS Record Types
 
-An Authoritative Zone file contains different types of records:
-- **A Record**: Maps a domain directly to an **IPv4** address.
-- **AAAA Record**: Maps a domain directly to an **IPv6** address.
-- **CNAME**: An Alias. It maps a domain to another domain (e.g., `www.example.com` points to `example.com`). *A CNAME can never point directly to an IP.*
-- **MX (Mail Exchange)**: Tells the world exactly which server handles incoming emails for this domain.
-- **TXT**: Plain text records used heavily today to prove domain ownership and implement email anti-spam security (SPF, DKIM, DMARC).
+<ComparisonTable 
+  headers={['Record Type', 'Function', 'Example Target']} 
+  rows={[
+    ['A (Address)', 'Maps a domain name directly to an IPv4 address.', '192.168.1.50'],
+    ['AAAA (Quad-A)', 'Maps a domain name directly to an IPv6 address.', '2001:db8::1'],
+    ['CNAME (Canonical Name)', 'Maps a domain name to another domain name (an alias). Cannot be placed at the root apex (example.com).', 'www.example.com -> myapp.herokuapp.com'],
+    ['MX (Mail Exchange)', 'Directs email to a specific mail server for the domain.', 'mail.google.com'],
+    ['TXT (Text)', 'Stores arbitrary text data. Critically used for security verification (SPF, DKIM, DMARC, SSL validation).', 'v=spf1 include:_spf.google.com ~all']
+  ]} 
+/>
 
-<Callout icon="warning" title="DNS Propagation">
-  Because DNS is distributed globally, resolvers cache answers for a set amount of time known as **TTL (Time to Live)**. If Amazon changes their IP address, but your ISP has a cached TTL of 24 hours, you will be routed to the dead IP address for 24 hours until the cache expires. Admins must lower the TTL to 5 minutes *before* migrating servers.
+## 3. DNS Zones
+A **DNS Zone** is a contiguous portion of the global domain name space for which administrative responsibility has been delegated to a single manager. For instance, you might own the zone for `example.com`, allowing you to mathematically create infinite subdomains (`api.example.com`, `dev.example.com`) within your authoritative zone file.
+
+<Callout icon="warning" title="Security and Latency">
+DNS traditionally runs on UDP port 53 in **plaintext**. This means ISPs and hackers on public Wi-Fi can mathematically observe exactly what websites you visit, even if the actual website traffic is encrypted via HTTPS. Modern web architectures are aggressively adopting **DNS over HTTPS (DoH)** to mathematically encrypt the DNS queries themselves, closing this massive privacy loophole.
 </Callout>
 
 </ConceptTemplate>

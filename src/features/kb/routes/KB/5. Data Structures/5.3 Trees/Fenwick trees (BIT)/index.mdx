@@ -1,8 +1,41 @@
+---
+title: Fenwick Trees (Binary Indexed Tree)
+description: A mathematically elegant, bitwise optimization of the Segment Tree that computes prefix sums in O(log N) using minimal memory and code.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Fenwick trees (BIT)">
+<ConceptTemplate title="Fenwick Trees (Binary Indexed Tree)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Peter Fenwick in 1994, the **Fenwick Tree** (or Binary Indexed Tree) solves the exact same problem as a Segment Tree (Range Sum Queries and Point Updates). However, it uses profound mathematical bitwise operations to compress the tree directly into a standard 1D array.
+
+## 1. The Memory Optimization
+A standard Segment Tree requires an array of size `4 * N` to store all the parent and leaf nodes safely. It requires complex recursive functions to traverse.
+
+A Fenwick tree mathematically drops all the right-child nodes. It requires an array of exactly size **`N`**. It is implemented using extremely tight, non-recursive `while` loops.
+
+## 2. The Mathematical Magic (LSB)
+The entire architecture of a Fenwick Tree relies on the mathematical extraction of the **Least Significant Bit (LSB)**. 
+Using Two's Complement binary math, a computer can instantly isolate the lowest set bit of an integer `i` using the formula:
+`LSB(i) = i & (-i)`
+
+Every index `i` in the Fenwick array does not store just one value; it mathematically stores the sum of a specific range of values. The length of that range is exactly equal to its LSB.
+- If `i = 12` (Binary `1100`), the LSB is 4 (Binary `100`). Therefore, index 12 stores the sum of the last 4 elements `[9, 10, 11, 12]`.
+
+## 3. Core Operations
+
+### Point Update (Add +X to index i)
+To update the tree, you must mathematically add X to index `i`, and then traverse "up" the conceptual tree to update all parent nodes that rely on `i`.
+You do this by continuously **adding** the LSB to `i` until you exceed the array size.
+`i = i + (i & -i)`
+
+### Prefix Query (Sum from 1 to i)
+To calculate the sum from 1 to `i`, you mathematically traverse "down" the tree, adding up the pre-calculated chunks.
+You do this by continuously **subtracting** the LSB from `i` until `i` reaches 0.
+`i = i - (i & -i)`
+
+<Callout icon="tip" title="Segment Tree vs Fenwick Tree">
+A Fenwick Tree takes 5 lines of code to write, uses 75% less memory, and executes bitwise operations much faster than a recursive Segment Tree. However, Fenwick Trees mathematically require the operation to be **invertible**. You can use them for Range Sum (because subtraction exists). You **cannot** easily use them for Range Max or Range Min. If you need Range Max, you must write a bulky Segment Tree.
+</Callout>
 
 </ConceptTemplate>

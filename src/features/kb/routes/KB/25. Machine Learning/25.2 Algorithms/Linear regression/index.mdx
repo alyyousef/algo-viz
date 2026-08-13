@@ -1,32 +1,49 @@
 ---
 title: Linear Regression
-description: The absolute foundational mathematical algorithm of statistics, predicting continuous variables by drawing an optimal line of best fit through high-dimensional space.
+description: The mathematical foundation of predictive modeling, Ordinary Least Squares, and gradient descent optimization.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Linear Regression">
 
-**Linear Regression** is arguably the oldest and most fundamental mathematical algorithm in Machine Learning. It predicts a continuous target variable by assuming a strict, linear mathematical relationship between the input features and the output.
+Linear Regression is the fundamental building block of all Machine Learning. It mathematically models the relationship between a scalar response (dependent variable) and one or more explanatory variables (independent variables).
 
-## 1. The Mathematical Equation
-The model is defined by a simple linear equation:
-$\hat{y} = w_1x_1 + w_2x_2 + ... + w_nx_n + b$
-- $x$: The input features (Square Footage, Number of Rooms).
-- $w$: The mathematical **Weights** (Coefficients / Slopes) the model must learn.
-- $b$: The **Bias** (Y-Intercept).
+## 1. The Mathematical Model
+For a dataset with `n` features, the hypothesis function `h_θ(x)` is defined as:
 
-## 2. Ordinary Least Squares (OLS)
-How does the algorithm mathematically discover the perfect weights? It uses OLS.
-1. The algorithm predicts a value ($\hat{y}$) and compares it to the true value ($y$). The difference is the **Residual**.
-2. It mathematically calculates the **Mean Squared Error (MSE)**: The sum of the squares of all residuals. (Squaring them ensures negative and positive errors don't cancel each other out, and heavily punishes massive outliers).
-3. Using Calculus (setting the derivative of the MSE to zero), or using matrix algebra, the algorithm mathematically solves for the exact weights that result in the absolute minimum possible MSE. 
+**`h_θ(x) = θ_0 + θ_1 x_1 + θ_2 x_2 + ... + θ_n x_n`**
 
-*(Unlike Neural Networks which guess and check using Gradient Descent, standard Linear Regression can be solved perfectly in a single step using the **Normal Equation** matrix inversion).*
+- `x_i`: The input features (e.g., square footage of a house, number of bedrooms).
+- `θ_i`: The weights (parameters) the model learns.
+- `θ_0`: The bias term (y-intercept).
 
-## 3. Mathematical Assumptions and Flaws
-Linear Regression is highly interpretable, but mathematically fragile because it requires strict assumptions:
-- **Linearity**: The relationship must actually be a straight line. If the data is U-shaped, the model fails.
-- **No Multicollinearity**: The input features cannot be highly correlated with each other. If you include both "Temperature in Celsius" and "Temperature in Fahrenheit", the matrix inversion mathematically collapses (Matrix becomes Singular), and the weights explode to infinity.
-- **Homoscedasticity**: The variance of the errors must be mathematically constant across all values.
+## 2. The Cost Function (MSE)
+To evaluate how wrong our model is, we define the **Mean Squared Error (MSE)** Cost Function, `J(θ)`:
+
+`J(θ) = (1 / 2m) * Σ (h_θ(x^(i)) - y^(i))^2`
+
+Where `m` is the number of training examples. The goal of linear regression is to mathematically minimize `J(θ)`.
+
+## 3. Optimization Algorithms
+
+<ComparisonTable 
+  headers={['Algorithm', 'Mechanism', 'Use Case']} 
+  rows={[
+    ['Ordinary Least Squares (Normal Equation)', 'Solves for θ directly using matrix inversion: θ = (X^T X)^-1 X^T y', 'Small datasets (N < 10,000) where matrix inversion is computationally fast.'],
+    ['Gradient Descent', 'Iteratively updates θ by moving against the gradient of the cost function.', 'Massive datasets (N > 1,000,000) where matrix operations would crash RAM.']
+  ]} 
+/>
+
+### Gradient Descent Update Rule
+For each parameter `θ_j`, the update rule is:
+`θ_j := θ_j - α * (∂ / ∂θ_j) J(θ)`
+
+Where `α` is the **Learning Rate**. If `α` is too small, the algorithm takes years to converge. If `α` is too large, it mathematically overshoots the minimum and diverges to infinity.
+
+<Callout icon="warning" title="Assumptions of Linear Regression">
+Linear regression assumes a linear relationship between features and the target. It is highly sensitive to **outliers** (because the error is squared) and suffers catastrophically from **multicollinearity** (when two input features are highly correlated).
+</Callout>
 
 </ConceptTemplate>

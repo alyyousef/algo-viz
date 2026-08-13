@@ -1,8 +1,43 @@
+---
+title: Autoscaling
+description: "A cloud computing feature that automatically and dynamically adjusts the amount of computational resources allocated to an application based on real-time traffic demand."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Autoscaling">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the on-premise era, if an e-commerce website expected massive traffic on Black Friday, they had to physically purchase and install 20 expensive servers in October. For the other 11 months of the year, 18 of those servers sat completely idle, wasting money and electricity.
+
+The cloud solves this via **Elasticity and Autoscaling**.
+
+## 1. How Autoscaling Works
+An Autoscaling Group (ASG) monitors metrics (like CPU utilization) across a fleet of Virtual Machines. 
+
+- **Scale Out (Provisioning)**: If average CPU spikes above 80% due to a viral marketing campaign, the ASG automatically provisions 5 new VMs, registers them with the Load Balancer, and distributes the traffic.
+- **Scale In (De-provisioning)**: When the viral traffic subsides and average CPU drops below 30%, the ASG safely terminates the 5 excess VMs, instantly stopping the hourly billing for those machines.
+
+## 2. Horizontal vs Vertical Scaling
+
+<ComparisonTable 
+  headers={['Type', 'Definition', 'Cloud Example', 'Limitations']} 
+  rows={[
+    ['Horizontal Scaling (Scaling OUT/IN)', 'Adding or removing MORE machines to a cluster.', 'Autoscaling Group adding 5 new EC2 instances.', 'Application must be designed to be Stateless (e.g., storing sessions in Redis, not on local disk).'],
+    ['Vertical Scaling (Scaling UP/DOWN)', 'Increasing the size (CPU/RAM) of an EXISTING machine.', 'Stopping a 2GB RAM VM and changing it to a 64GB RAM VM.', 'Requires downtime (reboot). Has a hard physical limit (you can only buy a server so big).']
+  ]} 
+/>
+
+*In modern cloud architecture, Horizontal Scaling is vastly preferred for web applications, while Vertical Scaling is often necessary for massive monolithic databases.*
+
+## 3. Types of Scaling Policies
+- **Target Tracking**: "Always keep the average CPU of the fleet exactly at 50%." (The easiest and most common policy).
+- **Step Scaling**: "If CPU > 70%, add 2 instances. If CPU > 90%, add 10 instances."
+- **Scheduled Scaling**: "Every Friday at 9:00 AM, scale out to 20 instances because we know our marketing email goes out then."
+- **Predictive Scaling**: The cloud provider uses Machine Learning to analyze historical traffic patterns and proactively scales up *before* the spike hits.
+
+<Callout icon="tip" title="Stateless Architecture">
+Autoscaling absolutely requires a **Stateless Architecture**. If User A logs into Web Server 1, and the session token is saved on Web Server 1's local hard drive, User A will be logged out if the Load Balancer routes their next request to Web Server 2. Sessions must be stored in a centralized database or cache (like Redis) so any server can handle any request.
+</Callout>
 
 </ConceptTemplate>

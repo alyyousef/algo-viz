@@ -1,8 +1,35 @@
+---
+title: Zero-Knowledge Proofs (ZKP)
+description: The advanced mathematical protocol allowing one party to prove they know a secret without actually revealing the secret itself.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Zero-knowledge proofs">
+<ConceptTemplate title="Zero-Knowledge Proofs (ZKP)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Zero-Knowledge Proof (ZKP)** is a highly advanced mathematical protocol that sounds like magic: It allows a "Prover" to mathematically convince a "Verifier" that they possess a specific secret piece of information, **without ever revealing the information itself.**
+
+## 1. The Core Mathematical Properties
+For a protocol to be considered a mathematically valid Zero-Knowledge Proof, it must satisfy three absolute conditions:
+
+1. **Completeness**: If the Prover genuinely knows the secret, they can mathematically convince the Verifier with 100% probability.
+2. **Soundness**: If the Prover is lying (they do not know the secret), the mathematical probability of them tricking the Verifier approaches zero exponentially.
+3. **Zero-Knowledge**: After the protocol finishes, the Verifier mathematically learns absolutely nothing about the secret itself (other than the fact that the Prover knows it).
+
+## 2. Interactive vs Non-Interactive
+Historically, ZKPs were **Interactive**. The Verifier would issue a mathematical "challenge", the Prover would calculate a response, and this ping-pong would repeat 50 times until the mathematical probability of the Prover guessing correctly was one-in-a-trillion.
+
+Modern cryptography utilizes **Non-Interactive Zero-Knowledge Proofs (NIZK)**, specifically **zk-SNARKs** (Zero-Knowledge Succinct Non-Interactive Argument of Knowledge). 
+Through incredibly complex elliptic curve pairings, the Prover can generate a single, tiny mathematical certificate (the proof). The Verifier can independently verify this certificate in milliseconds, entirely offline, without any ping-pong interaction.
+
+## 3. Real-World Applications
+
+- **Privacy-Preserving Blockchain (Zcash)**: In standard Bitcoin, the entire world can view the exact balance of your wallet. Using zk-SNARKs, a crypto network can mathematically verify that a transaction is perfectly valid (the sender has enough money) without revealing the sender's identity, the receiver's identity, or the amount sent.
+- **Identity Verification**: Proving to a bartender that you are over 21 years old, without revealing your exact birthdate, your name, or your address.
+- **Layer 2 Rollups (zk-Rollups)**: Scaling Ethereum by batching 10,000 transactions off-chain, and posting a single tiny mathematical zk-Proof to the main chain, guaranteeing that all 10,000 transactions were executed validly.
+
+<Callout icon="warning" title="The Trusted Setup Problem">
+Many zk-SNARK systems require a "Trusted Setup", a mathematical initialization event where random numbers (Toxic Waste) are generated to create the proving keys. If the scientists who generated these numbers collude and save them, they can mathematically forge fake proofs forever (e.g., printing infinite fake crypto). The industry is heavily researching zk-STARKs to eliminate this mathematical vulnerability.
+</Callout>
 
 </ConceptTemplate>

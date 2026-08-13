@@ -1,8 +1,41 @@
+---
+title: Infrastructure as a Service (IaaS)
+description: "The foundational layer of cloud computing, providing raw, virtualized computing resources like servers, storage, and networking over the internet."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="IaaS">
+<ConceptTemplate title="Infrastructure as a Service (IaaS)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Infrastructure as a Service (IaaS)** is the most basic cloud computing model. Instead of buying physical Dell servers, racking them in a data center, and wiring them to routers, you rent virtual servers and virtual networks from a cloud provider (like AWS, Azure, or GCP).
+
+With IaaS, you rent the *hardware*, but you are still responsible for installing and managing the Operating System, the runtime environment, the database software, and your application code.
+
+## 1. Core IaaS Components
+- **Compute**: Virtual Machines (VMs). You choose the CPU cores, RAM, and base OS image (e.g., Ubuntu, Windows Server).
+  - *Examples*: AWS EC2, Azure Virtual Machines, Google Compute Engine (GCE).
+- **Storage**: Raw block storage attached to the VMs, or object storage for files.
+  - *Examples*: AWS EBS (Elastic Block Store), AWS S3.
+- **Networking**: Virtual Private Clouds (VPCs), subnets, routing tables, and firewalls (Security Groups).
+  - *Examples*: AWS VPC, Azure Virtual Network.
+
+## 2. The Shared Responsibility Model
+In IaaS, security is a shared responsibility:
+- **The Cloud Provider** is responsible for the "Security *of* the Cloud" (physical data center locks, hypervisor security, cooling, power).
+- **You (The Customer)** are responsible for the "Security *in* the Cloud" (patching the Linux kernel on your VM, configuring firewall rules, encrypting your data, managing user access).
+
+<ComparisonTable 
+  headers={['Pros of IaaS', 'Cons of IaaS']} 
+  rows={[
+    ['Ultimate Control: You have root/admin access to the OS.', 'High Management Overhead: You must patch OS updates and manage security.'],
+    ['Flexibility: You can run legacy software that requires specific OS tweaks.', 'Scaling Complexity: You must manually configure Auto Scaling groups and Load Balancers.'],
+    ['No Hardware CapEx: Pay-as-you-go instead of buying $10k servers upfront.', 'Skill Barrier: Requires experienced System Administrators/DevOps engineers.']
+  ]} 
+/>
+
+<Callout icon="tip" title="When to use IaaS">
+Use IaaS when you are migrating legacy on-premise applications to the cloud via a "Lift and Shift" strategy, or when you require strict, low-level control over the operating system kernel and network stack.
+</Callout>
 
 </ConceptTemplate>

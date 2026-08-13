@@ -1,34 +1,42 @@
 ---
 title: Semaphores
-description: A synchronization primitive that uses an internal counter to control access to a pool of identical resources.
+description: A generalized signaling mechanism invented by Dijkstra that uses mathematical counters to control thread access to a finite pool of shared resources.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Semaphores">
 
-Invented by legendary computer scientist Edsger Dijkstra in 1965, a **Semaphore** is a synchronization primitive that is more flexible than a Mutex. 
+Invented by Edsger W. Dijkstra in 1965, a **Semaphore** is a synchronization primitive. While a Mutex strictly protects a *single* resource (0 or 1), a Semaphore protects a *finite pool* of resources using a mathematical counter (N).
 
-While a Mutex acts as a single key (allowing only 1 thread in at a time), a Semaphore acts as a **Bouncer at a nightclub with a strict capacity limit**.
+## 1. The Mathematical Counter
+A semaphore is initialized with an integer `N` (e.g., 5 database connections).
 
-## The Internal Counter
+It has two atomic operations (historically named by Dijkstra as P and V):
+- **wait() / acquire()**: If the counter is > 0, it mathematically subtracts 1 and proceeds. If the counter is exactly 0, the thread is frozen by the OS.
+- **signal() / release()**: Mathematically adds 1 to the counter. If any threads are currently frozen waiting, the OS instantly wakes exactly one of them up.
 
-A Semaphore is fundamentally just an Integer counter combined with a queue. 
-When you create a semaphore, you initialize it with a maximum capacity (e.g., `3`). 
+## 2. Mutex vs Semaphore
 
-There are only two operations you can perform on a semaphore (historically named by Dijkstra using Dutch words):
-1. **Wait() / P()**: Decrements the counter by 1. If the counter hits `0`, the thread is put to sleep and added to the waiting queue.
-2. **Signal() / V()**: Increments the counter by 1. If there are threads asleep in the queue, it wakes one of them up.
+<ComparisonTable 
+  headers={['Property', 'Mutex', 'Semaphore']} 
+  rows={[
+    ['Capacity', 'Strictly binary (0 or 1). Protects a single resource.', 'Can be initialized to any number N. Protects a pool of resources.'],
+    ['Ownership', 'Strict Ownership. The thread that locked the Mutex is the ONLY thread allowed to unlock it.', 'No Ownership. Thread A can call `wait()`, and Thread B can completely independently call `signal()` to wake it up.'],
+    ['Primary Use Case', 'Preventing Race Conditions on shared variables.', 'Signaling between threads (Producer-Consumer problems).']
+  ]} 
+/>
 
-<Callout icon="info" title="The Database Connection Pool">
-  If your web server is only allowed to have 3 simultaneous connections to the SQL database, you create a Semaphore initialized to `3`. 
-  As web requests (threads) arrive, they call `Wait()`. The first 3 threads enter instantly. The 4th thread calls `Wait()`, sees the counter is at `0`, and goes to sleep. When one of the first threads finishes, it calls `Signal()`, waking up the 4th thread.
+## 3. The Producer-Consumer Problem
+Semaphores are the mathematical backbone of Producer-Consumer architectures (like Thread Pools or Job Queues).
+- You initialize a Semaphore to 0.
+- 10 Worker Threads call `wait()`. Because it is 0, they all freeze.
+- A Master Thread receives a web request. It puts the job in a queue and calls `signal()`. 
+- The Semaphore hits 1. The OS instantly wakes up exactly one Worker Thread, who takes the job.
+
+<Callout icon="info" title="Binary Semaphores">
+If you initialize a Semaphore to exactly 1, it acts very similarly to a Mutex. However, because it lacks strict Ownership, it is still architecturally different. You should never use a Semaphore to protect a simple shared variable; always use a Mutex.
 </Callout>
-
-## Binary Semaphores vs Mutexes
-
-A **Binary Semaphore** is a semaphore initialized to `1`. It behaves almost exactly like a Mutex (only allowing 1 thread in at a time). 
-
-However, there is one massive difference: **Semaphores do not have Ownership**.
-A Mutex must be unlocked by the exact same thread that locked it. A Semaphore is just a counter; Thread A can call `Wait()`, and a completely different Thread B can call `Signal()` to let the next thread in. This makes semaphores perfect for **Producer-Consumer** workflows, where Thread A produces data and Thread B consumes it.
 
 </ConceptTemplate>

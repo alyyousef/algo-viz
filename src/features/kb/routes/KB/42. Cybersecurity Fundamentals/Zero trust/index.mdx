@@ -1,52 +1,42 @@
 ---
 title: Zero Trust Architecture
-description: A security framework requiring all users to be authenticated, authorized, and continuously validated.
+description: 'A modern security framework that completely eliminates the concept of a "trusted internal network," requiring strict identity and device verification for every single request, regardless of origin.'
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Zero Trust Architecture">
+<ConceptTemplate title="Zero Trust Architecture">
 
-Zero Trust is a strategic cybersecurity model designed to protect modern digital environments by eliminating the concept of trust from an organization's network architecture. Its core motto is: **"Never trust, always verify."**
+For decades, corporate networks operated like an egg: a hard outer shell (the Firewall) and a soft, squishy interior (the Intranet). If an employee was connected to the corporate WiFi, they were "trusted" and could freely access internal servers without a password.
 
-<Callout icon="info" title="The Death of the Perimeter">
-  Historically, IT security was a "Castle and Moat" model. Once you bypassed the firewall (the moat) and entered the corporate network (the castle), you were trusted implicitly. 
-  
-  Zero Trust assumes the network is *already compromised* and that the moat is useless in a modern era of remote work, BYOD, and cloud apps.
-</Callout>
+**Zero Trust** destroys this model. Its core mantra is: *"Never Trust, Always Verify."*
 
-## Core Principles of Zero Trust
+## 1. The Fall of the Perimeter
+The old perimeter model failed for two reasons:
+1. **Remote Work**: Employees now work from Starbucks on personal laptops, connecting to cloud SaaS apps. There is no physical corporate perimeter anymore.
+2. **Lateral Movement**: If a hacker breaches the outer firewall (e.g., via a compromised VPN account), they find themselves in the "trusted" soft interior, allowing them to freely hop from server to server (lateral movement) completely undetected.
+
+## 2. The Pillars of Zero Trust
+Under Zero Trust, the network itself is treated as hostile (just like the public internet). Every single request—even if it comes from the CEO's laptop inside the corporate headquarters—must be cryptographically verified.
+
+1. **Explicit Authentication**: Every request must carry a valid, short-lived token (e.g., JWT, SAML) proving user identity via MFA.
+2. **Device Posture Check**: The system verifies not just the user, but the *device*. (e.g., "Is this laptop company-issued? Is the antivirus currently running? Is the OS patched?"). If the device is unpatched, access is denied.
+3. **Micro-segmentation**: The network is divided into thousands of tiny, isolated zones. A compromised web server in Zone A physically cannot route packets to the database in Zone B unless explicitly authorized by policy.
+
+## 3. Traditional VPN vs Zero Trust Network Access (ZTNA)
 
 <ComparisonTable 
-  headers={['Principle', 'Description']}
+  headers={['Feature', 'Legacy VPN', 'Zero Trust (ZTNA)']} 
   rows={[
-    ['Verify Explicitly', 'Always authenticate and authorize based on all available data points (User identity, location, device health, service workload).'],
-    ['Use Least Privilege Access', 'Limit user access with Just-In-Time (JIT) and Just-Enough-Access (JEA) policies. Give them exactly what they need, exactly when they need it, and nothing more.'],
-    ['Assume Breach', 'Minimize blast radius by segmenting networks. Use end-to-end encryption. Use analytics to detect anomalous behavior in real-time.']
-  ]}
+    ['Access Model', 'Connects the user to the entire corporate network.', 'Connects the user strictly to a specific application.'],
+    ['Trust', 'Implicit. Once authenticated to the VPN, you are trusted.', 'Continuous. Every single HTTP request is cryptographically re-evaluated.'],
+    ['Visibility', 'Network-level IP addresses.', 'Application-level identity and device context.']
+  ]} 
 />
 
-## Beyond the VPN
+<Callout icon="tip" title="BeyondCorp">
+Zero Trust was pioneered by Google in 2014 under the project name **BeyondCorp**, after Chinese state-sponsored hackers successfully breached Google's internal network (Operation Aurora). Today, Zero Trust is the mandate for all modern enterprise architectures.
+</Callout>
 
-In a traditional setup, remote employees use a VPN to connect to the corporate network, gaining broad access. In a Zero Trust environment, VPNs are often replaced with Zero Trust Network Access (ZTNA) solutions, which grant access on a per-application basis, not a per-network basis.
-
-<ArchitectureDiagram chart={`
-graph TD
-  User[Remote Employee]
-  Device[Laptop\n(Checked for Antivirus/Updates)]
-  
-  Policy{Zero Trust Policy Engine}
-  
-  AppA[HR Application]
-  AppB[Finance Application]
-  AppC[Source Code Repo]
-  
-  User --> Device
-  Device -- Requests Access to HR App --> Policy
-  
-  Policy -- Context: Identity Verified,\nDevice Healthy,\nLocation Normal --> AppA
-  
-  Policy -. Denies access to Finance\n(Not Authorized) .-> AppB
-  Policy -. Denies access to Repo\n(Not Authorized) .-> AppC
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

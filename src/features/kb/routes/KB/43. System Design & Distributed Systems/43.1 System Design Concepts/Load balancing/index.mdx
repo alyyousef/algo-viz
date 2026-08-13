@@ -1,33 +1,38 @@
 ---
 title: Load Balancing
-description: The process of distributing incoming network traffic across multiple servers to ensure high availability and reliability.
+description: The critical architectural component that distributes incoming network traffic across a cluster of backend servers to ensure high availability and reliability.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Load Balancing">
 
-**Load Balancing** is the critical networking technique of distributing incoming user traffic across a pool of backend servers (a "server farm"). It ensures that no single server bears too much demand, improving responsiveness and maximizing application availability.
+When a web application scales from thousands to millions of users, a single server is mathematically incapable of handling the traffic. The solution is to add more servers. However, the users need a single IP address to connect to. 
 
-<Callout icon="info" title="The Traffic Cop">
-  Think of a Load Balancer as a traffic cop standing in front of 5 toll booths. As cars (web requests) arrive, the cop directs each car to the toll booth with the shortest line. If a toll booth breaks down, the cop immediately stops sending cars to it.
+A **Load Balancer (LB)** sits between the client and the server cluster, acting as a traffic cop. It accepts all incoming requests and routes them to the backend servers based on a specific algorithm.
+
+## 1. Routing Algorithms
+Load balancers use various mathematical algorithms to decide which server gets the next request:
+
+- **Round Robin**: Distributes requests sequentially (Server 1, 2, 3, 1, 2, 3). Simple, but ignores server capacity.
+- **Least Connections**: Routes the request to the server with the fewest active connections. Excellent for long-lived connections (like WebSockets).
+- **IP Hash**: Mathematically hashes the client's IP address to consistently route them to the *same* server every time (useful for stateful sessions).
+
+## 2. Layer 4 vs Layer 7 Load Balancing
+
+<ComparisonTable 
+  headers={['Metric', 'Layer 4 (Transport Level)', 'Layer 7 (Application Level)']} 
+  rows={[
+    ['Routing Decisions Based On', 'IP Address and TCP/UDP Port (Blind to the payload).', 'HTTP Headers, Cookies, URL Paths.'],
+    ['Speed', 'Blazingly fast (minimal CPU inspection).', 'Slower (Requires decrypting TLS and parsing HTTP).'],
+    ['Intelligence', 'Dumb routing.', 'Smart routing (e.g., Route `/api/images` to Server A, `/api/video` to Server B).'],
+    ['Popular Tools', 'HAProxy, AWS Network Load Balancer (NLB).', 'NGINX, AWS Application Load Balancer (ALB).']
+  ]} 
+/>
+
+<Callout icon="warning" title="Single Point of Failure (SPOF)">
+If you place a single Load Balancer in front of 100 robust servers, your architecture has a fatal flaw. If the Load Balancer crashes, your entire system goes offline. Load Balancers must always be deployed in **Active-Passive High Availability (HA) pairs**, using tools like Keepalived or AWS Route53 to seamlessly switch traffic if the primary LB dies.
 </Callout>
-
-## Load Balancing Algorithms
-
-How does the load balancer decide which server gets the next request?
-- **Round Robin**: Requests are distributed sequentially. Server A, then B, then C, then back to A.
-- **Least Connections**: Sends the request to the server with the fewest active, open connections. Best for long-lived connections (like WebSockets).
-- **IP Hash**: The client's IP address is mathematically hashed to consistently map them to a specific server. Useful if you need "sticky sessions" (ensuring the user always hits the server holding their session data).
-
-## Layer 4 vs. Layer 7 Load Balancing
-
-Load balancers operate at different layers of the OSI model:
-
-- **Layer 4 (Transport Layer)**: Routes traffic based purely on network data (IP addresses and TCP ports). It is blazingly fast because it does not inspect the contents of the HTTP request. It simply forwards the raw packets. (e.g., AWS Network Load Balancer).
-- **Layer 7 (Application Layer)**: Inspects the actual contents of the HTTP/HTTPS request. It can route traffic based on the URL path, HTTP headers, or cookies. For example, it can send all requests for `/api/video` to a cluster of powerful video-encoding servers, and `/api/text` to cheaper servers. (e.g., NGINX, AWS Application Load Balancer).
-
-## Health Checks
-
-A load balancer continuously pings its backend servers (usually by hitting a `/health` endpoint). If a server fails to respond within a timeout, the load balancer removes it from the pool, ensuring user traffic is never routed to a dead server.
 
 </ConceptTemplate>

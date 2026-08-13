@@ -1,27 +1,45 @@
 ---
 title: The Event Loop
-description: The secret to how JavaScript achieves asynchronous behavior on a single thread.
+description: The single-threaded execution model of JavaScript that manages asynchronous callbacks and promises without blocking the main thread.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="The Event Loop">
+<ConceptTemplate title="The Event Loop">
 
-JavaScript is strictly a single-threaded language. It can only execute one line of code at a time. However, it can perform asynchronous operations (like waiting 5 seconds for a network request) without freezing the entire browser. This magic is handled by the Event Loop.
+JavaScript is fundamentally **Single-Threaded**. It has exactly one Call Stack and one Memory Heap. 
+If a function takes 5 seconds to execute (e.g., a massive `while` loop), the entire browser tab freezes for 5 seconds. Users cannot click buttons, and CSS animations stop. 
 
-<Callout icon="info" title="The Golden Rule">
-  **Never block the main thread.** If you run a `while(true)` loop in JavaScript, the Event Loop gets stuck. The browser cannot render pixels, handle clicks, or process network responses until that loop finishes.
-</Callout>
+So how does JavaScript make network requests that take 2 seconds without freezing the browser? The answer is the **Event Loop** and **Web APIs**.
 
-## How it Works
+## 1. The Architecture
+When you execute `setTimeout(cb, 2000)`, the V8 JavaScript engine does *not* pause for 2 seconds. 
+1. V8 hands the timer off to the **Browser Web API** (a separate thread written in C++).
+2. V8 pops `setTimeout` off the Call Stack and continues running your other code immediately.
+3. After 2 seconds, the Web API pushes the `cb` (callback) into the **Callback Queue** (or Task Queue).
+
+## 2. The Loop Mechanism
+The **Event Loop** is a continuously running process with one extremely simple job:
+1. Check the Call Stack. Is it empty?
+2. If empty, check the Queues. Are there any callbacks waiting?
+3. If yes, take the first callback and push it onto the Call Stack for execution.
+
+If the Call Stack is NOT empty, the Event Loop does absolutely nothing. This is why a massive `while(true)` loop permanently blocks callbacks from ever executing.
+
+## 3. Macrotasks vs Microtasks
+There is actually a strict priority system within the queues.
 
 <ComparisonTable 
-  headers={['Component', 'Role']}
+  headers={['Queue Type', 'Examples', 'Priority']} 
   rows={[
-    ['Call Stack', 'Where your synchronous JS code actually runs. Functions are pushed on and popped off.'],
-    ['Web APIs', 'Provided by the Browser (or Node C++). `setTimeout` and `fetch` happen here, totally separate from the JS thread.'],
-    ['Callback Queue (Task Queue)', 'When a Web API finishes (e.g., the 5 seconds are up), it pushes the callback function into this queue.'],
-    ['The Event Loop', 'A continuous loop that looks at the Call Stack. If the Call Stack is EMPTY, it takes the first item from the Callback Queue and pushes it onto the Call Stack to execute.']
-  ]}
+    ['Microtask Queue', 'Promises (`.then()`), `MutationObserver`, `queueMicrotask()`', 'Absolute Highest. The Event Loop will drain every single Microtask before moving on.'],
+    ['Macrotask Queue (Task Queue)', '`setTimeout`, `setInterval`, DOM Events (Clicks), Network Callbacks', 'Lowest. The Event Loop only processes ONE Macrotask, and then immediately checks the Microtask queue again.']
+  ]} 
 />
 
-</TechnologyTemplate>
+<Callout icon="warning" title="Microtask Starvation">
+If you write a Promise that continuously resolves and chains another Promise infinitely, you will flood the Microtask Queue. Because the Event Loop refuses to process Macrotasks (like UI rendering or clicks) until the Microtask Queue is completely empty, you will instantly freeze the browser tab, even though the code is fully asynchronous.
+</Callout>
+
+</ConceptTemplate>

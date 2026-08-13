@@ -1,8 +1,35 @@
+---
+title: V8 Engine
+description: Google's ultra-high-performance open-source JavaScript and WebAssembly engine, written in C++, powering Chrome and Node.js.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="V8">
+<ConceptTemplate title="V8 Engine">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, JavaScript was a slow, interpreted scripting language meant to make buttons bounce. In 2008, Google released **V8**, fundamentally changing computer science by compiling JavaScript down to raw machine code at runtime, birthing modern Web Apps and Node.js.
+
+## 1. The Just-In-Time (JIT) Pipeline
+V8 does not interpret JavaScript line-by-line. It uses a complex dual-compiler architecture known as JIT.
+
+1. **Ignition (The Interpreter)**: V8 parses your JS into an Abstract Syntax Tree (AST) and generates **Bytecode**. Ignition executes this bytecode quickly.
+2. **The Profiler**: While Ignition is running, a background thread watches the code. If it notices a specific function is being called thousands of times (a "Hot" function), it flags it.
+3. **TurboFan (The Optimizing Compiler)**: TurboFan takes the hot Bytecode, applies extreme mathematical optimizations based on the Profiler's assumptions, and compiles it directly into highly optimized **Machine Code**.
+
+## 2. Hidden Classes & Inline Caching
+JavaScript is dynamically typed (`let x = 5; x = "hello"`). This is a nightmare for CPU performance because the memory layout constantly shifts.
+V8 solves this using **Hidden Classes (Shapes)**. 
+When you create an object `{ name: "John", age: 30 }`, V8 secretly creates a C++ struct mapping the memory offsets. If you create 1,000 identical objects, V8 reuses the exact same Hidden Class. 
+
+**Inline Caching**: If TurboFan sees a function `getAge(user)` called 50 times with the same Hidden Class, it mathematically hardcodes the memory offset into the machine code, skipping the property lookup entirely.
+
+## 3. Deoptimization (Bailing Out)
+What happens if you break TurboFan's assumptions? 
+If TurboFan assumed `getAge(user)` always receives an object with `age` as an integer, and you suddenly pass it an object where `age` is a string, TurboFan panics. The highly optimized machine code crashes.
+V8 throws away the machine code (Deoptimization), falls back to the slow Ignition bytecode, and your application's performance plummets.
+
+<Callout icon="warning" title="Performance Rule">
+To keep V8 running at blazing speeds, **write predictable JavaScript**. Always initialize object properties in the same order. Do not dynamically add or delete properties (`delete obj.prop` destroys the Hidden Class). Monomorphic functions (functions that always receive the exact same data shapes) run infinitely faster than polymorphic functions.
+</Callout>
 
 </ConceptTemplate>

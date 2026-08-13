@@ -1,8 +1,40 @@
+---
+title: A* Search Algorithm
+description: The pinnacle of pathfinding algorithms, utilizing mathematical heuristics to drastically optimize Dijkstra's search space.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="A*">
+<ConceptTemplate title="A* Search Algorithm">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Dijkstra's Algorithm mathematically guarantees the shortest path, it is "blind". It searches equally in all directions, wasting massive CPU cycles exploring the completely wrong side of a map. 
+
+The **A* (A-Star)** algorithm mathematically optimizes Dijkstra by giving it a "brain" (a Heuristic). It directs the search aggressively toward the target.
+
+## 1. The Mathematical Formula
+Like Dijkstra, A* uses a Priority Queue. However, instead of ordering the queue purely by the known distance from the start, A* orders the queue using a composite mathematical function:
+
+`f(n) = g(n) + h(n)`
+
+- **`g(n)`**: The exact, known mathematical cost from the Start node to Node N (This is literally just Dijkstra).
+- **`h(n)`**: The **Heuristic**. An estimated, calculated guess of the cost from Node N to the Target.
+
+## 2. The Heuristic (h)
+In a 2D video game grid, the Heuristic `h(n)` is usually calculated using Euclidean Distance (a straight line) or Manhattan Distance. 
+Because A* knows exactly where the target physically is, it mathematically prioritizes exploring nodes that physically move it closer to the target, ignoring nodes that move away.
+
+<ComparisonTable 
+  headers={['Algorithm', 'Mathematical Behavior', 'Speed']} 
+  rows={[
+    ['Dijkstra (h=0)', 'Expands purely outward in a perfect circle (or sphere). Guarantees shortest path.', 'Very Slow (Explores massive unnecessary areas).'],
+    ['Greedy Best-First (g=0)', 'Ignores the start distance, blindly rushes the target using only the Heuristic.', 'Blazingly Fast, but often gets trapped by walls and returns terrible, sub-optimal paths.'],
+    ['A* (g + h)', 'Mathematically balances both. Guarantees the absolute shortest path while minimizing wasted exploration.', 'Fast and Perfect.']
+  ]} 
+/>
+
+<Callout icon="tip" title="Admissibility">
+For A* to mathematically guarantee finding the absolute shortest path, the Heuristic MUST be **Admissible**. This means the heuristic must never overestimate the true cost. If the straight-line distance to the target is 10 miles, but your heuristic mathematically guesses it is 50 miles, A* will break and return a sub-optimal path.
+</Callout>
 
 </ConceptTemplate>

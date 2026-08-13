@@ -1,43 +1,41 @@
 ---
 title: RSA (Rivest-Shamir-Adleman)
-description: One of the first and most widely used public-key cryptosystems for secure data transmission.
+description: The pioneering asymmetric encryption algorithm based on the mathematical impossibility of factoring massive prime numbers.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="RSA (Rivest-Shamir-Adleman)">
+<ConceptTemplate title="RSA">
 
-RSA is an asymmetric cryptographic algorithm invented in 1977 by Ron Rivest, Adi Shamir, and Leonard Adleman. It was the first practical implementation of public-key cryptography and remains a cornerstone of internet security (like TLS and SSH) today.
+Invented in 1977, **RSA** is the original and most famous Asymmetric (Public-Key) algorithm. It relies entirely on a specific mathematical asymmetry in number theory: **Prime Factorization**.
 
-<Callout icon="info" title="The Math of Primes">
-  The entire security of RSA relies on the practical difficulty of factoring the product of two extremely large prime numbers. This is known as the "factoring problem."
+## 1. The Mathematical Foundation
+It is computationally trivial for a computer to multiply two massive prime numbers together (`p * q = n`). 
+However, if you are given only the massive 600-digit number `n`, there is no known efficient mathematical algorithm in existence to reverse-engineer which two primes were multiplied to create it. 
+
+### Key Generation Process
+1. Mathematically generate two massive, random prime numbers, `p` and `q`.
+2. Calculate the modulus `n = p * q`. (This `n` forms the mathematical lock).
+3. Calculate Carmichael's totient function `λ(n)`.
+4. Choose an integer `e` (often 65537) that is coprime to `λ(n)`. 
+5. The **Public Key** is mathematically defined as `(n, e)`.
+6. Calculate the modular multiplicative inverse of `e` modulo `λ(n)` to find `d`. 
+7. The **Private Key** is mathematically defined as `(n, d)`.
+
+## 2. Encryption and Decryption
+Once the keys are mathematically established, encryption is simply modular exponentiation.
+
+- **Encrypting (using Public Key)**: `Ciphertext = (Message^e) mod n`
+- **Decrypting (using Private Key)**: `Message = (Ciphertext^d) mod n`
+
+## 3. The Downfall of RSA
+While mathematically beautiful, RSA is dying in modern systems for two reasons:
+
+1. **Massive Key Sizes**: To maintain mathematical security against modern GPUs, an RSA key must be at least **2048 bits** (preferably 4096 bits). These massive keys consume huge amounts of bandwidth during TLS handshakes.
+2. **Shor's Algorithm**: In 1994, Peter Shor published a quantum algorithm that mathematically solves prime factorization in polynomial time. Once a sufficiently large Quantum Computer is built, RSA is instantly and mathematically broken forever.
+
+<Callout icon="tip" title="The Modern Replacement">
+Modern systems have overwhelmingly replaced RSA with **Elliptic Curve Cryptography (ECC)**. ECC relies on the mathematical impossibility of traversing points on a 2D elliptic curve. A 256-bit ECC key is mathematically as secure as a massive 3072-bit RSA key, making it exponentially faster for servers and mobile devices.
 </Callout>
 
-## How RSA Works
-
-RSA involves four steps: key generation, key distribution, encryption, and decryption.
-
-### 1. Key Generation
-1. Choose two distinct, massive prime numbers ($p$ and $q$). In modern RSA, these are often 1024 bits long each.
-2. Multiply them together to find $n = p \times q$. ($n$ is usually 2048 or 4096 bits long).
-3. The value $n$ is published openly as part of the **Public Key**. 
-4. Through complex modular arithmetic (involving Euler's totient function), a Public Exponent ($e$) and a Private Exponent ($d$) are calculated.
-5. **The Public Key is ($n$, $e$). The Private Key is ($d$).** The primes $p$ and $q$ are permanently destroyed.
-
-### 2. Encryption and Decryption
-If Bob wants to send a message ($M$) to Alice:
-- **Encryption**: Bob turns his text into a number ($M$), and calculates the ciphertext ($C$) using Alice's public key: $C = M^e \pmod{n}$
-- **Decryption**: Alice receives $C$ and applies her private key: $M = C^d \pmod{n}$
-
-*Because $d$ is mathematically derived from the destroyed primes $p$ and $q$, a hacker cannot calculate $d$ just by looking at the public $n$ unless they can factor $n$ back into $p$ and $q$.*
-
-## Key Sizes and Performance
-
-Factoring algorithms are getting faster, and computers are getting stronger. To maintain security, RSA keys have grown significantly over the decades.
-- **512-bit**: Broken in 1999.
-- **1024-bit**: Considered unsafe today by NIST.
-- **2048-bit**: The current absolute minimum standard for the web.
-- **4096-bit**: Highly secure, but computationally expensive.
-
-As the key size doubles, decryption takes roughly 8 times longer. This performance bottleneck is why much of the modern web is migrating away from RSA toward Elliptic Curve Cryptography (ECC), which offers the same security with much smaller keys and faster math.
-
-</TechnologyTemplate>
+</ConceptTemplate>

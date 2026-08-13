@@ -1,8 +1,41 @@
+---
+title: NP-Hard
+description: Exploring computational problems that are at least as hard as the hardest problems in NP, and potentially impossible to verify.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="NP-hard">
+<ConceptTemplate title="NP-Hard">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While **NP-Complete** represents the hardest problems *within* NP, the class **NP-Hard** represents the bleeding edge of computational intractability. 
+
+## 1. The Mathematical Definition
+A problem is **NP-Hard** if every problem in NP can be reduced (transformed) into it in polynomial time.
+Crucially, **an NP-Hard problem does NOT have to be in NP**. 
+
+This means that for an NP-Hard problem:
+1. It is at least as computationally difficult as the hardest problems in NP.
+2. If someone hands you a proposed solution, it might be mathematically impossible to even **verify** if it is correct in polynomial time.
+
+<ComparisonTable 
+  headers={['Complexity Class', 'Solvable in Polynomial Time?', 'Verifiable in Polynomial Time?']} 
+  rows={[
+    ['P', 'Yes', 'Yes'],
+    ['NP', 'Maybe (If P=NP)', 'Yes'],
+    ['NP-Complete', 'Maybe (If P=NP)', 'Yes'],
+    ['NP-Hard', 'Maybe (If P=NP)', 'Not Guaranteed (Could be impossible)']
+  ]} 
+/>
+
+## 2. Examples of NP-Hard Problems
+NP-Hard problems are often optimization problems, whereas NP-Complete problems are strictly "Yes/No" decision problems.
+
+### The Traveling Salesman Problem (Optimization Version)
+- **NP-Complete Version (Decision)**: "Is there a route strictly shorter than 500 miles? (Yes/No)" If I give you a route, you can easily verify it.
+- **NP-Hard Version (Optimization)**: "What is the absolute shortest possible route?" If I hand you a route and claim it is the absolute shortest, there is no fast mathematical way to verify my claim without effectively checking all other possible routes.
+
+### The Halting Problem
+Alan Turing mathematically proved that it is impossible to write a general computer program that can inspect another program and definitively state whether it will eventually halt (finish running) or loop infinitely.
+The Halting Problem is **NP-Hard** (it is universally hard), but it is not NP-Complete because it is mathematically uncomputable, so it cannot possibly be verified in polynomial time (thus not in NP).
 
 </ConceptTemplate>

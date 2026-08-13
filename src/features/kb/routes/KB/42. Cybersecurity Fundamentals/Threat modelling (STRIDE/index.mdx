@@ -1,8 +1,40 @@
+---
+title: Threat Modelling (STRIDE)
+description: "A structured, proactive engineering process used to identify, quantify, and address potential security threats during the software design phase, before any code is written."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Threat modelling (STRIDE">
+<ConceptTemplate title="Threat Modelling (STRIDE)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Security cannot be bolted onto an application right before launch; it must be designed into the architecture. **Threat Modelling** is the exercise of mapping out a system's architecture on a whiteboard, adopting an attacker's mindset, and asking: *"How can I break this?"*
+
+The most famous methodology for this is Microsoft's **STRIDE** model.
+
+## 1. The STRIDE Methodology
+STRIDE is an acronym representing six categories of threats. During a threat modelling session, engineers look at every data flow and component and check them against these six categories:
+
+<ComparisonTable 
+  headers={['Threat', 'Definition', 'Violated Property', 'Mitigation Strategy']} 
+  rows={[
+    ['Spoofing', 'Pretending to be someone or something else.', 'Authentication', 'Strong Identity (MFA, TLS Certificates, OIDC).'],
+    ['Tampering', 'Maliciously modifying data on disk or in transit.', 'Integrity', 'Digital Signatures, Checksums, HTTPS, WORM Storage.'],
+    ['Repudiation', 'A user performing a malicious action and successfully denying it.', 'Non-repudiation', 'Immutable Audit Logs (append-only), Digital Signatures.'],
+    ['Information Disclosure', 'Exposing sensitive data to unauthorized individuals.', 'Confidentiality', 'Encryption (AES-256), Masking, Stripping PII from logs.'],
+    ['Denial of Service', 'Flooding a system to make it unavailable to legitimate users.', 'Availability', 'Load Balancers, Rate Limiting, Cloudflare/WAF.'],
+    ['Elevation of Privilege', 'A low-level user exploiting a flaw to gain Admin rights.', 'Authorization', 'Principle of Least Privilege, RBAC, strict Input Validation.']
+  ]} 
+/>
+
+## 2. The Threat Modelling Process
+1. **Decompose the Application**: Draw a Data Flow Diagram (DFD) showing the frontend, APIs, databases, and external third-party services.
+2. **Identify Threats**: Apply the STRIDE categories to every single arrow (data flow) and box (process) on the diagram. (e.g., *"Can an attacker tamper with the data flowing between the API and the Database?"*)
+3. **Determine Mitigations**: For every identified threat, engineer a technical mitigation (e.g., *"We will use TLS 1.3 to prevent tampering in transit."*)
+4. **Validate**: Review the architecture to ensure the mitigations were actually implemented correctly in code.
+
+<Callout icon="tip" title="Shift-Left Security">
+Threat modelling is the ultimate realization of **"Shift-Left Security"**—moving security checks as early in the Software Development Life Cycle (SDLC) as possible. Fixing a fatal architectural flaw during the whiteboard phase costs $100. Fixing it after a massive data breach in production costs $100 million.
+</Callout>
 
 </ConceptTemplate>

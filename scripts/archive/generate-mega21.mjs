@@ -1,560 +1,332 @@
 import fs from 'fs/promises'
 import path from 'path'
 
+const TICK3 = '```'
+const TICK1 = '`'
+
 const contentMap = {
-  'src/features/kb/routes/KB/9. Computer Architecture/Pipelining/index.mdx': `---
-title: Instruction Pipelining
-description: The foundational hardware technique that allows modern CPUs to overlap the execution of multiple instructions, massively increasing throughput.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/OAuth 2.0/index.mdx': `---
+title: OAuth 2.0
+description: The industry-standard protocol for authorization, allowing users to grant third-party applications secure, delegated access to their resources without sharing passwords.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Instruction Pipelining">
+<ConceptTemplate title="OAuth 2.0">
 
-The foundational logic of a CPU is the **Fetch-Decode-Execute** cycle. In early processors (like the original Intel 8086), the CPU would fetch Instruction 1, decode it, and execute it. Only after Instruction 1 was completely finished would the CPU fetch Instruction 2. 
+Before **OAuth 2.0**, if you wanted a new app to read your Gmail contacts, you had to type your actual Google password into the app. This was a catastrophic security risk because the new app now had god-level access to your entire Google account.
 
-Because executing an instruction requires multiple distinct physical hardware components (the memory bus, the decoder, the ALU), running sequentially means that while the ALU is doing math, the memory bus is sitting completely idle.
+OAuth 2.0 solved this by introducing **Delegated Authorization** via Access Tokens.
 
-**Pipelining** is the brilliant engineering solution to this inefficiency, operating on the exact same logic as a Henry Ford assembly line.
+## 1. The Core Roles
+The OAuth specification defines four distinct entities:
+1. **Resource Owner (You)**: The human user who owns the data.
+2. **Client (The App)**: The third-party application requesting access to your data (e.g., a CRM app).
+3. **Authorization Server**: The secure identity provider that issues tokens (e.g., Google's login server).
+4. **Resource Server**: The API holding the actual data (e.g., Google Contacts API).
 
-<Callout icon="info" title="The Laundry Analogy">
-  Imagine doing 4 loads of laundry. A load requires 1 hour in the Washer, 1 hour in the Dryer, and 1 hour to Fold. 
-  - **Non-Pipelined**: You put Load 1 in the washer. Wait an hour. Move it to the dryer. Wait an hour. Fold it. Wait an hour. Then you start Load 2. Total time for 4 loads = **12 hours**.
-  - **Pipelined**: You put Load 1 in the washer. When it finishes, you move it to the dryer, and *immediately put Load 2 in the empty washer*. Both machines are now working simultaneously. Total time for 4 loads = **6 hours**.
+## 2. The Authorization Code Flow
+This is the most secure and common flow for web applications.
+
+1. **The Redirect**: The Client redirects you to Google's Authorization Server (TICK1https://accounts.google.com/authTICK1).
+2. **The Consent**: You log into Google and see a prompt: *"App X wants to read your contacts."* You click "Allow".
+3. **The Code**: Google redirects you back to the Client with a temporary **Authorization Code** in the URL.
+4. **The Token Exchange**: The Client takes that Code, attaches its own secret API key, and makes a hidden backend HTTP request to Google to exchange the Code for an **Access Token**.
+5. **The API Call**: The Client uses the Access Token to securely fetch your contacts from the Resource Server.
+
+## 3. OAuth is NOT Authentication
+<Callout icon="warning" title="The Biggest Misconception">
+OAuth 2.0 is strictly an **Authorization** protocol (granting access). It is explicitly *not* an Authentication protocol (proving who you are). It provides no standard way for the Client to get your email address or verify your identity. If you want Authentication, you must use **OpenID Connect (OIDC)**, which is built on top of OAuth 2.0.
 </Callout>
-
-## The Classic 5-Stage RISC Pipeline
-
-In a classic RISC architecture, an instruction is broken down into 5 stages, each taking exactly 1 clock cycle:
-
-1. **IF (Instruction Fetch)**: Fetch the binary instruction from the L1 Cache.
-2. **ID (Instruction Decode)**: Decode the binary and read the necessary CPU Registers.
-3. **EX (Execute)**: The ALU performs the actual math or logical operation.
-4. **MEM (Memory Access)**: If the instruction needs to read/write to RAM, it happens here.
-5. **WB (Write Back)**: The final result is written back into the CPU Registers.
-
-If the pipeline is perfectly full, the CPU is retiring **one complete instruction every single clock cycle**, even though each individual instruction takes 5 cycles from start to finish.
-
-## Deep Pipelining (The Pentium 4 Era)
-
-In the early 2000s, Intel realized that if you slice the pipeline into *more* stages, each stage has less work to do, meaning you can crank the clock speed incredibly high. The infamous Intel Pentium 4 had a **31-stage pipeline**, allowing it to hit an unprecedented 3.8 GHz. 
-
-However, deep pipelines suffer catastrophically when things go wrong (specifically due to Branch Prediction failures). If the CPU guesses a branch wrong, it has to flush 31 half-completed instructions and start over, losing massive amounts of performance. Modern CPUs have settled on a sweet spot of around **14 to 20 stages**.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Hazards (data/index.mdx': `---
-title: Data Hazards
-description: Conflicts in a pipelined CPU that occur when an instruction depends on the result of a previous instruction that hasn't finished executing yet.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/OpenID Connect/index.mdx': `---
+title: OpenID Connect (OIDC)
+description: A standardized authentication layer built on top of the OAuth 2.0 protocol, providing identity verification and user profiles via ID Tokens.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Data Hazards">
+<ConceptTemplate title="OpenID Connect (OIDC)">
 
-While Pipelining allows a CPU to overlap multiple instructions simultaneously, it introduces severe synchronization problems known as **Hazards**. 
+Because OAuth 2.0 only provided *Access Tokens* (keys to a door), developers started hacking the protocol to perform Authentication (figuring out who holds the key). This led to fractured, insecure implementations.
 
-A **Data Hazard** occurs when an instruction relies on a piece of data (usually sitting in a Register) that is currently being modified by a previous instruction still moving through the pipeline.
+In 2014, **OpenID Connect (OIDC)** was released. It sits directly on top of OAuth 2.0 and introduces a standardized way to prove identity: the **ID Token**.
 
-<Callout icon="warning" title="The Race Condition">
-  Imagine these two assembly instructions:
-  1. \`ADD RAX, RBX\` (Add RBX to RAX, and save the result in RAX)
-  2. \`SUB RCX, RAX\` (Subtract RAX from RCX)
+## 1. The ID Token (JWT)
+When you use "Sign in with Google", you are using OIDC. 
+Alongside the standard OAuth Access Token, the server also returns an **ID Token**.
 
-  In a 5-stage pipeline, Instruction 2 enters the "Decode/Read Registers" stage *before* Instruction 1 has reached the "Write Back" stage. Instruction 2 will read the **old, stale value** of RAX, resulting in a completely corrupted math calculation.
+The ID Token is always a cryptographically signed **JSON Web Token (JWT)**. When the Client decodes it, it finds standardized profile information (claims) about the user:
+- TICK1subTICK1: The unique user ID.
+- TICK1emailTICK1: The user's email address.
+- TICK1nameTICK1: The user's full name.
+- TICK1expTICK1: When the token expires.
+
+## 2. OIDC vs OAuth 2.0
+
+<ComparisonTable 
+  headers={['Protocol', 'Purpose', 'Token Type', 'Analogy']} 
+  rows={[
+    ['OAuth 2.0', 'Authorization (What can you do?)', 'Access Token (Opaque String)', 'A hotel keycard. It opens room 402, but the door doesn\\'t know your name.'],
+    ['OpenID Connect', 'Authentication (Who are you?)', 'ID Token (JWT)', 'A driver\\'s license. It proves your identity, age, and name.']
+  ]} 
+/>
+
+## 3. The UserInfo Endpoint
+Sometimes the ID Token doesn't contain enough information (to keep the JWT payload small). OIDC standardizes the TICK1/userinfoTICK1 API endpoint. The Client can take the standard OAuth Access Token it received, make a request to TICK1/userinfoTICK1, and retrieve extended profile details (like the user's profile picture or phone number).
+
+<Callout icon="tip" title="Implementation">
+If you are building an application and want users to "Log In with Apple/Google/Microsoft", you must look for an identity provider that explicitly supports the **OIDC standard**. Never attempt to build custom authentication directly on top of raw OAuth 2.0.
 </Callout>
-
-## Types of Data Hazards
-
-There are three classic dependencies that cause data hazards (often referred to by the acronyms read/write):
-
-1. **RAW (Read After Write)**: (True Dependency). Instruction 2 needs to read a register that Instruction 1 hasn't written to yet. (Most common).
-2. **WAR (Write After Read)**: (Anti-Dependency). Instruction 2 needs to write to a register, but Instruction 1 hasn't read the old value yet.
-3. **WAW (Write After Write)**: (Output Dependency). Both instructions are writing to the same register, but Instruction 2 finishes first, leaving the older value in the register permanently.
-
-## Solutions to Data Hazards
-
-Hardware engineers use three primary techniques to fix data hazards without crashing the program:
-
-### 1. Pipeline Stalling (Bubbles)
-The simplest solution. The Control Unit detects the dependency and simply pauses Instruction 2 (injecting empty "bubbles" or NOPs into the pipeline) until Instruction 1 finishes writing. This guarantees correctness but wastes clock cycles, hurting performance.
-
-### 2. Forwarding (Bypassing)
-The brilliant hardware solution. The CPU realizes that Instruction 1 calculates the correct answer in the ALU during Stage 3 (Execute), even though it won't officially save the answer to the Register until Stage 5 (Write Back). 
-Forwarding physically wires the output of the ALU *directly back into the input of the ALU*. Instruction 2 can instantly use the answer from Instruction 1 without waiting for it to be saved to the register!
-
-### 3. Out-of-Order Execution
-If Instruction 2 is stuck waiting for Instruction 1, the CPU looks ahead at Instruction 3. If Instruction 3 doesn't depend on anything, the CPU will execute Instruction 3 *before* Instruction 2, keeping the pipeline perfectly full.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/control/index.mdx': `---
-title: Control Hazards
-description: Disruptions in a pipelined CPU caused by branching instructions (if/else statements) that change the flow of execution.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/JWT/index.mdx': `---
+title: JSON Web Tokens (JWT)
+description: A compact, URL-safe, cryptographically signed token standard used heavily in modern web authentication to securely transmit information as a JSON object.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Control Hazards">
+<ConceptTemplate title="JSON Web Tokens (JWT)">
 
-While Data Hazards deal with data conflicts, **Control Hazards** (or Branch Hazards) are caused by the flow of the program itself. They occur specifically when the CPU encounters a conditional jump (like an \`if/else\` statement or a \`while\` loop).
+A **JSON Web Token (JWT)** is the backbone of modern stateless authentication. It allows a server to verify a user's identity without ever having to look up a session ID in a database.
 
-<Callout icon="warning" title="The Pipeline's Blind Spot">
-  In a pipelined processor, the CPU is always fetching the *next* instruction before it has finished executing the *current* instruction. 
-  But what if the current instruction is an \`if (x == 0)\`? 
-  The CPU won't know if the answer is True or False until the ALU does the math in Stage 3. What is the CPU supposed to fetch for Stage 1 and Stage 2 in the meantime?
+## 1. The Three-Part Structure
+A JWT looks like a long string of gibberish: TICK1xxxx.yyyy.zzzzTICK1. It is composed of three Base64Url-encoded parts separated by periods:
+
+1. **Header (xxxx)**: Contains metadata, such as the algorithm used to sign the token (e.g., TICK1{"alg": "HS256", "typ": "JWT"}TICK1).
+2. **Payload (yyyy)**: The actual JSON data (Claims). This contains the user ID (TICK1subTICK1), role (TICK1adminTICK1), and expiration time (TICK1expTICK1).
+3. **Signature (zzzz)**: The cryptographic hash of the Header + Payload + a Secret Key known only to the backend server.
+
+## 2. Stateless Verification
+When a user logs in, the server generates a JWT and signs it using its Secret Key. It sends the JWT to the browser.
+On the next request, the browser sends the JWT back to the server.
+
+The server does **not** query the database. It simply takes the Header and Payload from the incoming JWT, recalculates the hash using its Secret Key, and compares it to the Signature on the token. 
+If they match, the token is perfectly authentic and mathematically proven to be untampered with.
+
+## 3. The Revocation Problem
+Because JWTs are stateless, they are completely autonomous. If a hacker steals a JWT, they can impersonate the user until the token's TICK1expTICK1 (expiration time) is reached. 
+You cannot simply "delete" the session from the database, because the server doesn't check the database!
+
+To fix this, architects use **Short-Lived Access Tokens (e.g., 15 minutes)** paired with **Long-Lived Refresh Tokens**. If an Access Token is stolen, it becomes useless in 15 minutes. The Refresh Token is stored securely (usually as an HttpOnly Cookie) and used to generate new Access Tokens.
+
+<Callout icon="warning" title="JWTs are NOT Encrypted">
+A standard JWT is only Base64 encoded, meaning anyone can trivially decode the Payload and read the JSON data. **Never put passwords, credit card numbers, or PII inside a JWT payload.** If you need absolute secrecy, you must use JWE (JSON Web Encryption), which encrypts the payload entirely.
 </Callout>
-
-## The Cost of Waiting
-
-If the CPU takes the safe route and simply waits (Stalling) until the branch condition is resolved by the ALU, it wastes 2 to 3 clock cycles every single time it encounters an \`if\` statement. Because roughly **20% of all code** consists of branch instructions, stalling would cripple the CPU's performance, effectively turning a modern pipelined processor back into a slow sequential processor.
-
-## The Solution: Branch Prediction
-
-Because stalling is unacceptable, modern CPUs simply **guess**. 
-
-When the CPU fetches a branch instruction, a specialized piece of hardware called the **Branch Predictor** immediately kicks in. It looks at the historical behavior of this specific \`if\` statement and makes an educated guess (e.g., "This loop condition has been true 99 times in a row, I bet it will be true again").
-
-The CPU immediately begins fetching and executing the instructions from the guessed path. This is called **Speculative Execution**.
-
-### The Branch Penalty (Flush)
-
-If the guess was correct (which happens >95% of the time on modern architectures), the CPU loses zero clock cycles. The pipeline remains perfectly full.
-
-If the guess was wrong, a disaster occurs. The CPU has spent the last 3 clock cycles executing the wrong code. It must immediately throw away (flush) all the half-completed speculative instructions, reverting the CPU state, and begin fetching from the correct path. This is known as the **Branch Penalty**. 
-
-In deep pipelines (like the 31-stage Pentium 4), a wrong guess meant flushing up to 30 instructions, which is why modern CPU architectures invest billions of transistors into making Branch Predictors as accurate as possible.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/structural)/index.mdx': `---
-title: Structural Hazards
-description: Bottlenecks in a pipelined CPU caused when two different instructions require the exact same physical hardware component at the exact same time.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/SSO/index.mdx': `---
+title: Single Sign-On (SSO)
+description: An authentication paradigm allowing a user to log in once with a single set of credentials to access multiple independent software applications.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Structural Hazards">
+<ConceptTemplate title="Single Sign-On (SSO)">
 
-The third and final type of pipeline hazard is the **Structural Hazard**. Unlike Data Hazards (waiting for a variable) or Control Hazards (waiting for an \`if\` condition), a Structural Hazard is purely a physical limitation of the silicon.
+In a corporate environment, a single employee might use Gmail, Salesforce, Slack, Jira, and Workday. Forcing them to memorize 5 different strong passwords results in password fatigue, sticky notes on monitors, and massive security vulnerabilities.
 
-A Structural Hazard occurs when two different instructions moving through the pipeline attempt to use the **exact same physical piece of hardware** during the exact same clock cycle.
+**Single Sign-On (SSO)** solves this. The user logs into a central Identity Provider (IdP) exactly once, and is automatically authenticated across all 5 applications.
 
-<Callout icon="info" title="The Single Cash Register">
-  Imagine a fast-food restaurant with a pipeline: Order -> Cook -> Pay. 
-  If the person taking orders is *also* the only person allowed to run the cash register, a Structural Hazard occurs. They cannot take a new order and ring up a paying customer at the exact same time. One person must wait.
+## 1. The Architecture
+SSO relies on a strict trust relationship between two parties:
+- **Identity Provider (IdP)**: The central authority that holds the passwords and verifies the user (e.g., Okta, Microsoft Entra ID, Ping Identity).
+- **Service Provider (SP)**: The application the user actually wants to use (e.g., Salesforce).
+
+When the user attempts to access Salesforce, Salesforce redirects them to Okta. The user logs into Okta. Okta then sends a cryptographically signed token back to Salesforce declaring: *"I mathematically guarantee this user is John Doe."* Salesforce trusts Okta and grants access.
+
+## 2. Common SSO Protocols
+
+<ComparisonTable 
+  headers={['Protocol', 'Format', 'Primary Use Case']} 
+  rows={[
+    ['SAML 2.0', 'XML', 'The legacy enterprise standard. Used heavily by massive B2B corporate applications and older internal networks.'],
+    ['OIDC (OpenID Connect)', 'JSON (JWT)', 'The modern standard. Much lighter and easier to implement for modern web and mobile applications.'],
+    ['Kerberos', 'Tickets', 'Strictly used for internal OS-level authentication within Windows Active Directory networks.']
+  ]} 
+/>
+
+## 3. Benefits and Risks
+- **Benefits**: Massively reduces IT support tickets for forgotten passwords. Allows IT to instantly revoke an ex-employee's access to all 50 corporate apps with a single click in the IdP.
+- **Risks**: The IdP becomes a **Single Point of Failure**. If Okta goes offline, your entire company is completely locked out of every single application. Furthermore, if a hacker breaches the IdP, they gain instant, unfettered access to the user's entire digital life (hence why MFA is mandatory for IdPs).
+
+<Callout icon="tip" title="Enterprise Readiness">
+If you are building a B2B SaaS application, implementing SAML/OIDC SSO is not an optional feature. Fortune 500 companies will flat-out refuse to purchase your software unless it integrates natively with their central Identity Provider.
 </Callout>
-
-## Classic Examples of Structural Hazards
-
-### 1. The Single Memory Bus
-In a classic Von Neumann architecture, the CPU only has one connection (bus) to the main memory. 
-- Instruction 1 is in Stage 4 (Memory Access), attempting to read a variable from RAM.
-- Instruction 4 is in Stage 1 (Instruction Fetch), attempting to fetch its own code from RAM.
-Because there is only one physical wire, they collide. 
-
-**The Fix:** Modern CPUs use a **Modified Harvard Architecture** for their L1 Cache, splitting it into a dedicated Instruction Cache (L1i) and a Data Cache (L1d). This physical duplication completely eliminates this specific structural hazard.
-
-### 2. The Single ALU
-If a CPU only has one Arithmetic Logic Unit, but the pipeline requires one instruction to do integer math while another instruction simultaneously needs the ALU to calculate a memory address offset, a collision occurs.
-
-**The Fix:** Modern **Superscalar** CPUs physically duplicate execution units. A modern Intel core doesn't have one ALU; it might have four ALUs, two dedicated Floating Point Units, and two Address Generation Units, ensuring multiple instructions always have the physical hardware available to execute simultaneously.
-
-## When Duplication Fails
-
-Duplicating hardware (adding more ALUs or memory ports) costs massive amounts of silicon area, increases heat, and consumes more power. Hardware engineers cannot duplicate everything infinitely. 
-
-When a structural hazard cannot be physically designed away, the CPU's only option is to **Stall** (inject a pipeline bubble). The newer instruction is frozen in place for one clock cycle while the older instruction finishes using the contested hardware.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Branch prediction/index.mdx': `---
-title: Branch Prediction
-description: The highly advanced, AI-like hardware mechanism CPUs use to guess the outcome of if/else statements before they are actually calculated.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/RBAC/index.mdx': `---
+title: Role-Based Access Control (RBAC)
+description: A security paradigm that restricts system access based on the predefined roles assigned to individual users within an organization.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Branch Prediction">
+<ConceptTemplate title="Role-Based Access Control (RBAC)">
 
-Because pipelines are severely damaged by stalling at conditional branches (Control Hazards), modern CPUs rely entirely on **Branch Prediction** to guess which way an \`if/else\` statement will go. 
+Once a user is Authenticated (we know who they are), we must determine what they are Authorized to do. 
+The most widely adopted authorization architecture in software engineering is **Role-Based Access Control (RBAC)**.
 
-Over the decades, Branch Predictors have evolved from simple heuristics to some of the most complex, neural-network-like structures in all of hardware engineering. A modern Intel or AMD processor boasts a branch prediction accuracy exceeding **95%**.
+## 1. The Matrix
+In a naive system, you might assign permissions directly to users (e.g., "Give User John permission to delete databases"). If John moves to a new team, you have to manually audit and remove 50 specific permissions. This scales terribly.
 
-<Callout icon="success" title="Why is it so accurate?">
-  Human code is highly predictable. If a program is running a \`for(int i=0; i<1000; i++)\` loop, the branch condition (\`i<1000\`) will evaluate to TRUE 999 times in a row, and FALSE only once. A good predictor recognizes this pattern almost instantly.
+In RBAC, you introduce an intermediate abstraction layer: **The Role**.
+1. **Permissions** are assigned to **Roles** (e.g., The TICK1DBA_RoleTICK1 has the TICK1delete_dbTICK1 permission).
+2. **Users** are assigned to **Roles** (e.g., John is assigned the TICK1DBA_RoleTICK1).
+
+If John moves to Marketing, you simply revoke the TICK1DBA_RoleTICK1 and grant the TICK1Marketing_RoleTICK1.
+
+## 2. Principle of Least Privilege
+RBAC is heavily designed around the Principle of Least Privilege. Users should only be assigned the absolute minimum roles necessary to perform their daily job functions. 
+A common pattern is having a "Base User" role with read-only access, and temporarily escalating to an "Admin" role only when executing dangerous operations.
+
+## 3. RBAC vs ABAC
+While RBAC is industry standard, it lacks granular context. 
+If you need a rule like: *"Doctors can only view patient records IF the patient is assigned to them AND it is during hospital working hours,"* RBAC fails completely (you would need thousands of micro-roles).
+
+For this, architects graduate to **Attribute-Based Access Control (ABAC)**, which evaluates boolean logic policies dynamically based on User Attributes, Resource Attributes, and Environmental context (like IP address or Time of day).
+
+<Callout icon="tip" title="JWT Implementation">
+In modern microservices, the user's RBAC roles are often embedded directly inside the JWT Payload (e.g., TICK1"roles": ["editor", "admin"]TICK1). The backend API gateway simply decodes the JWT, checks if TICK1"admin"TICK1 exists in the array, and either allows the request or throws a TICK1403 ForbiddenTICK1 error.
 </Callout>
-
-## Types of Branch Predictors
-
-### 1. Static Prediction (The Old Way)
-Early predictors didn't use history. They used hard-coded rules determined by the compiler:
-- **Always predict backward branches as TAKEN**: (Assuming it's a loop).
-- **Always predict forward branches as NOT TAKEN**: (Assuming it's an edge-case error check).
-This was fast and required no memory, but was relatively inaccurate.
-
-### 2. Dynamic Prediction: The 2-Bit Counter (Bimodal Predictor)
-The CPU allocates a small piece of SRAM called the Branch History Table (BHT). It stores a 2-bit state machine (00, 01, 10, 11) for recent branch instructions.
-- \`11\`: Strongly Taken
-- \`10\`: Weakly Taken
-- \`01\`: Weakly Not Taken
-- \`00\`: Strongly Not Taken
-
-If the branch is taken, the counter increments. If not, it decrements. The genius of the 2-bit counter is that a single anomaly (e.g., exiting a loop once) will only move the counter from \`11\` to \`10\`, meaning the next time this code runs, it will still correctly guess "Taken".
-
-### 3. Two-Level Adaptive Predictors
-Code is often correlated. For example, if \`if (x > 0)\` is true, and \`if (y > 0)\` is true, then \`if (x + y > 0)\` is guaranteed to be true. 
-Modern predictors use **Global History Registers** that track the outcome of the last *N* branches across the entire program. This history is hashed to index into the prediction table, allowing the CPU to recognize incredibly complex, intertwined logical patterns.
-
-### 4. Neural Branch Predictors (Perceptrons)
-Modern AMD Ryzen and Intel processors use hardware-implemented Neural Networks (Perceptrons) as their branch predictors. They use machine learning weights to analyze dozens of different historical factors simultaneously to produce a highly accurate prediction in a fraction of a nanosecond.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Out-of-order execution/index.mdx': `---
-title: Out-of-Order Execution (OoOE)
-description: A paradigm-shifting CPU architecture where instructions are executed dynamically based on data availability rather than the order they were written in the code.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/MFA/index.mdx': `---
+title: Multi-Factor Authentication (MFA)
+description: A security mechanism requiring users to provide two or more distinct verification factors to gain access to a resource, drastically mitigating credential theft.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Out-of-Order Execution (OoOE)">
+<ConceptTemplate title="Multi-Factor Authentication (MFA)">
 
-In a strict, sequential pipeline (In-Order Execution), if Instruction 1 needs to wait 100 cycles to fetch a variable from RAM, the entire CPU stops. Instructions 2, 3, and 4 are completely blocked, even if they have absolutely nothing to do with Instruction 1.
+Passwords are fundamentally broken. They are reused across websites, leaked in massive data breaches, guessed via brute force, or stolen via phishing emails. 
 
-**Out-of-Order Execution (OoOE)** solves this by treating the CPU not as an assembly line, but as a dynamic dispatch center.
+**Multi-Factor Authentication (MFA)** solves this by forcing the attacker to compromise multiple independent dimensions of security simultaneously to breach an account.
 
-<Callout icon="info" title="The Restaurant Analogy">
-  - **In-Order**: The chef cooks orders strictly in the order they were received. If Table 1 orders a Souffle (takes 40 mins), Table 2's Salad (takes 2 mins) is blocked until the Souffle is finished.
-  - **Out-of-Order**: The chef looks at all pending orders. If the Souffle is in the oven, the chef immediately makes Table 2's Salad and serves it. The final result is the same, but overall throughput is massively increased.
+## 1. The Three Factors
+True MFA must combine two or more of the following distinct categories. (Combining two passwords is just Two-Step Verification, not MFA).
+
+<ComparisonTable 
+  headers={['Factor Type', 'Definition', 'Examples']} 
+  rows={[
+    ['Knowledge (Something you know)', 'Information memorized by the user.', 'Passwords, PIN codes, Security Questions (deprecated).'],
+    ['Possession (Something you have)', 'A physical or cryptographic object held by the user.', 'Smartphones (Authenticator Apps), SMS Codes, YubiKey hardware tokens.'],
+    ['Inherence (Something you are)', 'A biological metric unique to the user.', 'Fingerprint scans (TouchID), Facial recognition (FaceID), Retina scans.']
+  ]} 
+/>
+
+## 2. The SMS Vulnerability (SIM Swapping)
+Historically, the most common MFA was sending a 6-digit code via SMS text message. 
+**This is now considered highly insecure.**
+Attackers perform "SIM Swapping" by calling the victim's telecom provider, pretending to be the victim, and tricking the customer service rep into porting the phone number to the attacker's SIM card. The attacker now receives all of the victim's MFA SMS codes directly.
+
+## 3. Time-Based One-Time Passwords (TOTP)
+The modern software standard for MFA is **TOTP** (e.g., Google Authenticator, Authy).
+When setting up TOTP, the server and your phone securely share a secret cryptographic seed (usually via a QR code). 
+Both the server and your phone independently run a hashing algorithm combining the secret seed with the *current Unix timestamp*. Every 30 seconds, a new 6-digit code is generated simultaneously on both devices. Because it relies purely on math and time, TOTP works entirely offline and is immune to SIM swapping.
+
+<Callout icon="warning" title="Phishing Susceptibility">
+While TOTP is immune to SIM swapping, it is still vulnerable to **Real-Time Phishing (AiTM - Adversary in the Middle)**. If a user is tricked into logging into a fake website (TICK1g00gle.comTICK1), the attacker simply asks for the 6-digit TOTP code, immediately forwards it to the real Google, and intercepts the session cookie. Only hardware security keys (FIDO2/WebAuthn) can defeat real-time phishing.
 </Callout>
-
-## How OoOE Works (Tomasulo's Algorithm)
-
-First introduced to PCs in 1995 with the Intel Pentium Pro, OoOE is incredibly complex, requiring millions of dedicated transistors:
-
-1. **Instruction Fetch & Decode (In-Order)**: The CPU fetches instructions in the exact order the programmer wrote them.
-2. **Issue to Reservation Stations**: The CPU places the decoded instructions into "waiting rooms" called Reservation Stations attached to the ALUs. 
-3. **Execution (Out-of-Order)**: An instruction simply sits in the waiting room monitoring the data bus. The exact microsecond its required variables become available, it fires into the ALU. If Instruction 5 is ready before Instruction 1, Instruction 5 executes first.
-4. **Reorder Buffer (ROB)**: This is the critical component. Because instructions executed out of order, the CPU cannot permanently save their results to the main registers immediately (otherwise, the program state would be corrupted). The results are held in the Reorder Buffer.
-5. **Retirement (In-Order)**: The ROB sorts the finished instructions back into their original programmatic order, and officially "retires" them by committing their results to the architectural registers, presenting a perfect illusion of sequential execution to the software.
-
-## Register Renaming
-
-To make OoOE work, the hardware performs a magic trick called **Register Renaming**. 
-Because x86 only has 16 architectural registers, programmers constantly reuse them (creating False Dependencies / WAW hazards). The CPU secretly maintains hundreds of internal physical registers. When the code says "Write to RAX", the CPU maps RAX to "Secret Physical Register 42", allowing subsequent instructions to use RAX without actually overwriting the data the first instruction is still using.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Speculative execution/index.mdx': `---
-title: Speculative Execution
-description: The risky, high-performance technique where a CPU executes code that it isn't sure is actually needed yet, rolling back the state if it guessed wrong.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/WebAuthn/index.mdx': `---
+title: WebAuthn (FIDO2)
+description: The official W3C web standard for passwordless, phishing-resistant authentication utilizing public-key cryptography and hardware authenticators.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Speculative Execution">
+<ConceptTemplate title="WebAuthn (FIDO2)">
 
-**Speculative Execution** is the umbrella term for a CPU doing work before it is absolutely certain that the work is actually required. It is the logical combination of **Branch Prediction** and **Out-of-Order Execution**, and it is the primary reason modern processors are so incredibly fast.
+Despite MFA and TOTP, sophisticated attackers still breach accounts using real-time proxy phishing pages. 
+**WebAuthn** (part of the FIDO2 project) was engineered to completely eradicate passwords and neutralize phishing permanently by moving authentication from the user's brain to cryptographic hardware.
 
-<Callout icon="success" title="Better to act and apologize than to wait and do nothing">
-  If the CPU hits an unresolved conditional branch, it has two choices:
-  1. Sit idle for 15 cycles doing nothing (100% waste).
-  2. Guess the outcome and execute the code anyway. If right, you save 15 cycles. If wrong, you throw the work away and are no worse off than if you had sat idle.
+## 1. Public-Key Cryptography
+WebAuthn relies entirely on Asymmetric Cryptography (Public/Private Keys).
+During registration, the user's hardware device (like a YubiKey, Apple TouchID, or Windows Hello) generates a mathematically linked keypair.
+1. The **Public Key** is sent to the backend server and saved in the database.
+2. The **Private Key** is permanently burned into the secure enclave (TPM) of the hardware device. It never leaves the device.
+
+## 2. The Authentication Ceremony (The Challenge)
+When the user attempts to log in, there is no password box.
+1. The server generates a random string of bytes (a cryptographic Challenge) and sends it to the browser.
+2. The browser passes the Challenge to the hardware authenticator (prompting the user to scan their fingerprint or tap their YubiKey).
+3. The hardware uses the burned-in Private Key to digitally sign the Challenge, and sends the Signature back to the server.
+4. The server uses the stored Public Key to mathematically verify the Signature. If it matches, the user is authenticated.
+
+## 3. Perfect Phishing Resistance
+WebAuthn is the only protocol mathematically immune to phishing. 
+When the browser asks the hardware device to sign the challenge, it strictly binds the signature to the **Origin URL**. 
+If a user is tricked onto TICK1g00gle.comTICK1, the hardware device signs the challenge for TICK1g00gle.comTICK1. When the attacker forwards that signature to the real TICK1google.comTICK1, the real server detects the Origin mismatch and instantly rejects the login. The phishing attack catastrophically fails.
+
+<Callout icon="tip" title="Platform vs Roaming Authenticators">
+WebAuthn supports two types of devices: **Platform Authenticators** (built directly into the laptop, like a MacBook's TouchID or Windows Hello camera) and **Roaming Authenticators** (USB devices like YubiKeys that you carry on your keychain and plug into any computer).
 </Callout>
-
-## The Mechanism of Speculation
-
-When the Branch Predictor guesses the outcome of an \`if\` statement, the CPU begins fetching and executing those instructions speculatively. 
-Crucially, these speculative instructions are allowed to do math in the ALU, but **they are strictly forbidden from permanently modifying the architectural state** (Registers or RAM). 
-
-Their results are kept quarantined inside the **Reorder Buffer (ROB)**. 
-
-### Resolution
-- **Guess Correct**: The original branch condition is finally calculated by the ALU. The CPU realizes it guessed correctly. The quarantined results in the ROB are instantly "committed" to the real registers.
-- **Guess Incorrect**: The CPU realizes it guessed wrong. It triggers a flush. It simply deletes the quarantined data in the ROB and starts fetching down the correct path. The software never knew the CPU made a mistake.
-
-## The Security Disaster: Meltdown & Spectre (2018)
-
-For 20 years, computer scientists believed Speculative Execution was perfectly secure because incorrectly guessed data was completely deleted. 
-
-In 2018, researchers discovered the **Spectre** and **Meltdown** vulnerabilities, shattering this assumption. 
-The flaw was in the **Cache**. While speculative execution reverts the CPU Registers, *it does not revert the L1 Cache*. 
-
-A malicious program can trick the CPU's branch predictor into speculatively executing an illegal memory read (e.g., reading a password from the kernel). The CPU eventually realizes it made an illegal read and throws the data away... but that password was pulled into the L1 Cache. The attacker can then use highly precise timing attacks to measure cache latency and extract the secret password bit-by-bit. This flaw forced fundamental redesigns in OS kernels and CPU hardware worldwide.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/9. Computer Architecture/Superscalar execution/index.mdx': `---
-title: Superscalar Architecture
-description: A CPU design that implements Instruction-Level Parallelism by dispatching multiple instructions to duplicated execution units in a single clock cycle.
+  'src/features/kb/routes/KB/53. Authentication, Identity & Access/Passkeys/index.mdx': `---
+title: Passkeys
+description: The consumer-friendly evolution of WebAuthn, allowing cryptographic private keys to be securely synced across devices via cloud ecosystems (Apple, Google, Microsoft).
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Superscalar Architecture">
+<ConceptTemplate title="Passkeys">
 
-In a standard pipelined processor, the theoretical maximum speed is an IPC (Instructions Per Clock) of **1.0**. Even if the pipeline is perfectly full, the CPU can only retire one instruction at the end of the pipeline per cycle.
+WebAuthn (FIDO2) is a cryptographic masterpiece, but it had a massive consumer UX flaw: if you registered your MacBook's TouchID as your authenticator, the Private Key was physically trapped inside that laptop. If you dropped the laptop in a lake, you lost your Private Key and were permanently locked out of your accounts.
 
-By the 1990s, engineers hit the limits of clock speed (due to heat and physics). To make processors faster without increasing the clock speed, they needed an IPC greater than 1.0. This led to **Superscalar Execution**, a form of Instruction-Level Parallelism (ILP) within a single CPU core.
+**Passkeys** solve this by making WebAuthn keys syncable across your devices.
 
-<Callout icon="info" title="The Multi-Lane Highway">
-  If Pipelining is turning a sequential manufacturing process into an assembly line, Superscalar Architecture is **building multiple parallel assembly lines next to each other**. Instead of pushing 1 car down the line every minute, you push 4 cars down 4 lines simultaneously.
+## 1. The Cloud Sync Paradigm
+A Passkey is fundamentally just a WebAuthn credential (a Private Key). However, instead of being permanently locked to one piece of hardware, the Private Key is stored securely within a **Platform Credential Manager** (like Apple iCloud Keychain, Google Password Manager, or 1Password).
+
+If you create a Passkey on your iPhone for Amazon, iCloud seamlessly encrypts and syncs that Private Key to your iPad and MacBook. You can now log into Amazon from any of your Apple devices using FaceID, with zero setup.
+
+## 2. Cross-Ecosystem Authentication
+What if you create an iCloud Passkey on your iPhone, but you want to log into Amazon on a public Windows PC?
+Passkeys support a protocol called **CTAP2 (Client to Authenticator Protocol)**. 
+1. The Windows PC displays a QR code on the screen.
+2. You scan the QR code with your iPhone's camera.
+3. Your iPhone establishes a localized, secure Bluetooth/WiFi Direct connection with the Windows PC.
+4. Your iPhone uses FaceID to sign the cryptographic challenge and passes the signature back to the Windows PC, logging you in.
+
+## 3. Passkeys vs Passwords
+
+<ComparisonTable 
+  headers={['Feature', 'Passwords', 'Passkeys']} 
+  rows={[
+    ['Security', 'Terrible. Easily guessed, phished, or leaked in server breaches.', 'Perfect. Cryptographically strong and completely immune to phishing.'],
+    ['Server Breaches', 'Catastrophic. Hackers steal the password hashes.', 'Harmless. Servers only hold the Public Key, which is useless to attackers.'],
+    ['User Experience', 'Frustrating. Requires memorizing complex strings or managing password managers.', 'Seamless. Requires only a quick FaceID or Fingerprint scan.']
+  ]} 
+/>
+
+<Callout icon="warning" title="The Walled Garden Problem">
+Currently, syncing Passkeys *across* ecosystems is challenging. A Passkey created in iCloud does not automatically sync to your Google Account. While QR-code roaming works, the industry is still working on seamless credential export APIs to prevent users from being locked into a single tech giant's ecosystem.
 </Callout>
-
-## Physical Duplication
-
-To execute multiple instructions per cycle, a superscalar processor must physically duplicate its internal hardware. A modern Intel core is heavily superscalar. Inside a *single core*, there might be:
-- 4 Integer ALUs (for basic math)
-- 2 FPUs (for Floating-Point decimals)
-- 2 AGUs (Address Generation Units for interacting with RAM)
-- 2 Load/Store units
-
-## The Dispatch Bottleneck
-
-The hardest part of a superscalar architecture is the Dispatch Unit (often integrated with the Out-of-Order Execution scheduler). 
-
-If the CPU wants to dispatch 4 instructions simultaneously into the 4 ALUs, it must mathematically prove, in a fraction of a nanosecond, that **none of those 4 instructions depend on each other** (no Data Hazards). 
-
-- If \`Instruction 1\` calculates a variable used by \`Instruction 2\`, they *cannot* be executed in the same cycle on different ALUs. \`Instruction 2\` must wait.
-- If \`Instruction 3\` and \`Instruction 4\` calculate entirely independent variables, they are dispatched simultaneously.
-
-Because human-written code contains so many dependencies, it is incredibly difficult to actually achieve the theoretical maximum IPC. A CPU that can technically execute 6 instructions per cycle might average an actual IPC of 1.5 to 2.5 on real-world code. 
-
-### VLIW (Very Long Instruction Word)
-An alternative to Superscalar is **VLIW** (used by early DSPs and Intel's failed Itanium). Instead of the *hardware* figuring out which instructions can run in parallel on the fly, the *compiler* figures it out ahead of time, bundling 4 independent instructions into one massive "Long Word" instruction. While brilliant in theory, it proved too rigid for general-purpose computing.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/SIMD/index.mdx': `---
-title: SIMD (Single Instruction, Multiple Data)
-description: A parallel computing architecture that allows a CPU to apply a single mathematical operation to a large batch of data points simultaneously.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="SIMD (Single Instruction, Multiple Data)">
-
-Traditional CPU execution is **SISD (Single Instruction, Single Data)**. If you want to add 10 to a list of 4 numbers, the CPU must execute the \`ADD\` instruction 4 separate times. This is incredibly inefficient for media processing, graphics, and scientific simulations where the exact same math is applied to massive arrays of data.
-
-**SIMD (Single Instruction, Multiple Data)** is a hardware architecture designed specifically for this use case. With SIMD, you issue one \`ADD\` instruction, and the hardware adds 10 to all 4 numbers simultaneously in a single clock cycle.
-
-<Callout icon="success" title="The SIMD Speedup">
-  Applying a brightness filter to an image requires adding a value to the Red, Green, and Blue bytes of a pixel. Using SISD, processing one pixel takes 3 instructions. Using SIMD, you pack all three colors into a single wide register and process the entire pixel in exactly 1 instruction—a 300% speed increase.
-</Callout>
-
-## How SIMD Works: Wide Registers
-
-To facilitate SIMD, CPU manufacturers added specialized, ultra-wide registers to the CPU. 
-While a standard 64-bit register (like \`RAX\`) holds a single 64-bit integer, a modern SIMD register might be **256 bits or 512 bits wide**.
-
-You can pack multiple smaller data types into one of these wide registers:
-- A 256-bit register can hold **four 64-bit integers**.
-- Or **eight 32-bit floats**.
-- Or **thirty-two 8-bit bytes** (perfect for pixel color data).
-
-When the CPU executes a SIMD \`ADD\` instruction, the ALU physically partitions its logic gates to independently add the 8 distinct floating-point numbers in parallel, yielding 8 separate answers in a single cycle.
-
-## Real-World SIMD Implementations
-
-Every modern CPU includes SIMD extensions. The compiler (or the programmer writing raw intrinsics) detects loops that can be parallelized and explicitly compiles them into these SIMD instructions (a process called **Auto-Vectorization**).
-
-- **Intel / AMD (x86)**: The history of x86 SIMD is a graveyard of acronyms. It started with **MMX** in 1996, evolved into **SSE** (Streaming SIMD Extensions), then **AVX** (Advanced Vector Extensions), and currently **AVX-512**, which utilizes massive 512-bit wide registers.
-- **ARM**: Apple and mobile chips use an incredibly efficient SIMD architecture called **NEON**.
-
-Because SIMD hardware draws immense power, utilizing instructions like AVX-512 actually causes the CPU to generate so much heat that the processor is physically forced to lower its clock speed to prevent melting!
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/Vector processors/index.mdx': `---
-title: Vector Processors
-description: Specialized CPU architectures explicitly designed to execute mathematical operations on massive, one-dimensional arrays (vectors) of data at blazing speeds.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Vector Processors">
-
-While modern CPUs use **SIMD** (Single Instruction, Multiple Data) to process small batches of data in parallel, **Vector Processors** take this concept to its absolute extreme. 
-
-Historically dominating the world of supercomputers in the 1980s and 1990s (most notably the famous Cray supercomputers), vector processing is the architecture of choice for scientific computing, weather forecasting, and fluid dynamics.
-
-<Callout icon="info" title="Scalar vs. Vector">
-  - **Scalar Processor (Standard CPU)**: Operates on one piece of data at a time. \`C = A + B\`.
-  - **Vector Processor**: Operates on an entire array of data simultaneously. \`Array_C = Array_A + Array_B\`. The hardware handles the looping, fetching, and math across thousands of elements automatically.
-</Callout>
-
-## How Vector Processing Differs from SIMD
-
-While they sound similar, true Vector Processors and x86 SIMD extensions (like AVX) are architecturally distinct:
-
-1. **Register Length**: A SIMD AVX register is fixed at 512 bits (holding maybe 16 integers). A true Vector Machine has vector registers that can hold thousands of elements, and the length of the vector is abstracted away from the instruction set.
-2. **Execution Strategy**: 
-   - **SIMD** is fully parallel. It takes 16 numbers and pushes them through 16 ALUs at the exact same time.
-   - **Vector Processors** are deeply **pipelined**. If you ask a vector machine to add two arrays of 1,000 numbers, it doesn't have 1,000 ALUs. Instead, it streams the data from memory into a massive, heavily optimized ALU pipeline. Once the pipeline fills up, it outputs one finished calculation every fraction of a nanosecond, hiding the massive latency of RAM.
-
-## The Memory Bandwidth Challenge
-
-The primary bottleneck of a Vector Processor is not the math—it's feeding the beast. A vector ALU can crunch data so incredibly fast that standard RAM cannot keep up. 
-To solve this, Vector Processors utilize **Vector Memory Architectures**, which use highly interleaved memory banks. Instead of asking one RAM chip for 1000 numbers sequentially, the processor asks 100 separate RAM chips for 10 numbers each, simultaneously.
-
-## The Modern Resurgence
-
-Pure vector processors fell out of favor in the 2000s as standard x86 CPUs became fast enough to handle most workloads. However, the architecture has seen a massive resurgence today in two specific areas:
-1. **GPUs**: Modern Graphics Processing Units are essentially massive, modern implementations of vector processing principles, adapted to handle rendering and AI.
-2. **RISC-V Vector Extension (RVV)**: The open-source RISC-V architecture includes a highly praised Vector extension that behaves like a true vector machine (length-agnostic), completely abandoning the fixed-width register philosophy of Intel's AVX.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/Multicore-manycore design/index.mdx': `---
-title: Multicore and Manycore Design
-description: The architectural shift from increasing single-core clock speeds to placing dozens or hundreds of independent processing cores onto a single silicon die.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Multicore and Manycore Design">
-
-For the first 30 years of microprocessor history, the primary way to make a computer faster was simply to increase the clock speed (from 10 MHz to 3.8 GHz). However, in 2004, the industry hit the **Power Wall**. 
-Because power consumption and heat generation scale exponentially with frequency, pushing a CPU past 4 GHz caused the silicon to literally melt.
-
-To continue increasing performance (adhering to Moore's Law), engineers fundamentally shifted their strategy: instead of making one core ridiculously fast, they placed **multiple independent cores on the same chip**.
-
-<Callout icon="success" title="The Multicore Era">
-  A multicore processor is essentially gluing two complete, independent CPUs (each with their own ALUs, Control Units, and L1/L2 caches) onto a single piece of silicon, allowing the operating system to run two entirely separate programs perfectly simultaneously.
-</Callout>
-
-## Multicore (2 to 64 Cores)
-
-Modern consumer CPUs (like Intel Core i9 or AMD Ryzen) are **multicore**. They feature a small number of incredibly powerful, highly superscalar cores.
-- **Shared L3 Cache**: While each core has its own private L1 and L2 cache, they all share a massive L3 cache. This allows Core 1 to pass data to Core 2 without writing out to the slow motherboard RAM.
-- **Cache Coherence**: Because multiple cores are working independently, a severe problem arises: if Core 1 modifies variable \`X\` in its private L1 cache, Core 2's cached version of \`X\` is now stale and invalid. CPUs use complex **Cache Coherence Protocols (like MESI)** to constantly snoop on each other and ensure all cores have a synchronized view of memory.
-
-## Manycore (100+ Cores)
-
-While multicore processors optimize for high single-thread performance (each core is a genius), **Manycore** processors optimize for massive throughput (hundreds of mediocre workers).
-
-- **Intel Xeon Phi**: An early attempt at manycore design, placing 60+ simple x86 cores on a single PCIe card for supercomputing.
-- **Network on Chip (NoC)**: When you have 128 cores on a single chip, connecting them all with a shared bus is impossible (traffic jam). Manycore chips use a literal microscopic internet router system (a 2D mesh network) etched into the silicon, where Core 1 sends "data packets" through routers to reach Core 64.
-
-## Amdahl's Law
-
-The painful reality of multicore design is governed by **Amdahl's Law**. It states that the performance benefit of adding more cores is strictly limited by the portion of the program that *cannot* be parallelized. 
-If 20% of your software relies on sequential logic (e.g., waiting for user input or writing to a file in order), no matter if you have 10 cores or 10,000 cores, the maximum theoretical speedup of your program is capped at 5x. This is why 64-core processors don't make video games run 64 times faster.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/ASICs/index.mdx': `---
-title: Application-Specific Integrated Circuits (ASICs)
-description: Custom-designed silicon chips built to perform exactly one task with absolute, mathematically perfect efficiency.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Application-Specific Integrated Circuits (ASICs)">
-
-A standard CPU (like an Intel core) is a **General Purpose** processor. Because it must be capable of running a web browser, rendering a video, and calculating a spreadsheet, its silicon is full of compromises. It wastes massive amounts of power and area on instruction decoders, branch predictors, and caches.
-
-If you have a computationally heavy task that never changes, a CPU is the wrong tool. Instead, you design an **ASIC (Application-Specific Integrated Circuit)**.
-
-<Callout icon="info" title="Hardware vs. Software">
-  Instead of writing a software program in C++ and feeding it to a general CPU, you physically design the algorithm out of copper wire and logic gates. The algorithm is permanently etched into the silicon. It cannot run an operating system, and it cannot be updated, but it will perform its singular task thousands of times faster than a CPU, while using a fraction of the electricity.
-</Callout>
-
-## The Lifecycle of an ASIC
-
-Designing an ASIC is one of the most expensive and complex engineering tasks on earth.
-1. **Design**: Hardware engineers write the logic using a Hardware Description Language (HDL) like Verilog or VHDL.
-2. **Verification**: The design is rigorously tested in software simulations. If there is a single bug in the logic, millions of dollars are wasted.
-3. **Tape-out & Fabrication**: The blueprints are sent to a foundry (like TSMC in Taiwan). They create the physical photolithography masks and manufacture the silicon chips. The initial setup cost (NRE - Non-Recurring Engineering) can exceed **$50 million**.
-
-Because the upfront cost is so astronomical, ASICs are only viable if you plan to manufacture and sell millions of units to recoup the engineering costs.
-
-## Real-World Examples
-
-You interact with ASICs every single day:
-- **Smartphones**: The tiny chips inside your iPhone dedicated strictly to encoding H.264 video, or processing the camera sensor data.
-- **Networking**: The massive internet routers powering AWS and Google data centers use ASICs to route millions of network packets per second without ever touching a CPU.
-- **Bitcoin Mining**: In the early days, people mined Bitcoin using CPUs. As the math got harder, they moved to GPUs. Today, the entire Bitcoin network runs exclusively on ASICs—chips specifically physically wired to calculate the SHA-256 hash algorithm and literally nothing else.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/FPGAs/index.mdx': `---
-title: Field-Programmable Gate Arrays (FPGAs)
-description: The ultimate chameleon chip—a blank slate of silicon logic gates that can be physically rewired on the fly to become any hardware circuit you want.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Field-Programmable Gate Arrays (FPGAs)">
-
-An **ASIC** offers perfect performance but costs $50 million to design and cannot be changed once manufactured. 
-A **CPU** offers perfect flexibility (just write new software) but is slow and power-hungry. 
-
-The **FPGA (Field-Programmable Gate Array)** is the miraculous middle ground. It is a piece of hardware that acts like software. You can buy a blank FPGA off the shelf for $100, write hardware code (Verilog), and download it to the chip. The chip physically rearranges its internal wiring to become the custom circuit you designed. 
-
-<Callout icon="success" title="Hardware on Demand">
-  With an FPGA, you can download a file from the internet, and your chip instantly becomes a custom audio synthesizer. Tomorrow, you can download a new file, and the exact same physical chip reconfigures itself into a Bitcoin miner. You are altering the *hardware*, not the software!
-</Callout>
-
-## How FPGAs Work
-
-Under the microscope, an FPGA does not contain ALUs or CPU caches. Instead, it contains a massive grid of three primitive components:
-1. **Configurable Logic Blocks (CLBs)**: Tiny Look-Up Tables (LUTs) that can be programmed to act as any basic logic gate (AND, OR, XOR) or perform simple math.
-2. **Programmable Interconnects**: A massive matrix of microscopic electrical switches connecting all the CLBs together.
-3. **I/O Blocks**: Pins to interact with the outside world.
-
-When you "program" an FPGA, you upload a **Bitstream**. This file sets the state of millions of microscopic SRAM switches, routing the electrical pathways between the Logic Blocks to physically manifest your custom circuit. 
-
-## Advantages vs. ASICs
-
-- **Time to Market**: You can design and deploy an FPGA in weeks, whereas fabricating an ASIC at TSMC takes 18 months.
-- **Upgradability**: If a bug is found in an ASIC, it goes in the trash. If a bug is found in a satellite in deep space powered by an FPGA, engineers on Earth can beam up a new bitstream to physically rewire the satellite's hardware in orbit.
-- **Cost**: For low-volume products (like MRI machines or military jets where you only need 1,000 chips), FPGAs are incredibly cheap because you avoid the $50M ASIC setup fee.
-
-## FPGAs in the Cloud
-
-Historically used in aerospace and telecommunications, FPGAs have recently invaded the cloud. Microsoft famously deployed Intel Altera FPGAs across their Azure data centers (Project Catapult). When Bing search needs to accelerate its ranking algorithm, the data center dynamically reprograms the FPGAs to act as custom search accelerators, resulting in massive speedups over standard CPUs.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/9. Computer Architecture/TPUs/index.mdx': `---
-title: Tensor Processing Units (TPUs)
-description: Google's custom-designed ASIC dedicated exclusively to accelerating the massive matrix multiplication required for Machine Learning and AI.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Tensor Processing Units (TPUs)">
-
-For years, the Artificial Intelligence revolution was powered by **GPUs** (Nvidia). Because neural networks require millions of parallel calculations, GPUs were perfectly suited for the task. However, GPUs are still inherently designed to render 3D graphics; they contain hardware for texture mapping and ray tracing that is completely useless for AI, wasting silicon area and power.
-
-In 2016, Google shocked the industry by announcing they had secretly built their own custom ASIC dedicated exclusively to deep learning: the **Tensor Processing Unit (TPU)**.
-
-<Callout icon="info" title="The Matrix Multiplier">
-  At its core, 95% of the math required to run a Large Language Model (like ChatGPT) is simply multiplying massive grids of numbers (Matrices/Tensors) together. The TPU strips away all graphics logic, branch predictors, and standard CPU caches, dedicating almost all of its silicon exclusively to matrix multiplication.
-</Callout>
-
-## The Systolic Array Architecture
-
-The genius of the TPU is its heart: the **Systolic Array**. 
-
-In a standard CPU or GPU, the ALU reads two numbers from a register, multiplies them, and writes the answer back to the register. This constant reading and writing to registers consumes massive amounts of power and limits speed (the Von Neumann bottleneck).
-
-A Systolic Array is a massive, physical grid of thousands of ALUs wired directly into each other (e.g., a 256 $\\times$ 256 grid of MAC units - Multiply-Accumulate). 
-1. Data flows into the top and left of the grid, pulsing through the ALUs like blood pumping through a heart (hence "systolic").
-2. ALU #1 multiplies a number and passes the result *directly* to ALU #2 below it, without ever saving it to a register.
-3. The data cascades through 65,000 ALUs simultaneously.
-
-This allows the TPU to perform **hundreds of thousands of matrix operations per clock cycle** while drawing significantly less power than an equivalent GPU.
-
-## TPUs in the Real World
-
-Because Google built the TPU as a proprietary ASIC, you cannot buy one at a store. They exist exclusively inside Google's data centers.
-
-- **Inference**: TPU v1 was designed for inference (running AI models). When you speak to Google Assistant, ask Google Translate a question, or search for a photo in Google Photos, the math is calculated on a TPU.
-- **Training**: Subsequent TPU versions (v2, v3, v4) added floating-point support, allowing them to train massive AI models. Google strings thousands of TPUs together using custom fiber-optic networks into "TPU Pods," creating massive supercomputers capable of training models like Gemini.
-
-The success of the TPU proved that the future of computing lies in Domain-Specific Architectures (DSAs)—specialized hardware designed for specific algorithms.
 
 </ConceptTemplate>
 `,
@@ -564,7 +336,12 @@ async function main() {
   for (const [filePath, content] of Object.entries(contentMap)) {
     const fullPath = path.resolve(filePath)
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
-    await fs.writeFile(fullPath, content.trim() + '\n', 'utf-8')
+
+    // Safely replace TICK1 and TICK3 placeholders with actual backticks
+    let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
+
+    // Append a safe newline
+    await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8')
     console.log('Wrote ' + filePath)
   }
 }

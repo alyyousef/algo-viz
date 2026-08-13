@@ -1,8 +1,42 @@
+---
+title: Worst, Average, and Best Case Analysis
+description: Differentiating the performance bounds of algorithms depending on the structure and entropy of the input dataset.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Worst case">
+<ConceptTemplate title="Worst, Average, and Best Case Analysis">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When defining the Time Complexity of an algorithm, citing a single Big O notation is often mathematically incomplete. An algorithm's execution time can drastically shift depending on the specific structure, sorting, or entropy of the input data.
+
+We formalize this using three distinct bounds: **Best Case**, **Average Case**, and **Worst Case**.
+
+## 1. Worst Case (Big O - O)
+The **Worst Case** mathematically guarantees the absolute maximum time an algorithm will execute, regardless of the input. In software engineering, mission-critical systems (like pacemakers or aviation software) exclusively care about the Worst Case.
+
+**Example: Linear Search**
+Searching an array of `n` items one by one.
+- **Worst Case**: The target element is at the absolute end of the array, or does not exist at all.
+- Complexity: `O(n)`.
+
+## 2. Best Case (Big Omega - Ω)
+The **Best Case** defines the absolute minimum execution time. The input is perfectly aligned to trigger the earliest possible exit condition. This metric is usually mathematically useless in the real world, as you cannot rely on perfect inputs.
+
+**Example: Linear Search**
+- **Best Case**: The target element happens to be the very first element in the array.
+- Complexity: `Ω(1)`.
+
+## 3. Average Case (Big Theta - Θ)
+The **Average Case** applies probability theory to calculate the expected execution time across all possible valid mathematical permutations of the input. This is often the most realistic metric for scalable web architectures.
+
+<Callout icon="warning" title="The Quick Sort Paradox">
+**Quick Sort** is universally used in standard libraries (like V8 JavaScript) because its Average Case is a blazing fast `O(n log n)`. However, if you feed Quick Sort an array that is *already sorted* (and you pick a bad pivot), its mathematical Worst Case geometrically degrades into a catastrophic `O(n^2)`. 
+</Callout>
+
+## 4. Amortized Analysis
+A special subset of Average Case is **Amortized Analysis**.
+When appending an item to a Dynamic Array (like an ArrayList or a JavaScript Array), it takes `O(1)` time. However, if the underlying RAM block is full, the array must mathematically allocate a new block of double the size and copy all elements over. This single operation is suddenly a Worst Case of `O(n)`.
+
+Amortized analysis mathematically proves that because this resizing happens so rarely, the `O(n)` penalty is dispersed (amortized) across all the cheap `O(1)` insertions, yielding an *amortized worst-case* of `O(1)`.
 
 </ConceptTemplate>
