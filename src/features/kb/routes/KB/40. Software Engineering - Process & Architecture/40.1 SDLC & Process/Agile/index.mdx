@@ -1,26 +1,39 @@
 ---
-title: Agile Software Development
-description: An iterative approach to project management and software development that helps teams deliver value to their customers faster and with fewer headaches.
+title: Agile Methodology
+description: "An iterative approach to software development emphasizing flexibility, cross-functional collaboration, and continuous delivery of working software."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="Agile Software Development">
+<ConceptTemplate title="Agile">
 
-Agile software development comprises various approaches to software development under which requirements and solutions evolve through the collaborative effort of self-organizing and cross-functional teams and their customer(s)/end user(s).
+Before 2001, the software industry was dominated by the **Waterfall** methodology: a highly rigid, sequential process where teams spent months writing 500-page requirement documents before a single line of code was written. This resulted in massive projects that took years to launch, only to realize the market's needs had changed entirely.
 
-<Callout icon="warning" title="Agile vs Waterfall">
-  **Waterfall**: Spend 6 months writing a 500-page design document. Spend 1 year coding it. Release it. Realize the customer changed their mind 14 months ago.
-  
-  **Agile**: Build a tiny, ugly version in 2 weeks. Show the customer. Get feedback. Make it slightly better in the next 2 weeks. Repeat.
-</Callout>
+In 2001, a group of developers met in Utah and published the **Agile Manifesto**, fundamentally shifting how software is built.
 
-## The Agile Manifesto (2001)
-
-The four core values of Agile are:
-
+## 1. The Agile Manifesto Core Values
 1. **Individuals and interactions** over processes and tools.
 2. **Working software** over comprehensive documentation.
 3. **Customer collaboration** over contract negotiation.
 4. **Responding to change** over following a plan.
 
-</TechnologyTemplate>
+## 2. Iterative Development
+Instead of trying to build the entire product in one massive 2-year cycle, Agile teams work in short, iterative cycles (usually 2 to 4 weeks). 
+
+At the end of each cycle, the team must deliver a small, functional, deployable piece of software. This allows them to gather immediate feedback from real users and pivot the direction of the project if necessary.
+
+## 3. Agile vs Waterfall
+
+<ComparisonTable 
+  headers={['Feature', 'Waterfall', 'Agile']} 
+  rows={[
+    ['Planning', 'Upfront, rigid, months-long planning phase.', 'Continuous, adaptive planning at the start of every short iteration.'],
+    ['Delivery', 'One massive "Big Bang" release at the very end.', 'Continuous, incremental delivery of small features.'],
+    ['Testing', 'Testing happens only at the very end of the project.', 'Testing is continuous and integrated into every sprint.'],
+    ['Risk', 'High. You don\'t know if you built the wrong thing until year 2.', 'Low. If you build the wrong thing, you only wasted 2 weeks.']
+  ]} 
+/>
+
+Note that "Agile" is a mindset and a set of principles, not a specific step-by-step instruction manual. Frameworks like **Scrum** and **Kanban** are the specific implementations teams use to actually "do" Agile.
+
+</ConceptTemplate>

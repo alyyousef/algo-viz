@@ -1,570 +1,287 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const TICK3 = '\`\`\`'
-const TICK1 = '\`'
+const TICK3 = '```'
+const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/15. HTML & CSS/15.1 HTML/HTML5 Architecture/index.mdx': `---
-title: HTML5 Architecture
-description: The structural foundation of the modern web, providing the core markup language used to build dynamic web applications.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Linux/index.mdx': `---
+title: Linux
+description: "A family of open-source Unix-like operating systems based on the Linux kernel, created by Linus Torvalds."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="HTML5 Architecture">
+<TechnologyTemplate 
+  name="Linux"
+  icon="linux"
+  creator="Linus Torvalds"
+  year={1991}
+  website="https://www.kernel.org/"
+>
 
-**HTML (HyperText Markup Language)** is the structural bedrock of the internet. It is not a programming language; it is a declarative markup language that tells the browser how to structure content into a **DOM Tree**.
+**Linux** is not technically an operating system; it is a **Kernel**. It is the core program that manages the CPU, memory, and peripheral devices. When combined with GNU tools, desktop environments, and package managers, it forms what we colloquially call a "Linux Distribution" (or distro).
 
-## The HTML5 Revolution
-Released by the WHATWG, HTML5 completely revolutionized the web by shifting the focus from "static documents" to "dynamic applications."
+Linux is the undisputed king of the internet. While Windows dominates desktop PCs, Linux runs almost every web server, supercomputer, smartphone (Android is built on the Linux kernel), and smart appliance on Earth.
 
-It introduced:
-1. **Semantic Tags**: Replacing thousands of meaningless TICK1<div>TICK1s with structural tags like TICK1<nav>TICK1, TICK1<article>TICK1, and TICK1<main>TICK1.
-2. **Native Multimedia**: Native TICK1<video>TICK1 and TICK1<audio>TICK1 tags, finally killing Adobe Flash forever.
-3. **The Web API Ecosystem**: HTML5 shipped alongside massive Javascript APIs like LocalStorage, WebSockets, and the Canvas API.
+## Why Did Linux Win the Server War?
 
-## The Boilerplate
+1. **Free and Open Source**: Unlike Windows Server, which costs thousands of dollars in licensing fees, Linux is completely free. Startups could spin up 100 servers without paying a dime in software licenses.
+2. **Extreme Stability**: A well-configured Linux server can run for years without needing a reboot. It does not force automatic updates that break the system in the middle of the night.
+3. **No GUI Required**: Linux is designed to be managed entirely via the Command Line Interface (CLI). By stripping away the Graphical User Interface (GUI), the OS uses almost zero RAM or CPU, leaving 99% of the server's resources for running the actual database or web application.
 
-Every valid HTML5 document strictly requires the following boilerplate:
-
-TICK3html
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>My App</title>
-  </head>
-  <body>
-    <!-- Visible content goes here -->
-  </body>
-</html>
-TICK3
-
-- TICK1<!DOCTYPE html>TICK1: This is not an HTML tag. It is a historical artifact that explicitly tells the browser rendering engine to run in "Standards Mode", preventing it from intentionally rendering the page incorrectly (Quirks Mode) to support IE6 from 2001.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/15. HTML & CSS/15.1 HTML/Semantic HTML & ARIA/index.mdx': `---
-title: Semantic HTML & ARIA
-description: The architectural practice of using tags that accurately describe their structural meaning, ensuring accessibility and SEO compliance.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Semantic HTML & ARIA">
-
-Before HTML5, web developers suffered from **"div soup"**. Entire websites were built using generic TICK1<div>TICK1 elements for the header, the navigation, the footer, and the buttons. 
-
-While a TICK1<div>TICK1 can be visually styled with CSS to *look* like a button, it mathematically *is not* a button. This completely destroys the experience for blind users relying on Screen Readers, and destroys SEO because Googlebot cannot understand the structure of the page.
-
-## Core Semantic Tags
-Semantic HTML solves this by providing specific tags that carry inherent structural meaning:
-- TICK1<header>TICK1 / TICK1<footer>TICK1: Defines the top and bottom bounds of the page or article.
-- TICK1<nav>TICK1: Explicitly wraps primary navigation links.
-- TICK1<main>TICK1: The absolute most important tag. Tells the screen reader where the actual content begins, allowing users to skip past repetitive navigation bars.
-- TICK1<article>TICK1: A completely independent, self-contained piece of content (like a blog post or a Tweet).
-
-## ARIA (Accessible Rich Internet Applications)
-Sometimes, modern web apps require complex UI components (like a modal dialog or a custom React dropdown) that have no semantic HTML equivalent.
-In these cases, you use **ARIA attributes** to mathematically describe the component's state to the screen reader.
-
-- TICK1aria-hidden="true"TICK1: Hides decorative SVG icons from the screen reader.
-- TICK1aria-expanded="true"TICK1: Announces that the dropdown menu is currently open.
-- TICK1role="dialog"TICK1: Tells the screen reader that the current TICK1<div>TICK1 is actually a modal popup that traps keyboard focus.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/15. HTML & CSS/15.1 HTML/Forms & Validation/index.mdx': `---
-title: Forms & Input Validation
-description: The native HTML mechanisms for capturing user input securely, including built-in browser validation and varied input types.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Forms & Input Validation">
-
-The TICK1<form>TICK1 element is the primary mechanism for receiving user data. 
-
-Before modern JavaScript frameworks (React/Vue) took over, HTML forms natively handled HTTP POST requests. When a user clicked "Submit", the browser would automatically gather all the input data, serialize it, and send a hard page-refresh POST request to the backend server.
-
-Today, we almost always intercept this using JavaScript (TICK1e.preventDefault()TICK1) and send the data via TICK1fetch()TICK1.
-
-## The <input> Ecosystem
-HTML5 introduced powerful new input types that trigger specialized mobile keyboards on iOS and Android:
-- TICK1<input type="email">TICK1: Triggers a mobile keyboard with the TICK1@TICK1 symbol.
-- TICK1<input type="number">TICK1: Triggers the mobile numpad.
-- TICK1<input type="date">TICK1: Triggers the native OS calendar picker.
-
-## Native Browser Validation
-You do not need massive Javascript libraries to perform basic validation. HTML5 includes native validation constraints that will block form submission and display localized error popups:
-- TICK1requiredTICK1: The field cannot be empty.
-- TICK1minlength="8"TICK1: Enforces a minimum character count.
-- TICK1pattern="[0-9]{5}"TICK1: Enforces a strict Regex pattern (e.g., exactly 5 digits for a US ZIP code).
-
-<Callout icon="warning" title="Client-Side Validation is a UX Feature">
-  HTML/Javascript validation is purely a User Experience (UX) feature to help legitimate users catch typos instantly. **It provides zero security.** A hacker can easily bypass the browser and send raw malicious HTTP requests via Postman. **All validation MUST be duplicated on the backend server.**
+<Callout icon="tip" title="Everything is a File">
+Linux inherited the UNIX philosophy that **"Everything is a file."** Hardware devices (like hard drives or webcams), network sockets, and system processes are all represented as text files in the file system. If you want to change the brightness of your screen, you literally just write a number into a specific text file.
 </Callout>
 
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 
-  'src/features/kb/routes/KB/15. HTML & CSS/15.1 HTML/Metadata & SEO Tags/index.mdx': `---
-title: Metadata & SEO Tags
-description: Invisible HTML tags stored in the document head that dictate how the page is indexed by search engines and displayed on social media.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Windows/index.mdx': `---
+title: Windows
+description: "A group of several proprietary graphical operating system families, all of which are developed and marketed by Microsoft."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Metadata & SEO Tags">
+<TechnologyTemplate 
+  name="Windows"
+  icon="windows"
+  creator="Microsoft"
+  year={1985}
+  website="https://www.microsoft.com/windows"
+>
 
-The TICK1<head>TICK1 of an HTML document contains data *about* the data (Metadata). This information is invisible to the human user but is critical for Search Engines, Twitter, and Facebook.
+**Microsoft Windows** is the most widely used desktop operating system in the world. Originally built as a graphical shell on top of MS-DOS, modern Windows (since Windows NT) is a massive, incredibly complex OS designed to run on a near-infinite combination of hardware.
 
-## The Title and Description
-The absolute most important tags for SEO. These directly control how your website appears in Google Search results.
-TICK3html
-<title>Buy Cheap Sneakers</title>
-<meta name="description" content="Shop the best collection of affordable sneakers. Free shipping on all orders over $50.">
-TICK3
+## The Blessing and Curse of Backwards Compatibility
 
-## Open Graph (Social Media Tags)
-When you paste a link into iMessage, Twitter, or Slack, the app instantly displays a rich preview card with a title, description, and hero image. This is powered by **Open Graph** tags (originally invented by Facebook).
+Apple is famous for ruthlessly deleting legacy technologies. If an API is old, Apple removes it, breaking old apps but keeping macOS clean. 
 
-TICK3html
-<meta property="og:title" content="My Awesome Blog Post" />
-<meta property="og:image" content="https://example.com/hero.jpg" />
-<meta name="twitter:card" content="summary_large_image" />
-TICK3
+Microsoft takes the exact opposite approach: **Absolute Backwards Compatibility**.
+A program compiled for Windows 95 can, in many cases, still run perfectly on Windows 11 today. This is why enterprise businesses and hospitals love Windows; they know their expensive custom software won't break when they update the OS. 
 
-## Structured Data (Schema.org / JSON-LD)
-To get "Rich Snippets" on Google (e.g., your recipe showing 5-star ratings and cooking time directly in the search results), you must inject mathematical **Structured Data** into the head. 
-Today, this is done using JSON-LD (JSON for Linking Data) based on the TICK1Schema.orgTICK1 standard.
+However, this is also why Windows is massive and occasionally fragile: the operating system must ship with decades of legacy code, old registry structures, and deprecated APIs just to ensure a 25-year-old accounting program still works.
 
-TICK3html
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Recipe",
-  "name": "Perfect Chocolate Chip Cookies",
-  "cookTime": "PT15M"
-}
-</script>
-TICK3
+## DirectX and PC Gaming
+Windows dominates the PC gaming industry thanks to **DirectX**, Microsoft's proprietary API for handling tasks related to multimedia and game programming. Because Microsoft deeply integrated DirectX into the OS and constantly courted game developers, almost all major PC games are built specifically for Windows.
 
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/15. HTML & CSS/15.1 HTML/Media & Graphics/index.mdx': `---
-title: Media & Graphics
-description: The HTML architecture for embedding raster images, resolution-independent vector graphics (SVG), and streaming video.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Media & Graphics">
-
-Embedding media is a core component of web performance. Serving a 5MB unoptimized image to a mobile user on a 3G connection will destroy your UX and your Google rankings.
-
-## The <img> Tag and Responsive Images
-To fix the performance problem, HTML introduced the TICK1srcsetTICK1 attribute. It allows you to provide 3 different sizes of the exact same image, and the browser's rendering engine will mathematically choose the smallest file that fits the user's screen.
-
-TICK3html
-<img 
-  src="hero-fallback.jpg" 
-  srcset="hero-small.jpg 400w, hero-medium.jpg 800w, hero-large.jpg 1200w" 
-  alt="A scenic mountain" 
-  loading="lazy" 
-/>
-TICK3
-*Note: The TICK1loading="lazy"TICK1 attribute tells the browser to NOT download the image until the user actually scrolls down to it.*
-
-## SVG (Scalable Vector Graphics)
-Raster images (JPEG, PNG, WebP) are grids of colored pixels; if you zoom in, they become blurry. 
-**SVG** is a mathematical, XML-based markup language that defines shapes, paths, and curves. It is resolution-independent—an SVG logo will look flawlessly crisp on a 1080p monitor and an 8K retina display. Furthermore, because SVG is written in XML, you can animate the shapes directly using CSS or Javascript.
-
-## Video and Audio
-HTML5 introduced native TICK1<video>TICK1 and TICK1<audio>TICK1 tags, supporting multiple source formats (like MP4 and WebM) to ensure cross-browser compatibility without relying on third-party plugins.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/15. HTML & CSS/15.1 HTML/Tables/index.mdx': `---
-title: Tables & Tabular Data
-description: The strictly structured HTML architecture used for displaying complex, multi-dimensional grid data.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Tables & Tabular Data">
-
-In the late 1990s, before CSS was powerful, developers used massive, nested TICK1<table>TICK1 elements to build entire website layouts. This was a dark era. 
-
-Today, you must **never** use tables for layout. Tables are strictly reserved for their mathematical purpose: displaying highly-structured, two-dimensional tabular data (like a spreadsheet or a pricing tier comparison).
-
-## The Strict Hierarchy
-
-Tables require a very specific, nested hierarchy of tags to be semantically valid and accessible.
-
-1. TICK1<table>TICK1: The root container.
-2. TICK1<thead>TICK1: Groups the header content (the column titles).
-3. TICK1<tbody>TICK1: Groups the core data rows.
-4. TICK1<tr>TICK1 (Table Row): Defines a horizontal row.
-5. TICK1<th>TICK1 (Table Header): Defines a cell that acts as a label (bold text, centered by default).
-6. TICK1<td>TICK1 (Table Data): Defines a standard data cell.
-
-## Accessibility Importance
-If you build a table using CSS Grid and thousands of TICK1<div>TICK1 elements, a blind user's Screen Reader will just read a massive, confusing list of random numbers. 
-By using genuine TICK1<th>TICK1 and TICK1<td>TICK1 tags, the Screen Reader can mathematically map the data, announcing: *"Column: Price, Row: Pro Tier, Value: $99/mo"*.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Box Model & Positioning/index.mdx': `---
-title: Box Model & Positioning
-description: The absolute core mathematical model of CSS layout, defining how every element calculates its physical size and placement on the screen.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Box Model & Positioning">
-
-Every single element on a web page, regardless of whether it's a circle or a triangle visually, is mathematically calculated by the browser as a rectangular **Box**.
-
-## The Box Model
-The physical size of an element is calculated by combining four layers:
-1. **Content**: The actual text or image (width/height).
-2. **Padding**: Transparent space *inside* the border, pushing the border away from the content.
-3. **Border**: The physical line surrounding the padding.
-4. **Margin**: Transparent space *outside* the border, pushing other elements away.
-
-<Callout icon="warning" title="The box-sizing Revolution">
-  Historically, if you set TICK1width: 100px; padding: 20px; border: 5px;TICK1, the browser would add them together, making the box 150px wide. This caused layouts to violently explode. 
-  Today, every modern website applies a global reset: TICK1* { box-sizing: border-box; }TICK1. This forces the browser to mathematically absorb the padding and border into the 100px width, guaranteeing the element never grows larger than 100px.
+<Callout icon="info" title="WSL (Windows Subsystem for Linux)">
+Recognizing that web developers were fleeing to Mac and Linux, Microsoft introduced WSL. WSL embeds a literal Linux kernel directly inside Windows, allowing developers to run native Ubuntu terminal commands, Docker, and bash scripts seamlessly alongside their Windows GUI apps.
 </Callout>
 
-## Positioning
-The TICK1positionTICK1 property dictates how an element behaves within the document flow.
-- **static** (Default): The element flows naturally down the page.
-- **relative**: The element remains in the natural flow, but can be nudged using TICK1top/left/right/bottomTICK1 relative to its original position.
-- **absolute**: The element is **completely violently ripped out of the normal document flow**. It hovers above the page and aligns itself mathematically to its nearest TICK1relativeTICK1 parent container.
-- **fixed**: Ripped out of the flow and anchored to the physical screen (the viewport). Even if the user scrolls down, a TICK1fixedTICK1 header remains locked to the top of the glass.
-- **sticky**: Acts like TICK1relativeTICK1 until the user scrolls past it, at which point it instantly switches to TICK1fixedTICK1 and locks to the top of the screen.
-
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Selectors & Specificity/index.mdx': `---
-title: Selectors & Specificity
-description: The pattern-matching engine of CSS and the complex mathematical scoring algorithm that resolves styling conflicts.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/macOS/index.mdx': `---
+title: macOS
+description: "A proprietary graphical operating system developed and marketed by Apple Inc. It is the primary operating system for Apple's Mac computers."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Selectors & Specificity">
+<TechnologyTemplate 
+  name="macOS"
+  icon="apple"
+  creator="Apple"
+  year={2001}
+  website="https://www.apple.com/macos/"
+>
 
-CSS stands for Cascading Style Sheets. The "Cascade" is a complex mathematical algorithm the browser uses to decide which style wins when multiple conflicting rules apply to the exact same HTML element.
+**macOS** (formerly Mac OS X) is a POSIX-compliant UNIX operating system built on top of the open-source **Darwin** core. It is the operating system that powers Apple's desktop and laptop computers.
 
-## The Specificity Score
+Because macOS is fundamentally UNIX, it became the darling of software developers in the 2010s. Developers could write and test code on a beautiful, stable GUI laptop, and the terminal commands (bash/zsh) perfectly matched the Linux servers where the code would eventually be deployed.
 
-When a conflict occurs, the browser calculates a 3-column score: TICK1(ID, CLASS, TAG)TICK1. The highest score wins.
+## The Walled Garden and Hardware Integration
 
-1. **Tag Selectors** (TICK1divTICK1, TICK1pTICK1, TICK1h1TICK1): Lowest power. Score: TICK1(0, 0, 1)TICK1.
-2. **Class Selectors** (TICK1.btnTICK1, TICK1.headerTICK1): Medium power. Score: TICK1(0, 1, 0)TICK1.
-3. **ID Selectors** (TICK1#login-formTICK1): Extreme power. Score: TICK1(1, 0, 0)TICK1.
+Unlike Windows, which must support billions of different hardware combinations (resulting in driver conflicts and blue screens), macOS only runs on hardware designed by Apple. 
 
-If you write:
-TICK3css
-/* Score: (0, 0, 1) */
-button { color: red; } 
+This tight integration allows macOS to achieve incredible battery life, perfectly calibrated trackpads, and features like "Handoff" (where you can copy text on an iPhone and paste it on a Mac). 
 
-/* Score: (0, 1, 0) - This Wins! */
-.submit-btn { color: blue; } 
-TICK3
+## Core Technologies
+- **Cocoa**: The native object-oriented API for macOS applications (historically written in Objective-C, now Swift).
+- **Metal**: Apple's proprietary graphics API (their competitor to DirectX and Vulkan). By forcing developers to use Metal instead of cross-platform standards like OpenGL, Apple achieves better performance but alienates many game developers.
 
-Because the Class selector has a higher mathematical score, the button will be blue, regardless of which order the rules are written in the file.
+<Callout icon="warning" title="The Death of 32-bit">
+In macOS Catalina (2019), Apple ruthlessly dropped all support for 32-bit applications. If you had an old 32-bit game or utility, it permanently stopped working. This aggressive forward-momentum keeps macOS lean and secure, but severely punishes users relying on unmaintained legacy software.
+</Callout>
 
-## The Nuclear Option (!important)
-If you append TICK1!importantTICK1 to a rule (e.g., TICK1color: green !important;TICK1), it mathematically bypasses the entire specificity scoring system and instantly wins. 
-
-Using TICK1!importantTICK1 is generally considered a massive anti-pattern and a sign of architectural failure. If you use it, you break the Cascade, making the codebase nearly impossible to override or maintain in the future.
-
-## Combinators
-CSS allows complex pattern matching:
-- **Descendant** (TICK1div pTICK1): Selects *any* paragraph inside the div, no matter how deeply nested.
-- **Direct Child** (TICK1div > pTICK1): Selects *only* paragraphs that are immediate, first-generation children of the div.
-
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Flexbox/index.mdx': `---
-title: Flexbox Layout
-description: A powerful, one-dimensional layout engine designed to align, distribute, and perfectly center elements within a container.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Ubuntu/index.mdx': `---
+title: Ubuntu
+description: "A popular, beginner-friendly Linux distribution based on Debian and composed mostly of free and open-source software."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Flexbox Layout">
+<TechnologyTemplate 
+  name="Ubuntu"
+  icon="ubuntu"
+  creator="Canonical"
+  year={2004}
+  website="https://ubuntu.com/"
+>
 
-Before Flexbox (released around 2012), centering a TICK1<div>TICK1 vertically inside a container was famously one of the most agonizing, mathematically difficult tasks in web development (involving floating boxes and negative margins).
+**Ubuntu** is arguably the most famous Linux distribution in the world. Built on top of Debian, it was created by Canonical with a singular mission: make Linux easy enough for a normal human being to use.
 
-**Flexbox (Flexible Box Module)** solved this instantly. It is a one-dimensional layout engine, meaning it aligns items either in a horizontal Row, OR a vertical Column (but not both simultaneously).
+Before Ubuntu, installing Linux often involved manually compiling drivers and tweaking configuration files just to get Wi-Fi or sound working. Ubuntu shipped with a graphical installer, pre-installed proprietary drivers for common hardware, and a polished Desktop Environment.
 
-## The Parent Container (Flex Container)
-To activate Flexbox, you must apply TICK1display: flex;TICK1 to the parent container. This instantly turns all direct children into "Flex Items".
+## LTS (Long Term Support) Releases
 
-## The Two Axes
-Flexbox math operates on a Main Axis and a Cross Axis.
+Ubuntu releases a new version every 6 months (e.g., 23.04, 23.10), but every two years, they release an **LTS (Long Term Support)** version (e.g., 20.04 LTS, 22.04 LTS, 24.04 LTS).
 
-If TICK1flex-direction: rowTICK1 (the default):
-- **Main Axis** is horizontal (Left to Right). Controlled by TICK1justify-contentTICK1.
-- **Cross Axis** is vertical (Top to Bottom). Controlled by TICK1align-itemsTICK1.
+Enterprise companies rely heavily on Ubuntu Server LTS because Canonical guarantees security updates for 5 years. When a company deploys a database on 24.04 LTS, they know the OS won't introduce breaking API changes for half a decade.
 
-To perfectly center a box dead in the middle of a container:
-TICK3css
-.container {
-  display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center;     /* Center vertically */
-}
-TICK3
+## Apt and Snap
+Ubuntu inherits the TICK1aptTICK1 package manager from Debian, which is universally loved. However, Canonical has aggressively pushed **Snap**, their proprietary containerized packaging system. Snap allows apps to bundle all their dependencies together, but many power users hate it because Snap apps open slower, take up more disk space, and the Snap backend is closed-source.
 
-## Flex Item Properties
-You can give mathematical flexibility to the child items themselves:
-- TICK1flex-grow: 1TICK1: Tells the item to consume all available empty space in the container.
-- TICK1flex-shrink: 0TICK1: Explicitly forbids the browser from crushing the item if the screen gets too small.
+<Callout icon="tip" title="The Default Cloud OS">
+If you go to AWS, DigitalOcean, or Azure and click "Create a Server," the default option is almost always Ubuntu Server LTS. It is the de facto standard baseline for modern web deployment.
+</Callout>
 
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Grid/index.mdx': `---
-title: CSS Grid Layout
-description: The ultimate two-dimensional layout architecture, allowing complex rows and columns to be defined mathematically without nested divs.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Debian/index.mdx': `---
+title: Debian
+description: "One of the oldest and most stable Linux distributions, famous for its strict adherence to free software philosophies."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="CSS Grid Layout">
+<TechnologyTemplate 
+  name="Debian"
+  icon="debian"
+  creator="Ian Murdock"
+  year={1993}
+  website="https://www.debian.org/"
+>
 
-While Flexbox is perfect for aligning items in a single row (like a Navigation bar), it is terrible at building complex page architectures (like a dashboard with a sidebar, header, and main content area). 
+**Debian** is the grandfather of the modern Linux ecosystem. It is the rock-solid foundation upon which hundreds of other distributions (including Ubuntu, Linux Mint, and Kali Linux) are built.
 
-**CSS Grid** is the ultimate two-dimensional layout engine. It allows you to mathematically define both Rows AND Columns simultaneously.
+## Extreme Stability
 
-## The Grid Blueprint
-Instead of writing complex math on the child elements, CSS Grid allows you to define a structural blueprint entirely on the parent container.
+The Debian philosophy is built entirely around stability. When a new software package (like a new version of Python or a new Desktop GUI) is released, it enters Debian's "Unstable" branch. Then it moves to "Testing". It stays there, sometimes for *years*, until every single conceivable bug is fixed. Only then does it move into the "Stable" release.
 
-TICK3css
-.dashboard {
-  display: grid;
-  grid-template-columns: 200px 1fr; /* Two columns: A fixed 200px sidebar, and the rest (1fr) */
-  grid-template-rows: 60px 1fr;     /* Two rows: A fixed 60px header, and the rest (1fr) */
-  gap: 20px;                        /* Perfect spacing between all items */
-}
-TICK3
+Because of this intense vetting process:
+1. **Debian Servers Never Crash**: It is arguably the most stable OS on the planet.
+2. **Debian Software is Old**: If you install Debian Stable today, the version of Python or Node.js it ships with might be 2 or 3 years old. 
 
-## The Fractional Unit (fr)
-Grid introduced the TICK1frTICK1 (fractional) unit. It is incredibly powerful. 
-If you write TICK1grid-template-columns: 1fr 2fr 1frTICK1, the browser calculates the total available width, divides it into 4 equal slices, gives 1 slice to the left column, 2 slices to the middle column (making it twice as big), and 1 slice to the right.
+## The APT Package Manager
+Debian introduced TICK1aptTICK1 (Advanced Package Tool) and the TICK1.debTICK1 file format. Before APT, installing software on Linux meant resolving dependencies manually (if App A needs Library B, and Library B needs Library C, you had to download and compile all three manually). APT automated this entirely, revolutionizing OS package management.
 
-## Grid Areas (The Holy Grail)
-Grid allows you to name sections of your layout visually using strings, creating the most readable layout code in history:
+<Callout icon="info" title="Strictly Free Software">
+The core Debian team refuses to include proprietary (closed-source) software in the main operating system. By default, Debian will not install closed-source Nvidia graphics drivers or proprietary Wi-Fi firmware. You have to explicitly opt-in to the "non-free" repositories to get them.
+</Callout>
 
-TICK3css
-.layout {
-  display: grid;
-  grid-template-areas:
-    "header header header"
-    "sidebar main  ads"
-    "footer footer footer";
-}
-
-.header-child { grid-area: header; }
-TICK3
-The child element will instantly span across the entire top of the grid.
-
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Responsive Design/index.mdx': `---
-title: Responsive Design & Media Queries
-description: The architectural philosophy and CSS mechanics required to ensure web applications automatically adapt to smartphones, tablets, and 4K monitors.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Arch Linux/index.mdx': `---
+title: Arch Linux
+description: "A lightweight and flexible Linux distribution that tries to keep it simple, offering a rolling release model aimed at competent Linux users."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Responsive Design & Media Queries">
+<TechnologyTemplate 
+  name="Arch Linux"
+  icon="archlinux"
+  creator="Judd Vinet"
+  year={2002}
+  website="https://archlinux.org/"
+>
 
-In the early 2000s, companies built two entirely separate websites: TICK1www.example.comTICK1 for desktops, and TICK1m.example.comTICK1 for flip-phones. This was a maintenance nightmare.
+"I use Arch, btw." This is the oldest meme in the Linux community. 
 
-In 2010, Ethan Marcotte coined **Responsive Web Design**. The philosophy dictates that there should be exactly one HTML codebase, and CSS should mathematically fluidly adapt the layout based on the user's screen size.
+**Arch Linux** is a distribution designed for power users. When you install Ubuntu, it gives you a graphical installer, a pre-configured web browser, an office suite, and a desktop background. When you install Arch, it gives you a black screen with a blinking terminal cursor.
 
-## Media Queries
-The core technology behind Responsive Design is the **Media Query**. It acts as an IF-statement in CSS.
+You, the user, must manually partition the hard drive, install a bootloader, configure the network, choose a kernel, and install a desktop environment. 
 
-TICK3css
-/* Mobile-First Base Styles */
-.sidebar {
-  display: none; 
-}
+## The Rolling Release Model
+Unlike Ubuntu or Debian, which release massive updates every few years, Arch uses a **Rolling Release** model. 
+When a new version of the Linux Kernel or the GNOME desktop drops, Arch users get it immediately (usually within days). There is no "Arch Linux 2024." There is only Arch, and it updates daily.
 
-/* Tablet & Desktop Override */
-@media (min-width: 768px) {
-  .sidebar {
-    display: block; 
-  }
-}
-TICK3
+- **Pros**: You always have the absolute newest software, compilers, and features.
+- **Cons**: Because packages aren't tested together for years (like in Debian), an update can occasionally break your entire system, requiring you to drop into a terminal and fix it manually.
 
-## Mobile-First Architecture
-Modern web development strictly adheres to the "Mobile-First" philosophy. 
-You write the default CSS targeting the narrowest smartphone screen (stacking elements vertically). Then, you use TICK1min-widthTICK1 media queries to progressively enhance the layout as the screen gets wider (converting the vertical stack into a horizontal CSS Grid).
+## The AUR (Arch User Repository)
+Arch's greatest strength is the AUR. In Ubuntu, if a package isn't in the official store, you have to add shady PPAs or compile from source. The AUR is a massive, community-driven repository that contains a script to automatically download and build *literally any software that exists for Linux*. If someone wrote a program yesterday, it's in the AUR today.
 
-This is drastically more performant because smartphones (which have weaker CPUs) do not have to download and parse complex desktop layout rules only to override them.
-
-## The Viewport Meta Tag
-If you forget this tag, Responsive Design will completely fail:
-TICK3html
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-TICK3
-Without this, iPhones will assume your website is a legacy 1999 desktop site, and will violently zoom out, rendering the text at an unreadable microscopic size.
-
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Container Queries/index.mdx': `---
-title: Container Queries
-description: The next evolution of Responsive Design, allowing elements to adapt based on the size of their parent container rather than the global viewport.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/iOS/index.mdx': `---
+title: iOS
+description: "Apple's mobile operating system, originally created for the iPhone, known for its strict security, fluid animations, and absolute ecosystem control."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Container Queries">
+<TechnologyTemplate 
+  name="iOS"
+  icon="apple"
+  creator="Apple"
+  year={2007}
+  website="https://www.apple.com/ios/"
+>
 
-For a decade, Media Queries (TICK1@mediaTICK1) were the only way to build responsive layouts. However, Media Queries have a massive architectural flaw: they can only check the width of the **entire screen (the viewport)**.
+Originally called "iPhone OS", **iOS** revolutionized the world in 2007 by proving that a mobile device didn't need a physical keyboard or a stylus—it just needed a multi-touch capacitive screen and an operating system built natively for fingers.
 
-In modern Component-Based Architecture (React/Vue), you build reusable widgets (like a TICK1ProductCardTICK1). 
-If you put the TICK1ProductCardTICK1 in a wide main section, it should look horizontal. If you put that exact same TICK1ProductCardTICK1 into a narrow sidebar, it should look vertical. A Media Query cannot solve this, because the global screen size hasn't changed!
+Under the hood, iOS shares its core foundation (Darwin/UNIX) with macOS, but the User Interface layer is entirely different.
 
-## The Solution: @container
+## The Walled Garden
+iOS is famous for its strict, uncompromising security model:
+1. **Sandboxing**: Every app is strictly isolated in a "sandbox." App A cannot look at the files or memory of App B.
+2. **The App Store Monopoly**: Until very recently (and only due to EU legislation), the *only* way to install software on an iPhone was through Apple's App Store, subject to their strict review guidelines and 30% revenue cut.
+3. **No Background Processing**: To preserve battery life, iOS aggressively kills apps running in the background. Unlike Android, you cannot easily run an app that constantly mines crypto or tracks location without the OS noticing and terminating it.
 
-Released in 2022, **Container Queries** solve this massive problem. They allow a component to query the width of its *immediate parent container*, rather than the global screen.
+## The UI Standard
+iOS set the standard for fluid mobile interfaces. Apple enforces strict Human Interface Guidelines (HIG), ensuring that scrolling feels physical (rubber-banding effects) and that buttons are large enough for thumbs. Developers build iOS apps using **Swift** and **SwiftUI**.
 
-1. First, you must explicitly declare the parent as a container:
-TICK3css
-.sidebar {
-  container-type: inline-size;
-}
-TICK3
+<Callout icon="info" title="The Forking of iOS">
+As Apple's hardware evolved, they forked iOS to create specialized OSes: **iPadOS** (added mouse support and multitasking for larger screens), **watchOS** (for the Apple Watch), and **tvOS** (for Apple TV).
+</Callout>
 
-2. Then, you write a container query inside the child component:
-TICK3css
-.product-card {
-  display: flex; /* Default Horizontal */
-}
-
-/* IF the parent container is narrower than 400px, snap to vertical */
-@container (max-width: 400px) {
-  .product-card {
-    flex-direction: column;
-  }
-}
-TICK3
-
-This revolutionizes component reusability. The TICK1ProductCardTICK1 is now 100% context-aware and will perfectly adapt its layout regardless of where you place it in the DOM.
-
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Variables & Tokens/index.mdx': `---
-title: CSS Variables & Design Tokens
-description: The native mechanism for defining dynamic, reusable values (colors, spacing) to ensure absolute design consistency and enable Dark Mode.
+  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Android/index.mdx': `---
+title: Android
+description: "An open-source mobile operating system based on a modified version of the Linux kernel, developed primarily by Google."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="CSS Variables & Design Tokens">
+<TechnologyTemplate 
+  name="Android"
+  icon="android"
+  creator="Google (originally Android Inc.)"
+  year={2008}
+  website="https://www.android.com/"
+>
 
-Historically, if a company's brand color was TICK1#ff0000TICK1, developers had to manually type TICK1#ff0000TICK1 on 5,000 different buttons, borders, and text elements. If the CEO decided to rebrand to blue, it required a massive, error-prone find-and-replace operation.
+**Android** is the most widely used operating system in the world, powering over 70% of all smartphones globally. 
 
-Preprocessors like Sass solved this with static variables, but **CSS Custom Properties (CSS Variables)** brought this natively to the browser with one massive advantage: they are dynamic and can be manipulated by Javascript in real-time.
+Unlike iOS, which Apple keeps locked to their own hardware, Android is open-source (AOSP - Android Open Source Project). Google builds the core OS and gives it away for free to Samsung, Motorola, Xiaomi, and other manufacturers to put on their phones.
 
-## The Syntax
-Variables are typically declared on the root element (TICK1:rootTICK1) to make them globally accessible. They must be prefixed with two dashes TICK1--TICK1.
+## Architecture
 
-TICK3css
-:root {
-  --brand-primary: #ff0000;
-  --spacing-md: 16px;
-}
+1. **The Linux Kernel**: At the very bottom, Android runs a heavily modified Linux kernel to handle memory, power management, and hardware drivers.
+2. **The JVM (ART)**: Android apps are historically written in Java (and now Kotlin). Instead of running native machine code, Android uses the Android Runtime (ART) to compile and run bytecode. This ensures that an app written for a phone with a Qualcomm Snapdragon chip will also run on a phone with a MediaTek chip.
 
-.btn {
-  background-color: var(--brand-primary);
-  padding: var(--spacing-md);
-}
-TICK3
+## Openness vs Fragmentation
 
-## Design Tokens & Dark Mode
-CSS Variables are the architectural foundation of **Design Tokens**—the strict mathematical constants (colors, typography, spacing) that define a company's Design System.
+- **The Pros**: Sideloading. You do not need the Google Play Store to install an app; you can just download an APK file from the internet and install it. Android allows true background services, custom home screen launchers, and complete file system access.
+- **The Cons**: Fragmentation. Because Samsung and Motorola modify the OS heavily (adding their own UI skins like "One UI"), it takes months for them to update their phones when Google releases a new version of Android. Developers have to write code that accommodates thousands of different screen sizes, hardware combinations, and OS versions simultaneously.
 
-Because CSS Variables are dynamic, implementing a complex **Dark Mode** takes exactly 3 lines of code. You don't have to rewrite the button classes; you simply overwrite the variable definitions!
+<Callout icon="warning" title="Google Mobile Services (GMS)">
+While Android itself is open-source, the services that make it actually useful (Google Maps, Google Play Store, Push Notifications) are closed-source and owned by Google. If a manufacturer (like Huawei) is banned from using GMS, their Android phones become essentially useless to Western consumers, proving that Google maintains an iron grip on the "open" ecosystem.
+</Callout>
 
-TICK3css
-/* Default Light Mode */
-:root {
-  --bg-color: #ffffff;
-  --text-color: #000000;
-}
-
-/* Dark Mode Override */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #121212;
-    --text-color: #ffffff;
-  }
-}
-TICK3
-The browser instantly recalculates the entire page, swapping the colors flawlessly.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Animations & Transforms/index.mdx': `---
-title: Animations, Transitions & Transforms
-description: The high-performance CSS APIs utilized to smoothly animate elements using hardware-accelerated GPU processing.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Animations, Transitions & Transforms">
-
-Historically, animating a dropdown menu or a loading spinner required heavy Javascript loops (TICK1setIntervalTICK1). This was catastrophically bad for performance because it blocked the main CPU thread.
-
-CSS introduced native Animation APIs that offload the complex math directly to the GPU, guaranteeing a buttery-smooth 60 Frames Per Second (FPS).
-
-## The Big Three
-
-### 1. Transforms
-The TICK1transformTICK1 property allows you to mathematically manipulate the visual rendering of an element without disrupting the DOM layout.
-- TICK1transform: translateX(50px)TICK1 (Moves it right)
-- TICK1transform: scale(1.5)TICK1 (Makes it larger)
-- TICK1transform: rotate(45deg)TICK1 (Spins it)
-
-*Crucial rule: Translating an element is 100x faster than animating its TICK1margin-leftTICK1, because translating happens on the GPU and does not trigger a browser Layout Reflow.*
-
-### 2. Transitions
-A Transition tells the browser to automatically interpolate the frames between State A and State B when an interaction occurs.
-TICK3css
-.btn {
-  background-color: blue;
-  transition: background-color 0.3s ease-in-out;
-}
-.btn:hover {
-  background-color: red;
-}
-TICK3
-When hovered, the browser automatically generates all the purple frames in between over 300 milliseconds.
-
-### 3. Keyframe Animations
-While Transitions require a user interaction (like a hover), Keyframes allow you to define complex, multi-step, infinitely looping animations.
-TICK3css
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-spinner {
-  animation: spin 1s linear infinite;
-}
-TICK3
-
-</ConceptTemplate>
+</TechnologyTemplate>
 `,
 }
 

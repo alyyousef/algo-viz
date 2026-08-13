@@ -1,8 +1,48 @@
+---
+title: Lexical Analysis (Lexing)
+description: "The first phase of a compiler, converting a sequence of characters into a sequence of tokens."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Lexical analysis">
+<ConceptTemplate title="Lexical Analysis">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you feed a source code file (like `main.c`) into a compiler, the compiler initially just sees a massive, meaningless string of raw characters.
+
+The **Lexer** (or Scanner) performs **Lexical Analysis**. Its job is to read this raw string character by character, strip out whitespace and comments, and group the remaining characters into meaningful chunks called **Tokens**.
+
+## Example
+
+Given the raw source string:
+```c
+int main() {
+  return 0;
+}
+```
+
+The Lexer will output a stream of tokens that looks something like this:
+1. `[KEYWORD, "int"]`
+2. `[IDENTIFIER, "main"]`
+3. `[PUNCTUATION, "("]`
+4. `[PUNCTUATION, ")"]`
+5. `[PUNCTUATION, "{"]`
+6. `[KEYWORD, "return"]`
+7. `[NUMBER_LITERAL, "0"]`
+8. `[PUNCTUATION, ";"]`
+9. `[PUNCTUATION, "}"]`
+
+## How it Works
+Lexers are almost always implemented using **Finite Automata** (specifically, Deterministic Finite Automata or DFAs). The lexer defines a set of **Regular Expressions** for each valid token type in the language.
+
+<ComparisonTable 
+  headers={['Token Type', 'Regular Expression Example', 'Matches']} 
+  rows={[
+    ['Identifier', '[a-zA-Z_][a-zA-Z0-9_]*', 'myVariable, _private_val'],
+    ['Number Literal', '[0-9]+', '42, 1000'],
+    ['String Literal', '"[^"]*"', '"Hello World"']
+  ]} 
+/>
+
+If the Lexer encounters a character that does not match any valid rule (e.g., an illegal symbol like `@` in C), it throws a **Syntax Error** and halts compilation.
 
 </ConceptTemplate>

@@ -1,8 +1,36 @@
+---
+title: Reverse Proxies
+description: "An intermediary server that sits in front of backend application servers, intercepting and routing client requests."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Reverse proxies">
+<ConceptTemplate title="Reverse Proxies">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In modern web architecture, users rarely connect directly to the server running your actual application code (e.g., your Node.js or Java process). Instead, they connect to a **Reverse Proxy**.
+
+A Reverse Proxy is an intermediary server (like Nginx, HAProxy, or Envoy) that sits at the edge of your network, receives all incoming HTTP requests, and forwards them to the appropriate backend server.
+
+## 1. Forward Proxy vs Reverse Proxy
+
+<ComparisonTable 
+  headers={['Type', 'Who it protects', 'Use Case']} 
+  rows={[
+    ['Forward Proxy', 'The Client (User).', 'A corporate VPN proxy that hides the employee\'s IP address from the websites they visit.'],
+    ['Reverse Proxy', 'The Server (Backend).', 'Nginx hiding your internal database and application servers from the public internet.']
+  ]} 
+/>
+
+## 2. Why use a Reverse Proxy?
+
+1. **Security & Anonymity**: The public internet only sees the proxy's IP address. Your internal application servers can remain safely hidden on a private subnet.
+2. **TLS/SSL Termination**: HTTPS decryption is CPU-intensive. The proxy handles the decryption, allowing your application servers to focus entirely on running business logic (receiving plain HTTP).
+3. **Caching**: If 100 users request the exact same image or API response, the proxy can cache the first response and serve it to the next 99 users instantly, without even waking up your application server.
+4. **Load Balancing**: The proxy can distribute incoming requests evenly across 5 different backend servers.
+
+<Callout icon="info" title="API Gateways">
+An **API Gateway** (like AWS API Gateway or Kong) is essentially an advanced Reverse Proxy that adds developer-focused features like rate-limiting, API key authentication, and request/response transformation.
+</Callout>
 
 </ConceptTemplate>

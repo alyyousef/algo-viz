@@ -1,8 +1,25 @@
+---
+title: Computer Vision for Robotics
+description: "The algorithms and hardware that allow a robot to extract high-level understanding from digital images or videos to interact with the physical world."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Computer vision for robotics">
+<ConceptTemplate title="Computer Vision for Robotics">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A robot is blind without sensors. While LiDAR provides incredible 3D geometry, it is entirely colorblind. It can see a flat rectangular obstacle in front of the car, but it cannot tell if that rectangle is a solid brick wall or a harmless cardboard box. 
+
+**Computer Vision (CV)** allows robots to interpret semantic meaning from RGB cameras.
+
+## The Robotics Vision Pipeline
+Modern robotic vision generally follows a pipeline dominated by Convolutional Neural Networks (CNNs).
+
+1. **Object Detection (YOLO)**: The robot identifies bounding boxes around distinct objects. ("There is a Car at [100px, 200px] and a Pedestrian at [50px, 80px]"). Algorithms like YOLO (You Only Look Once) are heavily used because they run fast enough (60+ FPS) for real-time robotic reaction.
+2. **Semantic Segmentation**: Bounding boxes aren't enough for safe navigation. Segmentation classifies *every single pixel* in the image. ("Pixels 1-400 are 'Sky', Pixels 401-800 are 'Road', Pixels 801-900 are 'Sidewalk'"). This tells the robot exactly where the drivable surface is.
+3. **Sensor Fusion**: The ultimate step. The robot takes the 2D pixel classification from the camera ("This is a Stop Sign") and overlays it onto the 3D point cloud from the LiDAR. Now the robot knows it is looking at a Stop Sign that is exactly 14.3 meters away.
+
+## Unique Challenges in Robotics
+Computer Vision for a web app (like sorting user photos) is easy. Computer vision for a robot is terrifyingly hard.
+- **Lighting Variability**: A self-driving car's camera gets blinded by direct sunset glare, plunged into total darkness in a tunnel, and covered by raindrops, all within 60 seconds.
+- **Compute Constraints**: You cannot send video to the cloud for processing; latency will cause a crash. The heavy AI models must run locally on the robot's embedded Edge GPU (like an NVIDIA Jetson), which has strict power and thermal limits.
 
 </ConceptTemplate>

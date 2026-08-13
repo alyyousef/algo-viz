@@ -1,28 +1,34 @@
 ---
 title: Android
-description: The world's most widely used operating system, utilizing the Linux kernel beneath a massive Java-based user space.
+description: "An open-source mobile operating system based on a modified version of the Linux kernel, developed primarily by Google."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Android">
+<TechnologyTemplate 
+  name="Android"
+  icon="android"
+  creator="Google (originally Android Inc.)"
+  year={2008}
+  website="https://www.android.com/"
+>
 
-Developed by Google, **Android** is the most widely used operating system on Earth, powering billions of smartphones, tablets, and televisions. 
+**Android** is the most widely used operating system in the world, powering over 70% of all smartphones globally. 
 
-While it is technically a "Linux Distribution" (because it uses the Linux Kernel to talk to the phone's hardware), it shares absolutely zero user-space DNA with desktop Linux. 
+Unlike iOS, which Apple keeps locked to their own hardware, Android is open-source (AOSP - Android Open Source Project). Google builds the core OS and gives it away for free to Samsung, Motorola, Xiaomi, and other manufacturers to put on their phones.
 
-## The Architecture Stack
+## Architecture
 
-Android is built in highly distinct layers:
-1. **The Linux Kernel**: Handles memory management, CPU scheduling, and hardware drivers (camera, bluetooth).
-2. **Hardware Abstraction Layer (HAL)**: C/C++ libraries that allow the higher levels to talk to proprietary hardware without knowing the specific driver details.
-3. **Android Runtime (ART)**: A highly specialized Virtual Machine designed for low-power mobile devices. 
-4. **The Framework**: The massive Java/Kotlin API that provides UI buttons, location services, and notifications.
+1. **The Linux Kernel**: At the very bottom, Android runs a heavily modified Linux kernel to handle memory, power management, and hardware drivers.
+2. **The JVM (ART)**: Android apps are historically written in Java (and now Kotlin). Instead of running native machine code, Android uses the Android Runtime (ART) to compile and run bytecode. This ensures that an app written for a phone with a Qualcomm Snapdragon chip will also run on a phone with a MediaTek chip.
 
-<Callout icon="success" title="The Application Sandbox">
-  In desktop Linux, apps generally share the same user permissions. In Android, every single application is assigned its own unique Linux User ID (UID). Because the Linux Kernel strictly isolates memory between different users, this guarantees that a malicious flashlight app physically cannot read the RAM of your banking app.
+## Openness vs Fragmentation
+
+- **The Pros**: Sideloading. You do not need the Google Play Store to install an app; you can just download an APK file from the internet and install it. Android allows true background services, custom home screen launchers, and complete file system access.
+- **The Cons**: Fragmentation. Because Samsung and Motorola modify the OS heavily (adding their own UI skins like "One UI"), it takes months for them to update their phones when Google releases a new version of Android. Developers have to write code that accommodates thousands of different screen sizes, hardware combinations, and OS versions simultaneously.
+
+<Callout icon="warning" title="Google Mobile Services (GMS)">
+While Android itself is open-source, the services that make it actually useful (Google Maps, Google Play Store, Push Notifications) are closed-source and owned by Google. If a manufacturer (like Huawei) is banned from using GMS, their Android phones become essentially useless to Western consumers, proving that Google maintains an iron grip on the "open" ecosystem.
 </Callout>
 
-## Dalvik to ART
-Historically, Android compiled Java code into Dalvik bytecode and interpreted it Just-In-Time (JIT) while the app was running, which drained battery. Modern Android uses **ART (Android Runtime)**, which performs Ahead-Of-Time (AOT) compilation—translating the app into native machine code the moment you install it from the Play Store, resulting in massive performance gains.
-
-</ConceptTemplate>
+</TechnologyTemplate>

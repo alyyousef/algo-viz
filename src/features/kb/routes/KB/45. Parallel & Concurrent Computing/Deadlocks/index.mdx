@@ -1,33 +1,39 @@
 ---
 title: Deadlocks
-description: A state in which each member of a group is waiting for another member, including itself, to take action.
+description: "A situation where two or more threads are permanently blocked, each waiting on the other to release a resource."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Deadlocks">
+<ConceptTemplate title="Deadlocks">
 
-A deadlock is a situation in computer science where a set of processes or threads are blocked because each process is holding a resource and waiting for another resource acquired by some other process.
+While Mutexes solve Race Conditions, they introduce a terrifying new problem: **Deadlocks**. A deadlock occurs when two or more threads are stuck waiting for each other forever, causing the program to permanently freeze.
 
-<Callout icon="warning" title="The Traffic Jam Metaphor">
-  Imagine four cars arrive at a 4-way stop at the exact same time. Car 1 waits for Car 2, Car 2 waits for Car 3, Car 3 waits for Car 4, and Car 4 waits for Car 1. No one can move. They are deadlocked.
+## 1. The Classic Deadlock Scenario
+Imagine two threads, and two mutexes (Lock A and Lock B).
+
+1. **Thread 1** acquires **Lock A**.
+2. **Thread 2** acquires **Lock B**.
+3. **Thread 1** attempts to acquire **Lock B** (but it must wait for Thread 2 to release it).
+4. **Thread 2** attempts to acquire **Lock A** (but it must wait for Thread 1 to release it).
+
+Neither thread can proceed. They will wait for eternity. The application is frozen and must be forcefully killed by the operating system.
+
+## 2. The Coffman Conditions
+In 1971, Edward Coffman outlined the four conditions that must *all* be present for a deadlock to occur. Breaking just one of these prevents deadlocks:
+
+1. **Mutual Exclusion**: Resources cannot be shared. (If multiple threads can read data simultaneously, no deadlock).
+2. **Hold and Wait**: A thread holds one resource while waiting for another.
+3. **No Preemption**: A lock cannot be forcefully taken away from a thread by the OS.
+4. **Circular Wait**: Thread 1 waits for Thread 2, who waits for Thread 3, who waits for Thread 1.
+
+## 3. Prevention Strategies
+The most common way to prevent deadlocks in software engineering is breaking the **Circular Wait** condition via **Lock Ordering**.
+
+If your application dictates a strict, global rule: *"Lock A must ALWAYS be acquired before Lock B"*, then the scenario above becomes impossible. Thread 2 would be forced to wait for Lock A *before* it was allowed to acquire Lock B.
+
+<Callout icon="info" title="The Dining Philosophers">
+The most famous illustration of deadlocks is Dijkstra's "Dining Philosophers" problem. Five philosophers sit at a round table with five forks between them. They need two forks to eat. If everyone picks up their left fork simultaneously, no right forks remain, and they all starve to death waiting.
 </Callout>
 
-## The Four Coffman Conditions
-
-A deadlock CANNOT occur unless ALL FOUR of these conditions hold true simultaneously:
-
-<ComparisonTable 
-  headers={['Condition', 'Description']}
-  rows={[
-    ['1. Mutual Exclusion', 'At least one resource must be held in a non-shareable mode (only one thread can use it at a time).'],
-    ['2. Hold and Wait', 'A thread is currently holding at least one resource and requesting additional resources held by others.'],
-    ['3. No Preemption', 'A resource cannot be forcibly taken away from a thread; it must be released voluntarily.'],
-    ['4. Circular Wait', 'Thread A waits for Thread B, which waits for Thread C, which waits for Thread A.']
-  ]}
-/>
-
-## Deadlock Prevention
-
-To prevent a deadlock, you simply ensure that at least one of the four Coffman conditions is never met. The easiest to break is usually **Circular Wait**: by forcing all threads to always request locks in the exact same alphabetical or numerical order, a circle can never form.
-
-</TechnologyTemplate>
+</ConceptTemplate>

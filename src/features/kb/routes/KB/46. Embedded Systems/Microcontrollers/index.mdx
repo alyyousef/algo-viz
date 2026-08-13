@@ -1,8 +1,42 @@
+---
+title: Microcontrollers (MCUs)
+description: "A compact integrated circuit designed to govern a specific operation in an embedded system."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Microcontrollers">
+<ConceptTemplate title="Microcontrollers (MCUs)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Microcontroller (MCU)** is a complete, self-contained computer shrunk down to a single tiny chip. Unlike the CPU in your laptop (which is just the processor and requires external RAM and hard drives), a Microcontroller includes the processor, RAM, and non-volatile flash memory (the hard drive) all inside a single piece of silicon.
+
+They are the hidden brains inside almost every modern electronic device: your microwave, your TV remote, your car's anti-lock brakes, and digital thermometers.
+
+## MCU vs Microprocessor (MPU)
+
+<ComparisonTable 
+  headers={['Feature', 'Microcontroller (MCU)', 'Microprocessor (MPU)']} 
+  rows={[
+    ['Components', 'CPU, RAM, ROM/Flash, and I/O peripherals all on one chip.', 'Just the CPU. Requires external RAM and storage chips.'],
+    ['Power Consumption', 'Extremely low. Can run on a coin cell battery for years.', 'High. Often requires dedicated cooling/heatsinks.'],
+    ['Cost', 'Cents to a few dollars (e.g., ATmega328, ESP32).', 'Tens to hundreds of dollars (e.g., Intel Core i7).'],
+    ['Operating System', 'Usually runs Bare-Metal code or an RTOS.', 'Runs general-purpose OS like Windows, Linux, or macOS.']
+  ]} 
+/>
+
+## Key Components of an MCU
+1. **CPU Core**: The processing unit (e.g., an 8-bit AVR or a 32-bit ARM Cortex-M).
+2. **Memory**:
+   - **Flash/ROM**: Stores the program/firmware (non-volatile).
+   - **SRAM**: Stores temporary variables during execution (volatile).
+3. **Peripherals**: Built-in hardware modules for specific tasks:
+   - **GPIO**: General Purpose Input/Output pins.
+   - **Timers**: For precise time-keeping.
+   - **ADC/DAC**: Analog-to-Digital and Digital-to-Analog Converters.
+   - **Communication Interfaces**: UART, SPI, I2C.
+
+<Callout icon="tip" title="Popular MCUs">
+The **Arduino Uno** is powered by the Atmel ATmega328P (an 8-bit MCU). The **ESP32** is a popular 32-bit MCU that famously includes built-in Wi-Fi and Bluetooth, making it the king of IoT devices.
+</Callout>
 
 </ConceptTemplate>

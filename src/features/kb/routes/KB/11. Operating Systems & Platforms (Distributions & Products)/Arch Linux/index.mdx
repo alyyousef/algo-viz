@@ -1,27 +1,32 @@
 ---
 title: Arch Linux
-description: A minimalist, rolling-release Linux distribution that forces you to build your OS from scratch.
+description: "A lightweight and flexible Linux distribution that tries to keep it simple, offering a rolling release model aimed at competent Linux users."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Arch Linux">
+<TechnologyTemplate 
+  name="Arch Linux"
+  icon="archlinux"
+  creator="Judd Vinet"
+  year={2002}
+  website="https://archlinux.org/"
+>
 
-**Arch Linux** is a notoriously difficult, highly minimalist Linux distribution aimed strictly at power users. 
+"I use Arch, btw." This is the oldest meme in the Linux community. 
 
-When you boot the Arch Linux installation drive, you are not greeted by a beautiful graphical installer. You are dropped into a blank black terminal. You must manually partition your hard drive, format the filesystems, mount them, install the base kernel, configure the bootloader, and manually install a graphical desktop if you want one.
+**Arch Linux** is a distribution designed for power users. When you install Ubuntu, it gives you a graphical installer, a pre-configured web browser, an office suite, and a desktop background. When you install Arch, it gives you a black screen with a blinking terminal cursor.
 
-## Rolling Release
+You, the user, must manually partition the hard drive, install a bootloader, configure the network, choose a kernel, and install a desktop environment. 
 
-Arch Linux uses a **Rolling Release** model. Unlike Ubuntu or Debian (which release a massive OS upgrade every 2 years), Arch has no versions. You install it once, and run `pacman -Syu` to continuously download the absolute newest software updates every single day. 
+## The Rolling Release Model
+Unlike Ubuntu or Debian, which release massive updates every few years, Arch uses a **Rolling Release** model. 
+When a new version of the Linux Kernel or the GNOME desktop drops, Arch users get it immediately (usually within days). There is no "Arch Linux 2024." There is only Arch, and it updates daily.
 
-<Callout icon="warning" title="Bleeding Edge Danger">
-  Because Arch pushes software updates directly from the developers to your computer within hours of their release, things occasionally break. Arch users are expected to read the wiki and manually fix their systems when an update causes an issue.
-</Callout>
+- **Pros**: You always have the absolute newest software, compilers, and features.
+- **Cons**: Because packages aren't tested together for years (like in Debian), an update can occasionally break your entire system, requiring you to drop into a terminal and fix it manually.
 
-## The Arch Wiki and AUR
+## The AUR (Arch User Repository)
+Arch's greatest strength is the AUR. In Ubuntu, if a package isn't in the official store, you have to add shady PPAs or compile from source. The AUR is a massive, community-driven repository that contains a script to automatically download and build *literally any software that exists for Linux*. If someone wrote a program yesterday, it's in the AUR today.
 
-Arch is famous for two things:
-1. **The Arch Wiki**: Arguably the greatest, most comprehensive documentation of Linux systems on the internet, widely used even by non-Arch users.
-2. **The AUR (Arch User Repository)**: A massive, community-driven software repository that contains installation scripts for virtually every piece of software ever written for Linux.
-
-</ConceptTemplate>
+</TechnologyTemplate>

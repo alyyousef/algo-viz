@@ -1,26 +1,34 @@
 ---
 title: Windows
-description: The dominant desktop operating system on Earth, powered by the incredibly robust, proprietary Windows NT Kernel.
+description: "A group of several proprietary graphical operating system families, all of which are developed and marketed by Microsoft."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Windows">
+<TechnologyTemplate 
+  name="Windows"
+  icon="windows"
+  creator="Microsoft"
+  year={1985}
+  website="https://www.microsoft.com/windows"
+>
 
-Microsoft **Windows** is the undisputed king of the consumer and enterprise desktop market, holding roughly 70% global market share. 
+**Microsoft Windows** is the most widely used desktop operating system in the world. Originally built as a graphical shell on top of MS-DOS, modern Windows (since Windows NT) is a massive, incredibly complex OS designed to run on a near-infinite combination of hardware.
 
-While the early versions of Windows (Windows 95, 98) were famously unstable graphical shells built on top of the ancient DOS operating system, modern Windows (XP, 7, 10, 11) is built on an entirely different foundation: the **Windows NT Kernel**.
+## The Blessing and Curse of Backwards Compatibility
 
-## The NT Kernel Architecture
+Apple is famous for ruthlessly deleting legacy technologies. If an API is old, Apple removes it, breaking old apps but keeping macOS clean. 
 
-The NT (New Technology) Kernel is a proprietary, highly advanced **Hybrid Kernel**. 
+Microsoft takes the exact opposite approach: **Absolute Backwards Compatibility**.
+A program compiled for Windows 95 can, in many cases, still run perfectly on Windows 11 today. This is why enterprise businesses and hospitals love Windows; they know their expensive custom software won't break when they update the OS. 
 
-Unlike Linux (which is heavily focused on the POSIX/Unix philosophy), the NT architecture is completely unique:
-1. **The Registry**: Instead of storing configuration in thousands of scattered text files (like Linux's `/etc` directory), Windows stores all OS and Application configuration in a massive, centralized, hierarchical binary database called the Windows Registry.
-2. **Drive Letters**: Instead of a single root filesystem tree (`/`), Windows abstracts physical drives into distinct lettered volumes (`C:`, `D:`).
-3. **The Win32 API**: The massive C-based API that has maintained incredible backward compatibility. A program written for Windows 95 using Win32 will often still execute perfectly on Windows 11.
+However, this is also why Windows is massive and occasionally fragile: the operating system must ship with decades of legacy code, old registry structures, and deprecated APIs just to ensure a 25-year-old accounting program still works.
 
-<Callout icon="success" title="The WSL Revolution">
-  Recognizing the massive popularity of Linux for software development, Microsoft introduced **WSL2 (Windows Subsystem for Linux)**. Rather than trying to emulate Linux, Windows 11 now literally ships with a real, Microsoft-compiled Linux kernel running seamlessly alongside the NT kernel inside a lightweight hypervisor, allowing developers to run native Ubuntu directly inside Windows.
+## DirectX and PC Gaming
+Windows dominates the PC gaming industry thanks to **DirectX**, Microsoft's proprietary API for handling tasks related to multimedia and game programming. Because Microsoft deeply integrated DirectX into the OS and constantly courted game developers, almost all major PC games are built specifically for Windows.
+
+<Callout icon="info" title="WSL (Windows Subsystem for Linux)">
+Recognizing that web developers were fleeing to Mac and Linux, Microsoft introduced WSL. WSL embeds a literal Linux kernel directly inside Windows, allowing developers to run native Ubuntu terminal commands, Docker, and bash scripts seamlessly alongside their Windows GUI apps.
 </Callout>
 
-</ConceptTemplate>
+</TechnologyTemplate>

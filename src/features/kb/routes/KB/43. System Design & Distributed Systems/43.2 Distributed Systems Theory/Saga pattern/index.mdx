@@ -1,8 +1,33 @@
+---
+title: Saga Pattern
+description: "A sequence of local transactions used to maintain data consistency across microservices."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Saga pattern">
+<ConceptTemplate title="The Saga Pattern">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a monolith, if a user buys an item, you deduct inventory and charge their card within a single ACID database transaction. If the card declines, you issue an SQL `ROLLBACK`, and the inventory is perfectly restored.
+
+In microservices, the Inventory DB and the Payment DB are separated by a network. You cannot run a single ACID transaction across them. To solve this, you use a **Saga**.
+
+A Saga is a sequence of local database transactions. Each service performs its local transaction and publishes an event to trigger the next step.
+
+## Compensating Transactions
+If a step fails, you cannot use SQL `ROLLBACK`. You must write business logic to execute a **Compensating Transaction**—an operation that actively undoes the previous step.
+
+If Step 1 (Deduct Inventory) succeeds, but Step 2 (Charge Card) fails, the Payment Service emits a "PaymentFailed" event. The Inventory Service listens for this event and executes a Compensating Transaction: `UPDATE inventory SET count = count + 1`.
+
+## Choreography vs Orchestration
+
+There are two ways to organize a Saga:
+
+<ComparisonTable 
+  headers={['Type', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Choreography', 'Services listen to each other\'s events directly. (A decentralized dance).', 'Pro: No single point of failure. Con: Hard to track the overall status of the transaction.'],
+    ['Orchestration', 'A central "Orchestrator" service acts as a conductor, explicitly telling each service what to do via commands.', 'Pro: Complex workflows are easy to monitor and reason about. Con: The orchestrator is a single point of failure.']
+  ]} 
+/>
 
 </ConceptTemplate>

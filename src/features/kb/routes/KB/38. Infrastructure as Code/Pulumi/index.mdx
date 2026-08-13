@@ -1,8 +1,31 @@
+---
+title: Pulumi
+description: "A modern IaC platform that allows you to define infrastructure using general-purpose programming languages."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Pulumi">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Pulumi** is a modern Infrastructure as Code tool that challenges Terraform's dominance by changing *how* you write infrastructure.
+
+Instead of forcing you to learn a domain-specific language (like Terraform's HCL) or write thousands of lines of static markup (like CloudFormation's YAML), Pulumi allows you to provision infrastructure using standard, general-purpose programming languages: **TypeScript, Python, Go, or C#**.
+
+## 1. The Power of Real Code
+Because you are using a real programming language, you gain massive advantages:
+- **Native For-Loops**: Need 5 identical S3 buckets? Just write a standard JavaScript `for` loop. (Terraform requires complex `count` or `for_each` meta-arguments).
+- **IDE Support**: You get native autocompletion, type-checking, and inline documentation in VS Code without needing specialized plugins.
+- **Testing**: You can write standard unit tests (using Jest or PyTest) to validate your infrastructure logic before deploying it.
+- **Package Managers**: You can publish reusable infrastructure components as standard NPM packages or Python wheels.
+
+## 2. How it works
+Under the hood, Pulumi is highly declarative. When you run a Pulumi program, it doesn't immediately create resources. 
+1. It executes your TypeScript/Python code to dynamically build a target state graph.
+2. The Pulumi Engine compares this graph to the current state.
+3. It makes the necessary API calls to the cloud providers to reconcile the differences.
+
+<Callout icon="info" title="Pulumi vs AWS CDK">
+While both allow you to write infrastructure in real languages, **AWS CDK** only works for AWS (compiling down to CloudFormation). **Pulumi** is cloud-agnostic and interacts directly with the cloud provider's APIs, just like Terraform.
+</Callout>
 
 </ConceptTemplate>

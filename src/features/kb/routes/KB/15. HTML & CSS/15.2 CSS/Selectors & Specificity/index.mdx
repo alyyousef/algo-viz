@@ -1,40 +1,38 @@
 ---
 title: Selectors & Specificity
-description: The pattern-matching engine of CSS and the complex mathematical scoring algorithm that resolves styling conflicts.
+description: "The rule engine of CSS that determines exactly which styles are applied to an element when multiple conflicting rules exist."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Selectors & Specificity">
+<ConceptTemplate 
+  name="Selectors & Specificity"
+  icon="target"
+>
 
-CSS stands for Cascading Style Sheets. The "Cascade" is a complex mathematical algorithm the browser uses to decide which style wins when multiple conflicting rules apply to the exact same HTML element.
+CSS stands for **Cascading Style Sheets**. The "Cascade" is the algorithm the browser uses to decide which style wins when two different rules try to style the same element.
 
-## The Specificity Score
+## The Specificity Hierarchy
 
-When a conflict occurs, the browser calculates a 3-column score: `(ID, CLASS, TAG)`. The highest score wins.
+When a conflict occurs, the browser calculates a specificity score based on the types of selectors used. From highest to lowest priority:
 
-1. **Tag Selectors** (`div`, `p`, `h1`): Lowest power. Score: `(0, 0, 1)`.
-2. **Class Selectors** (`.btn`, `.header`): Medium power. Score: `(0, 1, 0)`.
-3. **ID Selectors** (`#login-form`): Extreme power. Score: `(1, 0, 0)`.
+1. **Inline Styles**: `<div style="color: red;">` (Almost always wins)
+2. **IDs**: `#header { color: blue; }`
+3. **Classes, Attributes, and Pseudo-classes**: `.btn`, `[type="text"]`, `:hover`
+4. **Elements and Pseudo-elements**: `h1`, `div`, `::before`
 
-If you write:
-```css
-/* Score: (0, 0, 1) */
-button { color: red; } 
+For example, `#nav .link` (1 ID, 1 Class) will override `div ul li .link` (3 Elements, 1 Class) because IDs carry vastly more weight.
 
-/* Score: (0, 1, 0) - This Wins! */
-.submit-btn { color: blue; } 
-```
+## Advanced Selectors
+- **Combinators**: 
+  - `div p` (Descendant: any `p` inside a `div`)
+  - `div > p` (Direct child: only `p` elements directly nested one level deep)
+  - `h1 + p` (Adjacent sibling: the `p` immediately following an `h1`)
+- **Pseudo-classes**: Target state. (e.g., `:focus`, `:nth-child(2)`, `:not(.active)`)
+- **Pseudo-elements**: Target sub-parts of an element. (e.g., `::before`, `::selection`)
 
-Because the Class selector has a higher mathematical score, the button will be blue, regardless of which order the rules are written in the file.
-
-## The Nuclear Option (!important)
-If you append `!important` to a rule (e.g., `color: green !important;`), it mathematically bypasses the entire specificity scoring system and instantly wins. 
-
-Using `!important` is generally considered a massive anti-pattern and a sign of architectural failure. If you use it, you break the Cascade, making the codebase nearly impossible to override or maintain in the future.
-
-## Combinators
-CSS allows complex pattern matching:
-- **Descendant** (`div p`): Selects *any* paragraph inside the div, no matter how deeply nested.
-- **Direct Child** (`div > p`): Selects *only* paragraphs that are immediate, first-generation children of the div.
+<Callout icon="warning" title="The !important Nuclear Option">
+Appending `!important` to a rule forces it to win over almost everything else, regardless of specificity. While tempting for quick fixes, overusing it destroys the cascade and makes your CSS impossible to maintain. Only use it when overriding third-party libraries.
+</Callout>
 
 </ConceptTemplate>

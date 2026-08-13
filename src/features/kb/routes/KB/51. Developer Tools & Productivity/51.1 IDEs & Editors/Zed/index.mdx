@@ -1,8 +1,34 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Zed
+description: "A lightning-fast, collaborative code editor written in Rust, built by the original creators of Atom and Tree-sitter."
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Zed">
+<TechnologyTemplate 
+  name="Zed"
+  icon="zed"
+  creator="Nathan Sobo (Zed Industries)"
+  year={2024}
+  website="https://zed.dev/"
+  repository="https://github.com/zed-industries/zed"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Zed** is the newest major player in the text editor space, built by the same developers who created GitHub's Atom editor and the Tree-sitter parsing library. 
 
-</ConceptTemplate>
+Where Atom and VS Code used web technologies (Electron/JavaScript), which inherently carry memory and performance overhead, Zed is written entirely in **Rust** and renders its UI directly to the GPU (using Vulkan/Metal).
+
+## The Obsession with Speed
+The core thesis of Zed is that editors have become too slow. There should be exactly zero latency between pressing a key and seeing the character on the screen. By bypassing the browser engine entirely, Zed achieves performance that rivals terminal editors like Neovim, but with a modern GUI.
+
+## Core Differentiators
+
+1. **Multiplayer by Default**: Zed was built from day one for collaborative coding. Instead of a clunky "Live Share" plugin, multiple developers can seamlessly jump into a workspace, see each other's cursors, and even share terminal sessions as if they were in a Google Doc.
+2. **Native AI Integration**: Unlike VS Code where GitHub Copilot is an extension bolted on top, Zed integrates AI deeply into the editor's core UX, providing incredibly fast inline code generation and a native AI chat panel that understands your codebase.
+3. **Vim Mode Built-in**: Recognizing that power users demand modal editing, Zed ships with a highly accurate, native Vim mode out of the box, without needing to install a slow javascript-based extension.
+
+<Callout icon="info" title="The Electron Backlash">
+Zed represents a broader industry trend (alongside tools like Tauri or native Rust apps) of moving away from Electron. Developers are tired of their chat app, music player, and code editor each running a separate, massive instance of the Chromium browser in the background and draining laptop batteries.
+</Callout>
+
+</TechnologyTemplate>

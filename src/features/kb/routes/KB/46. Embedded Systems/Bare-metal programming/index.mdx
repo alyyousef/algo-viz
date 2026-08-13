@@ -1,8 +1,50 @@
+---
+title: Bare-Metal Programming
+description: "Writing code that runs directly on the hardware without any intervening operating system."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Bare-metal programming">
+<ConceptTemplate title="Bare-Metal Programming">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you write a Python script on your laptop, you are sitting on top of an enormous tower of abstractions. You ask Python to open a file, Python asks the C standard library, the C standard library asks the Linux Kernel, the Kernel asks the file system driver, the driver asks the SSD controller.
+
+**Bare-Metal Programming** removes the entire tower. There is no Operating System. There is no Linux Kernel. There are no files, no threads, and no network stack. There is only your C code and the raw silicon.
+
+## How it Works
+In bare-metal programming, you control the hardware by reading and writing binary values directly to specific physical memory addresses known as **Memory-Mapped Registers**.
+
+```c
+// Example: Turning on an LED in bare-metal C
+// We look up the memory address of the GPIO Port in the MCU Datasheet
+#define GPIO_PORT_A 0x40020000 
+
+void turn_on_led() {
+    // We cast the hardcoded physical address to a pointer, 
+    // and write the binary value directly to the silicon.
+    unsigned int *port_a = (unsigned int *)GPIO_PORT_A;
+    *port_a = 0b00000001; 
+}
+```
+
+## The "Super Loop" Architecture
+Because there is no OS to manage background tasks or UI rendering, almost all bare-metal programs follow the exact same infinite loop architecture:
+
+```c
+void main() {
+    hardware_init();
+    
+    while(1) {
+        read_sensors();
+        process_data();
+        update_outputs();
+    }
+}
+```
+
+<Callout icon="warning" title="Blocking is Fatal">
+In a bare-metal super loop, if `process_data()` takes 5 seconds to run, the entire device is frozen for 5 seconds. You cannot read sensors or update outputs. Therefore, bare-metal code must be written to be entirely non-blocking, often relying heavily on Interrupts.
+</Callout>
 
 </ConceptTemplate>

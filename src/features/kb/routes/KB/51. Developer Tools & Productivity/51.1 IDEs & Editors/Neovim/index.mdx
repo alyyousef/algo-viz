@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Neovim
+description: "An aggressive refactor of Vim, bringing asynchronous plugins, an embedded Lua runtime, and modern architectural standards to the classic editor."
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Neovim">
+<TechnologyTemplate 
+  name="Neovim (Nvim)"
+  icon="neovim"
+  creator="Thiago de Arruda (and community)"
+  year={2014}
+  website="https://neovim.io/"
+  repository="https://github.com/neovim/neovim"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+By 2014, Vim's codebase was over 20 years old, bloated with support for obsolete operating systems (like AmigaOS), and maintained almost entirely by a single person who resisted modern features like asynchronous execution. If a Vim plugin needed to format your code, the entire editor would physically freeze until the formatting was done.
 
-</ConceptTemplate>
+**Neovim** was born as a hard fork of Vim. The creators deleted thousands of lines of legacy code and modernized the architecture.
+
+## Why Neovim Replaced Vim for Power Users
+
+1. **Lua Instead of Vimscript**: Neovim embedded the lightning-fast Lua programming language directly into the editor. This allowed developers to write highly complex, performant plugins in a real programming language instead of archaic Vimscript.
+2. **Native LSP Support**: Neovim built the Language Server Protocol client directly into its core. With a few lines of Lua configuration, a terminal editor instantly gained the exact same error-checking and autocomplete intelligence as VS Code.
+3. **Asynchronous Architecture**: Plugins run in the background. The UI never freezes.
+4. **Treesitter Integration**: Neovim integrates natively with Treesitter, a parser generator that builds an AST of your code in real-time. This allows for incredibly accurate, semantic syntax highlighting (e.g., coloring variables differently based on their scope, not just using simple Regex).
+
+<Callout icon="tip" title="Pre-configured Distributions">
+Because configuring Neovim from scratch requires writing hundreds of lines of Lua code, many users install "Distributions" like **LazyVim**, **LunarVim**, or **AstroNvim**. These are pre-packaged, highly optimized Neovim configurations that make it act like a modern IDE out of the box.
+</Callout>
+
+</TechnologyTemplate>

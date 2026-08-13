@@ -1,8 +1,34 @@
+---
+title: Grafana
+description: "The industry-standard open-source platform for visualizing metrics, logs, and traces through interactive dashboards."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Grafana">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Prometheus is incredible at storing and querying metrics, its built-in UI is extremely basic. **Grafana** is the visualization layer that sits on top of Prometheus (and dozens of other databases).
+
+Grafana allows you to build rich, interactive dashboards containing graphs, gauges, heatmaps, and tables.
+
+## 1. Data Source Agnostic
+Grafana does not store any data itself. It acts as a universal visualization engine for your entire observability stack. You can connect it to multiple **Data Sources** simultaneously:
+- **Metrics**: Prometheus, InfluxDB, Datadog.
+- **Logs**: Elasticsearch, Loki, Splunk.
+- **Traces**: Jaeger, Tempo.
+- **Relational Data**: PostgreSQL, MySQL.
+
+This allows an SRE to build a single "single pane of glass" dashboard that displays a Prometheus CPU graph right next to a table of recent Elasticsearch error logs.
+
+## 2. Dashboards as Code
+Because clicking through a UI to create 50 identical graphs for 50 microservices is tedious, Grafana fully supports "Dashboards as Code."
+You can define your entire dashboard layout in a JSON file and provision it automatically using tools like Terraform or Kubernetes ConfigMaps.
+
+## 3. The Grafana Stack (PLG)
+While Grafana initially only focused on visualization, the company behind it (Grafana Labs) has built a complete, highly-integrated open-source observability stack:
+- **Prometheus** (Metrics)
+- **Loki** (Logs - designed to be highly cost-effective by only indexing metadata, not the full log text)
+- **Grafana** (Visualization)
+
+This combination is widely known as the **PLG Stack**.
 
 </ConceptTemplate>

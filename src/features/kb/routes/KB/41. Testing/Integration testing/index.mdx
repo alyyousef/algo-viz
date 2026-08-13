@@ -1,51 +1,29 @@
 ---
 title: Integration Testing
-description: Testing how different components or systems work together.
+description: "The phase of software testing in which individual software modules are combined and tested as a group to verify they work together correctly."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Integration Testing">
+<ConceptTemplate title="Integration Testing">
 
-Integration testing is the phase in software testing in which individual software modules are combined and tested as a group. While unit tests verify that a function works in perfect isolation, integration tests verify that the function still works when hooked up to a real database, a real file system, or another service.
+While Unit Tests verify that individual functions work in isolation, **Integration Testing** verifies that those functions work correctly when connected to other components, such as databases, external APIs, or other microservices.
 
-<Callout icon="warning" title="The Integration Hell">
-  Historically, teams would write thousands of unit tests in isolation, assume everything was fine, and then try to wire everything together at the very end of the project. This led to "Integration Hell"—where nothing actually worked together. Modern CI/CD practices enforce continuous integration testing to prevent this.
+## 1. The "Two Doors" Problem
+A famous programming joke illustrates the need for integration testing: 
+*Two separate locks are installed on a door. One lock works perfectly. The other lock works perfectly. But when placed next to each other, you can't slide the door open because the handles collide.*
+Both components passed their unit tests, but the integration failed.
+
+## 2. Types of Integration Tests
+- **Database Integration**: Testing that a repository class correctly connects to a real PostgreSQL database, executes an INSERT statement, and retrieves the correct row.
+- **API Integration**: Testing that your application correctly formats a JSON payload, sends it to the Stripe API, and correctly handles a simulated 402 Payment Required error.
+- **Component Integration (React/Vue)**: Testing that clicking a button in the `<Checkout>` component correctly updates the state in the `<Cart>` component.
+
+## 3. Setting Up Integration Tests
+Because integration tests require real infrastructure, they are slower and harder to maintain than unit tests. Modern teams use tools like **Testcontainers** (spinning up temporary Docker containers for databases during the test run) or in-memory databases (like SQLite) to make integration testing more deterministic.
+
+<Callout icon="warning" title="The Flaky Test Problem">
+Integration tests are highly susceptible to "flakiness" (tests that pass sometimes and fail other times without code changes). This is usually caused by network latency, shared database state between parallel tests, or API rate limits. Ensure every test runs in an isolated transaction that rolls back after execution.
 </Callout>
 
-## Unit vs Integration
-
-<ComparisonTable 
-  headers={['Trait', 'Unit Tests', 'Integration Tests']}
-  rows={[
-    ['Scope', 'A single function or class', 'Multiple components working together'],
-    ['Speed', 'Extremely fast (milliseconds)', 'Slower (seconds or minutes)'],
-    ['Dependencies', 'Mocks and Stubs only', 'Real Databases, Files, or external modules'],
-    ['Reliability', 'Highly deterministic', 'Prone to flakiness (e.g. network timeouts)']
-  ]}
-/>
-
-## Architecture
-
-In an integration test, you actively want to test the *boundaries* between systems.
-
-<ArchitectureDiagram chart={`
-graph LR
-  Test[Integration Test]
-  
-  subgraph System Under Test
-    Service[User Service]
-    DB[(Test Database)]
-    
-    Service <--> DB
-  end
-  
-  Test -- "1. Seed Data" --> DB
-  Test -- "2. Call Service" --> Service
-  Test -- "3. Verify DB State" --> DB
-`} />
-
-## Test Containers
-
-A modern best practice for integration testing is using **Testcontainers**. Instead of mocking a database or relying on a fragile shared staging database, the test suite spins up a lightweight, ephemeral Docker container (like a real PostgreSQL instance), runs the tests against it, and instantly destroys the container when finished.
-
-</TechnologyTemplate>
+</ConceptTemplate>

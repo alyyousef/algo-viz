@@ -1,8 +1,28 @@
+---
+title: Fitts's Law
+description: "A predictive model of human movement primarily used in human-computer interaction that predicts the time required to rapidly move to a target area is a function of the ratio between the distance to the target and the width of the target."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Fitts's law">
+<ConceptTemplate title="Fitts's Law">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Proposed by psychologist Paul Fitts in 1954 (long before the invention of the computer mouse), **Fitts's Law** is a mathematical model that dictates how long it takes a human to move a pointer (like a finger or a mouse cursor) to a specific target (like a button).
+
+The law is surprisingly simple: **The time to acquire a target is a function of the distance to the target and the size of the target.**
+
+## The Two Variables
+1. **Distance**: The further away a button is from the user's current cursor position, the longer it takes to click it.
+2. **Size**: The smaller the button is, the harder it is to click, because the user must slow down their hand movement to achieve precision (avoiding clicking outside the boundary).
+
+## Applying Fitts's Law to UI Design
+
+1. **Make Important Buttons Large**: The primary Call-To-Action (CTA) on a screen (like "Checkout") should be significantly larger than secondary actions (like "Cancel").
+2. **Keep Related Actions Close**: If a user selects an item in a list, the "Edit" and "Delete" buttons should appear directly next to the item, not at the extreme top right corner of the monitor.
+3. **The "Infinite Size" of Screen Edges**: In macOS, the menu bar is glued to the absolute top edge of the screen. Why? Because you cannot accidentally overshoot it. If you throw your mouse violently to the top of the screen, the cursor physically stops at the edge, resting perfectly on the menu bar. According to Fitts's Law, objects pinned to the very edge of the screen have effectively "infinite size" and are incredibly fast to click.
+
+<Callout icon="tip" title="Mobile Thumb Zones">
+Fitts's Law is critical in mobile design. The easiest place for a right-handed user to click is the bottom-left of the screen (closest to the thumb joint). The hardest place is the extreme top-left (requiring a dangerous stretch). This is why modern browsers put the URL bar at the bottom, and why the most important tabs are in a bottom navigation bar.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,49 @@
+---
+title: Mutexes (Mutual Exclusion)
+description: "A synchronization primitive used to prevent multiple threads from concurrently accessing a shared resource."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Mutexes">
+<ConceptTemplate title="Mutexes (Mutual Exclusion)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Mutex** (Mutual Exclusion object) is the standard solution to Race Conditions. It acts like a key to a bathroom door. Only one person can hold the key at a time. If the bathroom is occupied, anyone else who wants to enter must wait in line outside.
+
+## 1. How It Works
+Before a thread enters a **Critical Section** (the part of the code that modifies shared data), it must acquire the Mutex.
+
+```c
+pthread_mutex_t lock;
+int shared_balance = 100;
+
+void deposit(int amount) {
+    // 1. Acquire the lock (Wait here if someone else has it)
+    pthread_mutex_lock(&lock);
+    
+    // --- CRITICAL SECTION ---
+    shared_balance = shared_balance + amount;
+    // ------------------------
+    
+    // 2. Release the lock (Wake up the next thread in line)
+    pthread_mutex_unlock(&lock);
+}
+```
+
+If Thread A calls `lock()`, it gets the key. If Thread B calls `lock()` a microsecond later, the OS will put Thread B to sleep. Thread B is physically blocked from executing until Thread A calls `unlock()`.
+
+## 2. Mutex vs Semaphore
+
+<ComparisonTable 
+  headers={['Primitive', 'Analogy', 'Use Case']} 
+  rows={[
+    ['Mutex', 'A single bathroom key.', 'Exclusive access. Only ONE thread can touch this variable at a time.'],
+    ['Semaphore', 'A bouncer at a club that allows exactly 5 people in.', 'Resource limiting. Allowing exactly N threads to access a connection pool.']
+  ]} 
+/>
+
+## 3. The Cost of Locking
+Mutexes solve data corruption, but they destroy performance. If 10 threads try to access the balance at once, 9 of them are put to sleep. You have effectively turned your highly parallel application back into a slow, sequential application.
+
+Furthermore, if a thread acquires a lock and then crashes (or forgets to call `unlock()`), all other threads will wait forever.
 
 </ConceptTemplate>

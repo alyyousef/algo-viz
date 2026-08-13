@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Android Studio
+description: "The official Integrated Development Environment for Google's Android operating system, built on JetBrains' IntelliJ IDEA software."
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Android Studio">
+<TechnologyTemplate 
+  name="Android Studio"
+  icon="androidstudio"
+  creator="Google (via JetBrains)"
+  year={2013}
+  website="https://developer.android.com/studio"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before 2013, Android developers suffered through using the Eclipse IDE with an unstable Android plugin. Recognizing this pain, Google partnered with JetBrains (creators of IntelliJ IDEA) to create **Android Studio**, the official and mandatory IDE for native Android development.
 
-</ConceptTemplate>
+Because it is built on IntelliJ, it inherits world-class Java and Kotlin refactoring, deep static analysis, and a highly polished interface.
+
+## Key Features
+
+1. **Gradle Build System**: Android apps are incredibly complex to build (requiring different assets for different screen sizes, obfuscation, and signing). Android Studio integrates deeply with Gradle, allowing developers to configure build variants (e.g., a "Free" version and a "Pro" version) from the same codebase.
+2. **The Android Emulator**: Testing an app on physical devices is tedious. Android Studio ships with a highly optimized Emulator that can simulate any Android phone, tablet, or watch, including simulating GPS location, battery levels, and incoming phone calls.
+3. **Jetpack Compose**: Similar to Apple's SwiftUI, Android has moved away from XML-based layouts to **Jetpack Compose** (declarative Kotlin UI). Android Studio provides live, interactive previews of Compose components directly next to the code.
+
+<Callout icon="warning" title="RAM Devourer">
+Because it runs the JVM (IntelliJ), the Gradle daemon (JVM), and potentially the Android Emulator (a literal virtual machine) simultaneously, Android Studio is notorious for instantly consuming 8GB to 16GB of RAM. Trying to run it on a low-end laptop is an exercise in extreme patience.
+</Callout>
+
+</TechnologyTemplate>

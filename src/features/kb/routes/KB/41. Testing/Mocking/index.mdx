@@ -1,72 +1,38 @@
 ---
-title: Mocking
-description: Creating fake versions of external dependencies so that you can unit test code in complete isolation.
+title: Mocking & Test Doubles
+description: "The practice of creating simulated objects that mimic the behavior of real objects in controlled ways, used to isolate code during unit testing."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Mocking">
+<ConceptTemplate title="Mocking & Test Doubles">
 
-Mocking is a process used in unit testing where the unit being tested has external dependencies. The purpose of mocking is to isolate and focus on the code being tested and not on the behavior or state of external dependencies. In mocking, the dependencies are replaced by closely controlled replacements objects that simulate the behavior of the real ones.
+If you are unit testing a function that calculates a user's invoice, and that function internally makes a network call to the Stripe API, you have a problem. Your test will fail if the internet goes down, and you might accidentally charge a real credit card.
 
-<Callout icon="tip" title="Why Mock?">
-  If you are testing a function that sends an email to a user, you DO NOT want your test suite to actually send thousands of spam emails every time it runs. You mock the email service so it just *pretends* to send the email and returns a success code.
-</Callout>
+The solution is **Mocking** (more broadly known as using **Test Doubles**). You replace the real Stripe API client with a fake, simulated version that always returns a predictable, hard-coded response.
 
-## Types of Test Doubles
-
-"Test Double" is the generic term for any fake object (like a stunt double in a movie). Mocks are just one type.
+## 1. Types of Test Doubles (Gerard Meszaros' definitions)
 
 <ComparisonTable 
-  headers={['Type', 'Description']}
+  headers={['Type', 'Definition', 'Example']} 
   rows={[
-    ['Dummy', 'Objects that are passed around but never actually used. Usually just used to fill parameter lists.'],
-    ['Stub', 'Provides canned, hard-coded answers to calls made during the test (e.g., `return true`).'],
-    ['Spy', 'A stub that also records some information based on how it was called (e.g., "Was I called exactly 3 times?").'],
-    ['Mock', 'Pre-programmed with expectations which form a specification of the calls they are expected to receive.']
-  ]}
+    ['Dummy', 'Objects passed around but never actually used/executed. Used just to satisfy parameter lists.', 'Passing an empty `{}` to a function that requires a config object but never reads it in the test path.'],
+    ['Stub', 'Provides canned, hard-coded answers to calls made during the test.', 'A database stub that always returns `[{id: 1, name: "Alice"}]` when queried.'],
+    ['Spy', 'A stub that also records some information based on how it was called.', 'Recording that an `emailService.send()` method was called exactly twice.'],
+    ['Mock', 'Objects pre-programmed with expectations which form a specification of the calls they are expected to receive.', 'Asserting that the test fails if `stripe.charge()` is NOT called with exactly $50.00.']
+  ]} 
 />
 
-## Example: Mocking an API Call
+## 2. Mocking Frameworks
+Modern testing libraries come with powerful mocking utilities built-in.
+- **JavaScript**: Jest (`jest.fn()`), Vitest.
+- **Python**: `unittest.mock`.
+- **Java**: Mockito.
 
-Instead of waiting for a slow API over the internet, we force the fake API to return exactly what we want instantly.
+## 3. The Danger of Over-Mocking
+<Callout icon="warning" title="Testing Implementation, Not Behavior">
+A common anti-pattern is mocking out every single internal function dependency. This creates highly brittle tests that break every time you rename a variable or refactor internal logic, even if the final output remains correct. Aim to mock *only* external I/O boundaries (Databases, Network APIs, File Systems, Dates/Randomness), while letting purely mathematical or logical helper functions run normally.
+</Callout>
 
-```javascript
-import { fetchUserData } from './api';
-import { displayUser } from './ui';
-
-// Tell Jest to replace the real file with a fake one
-jest.mock('./api');
-
-test('displays user name', async () => {
-  // Arrange: Force the mock to return specific data
-  fetchUserData.mockResolvedValue({ name: 'Alice' });
-  
-  // Act
-  const uiText = await displayUser(123);
-  
-  // Assert
-  expect(uiText).toBe('Hello, Alice');
-  expect(fetchUserData).toHaveBeenCalledWith(123); // Spy behavior
-});
-```
-
-## Architecture of a Mock
-
-<ArchitectureDiagram chart={`
-graph LR
-  Test[Unit Test]
-  
-  Func[Business Logic]
-  
-  subgraph Dependency Injection
-    Real[Real Email Service\n(Sends real emails)]
-    Mock[Mock Email Service\n(Does nothing, returns True)]
-  end
-  
-  Test -- Tests --> Func
-  Test -- Injects Mock --> Func
-  Func --> Mock
-  Func -.-x Real
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

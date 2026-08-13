@@ -1,30 +1,50 @@
 ---
 title: find
-description: The incredibly powerful, recursive search utility used to locate files and directories based on extreme edge-case criteria.
+description: "A command-line utility that searches one or more directory trees of a file system, locating files based on criteria."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="find">
+<ConceptTemplate 
+  name="find"
+  icon="search"
+>
 
-If you want to quickly locate a file by its name, you can use `locate`. However, if you need to execute a complex, hyper-specific query across the entire filesystem, you use **`find`**.
+While `grep` searches *inside* files, the **find** command searches for the *files themselves* within the directory structure.
 
-`find` physically crawls the hard drive in real-time, checking the metadata of every single file against your conditions.
+It is incredibly flexible. You can search by file name, creation date, modification date, file size, or permissions.
 
-## Syntax and Conditions
+## Common Examples
 
-The syntax is: `find [starting_directory] [conditions]`.
+**1. Find by Name:**
+Find all `.config` files in the current directory and subdirectories.
+```bash
+find . -name "*.config"
+```
 
-- **By Name**: `find /var/log -name "*.log"`
-- **By Size**: `find / -size +1G` (Finds all files larger than 1 Gigabyte).
-- **By Age (Mtime)**: `find /tmp -mtime +7` (Finds files modified more than 7 days ago).
-- **By Permissions**: `find /etc -perm 777` (Finds files with incredibly insecure permissions).
+**2. Find by Size:**
+Find files larger than 100 Megabytes in the `/var/log` directory.
+```bash
+find /var/log -type f -size +100M
+```
 
-<Callout icon="warning" title="The Exec Flag (Danger!)">
-  The true power of `find` is the `-exec` flag, which allows you to execute a command on every single file it finds.
-  
-  `find /var/log -name "*.old" -exec rm {} ;`
-  
-  This command finds all `.old` files and instantly passes them (represented by `{}`) into the `rm` command. Be extremely careful; running this as Root can delete thousands of files in milliseconds.
+**3. Find by Modification Time:**
+Find files modified in the last 7 days.
+```bash
+find /home/user -mtime -7
+```
+
+## Executing Commands on Found Files
+The true power of `find` comes from the `-exec` flag. It allows you to run a command on every single file that matches your search criteria.
+
+Find all files with a `.tmp` extension and immediately delete them:
+```bash
+find . -name "*.tmp" -exec rm {} \;
+```
+*(The `{}` is a placeholder for the found file's name, and the `\;` terminates the exec command).*
+
+<Callout icon="warning" title="Efficiency">
+If you are searching a massive file system, `find` can be slow because it actively crawls the disk. If you only need to search by filename, the `locate` command is often faster because it queries a pre-built background database (though that database might be hours out of date).
 </Callout>
 
 </ConceptTemplate>

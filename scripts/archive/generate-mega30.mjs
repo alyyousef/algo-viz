@@ -1,537 +1,276 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const TICK3 = '\`\`\`'
-const TICK1 = '\`'
+const TICK3 = '```'
+const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/journald/index.mdx': `---
-title: systemd-journald
-description: The background daemon responsible for collecting and indexing massive amounts of structured binary log data across the OS.
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Load balancing/index.mdx': `---
+title: Load Balancing
+description: "The process of distributing incoming network traffic across a group of backend servers to ensure high availability and reliability."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="systemd-journald">
+<ConceptTemplate title="Load Balancing">
 
-Before TICK1systemdTICK1, Linux logging was handled by TICK1syslogdTICK1 (or TICK1rsyslogTICK1), which simply wrote raw, unstructured text to files like TICK1/var/log/messagesTICK1.
+If a single web server can handle 1,000 concurrent users, what happens when 10,000 users visit your site? You scale horizontally by adding 9 more servers. But how do the users know which of the 10 servers to connect to? You place a **Load Balancer** in front of them.
 
-**TICK1systemd-journaldTICK1** fundamentally changed how Linux handles logging. It is a deeply integrated background daemon that captures stdout, stderr, kernel events, and application logs, storing them entirely in a structured **binary** format.
+A Load Balancer acts as the "traffic cop" routing client requests across all servers capable of fulfilling them in a manner that maximizes speed and capacity utilization.
 
-## Why Binary?
+## 1. Types of Load Balancers
 
-Traditional Unix admins hated the shift to binary logs because they could no longer use TICK1catTICK1 to read them. However, TICK1journaldTICK1 provides massive benefits:
-1. **Cryptographic Sealing**: Binary logs can be cryptographically sealed. If a hacker breaches a server and tries to delete the log showing their entry, TICK1journaldTICK1 will instantly detect the tampering.
-2. **Indexing**: Because the logs are structured, TICK1journaldTICK1 automatically attaches hidden metadata to every single line (e.g., the exact PID, User ID, and Systemd Unit that generated the text).
-3. **Storage Efficiency**: Binary logs are compressed automatically and rotate predictably.
+<ComparisonTable 
+  headers={['Type', 'OSI Layer', 'How it works', 'Use Case']} 
+  rows={[
+    ['Layer 4 (Transport)', 'Layer 4 (TCP/UDP)', 'Routes traffic based purely on IP address and Port. It does not inspect the contents of the HTTP request.', 'Ultra-low latency routing, or routing non-HTTP traffic (like database connections).'],
+    ['Layer 7 (Application)', 'Layer 7 (HTTP)', 'Inspects the actual HTTP headers, URL paths, and cookies to make routing decisions.', 'Routing TICK1/apiTICK1 to Node.js servers, and TICK1/imagesTICK1 to static file servers.']
+  ]} 
+/>
 
-<Callout icon="info" title="Interacting with the Journal">
-  You cannot read the raw TICK1.journalTICK1 files directly. You must use the **TICK1journalctlTICK1** command to query the database. Many modern systems configure TICK1journaldTICK1 to forward its data to a legacy TICK1syslogTICK1 daemon specifically so older text-parsing tools continue to work.
+## 2. Redundancy
+A load balancer introduces a single point of failure. If the load balancer crashes, your entire application goes offline, even if all 10 backend servers are perfectly healthy.
+
+To solve this, load balancers are always deployed in **Active-Passive** or **Active-Active** clusters using protocols like VRRP or Keepalived. If the primary load balancer dies, the standby instantly takes over its IP address.
+
+## 3. Session Persistence (Sticky Sessions)
+If a user adds an item to their shopping cart on Server A (and Server A stores that cart in local memory), their next request *must* be routed to Server A, or their cart will appear empty. Load balancers achieve this by injecting a cookie into the user's browser, forcing "Sticky Sessions". 
+
+*(Note: Modern system design discourages Sticky Sessions. State should be stored in a shared external database like Redis so any server can handle any request.)*
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/CDNs/index.mdx': `---
+title: Content Delivery Networks (CDNs)
+description: "A geographically distributed network of proxy servers that cache content closer to end users to reduce latency."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate title="Content Delivery Networks (CDNs)">
+
+Because of the speed of light, data takes roughly 150 milliseconds to travel from New York to Sydney, Australia. If your web server is in New York, Australian users will experience severe latency.
+
+A **CDN (Content Delivery Network)** solves this by placing thousands of caching servers (called **Edge Servers**) in cities all around the world.
+
+## 1. How a CDN Works
+1. A user in Sydney requests TICK1hero-image.jpgTICK1.
+2. The DNS routes their request to the closest CDN Edge Server (in Sydney).
+3. **Cache Miss**: The Sydney edge server does not have the image. It forwards the request to your **Origin Server** in New York.
+4. The Origin Server sends the image back to Sydney.
+5. The Sydney edge server saves a copy in its RAM/Disk (caches it) and serves it to the user.
+6. **Cache Hit**: A second user in Sydney requests the same image. The edge server serves it instantly from cache without ever contacting New York.
+
+## 2. Push vs Pull CDNs
+- **Pull CDN**: The most common. You just point the CDN at your Origin URL. The CDN pulls files automatically upon the first user request (lazy loading).
+- **Push CDN**: You actively upload your files (via API or FTP) directly to the CDN's servers ahead of time. Best for massive files that must be available instantly to everyone.
+
+<Callout icon="warning" title="Cache Invalidation">
+The hardest part of using a CDN is cache invalidation. If you update your logo on the Origin Server, the CDN might continue serving the old logo for 24 hours. You must either manually issue a "Purge" command via the CDN dashboard, or use versioned filenames (TICK1logo_v2.jpgTICK1) to bust the cache automatically.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/logs/index.mdx': `---
-title: Linux Logging
-description: The standard locations and conventions for finding system, application, and security logs on a traditional Linux filesystem.
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Caching strategies/index.mdx': `---
+title: Caching Strategies
+description: "Common patterns for deciding when to read from and write to a high-speed cache versus the primary database."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Linux Logging">
+<ConceptTemplate title="Caching Strategies">
 
-Even with the modern dominance of TICK1systemd-journaldTICK1, countless third-party applications (like Nginx, Apache, MySQL) still rely on the traditional Unix philosophy: writing raw text files directly to the hard drive.
+Reading from a database (like PostgreSQL) requires slow disk I/O. Reading from a Cache (like Redis or Memcached) is done entirely in RAM and is orders of magnitude faster. However, because caches are volatile and have limited capacity, you must employ specific strategies to keep the cache synchronized with the database.
 
-By FHS standard, almost all logs in a Linux system live inside the **TICK1/var/log/TICK1** directory.
+## 1. Read Strategies
 
-## Critical Log Files
+<ComparisonTable 
+  headers={['Strategy', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Cache-Aside (Lazy Loading)', 'Application asks Cache. If miss, app asks DB, then writes result to Cache.', 'Pro: Cache only contains requested data. Con: The first request is penalized with a cache miss latency.'],
+    ['Read-Through', 'Application asks Cache. If miss, the *Cache itself* (not the app) fetches from the DB, saves it, and returns it.', 'Pro: App logic is much simpler. Con: Requires specific cache software that supports DB connections.']
+  ]} 
+/>
 
-As a Linux Administrator, you must know these files by heart:
+## 2. Write Strategies
 
-- **TICK1/var/log/syslogTICK1 (or TICK1messagesTICK1)**: The absolute kitchen sink. Almost all general system activity, cron job executions, and minor errors end up here.
-- **TICK1/var/log/auth.logTICK1 (or TICK1secureTICK1)**: The security ledger. Every single time someone tries to SSH into the server, use TICK1sudoTICK1, or log in via the console, it is recorded here. This is the first place you look if you suspect a breach.
-- **TICK1/var/log/kern.logTICK1**: Messages specifically generated by the Linux Kernel.
-- **TICK1/var/log/dmesgTICK1**: A static snapshot of the Kernel ring buffer taken specifically during the boot process.
+<ComparisonTable 
+  headers={['Strategy', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Write-Through', 'Application writes to the Cache, and the Cache immediately writes synchronously to the DB.', 'Pro: Data is always 100% consistent. Con: Every write incurs the latency of writing to both systems.'],
+    ['Write-Behind (Write-Back)', 'App writes *only* to the Cache. The Cache asynchronously writes to the DB later in a batch.', 'Pro: Extremely fast writes. Con: High risk of data loss if the Cache crashes before flushing to the DB.'],
+    ['Write-Around', 'App writes directly to the DB, bypassing the Cache entirely.', 'Pro: Prevents the cache from filling up with data that won\\'t be read soon. Con: The next read will be a cache miss.']
+  ]} 
+/>
 
-<Callout icon="warning" title="Log Rotation">
-  If Nginx writes every web request to TICK1access.logTICK1, the file will eventually consume the entire hard drive. Linux solves this with a utility called **TICK1logrotateTICK1**. It runs via a daily cron job, renames the current log to TICK1access.log.1.gzTICK1 (compressing it), and creates a fresh, empty TICK1access.logTICK1 file, deleting archives older than a few weeks.
+## 3. Eviction Policies
+When the RAM is full, the cache must delete old data to make room for new data. The most common algorithm is **LRU (Least Recently Used)**, which discards the item that has not been read in the longest amount of time.
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.2 Distributed Systems Theory/CAP theorem/index.mdx': `---
+title: CAP Theorem
+description: "A fundamental theorem stating that a distributed data store can only simultaneously provide two of the following three guarantees: Consistency, Availability, and Partition Tolerance."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate title="The CAP Theorem">
+
+Formulated by Eric Brewer in 2000, the **CAP Theorem** is the foundational rule for understanding how distributed databases (like Cassandra, MongoDB, or CockroachDB) handle network failures.
+
+It states that a distributed system can only guarantee **two out of three** of the following properties:
+
+1. **Consistency (C)**: Every read receives the most recent write, or an error. If User A updates their name, User B *must* see the new name immediately.
+2. **Availability (A)**: Every request receives a non-error response, without the guarantee that it contains the most recent write.
+3. **Partition Tolerance (P)**: The system continues to operate despite an arbitrary number of messages being dropped (or delayed) by the network between nodes.
+
+## The Reality of CAP
+In a distributed system connected over the internet, network partitions (P) are a fact of physics. Cables get cut, switches fail, routers crash. Therefore, **you cannot choose CA**. You are forced to choose between **CP** and **AP** during a network failure.
+
+Imagine a database with Node 1 and Node 2. The network cable between them is cut (a Partition).
+
+### Scenario 1: Choose Consistency (CP)
+A user tries to write to Node 1. Node 1 cannot contact Node 2 to replicate the data. To remain Consistent, Node 1 *must* refuse the write and return an Error to the user. The system is Consistent, but **Unavailable**.
+*Examples: MongoDB, HBase, Redis.*
+
+### Scenario 2: Choose Availability (AP)
+A user tries to write to Node 1. Node 1 cannot contact Node 2, but accepts the write anyway to remain Available. A second user reads from Node 2 and gets the old, stale data. The system is Available, but **Inconsistent**.
+*Examples: Cassandra, DynamoDB.*
+
+<Callout icon="info" title="PACELC Theorem">
+CAP only applies *during a failure*. What about when the network is running perfectly? The **PACELC Theorem** extends CAP: "If there is a Partition (P), choose A or C. Else (E), choose between Latency (L) and Consistency (C)."
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/kill/index.mdx': `---
-title: kill
-description: The primary command used to send software Signals to running processes, asking them to shut down or reload.
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Rate limiting/index.mdx': `---
+title: Rate Limiting
+description: "A technique used to control the amount of incoming traffic to a network or application to prevent abuse and ensure stability."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="kill">
+<ConceptTemplate title="Rate Limiting">
 
-The **TICK1killTICK1** command is poorly named. It does not actually kill processes; it simply sends **Signals** to them. It is entirely up to the process (or the Kernel) to decide how to respond to that Signal.
+If a single user (or a malicious bot) sends 10,000 requests per second to your login endpoint, your database will crash, taking the entire application offline for everyone. **Rate Limiting** prevents this by artificially capping the number of requests a user can make within a specific time window.
 
-## The Most Common Signals
+When a limit is exceeded, the server stops processing the request and returns an **HTTP 429 Too Many Requests** response.
 
-When you run TICK1kill <PID>TICK1, you are actually sending a specific numerical signal.
+## Common Algorithms
 
-1. **SIGTERM (Signal 15 - Terminate)**: This is the default signal. It is a polite request. It tells a web server, "Please stop accepting new connections, save your database writes, and shut down." The application can completely ignore this if it is frozen.
-2. **SIGKILL (Signal 9 - Kill)**: TICK1kill -9 <PID>TICK1. This is the nuclear option. The signal never even reaches the application; it goes directly to the Kernel, and the Kernel instantly deletes the process from memory. Open files are corrupted, and data is lost.
-3. **SIGHUP (Signal 1 - Hangup)**: TICK1kill -1 <PID>TICK1. Originally used to tell a program the phone line hung up. Today, daemons (like Nginx) interpret this as "Reload your configuration files from disk without actually dropping active connections."
+<ComparisonTable 
+  headers={['Algorithm', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Token Bucket', 'Tokens are added to a bucket at a fixed rate (e.g., 1 per second). Every request costs 1 token. If the bucket is empty, drop the request.', 'Pro: Allows sudden, brief bursts of traffic. Standard for most APIs (like AWS/Stripe).'],
+    ['Leaky Bucket', 'Requests are placed in a queue (the bucket) that leaks (processes) at a strict, constant rate.', 'Pro: Smooths out bursts, ensuring a perfectly stable load on backend servers.'],
+    ['Fixed Window Counter', 'Divides time into fixed windows (e.g., 1:00-1:01). Increments a counter. Resets at the start of the next minute.', 'Con: The "Burst at Edge" problem. A user can send 100 requests at 1:00:59, and 100 more at 1:01:01, crushing the server with 200 requests in 2 seconds.'],
+    ['Sliding Window Log', 'Keeps a timestamp of every single request in a Redis sorted set. Calculates exact rate based on current time minus 1 minute.', 'Pro: Perfectly accurate. Con: Consumes massive amounts of RAM to store all those timestamps.']
+  ]} 
+/>
 
-<Callout icon="success" title="killall and pkill">
-  If you have 50 Google Chrome processes running, finding their PIDs and typing TICK1killTICK1 50 times is a nightmare.
-  Use **TICK1killall chromeTICK1** to instantly send a SIGTERM to every single process named "chrome", or **TICK1pkill -f "python script.py"TICK1** to kill processes matching a specific text pattern.
+## Implementation
+Rate limiting is rarely implemented inside the application code itself. It is almost always handled at the edge by the **API Gateway**, Load Balancer, or WAF (Web Application Firewall) (e.g., Cloudflare, Nginx, Kong), using Redis to share the rate limit counters across all edge servers.
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Circuit breakers/index.mdx': `---
+title: Circuit Breaker Pattern
+description: "A design pattern used to detect failures and encapsulate the logic of preventing a failure from constantly recurring."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate title="Circuit Breaker Pattern">
+
+In a microservices architecture, Service A calls Service B. If Service B becomes overloaded and extremely slow, Service A will sit there waiting for a timeout. Very quickly, all the threads in Service A will be blocked waiting for Service B, causing Service A to crash. This is a **Cascading Failure**.
+
+To prevent this, we wrap the network call in a **Circuit Breaker** (borrowing the concept from electrical engineering).
+
+## The Three States
+
+1. **CLOSED**: Under normal operations, the circuit is closed. Requests flow freely from A to B. The circuit breaker counts the number of failures/timeouts.
+2. **OPEN**: If the failure rate exceeds a threshold (e.g., 50% failures over 10 seconds), the circuit "trips" and opens. While OPEN, Service A *instantly* returns an error to the user without even attempting to call Service B. This gives Service B time to recover instead of hammering it with traffic.
+3. **HALF-OPEN**: After a timeout (e.g., 30 seconds), the breaker lets a *single* test request pass through to Service B.
+   - If the test request succeeds, the circuit assumes B has recovered and resets to **CLOSED**.
+   - If the test request fails, the circuit snaps back to **OPEN** and waits another 30 seconds.
+
+<Callout icon="tip" title="Fallbacks">
+When the circuit is OPEN, a good application implements a **Fallback**. If the "Recommendation Engine" service is down, the Circuit Breaker instantly returns a fallback list of the "Top 10 Global Best Sellers" so the UI doesn't look broken.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/ps/index.mdx': `---
-title: ps (Process Status)
-description: The fundamental command used to capture a static, instantaneous snapshot of all running processes on the system.
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.1 System Design Concepts/Consistent hashing/index.mdx': `---
+title: Consistent Hashing
+description: "A specialized hashing algorithm that minimizes the number of keys that need to be remapped when a hash table is resized."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="ps (Process Status)">
+<ConceptTemplate title="Consistent Hashing">
 
-While tools like TICK1htopTICK1 provide a live, continuously updating dashboard of running applications, the **TICK1psTICK1 (Process Status)** command takes a static, one-time snapshot of the Kernel's process table.
+Imagine you are storing 1 million user profiles across a cluster of 4 Redis servers (Servers A, B, C, and D). 
+To figure out which server holds User 123, you use a simple modulo hash: TICK1serverIndex = hash("User123") % 4TICK1.
 
-Because it simply prints text and exits, TICK1psTICK1 is overwhelmingly used in bash scripts and piped into TICK1grepTICK1 for text processing.
+This works perfectly until Server C crashes. Now you only have 3 servers. You change the formula to TICK1% 3TICK1. Suddenly, almost every single user maps to a completely different server index. **You just invalidated your entire cache.**
 
-## The Legendary "aux"
+## The Solution: The Hash Ring
 
-The TICK1psTICK1 command has the most chaotic flag syntax in all of Linux, due to decades of wars between the Unix (System V) and BSD development camps. 
-Today, almost all administrators use the BSD syntax format: **TICK1ps auxTICK1**
+**Consistent Hashing** solves this by mapping both the data keys *and* the servers onto a conceptual circle (a "hash ring" from 0 to 360 degrees).
 
-- **a**: Show processes for ALL users (not just the current user).
-- **u**: Display the output in a user-oriented format (shows the username, CPU%, and Memory%).
-- **x**: Show processes that are NOT attached to a terminal (e.g., background daemons like Nginx).
+1. Hash the IP addresses of Servers A, B, C, and D, and place them on the ring (e.g., at 10°, 90°, 180°, 270°).
+2. Hash the user ID (e.g., "User123" hashes to 45°).
+3. To find the server for User 123, move clockwise around the ring from 45° until you hit the first server. (In this case, Server B at 90°).
 
-<Callout icon="info" title="The Process Hierarchy">
-  If you want to see exactly who spawned who, you can use TICK1ps -ef --forestTICK1. This generates a beautiful ASCII tree, visually linking child processes directly to their parent's PID.
-</Callout>
+## Adding or Removing Servers
+If Server C (180°) crashes, the keys that were stored on it simply continue clockwise and fall onto Server D (270°). 
+**The brilliant part:** All the keys on Server A, Server B, and Server D remain exactly where they are. Only the data on the broken server needs to be remapped. 
 
-## Common Columns
-When you run TICK1ps auxTICK1, you will see several columns:
-- **USER / PID**: Who owns it, and its exact Process ID.
-- **VSZ / RSS**: Virtual Memory Size (everything the app has requested) vs Resident Set Size (the actual physical RAM it is actively consuming).
-- **STAT**: The current state (e.g., TICK1STICK1 for Sleeping, TICK1RTICK1 for Running, TICK1ZTICK1 for Zombie).
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/lsof/index.mdx': `---
-title: lsof (List Open Files)
-description: The ultimate system administration diagnostic tool used to determine exactly which process is interacting with a specific file or network port.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="lsof (List Open Files)">
-
-In Linux, "Everything is a File". Hard drives are files (TICK1/dev/sdaTICK1), network sockets are files, and directories are files. 
-
-Because of this philosophy, the **TICK1lsofTICK1 (List Open Files)** command is arguably the most powerful diagnostic tool in a sysadmin's arsenal. It asks the Kernel: "Show me every single file that is currently being held open by a process."
-
-## Common Use Cases
-
-### 1. "Device is Busy" Errors
-You try to unmount a USB drive using TICK1umount /mnt/usbTICK1, but Linux yells: *"umount: target is busy"*. 
-You run: TICK1lsof /mnt/usbTICK1
-The output instantly tells you that Alice's TICK1bashTICK1 process (PID 4501) is currently CD'd into that directory, preventing the unmount.
-
-### 2. Identifying Network Ports
-If you try to start a Node.js server on Port 8080, but get an *"Address already in use"* error, you can use TICK1lsofTICK1 to find the culprit:
-TICK1lsof -i :8080TICK1
-It will immediately tell you the exact PID and name of the rogue Java process secretly listening on that network socket.
-
-<Callout icon="warning" title="Running as Root">
-  By default, TICK1lsofTICK1 will only show you the files opened by your specific user account. To see files opened by system daemons or other users, you MUST run it using TICK1sudoTICK1, otherwise it will silently hide the data.
+<Callout icon="info" title="Virtual Nodes">
+To prevent data from bunching up unevenly if servers happen to hash close together on the ring, implementations use **Virtual Nodes**. Instead of hashing Server A once, they hash Server A 100 times (e.g., A1, A2, A3) to spread it evenly across the entire 360-degree ring.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/ltrace/index.mdx': `---
-title: ltrace (Library Trace)
-description: An advanced debugging tool that intercepts and logs the dynamic library calls a program makes to the operating system.
+  'src/features/kb/routes/KB/43. System Design & Distributed Systems/43.2 Distributed Systems Theory/Saga pattern/index.mdx': `---
+title: Saga Pattern
+description: "A sequence of local transactions used to maintain data consistency across microservices."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="ltrace (Library Trace)">
+<ConceptTemplate title="The Saga Pattern">
 
-When a compiled C program runs, it rarely executes entirely on its own code. It constantly relies on shared System Libraries (like TICK1glibcTICK1) to perform basic tasks like copying memory strings or calculating math.
+In a monolith, if a user buys an item, you deduct inventory and charge their card within a single ACID database transaction. If the card declines, you issue an SQL TICK1ROLLBACKTICK1, and the inventory is perfectly restored.
 
-**TICK1ltraceTICK1** is a deep diagnostic tool that attaches to a running process and prints exactly which library functions the program is calling in real-time.
+In microservices, the Inventory DB and the Payment DB are separated by a network. You cannot run a single ACID transaction across them. To solve this, you use a **Saga**.
 
-## strace vs ltrace
+A Saga is a sequence of local database transactions. Each service performs its local transaction and publishes an event to trigger the next step.
 
-It is critical to understand the difference between TICK1straceTICK1 and TICK1ltraceTICK1:
-- **TICK1straceTICK1** traces System Calls (the program talking directly to the Linux Kernel, like "open file" or "send network packet").
-- **TICK1ltraceTICK1** traces Library Calls (the program talking to user-space C libraries, like TICK1strlen()TICK1 or TICK1malloc()TICK1).
+## Compensating Transactions
+If a step fails, you cannot use SQL TICK1ROLLBACKTICK1. You must write business logic to execute a **Compensating Transaction**—an operation that actively undoes the previous step.
 
-<Callout icon="success" title="Reverse Engineering and Hacking">
-  TICK1ltraceTICK1 is heavily used in cybersecurity Capture The Flag (CTF) events. If you are given a compiled, undocumented binary that asks for a secret password, you can run TICK1ltrace ./binaryTICK1. When you type a fake password, TICK1ltraceTICK1 will intercept the TICK1strcmp(input, "SUPER_SECRET_123")TICK1 library call, instantly revealing the hardcoded password in plain text on your screen.
-</Callout>
+If Step 1 (Deduct Inventory) succeeds, but Step 2 (Charge Card) fails, the Payment Service emits a "PaymentFailed" event. The Inventory Service listens for this event and executes a Compensating Transaction: TICK1UPDATE inventory SET count = count + 1TICK1.
 
-## Basic Usage
-TICK1ltrace ./my_programTICK1 will launch the program and flood your terminal with every C library function it executes, providing a massive window into how the black-box binary was programmed.
+## Choreography vs Orchestration
 
-</ConceptTemplate>
-`,
+There are two ways to organize a Saga:
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/nice-renice/index.mdx': `---
-title: nice & renice
-description: The commands used to alter the CPU scheduling priority of a process, making it "nicer" to other applications.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="nice & renice">
-
-In Linux, the Kernel's CPU Scheduler uses a complex algorithm to decide which process gets access to the CPU in any given millisecond. 
-
-You can influence this scheduler using the **TICK1niceTICK1** value. It is literally a measure of how "nice" a process is to the rest of the system. 
-- A **highly nice** process will step aside and let other programs use the CPU first. 
-- A **very mean** (negative nice) process will aggressively hog the CPU, ignoring everyone else.
-
-## The Nice Scale
-
-Nice values range from **-20 (Highest Priority, Most Aggressive)** to **+19 (Lowest Priority, Nicest)**.
-By default, every standard program you launch starts with a nice value of **0**.
-
-- TICK1nice -n 15 tar -czf backup.tar.gz /varTICK1
-  This launches a massive, CPU-heavy backup script, but tells it to be very nice (+15). If the web server suddenly gets a spike in traffic, the backup will pause and give the web server the CPU.
-
-<Callout icon="warning" title="Negative Nice Values">
-  Any standard user can make their programs "nicer" (0 to 19). However, only the TICK1rootTICK1 user (via TICK1sudoTICK1) is legally allowed to assign a negative nice value (-1 to -20) to prevent standard users from maliciously hoarding the CPU.
-</Callout>
-
-## renice
-While TICK1niceTICK1 sets the priority of a process *before* it launches, **TICK1reniceTICK1** allows you to alter the priority of a process that is *already running*.
-TICK1sudo renice -n -10 -p 4591TICK1 (Makes PID 4591 highly aggressive).
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/mounts/index.mdx': `---
-title: mounts
-description: The fundamental mechanism of attaching hardware filesystems (hard drives, USBs) to the Linux directory tree.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="mounts">
-
-In Windows, if you plug in a USB drive, it automatically appears as the TICK1E:\TICK1 drive.
-In Linux, the Filesystem Hierarchy Standard dictates there is only one single unified tree, starting at TICK1/TICK1.
-
-To access data on a hard drive, you must use the **TICK1mountTICK1** command to graft the drive's filesystem onto an empty folder inside that tree (usually inside TICK1/mntTICK1 or TICK1/mediaTICK1).
-
-## The Mount Command
-
-If you plug in a new SSD, the Kernel will assign it a block device file (e.g., TICK1/dev/sdb1TICK1). 
-To make it usable, you create a directory and mount it:
-
-TICK3bash
-sudo mkdir /mnt/database
-sudo mount /dev/sdb1 /mnt/database
-TICK3
-
-Now, any file you write into TICK1/mnt/databaseTICK1 is physically written to the new SSD.
-
-<Callout icon="success" title="Virtual Filesystems">
-  TICK1mountTICK1 is not just for physical hardware. Linux heavily relies on virtual, RAM-only filesystems. 
-  For example, TICK1/procTICK1 and TICK1/sysTICK1 are actually fake filesystems dynamically generated by the Kernel in RAM. The TICK1mountTICK1 command is used to attach these data structures to the FHS tree so humans can read them using standard text tools like TICK1catTICK1.
-</Callout>
-
-## Unmounting (umount)
-Before you unplug a USB drive, you must run **TICK1umount /mnt/usbTICK1**. This forces the Kernel to flush all pending, cached data from RAM physically onto the flash memory of the drive. If you unplug it without unmounting, data corruption is almost guaranteed.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/rsync/index.mdx': `---
-title: rsync
-description: The legendary, ultra-efficient file synchronization tool used for massive backups and remote server deployments.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="rsync">
-
-If you need to copy a 50GB database file to a remote server, you can use TICK1scpTICK1. However, if the connection drops at 49GB, you have to start the entire transfer over from zero.
-
-**TICK1rsyncTICK1** (Remote Sync) is the industry standard tool for copying and backing up data. It uses a brilliant Delta-Transfer algorithm.
-
-## The Delta Algorithm
-
-If you use TICK1rsyncTICK1 to copy a 50GB file, and then you change a single 10-line text string inside that file, running TICK1rsyncTICK1 again will **not** transfer 50GB. 
-It mathematically compares the local file to the remote file, calculates exactly which byte blocks changed, and transfers *only those tiny changes* over the network, taking 3 seconds instead of 3 hours.
-
-## Basic Syntax
-
-TICK1rsyncTICK1 usually operates over a standard encrypted SSH tunnel. 
-
-TICK3bash
-# Sync local website files to a remote server
-rsync -avz --delete ./public_html/ root@192.168.1.50:/var/www/html/
-TICK3
-
-- **-a (Archive)**: Preserves all symlinks, file permissions, and ownership metadata.
-- **-v (Verbose)**: Prints what it is doing.
-- **-z (Compress)**: Compresses the data on the fly during network transit.
-- **--delete**: This is the "Mirror" flag. If you delete an image from your local laptop, this flag tells TICK1rsyncTICK1 to explicitly delete that same image on the remote server to ensure they are perfectly identical.
-
-<Callout icon="warning" title="The Trailing Slash">
-  In TICK1rsyncTICK1, the trailing slash is incredibly important. 
-  TICK1rsync -a ./folder /destTICK1 will copy the entire folder itself into the destination.
-  TICK1rsync -a ./folder/ /destTICK1 (WITH the slash) means "copy the *contents* of this folder" into the destination.
-</Callout>
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/networking basics/index.mdx': `---
-title: Networking Basics (ip & ss)
-description: The modern iproute2 suite of tools used to configure IP addresses, view routing tables, and analyze open sockets.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Networking Basics (ip & ss)">
-
-For decades, Linux administrators used tools like TICK1ifconfigTICK1 (to view IP addresses) and TICK1netstatTICK1 (to view open ports). 
-These tools are technically obsolete and missing from many modern distributions. They have been replaced by the **iproute2** suite, primarily the TICK1ipTICK1 and TICK1ssTICK1 commands.
-
-## The 'ip' Command
-
-The TICK1ipTICK1 command is incredibly powerful, managing everything from basic addressing to complex BGP routing tables.
-
-- **View your IP Addresses**: TICK1ip addr showTICK1 (or simply TICK1ip aTICK1).
-- **View your Routing Table**: TICK1ip routeTICK1 (Shows you exactly where traffic goes, including your Default Gateway router).
-- **Bring an interface online**: TICK1sudo ip link set eth0 upTICK1.
-
-<Callout icon="info" title="Ephemeral Configuration">
-  It is critical to remember that if you assign an IP address using the TICK1ipTICK1 command (e.g., TICK1ip addr add 192.168.1.50/24 dev eth0TICK1), that configuration lives entirely in RAM. The second the server reboots, the IP address vanishes. Permanent IP configuration must be handled by daemons like NetworkManager or systemd-networkd.
-</Callout>
-
-## The 'ss' Command (Socket Statistics)
-TICK1ssTICK1 is the modern replacement for TICK1netstatTICK1. Sysadmins use it constantly to determine what ports are open on a server.
-- **TICK1ss -tulpnTICK1**: The golden command. 
-  - **t/u**: Show TCP and UDP sockets.
-  - **l**: Show only Listening (open server) sockets.
-  - **p**: Show the exact Process Name (Nginx/SSH) attached to that socket.
-  - **n**: Show raw numeric IP addresses, bypassing slow DNS resolution.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/nftables/index.mdx': `---
-title: nftables
-description: The modern, high-performance Linux Kernel firewall subsystem designed to completely replace the legacy iptables architecture.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="nftables">
-
-For 20 years, TICK1iptablesTICK1 was the absolute king of Linux firewalls. However, its architecture was deeply flawed. Every time a Sysadmin added a single new firewall rule, the Kernel had to flush the entire massive ruleset from memory and reload it, causing massive latency spikes on huge enterprise routers.
-
-To fix this, the Linux Kernel developers created **nftables**.
-
-## The Architecture
-
-TICK1nftablesTICK1 operates via a unified user-space tool called **TICK1nftTICK1**. 
-Unlike TICK1iptablesTICK1 (which hardcoded Tables and Chains into the Kernel), TICK1nftablesTICK1 provides a completely blank slate. You define your own custom tables, meaning the firewall uses virtually zero CPU if it's not configured.
-
-TICK1nftablesTICK1 also compiles its rules into a specialized, ultra-fast bytecode (similar to eBPF) before pushing them into the Kernel.
-
-## Modern Syntax
-The TICK1nftTICK1 syntax was heavily inspired by the TICK1tcpdumpTICK1 network analyzer, making it much easier to read than ancient TICK1iptablesTICK1 flags.
-
-TICK3bash
-# Create a blank table
-nft add table inet my_firewall
-
-# Add a base chain to intercept incoming traffic, dropping by default
-nft add chain inet my_firewall inbound { type filter hook input priority 0 \; policy drop \; }
-
-# Allow SSH port 22
-nft add rule inet my_firewall inbound tcp dport 22 accept
-TICK3
-
-<Callout icon="success" title="The iptables-nft Wrapper">
-  Because replacing thousands of legacy Bash scripts overnight is impossible, modern Linux distributions ship with a tool called TICK1iptables-nftTICK1. When an old script runs an TICK1iptablesTICK1 command, this wrapper silently intercepts the command, translates it into TICK1nftablesTICK1 bytecode, and pushes it to the new engine.
-</Callout>
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/package managers (apt/index.mdx': `---
-title: apt (Advanced Package Tool)
-description: The massively popular package manager powering Debian, Ubuntu, and the vast majority of consumer Linux distributions.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="apt (Advanced Package Tool)">
-
-If you have ever used Ubuntu, Linux Mint, or a Raspberry Pi, you have used **APT (Advanced Package Tool)**. 
-Built by the Debian project, APT changed the Linux world by being one of the first systems to automatically download and install software dependencies over the internet.
-
-Under the hood, Debian software is distributed as TICK1.debTICK1 files. The low-level TICK1dpkgTICK1 tool actually installs the files, while TICK1aptTICK1 handles the high-level logic of contacting remote servers and calculating dependencies.
-
-## The Two-Step Update Process
-
-Unlike Windows, TICK1aptTICK1 does not constantly poll servers in the background. It relies on a local database (cache) of available software stored on your hard drive. 
-
-Therefore, installing software is always a two-step process:
-1. **TICK1sudo apt updateTICK1**: Reaches out to the Ubuntu servers, downloads the newest list of available software, and updates the local cache. (This does NOT install anything).
-2. **TICK1sudo apt upgradeTICK1**: Compares your installed software against the newly downloaded list, and physically downloads/installs the newer versions.
-
-<Callout icon="info" title="apt vs apt-get">
-  For decades, the command was TICK1apt-getTICK1. In 2014, Debian released the TICK1aptTICK1 command, which is a wrapper that combines TICK1apt-getTICK1 and TICK1apt-cacheTICK1 into a single, user-friendly tool that features a colorful progress bar. While TICK1aptTICK1 is perfect for humans, it explicitly warns you not to use it in automated Bash scripts, where the older, stable TICK1apt-getTICK1 is still required.
-</Callout>
-
-## PPA Repositories
-Because Debian values extreme stability, software in the official TICK1aptTICK1 repositories is often years out of date. Ubuntu solved this by introducing **PPAs (Personal Package Archives)**, allowing developers to host their own third-party TICK1aptTICK1 repositories, enabling users to easily install cutting-edge software.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/pacman/index.mdx': `---
-title: pacman
-description: The violently fast, simplistic package manager powering the Arch Linux ecosystem and the Steam Deck.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="pacman">
-
-**pacman** is the official package manager for Arch Linux. Unlike Debian's APT or Red Hat's DNF, which are highly complex Python or C++ applications designed for enterprise stability, TICK1pacmanTICK1 is written purely in C with one goal: **Speed**.
-
-It is famously used on Valve's SteamOS (Steam Deck).
-
-## The Rolling Release Model
-
-TICK1pacmanTICK1 does not handle "Major Version Upgrades" (like upgrading from Ubuntu 20.04 to 22.04). 
-Arch Linux is a **Rolling Release** distribution. You install it once, and TICK1pacmanTICK1 continuously upgrades individual pieces of the OS every single day, keeping you on the absolute bleeding edge of software development.
-
-## The Flag Syntax
-
-The TICK1pacmanTICK1 syntax is entirely unique. It uses single-letter flags (mostly based around the TICK1-STICK1 flag for "Sync") instead of English verbs.
-
-- **TICK1sudo pacman -SyuTICK1**: The most famous command in Arch Linux. It Syncs the repository databases (TICK1yTICK1) and Upgrades all packages (TICK1uTICK1).
-- **TICK1sudo pacman -S firefoxTICK1**: Syncs (Installs) Firefox from the repository.
-- **TICK1sudo pacman -Rns firefoxTICK1**: Removes Firefox, its configuration files, and any orphaned dependencies that are no longer needed.
-
-<Callout icon="warning" title="The AUR (Arch User Repository)">
-  The true power of Arch Linux lies in the **AUR**. It is a massive, community-driven database containing build scripts for almost every piece of Linux software ever written. While TICK1pacmanTICK1 itself cannot download from the AUR, users install third-party "AUR Helpers" (like TICK1yayTICK1 or TICK1paruTICK1) that perfectly mimic the TICK1pacmanTICK1 syntax while compiling software directly from source code.
-</Callout>
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/pipes/index.mdx': `---
-title: Pipes (|)
-description: The quintessential Unix mechanism allowing the output of one program to instantly become the input of another.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Pipes (|)">
-
-The core philosophy of Unix, pioneered in 1973, is: *"Write programs that do one thing and do it well. Write programs to work together."*
-
-The mechanism that allows these programs to work together is the **Pipe (TICK1|TICK1)**. It is a vertical bar (usually located above the Enter key).
-
-## Chaining Data Streams
-
-When you use a Pipe, the Shell intercepts the **Standard Output (stdout)** of the command on the left, and physically injects it into the **Standard Input (stdin)** of the command on the right, entirely in RAM, without ever writing to the hard drive.
-
-- **TICK1cat access.log | grep "404"TICK1**: The TICK1catTICK1 command spits out 10,000 lines of text. The Pipe catches it and forces it into TICK1grepTICK1, which filters it down to only the 404 errors.
-
-<Callout icon="success" title="Infinite Chaining">
-  You can chain as many pipes together as you want, building massive, complex data processing pipelines directly in the terminal:
-  
-  TICK1cat access.log | grep "404" | awk '{print $1}' | sort | uniq -c | sort -nr | head -n 5TICK1
-  
-  This single command reads a log, finds all errors, extracts the IP addresses, counts them, sorts them by the worst offenders, and displays the top 5 hackers.
-</Callout>
-
-## The xargs Command
-Some older programs (like TICK1rmTICK1) do not know how to read data from Standard Input (a Pipe). 
-To fix this, you use the **TICK1xargsTICK1** utility. TICK1xargsTICK1 catches the piped data and dynamically converts it into command-line arguments.
-For example: TICK1find . -name "*.tmp" | xargs rmTICK1
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/redirection/index.mdx': `---
-title: Redirection (>, <)
-description: The fundamental shell operator used to capture output text and permanently write it to files.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Redirection (>, <)">
-
-While Pipes (TICK1|TICK1) send data to other *programs*, **Redirection (TICK1>TICK1)** sends data directly to *files* on the hard drive.
-
-## The Three Data Streams
-
-Every Linux program has three invisible data streams:
-1. **Standard Input (stdin / File Descriptor 0)**: Where it reads data from (usually the keyboard).
-2. **Standard Output (stdout / File Descriptor 1)**: Where it prints normal text (the screen).
-3. **Standard Error (stderr / File Descriptor 2)**: Where it prints error messages (the screen).
-
-## Output Redirection (TICK1>TICK1 and TICK1>>TICK1)
-
-- **Single Bracket (TICK1>TICK1)**: Captures Standard Output, creates a file, and **overwrites** everything in it.
-  TICK1echo "Hello World" > output.txtTICK1
-- **Double Bracket (TICK1>>TICK1)**: Captures Standard Output and safely **appends** it to the bottom of the file (perfect for logs).
-  TICK1echo "Error 500" >> server.logTICK1
-
-<Callout icon="warning" title="Redirecting Errors (2>)">
-  By default, TICK1>TICK1 only captures File Descriptor 1 (Normal output). If a command fails, the error message bypasses the redirect and prints to your screen. 
-  To capture errors into a file, you must explicitly tell the shell to redirect File Descriptor 2:
-  TICK1find / -name "secret" 2> errors.logTICK1
-  *(To redirect BOTH normal output and errors to the same place, use the magic syntax TICK1&>TICK1 or TICK12>&1TICK1).*
-</Callout>
-
-## The Black Hole (/dev/null)
-If you are running a script and you want to completely silence all of its output (ignoring both normal text and errors), you redirect it to the Kernel's legendary black hole:
-TICK1./noisy_script.sh &> /dev/nullTICK1
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/sed/index.mdx': `---
-title: sed (Stream Editor)
-description: The notoriously cryptic but insanely powerful Unix utility used for on-the-fly text substitution and manipulation.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="sed (Stream Editor)">
-
-If you want to open a file, find a word, and replace it, you usually use a GUI text editor like VS Code or a terminal editor like Nano. 
-
-But what if you need to perform a Find & Replace inside an automated bash script? You use **TICK1sedTICK1 (Stream Editor)**. 
-TICK1sedTICK1 reads a stream of text (from a pipe or a file), manipulates it entirely in memory based on a set of rules, and spits the modified text out to the screen.
-
-## The Substitution Command
-
-99% of TICK1sedTICK1 usage revolves around the **Substitution (s)** command.
-The syntax uses slashes as delimiters: TICK1sed 's/SEARCH_TERM/REPLACE_TERM/g'TICK1
-
-TICK3bash
-# Replace the first instance of 'apple' with 'orange' on every line
-echo "I like apples" | sed 's/apple/orange/'
-
-# The 'g' (Global) flag replaces EVERY instance on the line, not just the first
-cat config.txt | sed 's/localhost/127.0.0.1/g'
-TICK3
-
-<Callout icon="warning" title="In-Place Editing (-i)">
-  By default, TICK1sedTICK1 does not modify the original file; it just prints the altered text to the terminal.
-  If you want to permanently modify the file on the hard drive, you use the dangerous **TICK1-iTICK1 (In-Place)** flag.
-  TICK1sed -i 's/Port 22/Port 2222/' /etc/ssh/sshd_configTICK1
-</Callout>
-
-## Advanced Deletions
-Because TICK1sedTICK1 supports Regex, you can use it to strip unwanted lines from files.
-For example, to print a configuration file but automatically delete every single line that starts with a comment (TICK1#TICK1) or is completely blank:
-TICK1sed -e '/^#/d' -e '/^$/d' /etc/nginx/nginx.confTICK1
+<ComparisonTable 
+  headers={['Type', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Choreography', 'Services listen to each other\\'s events directly. (A decentralized dance).', 'Pro: No single point of failure. Con: Hard to track the overall status of the transaction.'],
+    ['Orchestration', 'A central "Orchestrator" service acts as a conductor, explicitly telling each service what to do via commands.', 'Pro: Complex workflows are easy to monitor and reason about. Con: The orchestrator is a single point of failure.']
+  ]} 
+/>
 
 </ConceptTemplate>
 `,
@@ -543,7 +282,6 @@ async function main() {
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
 
     // Safely replace TICK1 and TICK3 placeholders with actual backticks
-    // This entirely avoids JSON/regex parsing issues.
     let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
 
     // Append a safe newline

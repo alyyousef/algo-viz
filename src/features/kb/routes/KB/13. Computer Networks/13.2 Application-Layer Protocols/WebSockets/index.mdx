@@ -1,29 +1,37 @@
 ---
 title: WebSockets
-description: A persistent, bi-directional communication protocol designed to allow real-time data streaming between a browser and a server.
+description: "A computer communications protocol providing full-duplex communication channels over a single TCP connection, essential for real-time web applications."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="WebSockets">
+<ConceptTemplate 
+  name="WebSockets"
+  icon="plug"
+>
 
-HTTP was designed to be strictly unidirectional: The Client asks a question, and the Server answers. The Server can **never** initiate contact with the Client.
+**WebSockets** were created to solve a fundamental limitation of HTTP: HTTP is strictly half-duplex and client-driven. In HTTP, a server can never send data to a browser unless the browser asks for it first.
 
-If you are building a real-time Chat app, or a live Stock Market ticker, how does the Server push new messages to the Client without the Client constantly mashing the refresh button? 
-Historically, developers used horrible hacks like "Long Polling" (holding an HTTP connection open indefinitely). 
+Before WebSockets, developers faked real-time behavior using **Long Polling** (the browser sends an HTTP request, the server holds it open until it has data, responds, and the browser immediately requests again). This was incredibly inefficient.
 
-**WebSockets** solved this permanently.
+## The WebSocket Handshake
 
-## The Connection Upgrade
+WebSockets cleverly hijack HTTP to establish their connection:
+1. The browser sends a standard HTTP `GET` request with an `Upgrade: websocket` header.
+2. If the server supports it, it responds with an HTTP `101 Switching Protocols` status.
+3. The HTTP connection is "upgraded," and the TCP socket is kept alive indefinitely.
 
-A WebSocket starts its life as a completely normal HTTP GET request, but it includes a special header:
-`Connection: Upgrade`
-`Upgrade: websocket`
+## Full-Duplex Communication
+Once established, the connection is **Full-Duplex**. Both the client and the server can push messages to each other at the exact same time, with almost zero overhead. The heavy HTTP headers (cookies, user-agents) are stripped away, and only raw binary or text frames are sent.
 
-If the Server supports it, it replies with a `101 Switching Protocols` status code.
-The HTTP protocol is instantly terminated, but the underlying TCP connection remains open. The tunnel transforms into a persistent, raw, bidirectional binary stream.
+This makes WebSockets the de facto standard for:
+- Live chat applications (Discord, Slack)
+- Multiplayer browser games
+- Live stock tickers and crypto trading dashboards
+- Collaborative editing (Google Docs)
 
-<Callout icon="success" title="True Full-Duplex">
-  Because the tunnel is raw TCP, it is Full-Duplex. The server can push 10 stock price updates to the browser at the exact same millisecond the browser is pushing a chat message to the server, with virtually zero latency and none of the massive HTTP header overhead.
+<Callout icon="info" title="Socket.IO vs WebSockets">
+Developers often confuse the two. WebSockets are the underlying raw protocol. **Socket.IO** is a JavaScript library that wraps WebSockets, providing automatic reconnections, broadcasting to "rooms," and gracefully falling back to HTTP Long-Polling if the user's corporate firewall blocks the WebSocket protocol.
 </Callout>
 
 </ConceptTemplate>

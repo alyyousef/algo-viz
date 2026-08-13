@@ -1,8 +1,39 @@
+---
+title: Prometheus
+description: "An open-source systems monitoring and alerting toolkit built for highly dynamic containerized environments."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Prometheus">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Originally built at SoundCloud and now a CNCF graduated project, **Prometheus** is the industry standard for gathering and storing **Metrics** in Kubernetes and cloud-native environments.
+
+## 1. The Pull Model (Scraping)
+Traditional monitoring agents (like New Relic or Datadog) use a *Push* model: the application actively sends its metrics over the network to the central monitoring server.
+
+Prometheus uses a **Pull** model. 
+Your application exposes a simple HTTP endpoint (usually `/metrics`) that prints out its current state in plain text. The Prometheus server periodically (e.g., every 15 seconds) makes an HTTP GET request to that endpoint, "scrapes" the data, and saves it to its internal time-series database.
+
+```text
+# Example Prometheus Metrics format
+http_requests_total{method="GET", status="200"} 1053
+http_requests_total{method="POST", status="500"} 12
+node_memory_Active_bytes 4.294967296e+09
+```
+
+## 2. PromQL (Prometheus Query Language)
+Prometheus stores data in a multidimensional time-series database. You query this data using **PromQL**, a powerful functional query language.
+
+Instead of writing SQL, you write mathematical queries to aggregate data over time.
+- **`http_requests_total`**: Returns the raw counter value.
+- **`rate(http_requests_total[5m])`**: Calculates the per-second rate of requests over the last 5 minutes (ignoring server restarts).
+
+## 3. The Alertmanager
+Prometheus itself just stores data and evaluates PromQL rules. If a rule evaluates to true (e.g., `cpu_usage > 90`), it fires an alert to a separate component called the **Alertmanager**. The Alertmanager handles deduplicating the alerts, grouping them together, and routing them to Slack, PagerDuty, or email.
+
+<Callout icon="info" title="Why Pull over Push?">
+The Pull model is perfect for Kubernetes. When 50 new Pods spin up, they don't need to be configured with the IP address of the monitoring server. Prometheus simply asks the Kubernetes API "what Pods exist?", discovers them automatically, and starts scraping them.
+</Callout>
 
 </ConceptTemplate>

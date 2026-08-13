@@ -1,8 +1,34 @@
+---
+title: ROS (Robot Operating System)
+description: "An open-source robotics middleware suite providing standard operating system services, hardware abstraction, and a publisher-subscriber message-passing architecture."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="ROS">
+<ConceptTemplate title="ROS (Robot Operating System)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Despite its name, **ROS is not an Operating System**. It does not boot up your computer, and it does not manage your RAM. It runs *on top* of a real OS (almost exclusively Ubuntu Linux).
+
+ROS is **Middleware**. It is a massive framework of tools, libraries, and communication protocols that solve the hardest problem in robotics: getting hundreds of different hardware components and software algorithms to talk to each other.
+
+## The Problem ROS Solves
+Imagine building a self-driving car. You buy a LiDAR sensor from Velodyne, a camera from Sony, and motor controllers from Bosch. None of these components speak the same language. You have to write custom C++ drivers to parse binary data from the LiDAR, convert it to an array, pass it to a Python script running OpenCV, and then pass *that* to a C script controlling the motors. 
+
+If you swap the LiDAR for a different brand, you have to rewrite your entire codebase.
+
+## The ROS Node Architecture
+ROS solves this by enforcing a strictly decoupled, modular architecture based on the **Publish/Subscribe** model.
+
+In ROS, every independent piece of software is a **Node**. 
+1. **Camera Node**: Just talks to the physical camera and publishes a standard ROS `Image` message.
+2. **LiDAR Node**: Just talks to the LiDAR and publishes a standard ROS `PointCloud` message.
+3. **Perception Node**: Subscribes to the `Image` and `PointCloud` topics, runs neural networks, and publishes a `BoundingBoxes` message.
+4. **Control Node**: Subscribes to `BoundingBoxes` and publishes a `Twist` (velocity) message to the motors.
+
+Because the Perception Node only expects a standard ROS `Image`, you can physically swap the Sony camera for a Logitech webcam, run the Logitech ROS driver, and **the rest of your software doesn't have to change at all.**
+
+<Callout icon="info" title="ROS vs ROS2">
+ROS 1 was built for academic research. It relied on a single "Master" node to route traffic. If the Master crashed, the entire robot died. **ROS 2** was rewritten from the ground up for industrial production. It uses DDS (Data Distribution Service), removing the single point of failure and allowing real-time, deterministic performance suitable for self-driving cars and medical robots.
+</Callout>
 
 </ConceptTemplate>

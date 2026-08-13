@@ -1,492 +1,335 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const TICK3 = '\`\`\`'
-const TICK1 = '\`'
+const TICK3 = '```'
+const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Linux/index.mdx': `---
-title: Linux
-description: The open-source, Unix-like operating system kernel that dominates the internet, smartphones, and supercomputers.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.1 Containers/Containers/index.mdx': `---
+title: Containers (Linux Concepts)
+description: "Lightweight, standalone, executable packages of software that include everything needed to run an application."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Linux">
+<ConceptTemplate title="Containers (Linux Concepts)">
 
-Created by Linus Torvalds in 1991 as a hobby project, **Linux** is arguably the most successful software project in human history. 
+Before Docker existed, **Containers** were simply a set of native Linux kernel features designed to isolate processes from one another. A container is not a virtual machine; it is just a standard Linux process that has been tricked into thinking it is the only process running on the computer.
 
-Crucially, Linux is *not* a full operating system; it is just a **Kernel**. It handles the core duties of talking to hardware, managing memory, and scheduling CPU time. A usable OS (like Ubuntu or Android) is created by taking the Linux Kernel and surrounding it with user-space software (like a desktop environment, GNU core utilities, and a package manager).
+## 1. The Core Kernel Features
+Linux containers are built primarily on two foundational kernel technologies:
 
-## The Monolithic Architecture
+### Namespaces (Isolation)
+Namespaces restrict what a process can *see*.
+- **PID Namespace**: The process thinks it is PID 1, and cannot see any other processes on the host machine.
+- **NET Namespace**: The process gets its own virtual network stack, its own localhost, and its own IP address.
+- **MNT Namespace**: The process gets its own isolated file system root (TICK1/TICK1), unable to access the host's actual hard drive.
 
-Unlike microkernels, Linux is a **Monolithic Kernel**. 
-This means that Device Drivers, File Systems, and Networking Stacks all run directly in Kernel Space (Ring 0). 
+### cgroups (Resource Limiting)
+Control Groups (cgroups) restrict what a process can *use*.
+- If a process has a memory leak, cgroups ensure it can only consume a maximum of 512MB of RAM before the kernel kills it, preventing it from crashing the entire host server.
+- They can also limit CPU cycles, disk I/O, and network bandwidth.
 
-<Callout icon="warning" title="The Tradeoff">
-  Because everything runs in Ring 0, Linux is incredibly fast; there is no context-switching overhead when writing to a hard drive or sending a network packet. 
-  However, this means that a bug in a graphics card driver can theoretically crash the entire operating system, whereas in a microkernel, only the driver would crash.
-</Callout>
+## 2. Virtual Machines vs Containers
 
-## Ubiquity
+<ComparisonTable 
+  headers={['Feature', 'Virtual Machines (VMs)', 'Containers']} 
+  rows={[
+    ['Architecture', 'Hypervisor running multiple full Guest OS kernels.', 'A single Host OS kernel shared among all containers.'],
+    ['Startup Time', 'Minutes (must boot the OS).', 'Milliseconds (just starting a process).'],
+    ['Size', 'Gigabytes (contains full OS).', 'Megabytes (contains only dependencies).'],
+    ['Isolation', 'Hardware-level isolation (very secure).', 'Process-level isolation (less secure, vulnerable to kernel exploits).']
+  ]} 
+/>
 
-While Linux struggled to conquer the consumer desktop market (currently holding ~3-4% market share), it absolutely dominates everywhere else:
-- **Smartphones**: Android is powered by the Linux Kernel.
-- **Servers**: The vast majority of the global internet infrastructure runs on Linux.
-- **Supercomputers**: 100% of the top 500 fastest supercomputers in the world run Linux.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Unix/index.mdx': `---
-title: Unix
-description: The ancient, incredibly influential operating system that defined modern computing paradigms.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Unix">
-
-Developed in 1969 at AT&T's Bell Labs by Ken Thompson and Dennis Ritchie, **Unix** is the granddaddy of modern operating systems. macOS, Linux, FreeBSD, and iOS all trace their philosophical (and sometimes literal) lineage directly back to Unix.
-
-## The Unix Philosophy
-
-Unix revolutionized computing not just through code, but through a strict engineering philosophy that remains highly relevant today:
-
-1. **Everything is a file**: Hard drives, keyboards, network sockets, and mice are all exposed as simple text files. If you know how to read and write to a file, you know how to interact with the entire computer.
-2. **Do one thing and do it well**: Instead of building massive, bloated software, build tiny, specialized tools (like TICK1grepTICK1, TICK1catTICK1, TICK1sedTICK1).
-3. **Chain programs together**: Use **Pipes** (TICK1|TICK1) to stream the output of one tiny program directly into the input of another, creating complex behavior out of simple building blocks.
-
-<Callout icon="info" title="Unix vs Unix-like">
-  Today, "Unix" is a registered trademark. An OS can only legally call itself Unix if it passes the incredibly strict Single UNIX Specification (SUS) certification. macOS is legally Unix. Linux is mathematically a clone of Unix, but it is not certified, so it is referred to as "Unix-like".
+<Callout icon="info" title="The Container Illusion">
+Because containers share the host's kernel, you cannot run a Windows container on a Linux host (without using a hidden Virtual Machine layer in between, which is exactly what Docker Desktop does on Mac/Windows).
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/FreeBSD/index.mdx': `---
-title: FreeBSD
-description: A complete, highly stable Unix-like operating system known for its exceptional networking stack and ZFS file system.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.1 Containers/Docker/index.mdx': `---
+title: Docker
+description: "The platform and toolset that popularized containerization by providing a standard way to build, package, and distribute containers."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="FreeBSD">
+<ConceptTemplate title="Docker">
 
-While Linux is just a kernel, **FreeBSD** is a complete operating system. The kernel, the device drivers, and the user-land utilities are all developed together in a single, cohesive source code repository by the same core team.
+While Linux had container features (LXC) for years, they were extremely difficult to use. In 2013, **Docker** revolutionized the software industry by introducing a user-friendly abstraction layer, a standard image format, and a centralized registry (Docker Hub).
 
-Descended directly from the Berkeley Software Distribution (BSD) created at UC Berkeley, FreeBSD is renowned for being incredibly stable and secure.
+Docker solved the infamous *"It works on my machine"* problem. By packaging the application code, the runtime (Node.js/Python), and the exact system dependencies (OpenSSL, glibc) into a single artifact, Docker guaranteed the app would run identically on a developer's laptop, a testing server, and production.
 
-## Key Strengths
+## 1. The Docker Architecture
+Docker uses a client-server architecture:
+- **Docker CLI**: The command-line tool developers interact with (TICK1docker runTICK1, TICK1docker buildTICK1).
+- **Docker Daemon (dockerd)**: The background service running on the host machine that actually does the heavy lifting of building, running, and monitoring containers.
+- **Containerd**: The low-level runtime (originally part of Docker, now an independent CNCF project) that manages the actual container lifecycle.
 
-1. **The Network Stack**: Historically, FreeBSD had a much more robust and performant networking stack than Linux. Because of this, companies like Netflix built their massive global content delivery network (Open Connect) entirely on FreeBSD.
-2. **ZFS**: FreeBSD offers native, first-class support for ZFS, arguably the most advanced and resilient file system ever created.
-3. **Jails**: Decades before Docker containers existed on Linux, FreeBSD pioneered lightweight OS-level virtualization with **FreeBSD Jails**, allowing strict isolation of processes.
+## 2. The OCI Standard
+Docker became so dominant that the industry feared a monopoly. In response, Docker helped create the **Open Container Initiative (OCI)** to standardize how container images are built and executed.
 
-<Callout icon="info" title="The Permissive License">
-  Unlike Linux (which uses the strict copyleft GPL license), FreeBSD uses the highly permissive **BSD License**. This allows companies to take FreeBSD, heavily modify it, and sell it as a closed-source product. 
-  For example, Sony's PlayStation OS and Apple's macOS/iOS are heavily derived from FreeBSD code.
+Today, a "Docker image" is actually an "OCI image". This means you don't even need Docker to run them—you can use alternative OCI-compliant tools like **Podman** or **Buildah**.
+
+<Callout icon="tip" title="Docker Desktop vs Docker Engine">
+**Docker Engine** is the free, open-source daemon that runs natively on Linux. **Docker Desktop** is a proprietary GUI application for Mac and Windows that spins up a hidden Linux VM to run the Docker Engine.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/NetBSD/index.mdx': `---
-title: NetBSD
-description: A highly portable BSD Unix variant famous for running on virtually any hardware architecture in existence.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.1 Containers/Dockerfile/index.mdx': `---
+title: Dockerfile
+description: "A text document containing all the commands a user could call on the command line to assemble an image."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="NetBSD">
+<ConceptTemplate title="Dockerfile">
 
-Like FreeBSD, **NetBSD** is a complete, open-source operating system descended from the original Berkeley Software Distribution (BSD). 
+A **Dockerfile** is the blueprint for a container. It is a simple script consisting of specialized instructions that the Docker daemon executes sequentially to build a Docker Image.
 
-However, while FreeBSD focuses on performance and enterprise stability, NetBSD is laser-focused on **Clean Code and Extreme Portability**.
+## 1. Common Instructions
 
-## "Of course it runs NetBSD"
+<ComparisonTable 
+  headers={['Instruction', 'Purpose', 'Example']} 
+  rows={[
+    ['\`FROM\`', 'Sets the base image. Must be the first instruction.', '\`FROM node:18-alpine\`'],
+    ['\`WORKDIR\`', 'Sets the working directory inside the container for subsequent instructions.', '\`WORKDIR /app\`'],
+    ['\`COPY\`', 'Copies files from the host machine into the container.', '\`COPY package.json .\`'],
+    ['\`RUN\`', 'Executes a command during the **build** phase (creating a new layer).', '\`RUN npm install\`'],
+    ['\`ENV\`', 'Sets environment variables.', '\`ENV NODE_ENV=production\`'],
+    ['\`EXPOSE\`', 'Documents which ports the application listens on (does not actually publish them).', '\`EXPOSE 8080\`'],
+    ['\`CMD\`', 'Specifies the default command to execute when the container **starts**.', '\`CMD ["npm", "start"]\`']
+  ]} 
+/>
 
-NetBSD's unofficial motto is *"Of course it runs NetBSD"*. The codebase is so beautifully abstracted that the OS can be compiled to run on almost anything with a CPU. 
+## 2. Example Dockerfile (Node.js)
 
-It currently supports over 50 different hardware architectures, including:
-- Standard x86 and ARM processors.
-- Ancient Motorola 68k Macs from the 1980s.
-- The Sega Dreamcast gaming console.
-- Amiga computers.
-- VAX mainframes.
+${TICK3}dockerfile
+# 1. Base Image
+FROM node:20-alpine
 
-<Callout icon="success" title="The Value of Portability">
-  By forcing the codebase to run on highly obscure, weird hardware architectures, the NetBSD developers are forced to write exceptionally clean, strictly standards-compliant C code. This makes NetBSD highly attractive for embedded systems development, particularly in aerospace and industrial control systems.
+# 2. Set working directory
+WORKDIR /usr/src/app
+
+# 3. Copy dependencies first (for caching)
+COPY package*.json ./
+RUN npm ci --only=production
+
+# 4. Copy application source code
+COPY . .
+
+# 5. Drop root privileges for security
+USER node
+
+# 6. Start the application
+EXPOSE 3000
+CMD ["node", "server.js"]
+${TICK3}
+
+<Callout icon="tip" title="CMD vs ENTRYPOINT">
+TICK1CMDTICK1 provides default arguments that can be easily overridden from the CLI (e.g., TICK1docker run myapp bashTICK1 replaces the CMD). TICK1ENTRYPOINTTICK1 sets the primary executable that *cannot* be easily overridden, and any extra CLI arguments are passed to it instead.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Debian/index.mdx': `---
-title: Debian
-description: The grandfather of Linux distributions, renowned for its legendary stability and massive software repository.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.1 Containers/Docker images/index.mdx': `---
+title: Docker Images & Layers
+description: "Read-only templates containing the instructions for creating a Docker container, built using a stacked layer architecture."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Debian">
+<ConceptTemplate title="Docker Images & Layers">
 
-Created in 1993, **Debian** is one of the oldest and most influential Linux distributions in existence. It is not owned by any corporation; it is developed entirely by a massive, global democratic community of volunteers.
+A **Docker Image** is an immutable, read-only snapshot of an application and its dependencies. When you run an image, it becomes a **Container**. You can think of an Image as a Class, and a Container as an Instance of that Class.
 
-## Stability Above All Else
+## 1. The Union File System (Layers)
+Images are not single monolithic files; they are built from a stack of independent **Layers**. 
+Every time a TICK1RUNTICK1, TICK1COPYTICK1, or TICK1ADDTICK1 command is executed in a Dockerfile, Docker creates a new layer on top of the previous ones.
 
-Debian is famous for its extreme, almost paranoid focus on stability. 
+These layers use a **Union File System**. If Layer 1 contains TICK1file.txtTICK1, and Layer 2 modifies TICK1file.txtTICK1, Layer 2 doesn't overwrite Layer 1. It simply places the modified file on top, hiding the old version.
 
-Software packages in Debian go through a rigorous, multi-year testing pipeline (moving from *Experimental*, to *Unstable*, to *Testing*, and finally to *Stable*). By the time a piece of software reaches the "Debian Stable" release, it may be 3 years old, but it is virtually guaranteed to never crash.
+## 2. The Layer Caching Mechanism
+Because building images can be slow, Docker heavily relies on layer caching.
+If you rebuild an image, Docker checks each instruction. If the instruction and the files it references haven't changed, Docker instantly reuses the cached layer instead of rebuilding it.
 
-<Callout icon="info" title="The APT Package Manager">
-  Debian pioneered the TICK1aptTICK1 (Advanced Package Tool) system and the TICK1.debTICK1 package format, which revolutionized how software was installed on Linux by automatically resolving and downloading dependency libraries.
-</Callout>
+**Crucial optimization rule**: Cache invalidation cascades downwards. If Layer 3 changes, Docker must rebuild Layer 3, and *every single layer after it* (4, 5, 6...).
 
-## The Universal OS
+This is why you always copy TICK1package.jsonTICK1 and run TICK1npm installTICK1 *before* copying your application source code. Your source code changes constantly (invalidating the cache), but your dependencies rarely change.
 
-Debian refers to itself as the "Universal Operating System" because it serves as the foundational bedrock for hundreds of other Linux distributions. 
-**Ubuntu**, **Kali Linux**, and **Linux Mint** are all directly built on top of Debian.
+## 3. Containers: The Writable Layer
+Because images are read-only, how does a container write a log file? 
+When a container starts, Docker slaps a very thin, ephemeral **Writable Layer** on top of the read-only image stack. Any file modifications happen in this writable layer. When the container is deleted, the writable layer is instantly destroyed, and all data inside it is lost.
 
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Fedora/index.mdx': `---
-title: Fedora
-description: A bleeding-edge Linux distribution sponsored by Red Hat, serving as the testing ground for enterprise software.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Fedora">
-
-**Fedora** is a highly popular, fast-moving Linux distribution sponsored by Red Hat (IBM). 
-
-Unlike Debian, which values ancient stability, Fedora is a **Bleeding-Edge** distribution. It is usually the very first major distribution to adopt radical new Linux technologies (like the Wayland display server, Systemd, or the PipeWire audio system).
-
-## The Upstream Relationship
-
-Fedora serves a very specific purpose in the enterprise ecosystem: it is the upstream testing ground for **Red Hat Enterprise Linux (RHEL)**.
-
-1. New software and kernel features are introduced and battle-tested in Fedora.
-2. Every few years, Red Hat takes a snapshot of Fedora, stabilizes it, freezes the features, and releases it as RHEL.
-3. RHEL is then sold to Fortune 500 companies with 10-year paid support contracts.
-
-<Callout icon="success" title="The Developer's Choice">
-  Because Fedora always has the newest compilers, programming languages, and kernel features, while still remaining relatively stable and backed by a major corporation, it is widely considered one of the best Linux distributions for software developers. Linus Torvalds famously uses Fedora on his personal workstations.
+<Callout icon="warning" title="Bloated Images">
+If you download a 100MB file in a TICK1RUNTICK1 command, and then delete it in a subsequent TICK1RUNTICK1 command, your final image is still 100MB larger! The file was permanently baked into the first layer. You must download and delete temporary files within the *same* TICK1RUNTICK1 command using TICK1&&TICK1.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Arch Linux/index.mdx': `---
-title: Arch Linux
-description: A minimalist, rolling-release Linux distribution that forces you to build your OS from scratch.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.1 Containers/Volumes/index.mdx': `---
+title: Docker Volumes
+description: "The preferred mechanism for persisting data generated by and used by Docker containers, bypassing the ephemeral writable layer."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Arch Linux">
-
-**Arch Linux** is a notoriously difficult, highly minimalist Linux distribution aimed strictly at power users. 
-
-When you boot the Arch Linux installation drive, you are not greeted by a beautiful graphical installer. You are dropped into a blank black terminal. You must manually partition your hard drive, format the filesystems, mount them, install the base kernel, configure the bootloader, and manually install a graphical desktop if you want one.
-
-## Rolling Release
-
-Arch Linux uses a **Rolling Release** model. Unlike Ubuntu or Debian (which release a massive OS upgrade every 2 years), Arch has no versions. You install it once, and run TICK1pacman -SyuTICK1 to continuously download the absolute newest software updates every single day. 
-
-<Callout icon="warning" title="Bleeding Edge Danger">
-  Because Arch pushes software updates directly from the developers to your computer within hours of their release, things occasionally break. Arch users are expected to read the wiki and manually fix their systems when an update causes an issue.
-</Callout>
-
-## The Arch Wiki and AUR
-
-Arch is famous for two things:
-1. **The Arch Wiki**: Arguably the greatest, most comprehensive documentation of Linux systems on the internet, widely used even by non-Arch users.
-2. **The AUR (Arch User Repository)**: A massive, community-driven software repository that contains installation scripts for virtually every piece of software ever written for Linux.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Alpine Linux/index.mdx': `---
-title: Alpine Linux
-description: An ultra-lightweight, security-oriented Linux distribution that dominates the Docker container ecosystem.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Alpine Linux">
-
-**Alpine Linux** is an independent, non-commercial Linux distribution designed for one thing: **Extreme Minimalism**.
-
-A standard Ubuntu installation requires roughly 2 Gigabytes of disk space. A base Alpine Linux installation requires exactly **5 Megabytes**.
-
-## How is it so small?
-
-Alpine achieves this microscopic footprint by completely abandoning the standard GNU utilities that power 99% of Linux distributions.
-1. It replaces the massive GNU C Library (TICK1glibcTICK1) with the tiny TICK1musl libcTICK1.
-2. It replaces the massive GNU Coreutils (cat, grep, ls) with **BusyBox**, a single, tiny executable file that emulates hundreds of Unix commands.
-
-<Callout icon="success" title="The King of Containers">
-  Because it is so incredibly small and fast to boot, Alpine Linux is the undisputed king of Docker containers. If you pull a Node.js or Python image from Docker Hub, it is almost certainly running Alpine Linux under the hood to minimize network bandwidth and attack surface.
-</Callout>
-
-## Security First
-Beyond size, Alpine is heavily focused on security. The kernel is patched with an unofficial security port, and all user-space binaries are compiled as Position Independent Executables (PIE) with stack-smashing protection enabled by default.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Gentoo/index.mdx': `---
-title: Gentoo Linux
-description: A source-based Linux distribution where every single piece of software must be manually compiled from C code by your CPU.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Gentoo Linux">
-
-**Gentoo** takes the difficulty of Arch Linux and multiplies it by ten. 
-
-In almost all Linux distributions, when you install a web browser, you are downloading a pre-compiled binary file. In Gentoo, when you install a web browser, the package manager (Portage) downloads the raw C++ source code and forces your CPU to manually compile the entire browser from scratch.
-
-## The Power of USE Flags
-
-Why would anyone do this? By compiling everything locally, Gentoo allows you to use **USE Flags** to perfectly tailor every piece of software to your exact needs.
-
-If you are building a server with no monitor, you can set the TICK1-XTICK1 and TICK1-waylandTICK1 USE flags. When Gentoo compiles your software, it will physically strip out all graphical interface code from every single program, resulting in incredibly lightweight, secure, and hyper-optimized binaries that run 2% faster.
-
-<Callout icon="warning" title="The Compilation Tax">
-  The downside to Gentoo is time. Installing a complex program like Firefox or Chromium on Gentoo might take 6 to 12 hours of your CPU running at 100% capacity just to compile the source code into a usable application.
-</Callout>
-
-Because of its extreme flexibility, Gentoo is often used as a base to build *other* operating systems, most notably **ChromeOS**.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Kali Linux/index.mdx': `---
-title: Kali Linux
-description: A specialized Debian-based distribution pre-loaded with hundreds of advanced penetration testing and ethical hacking tools.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Kali Linux">
-
-Developed and maintained by Offensive Security, **Kali Linux** is not designed for daily desktop use or web servers. It is a highly specialized tactical weapon used exclusively by Cybersecurity professionals, Penetration Testers, and Ethical Hackers.
-
-## The Arsenal
-
-Kali is essentially a standard Debian Linux installation, but it comes pre-configured with over 600 advanced security tools, categorized for specific phases of a cyber attack:
-- **Information Gathering**: Nmap, Wireshark, Maltego
-- **Vulnerability Analysis**: OpenVAS, Nikto
-- **Web Applications**: Burp Suite, SQLmap
-- **Password Attacks**: Hashcat, John the Ripper
-- **Exploitation**: Metasploit Framework
-
-<Callout icon="info" title="The Custom Kernel">
-  Aside from the software, Kali includes a heavily modified Linux kernel patched for wireless injection. This allows Kali users to use specific Wi-Fi adapters to inject packets into networks they are not connected to, a critical requirement for auditing wireless security protocols like WPA2.
-</Callout>
-
-## Usage Model
-
-Kali is rarely installed permanently on a hard drive. It is designed to be highly ephemeral. Security engineers usually boot Kali from a live USB stick or run it inside a temporary Virtual Machine, execute their attack simulation, generate a report, and immediately delete the VM.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/CentOS Stream/index.mdx': `---
-title: CentOS Stream
-description: The midstream enterprise Linux distribution that sits directly between the bleeding-edge Fedora and the rock-solid RHEL.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="CentOS Stream">
-
-To understand **CentOS Stream**, you must understand the Red Hat enterprise ecosystem.
-
-Historically, Red Hat released RHEL (a paid, enterprise OS). The community would take the RHEL source code, strip out the trademarks, and release it for free as **CentOS**. It was a 1:1 bug-for-bug clone of RHEL, used by millions of servers worldwide.
-
-## The Great Shift
-
-In 2020, Red Hat controversially killed traditional CentOS and replaced it with **CentOS Stream**. 
-
-Instead of being a downstream clone of RHEL, CentOS Stream was moved *upstream*.
-1. **Fedora**: Bleeding-edge features (Alpha testing).
-2. **CentOS Stream**: Stabilized features preparing for enterprise (Beta testing).
-3. **RHEL**: The final, frozen, paid enterprise product.
-
-<Callout icon="warning" title="The Impact">
-  Because CentOS Stream is effectively a rolling beta test for RHEL, it is no longer a 1:1 clone. It receives updates *before* RHEL does. This terrified enterprise sysadmins who relied on traditional CentOS for rock-solid, unchanging server stability, leading to the creation of Rocky Linux and AlmaLinux.
-</Callout>
-
-Despite the controversy, CentOS Stream is heavily used by massive hyperscalers (like Meta/Facebook) who actually *want* enterprise stability combined with a slightly faster update cadence.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/AlmaLinux/index.mdx': `---
-title: AlmaLinux
-description: A community-driven, 1:1 enterprise-grade clone of RHEL created to fill the void left by the death of traditional CentOS.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="AlmaLinux">
-
-When Red Hat controversially discontinued traditional CentOS in 2020 (replacing it with the rolling-release CentOS Stream), the enterprise server world panicked. Millions of servers relied on the free, rock-solid, 10-year lifecycle of CentOS.
-
-**AlmaLinux** was rapidly created by the web hosting company CloudLinux to fill this exact void.
-
-## The Bug-For-Bug Promise
-
-Like Rocky Linux, AlmaLinux's singular goal is to be a 100% bug-for-bug compatible drop-in replacement for Red Hat Enterprise Linux (RHEL). 
-
-If a piece of enterprise database software is certified to run on RHEL 9, it is mathematically guaranteed to run identically on AlmaLinux 9. 
-
-<Callout icon="info" title="The Non-Profit Foundation">
-  To ensure AlmaLinux can never be bought out or corporately shifted (like CentOS was), it is governed by the AlmaLinux OS Foundation, an independent 501(c)(6) non-profit organization. It is funded by heavyweights like AMD, AWS, and Microsoft to ensure the internet always has a free enterprise OS.
-</Callout>
-
-## The Source Code Pivot
-
-In 2023, Red Hat aggressively restricted public access to the RHEL source code, trying to kill downstream clones like AlmaLinux. In response, AlmaLinux brilliantly pivoted from being a "downstream clone of RHEL" to an "Application Binary Interface (ABI) compatible fork", utilizing CentOS Stream source code to build an OS that perfectly mimics RHEL without violating Red Hat's paywalls.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Embedded Linux/index.mdx': `---
-title: Embedded Linux
-description: Highly customized, stripped-down variants of the Linux kernel designed to run on resource-constrained microcontrollers and IoT devices.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Embedded Linux">
-
-**Embedded Linux** is not a specific distribution you can download. It is a category encompassing the use of the Linux kernel in highly specialized, resource-constrained devices like Wi-Fi routers, Smart TVs, automotive infotainment systems, and IoT refrigerators.
-
-## The Constraints
-
-A desktop Linux OS expects gigabytes of RAM and a fast SSD. An Embedded Linux device might only have **16 Megabytes of RAM** and a tiny 8MB Flash storage chip. 
-
-To make Linux fit into these constraints, embedded engineers must brutally strip the OS down to its absolute bare minimum:
-- **Custom Kernels**: The kernel is recompiled to strip out support for 99% of hardware (if the device doesn't have a screen, all graphics drivers are deleted).
-- **BusyBox**: Heavy GNU utilities are replaced with the microscopic BusyBox binary.
-- **musl libc**: The heavy standard C library is replaced with an ultra-lightweight alternative.
-
-<Callout icon="success" title="Real-Time Requirements">
-  Many embedded systems (like robotic arms or anti-lock brakes) require **Real-Time Operating System (RTOS)** capabilities, meaning the OS must mathematically guarantee it will respond to a hardware sensor within 2 milliseconds. Standard Linux cannot do this. Embedded engineers often apply the TICK1PREEMPT_RTTICK1 patch to the Linux kernel to give it strict, deterministic real-time capabilities.
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate title="Docker Volumes">
+
+By default, all files created inside a container are stored on a thin, ephemeral writable layer. If the container crashes or is removed, that data is permanently lost. This is acceptable for stateless web servers, but catastrophic for databases.
+
+To persist data permanently, you must mount storage from the host machine into the container. Docker provides two primary ways to do this.
+
+## 1. Bind Mounts
+A **Bind Mount** directly maps a specific file or directory from the host machine's filesystem (e.g., TICK1/home/user/my-codeTICK1) into the container (e.g., TICK1/appTICK1).
+- **Primary Use Case**: Local development. You bind mount your source code directory into the container. When you hit "Save" in your IDE on the host, the container instantly sees the changes and triggers a hot-reload.
+- **Drawback**: Highly dependent on the host machine's specific directory structure and OS permissions.
+
+## 2. Docker Volumes
+A **Volume** is a directory managed entirely by Docker itself (stored somewhere like TICK1/var/lib/docker/volumes/TICK1). You don't care *where* it is on the host; you just ask Docker to create it.
+- **Primary Use Case**: Database persistence (PostgreSQL data directory) or shared storage between multiple containers.
+- **Advantage**: Volumes are fully isolated from the host OS, can be easily backed up, and can even be backed by cloud providers (e.g., mounting an AWS EFS drive directly as a Docker volume).
+
+<ComparisonTable 
+  headers={['Metric', 'Bind Mounts', 'Docker Volumes']} 
+  rows={[
+    ['Managed By', 'The Host OS / User.', 'Docker Daemon.'],
+    ['Host Path Dependency', 'Requires exact absolute paths (TICK1/users/bob/dataTICK1).', 'Completely abstracted (TICK1my-db-dataTICK1).'],
+    ['Performance', 'Can be slow on Mac/Windows due to VM file syncing.', 'Extremely fast (native Linux performance).'],
+    ['Best For', 'Live-reloading source code during dev.', 'Persisting production database files.']
+  ]} 
+/>
+
+<Callout icon="tip" title="Anonymous Volumes">
+If a Dockerfile has a TICK1VOLUME /var/lib/mysqlTICK1 instruction, and you run the container without specifying a mount, Docker automatically creates an "Anonymous Volume" with a random hash name to ensure the data is safe.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Buildroot/index.mdx': `---
-title: Buildroot
-description: A simple, highly efficient tool used by embedded engineers to automatically generate a microscopic, custom Linux OS from scratch.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.2 Kubernetes/Kubernetes architecture/index.mdx': `---
+title: Kubernetes Architecture
+description: "The high-level architecture of Kubernetes, separating the Control Plane (the brain) from the Worker Nodes (the muscles)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Buildroot">
+<ConceptTemplate title="Kubernetes Architecture">
 
-When an engineer builds a custom Smart Thermostat, they cannot just install Ubuntu on it. They need an Embedded Linux OS perfectly tailored to their specific, weird hardware. 
+**Kubernetes (K8s)** is an open-source container orchestration platform. While Docker allows you to run a container on one machine, K8s allows you to manage thousands of containers across hundreds of machines, handling automated rollouts, self-healing, scaling, and load balancing.
 
-**Buildroot** is an automation tool designed specifically to generate these microscopic, custom Linux operating systems from scratch.
+Kubernetes operates on a declarative model: you write a YAML file describing your *Desired State* (e.g., "I want 3 instances of my web app running"), and K8s continuously monitors the *Actual State*, making changes until the two match.
 
-## How It Works
+## 1. The Control Plane (The Brain)
+The Control Plane is the collection of services that manage the cluster, make global decisions, and respond to events.
 
-Buildroot is essentially a giant collection of Makefiles. The engineer opens a menu (similar to the Linux kernel menuconfig), selects exactly what CPU architecture they are using, and checks boxes for exactly which software they want (e.g., "Add an SSH server", "Add SQLite").
+- **kube-apiserver**: The front door. Every single command (from developers using TICK1kubectlTICK1 or internal components) goes through the API server.
+- **etcd**: The highly-available, distributed key-value store. It is the single source of truth for the cluster, storing the entire state and all YAML configurations.
+- **kube-scheduler**: Watches for newly created Pods that have no node assigned, and selects the most optimal Worker Node for them to run on based on CPU/Memory constraints.
+- **kube-controller-manager**: Runs various controllers in the background. For example, if a node crashes, the Node Controller notices and the ReplicaSet controller spins up replacement Pods.
 
-When the engineer types TICK1makeTICK1, Buildroot will:
-1. Download a Cross-Compiler toolchain (so your x86 laptop can compile code for an ARM thermostat).
-2. Download the source code for the Linux Kernel and BusyBox.
-3. Compile everything from scratch.
-4. Output a single, tiny, 10-Megabyte binary Image file that can be flashed directly onto the thermostat's memory chip.
+## 2. The Worker Nodes (The Muscles)
+These are the actual servers (VMs or bare metal) where your application containers run.
 
-<Callout icon="info" title="Buildroot vs Yocto">
-  Buildroot is designed for **Simplicity**. It builds a single, static filesystem image. It does not support package managers (like TICK1aptTICK1). Once the OS is flashed to the device, it cannot be easily updated. For highly complex devices that require over-the-air package updates (like a Tesla car), engineers use the much heavier **Yocto Project**.
+- **kubelet**: The "captain" of the node. It communicates with the control plane, ensuring that the containers described by the API server are actually running and healthy.
+- **kube-proxy**: Manages network routing, maintaining network rules on the host to allow communication to the Pods from inside or outside the cluster.
+- **Container Runtime**: The actual software that runs the containers (e.g., **containerd** or **CRI-O**). Docker is no longer directly supported as a runtime in modern K8s.
+
+<Callout icon="info" title="Managed Kubernetes">
+Because the Control Plane (specifically etcd) is incredibly difficult to run and maintain in a highly-available way, 90% of companies use Managed Kubernetes services like **AWS EKS**, **Google GKE**, or **Azure AKS**, where the cloud provider completely hides and manages the Control Plane for you.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/Android/index.mdx': `---
-title: Android
-description: The world's most widely used operating system, utilizing the Linux kernel beneath a massive Java-based user space.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.2 Kubernetes/Pods/index.mdx': `---
+title: Kubernetes Pods
+description: "The smallest and simplest Kubernetes object. A Pod represents a set of running containers on your cluster."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Android">
+<ConceptTemplate title="Kubernetes Pods">
 
-Developed by Google, **Android** is the most widely used operating system on Earth, powering billions of smartphones, tablets, and televisions. 
+In Kubernetes, you do not deploy containers directly. Instead, you deploy **Pods**. A Pod is the smallest deployable atomic unit in the K8s ecosystem. 
 
-While it is technically a "Linux Distribution" (because it uses the Linux Kernel to talk to the phone's hardware), it shares absolutely zero user-space DNA with desktop Linux. 
+A Pod is a logical wrapper that encapsulates one or more containers, storage resources, a unique network IP, and options that govern how the container(s) should run.
 
-## The Architecture Stack
+## 1. One-Container vs Multi-Container Pods
+- **One Container per Pod (Most Common)**: The standard deployment model. One Pod runs one instance of your Node.js API. If you need to scale, you don't add more containers to the Pod; you add more Pods to the cluster.
+- **Multi-Container Pods (The Sidecar Pattern)**: Sometimes, two processes are so tightly coupled they must run on the exact same physical machine. For example, a main web server container, and a "sidecar" container that pulls the web server's log files and forwards them to Datadog.
 
-Android is built in highly distinct layers:
-1. **The Linux Kernel**: Handles memory management, CPU scheduling, and hardware drivers (camera, bluetooth).
-2. **Hardware Abstraction Layer (HAL)**: C/C++ libraries that allow the higher levels to talk to proprietary hardware without knowing the specific driver details.
-3. **Android Runtime (ART)**: A highly specialized Virtual Machine designed for low-power mobile devices. 
-4. **The Framework**: The massive Java/Kotlin API that provides UI buttons, location services, and notifications.
+## 2. Pod Networking and Storage
+Because containers inside a single Pod share the exact same Linux network namespace:
+- They can communicate with each other using TICK1localhostTICK1.
+- They share the exact same IP address.
+- They can easily share Volume mounts (e.g., Container A writes to a shared directory, Container B reads from it).
 
-<Callout icon="success" title="The Application Sandbox">
-  In desktop Linux, apps generally share the same user permissions. In Android, every single application is assigned its own unique Linux User ID (UID). Because the Linux Kernel strictly isolates memory between different users, this guarantees that a malicious flashlight app physically cannot read the RAM of your banking app.
+## 3. The Ephemeral Nature of Pods
+**Pods are mortal.** They are born, they run, and they die. 
+If a node crashes, the Pods on that node die. K8s does *not* resurrect the dead Pods; instead, higher-level controllers (like Deployments) notice the missing Pods and create brand new replacements on a healthy node.
+
+Because Pods are ephemeral:
+1. You should never store state directly on a Pod's local file system.
+2. You should never rely on a Pod's specific IP address, because the replacement Pod will have a different IP (this is why you use K8s **Services**).
+
+<Callout icon="warning" title="Never deploy naked Pods">
+You should almost never run TICK1kubectl runTICK1 or deploy a raw TICK1kind: PodTICK1 YAML file in production. If a naked Pod crashes, it is gone forever. You should always use a **Deployment** or **StatefulSet** to manage your Pods.
 </Callout>
-
-## Dalvik to ART
-Historically, Android compiled Java code into Dalvik bytecode and interpreted it Just-In-Time (JIT) while the app was running, which drained battery. Modern Android uses **ART (Android Runtime)**, which performs Ahead-Of-Time (AOT) compilation—translating the app into native machine code the moment you install it from the Play Store, resulting in massive performance gains.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/ChromeOS/index.mdx': `---
-title: ChromeOS
-description: A hyper-secure, web-first operating system built by Google on top of Gentoo Linux, designed entirely around the Chrome web browser.
+  'src/features/kb/routes/KB/37. Containers & Kubernetes/37.2 Kubernetes/Deployments/index.mdx': `---
+title: Kubernetes Deployments
+description: "A higher-level K8s controller that manages the creation, scaling, and rolling updates of replicated Pods."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="ChromeOS">
+<ConceptTemplate title="Kubernetes Deployments">
 
-**ChromeOS** is a proprietary operating system developed by Google, primarily found on inexpensive Chromebooks. It is fundamentally a heavily modified version of **Gentoo Linux**.
+Because individual Pods are ephemeral and prone to failure, we use **Deployments** to manage them. A Deployment provides declarative updates for Pods and ReplicaSets. You describe the desired state in the Deployment, and the controller changes the actual state to match it at a controlled rate.
 
-## The Web-First Philosophy
+## 1. The ReplicaSet Relationship
+Technically, a Deployment doesn't manage Pods directly. 
+1. The **Deployment** manages a **ReplicaSet**.
+2. The **ReplicaSet** is a controller whose sole job is to ensure that a specified number of Pod replicas (e.g., 3) are running at any given time. If a node dies and a Pod is lost, the ReplicaSet instantly spins up a new one to get back to 3.
 
-When ChromeOS launched, its entire philosophy was: *"Everything is a website."* 
-The OS had virtually no native applications. The user interface was literally just the Google Chrome web browser. If you wanted to write a document, you used Google Docs. If you wanted to listen to music, you used a web player. 
+## 2. Rolling Updates
+The primary reason we use Deployments instead of raw ReplicaSets is for Zero-Downtime deployments. 
 
-Because the OS was just a browser and a kernel, it was incredibly fast, booted in 5 seconds, and was immune to 99% of traditional desktop malware, making it massively popular in the education sector.
+When you update a Deployment to use a new Docker image tag (e.g., TICK1v2.0TICK1):
+1. The Deployment creates a *new* ReplicaSet for TICK1v2.0TICK1.
+2. It scales the new ReplicaSet up by 1 Pod.
+3. Once the new Pod is healthy (passing Readiness Probes), it scales the old TICK1v1.0TICK1 ReplicaSet down by 1 Pod.
+4. It repeats this process until the old ReplicaSet is at 0 and the new one is at full capacity. Users never experience downtime.
 
-<Callout icon="info" title="The Container Revolution">
-  As the OS matured, users demanded real apps. Google brilliantly solved this without compromising security by using **Containers and Virtual Machines**:
-  - ChromeOS can now run full Android apps seamlessly in an isolated Android container (ARC).
-  - ChromeOS can run full desktop Linux applications (like VS Code) inside a lightweight virtual machine (Crostini).
+## 3. Deployment Rollbacks
+Because the Deployment keeps the old ReplicaSet around (just scaled to 0), rolling back a bad release is instant. If TICK1v2.0TICK1 crashes in production, you issue a TICK1kubectl rollout undoTICK1 command. K8s simply scales the TICK1v1.0TICK1 ReplicaSet back up and scales TICK1v2.0TICK1 to 0.
+
+<ComparisonTable 
+  headers={['Controller', 'Best For', 'Characteristics']} 
+  rows={[
+    ['Deployment', 'Stateless Web Apps / APIs.', 'Pods are interchangeable. No persistent identity.'],
+    ['StatefulSet', 'Databases (Kafka, PostgreSQL).', 'Pods have sticky, sequential IDs (db-0, db-1) and persistent storage attached.'],
+    ['DaemonSet', 'Logging agents, Node monitoring.', 'Ensures exactly 1 Pod runs on every single node in the cluster.']
+  ]} 
+/>
+
+<Callout icon="tip" title="Self-Healing">
+The combination of a Deployment and a ReplicaSet is the core of Kubernetes' famous "self-healing" capability. The orchestrator constantly runs a reconciliation loop, comparing your YAML file to reality and fixing any discrepancies.
 </Callout>
-
-## Verified Boot Security
-
-ChromeOS is arguably the most secure consumer OS on the market due to **Verified Boot**. Every time you turn on a Chromebook, a dedicated hardware security chip mathematically verifies the cryptographic signature of the OS Kernel. If a virus manages to modify even a single byte of the core OS, the hardware will refuse to boot and automatically redownload a fresh copy of the OS from Google.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/11. Operating Systems & Platforms (Distributions & Products)/HarmonyOS/index.mdx': `---
-title: HarmonyOS
-description: Huawei's highly ambitious distributed operating system, designed to break away from Android and unify all smart devices.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="HarmonyOS">
-
-**HarmonyOS** (Hongmeng OS) is a proprietary operating system developed by Huawei. It was rapidly accelerated into production after US trade sanctions blocked Huawei from using Google's Android services.
-
-However, HarmonyOS is not just a phone OS; it is an incredibly ambitious **Distributed Operating System** designed for the "Internet of Everything".
-
-## The Distributed Bus
-
-The core philosophy of HarmonyOS is seamless hardware collaboration. 
-Through a technology called the **Distributed Virtual Bus**, HarmonyOS treats multiple physical devices as a single super-device. 
-- You can play a mobile game on your phone, and seamlessly swipe it up to your Smart TV to use the TV as a display, while your phone instantly transforms into the game controller.
-- Your phone's camera can be exposed directly as a hardware peripheral to your laptop.
-
-<Callout icon="warning" title="The Microkernel Transition">
-  The initial versions of HarmonyOS (running on smartphones) were heavily based on the Android Open Source Project (AOSP) Linux kernel to maintain app compatibility. However, with **HarmonyOS NEXT**, Huawei completely stripped out all AOSP and Linux code, moving to a proprietary **Microkernel** architecture. It no longer supports Android APKs, relying entirely on its own native application ecosystem.
-</Callout>
-
-## Unification
-
-Unlike Android (phones) and WearOS (watches) which are distinct codebases, HarmonyOS is designed to scale dynamically. The exact same OS core can be deployed on a smart watch with 128MB of RAM, a smartphone with 8GB of RAM, and a Smart Car dashboard, providing a completely unified development ecosystem.
 
 </ConceptTemplate>
 `,
@@ -498,7 +341,6 @@ async function main() {
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
 
     // Safely replace TICK1 and TICK3 placeholders with actual backticks
-    // This entirely avoids JSON/regex parsing issues.
     let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
 
     // Append a safe newline

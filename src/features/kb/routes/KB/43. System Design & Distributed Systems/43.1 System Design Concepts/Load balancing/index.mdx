@@ -1,38 +1,34 @@
 ---
 title: Load Balancing
-description: The critical architectural component that distributes incoming network traffic across a cluster of backend servers to ensure high availability and reliability.
+description: "The process of distributing incoming network traffic across a group of backend servers to ensure high availability and reliability."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Load Balancing">
 
-When a web application scales from thousands to millions of users, a single server is mathematically incapable of handling the traffic. The solution is to add more servers. However, the users need a single IP address to connect to. 
+If a single web server can handle 1,000 concurrent users, what happens when 10,000 users visit your site? You scale horizontally by adding 9 more servers. But how do the users know which of the 10 servers to connect to? You place a **Load Balancer** in front of them.
 
-A **Load Balancer (LB)** sits between the client and the server cluster, acting as a traffic cop. It accepts all incoming requests and routes them to the backend servers based on a specific algorithm.
+A Load Balancer acts as the "traffic cop" routing client requests across all servers capable of fulfilling them in a manner that maximizes speed and capacity utilization.
 
-## 1. Routing Algorithms
-Load balancers use various mathematical algorithms to decide which server gets the next request:
-
-- **Round Robin**: Distributes requests sequentially (Server 1, 2, 3, 1, 2, 3). Simple, but ignores server capacity.
-- **Least Connections**: Routes the request to the server with the fewest active connections. Excellent for long-lived connections (like WebSockets).
-- **IP Hash**: Mathematically hashes the client's IP address to consistently route them to the *same* server every time (useful for stateful sessions).
-
-## 2. Layer 4 vs Layer 7 Load Balancing
+## 1. Types of Load Balancers
 
 <ComparisonTable 
-  headers={['Metric', 'Layer 4 (Transport Level)', 'Layer 7 (Application Level)']} 
+  headers={['Type', 'OSI Layer', 'How it works', 'Use Case']} 
   rows={[
-    ['Routing Decisions Based On', 'IP Address and TCP/UDP Port (Blind to the payload).', 'HTTP Headers, Cookies, URL Paths.'],
-    ['Speed', 'Blazingly fast (minimal CPU inspection).', 'Slower (Requires decrypting TLS and parsing HTTP).'],
-    ['Intelligence', 'Dumb routing.', 'Smart routing (e.g., Route `/api/images` to Server A, `/api/video` to Server B).'],
-    ['Popular Tools', 'HAProxy, AWS Network Load Balancer (NLB).', 'NGINX, AWS Application Load Balancer (ALB).']
+    ['Layer 4 (Transport)', 'Layer 4 (TCP/UDP)', 'Routes traffic based purely on IP address and Port. It does not inspect the contents of the HTTP request.', 'Ultra-low latency routing, or routing non-HTTP traffic (like database connections).'],
+    ['Layer 7 (Application)', 'Layer 7 (HTTP)', 'Inspects the actual HTTP headers, URL paths, and cookies to make routing decisions.', 'Routing `/api` to Node.js servers, and `/images` to static file servers.']
   ]} 
 />
 
-<Callout icon="warning" title="Single Point of Failure (SPOF)">
-If you place a single Load Balancer in front of 100 robust servers, your architecture has a fatal flaw. If the Load Balancer crashes, your entire system goes offline. Load Balancers must always be deployed in **Active-Passive High Availability (HA) pairs**, using tools like Keepalived or AWS Route53 to seamlessly switch traffic if the primary LB dies.
-</Callout>
+## 2. Redundancy
+A load balancer introduces a single point of failure. If the load balancer crashes, your entire application goes offline, even if all 10 backend servers are perfectly healthy.
+
+To solve this, load balancers are always deployed in **Active-Passive** or **Active-Active** clusters using protocols like VRRP or Keepalived. If the primary load balancer dies, the standby instantly takes over its IP address.
+
+## 3. Session Persistence (Sticky Sessions)
+If a user adds an item to their shopping cart on Server A (and Server A stores that cart in local memory), their next request *must* be routed to Server A, or their cart will appear empty. Load balancers achieve this by injecting a cookie into the user's browser, forcing "Sticky Sessions". 
+
+*(Note: Modern system design discourages Sticky Sessions. State should be stored in a shared external database like Redis so any server can handle any request.)*
 
 </ConceptTemplate>

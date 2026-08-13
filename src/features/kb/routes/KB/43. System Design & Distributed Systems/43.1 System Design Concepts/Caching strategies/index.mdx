@@ -1,41 +1,36 @@
 ---
 title: Caching Strategies
-description: The architectural patterns used to store expensive computational results in ultra-fast memory (RAM), drastically reducing database load and response latency.
+description: "Common patterns for deciding when to read from and write to a high-speed cache versus the primary database."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Caching Strategies">
 
-Reading from a Disk (Database) takes milliseconds. Reading from RAM (Cache) takes microseconds. Caching is the single most powerful tool in System Design to reduce latency and save your database from collapsing under heavy load.
+Reading from a database (like PostgreSQL) requires slow disk I/O. Reading from a Cache (like Redis or Memcached) is done entirely in RAM and is orders of magnitude faster. However, because caches are volatile and have limited capacity, you must employ specific strategies to keep the cache synchronized with the database.
 
-However, caching introduces the hardest problem in computer science: **Cache Invalidation**. If the database updates, but the cache does not, the user sees stale (wrong) data.
+## 1. Read Strategies
 
-## 1. Write-Around (Cache Aside)
-The most common strategy. The Application code acts as the orchestrator.
-1. App asks Cache for data. If missing (Cache Miss), App queries the Database.
-2. App writes the data into the Cache.
-3. When updating data, the App updates the Database, and then manually **deletes** the cache key.
-- **Pros**: Easy to build. The cache only splits data that is actually requested.
-- **Cons**: Requires complex application-level logic to ensure the cache doesn't get out of sync.
+<ComparisonTable 
+  headers={['Strategy', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Cache-Aside (Lazy Loading)', 'Application asks Cache. If miss, app asks DB, then writes result to Cache.', 'Pro: Cache only contains requested data. Con: The first request is penalized with a cache miss latency.'],
+    ['Read-Through', 'Application asks Cache. If miss, the *Cache itself* (not the app) fetches from the DB, saves it, and returns it.', 'Pro: App logic is much simpler. Con: Requires specific cache software that supports DB connections.']
+  ]} 
+/>
 
-## 2. Write-Through
-The Application *only* ever talks to the Cache. The Cache itself is responsible for synchronously writing to the Database.
-1. App writes data to the Cache.
-2. The Cache freezes the request, writes to the DB, waits for the DB to confirm, and then returns success to the App.
-- **Pros**: Mathematically impossible for the Cache and DB to be out of sync. Perfect consistency.
-- **Cons**: Every single write suffers high latency, as it must traverse both the Cache and the DB sequentially.
+## 2. Write Strategies
 
-## 3. Write-Back (Write-Behind)
-1. App writes data to the Cache.
-2. The Cache *instantly* returns success to the App.
-3. Later, an asynchronous background worker takes the new data and lazily flushes it to the Database.
-- **Pros**: Insanely fast. Extreme write throughput.
-- **Cons**: **Dangerous**. If the Cache server loses power before the background worker flushes the data to the DB, the data is permanently destroyed.
+<ComparisonTable 
+  headers={['Strategy', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Write-Through', 'Application writes to the Cache, and the Cache immediately writes synchronously to the DB.', 'Pro: Data is always 100% consistent. Con: Every write incurs the latency of writing to both systems.'],
+    ['Write-Behind (Write-Back)', 'App writes *only* to the Cache. The Cache asynchronously writes to the DB later in a batch.', 'Pro: Extremely fast writes. Con: High risk of data loss if the Cache crashes before flushing to the DB.'],
+    ['Write-Around', 'App writes directly to the DB, bypassing the Cache entirely.', 'Pro: Prevents the cache from filling up with data that won\'t be read soon. Con: The next read will be a cache miss.']
+  ]} 
+/>
 
-<Callout icon="warning" title="Eviction Policies">
-RAM is expensive and limited. When a cache fills up, it must delete old data to make room for new data. The most common algorithmic policy is **LRU (Least Recently Used)**, which drops the data that hasn't been requested in the longest time. 
-</Callout>
+## 3. Eviction Policies
+When the RAM is full, the cache must delete old data to make room for new data. The most common algorithm is **LRU (Least Recently Used)**, which discards the item that has not been read in the longest amount of time.
 
 </ConceptTemplate>

@@ -1,8 +1,38 @@
+---
+title: Ansible
+description: "An open-source automation tool primarily focused on configuration management and application deployment."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Ansible">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Terraform is designed for **Infrastructure Provisioning** (creating the EC2 server), **Ansible** is designed for **Configuration Management** (installing Nginx and configuring the firewall on that newly created EC2 server). 
+
+Developed by Red Hat, Ansible is renowned for its simplicity and its agentless architecture.
+
+## 1. Agentless Architecture
+Unlike older configuration management tools like Chef or Puppet, which required you to install a heavy "agent" daemon on every single target server, Ansible is **agentless**. 
+
+It simply connects to the target servers over standard **SSH** (for Linux) or **WinRM** (for Windows) and executes Python scripts. This makes onboarding new servers into Ansible virtually instantaneous.
+
+## 2. Playbooks and Inventories
+- **Inventory**: A text file (usually INI or YAML) containing the IP addresses or hostnames of your servers, often grouped logically (e.g., `[webservers]`, `[databases]`).
+- **Playbook**: A YAML file describing a series of "Tasks" (the desired state) to be executed against the hosts in the inventory.
+
+## Provisioning vs Configuration Management
+
+<ComparisonTable 
+  headers={['Tool', 'Category', 'Primary Job', 'Metaphor']} 
+  rows={[
+    ['Terraform', 'Provisioning (Declarative)', 'Creating the hardware (VPCs, VMs, Load Balancers).', 'Building the house.'],
+    ['Ansible', 'Configuration (Imperative/Declarative hybrid)', 'Configuring the OS (installing software, copying config files).', 'Painting the walls and buying furniture.']
+  ]} 
+/>
+
+<Callout icon="tip" title="Better Together">
+A standard industry pattern is to use Terraform to spin up 5 blank Ubuntu VMs on AWS, and then have Terraform automatically trigger an Ansible Playbook to SSH into those VMs and install the actual application stack.
+</Callout>
 
 </ConceptTemplate>

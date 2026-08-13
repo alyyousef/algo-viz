@@ -1,8 +1,61 @@
+---
+title: Terraform Resources & Data Sources
+description: "The fundamental building blocks of Terraform used to create infrastructure and query external information."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Resources">
+<ConceptTemplate title="Resources & Data Sources">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Every object in Terraform is defined using blocks. The two most important block types are **Resources** (things you create) and **Data Sources** (things you query).
+
+## 1. Resources
+A `resource` block instructs Terraform to create, update, or destroy a physical piece of infrastructure. 
+
+```hcl
+resource "aws_instance" "web_server" {
+  ami           = "ami-12345678"
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "My Production Web Server"
+  }
+}
+```
+
+- **Provider Type**: `"aws_instance"` (Defined by the AWS provider).
+- **Local Name**: `"web_server"` (An arbitrary name used to reference this block elsewhere in your code).
+- **Arguments**: Inside the block, you specify the configuration parameters.
+
+## 2. Data Sources
+A `data` block allows Terraform to read information defined *outside* of Terraform, or computed by another separate Terraform configuration. It is read-only.
+
+For example, instead of hardcoding an AMI ID (which changes frequently), you can use a data source to query AWS for the most recent Ubuntu AMI.
+
+```hcl
+data "aws_ami" "latest_ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical's AWS Account ID
+  
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+}
+
+# Later in your code...
+resource "aws_instance" "web_server" {
+  ami           = data.aws_ami.latest_ubuntu.id
+  instance_type = "t2.micro"
+}
+```
+
+<ComparisonTable 
+  headers={['Block Type', 'Action', 'Lifecycle Management']} 
+  rows={[
+    ['`resource`', 'Write / Create', 'Terraform completely manages the lifecycle (Create, Update, Delete).'],
+    ['`data`', 'Read / Query', 'Terraform only fetches the data; it cannot modify or delete the target.']
+  ]} 
+/>
 
 </ConceptTemplate>

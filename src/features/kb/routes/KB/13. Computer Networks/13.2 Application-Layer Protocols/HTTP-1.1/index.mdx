@@ -1,25 +1,28 @@
 ---
 title: HTTP/1.1
-description: The massively successful 1997 revision of HTTP that introduced Keep-Alive connections, serving as the standard for two decades.
+description: "The classic, text-based hypermedia protocol that powered the growth of the World Wide Web for over two decades."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="HTTP/1.1">
+<ConceptTemplate 
+  name="HTTP/1.1"
+  icon="globe"
+>
 
-In 1991, the original HTTP/1.0 was incredibly inefficient. Every single time a browser wanted to download a file (an image, a CSS file), it had to open a brand new TCP connection, perform the slow 3-way handshake, download the file, and immediately kill the connection. 
-If a webpage had 50 images, the browser had to open and close 50 completely separate TCP connections.
+Released in 1997, **HTTP/1.1** is the protocol that defined the modern web. It is a text-based, application-layer protocol built on top of TCP. Whenever you request a web page, your browser sends an HTTP request to a server, and the server replies with an HTTP response.
 
-## The HTTP/1.1 Revolution
+## Key Features
 
-Released in 1997, **HTTP/1.1** introduced two massive architectural changes that saved the web.
+1. **Persistent Connections (Keep-Alive)**: Unlike HTTP/1.0, which opened and closed a brand new TCP connection for every single image on a webpage, HTTP/1.1 introduced `Connection: keep-alive`. This allowed a single TCP connection to remain open, allowing the browser to download the HTML, CSS, and JS files over the same connection, vastly improving loading speeds.
+2. **Chunked Transfer Encoding**: Allowed a server to start sending an HTML document before it knew the total size of the document, enabling dynamically generated content.
+3. **Host Header**: Introduced the `Host` header, making virtual hosting possible (allowing multiple websites with different domain names to live on a single IP address).
 
-1. **Persistent Connections (Keep-Alive)**:
-   By default, HTTP/1.1 connections remain open. The browser performs the slow TCP handshake exactly once, and then rapidly shoots 50 GET requests for all 50 images through that single, established tunnel.
-2. **The Host Header**:
-   HTTP/1.0 did not require a `Host: example.com` header. If a server hosted 100 different websites on the same IP address, it had no idea which website the client wanted. HTTP/1.1 mandated the Host header, making shared web hosting (Virtual Hosts) mathematically possible.
+## The Head-of-Line Blocking Problem
+HTTP/1.1 suffers from **Head-of-Line (HoL) Blocking** at the application layer. While a TCP connection is persistent, requests must be fulfilled in order. If the browser asks for a massive 5MB image, it cannot ask for a tiny 2KB CSS file on the same TCP connection until the image finishes downloading. To bypass this, browsers traditionally opened 6 parallel TCP connections per domain.
 
-<Callout icon="warning" title="Head-of-Line Blocking">
-  HTTP/1.1 had a fatal flaw. While it reused a single TCP connection, requests had to be processed sequentially. If you requested a massive 10MB Video, and then requested a tiny 1KB CSS file, the CSS file was physically blocked in the queue, forced to wait for the video to finish downloading completely. This is called Head-of-Line Blocking, and it forced developers to invent insane hacks like "Domain Sharding" to bypass it.
+<Callout icon="info" title="Human Readable">
+One of the best things about HTTP/1.1 is that it is plain text. You can literally use Telnet to connect to a web server, manually type `GET / HTTP/1.1`, press enter twice, and read the raw HTML response.
 </Callout>
 
 </ConceptTemplate>

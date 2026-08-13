@@ -1,26 +1,28 @@
 ---
 title: Test-Driven Development (TDD)
-description: A software development process relying on software requirements being converted to test cases before software is fully developed.
+description: "A software development process where developers write the automated tests before writing the actual production code."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Test-Driven Development (TDD)">
+<ConceptTemplate title="Test-Driven Development (TDD)">
 
-Test-driven development (TDD) is a software development process relying on software requirements being converted to test cases before software is fully developed, and tracking all software development by repeatedly testing the software against all test cases.
+**Test-Driven Development (TDD)** flips the traditional development process upside down. Instead of writing code and then writing tests to verify it, you write the test first, watch it fail, and then write the minimum amount of code required to make it pass.
 
-<Callout icon="tip" title="Red, Green, Refactor">
-  TDD enforces a very strict, extremely short micro-cycle of development known as "Red, Green, Refactor".
+## 1. The Red-Green-Refactor Cycle
+TDD is driven by a strict, repetitive three-step cycle:
+
+1. **Red**: Write a test for the next piece of functionality you want to add. Run the test suite. It will fail (show Red) because the functionality doesn't exist yet.
+2. **Green**: Write the absolute simplest, ugliest, most hard-coded production code possible just to make that specific test pass (show Green).
+3. **Refactor**: Now that the test passes, you have a safety net. Clean up the code, remove duplication, and apply design patterns, ensuring the test stays Green.
+
+## 2. Why use TDD?
+- **Forces Testable Design**: If you write the test first, you are forced to design your classes to be modular, decoupled, and easily mockable. You cannot accidentally write untestable spaghetti code.
+- **YAGNI (You Aren't Gonna Need It)**: Because you only write code to make a failing test pass, TDD prevents you from over-engineering features that the requirements didn't ask for.
+- **Fearless Refactoring**: The test suite grows organically with the codebase, providing a 100% reliable safety net for future changes.
+
+<Callout icon="warning" title="The TDD Learning Curve">
+TDD is notoriously difficult for beginners to adopt. It feels counter-intuitive and significantly slows down initial development speed. However, advocates argue that the time lost writing tests upfront is paid back tenfold by preventing long debugging sessions and regressions in the future.
 </Callout>
 
-## The TDD Cycle
-
-<ComparisonTable 
-  headers={['Step', 'Action', 'Why?']}
-  rows={[
-    ['1. Red', 'Write a test for a feature that doesn\'t exist yet. Run it, and watch it fail.', 'Proves the test actually works and isn\'t a false positive.'],
-    ['2. Green', 'Write the absolute minimum, ugliest amount of code required to make the test pass.', 'Ensures you only write code to fulfill requirements.'],
-    ['3. Refactor', 'Clean up the ugly code, safe in the knowledge that if you break it, the test will instantly tell you.', 'Improves software architecture without fear of regressions.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

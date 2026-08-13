@@ -1,8 +1,34 @@
+---
+title: Threads
+description: "The smallest sequence of programmed instructions that can be managed independently by a scheduler."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 <ConceptTemplate title="Threads">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a Process is a house, a **Thread** is a person living inside that house.
+
+A Process provides the memory space (the Heap, the global variables). A Thread is the actual path of execution running through the code. Every process starts with exactly one "Main Thread", but it can spawn dozens of additional threads.
+
+## 1. Process vs Thread
+
+<ComparisonTable 
+  headers={['Feature', 'Processes', 'Threads']} 
+  rows={[
+    ['Memory', 'Isolated. Process A cannot see Process B\'s memory.', 'Shared. All threads within a process share the exact same Heap and Global variables.'],
+    ['Creation Cost', 'Heavyweight. Takes time and memory to clone a process.', 'Lightweight. Fast to spawn and destroy.'],
+    ['Context Switching', 'Expensive. CPU must flush caches and swap memory maps.', 'Cheap. CPU only needs to swap registers, as the memory map remains identical.'],
+    ['Failure', 'If a child process crashes, the parent survives.', 'If one thread crashes (e.g., Segfault), it brings down the entire process and all other threads.']
+  ]} 
+/>
+
+## 2. Why Use Threads?
+Imagine writing a web server. If you use a single thread, and User A requests a massive file from the hard drive, the CPU stops and waits for the disk. If User B tries to connect while the disk is spinning, their request is completely ignored. 
+
+By spawning a new Thread for every user connection, the OS can pause Thread A (waiting for the disk) and instantly context-switch to Thread B to serve the second user. 
+
+## 3. The Danger of Shared State
+Because threads share the same Heap memory, Thread 1 and Thread 2 can easily try to read and write to the exact same variable at the exact same millisecond. This leads to the most notorious bugs in computer science: **Race Conditions**.
 
 </ConceptTemplate>

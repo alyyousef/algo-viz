@@ -1,33 +1,73 @@
 ---
 title: Factory Method Pattern
-description: A creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created.
+description: "A creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Factory Method Pattern">
+<ConceptTemplate title="Factory Method Pattern">
 
-The Factory Method pattern is a creational pattern that uses factory methods to deal with the problem of creating objects without having to specify the exact class of the object that will be created.
+When writing clean code, calling the `new` keyword directly inside your business logic tightly couples your code to specific concrete classes. 
 
-<Callout icon="tip" title="Decoupling Creation">
-  Instead of using `new Car()`, you call `VehicleFactory.create("car")`. This means if you later want to change the underlying implementation to a `FastCar`, you only have to change the factory, not the 100 places in your code that called `new`.
-</Callout>
+The **Factory Method** solves this by replacing direct object construction calls with calls to a special "factory" method. 
 
-## Architecture
+## 1. The Problem
+Imagine a logistics application. Initially, it only handles truck delivery.
 
-<ArchitectureDiagram chart={`
-graph TD
-  Client[Client Code]
-  Factory[VehicleFactory]
-  
-  subgraph Products
-    Car[Car]
-    Truck[Truck]
-    Bike[Bike]
-  end
-  
-  Client -- "create('truck')" --> Factory
-  Factory -. Instantiates .-> Truck
-  Truck -. Returns Instance .-> Client
-`} />
+```typescript
+class LogisticsApp {
+  planDelivery() {
+    // Tightly coupled to the concrete Truck class!
+    const vehicle = new Truck(); 
+    vehicle.deliver();
+  }
+}
+```
 
-</TechnologyTemplate>
+If the company expands to sea freight, you have to modify the core `planDelivery()` logic to add complex `if (type === 'sea') return new Ship()` statements, violating the Open/Closed Principle.
+
+## 2. The Solution
+We define a base `Logistics` creator class with an abstract `createTransport()` method. The core business logic interacts only with the abstract `Transport` interface.
+
+```typescript
+// 1. The Common Interface
+interface Transport {
+  deliver(): void;
+}
+
+// 2. Concrete Products
+class Truck implements Transport {
+  deliver() { console.log("Delivering by land in a box."); }
+}
+class Ship implements Transport {
+  deliver() { console.log("Delivering by sea in a container."); }
+}
+
+// 3. The Creator (Factory)
+abstract class Logistics {
+  // The Factory Method
+  abstract createTransport(): Transport;
+
+  // Core business logic relies on the interface, not concrete classes
+  planDelivery() {
+    const transport = this.createTransport();
+    transport.deliver();
+  }
+}
+
+// 4. Concrete Creators
+class RoadLogistics extends Logistics {
+  createTransport(): Transport {
+    return new Truck();
+  }
+}
+
+class SeaLogistics extends Logistics {
+  createTransport(): Transport {
+    return new Ship();
+  }
+}
+```
+
+By isolating the creation logic into specific Factory classes, adding a new transportation method (e.g., `AirLogistics` returning a `Plane`) requires zero changes to the existing business logic.
+
+</ConceptTemplate>

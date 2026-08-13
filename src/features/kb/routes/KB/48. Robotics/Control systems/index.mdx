@@ -1,8 +1,38 @@
+---
+title: Control Systems (PID)
+description: "The mathematical engineering discipline of managing and directing the behavior of dynamical systems to achieve a desired output."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Control systems">
+<ConceptTemplate title="Control Systems & PID Controllers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Once a robot knows the trajectory it *wants* to take (from the Motion Planner), how does it actually make the physical motors follow that trajectory?
+
+Because of friction, gravity, and battery voltage fluctuations, if you tell a motor to spin at 50 RPM, it might actually spin at 47 RPM. **Control Theory** is the science of using sensor feedback to constantly correct these physical errors in real-time.
+
+## The PID Controller
+The **Proportional-Integral-Derivative (PID)** controller is the most ubiquitous control algorithm in the world. It is used in cruise control, drones, 3D printers, and industrial robots.
+
+It calculates the **Error** (the difference between where you *want* to be and where you *actually* are) and applies three distinct mathematical corrections to the motor power:
+
+<ComparisonTable 
+  headers={['Term', 'Meaning', 'Analogy (Driving a Car)']} 
+  rows={[
+    ['Proportional (P)', 'Present Error. The bigger the error, the harder it pushes.', 'If you are 20 mph below the speed limit, you floor the gas. If you are 2 mph below, you press it lightly.'],
+    ['Integral (I)', 'Past Error. Accumulates the error over time to eliminate steady-state bias.', 'You are pressing the gas slightly, but driving up a steep hill, so you are stuck 2 mph below the limit. The "I" term realizes you have been stuck for 10 seconds and slowly adds more gas to push you over the hill.'],
+    ['Derivative (D)', 'Future Error. Looks at the rate of change to prevent overshooting.', 'You floored the gas and are rapidly approaching the speed limit. The "D" term sees you approaching too fast and eases off the gas early so you don’t accidentally speed.']
+  ]} 
+/>
+
+## Tuning
+A PID controller is just a formula with three configurable numbers: `Kp`, `Ki`, and `Kd`. 
+
+Finding the perfect values for these three numbers is called **Tuning**. If they are tuned poorly, the robot will oscillate violently back and forth, or react so slowly it crashes. Tuning is often done through mathematical modeling, or simply empirical trial-and-error (like the Ziegler-Nichols method).
+
+<Callout icon="info" title="Beyond PID">
+While PID is great for single motors, complex robots (like a walking humanoid or a SpaceX rocket landing) require **Model Predictive Control (MPC)**. MPC uses heavy physics simulations to look several seconds into the future, calculating the optimal motor commands required to land the rocket safely without violating physical constraints.
+</Callout>
 
 </ConceptTemplate>

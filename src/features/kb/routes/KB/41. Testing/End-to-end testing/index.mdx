@@ -1,65 +1,43 @@
 ---
 title: End-to-End (E2E) Testing
-description: Testing the entire application from start to finish, exactly as a real user would experience it.
+description: "A testing methodology that validates the entire software application from start to finish, simulating real user scenarios in a production-like environment."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="End-to-End (E2E) Testing">
+<ConceptTemplate title="End-to-End (E2E) Testing">
 
-End-to-end (E2E) testing is a methodology used to test whether the flow of an application is performing as designed from start to finish. The purpose of carrying out end-to-end tests is to identify system dependencies and to ensure that the right information is passed between various system components and systems.
+**End-to-End (E2E) Testing** sits at the very top of the testing pyramid. It verifies that the entire system—the frontend UI, the backend API, the database, and third-party integrations—all work together to deliver a successful user journey.
 
-<Callout icon="error" title="The Top of the Pyramid">
-  E2E tests sit at the very top of the Testing Pyramid. Because they launch real browsers, click real buttons, and hit real backend servers, they are incredibly slow, expensive to maintain, and highly prone to flakiness. You should only write E2E tests for the most critical user journeys (e.g., the Checkout Flow).
-</Callout>
+In web development, E2E testing involves a robot (like Cypress, Playwright, or Selenium) physically opening a real web browser, clicking buttons, typing in forms, and asserting that the correct text appears on the screen.
 
-## Popular Frameworks
+## 1. The Value of E2E
+A system can have 100% passing unit tests and 100% passing integration tests, but if a CSS class accidentally sets the "Submit Order" button to `display: none`, the business makes no money. E2E tests are the ultimate safety net because they test exactly what the user experiences.
+
+## 2. Example E2E Scenario (E-commerce)
+1. Robot opens Chrome and navigates to `/login`.
+2. Enters valid username and password, clicks "Login".
+3. Navigates to a product page.
+4. Clicks "Add to Cart".
+5. Navigates to checkout.
+6. Enters dummy credit card info.
+7. Asserts that the "Order Successful" confirmation page is rendered.
+
+## 3. The Testing Pyramid Trade-offs
 
 <ComparisonTable 
-  headers={['Framework', 'Description']}
+  headers={['Metric', 'Unit Tests', 'E2E Tests']} 
   rows={[
-    ['Cypress', 'A wildly popular JavaScript-based E2E framework that runs directly inside the browser, offering excellent debugging and time-travel capabilities.'],
-    ['Playwright', 'Built by Microsoft, supports multiple languages (JS, Python, Java) and natively supports parallel execution across Chromium, WebKit, and Firefox.'],
-    ['Selenium', 'The ancient, heavy-duty industry standard. Uses WebDriver to control browsers. Highly robust but slower and harder to set up than modern alternatives.']
-  ]}
+    ['Execution Speed', 'Milliseconds (extremely fast).', 'Minutes (very slow).'],
+    ['Cost to Write/Maintain', 'Low.', 'High (UI changes frequently break tests).'],
+    ['Confidence Level', 'Low (doesn\'t prove the app works).', 'High (proves the user can use the app).'],
+    ['Debugging', 'Easy (points exactly to the broken line of code).', 'Hard (did the network fail? Did the DB time out?).']
+  ]} 
 />
 
-## How It Works
+<Callout icon="tip" title="The E2E Rule of Thumb">
+Because E2E tests are slow and brittle, you should not use them to test edge cases (like testing 15 different invalid email formats). Use Unit Tests for exhaustive edge cases. Reserve E2E tests for your core "Happy Paths" (Login, Signup, Checkout, Core Workflows).
+</Callout>
 
-An E2E test doesn't know about your code. It doesn't call functions. It simply opens a browser, finds elements on the screen, and interacts with them.
-
-```javascript
-// Playwright Example
-test('User can log in', async ({ page }) => {
-  await page.goto('https://myapp.com/login');
-  
-  // Interact exactly like a user
-  await page.fill('#email', 'user@example.com');
-  await page.fill('#password', 'secret123');
-  await page.click('button[type="submit"]');
-  
-  // Assert the UI updated
-  await expect(page.locator('.welcome-message')).toHaveText('Welcome, User!');
-});
-```
-
-## Architecture
-
-<ArchitectureDiagram chart={`
-graph TD
-  E2E[E2E Test Runner\n(Playwright/Cypress)]
-  
-  Browser[Headless Browser\n(Chrome)]
-  
-  Frontend[React / Vue Frontend]
-  Backend[Node.js / Go Backend]
-  DB[(Production-like DB)]
-  ThirdParty[Stripe API]
-  
-  E2E -- Controls --> Browser
-  Browser -- Clicks/Types --> Frontend
-  Frontend -- HTTP / REST --> Backend
-  Backend <--> DB
-  Backend <--> ThirdParty
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

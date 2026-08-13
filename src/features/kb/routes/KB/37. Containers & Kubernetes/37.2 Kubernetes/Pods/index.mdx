@@ -1,40 +1,36 @@
 ---
 title: Kubernetes Pods
-description: The smallest and simplest deployable computing object that you can create and manage in Kubernetes.
+description: "The smallest and simplest Kubernetes object. A Pod represents a set of running containers on your cluster."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Pods">
+<ConceptTemplate title="Kubernetes Pods">
 
-A **Pod** is the atomic, fundamental building block of Kubernetes. K8s does not directly deploy or manage raw "Containers." Instead, it wraps containers into a higher-level abstraction called a Pod.
+In Kubernetes, you do not deploy containers directly. Instead, you deploy **Pods**. A Pod is the smallest deployable atomic unit in the K8s ecosystem. 
 
-<Callout icon="warning" title="Ephemeral by Design">
-  Pods are mortal. They are born, they run, and they die. **A Pod is never "restarted".** If the server a Pod is running on crashes, that Pod is permanently destroyed. K8s will spin up a brand new, identical Pod on a different server to replace it. Never store permanent data inside a Pod.
+A Pod is a logical wrapper that encapsulates one or more containers, storage resources, a unique network IP, and options that govern how the container(s) should run.
+
+## 1. One-Container vs Multi-Container Pods
+- **One Container per Pod (Most Common)**: The standard deployment model. One Pod runs one instance of your Node.js API. If you need to scale, you don't add more containers to the Pod; you add more Pods to the cluster.
+- **Multi-Container Pods (The Sidecar Pattern)**: Sometimes, two processes are so tightly coupled they must run on the exact same physical machine. For example, a main web server container, and a "sidecar" container that pulls the web server's log files and forwards them to Datadog.
+
+## 2. Pod Networking and Storage
+Because containers inside a single Pod share the exact same Linux network namespace:
+- They can communicate with each other using `localhost`.
+- They share the exact same IP address.
+- They can easily share Volume mounts (e.g., Container A writes to a shared directory, Container B reads from it).
+
+## 3. The Ephemeral Nature of Pods
+**Pods are mortal.** They are born, they run, and they die. 
+If a node crashes, the Pods on that node die. K8s does *not* resurrect the dead Pods; instead, higher-level controllers (like Deployments) notice the missing Pods and create brand new replacements on a healthy node.
+
+Because Pods are ephemeral:
+1. You should never store state directly on a Pod's local file system.
+2. You should never rely on a Pod's specific IP address, because the replacement Pod will have a different IP (this is why you use K8s **Services**).
+
+<Callout icon="warning" title="Never deploy naked Pods">
+You should almost never run `kubectl run` or deploy a raw `kind: Pod` YAML file in production. If a naked Pod crashes, it is gone forever. You should always use a **Deployment** or **StatefulSet** to manage your Pods.
 </Callout>
-
-## Why Pods? (The Sidecar Pattern)
-
-A Pod usually contains exactly one container (e.g., your Node.js app). 
-However, the reason Pods exist is that they can hold **multiple containers**. 
-
-When multiple containers are placed inside the same Pod, they are mathematically guaranteed to be scheduled on the exact same physical Worker Node. Because of this, they share the exact same IP address (\`localhost\`), the exact same port space, and can share storage volumes.
-
-This enables the **Sidecar Pattern**. 
-- *Container 1*: The main application web server.
-- *Container 2 (Sidecar)*: A tiny logging agent that tails the web server's logs and ships them to Datadog. 
-They are deployed as a single atomic unit.
-
-## Networking inside a Pod
-
-Because all containers in a Pod share the same network namespace:
-- They can communicate with each other using \`localhost\`. (e.g., The Node app can reach a sidecar Redis cache at \`localhost:6379\`).
-- They cannot bind to the same port. (If Container 1 listens on 8080, Container 2 cannot listen on 8080).
-
-## Pod Lifecycle
-
-- **Pending**: The API accepted the Pod, but it is waiting to be scheduled onto a Node or waiting for the image to download.
-- **Running**: The Pod is bound to a node, and all containers are running.
-- **Succeeded / Failed**: The Pod finished its task (used in K8s Jobs).
-- **CrashLoopBackOff**: The container inside the Pod is crashing immediately upon startup, so K8s is pausing before trying to start it again.
 
 </ConceptTemplate>

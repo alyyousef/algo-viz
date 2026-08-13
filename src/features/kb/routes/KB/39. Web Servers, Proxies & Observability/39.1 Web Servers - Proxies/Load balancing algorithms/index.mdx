@@ -1,8 +1,38 @@
+---
+title: Load Balancing Algorithms
+description: "The mathematical strategies used by proxies to determine which backend server should receive the next incoming request."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Load balancing algorithms">
+<ConceptTemplate title="Load Balancing Algorithms">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a Reverse Proxy (or Load Balancer) receives an HTTP request, and there are 5 healthy backend servers available, how does it decide which server gets the request? It relies on a **Load Balancing Algorithm**.
+
+## 1. Static Algorithms
+These algorithms do not care about the current CPU load or health of the backend servers.
+
+<ComparisonTable 
+  headers={['Algorithm', 'How it works', 'Best For']} 
+  rows={[
+    ['Round Robin', 'Iterates through the list of servers sequentially (A, B, C, A, B, C).', 'Identical servers handling predictable, uniform requests.'],
+    ['Weighted Round Robin', 'Assigns more requests to servers with higher weights (e.g., A gets 3x more traffic than B).', 'Clusters with mixed hardware (Server A is 3x more powerful than B).'],
+    ['IP Hash', 'Uses a hash of the client\'s IP address to always route that specific user to the exact same server.', 'Legacy applications requiring "Sticky Sessions" (state stored in local RAM).']
+  ]} 
+/>
+
+## 2. Dynamic Algorithms
+These algorithms actively monitor the state of the backend servers to make intelligent routing decisions.
+
+<ComparisonTable 
+  headers={['Algorithm', 'How it works', 'Best For']} 
+  rows={[
+    ['Least Connections', 'Routes the request to the server with the fewest active, open connections.', 'Long-lived connections (WebSockets, database queries).'],
+    ['Least Time (Latency)', 'Routes to the server with the lowest average response time (fastest historical performance).', 'Geographically distributed servers or highly variable workloads.']
+  ]} 
+/>
+
+## 3. Health Checks
+No algorithm matters if a server is dead. Load balancers constantly perform **Active Health Checks** (pinging `/health` every 5 seconds). If a server fails 3 consecutive pings, the load balancer temporarily removes it from the rotation until it recovers.
 
 </ConceptTemplate>

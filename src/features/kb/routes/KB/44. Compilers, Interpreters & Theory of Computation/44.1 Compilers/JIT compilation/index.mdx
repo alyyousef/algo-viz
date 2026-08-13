@@ -1,36 +1,34 @@
 ---
-title: JIT Compilation (Just-In-Time)
-description: A way of executing computer code that involves compilation during execution of a program – at run time.
+title: JIT Compilation
+description: "Just-In-Time compilation, a method of executing code where the source or bytecode is compiled into machine code at runtime."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="JIT Compilation (Just-In-Time)">
+<ConceptTemplate title="Just-In-Time (JIT) Compilation">
 
-In computing, just-in-time (JIT) compilation (also known as dynamic translation or run-time compilation) is a way of executing computer code that involves compilation during the execution of a program (at run time) rather than before execution.
+To run code, you traditionally have two choices:
+1. **AOT (Ahead-of-Time) Compilation**: Like C or Rust. You compile the code entirely into native machine code *before* you ship it. It is incredibly fast, but tied to a specific CPU architecture.
+2. **Interpretation**: Like Python or Ruby. A program (the Interpreter) reads the source code line-by-line and executes it on the fly. It is highly portable but notoriously slow.
 
-<Callout icon="tip" title="The Best of Both Worlds">
-  **AOT (Ahead-of-Time) Compilers** like C++ are extremely fast but require the developer to compile a new binary for every OS (Windows, Mac, Linux). 
-  
-  **Interpreters** like Python are highly portable but painfully slow.
-  
-  **JIT Compilers** (Java JVM, C# CLR, JavaScript V8) combine both. The code is distributed as portable Bytecode. When the user runs the app, the JIT compiler instantly turns that Bytecode into blazing-fast machine code specifically optimized for that exact user's CPU.
-</Callout>
+**JIT (Just-In-Time) Compilation** is the hybrid approach used by Java, C#, and JavaScript (V8) to get the best of both worlds.
 
-## How JIT Works (The V8 Engine)
-
-Modern engines like Google Chrome's V8 use extremely advanced, multi-tier JIT systems.
+## How JIT Works
 
 <ComparisonTable 
-  headers={['Component', 'Role']}
+  headers={['Step', 'Action']} 
   rows={[
-    ['Interpreter (Ignition)', 'Starts running the code instantly to get the web page loading. It is slow, but requires zero startup time.'],
-    ['Profiler', 'Silently watches the interpreter. It counts which functions are executed the most (identifying "Hot" code).'],
-    ['Optimizing JIT (TurboFan)', 'Takes the "Hot" code and spends CPU cycles to compile it into highly optimized, bare-metal Machine Code. Next time the function runs, it runs at C++ speeds.']
-  ]}
+    ['1. Bytecode', 'The source code is quickly converted into an intermediate format (like Java Bytecode).'],
+    ['2. Interpretation', 'The program starts running immediately via a fast interpreter.'],
+    ['3. Profiling', 'As the program runs, the runtime "watches" it. It identifies "Hot Paths"—functions that are executed thousands of times (like a sorting algorithm).'],
+    ['4. JIT Compilation', 'In the background, the JIT Compiler takes that specific "Hot" bytecode and compiles it down to highly optimized, native machine code.'],
+    ['5. Swap', 'The runtime seamlessly swaps out the slow interpreted function for the lightning-fast machine code version.']
+  ]} 
 />
 
-## Deoptimization (Bailing Out)
+## The JIT Advantage
+Surprisingly, JIT-compiled code can sometimes run **faster** than AOT-compiled C++. 
 
-Because JavaScript is dynamically typed, the JIT might optimize a function assuming the variable `x` is always an Integer. If, 10 minutes later, you pass a String into that function, the JIT throws away the optimized machine code (Deoptimizes) and falls back to the slow interpreter.
+Because the JIT compiler is running *on the exact machine* the user owns, it can look at the specific CPU (e.g., "Ah, this is an Intel i9") and utilize ultra-modern vector instructions (AVX-512) that an AOT compiler couldn't safely assume were available when the software was packaged months ago.
 
-</TechnologyTemplate>
+</ConceptTemplate>

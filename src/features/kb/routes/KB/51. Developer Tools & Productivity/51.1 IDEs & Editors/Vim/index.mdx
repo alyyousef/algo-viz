@@ -1,8 +1,42 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Vim
+description: "A highly configurable text editor built to enable efficient text editing. Known for its steep learning curve and modal editing paradigm."
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Vim">
+<TechnologyTemplate 
+  name="Vim (Vi IMproved)"
+  icon="vim"
+  creator="Bram Moolenaar"
+  year={1991}
+  website="https://www.vim.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Vim** is not an IDE. It is a terminal-based text editor. It is famous for two things: being installed by default on almost every Unix/Linux server on Earth, and the joke that nobody knows how to exit it (type `:q!`).
 
-</ConceptTemplate>
+## The Power of Modal Editing
+Most text editors (Notepad, VS Code) are "modeless." If you press 'j', the letter 'j' appears on the screen.
+
+Vim is **Modal**. By default, it opens in **Normal Mode**. 
+In Normal Mode, the keyboard is not for typing words; the keyboard is a video game controller for manipulating text.
+- Pressing `j` moves the cursor down one line.
+- Pressing `w` jumps the cursor forward by one word.
+- Pressing `dd` deletes the entire line.
+- Pressing `cw` (Change Word) deletes the word you are on and instantly drops you into **Insert Mode**.
+
+Now you are in Insert Mode. If you type 'j', it types 'j'. When you are done typing, you press `Escape` to return to Normal Mode.
+
+## The Grammar of Vim
+Vim commands are a language composed of **Verbs** (actions) and **Nouns** (objects):
+- `d` = Delete (Verb)
+- `i` = Inside (Modifier)
+- `"` = Quotes (Noun)
+
+If you place your cursor inside a string like `"Hello World"` and press `di"`, Vim instantly deletes "Hello World", leaving the quotes intact. A VS Code user would have to reach for their mouse, highlight the words, and press backspace. The Vim user never moves their hands from the home row of the keyboard.
+
+<Callout icon="warning" title="Vimscript">
+Historically, extending Vim required writing plugins in **Vimscript**, a clunky, archaic scripting language. This limitation is what drove the community to fork Vim and create **Neovim**.
+</Callout>
+
+</TechnologyTemplate>

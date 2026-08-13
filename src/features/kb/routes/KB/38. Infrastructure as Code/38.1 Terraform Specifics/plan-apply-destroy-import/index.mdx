@@ -1,8 +1,42 @@
+---
+title: Core Terraform Workflow
+description: "The primary commands used to initialize, plan, execute, and destroy infrastructure using Terraform."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="plan/apply/destroy/import">
+<ConceptTemplate title="Init, Plan, Apply, Destroy">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The standard Terraform workflow consists of a rigid sequence of CLI commands designed to ensure safety and predictability.
+
+## 1. terraform init
+Before you can do anything in a new Terraform project, you must initialize the working directory.
+`terraform init` looks at your HCL code, identifies which Providers and Modules are required, and downloads the necessary binaries into a hidden `.terraform/` folder. It also configures your backend for state storage.
+
+## 2. terraform plan
+This is a dry run. `terraform plan` evaluates your code, compares it to the current state, and generates an execution plan outlining exactly what actions it *intends* to take.
+
+It uses a Git-diff style output:
+- **`+` (Green)**: Resource will be created.
+- **`-` (Red)**: Resource will be destroyed.
+- **`~` (Yellow)**: Resource will be updated in-place.
+- **`-/+` (Red/Green)**: Resource must be destroyed and entirely recreated (usually because you changed an immutable property).
+
+## 3. terraform apply
+`terraform apply` actually executes the proposed changes against the cloud provider's APIs. By default, it will run a `plan` and pause, prompting you to type `yes` to confirm before proceeding.
+In CI/CD pipelines, this is often run as `terraform apply -auto-approve`.
+
+## 4. terraform destroy
+When you are done with a project (e.g., tearing down a temporary staging environment), `terraform destroy` deletes every single resource currently tracked in the state file. It calculates the dependency graph in reverse, ensuring that the EC2 instance is deleted *before* the VPC it resides in.
+
+## 5. terraform import (Advanced)
+What if an AWS S3 bucket already exists (created manually via the console), and you want Terraform to start managing it?
+You cannot just write the HCL code and run `apply`—Terraform will try to create a new bucket and fail because the name is taken.
+
+You use `terraform import aws_s3_bucket.my_bucket my-real-bucket-name`. This command maps the real-world AWS resource into your state file, linking it to your local HCL identifier.
+
+<Callout icon="tip" title="Saving the Plan">
+In automated CI/CD pipelines, you should always run `terraform plan -out=tfplan`, and then pass that exact file to `terraform apply tfplan`. This guarantees that the apply phase executes *exactly* what was reviewed in the plan phase, eliminating race conditions.
+</Callout>
 
 </ConceptTemplate>

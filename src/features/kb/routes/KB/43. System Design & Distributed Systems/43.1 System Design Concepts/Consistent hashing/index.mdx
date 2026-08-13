@@ -1,39 +1,31 @@
 ---
 title: Consistent Hashing
-description: A brilliant mathematical algorithm that allows distributed systems like caches and databases to dynamically scale out without causing massive data reshuffling.
+description: "A specialized hashing algorithm that minimizes the number of keys that need to be remapped when a hash table is resized."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Consistent Hashing">
 
-Imagine you have 4 cache servers storing millions of user sessions. You route users to servers using the mathematical formula: `ServerIndex = Hash(UserID) % 4`.
+Imagine you are storing 1 million user profiles across a cluster of 4 Redis servers (Servers A, B, C, and D). 
+To figure out which server holds User 123, you use a simple modulo hash: `serverIndex = hash("User123") % 4`.
 
-This works perfectly until Black Friday. Traffic spikes, and you add a 5th server.
-Your formula is now: `Hash(UserID) % 5`.
-Because the modulo denominator changed, **almost every single user hashes to a different server**. 99% of your cache becomes instantly invalidated. Your database is slammed with requests, and the system crashes. 
+This works perfectly until Server C crashes. Now you only have 3 servers. You change the formula to `% 3`. Suddenly, almost every single user maps to a completely different server index. **You just invalidated your entire cache.**
 
-**Consistent Hashing** mathematically solves this exact catastrophe.
+## The Solution: The Hash Ring
 
-## 1. The Hash Ring
-Instead of hashing values into an array, Consistent Hashing hashes both the **Data (User ID)** and the **Servers (IP Addresses)** onto a massive mathematical circle (a ring from 0 to 2³²-1).
+**Consistent Hashing** solves this by mapping both the data keys *and* the servers onto a conceptual circle (a "hash ring" from 0 to 360 degrees).
 
-1. Hash the 4 Servers onto the ring.
-2. Hash a User ID onto the ring.
-3. To find which server owns the user, move **clockwise** around the ring until you hit a Server.
+1. Hash the IP addresses of Servers A, B, C, and D, and place them on the ring (e.g., at 10°, 90°, 180°, 270°).
+2. Hash the user ID (e.g., "User123" hashes to 45°).
+3. To find the server for User 123, move clockwise around the ring from 45° until you hit the first server. (In this case, Server B at 90°).
 
-## 2. The Scaling Magic
-When you add a 5th server, you simply hash it onto the ring. 
-Mathematically, the *only* data that gets reassigned is the data physically sitting on the ring between the new Server and its counter-clockwise neighbor. 
-**If you have N servers and you add a new one, you only remap `1/N` of the data.** 99% of your cache remains perfectly intact.
+## Adding or Removing Servers
+If Server C (180°) crashes, the keys that were stored on it simply continue clockwise and fall onto Server D (270°). 
+**The brilliant part:** All the keys on Server A, Server B, and Server D remain exactly where they are. Only the data on the broken server needs to be remapped. 
 
-## 3. Virtual Nodes
-A raw hash ring has a flaw: servers might clump together on the ring, causing one server to take 80% of the traffic, while others take 5%. 
-
-To solve this, modern systems use **Virtual Nodes**. Instead of hashing "Server A" once, they hash "ServerA-1", "ServerA-2", ... "ServerA-100". Each physical server appears 100 times, scattered evenly across the entire mathematical ring. This guarantees a perfectly uniform distribution of traffic.
-
-<Callout icon="tip" title="Industry Dominance">
-Consistent Hashing is the fundamental mathematical routing layer for almost all globally distributed NoSQL databases and CDNs, including **Amazon DynamoDB, Apache Cassandra, and Discord's infrastructure**.
+<Callout icon="info" title="Virtual Nodes">
+To prevent data from bunching up unevenly if servers happen to hash close together on the ring, implementations use **Virtual Nodes**. Instead of hashing Server A once, they hash Server A 100 times (e.g., A1, A2, A3) to spread it evenly across the entire 360-degree ring.
 </Callout>
 
 </ConceptTemplate>

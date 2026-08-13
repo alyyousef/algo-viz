@@ -1,8 +1,25 @@
+---
+title: Edge Computing
+description: "A distributed computing paradigm that brings computation and data storage closer to the sources of data."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Edge computing">
+<ConceptTemplate title="Edge Computing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional cloud computing, sensors collect data and blindly stream it across the internet to massive AWS or Azure data centers for processing. 
+
+**Edge Computing** flips this model. Instead of moving data to the computer, it moves the computer to the data. Small, powerful servers (the "Edge") are placed physically on-site (in a factory, in a hospital, or inside a self-driving car) to process the data immediately.
+
+## Why is Edge Computing Necessary?
+
+1. **Latency**: A self-driving car traveling at 70 MPH cannot wait 150 milliseconds for a server in Virginia to tell it to hit the brakes. The AI model must run on a GPU inside the trunk of the car (the Edge) to react in 5 milliseconds.
+2. **Bandwidth Costs**: A modern jet engine generates a terabyte of diagnostic data per flight. Sending this over an expensive satellite connection would cost thousands of dollars. The Edge computer on the plane filters the data, throwing away 99% of it, and only transmits anomalies to the cloud.
+3. **Privacy and Security**: Security cameras in a hospital might use Edge computing to run facial recognition locally, blurring out faces *before* the video is ever uploaded to the cloud, ensuring compliance with privacy laws.
+4. **Offline Capability**: If a tractor on a farm loses cellular connection, it can still use its Edge server to navigate the field and operate autonomously.
+
+<Callout icon="warning" title="The Convergence">
+The lines between Cloud and Edge are blurring. Technologies like **Kubernetes** are heavily used to manage Edge deployments, allowing engineers to deploy Docker containers to a server in a factory exactly the same way they deploy to a server in AWS.
+</Callout>
 
 </ConceptTemplate>

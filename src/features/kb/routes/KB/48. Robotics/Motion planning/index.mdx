@@ -1,8 +1,32 @@
+---
+title: Motion Planning
+description: "The process of detailing the exact physical movements (velocities, accelerations, and timings) required to execute a geometric path."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Motion planning">
+<ConceptTemplate title="Motion Planning (Trajectory Generation)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Path Planning** and **Motion Planning** are often confused, but they are distinct steps in the robotics pipeline.
+
+- **Path Planning** gives you a geometric line on a map. (e.g., "Go from X to Y to Z to avoid the wall").
+- **Motion Planning** takes that line and adds the physics of time, velocity, and acceleration. 
+
+## Why Motion Planning is Necessary
+If Path Planning says, *"Move from Coordinate A to Coordinate B,"* you cannot simply tell the robot's motors to spin at 100% speed instantly. 
+
+If a 4,000-pound self-driving car instantly requests infinite acceleration, the tires will spin out. If it reaches Coordinate B and requests infinite deceleration, the passengers will fly through the windshield.
+
+Motion Planning converts the geometric path into a **Trajectory**—a smooth sequence of setpoints that respect the physical limits of the robot.
+
+## Velocity Profiles
+To move smoothly from A to B, Motion Planners generate Velocity Profiles.
+
+1. **Trapezoidal Profile**: The robot accelerates at a constant rate, cruises at a max velocity, and decelerates at a constant rate. (If you graph velocity over time, it looks like a trapezoid).
+2. **S-Curve Profile (Jerk Control)**: A trapezoidal profile has sudden "jerks" when acceleration starts and stops (spilling coffee in a self-driving car). An S-Curve smooths out the acceleration itself, resulting in buttery-smooth robotic movement.
+
+<Callout icon="tip" title="Dynamic Obstacles">
+Motion planning is also responsible for dynamic obstacle avoidance. If Path Planning gives a route down a hallway, and a human suddenly steps in front of the robot, the Motion Planner must instantly recalculate a localized trajectory (a "Local Planner") to swerve around the human, while still following the overall global path.
+</Callout>
 
 </ConceptTemplate>

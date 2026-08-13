@@ -1,8 +1,39 @@
+---
+title: PWM (Pulse Width Modulation)
+description: "A method of reducing the average power delivered by an electrical signal by effectively chopping it up into discrete parts."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="PWM">
+<ConceptTemplate title="PWM (Pulse Width Modulation)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+GPIO pins are strictly digital: they can output exactly 3.3V (HIGH) or exactly 0V (LOW). 
+
+But what if you want to dim an LED to 50% brightness? Or run a DC motor at half speed? A digital pin cannot output a continuous analog 1.65V.
+
+The solution is **Pulse Width Modulation (PWM)**. PWM rapidly turns the digital pin HIGH and LOW thousands of times per second. By changing the ratio of how long the pin is ON versus how long it is OFF, we can simulate an analog voltage.
+
+## Duty Cycle
+The defining metric of PWM is the **Duty Cycle**, expressed as a percentage: the proportion of time the signal is HIGH during one cycle.
+
+<ComparisonTable 
+  headers={['Duty Cycle', 'Electrical Behavior', 'Result (LED Brightness)']} 
+  rows={[
+    ['0%', 'Always 0V (LOW)', 'Off (0%)'],
+    ['25%', 'HIGH for 25% of the time, LOW for 75%.', 'Dim (25%)'],
+    ['50%', 'HIGH for 50% of the time, LOW for 50%.', 'Medium (50%)'],
+    ['100%', 'Always 3.3V (HIGH)', 'Maximum Brightness (100%)']
+  ]} 
+/>
+
+## How It Works
+If the frequency of the PWM is fast enough (e.g., 1000 Hz), human eyes cannot perceive the LED turning on and off 1,000 times a second. Instead, the visual persistence of the eye averages the rapid flashes into a smooth, steady dim glow.
+
+Similarly, DC motors have physical inertia. If you hit a motor with 5V for 1 millisecond, and 0V for 1 millisecond, the physical mass of the spinning motor smooths out the electrical pulses, and it spins at exactly half speed.
+
+<Callout icon="tip" title="Hardware PWM">
+Creating PWM manually using a `while` loop and `delay()` functions is terribly inefficient and consumes 100% of the CPU. Modern MCUs have dedicated hardware Timers built into the silicon. You simply tell the Timer register "Output 50% PWM on Pin 3", and the hardware takes over, generating the signal perfectly while the CPU goes back to sleep.
+</Callout>
 
 </ConceptTemplate>

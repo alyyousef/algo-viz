@@ -1,8 +1,36 @@
+---
+title: Sensors
+description: "A device that detects and responds to some type of input from the physical environment and converts it into a digital signal."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 <ConceptTemplate title="Sensors">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Sensors are the "eyes and ears" of an IoT system. They take continuous, analog physical phenomena (heat, light, pressure) and convert them into discrete digital data that microcontrollers can understand.
+
+## Types of Sensors
+
+<ComparisonTable 
+  headers={['Category', 'Examples', 'Common Use Cases']} 
+  rows={[
+    ['Environmental', 'Thermistor, Hygrometer (Humidity), Barometer', 'Smart thermostats, weather stations, cold-chain food transport.'],
+    ['Motion & Position', 'Accelerometer, Gyroscope, GPS', 'Fitness trackers, drone stabilization, fleet tracking.'],
+    ['Optical / Vision', 'Photoresistor (LDR), Infrared (IR), LiDAR', 'Automatic streetlights, security cameras, autonomous vehicles.'],
+    ['Proximity / Presence', 'Ultrasonic, PIR (Passive Infrared)', 'Automatic doors, robot vacuums, room occupancy tracking.']
+  ]} 
+/>
+
+## How Analog Becomes Digital
+The physical world is analog (infinite decimal places). Microcontrollers are digital (1s and 0s). 
+To bridge this gap, MCUs use an **ADC (Analog-to-Digital Converter)**.
+
+1. A temperature sensor changes its electrical resistance based on the heat of the room.
+2. This creates a fluctuating analog voltage between 0V and 3.3V.
+3. The ADC slices this voltage range into discrete steps. For example, a 10-bit ADC has 1,024 steps (from `0` to `1023`).
+4. If the voltage is exactly 1.65V (halfway), the ADC reports the digital integer `512` to the software.
+
+## Calibration and Noise
+Raw sensor data is notoriously noisy. A temperature sensor sitting on a desk might rapidly output: `22.1, 22.9, 21.8, 22.2`. IoT engineers must write software filters (like Moving Averages or Kalman Filters) to smooth out the noise and find the true signal.
 
 </ConceptTemplate>

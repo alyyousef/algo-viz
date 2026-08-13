@@ -1,8 +1,36 @@
+---
+title: Accessibility (a11y)
+description: "The inclusive practice of ensuring there are no barriers that prevent interaction with, or access to, websites on the World Wide Web by people with physical disabilities, situational disabilities, and socio-economic restrictions on bandwidth and speed."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Accessibility">
+<ConceptTemplate title="Accessibility (a11y)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Accessibility**, often abbreviated as **a11y** (because there are 11 letters between the 'a' and the 'y'), is the practice of designing software so it is usable by everyone, including people with visual, auditory, motor, or cognitive disabilities.
+
+It is not just a moral obligation; in many jurisdictions (like the EU and the US ADA), it is a strict legal requirement.
+
+## Common Accessibility Barriers & Solutions
+
+<ComparisonTable 
+  headers={['Disability Type', 'Common Digital Barrier', 'Technical Solution']} 
+  rows={[
+    ['Visual (Blindness)', 'Cannot see images or layout. Rely entirely on Screen Reader software (VoiceOver, NVDA).', 'Use semantic HTML (`<nav>`, `<button>` instead of `<div onClick>`). Always provide descriptive `alt` text for images.'],
+    ['Visual (Color Blindness)', 'Important errors are communicated using only the color Red.', 'Never use color as the sole means of conveying information. Combine the red color with an explicit error icon (⚠) or text.'],
+    ['Motor (Tremors/Paralysis)', 'Cannot use a mouse; rely entirely on keyboard navigation or voice control.', 'Ensure every interactive element can be reached using the `Tab` key. Maintain visible focus indicators (the blue outline around a focused button).'],
+    ['Auditory (Deafness)', 'Information is only provided in a podcast or video format.', 'Provide accurate, synchronized closed captions for all video content and transcripts for audio.']
+  ]} 
+/>
+
+## Semantic HTML is 90% of the Battle
+The easiest way to make a website accessible is to simply use HTML exactly as it was intended. 
+
+Screen readers are highly optimized to understand native HTML tags. If you build a custom dropdown menu out of generic `<div>`s and style it with CSS, the screen reader has no idea it's a menu. You must then manually add complex **ARIA (Accessible Rich Internet Applications)** attributes to explain the element's behavior to the screen reader.
+
+<Callout icon="warning" title="Contrast Ratios">
+A massive portion of the population has low vision. The Web Content Accessibility Guidelines (WCAG) dictate that text must have a strict contrast ratio against its background (usually 4.5:1 for normal text). Light gray text on a white background is one of the most common accessibility violations on the internet.
+</Callout>
 
 </ConceptTemplate>

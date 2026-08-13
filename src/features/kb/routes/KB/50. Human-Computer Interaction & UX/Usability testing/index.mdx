@@ -1,8 +1,32 @@
+---
+title: Usability Testing
+description: "A technique used in user-centered interaction design to evaluate a product by testing it on real users."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Usability testing">
+<ConceptTemplate title="Usability Testing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You are not your user. 
+
+Because you designed the software (or wrote the code), you know exactly how it works. You intuitively know that clicking the gear icon opens the settings, because you put it there. 
+When you release the software, you will be shocked to watch real users stare at the gear icon for 5 minutes, completely lost, unable to find the settings.
+
+**Usability Testing** is the humbling process of putting your product in front of strangers and watching them attempt to use it.
+
+## The Testing Process
+1. **Recruit**: Find 5 real humans who match your target demographic (e.g., if you are building accounting software, don't test it on teenagers; test it on accountants).
+2. **Assign Tasks**: Give the user a specific, goal-oriented task. *(e.g., "Imagine you want to change your billing address. Show me how you would do that.")*
+3. **Observe, Do Not Guide**: This is the hardest part. The facilitator must stay completely silent. If the user gets stuck and asks, *"Do I click here?"*, the facilitator must reply, *"What do you think you should do?"*
+4. **Think Aloud Protocol**: Ask the user to narrate their internal thoughts as they navigate. *(e.g., "I'm looking for a profile icon... I don't see one... maybe it's in the footer?")*
+
+## Why Only 5 Users?
+Jakob Nielsen famously proved that testing a UI with just **5 users** will uncover **85% of the core usability problems**. 
+
+Testing with 15 users is a waste of time and money, because users 6 through 15 will just get stuck on the exact same confusing buttons that users 1 through 5 found. The correct methodology is to test with 5 users, fix the glaring problems, and then run a *new* test with 5 new users.
+
+<Callout icon="tip" title="Qualitative vs Quantitative">
+Usability testing is **Qualitative**. It tells you *why* users are confused. A/B Testing or Analytics are **Quantitative**. They tell you *that* 60% of users are dropping off at the checkout page, but they can't tell you that it's because the credit card form looks suspicious.
+</Callout>
 
 </ConceptTemplate>

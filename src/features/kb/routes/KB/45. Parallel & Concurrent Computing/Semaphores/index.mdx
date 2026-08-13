@@ -1,8 +1,31 @@
+---
+title: Semaphores
+description: "A synchronization primitive consisting of an integer variable used to control access to a common resource by multiple processes or threads."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Semaphores">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Edsger W. Dijkstra in 1962, a **Semaphore** is a synchronization tool similar to a Mutex, but instead of providing exclusive (1-person) access, it controls access based on a specific counter.
+
+## 1. The Integer Counter
+A semaphore is essentially just an integer variable with two atomic operations:
+- **wait()** (historically `P` or `down`): If the counter is > 0, decrement it by 1 and proceed. If the counter is 0, put the thread to sleep until it becomes > 0.
+- **signal()** (historically `V` or `up`): Increment the counter by 1. If any threads are sleeping on this semaphore, wake one of them up.
+
+## 2. Binary vs Counting Semaphores
+
+### Binary Semaphore (Value initialized to 1)
+Behaves almost identically to a Mutex. It guarantees Mutual Exclusion.
+*Difference:* A Mutex has "ownership" (the thread that locked it must unlock it). A Binary Semaphore has no ownership; Thread A can call `wait()`, and Thread B can call `signal()`.
+
+### Counting Semaphore (Value initialized to N)
+Used to manage a finite pool of resources. 
+
+**Example: A Database Connection Pool.**
+You have a pool of 5 connections to Postgres. You initialize a Semaphore to `5`.
+- 5 threads call `wait()`. The counter hits `0`. All 5 get a connection.
+- A 6th thread calls `wait()`. Because the counter is `0`, the 6th thread is blocked and goes to sleep.
+- When one of the first 5 threads finishes, it calls `signal()`. The counter ticks to 1, instantly waking up the 6th thread and giving it the connection.
 
 </ConceptTemplate>

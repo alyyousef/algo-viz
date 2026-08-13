@@ -1,354 +1,393 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const TICK3 = '\`\`\`'
-const TICK1 = '\`'
+const TICK3 = '```'
+const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Core UI Frameworks/index.mdx': `---
-title: Core UI Frameworks (React, Vue, Angular, Svelte, Solid)
-description: The massive architectural shift from imperative DOM manipulation to declarative, state-driven UI frameworks.
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Box Model & Positioning/index.mdx': `---
+title: Box Model & Positioning
+description: "The fundamental engine of CSS layout, describing how elements take up space and align on the screen."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Core UI Frameworks">
-
-Historically, rendering a list of users on a screen required manually querying the DOM (TICK1document.getElementByIdTICK1) and mathematically updating individual HTML nodes in a highly imperative manner. As applications grew into massive Single Page Applications (SPAs), this led to catastrophic spaghetti code.
-
-The industry solved this by introducing **Declarative UI Frameworks**. You define what the UI *should* look like based on current data (State), and the framework mathematically handles updating the actual DOM for you.
-
-## 1. React (The Global Standard)
-Created by Facebook. React is not actually a framework; it's a library. It introduced two massive architectural paradigms:
-1. **Component-Based Architecture**: Breaking the UI into reusable, isolated Javascript functions.
-2. **The Virtual DOM**: Interacting with the real DOM is incredibly slow. React keeps a lightweight Javascript copy of the DOM in memory. When state changes, React mathematically calculates the "Diff" between the old Virtual DOM and the new Virtual DOM, and then executes a single, highly-optimized batch update to the real DOM.
-
-## 2. Vue.js
-Created by Evan You. Vue was designed to take the best parts of Angular and React. It uses a Virtual DOM like React but uses a mathematically "Reactive" state system. Instead of explicitly calling TICK1setStateTICK1, Vue uses Javascript Proxies to silently track when a variable is accessed or mutated, triggering automatic UI updates.
-
-## 3. Angular
-Created by Google. Unlike React, Angular is a massive, highly-opinionated **Framework**. It forces you to write in TypeScript and provides built-in routing, state, and HTTP clients. It historically utilized **Two-Way Data Binding** and complex decorators, making it the dominant choice for massive, strictly-architected enterprise applications.
-
-## 4. Svelte (The Compiler Revolution)
-Created by Rich Harris. Svelte completely shattered the industry by declaring: **"The Virtual DOM is pure overhead."**
-Unlike React, Svelte does not ship a heavy framework runtime to the browser. Instead, Svelte is a **Compiler**. During the build step, it mathematically analyzes your code and compiles it down to tiny, highly-optimized, imperative Vanilla Javascript DOM updates.
-
-## 5. SolidJS
-Created by Ryan Carniato. Solid looks identical to React (using JSX and Signals), but like Svelte, it completely abandons the Virtual DOM. It compiles down to direct DOM nodes, making it the fastest Javascript framework in existence for raw performance benchmarks.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Minimalist UI/index.mdx': `---
-title: Minimalist UI (jQuery, HTMX, Alpine.js)
-description: The legacy of imperative DOM manipulation, and the modern rebellion against the massive complexity of Single Page Applications.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Minimalist UI">
-
-Not every website needs to be a 5MB React Single Page Application. If you are building a simple blog or an e-commerce landing page, shipping massive Javascript bundles is terrible for performance and SEO.
-
-## 1. jQuery (The Historical King)
-In the late 2000s, Javascript was a nightmare. Every browser (Internet Explorer, Firefox, Chrome) implemented the DOM API differently. 
-**jQuery** mathematically solved this by providing a unified, incredibly simple API wrapper.
-TICK3js
-// Selecting an element and fading it out
-$('#login-btn').fadeOut();
-TICK3
-jQuery became the most widely used library in history. Today, it is largely obsolete because native Javascript (ES6) absorbed all of its best features (like TICK1document.querySelectorTICK1 and TICK1fetchTICK1).
-
-## 2. HTMX (The HTML Rebellion)
-Created by Carson Gross, **HTMX** is a rapidly growing philosophy that violently rejects the complexity of React.
-The core philosophy is: **HTML is already a great language, it's just missing features.** 
-
-Instead of writing massive Javascript fetch requests to update the DOM, HTMX allows you to do it directly in HTML attributes:
-TICK3html
-<button 
-  hx-post="/api/like-button" 
-  hx-target="#like-count" 
-  hx-swap="innerHTML">
-  Like
-</button>
-TICK3
-When clicked, HTMX automatically sends a POST request, takes the raw HTML the server sends back, and seamlessly injects it into the TICK1#like-countTICK1 div without a page reload.
-
-## 3. Alpine.js
-Often paired with Tailwind CSS, Alpine.js brings the reactive power of Vue directly into HTML without requiring a massive build step (Webpack/Vite). It is designed to sprinkle tiny bits of interactivity (like dropdowns and modals) into static HTML pages.
-
-TICK3html
-<div x-data="{ open: false }">
-    <button @click="open = true">Open Dropdown</button>
-    <ul x-show="open" @click.outside="open = false">
-        <li>Settings</li>
-    </ul>
-</div>
-TICK3
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Meta-Frameworks/index.mdx': `---
-title: The Meta-Frameworks (Next.js, Remix, Nuxt, Astro)
-description: The architectural shift from client-side Single Page Applications to Server-Side Rendering (SSR) and Static Site Generation (SSG).
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="The Meta-Frameworks">
-
-When you build a standard React app (Vite/Create-React-App), it generates an entirely blank HTML file containing only TICK1<div id="root"></div>TICK1. 
-The browser must download massive Megabytes of Javascript before it can mathematically construct the UI. 
-
-This causes two catastrophic problems:
-1. **Terrible SEO**: When Googlebot crawls the page, it sees a blank white screen and penalizes your ranking.
-2. **Terrible Performance**: Users on slow 3G mobile networks stare at a white screen for 5 seconds waiting for JS to download.
-
-To solve this, the industry invented **Meta-Frameworks** (Frameworks built on top of Frameworks).
-
-## Server-Side Rendering (SSR)
-Instead of constructing the HTML in the user's browser, a Meta-Framework runs a Node.js server. When a user requests a URL, the Node server executes the React code, mathematically computes the final HTML string, and sends fully populated HTML to the browser instantly.
-
-## The Big Players
-
-### 1. Next.js (React)
-Created by Vercel. Next.js is the absolute industry standard for enterprise React applications. It pioneered **File-System Routing** (creating a TICK1page.tsxTICK1 file automatically creates a URL route). It seamlessly supports SSR, Static Site Generation (SSG), and the revolutionary new **React Server Components (RSC)** architecture.
-
-### 2. Remix (React)
-Created by the authors of React Router (now acquired by Shopify). Remix violently rejects SSG and focuses strictly on high-performance SSR. It relies heavily on native web standards (like standard HTTP Request/Response objects) and uses advanced mathematical caching to parallelize data fetching, eliminating waterfall network requests.
-
-### 3. Nuxt (Vue)
-The Vue equivalent to Next.js. It provides the exact same architectural benefits (SSR, File-System Routing, API routes) but is tailored perfectly for the Vue ecosystem.
-
-### 4. Astro (The Island Architecture)
-A modern framework that fundamentally altered the paradigm. Astro generates 100% pure, static HTML with zero Javascript shipped to the browser by default. 
-If you need an interactive component (like a React Carousel), Astro utilizes **Island Architecture**—it mathematically hydrates *only* that specific carousel with Javascript, leaving the rest of the page as pure, blazing-fast HTML.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/State Management/index.mdx': `---
-title: State Management (Redux, Zustand, MobX, XState)
-description: The complex architectural patterns required to share data globally across hundreds of deeply nested UI components.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="State Management">
-
-In a component-based architecture (like React), passing data (State) down through 10 layers of child components is called **Prop Drilling**. It creates unmaintainable spaghetti code.
-To solve this, we extract the data into a Global Store that any component can access directly.
-
-## 1. Redux (The Flux Architecture)
-Created by Dan Abramov. For years, Redux was the absolute mandatory standard for React apps. It implements a strict unidirectional data flow called **Flux**.
-- **State** is completely immutable. You cannot mathematically modify it directly.
-- You must dispatch an **Action** (a string like TICK1"USER_LOGGED_IN"TICK1).
-- A **Reducer** (a pure mathematical function) intercepts the action, copies the state, applies the change, and returns the new state.
-
-**The Flaw**: Redux required a catastrophic amount of boilerplate code (Actions, Reducers, Types, Thunks) just to update a single boolean value. Today, it is largely wrapped in **Redux Toolkit (RTK)** to minimize this boilerplate.
-
-## 2. Zustand (The Minimalist King)
-German for "State". Created by Daishi Kato, Zustand is currently the most heavily favored state management library in the React ecosystem. 
-It completely abandons Redux boilerplate. It uses modern React Hooks to create a tiny, mathematically flawless global store with zero providers required.
-
-TICK3ts
-const useStore = create((set) => ({
-  bears: 0,
-  increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
-}))
-TICK3
-
-## 3. MobX (The Reactive Approach)
-Unlike Redux's strict immutable paradigm, MobX encourages you to mathematically mutate state directly. It relies heavily on Object-Oriented Programming (Classes) and Javascript Proxies/Observables. When you change a property, MobX automatically triggers re-renders on the exact components observing that specific property.
-
-## 4. XState (State Machines)
-Instead of managing random variables (TICK1isLoadingTICK1, TICK1isErrorTICK1), XState mathematically models your application as a **Finite State Machine**. An application can only be in one state at a time (e.g., TICK1idleTICK1 -> TICK1loadingTICK1 -> TICK1successTICK1). This entirely prevents "impossible states" (like being TICK1isError: trueTICK1 and TICK1isSuccess: trueTICK1 simultaneously).
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Data Fetching & Routing/index.mdx': `---
-title: Data Fetching & Routing (TanStack, React Router)
-description: The sophisticated architectures required to synchronize server state with the UI, manage HTTP caching, and orchestrate client-side URL navigation.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Data Fetching & Routing">
-
-Historically, developers used Redux to store API data. This was a catastrophic architectural mistake. **Server Data is not Global UI State.** Server Data is inherently asynchronous, instantly becomes stale, and requires complex polling and caching logic.
-
-## TanStack Query (React Query)
-Created by Tanner Linsley, TanStack Query mathematically solved the "Server State" problem and rendered Redux largely obsolete for API calls.
-
-Instead of writing massive TICK1useEffectTICK1 hooks to fetch data, you use TanStack Query.
-TICK3ts
-const { data, isLoading, isError } = useQuery({
-  queryKey: ['todos'],
-  queryFn: fetchTodos
-})
-TICK3
-
-It automatically handles:
-1. **Caching**: If you visit the Todos page again, it instantly shows the cached data while secretly fetching updates in the background.
-2. **Deduplication**: If 5 components request the Todos simultaneously, it mathematically merges them into exactly 1 network request.
-3. **Retry Logic**: It automatically retries failed network requests 3 times with exponential backoff.
-
-## Client-Side Routing
-In a traditional website, clicking a link causes a hard page refresh (the browser downloads a new HTML file). 
-In a Single Page Application (SPA), the browser mathematically suppresses the hard refresh, updates the URL via the HTML5 History API, and Javascript instantly mounts a new component.
-
-### 1. React Router
-The undisputed historical king of SPA routing. Created by Remix (now Shopify). It utilizes a complex nested route architecture, allowing inner sections of a page (like a dashboard widget) to navigate independently of the outer layout.
-
-### 2. TanStack Router
-A massive modern challenger. It is built entirely around 100% Type-Safety. It ensures that if you link to a URL route that requires a TICK1?userId=123TICK1 search parameter, the TypeScript compiler will violently crash if you forget to provide it.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Forms & Validation/index.mdx': `---
-title: Forms & Validation (React Hook Form, Formik)
-description: The architectural patterns required to capture complex user input securely while minimizing devastating React re-render cycles.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Forms & Validation">
-
-Building forms in modern SPAs is notoriously difficult. You must track the value of 20 different text inputs, run Regex validation in real-time, display localized error messages, and handle loading states—all without completely destroying the app's performance.
-
-## The Performance Problem: Controlled Components
-In standard React, developers build "Controlled Forms". Every time a user types a single character in the password field, React updates the State, which forces the *entire massive form component* to re-render. If you type 10 characters, the form re-renders 10 times. On a complex form with heavy UI, this causes massive keystroke latency.
-
-## React Hook Form (The Uncontrolled Revolution)
-React Hook Form mathematically solved this performance crisis. 
-Instead of tracking every keystroke in React State, it uses **Uncontrolled Components**. It registers a standard HTML input using a Javascript TICK1refTICK1. 
-
-When the user types, the DOM updates natively, but React does *not* re-render. The values are mathematically extracted directly from the DOM only when the form is actually submitted. This drastically reduces re-renders to near-zero.
-
-TICK3ts
-const { register, handleSubmit, formState: { errors } } = useForm();
-
-return (
-  <form onSubmit={handleSubmit(onSubmit)}>
-    <input {...register("email", { required: true, pattern: /^\S+@\S+$/i })} />
-    {errors.email && <span>Email is invalid</span>}
-  </form>
-);
-TICK3
-
-## Formik
-Historically the most popular form library in React. It heavily popularized the standard architecture of managing form state, validation, and submission handlers in a unified object. However, because it relies on standard Controlled Components (triggering heavy re-renders on every keystroke), the industry has largely migrated away from Formik to React Hook Form.
-
-## Schema Validation (Zod)
-Instead of writing manual IF-statements for validation, the industry utilizes **Zod** (a TypeScript-first schema validation library). You mathematically define the exact shape of your data, and tools like React Hook Form natively integrate with Zod to enforce the rules.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Component Libraries/index.mdx': `---
-title: Component Libraries & Storybook
-description: The enterprise strategy of utilizing pre-built, highly-accessible UI systems and documenting them in isolated sandbox environments.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Component Libraries & Storybook">
-
-Building a fully accessible, keyboard-navigable Dropdown or Date Picker from scratch is mathematically incredibly difficult. It requires strict adherence to complex W3C ARIA specifications. 
-Instead of wasting thousands of hours reinventing the wheel, companies use Component Libraries.
-
-## Headless UI vs Styled UI
-
-### 1. Styled Libraries (Material UI, Ant Design)
-These libraries ship massive amounts of pre-written CSS. 
-**Material UI (MUI)** is the most widely used React library in the world. It provides thousands of components that strictly adhere to Google's Material Design specification. 
-**The Flaw**: It is notoriously difficult to customize. Overriding MUI's internal CSS often requires ugly specificity hacks, resulting in every app looking exactly like a Google product.
-
-### 2. Headless UI (Radix, HeadlessUI, Ark)
-The modern architectural revolution. A Headless library provides the raw JavaScript logic, state management, and strict ARIA accessibility required for a complex component (like an Accordion), but ships **Zero CSS**.
-You are mathematically forced to write your own CSS (usually Tailwind) to style it. This guarantees that your application remains 100% uniquely branded while benefiting from flawless accessibility logic. 
-
-**Shadcn UI** is the current industry pinnacle of this. It uses Radix under the hood, but instead of installing it as an NPM package, you literally copy and paste the raw React code into your project, giving you absolute ownership over the component.
-
-## Storybook (Component Isolation)
-In a massive enterprise codebase with 500 components, developers often struggle to find existing buttons, leading to duplicated code.
-
-**Storybook** is an isolated Sandbox environment that runs completely separately from your main application. 
-It mathematically renders a catalog of every single UI component in your system, allowing designers and developers to visually click, hover, and test the components without needing to navigate through a complex login flow in the actual app.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Animation/index.mdx': `---
-title: Animation (Framer Motion, GSAP)
-description: The advanced Javascript architectures used to execute buttery-smooth, physics-based animations at 60 frames per second.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Animation (Framer Motion, GSAP)">
-
-While basic CSS Transitions and Keyframes are sufficient for simple hover effects, they completely fall apart when orchestrating massive, multi-step, scroll-linked animations or animating components mounting and unmounting from the DOM.
-
-## 1. Framer Motion (The Physics Engine)
-Created by Matt Perry, Framer Motion is the absolute standard for React animation.
-Instead of dealing with rigid CSS durations (like TICK10.3sTICK1), Framer Motion is built on a mathematical **Spring Physics** engine. You define mass, stiffness, and damping, resulting in fluid, organic animations that mimic the real world.
-
-Crucially, it introduced the TICK1<AnimatePresence>TICK1 wrapper, mathematically solving the hardest problem in React: animating a component *out* of the DOM just before it gets violently unmounted by state changes.
-
-TICK3tsx
-<motion.div
-  initial={{ opacity: 0, scale: 0.5 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ type: "spring", stiffness: 100 }}
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Box Model & Positioning"
+  icon="square"
 >
-  Hello
-</motion.div>
-TICK3
 
-## 2. GSAP (GreenSock Animation Platform)
-Before modern React existed, GSAP was the undisputed king of web animation, and it remains the most powerful library in existence for raw timeline orchestration.
+Everything in CSS is a box. Understanding the **CSS Box Model** is the absolute prerequisite to building any web layout.
 
-GSAP completely bypasses CSS and uses highly-optimized Javascript math via TICK1requestAnimationFrameTICK1 to manipulate DOM properties directly at 60+ FPS. 
-It is explicitly designed for building massive "Scrollytelling" websites (like the Apple iPhone landing pages) where the entire page's animation state is mathematically linked to the user's scrollbar position (via the ScrollTrigger plugin).
+## The Box Model Layers
 
-## 3. Lottie
-Created by Airbnb. Lottie is an architecture that mathematically exports complex Adobe After Effects animations as tiny JSON files. The Lottie web player parses the JSON and renders the animation using high-performance SVGs, allowing designers to ship Hollywood-level animations directly to the browser with zero coding required.
+From the inside out, every element consists of:
+1. **Content**: The actual text, image, or child elements.
+2. **Padding**: Transparent space *inside* the element, pushing the border away from the content.
+3. **Border**: The structural edge of the element.
+4. **Margin**: Transparent space *outside* the element, pushing it away from other elements.
+
+<Callout icon="warning" title="box-sizing: border-box">
+By default, CSS uses TICK1box-sizing: content-boxTICK1. If you set a width of 100px and add 20px padding, the box becomes 140px wide on the screen, breaking your layouts. Modern developers apply TICK1box-sizing: border-boxTICK1 globally so that padding and borders are absorbed into the declared width.
+</Callout>
+
+## Positioning
+
+The TICK1positionTICK1 property drastically alters how an element behaves within the document flow:
+- **static** (default): The element flows naturally down the page. TICK1topTICK1, TICK1leftTICK1, TICK1z-indexTICK1 do nothing.
+- **relative**: The element remains in the normal flow, but you can visually nudge it using TICK1topTICK1 and TICK1leftTICK1 without affecting surrounding elements. Crucially, it acts as an anchor point for absolute children.
+- **absolute**: The element is ripped entirely out of the document flow. It positions itself relative to its closest TICK1position: relativeTICK1 ancestor.
+- **fixed**: Ripped out of flow and positioned relative to the viewport. It stays on screen even when scrolling (e.g., sticky headers).
+- **sticky**: A hybrid. It acts TICK1staticTICK1 until you scroll past a certain threshold, at which point it acts TICK1fixedTICK1.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/17. Frontend Frameworks, Libraries & State Management/Data Visualization & 3D/index.mdx': `---
-title: Data Visualization & 3D (D3.js, Three.js)
-description: The highly specialized mathematical libraries used to render complex SVG charts and interactive WebGL 3D environments.
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Flexbox/index.mdx': `---
+title: Flexbox
+description: "Flexible Box Module, a one-dimensional layout model for distributing space and aligning items within a container."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Data Visualization & 3D">
+<ConceptTemplate 
+  name="Flexbox"
+  icon="align-justify"
+>
 
-When standard HTML divs are mathematically insufficient to represent massive datasets or complex geometries, we shift to the Canvas API, SVGs, and WebGL.
+Before **Flexbox** (introduced around 2012), developers relied on massive hacks—like floats, clearfixes, and absolute positioning—just to align elements horizontally. Flexbox revolutionized CSS by providing a robust, one-dimensional layout engine.
 
-## 1. D3.js (Data-Driven Documents)
-Created by Mike Bostock (at the New York Times), D3 is the absolute bedrock of web data visualization.
-D3 is not a "charting library" (it doesn't have a TICK1<BarChart>TICK1 component). Instead, it is a low-level mathematical engine that takes massive JSON arrays of data, computes the complex geometric scales (mapping a $1,000,000 salary to a 50px high pixel coordinate), and binds the data directly to SVG DOM elements.
+## The Main Axis vs. Cross Axis
 
-**The Flaw**: D3 aggressively mutates the DOM natively. This completely conflicts with React's Virtual DOM architecture.
+Flexbox is all about direction. When you set TICK1display: flex;TICK1 on a container, you define an axis.
+- **Main Axis**: Controlled by TICK1justify-contentTICK1 (aligns items along the row or column).
+- **Cross Axis**: Controlled by TICK1align-itemsTICK1 (aligns items perpendicular to the main axis).
 
-## 2. Recharts & Chart.js
-To solve the D3 conflict, developers created high-level wrappers.
-- **Recharts**: The most popular React charting library. It uses D3 under the hood strictly for the mathematical scaling calculations, but allows React to handle the actual rendering of the SVG DOM nodes, flawlessly respecting the Virtual DOM.
-- **Chart.js**: A highly popular vanilla JS library that renders entirely onto an HTML5 TICK1<canvas>TICK1 element instead of using SVGs, making it incredibly performant for massive datasets (like plotting 50,000 stock market ticks).
+## Centering a Div
 
-## 3. Three.js (The WebGL Wrapper)
-Writing raw WebGL (Web Graphics Library) to render a 3D cube in the browser requires hundreds of lines of horrifyingly complex C-style GLSL shader code and heavy matrix multiplication math.
+The holy grail of CSS used to take 10 lines of complex code. With Flexbox, centering a div horizontally and vertically takes three lines:
 
-**Three.js** is a massive Javascript abstraction layer over WebGL. It provides human-readable APIs for Cameras, Lighting, Geometries, and Materials. 
-In the React ecosystem, this is dominated by **React Three Fiber (R3F)**, which brilliantly maps Three.js instances directly to React Components, allowing you to render a 3D spinning box using declarative JSX:
+${TICK3}css
+.container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+}
+${TICK3}
 
-TICK3tsx
-<Canvas>
-  <ambientLight />
-  <mesh rotation={[10, 10, 0]}>
-    <boxGeometry args={[1, 1, 1]} />
-    <meshStandardMaterial color="hotpink" />
-  </mesh>
-</Canvas>
-TICK3
+## Flex Items (The Children)
+While the container dictates the overall layout, the children can dictate their own behavior:
+- TICK1flex-growTICK1: How much of the leftover space this item should consume.
+- TICK1flex-shrinkTICK1: How much this item should shrink if there isn't enough space.
+- TICK1flex-basisTICK1: The default size before growing or shrinking.
+
+<Callout icon="tip" title="The flex shorthand">
+You'll often see TICK1flex: 1;TICK1 on a child element. This is shorthand for TICK1flex-grow: 1; flex-shrink: 1; flex-basis: 0%;TICK1. It tells the item to fill all available space equally.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Grid/index.mdx': `---
+title: Grid
+description: "CSS Grid Layout, a two-dimensional layout system tailored for complex webpage structuring."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Grid"
+  icon="grid"
+>
+
+While Flexbox excels at **one-dimensional** layouts (a row of buttons, a column of text), **CSS Grid** is the ultimate tool for **two-dimensional** layouts (rows *and* columns simultaneously).
+
+## Defining the Grid
+
+You turn an element into a grid by setting TICK1display: grid;TICK1. You then define the structure using columns and rows.
+
+${TICK3}css
+.dashboard {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* Sidebar is 250px, Main takes the rest */
+  grid-template-rows: 60px 1fr;     /* Header is 60px, Content takes the rest */
+  gap: 16px;                        /* Spacing between cells */
+}
+${TICK3}
+
+## The Fractional Unit (fr)
+Grid introduced the TICK1frTICK1 unit, which represents a fraction of the available free space. If you define TICK1grid-template-columns: 1fr 2fr 1fr;TICK1, the browser divides the space into 4 chunks. The middle column gets twice as much space as the side columns.
+
+## Placing Items
+Unlike Flexbox where items naturally flow, Grid allows you to explicitly place an element anywhere on the grid, even overlapping them.
+
+${TICK3}css
+.header {
+  grid-column: 1 / 3; /* Span from grid line 1 to grid line 3 */
+  grid-row: 1;
+}
+${TICK3}
+
+<Callout icon="info" title="Grid vs. Flexbox">
+A common misconception is that Grid replaces Flexbox. They are meant to be used together! Use Grid for the macro-layout (the skeleton of the page: header, sidebar, main, footer). Use Flexbox for the micro-layout (aligning the icons and text inside a navigation bar).
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Selectors & Specificity/index.mdx': `---
+title: Selectors & Specificity
+description: "The rule engine of CSS that determines exactly which styles are applied to an element when multiple conflicting rules exist."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Selectors & Specificity"
+  icon="target"
+>
+
+CSS stands for **Cascading Style Sheets**. The "Cascade" is the algorithm the browser uses to decide which style wins when two different rules try to style the same element.
+
+## The Specificity Hierarchy
+
+When a conflict occurs, the browser calculates a specificity score based on the types of selectors used. From highest to lowest priority:
+
+1. **Inline Styles**: TICK1<div style="color: red;">TICK1 (Almost always wins)
+2. **IDs**: TICK1#header { color: blue; }TICK1
+3. **Classes, Attributes, and Pseudo-classes**: TICK1.btnTICK1, TICK1[type="text"]TICK1, TICK1:hoverTICK1
+4. **Elements and Pseudo-elements**: TICK1h1TICK1, TICK1divTICK1, TICK1::beforeTICK1
+
+For example, TICK1#nav .linkTICK1 (1 ID, 1 Class) will override TICK1div ul li .linkTICK1 (3 Elements, 1 Class) because IDs carry vastly more weight.
+
+## Advanced Selectors
+- **Combinators**: 
+  - TICK1div pTICK1 (Descendant: any TICK1pTICK1 inside a TICK1divTICK1)
+  - TICK1div > pTICK1 (Direct child: only TICK1pTICK1 elements directly nested one level deep)
+  - TICK1h1 + pTICK1 (Adjacent sibling: the TICK1pTICK1 immediately following an TICK1h1TICK1)
+- **Pseudo-classes**: Target state. (e.g., TICK1:focusTICK1, TICK1:nth-child(2)TICK1, TICK1:not(.active)TICK1)
+- **Pseudo-elements**: Target sub-parts of an element. (e.g., TICK1::beforeTICK1, TICK1::selectionTICK1)
+
+<Callout icon="warning" title="The !important Nuclear Option">
+Appending TICK1!importantTICK1 to a rule forces it to win over almost everything else, regardless of specificity. While tempting for quick fixes, overusing it destroys the cascade and makes your CSS impossible to maintain. Only use it when overriding third-party libraries.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Responsive Design/index.mdx': `---
+title: Responsive Design
+description: "The practice of building web pages that detect the visitor's screen size and orientation and change the layout accordingly."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Responsive Design"
+  icon="smartphone"
+>
+
+In the early days of smartphones, developers built entirely separate websites for mobile devices (e.g., TICK1m.facebook.comTICK1). **Responsive Web Design (RWD)**, coined by Ethan Marcotte in 2010, changed the industry paradigm: build one HTML document, but use CSS to make it fluidly adapt to any screen.
+
+## The Meta Viewport Tag
+Responsive design literally does not work without this HTML tag in your TICK1<head>TICK1. It tells mobile browsers not to arbitrarily zoom out the page to fit a desktop layout onto a 4-inch screen.
+${TICK3}html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+${TICK3}
+
+## Media Queries
+Media queries allow you to apply CSS conditionally based on screen dimensions.
+
+**Mobile-First Approach (Best Practice):**
+Write your default CSS for mobile screens, then use TICK1min-widthTICK1 to add complexity as the screen gets larger.
+${TICK3}css
+/* Default: Mobile (stacked layout) */
+.layout { display: block; }
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .layout { display: flex; }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  .layout { display: grid; }
+}
+${TICK3}
+
+## Relative Units
+Responsive design relies heavily on avoiding fixed TICK1pxTICK1 values in favor of:
+- **TICK1%TICK1**: Percentage of the parent container.
+- **TICK1vwTICK1 / TICK1vhTICK1**: Viewport Width / Viewport Height (1vw is 1% of the screen width).
+- **TICK1remTICK1**: Root em. Relative to the default font size of the HTML document (great for accessibility scaling).
+
+<Callout icon="info" title="Container Queries">
+A massive recent addition to CSS is **Container Queries** (TICK1@containerTICK1). Instead of altering a component based on the *entire screen size*, you can alter it based on the *size of its parent container*. This is a game-changer for building reusable React/Vue components that look good anywhere on the page.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Variables & Tokens/index.mdx': `---
+title: Variables & Tokens
+description: "CSS Custom Properties, providing dynamic, cascading variables native to the browser without requiring a preprocessor."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Variables & Tokens"
+  icon="code"
+>
+
+For years, developers had to use tools like Sass or LESS to use variables. Today, **CSS Custom Properties** (native CSS variables) are universally supported and are significantly more powerful because they exist in the browser at runtime.
+
+## Defining and Using Variables
+
+Variables are prefixed with two dashes (TICK1--TICK1). They are usually defined on the TICK1:rootTICK1 pseudo-class so they are globally accessible.
+
+${TICK3}css
+:root {
+  --primary-color: #3b82f6;
+  --spacing-md: 16px;
+}
+
+.button {
+  background-color: var(--primary-color);
+  padding: var(--spacing-md);
+}
+${TICK3}
+
+## Design Tokens and Theming
+Variables are the foundation of modern **Design Systems** and **Dark Mode**. Because native CSS variables cascade, you can change a variable's value on a specific container or state, and the UI updates instantly without rewriting classes.
+
+${TICK3}css
+:root {
+  --bg-color: #ffffff;
+  --text-color: #111827;
+}
+
+/* Dark Mode Implementation */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+${TICK3}
+
+<Callout icon="tip" title="JavaScript Interaction">
+Because they exist in the DOM at runtime, JavaScript can read and write CSS variables effortlessly. This is how you implement dynamic drag-and-drop elements or scroll-linked animations: TICK1element.style.setProperty('--mouse-x', event.clientX + 'px')TICK1.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Animations & Transforms/index.mdx': `---
+title: Animations & Transforms
+description: "Moving, scaling, rotating, and animating DOM elements smoothly using hardware-accelerated CSS properties."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Animations & Transforms"
+  icon="play"
+>
+
+Modern CSS provides powerful tools to create fluid, hardware-accelerated motion without writing a single line of JavaScript.
+
+## Transforms (Static Changes)
+The TICK1transformTICK1 property alters the visual appearance of an element without affecting the document flow (it won't push other elements out of the way).
+- TICK1translate(x, y)TICK1: Moves the element.
+- TICK1scale(n)TICK1: Enlarges or shrinks.
+- TICK1rotate(deg)TICK1: Spins the element.
+
+## Transitions (A to B)
+TICK1transitionTICK1 is used to smoothly interpolate between states (like a hover effect).
+
+${TICK3}css
+.btn {
+  background-color: blue;
+  transform: scale(1);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background-color: red;
+  transform: scale(1.1);
+}
+${TICK3}
+
+## Keyframe Animations (Complex Sequences)
+For continuous animations or complex multi-step sequences, you use TICK1@keyframesTICK1.
+
+${TICK3}css
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.loading-dot {
+  animation: pulse 2s infinite linear;
+}
+${TICK3}
+
+<Callout icon="warning" title="Performance & The GPU">
+You should only ever animate TICK1transformTICK1 and TICK1opacityTICK1. Animating properties like TICK1widthTICK1, TICK1marginTICK1, or TICK1box-shadowTICK1 forces the browser to recalculate the entire page layout on every single frame, causing severe lag on mobile devices. Transforms are offloaded directly to the device's GPU for silky smooth 60FPS motion.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/15. HTML & CSS/15.2 CSS/Tailwind CSS/index.mdx': `---
+title: Tailwind CSS
+description: "A utility-first CSS framework that allows rapid UI development by composing low-level utility classes directly in the HTML."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Tailwind CSS"
+  icon="feather"
+>
+
+**Tailwind CSS** represents a massive paradigm shift in how developers write CSS. Instead of creating semantic class names (TICK1.profile-cardTICK1) and writing custom CSS in a separate file, Tailwind provides thousands of atomic "utility classes" (TICK1flexTICK1, TICK1p-4TICK1, TICK1text-centerTICK1) that you apply directly in your HTML/JSX.
+
+## The Utility-First Workflow
+
+Instead of:
+${TICK3}css
+/* The old way */
+.btn-primary {
+  display: flex;
+  padding: 16px 32px;
+  background-color: blue;
+  border-radius: 8px;
+}
+${TICK3}
+
+You write:
+${TICK3}html
+<!-- The Tailwind way -->
+<button class="flex px-8 py-4 bg-blue-500 rounded-lg">Submit</button>
+${TICK3}
+
+## Why it took over the industry
+1. **No Context Switching**: You don't have to constantly flip between TICK1index.tsxTICK1 and TICK1styles.cssTICK1.
+2. **No Naming Fatigue**: You don't waste time inventing names like TICK1.outer-wrapper-innerTICK1.
+3. **Dead Code Elimination**: Traditional CSS files grow forever because developers are terrified to delete rules. Tailwind compiles your codebase at build-time, parsing your HTML and outputting a CSS file containing *only* the classes you actually used (often resulting in CSS payloads under 10KB).
+4. **Built-in Design System**: It forces you to use a standardized scale for spacing, typography, and colors, preventing UI inconsistencies.
+
+<Callout icon="info" title="The Backlash">
+When people first see Tailwind, they often hate it, claiming it looks like inline styles and clutters the HTML. However, in an era where we build UIs using component frameworks (React, Vue, Svelte), the "messy" HTML is encapsulated inside small, reusable components anyway. Once developers try it, they rarely go back.
+</Callout>
 
 </ConceptTemplate>
 `,

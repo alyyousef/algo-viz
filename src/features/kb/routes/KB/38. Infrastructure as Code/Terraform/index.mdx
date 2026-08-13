@@ -1,69 +1,27 @@
 ---
 title: Terraform
-description: An infrastructure as code tool that lets you define both cloud and on-prem resources in human-readable configuration files.
+description: "The industry standard, cloud-agnostic Infrastructure as Code tool developed by HashiCorp."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Terraform">
+<ConceptTemplate title="Terraform">
 
-Terraform is an open-source infrastructure as code (IaC) software tool created by HashiCorp. Users define and provide data center infrastructure using a declarative configuration language known as HashiCorp Configuration Language (HCL).
+**Terraform** is an open-source Infrastructure as Code (IaC) tool created by HashiCorp. It allows you to define both cloud and on-premise resources (like VMs, load balancers, and databases) in human-readable configuration files that you can version, reuse, and share.
 
-<Callout icon="tip" title="Cloud Agnostic">
-  Unlike AWS CloudFormation which only works on AWS, Terraform uses a "Provider" architecture, allowing you to manage AWS, Azure, Google Cloud, Cloudflare, and Kubernetes all from the exact same tool and workflow.
+Terraform uses a declarative language called **HCL (HashiCorp Configuration Language)**. You simply state *what* you want the final architecture to look like, and Terraform figures out *how* to make the API calls to the cloud provider to achieve that state.
+
+## 1. Cloud Agnostic (The Provider Model)
+Unlike AWS CloudFormation or Azure ARM templates, which are strictly locked into their respective clouds, Terraform is **cloud-agnostic**.
+
+It achieves this through a plugin ecosystem called **Providers**. There is an AWS provider, an Azure provider, a GitHub provider, and even a Spotify provider. You can manage multiple cloud resources simultaneously within the exact same configuration file.
+
+## 2. Declarative vs Imperative
+- **Imperative (e.g., Bash script with AWS CLI)**: "Create Server A. Then wait. Then attach Network B to Server A. If Server A exists, do nothing." (You must handle the logic and edge cases).
+- **Declarative (Terraform)**: "I want Server A and Network B attached." (Terraform calculates the dependency graph, builds Network B first, creates Server A, and attaches them. If Server A already exists, it does nothing).
+
+<Callout icon="info" title="OpenTofu">
+In 2023, HashiCorp changed Terraform's open-source license (MPL) to a Business Source License (BSL). In response, the Linux Foundation forked the project to create **OpenTofu**, an open-source, drop-in replacement for Terraform.
 </Callout>
 
-## The Terraform Workflow
-
-Terraform relies on three core commands to safely manage infrastructure.
-
-<ComparisonTable 
-  headers={['Command', 'What it does']}
-  rows={[
-    ['terraform init', 'Initializes the working directory, downloads the required cloud Providers (e.g., AWS plugin).'],
-    ['terraform plan', 'Creates an execution plan. It compares your code to the real world and shows you exactly what it *will* create, modify, or destroy.'],
-    ['terraform apply', 'Executes the plan and actually provisions the infrastructure via cloud APIs.']
-  ]}
-/>
-
-## Example: Provisioning an AWS Server
-
-```hcl
-# Configure the AWS Provider
-provider "aws" {
-  region = "us-east-1"
-}
-
-# Define an EC2 Instance (Virtual Machine)
-resource "aws_instance" "web" {
-  ami           = "ami-0c55b159cbfafe1f0" # Ubuntu Linux
-  instance_type = "t2.micro"
-
-  tags = {
-    Name = "HelloWorldServer"
-    Env  = "Production"
-  }
-}
-
-# Output the public IP address after creation
-output "server_public_ip" {
-  value = aws_instance.web.public_ip
-}
-```
-
-## The State File
-
-Terraform must keep track of what it has created so it can modify or destroy it later. It does this via a **State File** (`terraform.tfstate`).
-
-<ArchitectureDiagram chart={`
-graph LR
-  Code[Terraform Code\n(.tf files)]
-  TF{Terraform CLI}
-  State[(Terraform State\n.tfstate)]
-  AWS[AWS Cloud API]
-  
-  Code --> TF
-  TF <--> State
-  TF -- API Calls --> AWS
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

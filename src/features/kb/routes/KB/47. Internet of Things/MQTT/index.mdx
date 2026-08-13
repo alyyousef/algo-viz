@@ -1,8 +1,34 @@
+---
+title: MQTT (Message Queuing Telemetry Transport)
+description: "A lightweight, publish-subscribe network protocol that transports messages between devices, designed specifically for constrained IoT networks."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="MQTT">
+<ConceptTemplate title="MQTT (Message Queuing Telemetry Transport)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If HTTP is the language of the Web, **MQTT** is the language of the Internet of Things. 
+
+Invented in 1999 to monitor oil pipelines over expensive, unreliable satellite links, MQTT was designed to be incredibly lightweight. It uses a **Publish/Subscribe (Pub/Sub)** architecture, completely decoupling the devices sending data from the applications receiving it.
+
+## The Pub/Sub Model
+In HTTP, a client connects directly to a server and asks for data. 
+In MQTT, clients never talk to each other directly. Instead, they all connect to a central server called the **MQTT Broker**.
+
+1. **Publish**: A temperature sensor publishes a message `"22.5"` to a specific "Topic", like `home/livingroom/temperature`.
+2. **Subscribe**: A smart thermostat app subscribes to the topic `home/livingroom/temperature`.
+3. **Routing**: When the Broker receives the message from the sensor, it immediately pushes it to the thermostat app (and any other apps listening to that topic).
+
+## Why MQTT is Perfect for IoT
+- **Tiny Overhead**: An HTTP header can be hundreds of bytes. An MQTT header is as small as 2 bytes. This saves massive amounts of battery and cellular bandwidth.
+- **Quality of Service (QoS)**: MQTT has three levels of guarantee:
+  - **QoS 0 (At most once)**: Fire and forget. (Good for frequent sensor readings).
+  - **QoS 1 (At least once)**: Guaranteed delivery, but might arrive twice.
+  - **QoS 2 (Exactly once)**: Safest, but slowest. (Good for billing systems).
+- **Last Will and Testament (LWT)**: If a device suddenly loses power or cell service, the Broker will automatically publish a pre-configured "death certificate" message to notify the rest of the system that the device has flatlined.
+
+<Callout icon="tip" title="Popular Brokers">
+**Mosquitto** is the most popular open-source MQTT broker for small/medium projects. Enterprise cloud providers (AWS IoT Core, Azure IoT Hub) heavily use MQTT under the hood to ingest data.
+</Callout>
 
 </ConceptTemplate>

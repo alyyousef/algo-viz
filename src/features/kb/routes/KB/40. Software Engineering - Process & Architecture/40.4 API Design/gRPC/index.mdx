@@ -1,27 +1,45 @@
 ---
 title: gRPC
-description: A high-performance, open-source universal RPC framework developed by Google.
+description: "A high-performance, open-source Remote Procedure Call (RPC) framework developed by Google."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="gRPC">
+<ConceptTemplate title="gRPC">
 
-gRPC is a modern, open-source Remote Procedure Call (RPC) framework that can run in any environment. It can efficiently connect services in and across data centers with pluggable support for load balancing, tracing, health checking and authentication.
+While REST and GraphQL are the standards for external APIs (frontend-to-backend), **gRPC** has become the industry standard for internal, backend-to-backend microservice communication.
 
-<Callout icon="info" title="Under the Hood">
-  gRPC uses HTTP/2 for transport (which allows multiplexing and streaming) and Protocol Buffers (Protobuf) as the interface description language and message format.
-</Callout>
+gRPC is a modern evolution of the classic **RPC (Remote Procedure Call)** model, where a client application directly calls a function on a remote server as if it were a local object.
 
-## Why gRPC over REST?
+## 1. Protocol Buffers (Protobuf)
+REST uses JSON. JSON is a text-based format that is human-readable but slow to parse and large over the wire.
+
+gRPC uses **Protocol Buffers (Protobuf)**, a strictly typed, binary serialization format. 
+1. You define your API schema and data types in a `.proto` text file.
+2. The Protobuf compiler automatically generates the client and server code in 10+ languages (Java, Go, Python, Node.js).
+3. The data is serialized into tiny, lightning-fast binary payloads before being sent over the network.
+
+## 2. HTTP/2 by Default
+gRPC is built strictly on top of HTTP/2. This provides massive performance benefits over HTTP/1.1 (which REST usually uses):
+- **Multiplexing**: Sending multiple requests simultaneously over a single TCP connection.
+- **Header Compression**: Reducing bandwidth.
+- **Bi-directional Streaming**: The client and server can stream continuous flows of messages back and forth simultaneously.
+
+## 3. gRPC vs REST
 
 <ComparisonTable 
-  headers={['Feature', 'REST (JSON)', 'gRPC (Protobuf)']}
+  headers={['Feature', 'REST (JSON)', 'gRPC (Protobuf)']} 
   rows={[
-    ['Format', 'JSON (Text-based, human-readable).', 'Protobuf (Binary, completely unreadable to humans, highly compressed).'],
-    ['Speed', 'Fast, but requires parsing JSON strings into objects.', 'Extremely fast. Binary serialization is roughly 5x to 10x faster.'],
-    ['Contracts', 'OpenAPI/Swagger (Optional).', 'Strictly typed `.proto` files (Mandatory). The compiler automatically generates client code in Python, Go, Java, etc.'],
-    ['Streaming', 'Generally limited to Client-to-Server requests.', 'Supports Bi-directional streaming natively via HTTP/2.']
-  ]}
+    ['Payload Format', 'Text (JSON) - Slow to parse, large size.', 'Binary - Extremely fast serialization, compact size.'],
+    ['Contract / Schema', 'Optional (OpenAPI/Swagger).', 'Strictly enforced by `.proto` files. Generates SDKs automatically.'],
+    ['Transport Protocol', 'Usually HTTP/1.1.', 'Strictly HTTP/2.'],
+    ['Best Use Case', 'Public-facing APIs, Browser clients.', 'Internal microservice-to-microservice communication.']
+  ]} 
 />
 
-</TechnologyTemplate>
+<Callout icon="info" title="Browser Support">
+Standard gRPC uses HTTP/2 features that web browsers do not fully expose to JavaScript. Therefore, you cannot easily use gRPC directly from a React frontend without setting up a translation proxy (like **gRPC-Web** or Envoy).
+</Callout>
+
+</ConceptTemplate>

@@ -1,8 +1,50 @@
+---
+title: Interrupts
+description: "A signal to the processor emitted by hardware or software indicating an event that needs immediate attention."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Interrupts">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How does a Microcontroller know when a user has pressed a button?
+
+The bad way is **Polling**. The CPU runs an infinite loop, constantly asking: *"Is the button pressed? No. Is the button pressed? No."* This wastes 100% of the CPU's processing power and drains the battery immediately.
+
+The correct way is using **Interrupts**.
+
+## How Interrupts Work
+An Interrupt is a hardware mechanism that allows the CPU to go to sleep or do other work. When the physical button is pressed, the electrical signal travels directly into the MCU's Interrupt Controller. 
+
+The Controller forces the CPU to instantly pause its current program, save its exact state, and jump to a special function called an **Interrupt Service Routine (ISR)**. 
+
+```c
+// This function is NOT called by the main() loop.
+// It is triggered by the hardware silicon the exact microsecond Pin 2 goes HIGH.
+void button_press_ISR() {
+    turn_on_led();
+    clear_interrupt_flag();
+}
+
+void main() {
+    setup_hardware_interrupt(PIN_2, RISING_EDGE);
+    
+    while(1) {
+        // CPU can sleep here, saving 99% battery!
+        enter_low_power_sleep();
+    }
+}
+```
+
+Once the ISR finishes, the CPU resumes its original task exactly where it left off.
+
+## Interrupt Priorities
+Modern MCUs can have dozens of interrupt sources (Timers, Wi-Fi chips, Buttons, UART). What happens if two interrupts trigger at the exact same millisecond?
+
+The MCU assigns **Priorities** to every interrupt. If the CPU is executing a Low Priority ISR (like a button press), and a High Priority Interrupt arrives (like a critical motor failure), the CPU will interrupt the interrupt, handle the motor failure, then return to the button press, then return to the main code.
+
+<Callout icon="warning" title="Keep ISRs Short!">
+A golden rule of embedded programming is that an ISR must be as short and fast as possible. You should **never** put delays, loops, or complex math inside an ISR. Usually, an ISR just sets a boolean flag (e.g., `button_was_pressed = true`) and immediately exits, letting the main loop handle the heavy processing later.
+</Callout>
 
 </ConceptTemplate>

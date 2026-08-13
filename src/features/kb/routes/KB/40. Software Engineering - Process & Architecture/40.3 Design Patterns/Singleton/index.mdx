@@ -1,26 +1,55 @@
 ---
 title: Singleton Pattern
-description: A creational design pattern that lets you ensure that a class has only one instance, while providing a global access point to this instance.
+description: "A creational design pattern that restricts the instantiation of a class to one single instance."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Singleton Pattern">
+<ConceptTemplate title="Singleton Pattern">
 
-The Singleton pattern is a software design pattern that restricts the instantiation of a class to one "single" instance. This is useful when exactly one object is needed to coordinate actions across the system.
+The **Singleton** is the most famous (and most controversial) design pattern from the original Gang of Four book. It ensures that a class has only one single instance throughout the entire lifecycle of an application, and provides a global point of access to it.
+
+## 1. The Implementation
+To create a Singleton, you must:
+1. Make the constructor private (so no one can use the `new` keyword).
+2. Create a static method that acts as a constructor. This method creates the object the first time it is called, saves it in a private static field, and returns that cached instance on all subsequent calls.
+
+```typescript
+class DatabaseConnection {
+  private static instance: DatabaseConnection;
+
+  // 1. Private constructor prevents direct instantiation
+  private constructor() {
+    console.log("Initializing database connection...");
+  }
+
+  // 2. Static access method
+  public static getInstance(): DatabaseConnection {
+    if (!DatabaseConnection.instance) {
+      DatabaseConnection.instance = new DatabaseConnection();
+    }
+    return DatabaseConnection.instance;
+  }
+
+  public query(sql: string) {
+    // Execute query
+  }
+}
+
+// Usage:
+const db1 = DatabaseConnection.getInstance();
+const db2 = DatabaseConnection.getInstance();
+
+console.log(db1 === db2); // true! They point to the exact same object in memory.
+```
+
+## 2. Common Use Cases
+- Managing a single shared Database connection pool.
+- Centralized Application Configuration or Logging services.
+- Hardware interface access (e.g., you only have one physical printer, so you only want one PrinterSpooler object).
 
 <Callout icon="warning" title="The Anti-Pattern Debate">
-  Many modern developers consider the Singleton an anti-pattern. It is essentially a glorified Global Variable, which makes unit testing extremely difficult because tests can bleed state into each other through the shared Singleton. Modern Dependency Injection (DI) is preferred.
+Many modern developers consider the Singleton an **Anti-Pattern**. It introduces hidden global state, makes unit testing incredibly difficult (because state bleeds between tests), and tightly couples your code. In modern applications, Singletons are usually replaced by **Dependency Injection** frameworks, which handle the object lifecycle and guarantee a single instance without hardcoding it into the class itself.
 </Callout>
 
-## Common Use Cases
-
-<ComparisonTable 
-  headers={['Use Case', 'Why Singleton?']}
-  rows={[
-    ['Database Connections', 'Opening a connection to PostgreSQL is extremely slow. A Singleton ensures you open it exactly once, and all classes share that one open pipe.'],
-    ['Logging Services', 'You want a single file lock on the `server.log` file, and you want any class anywhere to be able to call `Logger.info()`.'],
-    ['Hardware Interfaces', 'If you have a robot arm, you only want one class controlling it. If two instances tried to send instructions to the arm simultaneously, it would crash.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

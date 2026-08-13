@@ -1,29 +1,30 @@
 ---
 title: Content Delivery Networks (CDNs)
-description: A geographically distributed network of proxy servers and their data centers.
+description: "A geographically distributed network of proxy servers that cache content closer to end users to reduce latency."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Content Delivery Networks (CDNs)">
+<ConceptTemplate title="Content Delivery Networks (CDNs)">
 
-A content delivery network (CDN) is a geographically distributed network of proxy servers and their data centers. The goal is to provide high availability and performance by distributing the service spatially relative to end users.
+Because of the speed of light, data takes roughly 150 milliseconds to travel from New York to Sydney, Australia. If your web server is in New York, Australian users will experience severe latency.
 
-<Callout icon="tip" title="Defeating the Speed of Light">
-  If your main server is in New York, and a user in Tokyo requests a 5MB image, the data literally has to travel through fiber optic cables across the ocean, taking 200+ milliseconds. 
-  
-  A CDN copies that image to a server in Tokyo. The user requests it, and the Tokyo server responds in 5 milliseconds.
+A **CDN (Content Delivery Network)** solves this by placing thousands of caching servers (called **Edge Servers**) in cities all around the world.
+
+## 1. How a CDN Works
+1. A user in Sydney requests `hero-image.jpg`.
+2. The DNS routes their request to the closest CDN Edge Server (in Sydney).
+3. **Cache Miss**: The Sydney edge server does not have the image. It forwards the request to your **Origin Server** in New York.
+4. The Origin Server sends the image back to Sydney.
+5. The Sydney edge server saves a copy in its RAM/Disk (caches it) and serves it to the user.
+6. **Cache Hit**: A second user in Sydney requests the same image. The edge server serves it instantly from cache without ever contacting New York.
+
+## 2. Push vs Pull CDNs
+- **Pull CDN**: The most common. You just point the CDN at your Origin URL. The CDN pulls files automatically upon the first user request (lazy loading).
+- **Push CDN**: You actively upload your files (via API or FTP) directly to the CDN's servers ahead of time. Best for massive files that must be available instantly to everyone.
+
+<Callout icon="warning" title="Cache Invalidation">
+The hardest part of using a CDN is cache invalidation. If you update your logo on the Origin Server, the CDN might continue serving the old logo for 24 hours. You must either manually issue a "Purge" command via the CDN dashboard, or use versioned filenames (`logo_v2.jpg`) to bust the cache automatically.
 </Callout>
 
-## How it Works
-
-<ComparisonTable 
-  headers={['Component', 'Description']}
-  rows={[
-    ['Origin Server', 'Your actual server (e.g., an AWS S3 bucket in New York). This holds the absolute truth.'],
-    ['Edge Server (PoP)', 'The CDN servers scattered in 100+ cities worldwide (Point of Presence).'],
-    ['Cache Miss', 'User in Paris requests an image. The Paris Edge Server doesn\'t have it. It asks the Origin Server in NY, serves it to the user, and caches a copy.'],
-    ['Cache Hit', 'The next user in Paris requests the same image. The Paris Edge Server instantly returns the cached copy, completely bypassing the NY Origin server.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

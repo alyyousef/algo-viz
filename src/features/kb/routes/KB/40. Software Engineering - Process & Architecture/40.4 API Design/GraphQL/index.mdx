@@ -1,48 +1,52 @@
 ---
 title: GraphQL
-description: A query language for your API, and a server-side runtime for executing queries using a type system you define for your data.
+description: "A query language for APIs developed by Facebook that allows clients to request exactly the data they need, and nothing more."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="GraphQL">
+<ConceptTemplate title="GraphQL">
 
-GraphQL is a data query and manipulation language for APIs, and a runtime for fulfilling queries with existing data. It allows clients to define the structure of the data required, and exactly that structure of the data is returned from the server.
+Created by Facebook in 2012 to optimize data fetching for their mobile apps, **GraphQL** is an alternative to REST. While REST forces the server to define the structure of the response, GraphQL empowers the *client* to dictate exactly what data it wants.
 
-<Callout icon="success" title="No More Over-fetching">
-  Unlike REST, where calling `/api/users/1` might return 50 fields (including their entire purchase history when you just needed their username), GraphQL lets the frontend say: `query { user(id: 1) { username } }`. The server returns *exactly* that and nothing more, saving massive amounts of bandwidth.
-</Callout>
+## 1. The Problems with REST
+- **Over-fetching**: You hit `/users/123` to get a user's name, but the REST API returns a massive JSON object with 50 fields (address, preferences, history) that you waste bandwidth downloading.
+- **Under-fetching (N+1 Problem)**: To render a blog post page, you hit `/posts/1`. Then you need the author data, so you hit `/users/5`. Then you need the comments, so you hit `/posts/1/comments`. Rendering one screen required 3 separate HTTP network round-trips.
 
-## The Three Core Operations
+## 2. The GraphQL Solution
+In GraphQL, there is only **one** endpoint (usually `POST /graphql`). The client sends a query specifying exactly the graph of data it needs in a single request.
+
+```graphql
+# The Client Query
+query {
+  post(id: 1) {
+    title
+    author {
+      name
+    }
+    comments(limit: 2) {
+      body
+    }
+  }
+}
+```
+
+The server responds with a JSON object that exactly matches the shape of the query, solving both over-fetching and under-fetching simultaneously.
+
+## 3. Operations
 
 <ComparisonTable 
-  headers={['Operation', 'Purpose', 'REST Equivalent']}
+  headers={['GraphQL Operation', 'REST Equivalent', 'Purpose']} 
   rows={[
-    ['Query', 'Fetching data (read-only).', 'GET'],
-    ['Mutation', 'Modifying data (Create, Update, Delete) and returning the updated data.', 'POST, PUT, PATCH, DELETE'],
-    ['Subscription', 'Maintaining a persistent connection (WebSocket) to receive real-time updates when data changes.', 'Webhooks or Server-Sent Events (SSE)']
-  ]}
+    ['Query', 'GET', 'Fetching data without modifying it.'],
+    ['Mutation', 'POST, PUT, DELETE', 'Modifying data on the server and returning the updated result.'],
+    ['Subscription', 'WebSockets / SSE', 'Opening a real-time connection to receive live updates when data changes.']
+  ]} 
 />
 
-## Architecture
+<Callout icon="warning" title="The Trade-off">
+GraphQL shifts the complexity from the network to the server. Writing efficient "Resolvers" on the backend to fulfill complex nested GraphQL queries without crushing your SQL database requires advanced techniques like DataLoader to batch database queries.
+</Callout>
 
-<ArchitectureDiagram chart={`
-graph TD
-  Client[React Frontend]
-  
-  subgraph GraphQL Server
-    Resolver1[User Resolver]
-    Resolver2[Post Resolver]
-    Resolver3[Payment Resolver]
-  end
-  
-  DB1[(PostgreSQL)]
-  DB2[(MongoDB)]
-  API[(Stripe API)]
-  
-  Client -- "query { user { posts, billing } }" --> GraphQLServer
-  Resolver1 --> DB1
-  Resolver2 --> DB2
-  Resolver3 --> API
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

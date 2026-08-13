@@ -1,8 +1,35 @@
+---
+title: Cognitive Load
+description: "The total amount of mental effort being used in the working memory, which in UX determines how easily a user can understand and navigate an interface."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Cognitive load">
+<ConceptTemplate title="Cognitive Load">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The human brain acts like a computer's RAM (Working Memory). It can only hold and process a very small amount of information at one time (roughly 5 to 7 "chunks" of information).
+
+**Cognitive Load** is the amount of mental processing power required to use a product. If a User Interface requires too much thinking, the user's working memory overflows, they feel overwhelmed, and they abandon the app.
+
+## Types of Cognitive Load in UX
+
+<ComparisonTable 
+  headers={['Type', 'Definition', 'UX Example']} 
+  rows={[
+    ['Intrinsic Cognitive Load', 'The inherent difficulty of the task itself. You cannot eliminate this.', 'Doing your taxes is inherently complex. You have to understand income, deductions, and tax brackets.'],
+    ['Extraneous Cognitive Load', 'The mental effort caused by a bad interface or confusing design. This is what UX Designers try to eliminate.', 'The tax software uses a tiny, hard-to-read font, hides the "Next" button, and uses dense legal jargon instead of plain English.']
+  ]} 
+/>
+
+## How to Reduce Cognitive Load
+
+1. **Chunking**: Break massive tasks down into small, digestible bites. Instead of a single form with 50 questions, use a wizard that asks 5 questions per page across 10 pages.
+2. **Remove Visual Clutter**: (Nielsen's 8th Heuristic). If an image, border, or text block doesn't help the user complete their immediate goal, delete it.
+3. **Rely on Familiar Patterns**: If you invent a completely novel, experimental navigation system, the user has to spend mental energy just learning how to click around. If you use a standard top-nav bar, their brain uses zero energy to navigate, saving it all for the actual task.
+
+<Callout icon="warning" title="Hick's Law">
+Hick's Law states that **the time it takes to make a decision increases with the number and complexity of choices.** If a restaurant menu has 200 items, you will take 15 minutes to order. If a website shows 40 different pricing tiers on the signup page, the user will suffer analysis paralysis and leave.
+</Callout>
 
 </ConceptTemplate>

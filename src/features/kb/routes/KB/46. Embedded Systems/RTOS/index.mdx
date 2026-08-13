@@ -1,8 +1,35 @@
+---
+title: RTOS (Real-Time Operating System)
+description: "An operating system intended to serve real-time applications that process data as it comes in, typically without buffering delays."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="RTOS">
+<ConceptTemplate title="Real-Time Operating System (RTOS)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+As embedded systems become more complex (e.g., a device that needs to read sensors, update an LCD screen, and maintain a Wi-Fi connection simultaneously), the Bare-Metal "Super Loop" architecture becomes impossible to manage. 
+
+The solution is an **RTOS (Real-Time Operating System)** like FreeRTOS or Zephyr. An RTOS is a tiny, highly-optimized OS (often just a few kilobytes of code) that provides a Scheduler, allowing you to run multiple Tasks (threads) simultaneously on a Microcontroller.
+
+## "Real-Time" Means Predictable, Not Fast
+A common misconception is that an RTOS is "faster" than Linux. This is false.
+**Real-Time means Deterministic.** 
+
+<ComparisonTable 
+  headers={['OS Type', 'Philosophy', 'Example']} 
+  rows={[
+    ['General Purpose OS (Linux/Windows)', 'Fairness and Throughput. Tries to keep all applications responsive. A process might be delayed by 50ms if the CPU is busy loading a game.', 'Your laptop, web servers.'],
+    ['Real-Time OS (FreeRTOS)', 'Strict Deadlines. If a high-priority task (e.g., deploying an airbag) needs to run, it will preempt absolutely everything else in exactly 1.2 microseconds, guaranteed.', 'Medical ventilators, car brakes, rockets.']
+  ]} 
+/>
+
+## Hard vs Soft Real-Time
+- **Hard Real-Time**: Missing a deadline causes total system failure or catastrophe. (e.g., A pacemaker must fire exactly every 800ms. If it is 50ms late, the patient dies).
+- **Soft Real-Time**: Missing a deadline is bad, but the system degrades gracefully. (e.g., A video decoder drops a frame, causing a slight visual glitch, but the video continues).
+
+<Callout icon="info" title="FreeRTOS">
+**FreeRTOS** is the undisputed king of the embedded world. It is open-source, written in pure C, and small enough to run on an MCU with only 4KB of RAM.
+</Callout>
 
 </ConceptTemplate>

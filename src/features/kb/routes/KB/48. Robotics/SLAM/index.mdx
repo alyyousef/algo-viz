@@ -1,8 +1,32 @@
+---
+title: SLAM (Simultaneous Localization and Mapping)
+description: "The computational problem of constructing or updating a map of an unknown environment while simultaneously keeping track of an agent's location within it."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="SLAM">
+<ConceptTemplate title="SLAM (Simultaneous Localization and Mapping)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**SLAM** is arguably the most famous and difficult algorithmic problem in modern mobile robotics. It is the core technology behind robot vacuums (Roombas), self-driving cars, and Mars rovers.
+
+## The Chicken-and-Egg Problem
+To navigate a room, a robot needs two things:
+1. **Localization**: "Where am I?" (To know where you are, you need a map).
+2. **Mapping**: "What does the room look like?" (To draw a map, you need to know exactly where you are standing when you draw it).
+
+SLAM is the mathematical magic of doing both at the exact same time. The robot uses its sensors (LiDAR or cameras) to look at the walls, guess its position based on the walls, and then use that position to draw more walls.
+
+## How SLAM Works (Simplified)
+1. **Odometry (Dead Reckoning)**: The robot counts its wheel rotations to guess how far it moved. *"My wheels turned 3 times, I must have moved 1 meter forward."* Because wheels slip on carpet, this guess is slightly wrong.
+2. **Observation**: The LiDAR scans the room and sees a distinct corner of a wall.
+3. **Movement**: The robot moves forward, Odometry guesses the new position, and LiDAR scans the room again.
+4. **Scan Matching**: The SLAM algorithm compares the new LiDAR scan to the old one. If Odometry says we moved 1 meter, but the wall corner only looks like we moved 0.9 meters, SLAM uses heavy probabilistic math (usually a **Kalman Filter** or **Particle Filter**) to correct the Odometry error and update the internal map.
+
+## Loop Closure
+The biggest challenge in SLAM is **Drift**. If a robot drives down a long hallway, tiny errors in sensor readings accumulate. The map starts to bend slightly. 
+
+If the robot drives in a massive circle around a building and returns to the exact spot it started, the accumulated drift might make the robot think it is 10 feet to the left of where it actually is. 
+
+**Loop Closure** is when the algorithm suddenly recognizes a feature it saw 20 minutes ago. It realizes, *"Wait, I've been here before. I must have drifted!"* The SLAM algorithm then instantly snaps the entire map back into place, correcting all the accumulated errors backward through time.
 
 </ConceptTemplate>

@@ -1,27 +1,32 @@
 ---
-title: FTP (File Transfer Protocol)
-description: The legacy, unencrypted, and notoriously complex protocol originally designed in 1971 to transfer files across networks.
+title: FTP
+description: "File Transfer Protocol, a standard network protocol used for the transfer of computer files between a client and server on a computer network."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="FTP (File Transfer Protocol)">
+<ConceptTemplate 
+  name="FTP"
+  icon="folder"
+>
 
-**FTP (File Transfer Protocol)** is one of the oldest protocols on the internet, predating TCP/IP itself. It was the standard way to upload files to web servers for decades.
+**FTP (File Transfer Protocol)** is an ancient protocol (originally defined in 1971, pre-dating TCP/IP itself) used for uploading and downloading files. For decades, it was the primary way web developers uploaded HTML files to their shared hosting providers.
 
-Today, standard FTP is considered a massive security risk and is almost entirely obsolete. 
+## The Two-Port Architecture
 
-## The Dual-Channel Nightmare
+FTP is unusual because it uses two separate TCP connections:
+1. **The Control Connection (Port 21)**: Used to send commands (like `USER`, `PASS`, `LIST`) and receive status replies. This connection stays open for the entire session.
+2. **The Data Connection (Port 20)**: A temporary, separate connection opened specifically to transfer the actual file contents, then immediately closed.
 
-FTP is incredibly hostile to modern firewalls because it requires **two completely separate connections** to function:
-1. **The Command Channel (Port 21)**: The client connects to Port 21 to send commands (like "LIST files" or "DOWNLOAD image.jpg").
-2. **The Data Channel (Port 20 or Random)**: When the server actually transfers the file, it opens a *brand new connection*. 
+This two-port architecture makes FTP a nightmare for modern NATs (Network Address Translation) and strict firewalls, leading to the invention of "Passive Mode" (where the client initiates the data connection instead of the server).
 
-### Active vs Passive Mode
-- **Active Mode**: The Client tells the Server, *"I am listening on Port 5000, please connect to me to send the file."* Modern NAT routers instantly block this because they drop unsolicited incoming traffic.
-- **Passive Mode**: The Server tells the Client, *"I am listening on random Port 55000, please connect to me to get the file."* The Server's firewall must be manually configured to allow thousands of random high-numbered ports, which security teams hate.
+## Security Flaws
+FTP sends everything—including your username and password—in **plain text**. If you log into an FTP server over public Wi-Fi, anyone sniffing the network can steal your credentials instantly.
 
-<Callout icon="warning" title="Zero Encryption">
-  Standard FTP transmits everything in plain text, including the username and password used to log in. It should never be used on the modern internet. If legacy systems absolutely require FTP, administrators must wrap it in TLS encryption, creating a protocol known as **FTPS (FTP over SSL/TLS)**. (Note: FTPS is completely different from SFTP, which uses SSH).
+<Callout icon="danger" title="FTP vs SFTP vs FTPS">
+- **FTP**: Unencrypted, insecure, obsolete.
+- **FTPS**: FTP wrapped in TLS encryption. Still suffers from firewall issues due to the two-port architecture.
+- **SFTP (SSH File Transfer Protocol)**: Not FTP at all! It is an entirely different, highly secure protocol that runs over standard SSH (Port 22). **SFTP is the modern standard for secure file transfers.**
 </Callout>
 
 </ConceptTemplate>

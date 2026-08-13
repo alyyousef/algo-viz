@@ -1,8 +1,31 @@
+---
+title: CoAP (Constrained Application Protocol)
+description: "A specialized web transfer protocol for use with constrained nodes and constrained networks in the Internet of Things."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="CoAP">
+<ConceptTemplate title="CoAP (Constrained Application Protocol)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While MQTT uses a Publish/Subscribe model, some IoT applications still require a traditional Request/Response model (just like HTTP). However, HTTP is far too heavy for battery-powered microcontrollers.
+
+**CoAP** was designed to be "HTTP for the Internet of Things." It maps perfectly to HTTP semantics (GET, POST, PUT, DELETE), but is dramatically stripped down to run over UDP instead of TCP.
+
+## CoAP vs MQTT
+
+<ComparisonTable 
+  headers={['Feature', 'CoAP', 'MQTT']} 
+  rows={[
+    ['Architecture', 'Request/Response (Client/Server)', 'Publish/Subscribe (Broker)'],
+    ['Transport Protocol', 'UDP (Fast, no handshake overhead)', 'TCP (Reliable, but heavy)'],
+    ['Header Size', '4 Bytes', '2 Bytes'],
+    ['Best For', 'State transfer, querying specific devices (e.g., "Are you locked?")', 'Telemetry, streaming constant data (e.g., "Here is my temperature.")']
+  ]} 
+/>
+
+## Key Features of CoAP
+1. **UDP Based**: By ditching TCP, CoAP avoids the expensive 3-way handshake. This means a device can wake up from deep sleep, fire off a UDP packet, and go back to sleep in milliseconds, saving massive amounts of battery.
+2. **Observe Pattern**: CoAP extends standard HTTP with an `Observe` flag. A client can send a GET request for `/temperature` with the Observe flag. Instead of returning once, the server will keep the connection conceptually open and push new responses whenever the temperature changes.
+3. **Built-in Discovery**: Because CoAP devices might be on local mesh networks, CoAP includes standard mechanisms for devices to broadcast their existence and discover each other locally.
 
 </ConceptTemplate>

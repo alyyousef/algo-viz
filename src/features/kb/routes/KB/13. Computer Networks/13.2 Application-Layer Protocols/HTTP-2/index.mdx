@@ -1,28 +1,34 @@
 ---
 title: HTTP/2
-description: The 2015 overhaul of HTTP that introduced binary framing and stream multiplexing to solve the latency problems of the modern web.
+description: "A major revision of the HTTP network protocol, introducing multiplexing, binary framing, and header compression to solve HTTP/1.1's performance bottlenecks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="HTTP/2">
+<ConceptTemplate 
+  name="HTTP/2"
+  icon="rocket"
+>
 
-By 2015, modern webpages had become massive, requiring browsers to download hundreds of Javascript and CSS files simultaneously. HTTP/1.1, with its sequential processing and Head-of-Line blocking, was collapsing under the weight.
+Published in 2015 and heavily based on Google's SPDY protocol, **HTTP/2** was the first major upgrade to the web in 18 years. It was designed specifically to make websites load faster by fixing the inherent design flaws in HTTP/1.1.
 
-Google developed an experimental protocol called SPDY, which the IETF eventually standardized into **HTTP/2**.
+## How it Works: Binary Framing
 
-## The Binary Revolution
+HTTP/1.1 is text-based. HTTP/2 fundamentally changes this by adding a **Binary Framing Layer**. 
+Instead of sending raw text, HTTP/2 breaks down messages (Headers and Body) into discrete, binary frames. 
 
-HTTP/1.1 was entirely plain text (you could read the headers with your eyes). 
-HTTP/2 is a **Binary** protocol. The client takes the HTTP request, compiles it into binary machine code, and breaks it into tiny, discrete "Frames".
+Because the data is broken into frames, HTTP/2 can perform **Multiplexing**.
 
-## Multiplexing (The Killer Feature)
+## Multiplexing (Solving Application HoL Blocking)
+In HTTP/1.1, if you wanted 10 files, you had to queue them one after another (or open 6 TCP connections).
+In HTTP/2, the browser opens **a single TCP connection** to the server. Over this single connection, it can send requests for the HTML, CSS, and 8 images simultaneously. The server sends back binary frames for all 10 files interspersed with each other. 
 
-Because the requests are broken into binary frames, HTTP/2 can **Multiplex** data.
-You can send the 10MB Video and the 1KB CSS file *at the exact same time* over a single TCP connection. The server chops both files into tiny binary frames, mixes them together in the TCP pipe, and the browser mathematically reassembles them on the other side. 
-**Head-of-Line blocking was completely eliminated.**
+## Other Features
+- **Header Compression (HPACK)**: HTTP/1.1 sends the exact same headers (like cookies and user agents) on every single request, wasting bandwidth. HTTP/2 compresses headers and only sends the delta (what changed).
+- **Server Push**: (Largely deprecated now) Allowed a server to proactively send CSS and JS files to the client before the client even realized it needed them.
 
-<Callout icon="success" title="Header Compression (HPACK)">
-  In HTTP/1.1, every single request re-sent the exact same massive headers (Cookies, User-Agents), wasting massive amounts of bandwidth. HTTP/2 introduced **HPACK**, which aggressively compresses headers, drastically reducing the size of the request payloads and speeding up mobile browsing significantly.
+<Callout icon="warning" title="TCP Head-of-Line Blocking">
+While HTTP/2 solved HoL blocking at the *application* layer, it created a new problem at the *TCP* layer. Because everything travels over a single TCP connection, if a single packet is lost on the network, TCP halts the *entire* connection to wait for retransmission, pausing the download of all multiplexed files simultaneously.
 </Callout>
 
 </ConceptTemplate>

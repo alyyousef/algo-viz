@@ -1,31 +1,43 @@
 ---
-title: Containers
-description: A standard unit of software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another.
+title: Containers (Linux Concepts)
+description: "Lightweight, standalone, executable packages of software that include everything needed to run an application."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Containers">
+<ConceptTemplate title="Containers (Linux Concepts)">
 
-A **Container** is an isolated, lightweight, and portable execution environment that bundles a software application along with all of its dependencies, libraries, and configuration files.
+Before Docker existed, **Containers** were simply a set of native Linux kernel features designed to isolate processes from one another. A container is not a virtual machine; it is just a standard Linux process that has been tricked into thinking it is the only process running on the computer.
 
-<Callout icon="success" title="The 'It Works on My Machine' Solution">
-  Before containers, a developer would write Python code on a Mac, push it to a Linux server, and the server would crash because it had the wrong version of a C library installed. 
-  Containers solve this entirely. Because the container includes the exact OS libraries and dependencies the code needs, if it runs on the developer's laptop, it is mathematically guaranteed to run identically on the production server.
+## 1. The Core Kernel Features
+Linux containers are built primarily on two foundational kernel technologies:
+
+### Namespaces (Isolation)
+Namespaces restrict what a process can *see*.
+- **PID Namespace**: The process thinks it is PID 1, and cannot see any other processes on the host machine.
+- **NET Namespace**: The process gets its own virtual network stack, its own localhost, and its own IP address.
+- **MNT Namespace**: The process gets its own isolated file system root (`/`), unable to access the host's actual hard drive.
+
+### cgroups (Resource Limiting)
+Control Groups (cgroups) restrict what a process can *use*.
+- If a process has a memory leak, cgroups ensure it can only consume a maximum of 512MB of RAM before the kernel kills it, preventing it from crashing the entire host server.
+- They can also limit CPU cycles, disk I/O, and network bandwidth.
+
+## 2. Virtual Machines vs Containers
+
+<ComparisonTable 
+  headers={['Feature', 'Virtual Machines (VMs)', 'Containers']} 
+  rows={[
+    ['Architecture', 'Hypervisor running multiple full Guest OS kernels.', 'A single Host OS kernel shared among all containers.'],
+    ['Startup Time', 'Minutes (must boot the OS).', 'Milliseconds (just starting a process).'],
+    ['Size', 'Gigabytes (contains full OS).', 'Megabytes (contains only dependencies).'],
+    ['Isolation', 'Hardware-level isolation (very secure).', 'Process-level isolation (less secure, vulnerable to kernel exploits).']
+  ]} 
+/>
+
+<Callout icon="info" title="The Container Illusion">
+Because containers share the host's kernel, you cannot run a Windows container on a Linux host (without using a hidden Virtual Machine layer in between, which is exactly what Docker Desktop does on Mac/Windows).
 </Callout>
-
-## Virtual Machines vs. Containers
-
-To understand containers, you must understand how they differ from traditional Virtual Machines (VMs).
-
-- **Virtual Machines**: A hypervisor allocates physical hardware to run a completely independent, full-blown "Guest Operating System" (like Windows or Ubuntu) for every single VM. This is extremely heavy. A VM might consume 2GB of RAM just to boot the OS, before running any application code.
-- **Containers**: Containers do **not** contain a full operating system. Instead, all containers running on a machine share the exact same underlying Host OS Kernel. The container only holds the application code and the specific user-space binaries it needs. This makes containers incredibly lightweight. They boot in milliseconds and consume only megabytes of RAM.
-
-## How do they work? (Linux Primitives)
-
-Containers are essentially an illusion created using three core features of the Linux Kernel:
-
-1. **Namespaces**: Provide isolation. They trick a process into thinking it is the only process running on the computer. A process in a container cannot see processes, network interfaces, or mount points outside of its namespace.
-2. **cgroups (Control Groups)**: Provide resource limits. They prevent a single container from consuming 100% of the CPU or RAM and starving the rest of the system.
-3. **Union File Systems (OverlayFS)**: Provide layered image management. They allow the container to share common base files (like the Ubuntu root filesystem) with other containers to save massive amounts of disk space.
 
 </ConceptTemplate>

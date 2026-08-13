@@ -1,27 +1,33 @@
 ---
 title: iOS
-description: The mobile operating system powering the iPhone, sharing its core XNU kernel with macOS but fundamentally redesigned for touch, battery life, and extreme security.
+description: "Apple's mobile operating system, originally created for the iPhone, known for its strict security, fluid animations, and absolute ecosystem control."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="iOS">
+<TechnologyTemplate 
+  name="iOS"
+  icon="apple"
+  creator="Apple"
+  year={2007}
+  website="https://www.apple.com/ios/"
+>
 
-When Apple introduced the iPhone in 2007, Steve Jobs famously stated that it "runs OS X." This was true: **iOS** is fundamentally the exact same operating system as macOS, simply stripped down and hyper-optimized for mobile hardware.
+Originally called "iPhone OS", **iOS** revolutionized the world in 2007 by proving that a mobile device didn't need a physical keyboard or a stylus—it just needed a multi-touch capacitive screen and an operating system built natively for fingers.
 
-## The Shared Foundation
+Under the hood, iOS shares its core foundation (Darwin/UNIX) with macOS, but the User Interface layer is entirely different.
 
-iOS shares the exact same **Darwin foundation and XNU Hybrid Kernel** as macOS. It uses the same networking stack, the same file system (APFS), and the same core libraries.
+## The Walled Garden
+iOS is famous for its strict, uncompromising security model:
+1. **Sandboxing**: Every app is strictly isolated in a "sandbox." App A cannot look at the files or memory of App B.
+2. **The App Store Monopoly**: Until very recently (and only due to EU legislation), the *only* way to install software on an iPhone was through Apple's App Store, subject to their strict review guidelines and 30% revenue cut.
+3. **No Background Processing**: To preserve battery life, iOS aggressively kills apps running in the background. Unlike Android, you cannot easily run an app that constantly mines crypto or tracks location without the OS noticing and terminating it.
 
-However, the user-space layer is completely different. Where macOS uses the "Cocoa" framework for windowed, mouse-driven apps, iOS uses the **Cocoa Touch** framework, built entirely around multi-touch gestures, swipe physics, and single-window fullscreen applications.
+## The UI Standard
+iOS set the standard for fluid mobile interfaces. Apple enforces strict Human Interface Guidelines (HIG), ensuring that scrolling feels physical (rubber-banding effects) and that buttons are large enough for thumbs. Developers build iOS apps using **Swift** and **SwiftUI**.
 
-<Callout icon="warning" title="The Walled Garden">
-  Unlike macOS (where you can download any software from the internet), iOS is a completely closed ecosystem. The OS is cryptographically locked to only execute binaries that have been digitally signed by Apple. Unless you "Jailbreak" the device by exploiting a kernel vulnerability, the App Store is the only legal way to install software.
+<Callout icon="info" title="The Forking of iOS">
+As Apple's hardware evolved, they forked iOS to create specialized OSes: **iPadOS** (added mouse support and multitasking for larger screens), **watchOS** (for the Apple Watch), and **tvOS** (for Apple TV).
 </Callout>
 
-## Extreme Sandboxing
-
-Because iOS is designed for consumer safety, its security model is significantly more restrictive than desktop OSs:
-- **Application Sandboxing**: Every app is strictly confined to its own isolated container on the SSD. A flashlight app physically cannot browse your photo library unless you explicitly grant it permission via a secure OS-level prompt.
-- **Background Execution**: In macOS, an app can run silently in the background forever. In iOS, the kernel will mercilessly freeze and kill background applications after a few seconds to preserve RAM and battery life, forcing developers to rely on Apple's Push Notification Service to receive updates.
-
-</ConceptTemplate>
+</TechnologyTemplate>

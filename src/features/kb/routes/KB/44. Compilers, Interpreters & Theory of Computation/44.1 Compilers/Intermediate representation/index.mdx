@@ -1,8 +1,42 @@
+---
+title: Intermediate Representation (IR)
+description: "A data structure or code used internally by a compiler to represent source code before translating it into the target machine code."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Intermediate representation">
+<ConceptTemplate title="Intermediate Representation (IR)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Instead of translating the AST directly into Intel x86 machine code, modern compilers first translate the AST into an **Intermediate Representation (IR)**.
+
+IR looks like a simplified, generic assembly language. It is independent of the original source language (like C++ or Rust) and independent of the target CPU architecture (like x86 or ARM).
+
+## The "M x N" Problem
+Imagine you want to build a compiler that supports 3 languages (C, C++, Rust) and outputs to 3 CPU architectures (x86, ARM, RISC-V).
+- **Without IR**: You must write 9 distinct compilers (C to x86, C to ARM, Rust to ARM, etc).
+- **With IR**: You write 3 "Frontends" that convert the source code to IR. You write 3 "Backends" that convert IR to machine code. You only wrote 6 components, but you get all 9 combinations for free!
+
+## Three-Address Code
+A very common form of IR is **Three-Address Code (TAC)**. Every instruction is broken down so it has at most two operands and one result.
+
+*Source Code:*
+```c
+x = a + b * c;
+```
+
+*Intermediate Representation:*
+```text
+t1 = b * c
+x = a + t1
+```
+
+<ComparisonTable 
+  headers={['Compiler Phase', 'Input', 'Output']} 
+  rows={[
+    ['Frontend', 'Source Code (C++, Swift)', 'Abstract Syntax Tree (AST) -> IR'],
+    ['Middle-end', 'Unoptimized IR', 'Optimized IR (Dead code removed, loops unrolled)'],
+    ['Backend', 'Optimized IR', 'Machine Code (x86, ARM, WebAssembly)']
+  ]} 
+/>
 
 </ConceptTemplate>

@@ -1,26 +1,27 @@
 ---
-title: Flexbox Layout
-description: A powerful, one-dimensional layout engine designed to align, distribute, and perfectly center elements within a container.
+title: Flexbox
+description: "Flexible Box Module, a one-dimensional layout model for distributing space and aligning items within a container."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Flexbox Layout">
+<ConceptTemplate 
+  name="Flexbox"
+  icon="align-justify"
+>
 
-Before Flexbox (released around 2012), centering a `<div>` vertically inside a container was famously one of the most agonizing, mathematically difficult tasks in web development (involving floating boxes and negative margins).
+Before **Flexbox** (introduced around 2012), developers relied on massive hacks—like floats, clearfixes, and absolute positioning—just to align elements horizontally. Flexbox revolutionized CSS by providing a robust, one-dimensional layout engine.
 
-**Flexbox (Flexible Box Module)** solved this instantly. It is a one-dimensional layout engine, meaning it aligns items either in a horizontal Row, OR a vertical Column (but not both simultaneously).
+## The Main Axis vs. Cross Axis
 
-## The Parent Container (Flex Container)
-To activate Flexbox, you must apply `display: flex;` to the parent container. This instantly turns all direct children into "Flex Items".
+Flexbox is all about direction. When you set `display: flex;` on a container, you define an axis.
+- **Main Axis**: Controlled by `justify-content` (aligns items along the row or column).
+- **Cross Axis**: Controlled by `align-items` (aligns items perpendicular to the main axis).
 
-## The Two Axes
-Flexbox math operates on a Main Axis and a Cross Axis.
+## Centering a Div
 
-If `flex-direction: row` (the default):
-- **Main Axis** is horizontal (Left to Right). Controlled by `justify-content`.
-- **Cross Axis** is vertical (Top to Bottom). Controlled by `align-items`.
+The holy grail of CSS used to take 10 lines of complex code. With Flexbox, centering a div horizontally and vertically takes three lines:
 
-To perfectly center a box dead in the middle of a container:
 ```css
 .container {
   display: flex;
@@ -29,9 +30,14 @@ To perfectly center a box dead in the middle of a container:
 }
 ```
 
-## Flex Item Properties
-You can give mathematical flexibility to the child items themselves:
-- `flex-grow: 1`: Tells the item to consume all available empty space in the container.
-- `flex-shrink: 0`: Explicitly forbids the browser from crushing the item if the screen gets too small.
+## Flex Items (The Children)
+While the container dictates the overall layout, the children can dictate their own behavior:
+- `flex-grow`: How much of the leftover space this item should consume.
+- `flex-shrink`: How much this item should shrink if there isn't enough space.
+- `flex-basis`: The default size before growing or shrinking.
+
+<Callout icon="tip" title="The flex shorthand">
+You'll often see `flex: 1;` on a child element. This is shorthand for `flex-grow: 1; flex-shrink: 1; flex-basis: 0%;`. It tells the item to fill all available space equally.
+</Callout>
 
 </ConceptTemplate>

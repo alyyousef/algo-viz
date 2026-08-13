@@ -1,8 +1,34 @@
+---
+title: OpenTelemetry (OTel)
+description: "A vendor-neutral standard for generating, collecting, and exporting telemetry data (logs, metrics, and traces)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="OpenTelemetry">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, the observability industry was plagued by vendor lock-in. If you wanted to use Datadog, you had to install the Datadog SDK in your application code. If you later decided to switch to New Relic, you had to rewrite thousands of lines of code to remove the Datadog SDK and install the New Relic SDK.
+
+**OpenTelemetry (OTel)** is a CNCF project created to solve this problem. It provides a single, vendor-neutral standard for instrumenting applications.
+
+## 1. The OTel Architecture
+
+OpenTelemetry consists of two main parts:
+
+### The OTel SDKs
+You install the standard OTel SDK into your Node.js, Python, or Java application. Your application uses this SDK to generate metrics and traces. The application *does not know* where this data is going.
+
+### The OTel Collector
+The Collector is a proxy server that sits between your application and the observability vendors.
+1. Your application sends its telemetry data to the OTel Collector using the standard OTLP protocol.
+2. The Collector receives the data, processes it (filtering out sensitive info like passwords), and then **exports** it to any backend you configure.
+3. You can configure the Collector to send Traces to Jaeger, Metrics to Prometheus, and *everything* to Datadog simultaneously.
+
+## 2. Breaking Lock-in
+With OpenTelemetry, changing observability vendors is trivial. You do not touch your application code. You simply update the configuration YAML file of the OTel Collector to point to a new vendor's API endpoint, and the data instantly starts flowing there.
+
+<Callout icon="tip" title="Auto-Instrumentation">
+For languages like Java and Python, OTel supports "Auto-Instrumentation". It hooks into the runtime environment and automatically generates traces for incoming HTTP requests, database queries, and Redis calls without you writing a single line of instrumentation code.
+</Callout>
 
 </ConceptTemplate>

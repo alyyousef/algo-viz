@@ -1,8 +1,37 @@
+---
+title: Terraform State
+description: "The mapping mechanism Terraform uses to keep track of the real-world infrastructure it manages."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="State">
+<ConceptTemplate title="Terraform State">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Terraform needs a way to map the resources defined in your HCL code to the actual, physical resources deployed in the cloud. It accomplishes this using the **State File** (`terraform.tfstate`).
+
+## 1. Why State is Necessary
+If you write `resource "aws_instance" "web"` and run Terraform, it creates an EC2 instance with ID `i-0abcd1234`. 
+
+If you run Terraform again, how does it know whether to create a *second* EC2 instance, or update the *first* one?
+It looks at the state file. The state file contains a JSON mapping indicating that the local HCL identifier `aws_instance.web` corresponds specifically to AWS ID `i-0abcd1234`.
+
+## 2. Remote State
+By default, Terraform stores state locally in a file named `terraform.tfstate` on your laptop. 
+**This is incredibly dangerous for teams.**
+- **Concurrency**: If Alice and Bob run Terraform at the same time, they will overwrite each other's changes and corrupt the infrastructure.
+- **Secrets**: The state file stores all resource properties in *plaintext*, including database passwords and API keys.
+
+In production, you must use a **Remote Backend** (like an AWS S3 Bucket combined with a DynamoDB table).
+- The S3 bucket securely stores the state file centrally.
+- The DynamoDB table acts as a **State Lock**. When Alice runs Terraform, it locks the table. If Bob tries to run Terraform, it fails and tells him to wait, preventing corruption.
+
+## 3. State Drift
+If someone manually logs into the AWS console and deletes an EC2 instance, the Terraform state file doesn't instantly know. 
+
+During the next `terraform plan`, Terraform performs a **Refresh**. It reads the state file, queries the AWS APIs to check the real-world status of those resources, notices the instance is missing, and updates the state in memory before calculating the plan (which will propose re-creating the instance).
+
+<Callout icon="warning" title="Never edit state manually">
+The `terraform.tfstate` file is a massive JSON document. You should never edit it by hand using a text editor. If you need to manipulate state (e.g., removing a resource without destroying it), use CLI commands like `terraform state rm`.
+</Callout>
 
 </ConceptTemplate>

@@ -1,528 +1,562 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const TICK3 = '\`\`\`'
-const TICK1 = '\`'
+const TICK3 = '```'
+const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/chgrp/index.mdx': `---
-title: chgrp
-description: The specific command-line utility used to change the Group ownership of a file or directory.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.2 Software Architecture/Microservices/index.mdx': `---
+title: Microservices
+description: "An architectural style that structures an application as a collection of loosely coupled, independently deployable services."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="chgrp">
+<ConceptTemplate title="Microservices Architecture">
 
-Every file in Linux is owned by a specific User and a specific Group. While the TICK1chownTICK1 command can change both, the **TICK1chgrpTICK1** command is a specialized utility designed exclusively to change the Group ownership of a file.
+Historically, applications were built as **Monoliths**: a single, massive codebase containing all the UI logic, business logic, and database access code, compiled into a single executable and deployed to a single server.
 
-## Basic Usage
+**Microservices** split that massive application into dozens (or hundreds) of small, independent services. Each service represents a specific business capability (e.g., an "Authentication Service", a "Payment Service", an "Inventory Service").
 
-The syntax is extremely simple: TICK1chgrp [GROUP] [FILE]TICK1.
+## 1. Monolith vs Microservices
 
-If you have a file named TICK1project.txtTICK1, and you want to hand ownership of it to the TICK1developersTICK1 group so your team can edit it:
-TICK1sudo chgrp developers project.txtTICK1
+<ComparisonTable 
+  headers={['Feature', 'Monolith', 'Microservices']} 
+  rows={[
+    ['Codebase', 'Single, unified repository.', 'Multiple repositories, one per service.'],
+    ['Deployment', 'Deploy the entire application at once.', 'Deploy individual services independently without downtime.'],
+    ['Scaling', 'Scale the entire application vertically or horizontally.', 'Scale only the specific services under heavy load (e.g., scale the Payment service 10x on Black Friday, leave the User Profile service alone).'],
+    ['Technology Stack', 'Forces a single language and framework across the board.', 'Each service can use the best tool for the job (e.g., Node.js for real-time chat, Python for AI, Go for high-throughput processing).']
+  ]} 
+/>
 
-<Callout icon="warning" title="Security Restrictions">
-  Unlike Windows, you cannot just assign any group to a file. A standard user can only use TICK1chgrpTICK1 if they currently own the file **and** they are already a member of the target group. Otherwise, you must use TICK1sudoTICK1.
-</Callout>
+## 2. The Trade-offs
 
-## Recursive Group Changes
-If you have a massive directory containing thousands of files, you can use the TICK1-RTICK1 (Recursive) flag to instantly change the group of everything inside the folder:
-TICK1sudo chgrp -R www-data /var/www/html/TICK1
+Microservices solve scaling and organizational problems (allowing a 500-person engineering team to work without stepping on each other's toes), but they introduce massive operational complexity.
 
-</ConceptTemplate>
-`,
+Instead of calling a function in memory (TICK1calculateTax()TICK1), you are now making a network request (HTTP GET over the unpredictable public internet). You must now handle:
+- **Network Latency & Timeouts**
+- **Distributed Tracing**: Figuring out where a request failed when it touches 7 different services.
+- **Eventual Consistency**: You can no longer use simple database ACID transactions across services. You must use complex patterns like Sagas.
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/chmod/index.mdx': `---
-title: chmod
-description: The fundamental command used to change the read, write, and execute permissions of files and directories.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="chmod">
-
-The **TICK1chmodTICK1** (Change Mode) command is one of the most frequently used commands in Linux. It modifies the permission bits (Read, Write, Execute) for the Owner, Group, and Others.
-
-## Octal (Numeric) Mode
-
-The most common and fastest way to use TICK1chmodTICK1 is using Octal numbers, where:
-- **4** = Read
-- **2** = Write
-- **1** = Execute
-
-You provide a 3-digit number representing the Owner, the Group, and Others.
-
-TICK3bash
-# Owner gets Read/Write/Execute (7). Everyone else gets Read/Execute (5).
-chmod 755 script.sh
-
-# Owner gets Read/Write (6). Everyone else gets absolutely nothing (0).
-chmod 600 private_key.pem
-TICK3
-
-## Symbolic Mode
-
-If you don't want to calculate numbers, you can use symbolic math using TICK1uTICK1 (User), TICK1gTICK1 (Group), TICK1oTICK1 (Others), and TICK1aTICK1 (All).
-
-- **Add Execute permission for everyone**: TICK1chmod +x script.shTICK1
-- **Remove Write permission for Others**: TICK1chmod o-w public.txtTICK1
-- **Explicitly set Group to Read-only**: TICK1chmod g=r public.txtTICK1
-
-<Callout icon="warning" title="Directories and Execute">
-  Remember that for a directory, the "Execute" bit means "Allow the user to CD into this directory". If you remove the Execute bit from a directory (TICK1chmod -xTICK1), no one will be able to open it, even if they have Read permission!
+<Callout icon="warning" title="The Microservice Premium">
+Do not start with microservices. Martin Fowler coined the "Microservice Premium": the baseline overhead of infrastructure (Kubernetes, CI/CD, API Gateways) required to run microservices makes them much slower to build initially than a monolith. Start with a well-structured monolith and extract services only when organizational scaling demands it.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/chown/index.mdx': `---
-title: chown
-description: The supreme command used to change the User and Group ownership of files and directories.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.2 Software Architecture/Event-driven architecture/index.mdx': `---
+title: Event-Driven Architecture (EDA)
+description: "A software architecture paradigm promoting the production, detection, and reaction to events."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="chown">
+<ConceptTemplate title="Event-Driven Architecture (EDA)">
 
-The **TICK1chownTICK1** (Change Owner) command allows administrators to transfer ownership of a file from one user to another. Because giving files away can bypass disk quotas and security mechanisms, TICK1chownTICK1 usually requires Root (TICK1sudoTICK1) privileges.
+In traditional request-response architectures (like REST APIs), Service A actively calls Service B and waits for an answer. This creates **tight coupling**. 
 
-## Syntax and Usage
+In an **Event-Driven Architecture**, services communicate by emitting and listening to **Events** via a central message broker (like Apache Kafka, RabbitMQ, or AWS EventBridge).
 
-You can use TICK1chownTICK1 to change just the user, or both the user and the group simultaneously using a colon (TICK1:TICK1).
+## 1. How It Works
+1. **The Producer**: A user completes a checkout. The Checkout Service emits an event: TICK1{"event": "OrderPlaced", "orderId": 123}TICK1 into the message broker. It does not know or care who is listening.
+2. **The Broker**: The message broker durably stores the event.
+3. **The Consumers**: 
+   - The Inventory Service listens for TICK1OrderPlacedTICK1 and deducts stock.
+   - The Email Service listens for TICK1OrderPlacedTICK1 and sends a receipt.
+   - The Analytics Service listens for TICK1OrderPlacedTICK1 to update the daily dashboard.
 
-- **Change just the User**:
-  TICK1sudo chown alice database.sqlTICK1
-- **Change the User and the Group simultaneously**:
-  TICK1sudo chown alice:developers database.sqlTICK1
+## 2. Request-Driven vs Event-Driven
 
-<Callout icon="info" title="The Shorthand Group Trick">
-  If you type a colon but leave the group blank (e.g., TICK1sudo chown alice: database.sqlTICK1), Linux will automatically look up Alice's Primary Group and change the file's group ownership to match it.
-</Callout>
+<ComparisonTable 
+  headers={['Feature', 'Request-Driven (REST)', 'Event-Driven (Pub/Sub)']} 
+  rows={[
+    ['Coupling', 'High. The caller must know the IP address and API schema of the receiver.', 'Low. Producers and Consumers are completely decoupled.'],
+    ['Failure Handling', 'If the receiver is down, the HTTP request fails immediately (Cascading Failure).', 'If the receiver is down, the broker holds the message. When the receiver boots back up, it processes the backlog.'],
+    ['Extensibility', 'Adding a new feature requires modifying the Producer to make a new HTTP call.', 'Adding a new feature is zero-touch. You just spin up a new Consumer listening to the existing event stream.']
+  ]} 
+/>
 
-## The Danger of Recursive Chown
-Like TICK1chmodTICK1, TICK1chownTICK1 supports the TICK1-RTICK1 flag. Be extremely careful when using TICK1sudo chown -R user:group /*TICK1. A misplaced asterisk or slash will instantly destroy the operating system by reassigning ownership of core kernel binaries away from Root, permanently breaking the server.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/cron/index.mdx': `---
-title: cron
-description: The legendary time-based job scheduler used to automate recurring background tasks on Unix systems.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="cron">
-
-If you need a script to run every single night at 2:00 AM, you do not write a script with an infinite loop and a TICK1sleepTICK1 command. You use **TICK1cronTICK1**.
-
-The TICK1crondTICK1 daemon wakes up every single minute, checks a set of configuration files called "crontabs", and executes any commands scheduled for that specific minute.
-
-## The Crontab Syntax
-
-You edit your user's scheduled jobs by typing TICK1crontab -eTICK1. 
-The syntax consists of 5 time fields followed by the command to execute:
-
-TICK3text
-* * * * * command_to_execute
-| | | | |
-| | | | +-- Day of the Week (0 - 7) (Sunday=0 or 7)
-| | | +---- Month (1 - 12)
-| | +------ Day of the Month (1 - 31)
-| +-------- Hour (0 - 23)
-+---------- Minute (0 - 59)
-TICK3
-
-### Examples:
-- **TICK10 2 * * * /backup.shTICK1**: Runs exactly at 2:00 AM every single day.
-- **TICK1*/5 * * * * /monitor.shTICK1**: Runs every 5 minutes, 24/7.
-- **TICK10 0 * * 5 /report.shTICK1**: Runs at midnight, only on Fridays.
-
-<Callout icon="warning" title="Cron Environment Variables">
-  TICK1cronTICK1 runs in a heavily stripped-down, non-interactive environment. It does NOT load your TICK1~/.bashrcTICK1 file. Therefore, commands that rely on your personal TICK1$PATHTICK1 variable will fail. Always use absolute paths in cron jobs (e.g., TICK1/usr/bin/node /home/user/script.jsTICK1).
+<Callout icon="info" title="Event Sourcing">
+A more extreme pattern of EDA is **Event Sourcing**. Instead of storing the *current state* of an entity in a database (e.g., TICK1balance: $50TICK1), you store the *entire history of events* that led to that state (TICK1Deposited $100TICK1, TICK1Withdrew $50TICK1). The current state is calculated by replaying the events.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/curl/index.mdx': `---
-title: curl
-description: The ubiquitous command-line tool and library for transferring data over network protocols, primarily HTTP/HTTPS.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.4 API Design/REST/index.mdx': `---
+title: REST (Representational State Transfer)
+description: "The architectural style that defines how modern web APIs are designed using standard HTTP methods."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="curl">
+<ConceptTemplate title="RESTful APIs">
 
-**TICK1curlTICK1** (Client URL) is the Swiss Army knife of networking. It allows you to make HTTP requests, download files, and interact with REST APIs directly from your terminal. It is installed by default on almost every operating system on Earth, including Windows 10+.
+Coined by Roy Fielding in 2000, **REST (Representational State Transfer)** is a set of architectural constraints for building web APIs. True REST relies entirely on the built-in features of the HTTP protocol.
 
-## Basic HTTP Requests
+## 1. Resources and URIs
+In REST, everything is a **Resource** (e.g., a User, an Article, a Comment). Resources are identified by standard URLs (URIs). Nouns are used, never verbs.
+- ✅ TICK1/users/123TICK1
+- ❌ TICK1/getUserById?id=123TICK1 (This is RPC style, not REST)
 
-By default, TICK1curlTICK1 executes a standard HTTP GET request and prints the raw response body to the terminal screen.
-TICK1curl https://api.github.com/users/torvaldsTICK1
+## 2. HTTP Methods (CRUD)
+REST uses standard HTTP methods to map directly to CRUD (Create, Read, Update, Delete) database operations:
 
-<Callout icon="info" title="Viewing Headers">
-  If an API is failing and you need to debug the HTTP headers, use the TICK1-iTICK1 flag (include headers) or the TICK1-vTICK1 flag (verbose mode, which shows exactly what TICK1curlTICK1 is sending and receiving byte-by-byte).
-</Callout>
+<ComparisonTable 
+  headers={['HTTP Method', 'CRUD Operation', 'Example URI', 'Description']} 
+  rows={[
+    ['POST', 'Create', '/users', 'Creates a new user. Not idempotent.'],
+    ['GET', 'Read', '/users/123', 'Retrieves user 123. Safe and idempotent (does not modify state).'],
+    ['PUT', 'Update', '/users/123', 'Replaces the entire user 123 object. Idempotent.'],
+    ['PATCH', 'Update', '/users/123', 'Partially updates user 123 (e.g., only changing the email).'],
+    ['DELETE', 'Delete', '/users/123', 'Deletes user 123.']
+  ]} 
+/>
 
-## Advanced API Interaction
-
-TICK1curlTICK1 can perfectly simulate a complex frontend JavaScript TICK1fetch()TICK1 call.
-
-- **Send a POST request (TICK1-XTICK1)** with a JSON body (TICK1-dTICK1) and specific headers (TICK1-HTICK1):
-TICK3bash
-curl -X POST https://api.example.com/login \
-     -H "Content-Type: application/json" \
-     -d '{"username": "admin", "password": "123"}'
-TICK3
-
-## Downloading Files
-While TICK1wgetTICK1 is usually preferred for downloading files, you can use TICK1curl -OTICK1 to tell curl to save the remote file to your hard drive using its original file name instead of printing the binary gibberish to the screen.
+## 3. Statelessness
+A core constraint of REST is that the server must be completely **stateless**. The server cannot store session data (like a logged-in user's state) in its local memory. Every single HTTP request from the client must contain all the information necessary to authenticate and process the request (usually via a JWT in the TICK1AuthorizationTICK1 header). This allows REST APIs to scale horizontally with ease.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/dmesg/index.mdx': `---
-title: dmesg
-description: A command that prints the kernel ring buffer, used primarily to diagnose hardware and driver issues.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.4 API Design/GraphQL/index.mdx': `---
+title: GraphQL
+description: "A query language for APIs developed by Facebook that allows clients to request exactly the data they need, and nothing more."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="dmesg">
+<ConceptTemplate title="GraphQL">
 
-When a Linux system boots up, the Kernel initializes the CPU, RAM, hard drives, and USB ports long before the system logger (like TICK1journaldTICK1) is actually running.
+Created by Facebook in 2012 to optimize data fetching for their mobile apps, **GraphQL** is an alternative to REST. While REST forces the server to define the structure of the response, GraphQL empowers the *client* to dictate exactly what data it wants.
 
-To record these hyper-early boot messages, the Kernel stores them in a fixed-size chunk of memory called the **Ring Buffer**. The **TICK1dmesgTICK1** (Display Message) command reads and prints this buffer.
+## 1. The Problems with REST
+- **Over-fetching**: You hit TICK1/users/123TICK1 to get a user's name, but the REST API returns a massive JSON object with 50 fields (address, preferences, history) that you waste bandwidth downloading.
+- **Under-fetching (N+1 Problem)**: To render a blog post page, you hit TICK1/posts/1TICK1. Then you need the author data, so you hit TICK1/users/5TICK1. Then you need the comments, so you hit TICK1/posts/1/commentsTICK1. Rendering one screen required 3 separate HTTP network round-trips.
 
-## When to use dmesg
+## 2. The GraphQL Solution
+In GraphQL, there is only **one** endpoint (usually TICK1POST /graphqlTICK1). The client sends a query specifying exactly the graph of data it needs in a single request.
 
-TICK1dmesgTICK1 is the ultimate hardware debugging tool. Sysadmins use it when:
-1. **A server crashes**: To see if the Kernel triggered an Out-Of-Memory (OOM) killer event right before the crash.
-2. **Plugging in new hardware**: If you plug a new USB drive into a headless server, you run TICK1dmesg | tailTICK1 to immediately see exactly what device name the Kernel assigned to it (e.g., TICK1/dev/sdcTICK1).
-3. **Driver Failures**: To see if a proprietary Nvidia graphics driver failed to initialize.
+${TICK3}graphql
+# The Client Query
+query {
+  post(id: 1) {
+    title
+    author {
+      name
+    }
+    comments(limit: 2) {
+      body
+    }
+  }
+}
+${TICK3}
 
-<Callout icon="warning" title="The Ring Buffer Overwrites Itself">
-  The kernel ring buffer is fixed in size (usually around 16KB to 64KB). Once it fills up, the oldest messages are permanently deleted to make room for new ones. If a server has been running for 3 years, running TICK1dmesgTICK1 will no longer show you the boot messages.
+The server responds with a JSON object that exactly matches the shape of the query, solving both over-fetching and under-fetching simultaneously.
+
+## 3. Operations
+
+<ComparisonTable 
+  headers={['GraphQL Operation', 'REST Equivalent', 'Purpose']} 
+  rows={[
+    ['Query', 'GET', 'Fetching data without modifying it.'],
+    ['Mutation', 'POST, PUT, DELETE', 'Modifying data on the server and returning the updated result.'],
+    ['Subscription', 'WebSockets / SSE', 'Opening a real-time connection to receive live updates when data changes.']
+  ]} 
+/>
+
+<Callout icon="warning" title="The Trade-off">
+GraphQL shifts the complexity from the network to the server. Writing efficient "Resolvers" on the backend to fulfill complex nested GraphQL queries without crushing your SQL database requires advanced techniques like DataLoader to batch database queries.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/dnf/index.mdx': `---
-title: dnf (Dandified YUM)
-description: The modern, dependency-resolving package manager used by Red Hat Enterprise Linux, Fedora, and CentOS.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.4 API Design/gRPC/index.mdx': `---
+title: gRPC
+description: "A high-performance, open-source Remote Procedure Call (RPC) framework developed by Google."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="dnf (Dandified YUM)">
+<ConceptTemplate title="gRPC">
 
-For over a decade, Red Hat and CentOS systems used a package manager called TICK1yumTICK1. However, TICK1yumTICK1 was notoriously slow, consumed massive amounts of RAM, and had a poor dependency resolution algorithm.
+While REST and GraphQL are the standards for external APIs (frontend-to-backend), **gRPC** has become the industry standard for internal, backend-to-backend microservice communication.
 
-In 2015, Fedora introduced **TICK1dnfTICK1** (Dandified YUM), a complete rewrite of YUM using a state-of-the-art C++ dependency solver called TICK1hawkeyTICK1. Today, TICK1dnfTICK1 is the absolute standard across the entire RHEL ecosystem.
+gRPC is a modern evolution of the classic **RPC (Remote Procedure Call)** model, where a client application directly calls a function on a remote server as if it were a local object.
 
-## Basic Usage
+## 1. Protocol Buffers (Protobuf)
+REST uses JSON. JSON is a text-based format that is human-readable but slow to parse and large over the wire.
 
-TICK1dnfTICK1 works exactly like TICK1aptTICK1 in Debian/Ubuntu, but is often considered more stable and transaction-oriented.
+gRPC uses **Protocol Buffers (Protobuf)**, a strictly typed, binary serialization format. 
+1. You define your API schema and data types in a TICK1.protoTICK1 text file.
+2. The Protobuf compiler automatically generates the client and server code in 10+ languages (Java, Go, Python, Node.js).
+3. The data is serialized into tiny, lightning-fast binary payloads before being sent over the network.
 
-- **TICK1sudo dnf updateTICK1**: Updates all software on the system.
-- **TICK1sudo dnf install nginxTICK1**: Installs Nginx and automatically calculates and downloads all required dependencies.
-- **TICK1sudo dnf remove httpdTICK1**: Uninstalls Apache.
+## 2. HTTP/2 by Default
+gRPC is built strictly on top of HTTP/2. This provides massive performance benefits over HTTP/1.1 (which REST usually uses):
+- **Multiplexing**: Sending multiple requests simultaneously over a single TCP connection.
+- **Header Compression**: Reducing bandwidth.
+- **Bi-directional Streaming**: The client and server can stream continuous flows of messages back and forth simultaneously.
 
-<Callout icon="success" title="The History and Rollback Feature">
-  Because TICK1dnfTICK1 treats every action as a strict transaction, it maintains a history log. 
-  If you install a complex database cluster and it breaks your server, you can simply run TICK1dnf historyTICK1 to find the transaction ID, and then run TICK1dnf history undo <ID>TICK1 to completely roll back every single file and dependency installed during that specific command.
+## 3. gRPC vs REST
+
+<ComparisonTable 
+  headers={['Feature', 'REST (JSON)', 'gRPC (Protobuf)']} 
+  rows={[
+    ['Payload Format', 'Text (JSON) - Slow to parse, large size.', 'Binary - Extremely fast serialization, compact size.'],
+    ['Contract / Schema', 'Optional (OpenAPI/Swagger).', 'Strictly enforced by TICK1.protoTICK1 files. Generates SDKs automatically.'],
+    ['Transport Protocol', 'Usually HTTP/1.1.', 'Strictly HTTP/2.'],
+    ['Best Use Case', 'Public-facing APIs, Browser clients.', 'Internal microservice-to-microservice communication.']
+  ]} 
+/>
+
+<Callout icon="info" title="Browser Support">
+Standard gRPC uses HTTP/2 features that web browsers do not fully expose to JavaScript. Therefore, you cannot easily use gRPC directly from a React frontend without setting up a translation proxy (like **gRPC-Web** or Envoy).
 </Callout>
-
-## Modules and Application Streams
-A major feature of TICK1dnfTICK1 in RHEL 8+ is **AppStreams**. It allows the OS to host multiple versions of the same software (e.g., Node.js 14, 16, and 18) in the repository simultaneously. Sysadmins can use TICK1dnf module enable nodejs:18TICK1 to cleanly lock the server to a specific major version without dependency hell.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/environment variables/index.mdx': `---
-title: Environment Variables
-description: Dynamic key-value pairs stored in the shell's memory that define the behavior of the system and user-space applications.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.4 API Design/Webhooks/index.mdx': `---
+title: Webhooks
+description: "User-defined HTTP callbacks used to enable real-time, event-driven communication between different web services."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Environment Variables">
+<ConceptTemplate title="Webhooks">
 
-When you type TICK1lsTICK1, how does the Shell know that the TICK1lsTICK1 binary is located in TICK1/usr/bin/lsTICK1? It uses an **Environment Variable**.
+Also known as "Reverse APIs", **Webhooks** are a way for an application to push real-time data to other applications when a specific event occurs.
 
-Environment Variables are simple Key-Value pairs that live in the background memory of your Shell. They are used to pass configuration data to applications without hardcoding values into scripts.
+## 1. Polling vs Webhooks
+Imagine you are building an e-commerce app using Stripe for payments. You need to know exactly when a user's credit card charge is approved so you can ship the product.
 
-## Core Variables
+- **The Bad Way (Polling)**: Your server runs a loop, sending a REST API request to Stripe every 10 seconds: *"Is order 123 paid yet?"*. This wastes immense amounts of bandwidth and CPU on both ends.
+- **The Webhook Way (Push)**: You register a URL on your server (e.g., TICK1https://myapp.com/api/webhooks/stripeTICK1) in the Stripe dashboard. When the payment finally succeeds, Stripe makes an HTTP POST request *to your server* containing the payment details.
 
-You can view all current variables by running the TICK1envTICK1 or TICK1printenvTICK1 command.
-- **TICK1$PATHTICK1**: A colon-separated list of directories. When you type a command, the shell searches these exact directories from left to right to find the binary.
-- **TICK1$HOMETICK1**: The absolute path to your current user's home directory.
-- **TICK1$USERTICK1**: Your current username.
+## 2. Implementing a Webhook Endpoint
+Because you are exposing a public URL that expects to receive data, you must handle security carefully. If a malicious user discovers your Stripe webhook URL, they could send fake "Payment Successful" payloads to give themselves free items.
 
-<Callout icon="success" title="The Power of Export">
-  If you set a variable like TICK1API_KEY=123TICK1 in Bash, it is only available to that specific shell. If you run a Python script, the script cannot see the TICK1API_KEYTICK1. 
-  You must use the TICK1exportTICK1 command (TICK1export API_KEY=123TICK1). This forces Bash to pass a copy of the variable down to all child processes spawned from that terminal.
-</Callout>
+To secure Webhooks, providers (like Stripe, GitHub, Slack) include a cryptographic signature in the HTTP headers (e.g., TICK1Stripe-SignatureTICK1). Your server must use a pre-shared secret key to verify this signature before processing the request.
 
-## Configuring Twelve-Factor Apps
-Modern cloud applications (like Node.js or Docker containers) follow the "Twelve-Factor App" methodology, which mandates that ALL configuration (Database passwords, API endpoints, Port numbers) must be injected via Environment Variables at runtime, completely avoiding hardcoded configuration files.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/find/index.mdx': `---
-title: find
-description: The incredibly powerful, recursive search utility used to locate files and directories based on extreme edge-case criteria.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="find">
-
-If you want to quickly locate a file by its name, you can use TICK1locateTICK1. However, if you need to execute a complex, hyper-specific query across the entire filesystem, you use **TICK1findTICK1**.
-
-TICK1findTICK1 physically crawls the hard drive in real-time, checking the metadata of every single file against your conditions.
-
-## Syntax and Conditions
-
-The syntax is: TICK1find [starting_directory] [conditions]TICK1.
-
-- **By Name**: TICK1find /var/log -name "*.log"TICK1
-- **By Size**: TICK1find / -size +1GTICK1 (Finds all files larger than 1 Gigabyte).
-- **By Age (Mtime)**: TICK1find /tmp -mtime +7TICK1 (Finds files modified more than 7 days ago).
-- **By Permissions**: TICK1find /etc -perm 777TICK1 (Finds files with incredibly insecure permissions).
-
-<Callout icon="warning" title="The Exec Flag (Danger!)">
-  The true power of TICK1findTICK1 is the TICK1-execTICK1 flag, which allows you to execute a command on every single file it finds.
+${TICK3}javascript
+// Example Express.js Webhook Handler
+app.post('/webhook', (req, res) => {
+  const signature = req.headers['stripe-signature'];
   
-  TICK1find /var/log -name "*.old" -exec rm {} \;TICK1
-  
-  This command finds all TICK1.oldTICK1 files and instantly passes them (represented by TICK1{}TICK1) into the TICK1rmTICK1 command. Be extremely careful; running this as Root can delete thousands of files in milliseconds.
+  try {
+    // Cryptographically verify the payload is genuinely from Stripe
+    const event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
+    
+    if (event.type === 'payment_intent.succeeded') {
+       fulfillOrder(event.data.object);
+    }
+    
+    // Always return a 200 OK immediately so Stripe knows you received it
+    res.status(200).send();
+  } catch (err) {
+    res.status(400).send(\`Webhook Error: \${err.message}\`);
+  }
+});
+${TICK3}
+
+<Callout icon="warning" title="Idempotency">
+Webhook providers often guarantee "at least once" delivery. If a network glitch occurs, Stripe might send you the exact same "Payment Successful" webhook twice. Your application logic must be **Idempotent**—it must be able to safely handle duplicate webhooks without shipping the product twice.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/fstab/index.mdx': `---
-title: fstab (File System Table)
-description: The critical system configuration file that dictates which hard drives are automatically mounted when the OS boots.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.3 Design Patterns/Singleton/index.mdx': `---
+title: Singleton Pattern
+description: "A creational design pattern that restricts the instantiation of a class to one single instance."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="fstab (File System Table)">
+<ConceptTemplate title="Singleton Pattern">
 
-In Linux, plugging a hard drive into the motherboard does not make it usable. You must physically "mount" the drive's filesystem (e.g., TICK1/dev/sdb1TICK1) to an empty directory in the root tree (e.g., TICK1/mnt/databaseTICK1).
+The **Singleton** is the most famous (and most controversial) design pattern from the original Gang of Four book. It ensures that a class has only one single instance throughout the entire lifecycle of an application, and provides a global point of access to it.
 
-When the server reboots, all manual mounts are instantly forgotten. 
-To make a mount permanent, you must declare it in **TICK1/etc/fstabTICK1**.
+## 1. The Implementation
+To create a Singleton, you must:
+1. Make the constructor private (so no one can use the TICK1newTICK1 keyword).
+2. Create a static method that acts as a constructor. This method creates the object the first time it is called, saves it in a private static field, and returns that cached instance on all subsequent calls.
 
-## The Syntax
+${TICK3}typescript
+class DatabaseConnection {
+  private static instance: DatabaseConnection;
 
-The TICK1fstabTICK1 file uses a strict 6-column format:
-TICK3text
-# Device/UUID      Mount_Point   Type   Options    Dump   Pass
-UUID=1a2b3c4d      /             ext4   defaults   0      1
-/dev/sdb1          /mnt/data     xfs    defaults   0      2
-10.0.0.5:/share    /mnt/nfs      nfs    ro         0      0
-TICK3
+  // 1. Private constructor prevents direct instantiation
+  private constructor() {
+    console.log("Initializing database connection...");
+  }
 
-1. **Device**: The physical partition (or uniquely generated UUID).
-2. **Mount Point**: The directory where the drive should be attached.
-3. **Type**: The filesystem format (EXT4, XFS, NFS).
-4. **Options**: Mounting rules (e.g., TICK1roTICK1 for Read-Only, TICK1noexecTICK1 to ban running scripts from the drive).
-5. **Dump & Pass**: Legacy fields for backup tools and filesystem checkers (TICK1fsckTICK1).
+  // 2. Static access method
+  public static getInstance(): DatabaseConnection {
+    if (!DatabaseConnection.instance) {
+      DatabaseConnection.instance = new DatabaseConnection();
+    }
+    return DatabaseConnection.instance;
+  }
 
-<Callout icon="warning" title="The Boot-Loop Danger">
-  If you make a typo in TICK1/etc/fstabTICK1 (e.g., spelling TICK1ext4TICK1 as TICK1ex4TICK1), Linux will panic during the boot sequence because it cannot mount the drive, dropping the server into "Emergency Mode". You must always run TICK1mount -aTICK1 immediately after editing the file to test the syntax before you ever reboot.
+  public query(sql: string) {
+    // Execute query
+  }
+}
+
+// Usage:
+const db1 = DatabaseConnection.getInstance();
+const db2 = DatabaseConnection.getInstance();
+
+console.log(db1 === db2); // true! They point to the exact same object in memory.
+${TICK3}
+
+## 2. Common Use Cases
+- Managing a single shared Database connection pool.
+- Centralized Application Configuration or Logging services.
+- Hardware interface access (e.g., you only have one physical printer, so you only want one PrinterSpooler object).
+
+<Callout icon="warning" title="The Anti-Pattern Debate">
+Many modern developers consider the Singleton an **Anti-Pattern**. It introduces hidden global state, makes unit testing incredibly difficult (because state bleeds between tests), and tightly couples your code. In modern applications, Singletons are usually replaced by **Dependency Injection** frameworks, which handle the object lifecycle and guarantee a single instance without hardcoding it into the class itself.
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/grep/index.mdx': `---
-title: grep
-description: The most famous Linux text processing tool, used to search streams of text for lines matching regular expressions.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.3 Design Patterns/Factory Method/index.mdx': `---
+title: Factory Method Pattern
+description: "A creational design pattern that provides an interface for creating objects in a superclass, but allows subclasses to alter the type of objects that will be created."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="grep">
+<ConceptTemplate title="Factory Method Pattern">
 
-**TICK1grepTICK1** (Global Regular Expression Print) is the ultimate search tool. It takes a stream of text (either from a file or piped from another command), scans every single line, and outputs only the lines that match your search pattern.
+When writing clean code, calling the TICK1newTICK1 keyword directly inside your business logic tightly couples your code to specific concrete classes. 
 
-## Core Usage
+The **Factory Method** solves this by replacing direct object construction calls with calls to a special "factory" method. 
 
-You will use TICK1grepTICK1 thousands of times in your career to filter through massive, messy log files.
+## 1. The Problem
+Imagine a logistics application. Initially, it only handles truck delivery.
 
-- **Basic Search**: TICK1grep "ERROR" /var/log/syslogTICK1 (Prints every line containing the word ERROR).
-- **Case Insensitive (TICK1-iTICK1)**: TICK1grep -i "error" /var/log/syslogTICK1.
-- **Invert Match (TICK1-vTICK1)**: TICK1grep -v "DEBUG" /var/log/syslogTICK1 (Prints everything EXCEPT lines containing DEBUG).
-- **Recursive Directory Search (TICK1-rTICK1)**: TICK1grep -r "password123" /etc/TICK1 (Searches every single file inside the TICK1/etcTICK1 folder).
+${TICK3}typescript
+class LogisticsApp {
+  planDelivery() {
+    // Tightly coupled to the concrete Truck class!
+    const vehicle = new Truck(); 
+    vehicle.deliver();
+  }
+}
+${TICK3}
 
-<Callout icon="success" title="Piping with Grep">
-  The true power of TICK1grepTICK1 comes from the Unix Pipe (TICK1|TICK1). 
-  If you run TICK1ps auxTICK1, it prints 500 running processes to your screen. 
-  By running TICK1ps aux | grep nginxTICK1, you force the output of TICK1psTICK1 directly into TICK1grepTICK1, instantly filtering the screen to only show you the Nginx processes.
-</Callout>
+If the company expands to sea freight, you have to modify the core TICK1planDelivery()TICK1 logic to add complex TICK1if (type === 'sea') return new Ship()TICK1 statements, violating the Open/Closed Principle.
 
-## Regular Expressions
-TICK1grepTICK1 gets its name from Regular Expressions. You can use complex regex to find dynamic patterns, such as extracting IP addresses or valid email formats from a million-line database dump. (Using TICK1grep -ETICK1 or the TICK1egrepTICK1 alias enables Extended Regex for modern syntax).
+## 2. The Solution
+We define a base TICK1LogisticsTICK1 creator class with an abstract TICK1createTransport()TICK1 method. The core business logic interacts only with the abstract TICK1TransportTICK1 interface.
+
+${TICK3}typescript
+// 1. The Common Interface
+interface Transport {
+  deliver(): void;
+}
+
+// 2. Concrete Products
+class Truck implements Transport {
+  deliver() { console.log("Delivering by land in a box."); }
+}
+class Ship implements Transport {
+  deliver() { console.log("Delivering by sea in a container."); }
+}
+
+// 3. The Creator (Factory)
+abstract class Logistics {
+  // The Factory Method
+  abstract createTransport(): Transport;
+
+  // Core business logic relies on the interface, not concrete classes
+  planDelivery() {
+    const transport = this.createTransport();
+    transport.deliver();
+  }
+}
+
+// 4. Concrete Creators
+class RoadLogistics extends Logistics {
+  createTransport(): Transport {
+    return new Truck();
+  }
+}
+
+class SeaLogistics extends Logistics {
+  createTransport(): Transport {
+    return new Ship();
+  }
+}
+${TICK3}
+
+By isolating the creation logic into specific Factory classes, adding a new transportation method (e.g., TICK1AirLogisticsTICK1 returning a TICK1PlaneTICK1) requires zero changes to the existing business logic.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/gzip/index.mdx': `---
-title: gzip
-description: The standard GNU compression utility used to heavily reduce the file size of text files and logs.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.3 Design Patterns/Observer/index.mdx': `---
+title: Observer Pattern
+description: "A behavioral design pattern that lets you define a subscription mechanism to notify multiple objects about any events that happen to the object they're observing."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="gzip">
+<ConceptTemplate title="Observer Pattern">
 
-**TICK1gzipTICK1** (GNU zip) is a single-file compression utility. It uses the DEFLATE algorithm, which is incredibly efficient at compressing raw text, logs, and database SQL dumps.
+The **Observer Pattern** (also known as Pub/Sub) establishes a one-to-many relationship between a **Subject** (the state holder) and multiple **Observers** (the listeners). When the Subject changes state, all registered Observers are automatically notified and updated.
 
-In the Linux ecosystem, TICK1gzipTICK1 is overwhelmingly the default compression format, recognizable by the TICK1.gzTICK1 file extension.
+## 1. Real-World Analogy
+If you subscribe to a newspaper, you don't go to the printing press every day to ask if the new edition is ready (polling). Instead, the publisher maintains a list of subscribers. When a new edition is printed, they push it directly to your mailbox.
 
-## How it works
+## 2. Implementation
+The Subject maintains a list of observer references and provides methods to subscribe and unsubscribe.
 
-Unlike the Windows TICK1.zipTICK1 format (which can bundle 100 files into a single archive), TICK1gzipTICK1 can only compress **one single file at a time**.
+${TICK3}typescript
+interface Observer {
+  update(temperature: number): void;
+}
 
-If you run TICK1gzip backup.sqlTICK1:
-1. It compresses the file.
-2. It renames it to TICK1backup.sql.gzTICK1.
-3. It permanently deletes the original TICK1backup.sqlTICK1 file to save space.
+class WeatherStation {
+  private observers: Observer[] = [];
+  private temperature: number;
 
-To decompress it, you run TICK1gunzip backup.sql.gzTICK1.
+  public subscribe(observer: Observer) {
+    this.observers.push(observer);
+  }
 
-<Callout icon="info" title="Tarballs (.tar.gz)">
-  Because TICK1gzipTICK1 can only compress single files, sysadmins use the TICK1tarTICK1 command to bundle 100 files together into one massive solid block (an archive), and then pipe that block through TICK1gzipTICK1. 
-  This results in the famous TICK1.tar.gzTICK1 (or TICK1.tgzTICK1) "Tarball", which is the Linux equivalent of a Windows Zip file.
-</Callout>
+  public unsubscribe(observer: Observer) {
+    this.observers = this.observers.filter(obs => obs !== observer);
+  }
 
-## zcat and zgrep
-A massive benefit of TICK1gzipTICK1 is the ability to read files without decompressing them to the hard drive. 
-If you have a 5GB compressed log file (TICK1syslog.2.gzTICK1), you do not need to extract it to search it. You can simply use TICK1zgrep "ERROR" syslog.2.gzTICK1, which decompresses the text directly into RAM and searches it on the fly.
+  // When state changes, notify everyone!
+  public setTemperature(temp: number) {
+    this.temperature = temp;
+    this.notifyObservers();
+  }
 
-</ConceptTemplate>
-`,
+  private notifyObservers() {
+    for (const observer of this.observers) {
+      observer.update(this.temperature);
+    }
+  }
+}
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/htop/index.mdx': `---
-title: htop
-description: An interactive, colorful, and heavily upgraded process viewer that serves as the modern replacement for the classic 'top' command.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+// Concrete Observers
+class PhoneDisplay implements Observer {
+  update(temp: number) { console.log(\`Phone updated: \${temp}°C\`); }
+}
+class WindowDisplay implements Observer {
+  update(temp: number) { console.log(\`Window updated: \${temp}°C\`); }
+}
 
-<ConceptTemplate title="htop">
+// Usage
+const station = new WeatherStation();
+const phone = new PhoneDisplay();
+station.subscribe(phone);
+station.subscribe(new WindowDisplay());
 
-While the ancient TICK1topTICK1 command is installed on every Linux system, it is visually messy and difficult to use. 
-**TICK1htopTICK1** is a third-party, ncurses-based task manager that sysadmins almost immediately install on fresh servers.
+// Automatically triggers updates on both displays
+station.setTemperature(25); 
+${TICK3}
 
-It provides a live, continuously updating dashboard of the server's vitals.
-
-## The Interface
-
-When you run TICK1htopTICK1, the screen splits into two main sections:
-1. **The Header**: Displays beautiful ASCII bar graphs representing CPU utilization (for every single CPU core), RAM usage, and Swap space usage.
-2. **The Process List**: A sortable list of every running process, showing exactly who owns it, how much RAM it is consuming (RES/VIRT), and its CPU percentage.
-
-<Callout icon="success" title="Interactive Management">
-  The biggest advantage of TICK1htopTICK1 over TICK1topTICK1 is interactivity. You can use your keyboard arrows (or your mouse!) to scroll through the process list, press F6 to instantly sort by Memory usage, select a rogue database query, and press F9 to instantly kill it—all without typing a single PID number.
-</Callout>
-
-## Tree View
-By pressing F5 in TICK1htopTICK1, you enable **Tree View**. This visually nests child processes under their parent processes. This is absolutely critical for debugging web servers like Nginx or Apache, allowing you to see the main master process and all of its spawned worker threads.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/init systems/index.mdx': `---
-title: Init Systems
-description: The absolute first process (PID 1) that the Linux kernel launches, responsible for booting every other service on the machine.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Init Systems">
-
-When you turn on a Linux server, the BIOS loads the Bootloader, the Bootloader loads the Kernel, and the Kernel initializes the CPU and RAM.
-
-Once the hardware is ready, the Kernel launches exactly one single user-space program: **The Init System**. 
-The Init system is assigned **PID 1**, and its job is to launch every other background service (Networking, SSH, Web Servers, Desktop GUIs) required to make the OS usable.
-
-## SysVinit (The Old Guard)
-
-For decades, Linux used **SysVinit** (System V). 
-SysVinit used a series of bash scripts stored in TICK1/etc/init.d/TICK1. It booted the system sequentially, one script at a time. If the networking script took 10 seconds to start, the SSH script had to wait 10 seconds before it could run. This made booting incredibly slow.
-
-## systemd (The Modern Standard)
-
-In the 2010s, the Linux ecosystem underwent a massive, highly controversial shift to **systemd**.
-
-TICK1systemdTICK1 is not just an init system; it is a massive suite of tools that manages the entire operating system.
-- **Parallel Booting**: It maps out the dependency tree of services and boots them all simultaneously, drastically reducing boot times.
-- **Unit Files**: Instead of messy bash scripts, services are defined using strict, declarative TICK1.serviceTICK1 files.
-- **Process Tracking**: TICK1systemdTICK1 uses cgroups to track processes. If a web server crashes, TICK1systemdTICK1 knows immediately and can automatically restart it.
-
-<Callout icon="warning" title="The systemd Controversy">
-  TICK1systemdTICK1 was heavily criticized by Unix purists because it violates the "Unix Philosophy" (Do one thing and do it well). TICK1systemdTICK1 swallowed the init system, system logging (journald), cron jobs (systemd-timers), and network management (systemd-networkd) into one massive, complex monolith. Despite the arguments, TICK1systemdTICK1 won the war and is the default on almost all major distributions today.
+<Callout icon="info" title="Frontend Frameworks">
+If you have used React (TICK1useEffectTICK1), Vue, or RxJS, you are using advanced variations of the Observer pattern. The UI components are "Observers" that subscribe to changes in the Application State (the "Subject").
 </Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/iptables/index.mdx': `---
-title: iptables
-description: The classic, deeply integrated Linux firewall utility used to filter network packets directly inside the Kernel.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.1 SDLC & Process/Agile/index.mdx': `---
+title: Agile Methodology
+description: "An iterative approach to software development emphasizing flexibility, cross-functional collaboration, and continuous delivery of working software."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="iptables">
+<ConceptTemplate title="Agile">
 
-**TICK1iptablesTICK1** is a user-space utility that configures the **Netfilter** module built directly into the Linux Kernel. It is the grandfather of all modern Linux firewalls.
+Before 2001, the software industry was dominated by the **Waterfall** methodology: a highly rigid, sequential process where teams spent months writing 500-page requirement documents before a single line of code was written. This resulted in massive projects that took years to launch, only to realize the market's needs had changed entirely.
 
-Every single network packet that enters, leaves, or routes through a Linux machine is intercepted by Netfilter and passed through the rules defined by TICK1iptablesTICK1.
+In 2001, a group of developers met in Utah and published the **Agile Manifesto**, fundamentally shifting how software is built.
 
-## Tables and Chains
+## 1. The Agile Manifesto Core Values
+1. **Individuals and interactions** over processes and tools.
+2. **Working software** over comprehensive documentation.
+3. **Customer collaboration** over contract negotiation.
+4. **Responding to change** over following a plan.
 
-TICK1iptablesTICK1 is incredibly complex because it is designed around multiple Tables and Chains:
-1. **The Filter Table**: Used for standard firewall duties (Allow/Drop packets).
-   - **INPUT Chain**: Traffic coming into the server (e.g., someone trying to load your website).
-   - **OUTPUT Chain**: Traffic leaving the server (e.g., the server downloading an update).
-   - **FORWARD Chain**: Traffic passing through the server (used if the server is acting as a router).
-2. **The NAT Table**: Used to modify IP addresses (Network Address Translation), heavily used by Docker to map ports.
+## 2. Iterative Development
+Instead of trying to build the entire product in one massive 2-year cycle, Agile teams work in short, iterative cycles (usually 2 to 4 weeks). 
 
-<Callout icon="info" title="Modern Abstractions (UFW / Firewalld)">
-  Because the raw TICK1iptablesTICK1 syntax is notoriously difficult to memorize and prone to catastrophic mistakes (like instantly locking yourself out of SSH), modern distributions use frontend abstractions. Ubuntu uses **UFW** (Uncomplicated Firewall) and RHEL uses **firewalld**. These tools provide simple human syntax (e.g., TICK1ufw allow 80TICK1) and translate it into raw TICK1iptablesTICK1 rules in the background.
-</Callout>
+At the end of each cycle, the team must deliver a small, functional, deployable piece of software. This allows them to gather immediate feedback from real users and pivot the direction of the project if necessary.
 
-## The Shift to nftables
-While TICK1iptablesTICK1 dominated for 20 years, it suffers from performance issues when handling massive lists of rules. The Linux kernel has officially deprecated it in favor of a newer, faster subsystem called **nftables**. However, TICK1iptablesTICK1 syntax is so ingrained in enterprise scripts that almost all modern systems provide an TICK1iptablesTICK1 translation layer.
+## 3. Agile vs Waterfall
+
+<ComparisonTable 
+  headers={['Feature', 'Waterfall', 'Agile']} 
+  rows={[
+    ['Planning', 'Upfront, rigid, months-long planning phase.', 'Continuous, adaptive planning at the start of every short iteration.'],
+    ['Delivery', 'One massive "Big Bang" release at the very end.', 'Continuous, incremental delivery of small features.'],
+    ['Testing', 'Testing happens only at the very end of the project.', 'Testing is continuous and integrated into every sprint.'],
+    ['Risk', 'High. You don\\'t know if you built the wrong thing until year 2.', 'Low. If you build the wrong thing, you only wasted 2 weeks.']
+  ]} 
+/>
+
+Note that "Agile" is a mindset and a set of principles, not a specific step-by-step instruction manual. Frameworks like **Scrum** and **Kanban** are the specific implementations teams use to actually "do" Agile.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/12. Linux & Shell Administration/journalctl/index.mdx': `---
-title: journalctl
-description: The incredibly powerful command-line tool used to query the centralized binary logs managed by systemd's journald.
+  'src/features/kb/routes/KB/40. Software Engineering - Process & Architecture/40.1 SDLC & Process/Scrum/index.mdx': `---
+title: Scrum
+description: "The most popular Agile framework, organizing work into short, time-boxed iterations called Sprints."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="journalctl">
+<ConceptTemplate title="Scrum">
 
-Historically, Linux services dumped their logs into plain text files scattered across TICK1/var/logTICK1. You had to use TICK1grepTICK1 and TICK1awkTICK1 to manually piece together what happened when a server crashed.
+**Scrum** is the most widely utilized framework for implementing Agile development. It provides a lightweight structure consisting of specific Roles, Artifacts, and Ceremonies (meetings) designed to help teams deliver value iteratively.
 
-When TICK1systemdTICK1 took over Linux, it introduced **systemd-journald**, a background daemon that intercepts all logs from the Kernel, the Bootloader, and every single service, storing them in a centralized, highly indexed, **binary** format.
+## 1. The Sprints
+In Scrum, all work is executed in time-boxed iterations called **Sprints**, typically lasting exactly 2 weeks. At the end of the Sprint, the team must produce a potentially shippable increment of the product. 
 
-You cannot read binary logs with TICK1catTICK1. You must use the **TICK1journalctlTICK1** command.
+Once a Sprint begins, the goal is locked in—management is not allowed to add new surprise tasks to the team's plate mid-sprint.
 
-## Querying the Journal
+## 2. The Three Roles
 
-Because the logs are indexed, TICK1journalctlTICK1 allows you to perform hyper-specific database-like queries instantly:
+<ComparisonTable 
+  headers={['Role', 'Responsibilities']} 
+  rows={[
+    ['Product Owner', 'Represents the business and the customer. Owns the "What" and the "Why". Prioritizes the backlog.'],
+    ['Scrum Master', 'The facilitator. Protects the team from outside interruptions, removes blockers, and ensures Scrum rules are followed.'],
+    ['Developers', 'The engineers, designers, and QA who do the actual work. They own the "How" and estimate how much work they can take on.']
+  ]} 
+/>
 
-- **View logs for a specific service**: 
-  TICK1journalctl -u nginx.serviceTICK1
-- **View logs since the last reboot**: 
-  TICK1journalctl -bTICK1
-- **View logs within a specific timeframe**: 
-  TICK1journalctl --since "2024-10-18 08:00:00" --until "1 hour ago"TICK1
-- **Follow logs in real-time (like tail -f)**: 
-  TICK1journalctl -u sshd.service -fTICK1
+## 3. The Ceremonies (Meetings)
+Scrum defines four specific meetings to structure the feedback loop:
 
-<Callout icon="success" title="Structured Metadata">
-  Because the journal intercepts the logs directly from the execution environment, it automatically attaches massive amounts of hidden metadata to every log line. You can query logs by the exact PID (TICK1_PID=1234TICK1), the exact user UID, or even the specific executable path, making debugging drastically easier than parsing plain text syslog files.
+1. **Sprint Planning**: At the start of the Sprint. The team looks at the prioritized Backlog and agrees on what they can realistically complete in the next 2 weeks.
+2. **Daily Stand-up**: A strictly 15-minute daily sync. Each member states: What did I do yesterday? What will I do today? Am I blocked by anything?
+3. **Sprint Review (Demo)**: At the end of the Sprint. The team demonstrates the working software they just built to stakeholders.
+4. **Sprint Retrospective**: A private team meeting to reflect on the process itself. What went well? What went poorly? How can we improve our workflow next sprint?
+
+<Callout icon="warning" title="Story Points & Velocity">
+Scrum teams rarely estimate tasks in "Hours", because humans are terrible at absolute time estimation. Instead, they use **Story Points** (often following the Fibonacci sequence: 1, 2, 3, 5, 8) to estimate the *relative complexity* of a task. The total number of points a team completes in a sprint is their **Velocity**.
 </Callout>
 
 </ConceptTemplate>
@@ -535,7 +569,6 @@ async function main() {
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
 
     // Safely replace TICK1 and TICK3 placeholders with actual backticks
-    // This entirely avoids JSON/regex parsing issues.
     let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
 
     // Append a safe newline

@@ -1,30 +1,34 @@
 ---
 title: macOS
-description: Apple's primary desktop operating system, built on a certified Unix foundation (Darwin) with a highly polished proprietary GUI (Aqua).
+description: "A proprietary graphical operating system developed and marketed by Apple Inc. It is the primary operating system for Apple's Mac computers."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="macOS">
+<TechnologyTemplate 
+  name="macOS"
+  icon="apple"
+  creator="Apple"
+  year={2001}
+  website="https://www.apple.com/macos/"
+>
 
-**macOS** (formerly Mac OS X) is the operating system that powers Apple's Mac computers. It represents one of the most successful marriages of open-source engineering and closed-source proprietary design in software history.
+**macOS** (formerly Mac OS X) is a POSIX-compliant UNIX operating system built on top of the open-source **Darwin** core. It is the operating system that powers Apple's desktop and laptop computers.
 
-## The Unix Foundation (Darwin)
+Because macOS is fundamentally UNIX, it became the darling of software developers in the 2010s. Developers could write and test code on a beautiful, stable GUI laptop, and the terminal commands (bash/zsh) perfectly matched the Linux servers where the code would eventually be deployed.
 
-Underneath the beautiful, user-friendly graphical interface, macOS is a hardcore, certified Unix operating system.
+## The Walled Garden and Hardware Integration
 
-The core of macOS is called **Darwin**. Darwin is an open-source operating system created by Apple, heavily derived from **FreeBSD** and the **Mach microkernel**. 
-Because it is a certified Unix OS, developers can open the macOS Terminal and natively use standard Unix utilities (like `grep`, `bash`, and `ssh`) exactly as they would on Linux, without needing virtual machines or translation layers.
+Unlike Windows, which must support billions of different hardware combinations (resulting in driver conflicts and blue screens), macOS only runs on hardware designed by Apple. 
 
-<Callout icon="success" title="The XNU Kernel">
-  The specific kernel powering Darwin (and therefore macOS) is called **XNU** (X is Not Unix). 
-  XNU is a highly unusual **Hybrid Kernel**. It attempts to combine the extreme speed of a Monolithic Kernel (like Linux) with the modular security of a Microkernel (Mach), resulting in a unique, highly performant architecture.
+This tight integration allows macOS to achieve incredible battery life, perfectly calibrated trackpads, and features like "Handoff" (where you can copy text on an iPhone and paste it on a Mac). 
+
+## Core Technologies
+- **Cocoa**: The native object-oriented API for macOS applications (historically written in Objective-C, now Swift).
+- **Metal**: Apple's proprietary graphics API (their competitor to DirectX and Vulkan). By forcing developers to use Metal instead of cross-platform standards like OpenGL, Apple achieves better performance but alienates many game developers.
+
+<Callout icon="warning" title="The Death of 32-bit">
+In macOS Catalina (2019), Apple ruthlessly dropped all support for 32-bit applications. If you had an old 32-bit game or utility, it permanently stopped working. This aggressive forward-momentum keeps macOS lean and secure, but severely punishes users relying on unmaintained legacy software.
 </Callout>
 
-## The Proprietary Layers
-
-While the Darwin foundation is open-source, everything sitting on top of it is closed-source and fiercely protected by Apple:
-- **Aqua**: The iconic, hardware-accelerated graphical user interface.
-- **Cocoa**: The massive, object-oriented API framework (originally written in Objective-C, now heavily transitioning to Swift) that developers use to write native Mac apps.
-- **Metal**: Apple's proprietary, low-overhead hardware graphics API, designed as a direct competitor to Vulkan and DirectX.
-
-</ConceptTemplate>
+</TechnologyTemplate>

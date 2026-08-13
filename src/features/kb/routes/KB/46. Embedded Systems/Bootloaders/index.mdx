@@ -1,8 +1,28 @@
+---
+title: Bootloaders
+description: "A small program placed in the read-only memory of a microcontroller that runs immediately upon reset to load the main application."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Bootloaders">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a Microcontroller is powered on, its hardware circuit is hardwired to immediately start executing instructions from a specific memory address (usually Address `0x00000000`).
+
+In a simple device, your main Firmware application sits exactly at that address. But what if you want to update the Firmware over USB or Wi-Fi? You can't overwrite the application while it's currently running itself. 
+
+This is where the **Bootloader** comes in.
+
+## The Two-Stage Process
+A Bootloader is a tiny, highly-protected program that sits at Address `0x00000000`. Your actual Firmware application is shifted to sit further down in memory (e.g., Address `0x00002000`).
+
+When power is applied, the MCU boots into the Bootloader first. The Bootloader's logic is usually very simple:
+1. **Check for an Update Signal**: (e.g., Is a specific button held down? Is there a payload waiting on the USB port?)
+2. **Flash the Update**: If an update is present, the Bootloader reads the new firmware from the USB port and writes it into the Application Memory Space. (The Bootloader can do this safely because it is not overwriting itself).
+3. **Jump to Application**: If no update is present, or the update is finished, the Bootloader instructs the CPU's Program Counter to jump to `0x00002000`, officially starting your main Firmware.
+
+## The Arduino Revolution
+Before 2005, programming an AVR microcontroller required buying a $50 hardware programmer and connecting it to 6 specific pins on the chip.
+
+The **Arduino** revolutionized electronics by pre-flashing every chip with the "Optiboot" Bootloader. Optiboot is designed to listen to the Serial (UART) port for 1 second upon boot. Because of this, developers could suddenly program MCUs using nothing but a standard USB cable.
 
 </ConceptTemplate>

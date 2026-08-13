@@ -1,8 +1,30 @@
+---
+title: Snapshot Testing
+description: "A testing technique where the output of a component is captured and compared against a previously stored reference baseline to detect unexpected changes."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Snapshot testing">
+<ConceptTemplate title="Snapshot Testing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional assertions verify specific values (e.g., `expect(title).toBe('Hello')`). **Snapshot Testing** is a much broader technique primarily used in Frontend development (React, Vue) to ensure UI components do not change unexpectedly.
+
+## 1. How it Works
+1. The first time a test runs, the testing framework renders the UI component (into a string of HTML or JSON) and saves it to a local file called a **Snapshot**.
+2. The developer commits this snapshot file to version control (Git).
+3. On subsequent test runs, the framework renders the component again and compares the new output to the saved snapshot.
+4. If there is a 100% exact match, the test passes. If even a single CSS class or HTML tag differs, the test fails, highlighting a diff.
+
+## 2. Updating Snapshots
+If the test fails, the developer must inspect the diff.
+- If the change was an accident (a regression), the developer fixes the code.
+- If the change was intentional (the designer asked to change the button color from blue to red), the developer runs a command (e.g., `jest -u`) to overwrite the old snapshot with the new baseline.
+
+## 3. Visual Regression Testing
+While standard snapshot testing compares HTML/JSON strings, **Visual Snapshot Testing** compares actual pixels. Tools like Percy or Cypress take screenshots of a webpage rendered in a headless browser and use image-comparison algorithms to detect if a specific div shifted by 2 pixels to the left.
+
+<Callout icon="warning" title="Snapshot Fatigue">
+Because snapshots capture *everything*, they are incredibly brittle. Changing a global wrapper component might cause 500 snapshot tests to fail simultaneously. Developers often suffer from "Snapshot Fatigue," where they blindly press "Update Snapshots" without actually reviewing the diff, entirely defeating the purpose of the test.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,34 @@
+---
+title: LLVM
+description: "A collection of modular and reusable compiler and toolchain technologies used to build modern programming languages."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="LLVM">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Originally standing for "Low Level Virtual Machine" (a name that is now officially obsolete), **LLVM** is the most important piece of compiler infrastructure in modern software engineering.
+
+Before LLVM, if you invented a new programming language, you had to write your own parser, figure out how to optimize code, and learn the dense machine-code manuals for Intel, AMD, and ARM processors just to get your language to run.
+
+## The LLVM Revolution
+LLVM solved this by providing a world-class **Middle-end** and **Backend**. 
+
+If you invent a new language today, you only have to write the **Frontend**: a parser that converts your syntax into **LLVM IR** (LLVM's Intermediate Representation). 
+
+Once you hand that IR to LLVM, LLVM automatically:
+1. Runs decades of state-of-the-art optimizations on your code.
+2. Translates it perfectly to x86, ARM, WebAssembly, or almost any other hardware architecture.
+
+## Languages Powered by LLVM
+Because LLVM makes building high-performance compilers so accessible, it powered an explosion of modern languages:
+- **Rust**: Uses LLVM as its primary backend.
+- **Swift**: Created by Apple using LLVM.
+- **Clang**: The LLVM-based C/C++ frontend that replaced GCC on macOS.
+- **Julia**: Uses LLVM for JIT compilation.
+
+<Callout icon="info" title="LLVM IR">
+LLVM IR is strongly typed and uses **Static Single Assignment (SSA)** form, meaning every variable is assigned a value exactly once. This mathematical property makes it incredibly easy for the optimizer to analyze and transform the code without making mistakes.
+</Callout>
 
 </ConceptTemplate>

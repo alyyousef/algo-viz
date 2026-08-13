@@ -1,34 +1,29 @@
 ---
 title: Rate Limiting
-description: A critical defensive architectural pattern that restricts the number of network requests a user can make to protect APIs from abuse, DDoS, and cascading failure.
+description: "A technique used to control the amount of incoming traffic to a network or application to prevent abuse and ensure stability."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 <ConceptTemplate title="Rate Limiting">
 
-APIs are expensive to execute. If a malicious bot (or a buggy client script) sends 50,000 requests per second to your login endpoint, your database will crash, taking down the system for legitimate users. 
+If a single user (or a malicious bot) sends 10,000 requests per second to your login endpoint, your database will crash, taking the entire application offline for everyone. **Rate Limiting** prevents this by artificially capping the number of requests a user can make within a specific time window.
 
-**Rate Limiting** acts as a defensive shield, throttling requests (usually returning HTTP 429 "Too Many Requests") when a client exceeds their quota.
+When a limit is exceeded, the server stops processing the request and returns an **HTTP 429 Too Many Requests** response.
 
-## 1. The Core Algorithms
+## Common Algorithms
 
-### Token Bucket
-Imagine a bucket that holds a maximum of 10 tokens. Every minute, a background process adds 2 tokens to the bucket. 
-When a request arrives, it must "spend" a token to proceed. If the bucket is empty, the request is dropped.
-- **Benefit**: Allows for brief, sudden spikes in traffic (bursts) as long as the user has saved up tokens.
+<ComparisonTable 
+  headers={['Algorithm', 'How it works', 'Pros & Cons']} 
+  rows={[
+    ['Token Bucket', 'Tokens are added to a bucket at a fixed rate (e.g., 1 per second). Every request costs 1 token. If the bucket is empty, drop the request.', 'Pro: Allows sudden, brief bursts of traffic. Standard for most APIs (like AWS/Stripe).'],
+    ['Leaky Bucket', 'Requests are placed in a queue (the bucket) that leaks (processes) at a strict, constant rate.', 'Pro: Smooths out bursts, ensuring a perfectly stable load on backend servers.'],
+    ['Fixed Window Counter', 'Divides time into fixed windows (e.g., 1:00-1:01). Increments a counter. Resets at the start of the next minute.', 'Con: The "Burst at Edge" problem. A user can send 100 requests at 1:00:59, and 100 more at 1:01:01, crushing the server with 200 requests in 2 seconds.'],
+    ['Sliding Window Log', 'Keeps a timestamp of every single request in a Redis sorted set. Calculates exact rate based on current time minus 1 minute.', 'Pro: Perfectly accurate. Con: Consumes massive amounts of RAM to store all those timestamps.']
+  ]} 
+/>
 
-### Leaky Bucket
-Incoming requests are placed into a FIFO queue (the bucket). The bucket "leaks" (processes) requests at a strictly constant rate (e.g., 5 requests per second). 
-If a sudden burst of 100 requests hits, the bucket overflows and the excess requests are instantly dropped.
-- **Benefit**: Guarantees a perfectly smooth, constant load on your backend database, entirely flattening out bursts.
-
-### Fixed Window Counter
-The simplest algorithm. Track requests in a Redis counter tied to the minute (e.g., `user_123_10:05_AM = 8`). If the counter exceeds 10, drop requests. At 10:06 AM, the counter resets to 0.
-- **Flaw**: The "Boundary Spike". A user can send 10 requests at 10:05:59, and 10 requests at 10:06:01. They bypassed the limit and sent 20 requests in two seconds. 
-
-<Callout icon="tip" title="Distributed Rate Limiting">
-If you have 50 API Gateway servers, you cannot store rate limits in local RAM (or a user could hit different servers and bypass the limit 50 times). Rate Limiting in massive systems always relies on a centralized, ultra-fast, in-memory datastore like **Redis**, utilizing atomic operations like `INCR` and `EXPIRE`.
-</Callout>
+## Implementation
+Rate limiting is rarely implemented inside the application code itself. It is almost always handled at the edge by the **API Gateway**, Load Balancer, or WAF (Web Application Firewall) (e.g., Cloudflare, Nginx, Kong), using Redis to share the rate limit counters across all edge servers.
 
 </ConceptTemplate>

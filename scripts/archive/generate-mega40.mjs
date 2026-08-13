@@ -1,320 +1,295 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const TICK3 = '\`\`\`'
-const TICK1 = '\`'
+const TICK3 = '```'
+const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/The Core Languages/index.mdx': `---
-title: The Core Languages (JS, ES6+, TS)
-description: The evolution of Javascript from a simple 10-day scripting language into a globally dominant, strongly-typed enterprise ecosystem.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/HTTP-1.1/index.mdx': `---
+title: HTTP/1.1
+description: "The classic, text-based hypermedia protocol that powered the growth of the World Wide Web for over two decades."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Core Languages (JS, ES6+, TS)">
+<ConceptTemplate 
+  name="HTTP/1.1"
+  icon="globe"
+>
 
-JavaScript was famously created by Brendan Eich in just 10 days in 1995. It was originally intended to be a simple, lightweight scripting language to make buttons clickable in the Netscape Navigator browser. 
+Released in 1997, **HTTP/1.1** is the protocol that defined the modern web. It is a text-based, application-layer protocol built on top of TCP. Whenever you request a web page, your browser sends an HTTP request to a server, and the server replies with an HTTP response.
 
-Today, it is the most widely used programming language on Earth, powering everything from enterprise cloud backends to mobile applications.
+## Key Features
 
-## ES6 (ECMAScript 2015) - The Revolution
-The language stagnated for years until the legendary **ES6 (ECMAScript 2015)** update. This single update fundamentally modernized Javascript, introducing:
+1. **Persistent Connections (Keep-Alive)**: Unlike HTTP/1.0, which opened and closed a brand new TCP connection for every single image on a webpage, HTTP/1.1 introduced TICK1Connection: keep-aliveTICK1. This allowed a single TCP connection to remain open, allowing the browser to download the HTML, CSS, and JS files over the same connection, vastly improving loading speeds.
+2. **Chunked Transfer Encoding**: Allowed a server to start sending an HTML document before it knew the total size of the document, enabling dynamically generated content.
+3. **Host Header**: Introduced the TICK1HostTICK1 header, making virtual hosting possible (allowing multiple websites with different domain names to live on a single IP address).
 
-1. **let & const**: Finally replacing the unpredictable, globally-scoped TICK1varTICK1.
-2. **Arrow Functions**: TICK1const add = (a, b) => a + b;TICK1 - providing concise syntax and mathematically fixing the confusing TICK1thisTICK1 context.
-3. **Promises & Async/Await**: Killing "Callback Hell" and providing a clean architecture for asynchronous HTTP requests.
-4. **Destructuring & Spread Operators**: Allowing developers to extract object properties mathematically TICK1const { name } = user;TICK1.
+## The Head-of-Line Blocking Problem
+HTTP/1.1 suffers from **Head-of-Line (HoL) Blocking** at the application layer. While a TCP connection is persistent, requests must be fulfilled in order. If the browser asks for a massive 5MB image, it cannot ask for a tiny 2KB CSS file on the same TCP connection until the image finishes downloading. To bypass this, browsers traditionally opened 6 parallel TCP connections per domain.
 
-## The TypeScript Paradigm Shift
-Despite ES6, JavaScript still had a fatal flaw: **Dynamic Typing**. 
-In a 1-million line codebase, a developer might accidentally pass a String into a function that expects an Array, and the application wouldn't crash until a user actually clicked a button in Production.
-
-Microsoft solved this by creating **TypeScript**.
-TypeScript is a strict syntactical superset of JavaScript. It adds **Static Type Checking** at compile-time.
-
-TICK3ts
-interface User {
-  id: number;
-  name: string;
-}
-
-// The compiler will violently crash if you pass a boolean here.
-function greetUser(user: User) {
-  console.log("Hello " + user.name);
-}
-TICK3
-
-TypeScript does not run in the browser. It mathematically verifies the entire codebase for errors, and then compiles (stripping away the types) down into pure JavaScript. Today, TypeScript is considered the absolute industry standard for all professional web development.
+<Callout icon="info" title="Human Readable">
+One of the best things about HTTP/1.1 is that it is plain text. You can literally use Telnet to connect to a web server, manually type TICK1GET / HTTP/1.1TICK1, press enter twice, and read the raw HTML response.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/The Module Systems/index.mdx': `---
-title: The Module Systems (CJS, ESM, AMD)
-description: The historical nightmare of Javascript imports, leading to the ultimate triumph of native ES Modules.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/HTTP-2/index.mdx': `---
+title: HTTP/2
+description: "A major revision of the HTTP network protocol, introducing multiplexing, binary framing, and header compression to solve HTTP/1.1's performance bottlenecks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Module Systems (CJS, ESM)">
+<ConceptTemplate 
+  name="HTTP/2"
+  icon="rocket"
+>
 
-For the first 20 years of its existence, JavaScript had absolutely no native way to split code into multiple files. You simply loaded massive, global TICK1<script>TICK1 tags in your HTML file and hoped they loaded in the correct order without colliding.
+Published in 2015 and heavily based on Google's SPDY protocol, **HTTP/2** was the first major upgrade to the web in 18 years. It was designed specifically to make websites load faster by fixing the inherent design flaws in HTTP/1.1.
 
-To fix this, the community invented fragmented "Module Systems."
+## How it Works: Binary Framing
 
-## The Legacy Systems
+HTTP/1.1 is text-based. HTTP/2 fundamentally changes this by adding a **Binary Framing Layer**. 
+Instead of sending raw text, HTTP/2 breaks down messages (Headers and Body) into discrete, binary frames. 
 
-### CommonJS (CJS)
-When Node.js was created in 2009 for backend servers, it needed a module system immediately. They invented **CommonJS**. It uses TICK1require()TICK1 and is entirely **synchronous**.
-TICK3js
-const fs = require('fs');
-module.exports = { myFunction };
-TICK3
-CommonJS worked perfectly on the backend, but it was disastrous for browsers (which need to load files asynchronously over the network).
+Because the data is broken into frames, HTTP/2 can perform **Multiplexing**.
 
-### AMD (Asynchronous Module Definition)
-Used primarily by libraries like **RequireJS**, AMD was designed specifically for the browser. It used a massive, ugly wrapper function to load dependencies asynchronously before executing the code.
-TICK3js
-define(['dep1', 'dep2'], function (dep1, dep2) {
-    return function () {};
-});
-TICK3
+## Multiplexing (Solving Application HoL Blocking)
+In HTTP/1.1, if you wanted 10 files, you had to queue them one after another (or open 6 TCP connections).
+In HTTP/2, the browser opens **a single TCP connection** to the server. Over this single connection, it can send requests for the HTML, CSS, and 8 images simultaneously. The server sends back binary frames for all 10 files interspersed with each other. 
 
-### UMD (Universal Module Definition)
-A terrifying Frankenstein wrapper that attempted to detect if the code was running in Node (CJS) or a browser (AMD), and dynamically served both.
+## Other Features
+- **Header Compression (HPACK)**: HTTP/1.1 sends the exact same headers (like cookies and user agents) on every single request, wasting bandwidth. HTTP/2 compresses headers and only sends the delta (what changed).
+- **Server Push**: (Largely deprecated now) Allowed a server to proactively send CSS and JS files to the client before the client even realized it needed them.
 
-## ES Modules (ESM) - The Standard
-In 2015, ECMAScript finally introduced a native, official module architecture built directly into the JavaScript language: **ESM**.
-
-TICK3js
-import { myFunction } from './utils.js';
-export const myVariable = 42;
-TICK3
-
-ESM is asynchronous, statically analyzable (which allows Bundlers to mathematically perform "Tree-Shaking" to delete unused code), and natively supported by all modern browsers via TICK1<script type="module">TICK1.
-
-**The Transition Nightmare**: For the last decade, the Javascript ecosystem has suffered immensely trying to migrate the billions of existing CommonJS packages over to ESM.
+<Callout icon="warning" title="TCP Head-of-Line Blocking">
+While HTTP/2 solved HoL blocking at the *application* layer, it created a new problem at the *TCP* layer. Because everything travels over a single TCP connection, if a single packet is lost on the network, TCP halts the *entire* connection to wait for retransmission, pausing the download of all multiplexed files simultaneously.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/The Runtimes/index.mdx': `---
-title: The Runtimes (Node.js, Deno, Bun)
-description: The execution engines that allow JavaScript to run directly on operating systems outside of the browser.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/HTTP-3 (QUIC)/index.mdx': `---
+title: HTTP/3 (QUIC)
+description: "The newest iteration of HTTP, which abandons TCP entirely in favor of QUIC (a UDP-based protocol) to solve TCP-level Head-of-Line blocking."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Runtimes (Node.js, Deno, Bun)">
+<ConceptTemplate 
+  name="HTTP/3 (QUIC)"
+  icon="zap"
+>
 
-Historically, JavaScript was locked inside a cage: the web browser. It could not read local computer files, it could not open network ports, and it could not run as a background service.
+**HTTP/3** is a radical departure from its predecessors. For 30 years, HTTP has run on top of TCP. HTTP/3 throws TCP out the window and runs on top of **QUIC** (Quick UDP Internet Connections), a protocol originally developed by Google.
 
-## Node.js (The Pioneer)
-In 2009, Ryan Dahl took Google Chrome's blazing-fast **V8 JavaScript Engine**, ripped it out of the browser, and strapped it to a C++ architecture that gave it full OS access. This created **Node.js**.
+Because QUIC runs on top of **UDP** (which does not guarantee delivery or order), QUIC itself implements the necessary reliability, congestion control, and encryption logic normally handled by TCP and TLS.
 
-Node.js revolutionized the industry. For the first time ever, developers could write their frontend UI in Javascript, and their backend API in Javascript. It introduced an asynchronous, Event-Driven, non-blocking I/O model that was capable of handling tens of thousands of concurrent connections (drastically outperforming traditional Ruby and PHP servers).
+## Why Abandon TCP?
 
-## Deno (The Secure Successor)
-Years later, Ryan Dahl realized Node.js had massive architectural flaws: 
-1. It lacked security (any Node package could secretly delete your entire hard drive).
-2. It relied on a centralized TICK1package.jsonTICK1 and the TICK1node_modulesTICK1 folder.
+HTTP/2 multiplexed all requests over a single TCP connection. If a single network packet dropped, TCP halted the entire connection until the packet was retransmitted. This is called **TCP Head-of-Line (HoL) Blocking**.
 
-He created **Deno** (written in Rust) to fix this. Deno is secure by default (requiring explicit permissions to read files or access the network), natively supports TypeScript out-of-the-box without transpilers, and imports URLs directly (like the browser) instead of using TICK1node_modulesTICK1.
+By using UDP (which doesn't care about order), QUIC implements multiple independent "streams." If the packet containing a chunk of an image drops, only the stream for that specific image is paused. The CSS and JS streams continue downloading unimpeded.
 
-## Bun (The Speed Demon)
-Created by Jarred Sumner, **Bun** is the newest runtime. Instead of Google's V8, it uses Apple's **JavaScriptCore** engine. It is written in Zig and is mathematically hyper-optimized for extreme performance. 
-Bun is designed to be a completely unified ecosystem: it acts as a runtime, a package manager (replacing TICK1npmTICK1), and a bundler (replacing TICK1WebpackTICK1), executing significantly faster than Node.js.
+## 0-RTT Handshakes
+Establishing a secure HTTP/2 connection requires a TCP 3-way handshake, followed by a TLS handshake. If the server is physically far away, this takes hundreds of milliseconds before the first byte of actual data is sent.
+
+QUIC bakes TLS 1.3 directly into the protocol. A client can establish a secure connection and request the HTML file in a single round trip (1-RTT). For servers the client has visited before, it can send the request with zero round trips (0-RTT), resulting in instantaneous loading.
+
+<Callout icon="tip" title="Connection Migration">
+If you are watching a YouTube video on HTTP/2 (TCP) and walk out of your house, your phone switches from Wi-Fi to 5G. Your IP address changes, breaking the TCP connection, causing the video to buffer while it reconnects. QUIC uses a persistent "Connection ID" instead of relying on IP addresses. When you switch to 5G, the QUIC connection migrates seamlessly, and the video never stops.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/Package Managers/index.mdx': `---
-title: Package Managers (npm, Yarn, pnpm)
-description: The tools designed to resolve, download, and manage the massive dependency trees of open-source Javascript libraries.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/WebSockets/index.mdx': `---
+title: WebSockets
+description: "A computer communications protocol providing full-duplex communication channels over a single TCP connection, essential for real-time web applications."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Package Managers">
+<ConceptTemplate 
+  name="WebSockets"
+  icon="plug"
+>
 
-Modern applications rely on thousands of open-source libraries (React, Lodash, Tailwind). Managing the exact version numbers and deep dependencies of these libraries requires a **Package Manager**.
+**WebSockets** were created to solve a fundamental limitation of HTTP: HTTP is strictly half-duplex and client-driven. In HTTP, a server can never send data to a browser unless the browser asks for it first.
 
-## npm (Node Package Manager)
-The default package manager that ships with Node.js. It created the infamous **TICK1node_modulesTICK1** folder—a massive, endlessly deep directory containing all your downloaded code.
-Historically, npm was extremely slow, lacked deterministic lockfiles, and if 10 different projects on your computer all used React, npm would download and copy React 10 separate times, consuming massive amounts of hard drive space.
+Before WebSockets, developers faked real-time behavior using **Long Polling** (the browser sends an HTTP request, the server holds it open until it has data, responds, and the browser immediately requests again). This was incredibly inefficient.
 
-## Yarn (The Facebook Fix)
-In 2016, Facebook grew tired of npm's failures and released **Yarn**. 
-Yarn introduced the **Lockfile** (TICK1yarn.lockTICK1), which mathematically guaranteed that if Developer A installed a package, Developer B would get the *exact same* cryptographic hash version. It also downloaded packages in parallel, drastically increasing installation speeds. (npm eventually copied all these features).
+## The WebSocket Handshake
 
-## pnpm (Performant NPM)
-The current industry pinnacle. **pnpm** mathematically solved the hard drive space issue by using a global **content-addressable store** and OS-level **Symlinks** (Hard Links).
+WebSockets cleverly hijack HTTP to establish their connection:
+1. The browser sends a standard HTTP TICK1GETTICK1 request with an TICK1Upgrade: websocketTICK1 header.
+2. If the server supports it, it responds with an HTTP TICK1101 Switching ProtocolsTICK1 status.
+3. The HTTP connection is "upgraded," and the TCP socket is kept alive indefinitely.
 
-If you have 100 projects on your computer that use React, pnpm downloads React exactly once to a hidden folder on your OS (TICK1~/.pnpm-storeTICK1). It then creates instantaneous symbolic links in your TICK1node_modulesTICK1 that point to the global store. 
-This makes pnpm astronomically faster than npm and saves gigabytes of disk space.
+## Full-Duplex Communication
+Once established, the connection is **Full-Duplex**. Both the client and the server can push messages to each other at the exact same time, with almost zero overhead. The heavy HTTP headers (cookies, user-agents) are stripped away, and only raw binary or text frames are sent.
+
+This makes WebSockets the de facto standard for:
+- Live chat applications (Discord, Slack)
+- Multiplayer browser games
+- Live stock tickers and crypto trading dashboards
+- Collaborative editing (Google Docs)
+
+<Callout icon="info" title="Socket.IO vs WebSockets">
+Developers often confuse the two. WebSockets are the underlying raw protocol. **Socket.IO** is a JavaScript library that wraps WebSockets, providing automatic reconnections, broadcasting to "rooms," and gracefully falling back to HTTP Long-Polling if the user's corporate firewall blocks the WebSocket protocol.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/Transpilers & Compilers/index.mdx': `---
-title: Transpilers & Compilers (Babel, SWC, esbuild)
-description: The build tools that mathematically transform futuristic TypeScript and React JSX into older JavaScript that legacy browsers can understand.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/SMTP/index.mdx': `---
+title: SMTP
+description: "Simple Mail Transfer Protocol, the internet standard communication protocol for electronic mail transmission."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Transpilers & Compilers">
+<ConceptTemplate 
+  name="SMTP"
+  icon="mail"
+>
 
-When React introduced **JSX** (writing HTML directly inside Javascript), browsers had no idea how to read it. They would instantly crash with a Syntax Error. 
-Furthermore, when ES6 released, developers wanted to use new features like Arrow Functions, but users on older browsers (Internet Explorer) couldn't run them.
+**SMTP (Simple Mail Transfer Protocol)** is the foundation of global email. It is the protocol used to *push* or send emails from a client to a mail server, and from one mail server to another.
 
-We needed a tool to "Transpile" (Translate + Compile) the futuristic code back down into older, highly-compatible JavaScript.
+(Note: SMTP is only used for *sending* mail. To *retrieve* mail from a server to your phone or laptop, you use **IMAP** or **POP3**).
 
-## Babel (The JS Pioneer)
-**Babel** was the undisputed king of transpilation for nearly a decade. 
-It parsed your React JSX and ES6 code into an Abstract Syntax Tree (AST), mathematically transformed the nodes, and spat out ugly, highly compatible ES5 code. 
+## How Email Actually Works
 
-**The Flaw**: Babel was written in Javascript. As codebases grew to millions of lines, Babel would often take 5+ minutes just to compile the application. Javascript was simply too slow for heavy compiler mathematics.
+If alice@gmail.com sends an email to bob@yahoo.com:
+1. Alice's phone connects to Google's SMTP server and authenticates.
+2. Google's SMTP server queries DNS for Yahoo's "MX" (Mail Exchange) record to find Yahoo's server IP.
+3. Google's server opens an SMTP connection to Yahoo's server on Port 25.
+4. They exchange a series of text-based commands (TICK1EHLOTICK1, TICK1MAIL FROMTICK1, TICK1RCPT TOTICK1, TICK1DATATICK1).
+5. Yahoo accepts the email and drops it into Bob's inbox.
 
-## The Systems Language Revolution
-To fix the compilation speed crisis, developers began rewriting JavaScript tooling in low-level, hyper-optimized Systems Languages.
+## The Spam Problem
+SMTP was designed in 1982 when the internet was a small group of trusted academics. It inherently lacks authentication; anyone can connect to an SMTP server and claim to be "president@whitehouse.gov".
 
-### 1. esbuild (Written in Go)
-Created by Evan Wallace, esbuild shocked the industry by compiling code **10x to 100x faster than Babel**. Because it was written in Go, it could heavily utilize CPU multi-threading and shared memory architectures that Node.js could not.
+To combat spam and spoofing, the internet layered cryptographic verifications on top of SMTP:
+- **SPF (Sender Policy Framework)**: A DNS record listing the IP addresses allowed to send mail on behalf of a domain.
+- **DKIM (DomainKeys Identified Mail)**: Cryptographically signs every outgoing email so the receiver can verify it wasn't tampered with.
+- **DMARC**: Tells the receiving server what to do (reject or quarantine) if an email fails SPF or DKIM checks.
 
-### 2. SWC (Speedy Web Compiler - Written in Rust)
-Created by Next.js (Vercel), SWC is a Rust-based compiler designed specifically as a drop-in replacement for Babel. It performs the exact same AST transformations but operates at near-native CPU speeds.
-
-Today, nearly all modern frameworks (Next.js, Vite) have completely abandoned Babel in favor of esbuild or SWC.
+<Callout icon="warning" title="Port 25 Blocking">
+If you rent a cloud server on AWS or DigitalOcean and try to build your own email server, you will find that outbound traffic on Port 25 is hard-blocked at the firewall level. Cloud providers do this to prevent hackers from renting servers to send millions of spam emails. You usually have to request manual unblocking from customer support.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/Legacy Bundlers/index.mdx': `---
-title: Legacy Bundlers (Webpack, Rollup, Parcel)
-description: The heavy architectural tools used to traverse dependency graphs and mathematically combine thousands of JS files into a single production asset.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/FTP/index.mdx': `---
+title: FTP
+description: "File Transfer Protocol, a standard network protocol used for the transfer of computer files between a client and server on a computer network."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Legacy Bundlers">
+<ConceptTemplate 
+  name="FTP"
+  icon="folder"
+>
 
-Browsers historically punished you for making too many HTTP requests. If your app consisted of 500 separate Javascript files, the browser would have to make 500 slow network requests to load the page.
-To solve this, developers created **Bundlers**—tools that spider through your code, read the TICK1importTICK1 statements, and mathematically stitch everything together into one massive TICK1bundle.jsTICK1 file.
+**FTP (File Transfer Protocol)** is an ancient protocol (originally defined in 1971, pre-dating TCP/IP itself) used for uploading and downloading files. For decades, it was the primary way web developers uploaded HTML files to their shared hosting providers.
 
-## Webpack (The Monolith)
-For years, **Webpack** was the absolute standard. It viewed everything (Javascript, CSS, Images, SVGs) as a module. 
-Webpack was incredibly powerful, allowing for **Code Splitting** (breaking the massive bundle into smaller chunks that only load when the user visits a specific page). 
+## The Two-Port Architecture
 
-**The Flaw**: Webpack configuration files (TICK1webpack.config.jsTICK1) were notoriously horrifying. They were massive, impossible to read, and broke constantly. Additionally, because Webpack was written in Javascript, building a large enterprise app could take 10+ minutes.
+FTP is unusual because it uses two separate TCP connections:
+1. **The Control Connection (Port 21)**: Used to send commands (like TICK1USERTICK1, TICK1PASSTICK1, TICK1LISTTICK1) and receive status replies. This connection stays open for the entire session.
+2. **The Data Connection (Port 20)**: A temporary, separate connection opened specifically to transfer the actual file contents, then immediately closed.
 
-## Rollup (The Library King)
-Created by Rich Harris (creator of Svelte), Rollup focused strictly on Javascript (ignoring CSS/Images). 
-Rollup pioneered **Tree-Shaking**—a mathematical algorithm that statically analyzes your ESM imports and aggressively deletes any unused functions from the final output, producing incredibly tiny bundle sizes. 
-Because of this, Rollup became the industry standard for bundling open-source NPM libraries (like React components), while Webpack remained the standard for web applications.
+This two-port architecture makes FTP a nightmare for modern NATs (Network Address Translation) and strict firewalls, leading to the invention of "Passive Mode" (where the client initiates the data connection instead of the server).
 
-## Parcel
-Parcel attempted to solve the Webpack configuration nightmare by offering a "Zero Configuration" bundler. It worked brilliantly out-of-the-box, automatically detecting HTML/CSS/JS without a massive config file, though it struggled to gain Webpack's enterprise market share.
+## Security Flaws
+FTP sends everything—including your username and password—in **plain text**. If you log into an FTP server over public Wi-Fi, anyone sniffing the network can steal your credentials instantly.
+
+<Callout icon="danger" title="FTP vs SFTP vs FTPS">
+- **FTP**: Unencrypted, insecure, obsolete.
+- **FTPS**: FTP wrapped in TLS encryption. Still suffers from firewall issues due to the two-port architecture.
+- **SFTP (SSH File Transfer Protocol)**: Not FTP at all! It is an entirely different, highly secure protocol that runs over standard SSH (Port 22). **SFTP is the modern standard for secure file transfers.**
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/Modern Build Tools/index.mdx': `---
-title: Modern Build Tools (Vite, Turbopack)
-description: The next-generation architecture that abandons heavy bundling during development in favor of instant, unbundled ESM delivery.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/MQTT/index.mdx': `---
+title: MQTT
+description: "Message Queuing Telemetry Transport, a lightweight, publish-subscribe network protocol that transports messages between devices, standard in IoT."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Modern Build Tools">
+<ConceptTemplate 
+  name="MQTT"
+  icon="wifi"
+>
 
-The Webpack era created a catastrophic developer experience problem. In a large app, if a developer changed a single CSS color, they would have to wait 30 seconds for Webpack to re-bundle the entire application before the browser would update.
+**MQTT** is the undisputed king protocol of the **Internet of Things (IoT)**. 
 
-Evan You (creator of Vue) realized that modern browsers had finally implemented native support for ES Modules (TICK1<script type="module">TICK1).
+When you have a smart thermostat, a fleet of delivery trucks, or 10,000 temperature sensors in a factory, HTTP is far too heavy. HTTP requires opening a connection, sending heavy headers, and keeping the connection alive. MQTT is designed to be incredibly lightweight, using minimal battery power and bandwidth over unstable networks (like 2G cellular or satellite).
 
-## Vite (The French word for "Quick")
-Vite completely revolutionized frontend development by entirely abandoning the concept of bundling during development.
+## The Publish-Subscribe Model (Pub/Sub)
 
-When you start a Vite dev server:
-1. It does **not** bundle your code.
-2. It uses blazing-fast **esbuild** (written in Go) to instantly pre-compile your npm dependencies.
-3. It serves your source code directly to the browser as native ESM over HTTP.
-4. If you edit a file, Vite uses **HMR (Hot Module Replacement)** to instantly swap out exactly that one module in the browser via WebSockets in milliseconds.
+MQTT does not use a Client-Server request model. It uses a **Broker**.
 
-The result: A Vite dev server starts in 100 milliseconds, regardless of whether your app has 10 files or 10,000 files. (Note: For Production, Vite still heavily bundles the code using Rollup for optimal network performance).
+1. **The Broker**: A central server (like Eclipse Mosquitto) that acts as a post office.
+2. **Publishers**: A smart thermometer publishes a tiny message ("22.5") to a specific **Topic** (e.g., TICK1house/livingroom/tempTICK1).
+3. **Subscribers**: Your phone app connects to the broker and subscribes to TICK1house/+/tempTICK1. The broker instantly pushes the temperature data to your phone.
 
-## Turbopack
-Created by Tobias Koppers (the original creator of Webpack) at Vercel. 
-Turbopack is billed as the "Rust-based successor to Webpack". Instead of abandoning bundling like Vite, it relies on incredibly complex, heavily-cached incremental Rust compilation to achieve extreme speed, specifically optimized for massive Next.js architectures.
+The thermometer and your phone never talk to each other directly; they only talk to the broker.
+
+## QoS (Quality of Service)
+MQTT allows devices to specify how critical a message is:
+- **QoS 0 (At most once)**: "Fire and forget." The sensor sends data; if the network drops it, it's gone. Used for data that updates frequently.
+- **QoS 1 (At least once)**: Guaranteed delivery, but the subscriber might receive duplicates.
+- **QoS 2 (Exactly once)**: Guaranteed delivery with no duplicates. Uses a 4-step handshake. Used for critical commands (e.g., "Unlock the front door").
+
+<Callout icon="tip" title="Last Will and Testament (LWT)">
+A brilliant feature of MQTT. When a sensor connects to the broker, it can register a "Last Will." If the sensor suddenly loses power and drops the TCP connection ungracefully, the broker will automatically publish the Last Will message (e.g., "Device Offline") to a topic, alerting the system that the sensor died.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/Monorepos/index.mdx': `---
-title: Monorepo Tooling (Nx, Turborepo, Lerna)
-description: Enterprise architecture systems designed to manage dozens of separate applications and packages within a single Git repository.
+  'src/features/kb/routes/KB/13. Computer Networks/13.2 Application-Layer Protocols/TLS/index.mdx': `---
+title: TLS
+description: "Transport Layer Security, the cryptographic protocol designed to provide communications security over a computer network (the 'S' in HTTPS)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Monorepo Tooling">
+<ConceptTemplate 
+  name="TLS"
+  icon="lock"
+>
 
-Historically, if a company had a Web App, a Mobile App, and a shared UI Library, they put them in 3 separate Git repositories (Polyrepo). This was a nightmare. If you updated the UI library, you had to publish it to NPM, update the version in the Web App repo, and deploy.
+**TLS (Transport Layer Security)** is the successor to the deprecated **SSL (Secure Sockets Layer)**. It is the cryptographic armor that wraps around other protocols. When you wrap HTTP in TLS, you get HTTPS. When you wrap SMTP in TLS, you get SMTPS.
 
-A **Monorepo** solves this by putting all 3 applications in a single Git repository. They can instantly share code locally without publishing to NPM.
+TLS provides three critical guarantees to internet communication:
+1. **Encryption**: Hides the data from eavesdroppers (ISPs, hackers on public Wi-Fi).
+2. **Authentication**: Proves you are actually talking to TICK1google.comTICK1 and not an imposter intercepting the traffic.
+3. **Integrity**: Ensures the data wasn't altered in transit.
 
-However, if you have 50 applications in one repo, running TICK1npm run testTICK1 will take 4 hours. You need Monorepo Tooling.
+## The TLS Handshake (How it works)
 
-## 1. Lerna (The Legacy Tool)
-The original monorepo tool. It simply helped version and publish multiple packages simultaneously. However, it was slow and lacked advanced mathematical build caching.
+When you navigate to TICK1https://bank.comTICK1:
+1. **Client Hello / Server Hello**: The browser and server agree on which cryptographic algorithms to use (the cipher suite).
+2. **Certificate Exchange**: The server sends its public key and its TLS Certificate (issued by a trusted Certificate Authority like Let's Encrypt). The browser verifies the certificate's cryptographic signature to prove the server is the real bank.
+3. **Key Exchange**: Because asymmetric encryption (public/private keys) is too slow for downloading streaming video, they only use it momentarily. The browser securely generates a random "Symmetric Session Key" and encrypts it using the server's public key.
+4. **Secure Tunnel**: The server decrypts the session key using its private key. Now, both the browser and server share a super-fast, symmetric secret key. All further HTTP traffic is encrypted using this session key.
 
-## 2. Nx (The Enterprise Standard)
-Created by former Google Angular engineers, Nx treats your repository as a massive Directed Acyclic Graph (DAG). 
-If you edit a deeply nested utility function, Nx mathematically calculates exactly which apps depend on that function, and it will **only rebuild and test those specific apps**, ignoring the rest of the repo. 
-It also utilizes **Remote Caching**—if Developer A builds the app on their laptop, the compiled output is sent to a cloud server. If Developer B tries to build the exact same code, Nx instantly downloads the cached result in 2 seconds instead of compiling it locally.
+## TLS 1.3
+Released in 2018, **TLS 1.3** was a massive overhaul. It ruthlessly stripped out dozens of outdated, vulnerable cryptographic algorithms (like MD5 and SHA-1) and reduced the handshake from two round-trips to **one round-trip (1-RTT)**, making the secure web significantly faster.
 
-## 3. Turborepo (The Modern Challenger)
-Acquired by Vercel, Turborepo is written in Rust. It functions very similarly to Nx (DAG mapping + Remote Caching) but is heavily optimized for zero-configuration, seamless integration with Next.js, and uses highly readable JSON configuration files.
-
-</ConceptTemplate>
-`,
-
-  'src/features/kb/routes/KB/16. JavaScript Ecosystem & Tooling/Code Quality/index.mdx': `---
-title: Code Quality (ESLint, Prettier)
-description: The automated static analysis tools that mathematically enforce stylistic consistency and prevent logical errors before execution.
----
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
-<ConceptTemplate title="Code Quality (ESLint, Prettier)">
-
-In a team of 50 developers, everyone has different opinions on coding style. Some prefer single quotes, some prefer double quotes. Some prefer 2 spaces, some prefer tabs. 
-
-Without automated tooling, Pull Request reviews devolve into bitter arguments over indentation, wasting thousands of hours of expensive engineering time. 
-
-The industry mathematically solved this using a strict separation of concerns:
-
-## 1. Prettier (The Code Formatter)
-Prettier is an "opinionated" code formatter. It does not care about logic or bugs. Its only job is visual spacing.
-When you press Save in your editor, Prettier rips your code apart into an Abstract Syntax Tree (AST), deletes all of your personal formatting, and reprints it using a strict set of mathematical rules. 
-
-TICK3js
-// You write this ugly mess:
-foo(arg1,arg2,
-arg3,arg4);
-
-// Prettier instantly formats it on Save:
-foo(
-  arg1,
-  arg2,
-  arg3,
-  arg4
-);
-TICK3
-It completely eliminates all team debates about formatting.
-
-## 2. ESLint (The Logic Linter)
-While Prettier handles formatting, ESLint analyzes your actual Javascript logic to mathematically prevent bugs.
-
-ESLint scans the AST for dangerous patterns:
-- TICK1no-unused-varsTICK1: You declared a variable but never used it.
-- TICK1eqeqeqTICK1: You used TICK1==TICK1 instead of the strict TICK1===TICK1.
-- TICK1react-hooks/exhaustive-depsTICK1: You forgot to include a variable in a React TICK1useEffectTICK1 dependency array, which will cause a stale closure bug in Production.
-
-## The Synergy
-Today, these tools are run automatically on "pre-commit hooks" using a tool called **Husky**. The system will literally forbid the developer from committing their code to Git unless Prettier has formatted it and ESLint reports zero errors.
+<Callout icon="info" title="Let's Encrypt">
+Before 2015, TLS certificates cost hundreds of dollars a year, and configuring them was a nightmare. This meant 70% of the web was unencrypted. A non-profit called **Let's Encrypt** launched, providing automated, free TLS certificates to anyone. Today, over 95% of web traffic is encrypted, entirely changing the landscape of internet privacy.
+</Callout>
 
 </ConceptTemplate>
 `,

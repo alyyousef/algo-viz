@@ -1,8 +1,42 @@
+---
+title: Behaviour-Driven Development (BDD)
+description: "An agile software development process that encourages collaboration among developers, QA, and non-technical business participants by defining system behavior in plain text."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Behaviour-driven development (BDD)">
+<ConceptTemplate title="Behaviour-Driven Development (BDD)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While TDD focuses on *how* the code is written, **Behaviour-Driven Development (BDD)** focuses on *what* the system should do. It bridges the communication gap between technical teams and business stakeholders (Product Managers, Business Analysts) by using human-readable domain language.
+
+## 1. The Gherkin Syntax
+BDD relies on a structured natural language framework, most commonly **Gherkin** (used by tools like Cucumber). Scenarios are defined using `Given`, `When`, and `Then` keywords.
+
+```gherkin
+Feature: User Authentication
+  As a registered user
+  I want to log into the application
+  So that I can access my dashboard
+
+  Scenario: Successful login with valid credentials
+    Given the user is on the login page
+    And the user has a registered account with email "john@example.com"
+    When the user enters "john@example.com" and "password123"
+    And the user clicks the login button
+    Then the user should be redirected to the dashboard
+    And a welcome message should be displayed
+```
+
+## 2. Executable Specifications
+The magic of BDD is that these plain-text files are actually executable code. Developers write "Step Definitions" (in Java, JavaScript, Python, etc.) that map to each line of the Gherkin text.
+When the test suite runs, it reads the plain English text and executes the corresponding code, acting as a living, self-validating requirement document.
+
+## 3. Benefits of BDD
+- **Shared Understanding**: Eliminates ambiguity. The Product Manager writes the requirements, and the developer runs those exact requirements as tests.
+- **Focus on User Value**: Forces the team to think about system behavior from the end-user's perspective rather than implementation details.
+
+<Callout icon="warning" title="Maintenance Overhead">
+Maintaining the mapping between the plain-text Gherkin steps and the underlying automation code can become a massive maintenance burden for QA teams. BDD is highly effective for complex domain logic but is often overkill for simple CRUD applications.
+</Callout>
 
 </ConceptTemplate>

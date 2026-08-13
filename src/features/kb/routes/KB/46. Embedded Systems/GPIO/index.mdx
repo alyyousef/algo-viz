@@ -1,8 +1,32 @@
+---
+title: GPIO (General-Purpose Input/Output)
+description: "Uncommitted digital signal pins on an integrated circuit or electronic circuit board whose behavior can be controlled by the user at runtime."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GPIO">
+<ConceptTemplate title="GPIO (General-Purpose Input/Output)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**GPIO pins** are the primary way a Microcontroller interacts with the physical world. If you look at an MCU chip, the little metal legs sticking out of it are the pins. Some pins have dedicated electrical purposes (like providing power or ground), but most are GPIOs.
+
+"General Purpose" means they have no predefined purpose. The software developer decides what the pin will do at runtime.
+
+## Digital Inputs and Outputs
+GPIO pins are strictly digital. They only understand two states: **HIGH (1)** or **LOW (0)**. 
+Electrically, HIGH is usually 3.3V or 5V, and LOW is 0V (Ground).
+
+### 1. Configuring as an Output
+When configured as an Output, the MCU actively drives voltage to the pin.
+- Setting the pin HIGH outputs 3.3V. This could be used to turn on an LED, activate a relay, or signal a motor driver to move.
+- Setting the pin LOW pulls it to 0V, turning the device off.
+
+### 2. Configuring as an Input
+When configured as an Input, the MCU "listens" to the voltage on the pin.
+- If a user presses a physical button connected to 3.3V, the pin reads HIGH.
+- If the button is released, the pin reads LOW.
+
+## Pull-Up and Pull-Down Resistors
+When an Input pin is not connected to anything (e.g., a button is not pressed), it acts like an antenna and picks up random electromagnetic noise from the environment. The MCU will rapidly read a chaotic mix of HIGH and LOW. This is called a **Floating Pin**.
+
+To fix this, we use **Pull-Up or Pull-Down Resistors**. A Pull-Up resistor weakly ties the pin to 3.3V, ensuring it always reads HIGH until a button press forcefully pulls it LOW to Ground. Most modern MCUs have these resistors built directly into the silicon, and you can enable them with a single line of code.
 
 </ConceptTemplate>

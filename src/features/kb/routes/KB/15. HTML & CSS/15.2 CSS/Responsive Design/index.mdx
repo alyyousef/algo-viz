@@ -1,43 +1,51 @@
 ---
-title: Responsive Design & Media Queries
-description: The architectural philosophy and CSS mechanics required to ensure web applications automatically adapt to smartphones, tablets, and 4K monitors.
+title: Responsive Design
+description: "The practice of building web pages that detect the visitor's screen size and orientation and change the layout accordingly."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Responsive Design & Media Queries">
+<ConceptTemplate 
+  name="Responsive Design"
+  icon="smartphone"
+>
 
-In the early 2000s, companies built two entirely separate websites: `www.example.com` for desktops, and `m.example.com` for flip-phones. This was a maintenance nightmare.
+In the early days of smartphones, developers built entirely separate websites for mobile devices (e.g., `m.facebook.com`). **Responsive Web Design (RWD)**, coined by Ethan Marcotte in 2010, changed the industry paradigm: build one HTML document, but use CSS to make it fluidly adapt to any screen.
 
-In 2010, Ethan Marcotte coined **Responsive Web Design**. The philosophy dictates that there should be exactly one HTML codebase, and CSS should mathematically fluidly adapt the layout based on the user's screen size.
-
-## Media Queries
-The core technology behind Responsive Design is the **Media Query**. It acts as an IF-statement in CSS.
-
-```css
-/* Mobile-First Base Styles */
-.sidebar {
-  display: none; 
-}
-
-/* Tablet & Desktop Override */
-@media (min-width: 768px) {
-  .sidebar {
-    display: block; 
-  }
-}
-```
-
-## Mobile-First Architecture
-Modern web development strictly adheres to the "Mobile-First" philosophy. 
-You write the default CSS targeting the narrowest smartphone screen (stacking elements vertically). Then, you use `min-width` media queries to progressively enhance the layout as the screen gets wider (converting the vertical stack into a horizontal CSS Grid).
-
-This is drastically more performant because smartphones (which have weaker CPUs) do not have to download and parse complex desktop layout rules only to override them.
-
-## The Viewport Meta Tag
-If you forget this tag, Responsive Design will completely fail:
+## The Meta Viewport Tag
+Responsive design literally does not work without this HTML tag in your `<head>`. It tells mobile browsers not to arbitrarily zoom out the page to fit a desktop layout onto a 4-inch screen.
 ```html
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 ```
-Without this, iPhones will assume your website is a legacy 1999 desktop site, and will violently zoom out, rendering the text at an unreadable microscopic size.
+
+## Media Queries
+Media queries allow you to apply CSS conditionally based on screen dimensions.
+
+**Mobile-First Approach (Best Practice):**
+Write your default CSS for mobile screens, then use `min-width` to add complexity as the screen gets larger.
+```css
+/* Default: Mobile (stacked layout) */
+.layout { display: block; }
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .layout { display: flex; }
+}
+
+/* Desktop and up */
+@media (min-width: 1024px) {
+  .layout { display: grid; }
+}
+```
+
+## Relative Units
+Responsive design relies heavily on avoiding fixed `px` values in favor of:
+- **`%`**: Percentage of the parent container.
+- **`vw` / `vh`**: Viewport Width / Viewport Height (1vw is 1% of the screen width).
+- **`rem`**: Root em. Relative to the default font size of the HTML document (great for accessibility scaling).
+
+<Callout icon="info" title="Container Queries">
+A massive recent addition to CSS is **Container Queries** (`@container`). Instead of altering a component based on the *entire screen size*, you can alter it based on the *size of its parent container*. This is a game-changer for building reusable React/Vue components that look good anywhere on the page.
+</Callout>
 
 </ConceptTemplate>

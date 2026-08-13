@@ -1,8 +1,34 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: VS Code (Visual Studio Code)
+description: "A free, cross-platform code editor made by Microsoft that has completely dominated the modern software development landscape."
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="VS Code">
+<TechnologyTemplate 
+  name="VS Code"
+  icon="vscode"
+  creator="Microsoft"
+  year={2015}
+  website="https://code.visualstudio.com/"
+  repository="https://github.com/microsoft/vscode"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Visual Studio Code** is not an IDE (Integrated Development Environment) out of the box; it is an incredibly fast, highly extensible text editor built on Electron. Through its massive marketplace of extensions, developers turn it into a custom IDE for Python, TypeScript, Rust, C++, or any other language imaginable.
 
-</ConceptTemplate>
+## Why Did It Win?
+Before VS Code, developers had to choose between highly functional but incredibly bloated Java-based IDEs (like Eclipse or IntelliJ), or fast but bare-bones text editors (like Sublime Text or Atom).
+
+VS Code struck the perfect balance. It was faster and more stable than Atom (which was also Electron-based but suffered terrible performance issues), but it offered the **Language Server Protocol (LSP)**.
+
+### The LSP Revolution
+Before the LSP, every code editor had to write custom logic to parse and understand every programming language. 
+Microsoft introduced the LSP with VS Code: a standardized protocol where the editor asks a separate background process (the Language Server) "What are the errors here?" or "What should autocomplete show when the user types a dot?". 
+
+Because of LSP, as soon as a new language (like Zig) is created, its creators just write *one* Language Server, and instantly every editor (VS Code, Neovim, Emacs) gets perfect syntax highlighting and autocomplete.
+
+<Callout icon="tip" title="Monaco Editor">
+The actual text-editing component inside VS Code is called **Monaco**. Microsoft extracted this into a standalone library, which is why when you edit code directly on GitHub or in CodeSandbox, the editor feels *exactly* like VS Code.
+</Callout>
+
+</TechnologyTemplate>

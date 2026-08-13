@@ -1,35 +1,29 @@
 ---
 title: Docker
-description: The industry-standard platform that democratized containerization by providing an easy-to-use CLI and ecosystem.
+description: "The platform and toolset that popularized containerization by providing a standard way to build, package, and distribute containers."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate 
-  title="Docker" 
-  category="DevOps & Infrastructure" 
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg"
->
+<ConceptTemplate title="Docker">
 
-**Docker** is the software platform that brought container technology to the masses. While Linux containers (LXC) existed long before Docker, they were incredibly difficult to use. Docker introduced a simple CLI, a standard image format (the Dockerfile), and a central registry (Docker Hub), completely revolutionizing modern software engineering.
+While Linux had container features (LXC) for years, they were extremely difficult to use. In 2013, **Docker** revolutionized the software industry by introducing a user-friendly abstraction layer, a standard image format, and a centralized registry (Docker Hub).
 
-<Callout icon="info" title="The Docker Daemon (dockerd)">
-  At the heart of the Docker platform is the **Docker Daemon**, a background service running on your host OS. When you type \`docker run nginx\` in your terminal, the Docker CLI sends a REST API request to the Daemon, which actually talks to the Linux Kernel to construct the namespaces and cgroups required to spawn the container.
+Docker solved the infamous *"It works on my machine"* problem. By packaging the application code, the runtime (Node.js/Python), and the exact system dependencies (OpenSSL, glibc) into a single artifact, Docker guaranteed the app would run identically on a developer's laptop, a testing server, and production.
+
+## 1. The Docker Architecture
+Docker uses a client-server architecture:
+- **Docker CLI**: The command-line tool developers interact with (`docker run`, `docker build`).
+- **Docker Daemon (dockerd)**: The background service running on the host machine that actually does the heavy lifting of building, running, and monitoring containers.
+- **Containerd**: The low-level runtime (originally part of Docker, now an independent CNCF project) that manages the actual container lifecycle.
+
+## 2. The OCI Standard
+Docker became so dominant that the industry feared a monopoly. In response, Docker helped create the **Open Container Initiative (OCI)** to standardize how container images are built and executed.
+
+Today, a "Docker image" is actually an "OCI image". This means you don't even need Docker to run them—you can use alternative OCI-compliant tools like **Podman** or **Buildah**.
+
+<Callout icon="tip" title="Docker Desktop vs Docker Engine">
+**Docker Engine** is the free, open-source daemon that runs natively on Linux. **Docker Desktop** is a proprietary GUI application for Mac and Windows that spins up a hidden Linux VM to run the Docker Engine.
 </Callout>
 
-## Images vs. Containers
-
-Understanding Docker requires distinguishing between its two fundamental states:
-
-- **Docker Image**: The passive, read-only template. It is a frozen snapshot of an application and its dependencies (like a CD-ROM). You build an image once.
-- **Docker Container**: The active, running instance of an image. You can launch 50 identical containers simultaneously from a single image. A container adds a thin, read-write layer on top of the read-only image so the application can write temporary files.
-
-## The Docker Registry (Docker Hub)
-
-Docker's explosive growth was fueled by **Docker Hub**, a global, public repository of pre-built images. 
-If you need a PostgreSQL database, you do not need to compile PostgreSQL from source. You simply type \`docker run postgres\`, and Docker automatically downloads the official, optimized, secure image from Docker Hub and boots it in 3 seconds.
-
-## The Open Container Initiative (OCI)
-
-Docker became so popular that its image format became a de facto global standard. To prevent a monopoly, the industry formed the **OCI**, extracting Docker's core container runtime (\`runC\`) and standardizing the image format. Today, tools like **Podman** or **containerd** can run "Docker images" perfectly without actually having Docker installed.
-
-</TechnologyTemplate>
+</ConceptTemplate>

@@ -1,8 +1,42 @@
+---
+title: Actor Model
+description: "A conceptual model of concurrent computation that treats 'Actors' as the universal primitive of concurrent execution."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Actor model">
+<ConceptTemplate title="The Actor Model">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional multithreading, multiple threads share the same memory (which leads to Race Conditions), requiring Mutexes (which lead to Deadlocks). 
+
+The **Actor Model** (popularized by Erlang and Akka/Scala) completely abandons shared memory. It solves concurrency by strictly enforcing that state is isolated, and entities only communicate by passing immutable messages.
+
+## 1. What is an Actor?
+An Actor is a tiny, independent entity that contains:
+1. **Private State**: Variables that *absolutely no one else* can read or write.
+2. **A Mailbox**: A queue of incoming messages.
+3. **Behavior**: Logic that dictates what to do when a message is processed.
+
+When an Actor pulls a message from its mailbox, it can do three things:
+- Alter its own private state.
+- Create new child Actors.
+- Send a message to another Actor's mailbox.
+
+Because an Actor processes its mailbox strictly one message at a time, sequentially, **Race Conditions are impossible by design**. You never need a Mutex.
+
+## 2. Shared Memory vs Actor Model
+
+<ComparisonTable 
+  headers={['Feature', 'Shared Memory (Threads)', 'Actor Model']} 
+  rows={[
+    ['State', 'Global and shared. Accessible by everyone.', 'Strictly private and isolated.'],
+    ['Communication', 'Threads write to the same variables in RAM.', 'Actors asynchronously mail immutable messages to each other.'],
+    ['Safety', 'Prone to Race Conditions and Deadlocks.', 'Inherently thread-safe.'],
+    ['Distribution', 'Threads must live on the same physical CPU/Motherboard.', 'Because communication is just message passing, Actor A can live on a server in New York, and Actor B in Tokyo, and the code looks identical.']
+  ]} 
+/>
+
+## 3. "Let it Crash"
+In Erlang, millions of highly lightweight Actors can run simultaneously. If one Actor encounters a bug, it simply crashes and dies. Its "Supervisor" Actor notices it died, and simply spawns a fresh, clean replacement Actor to take its place. This philosophy ("Let it Crash") is how systems built on the Actor Model achieve 99.9999999% uptime.
 
 </ConceptTemplate>

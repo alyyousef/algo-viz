@@ -1,29 +1,48 @@
 ---
 title: Webhooks
-description: User-defined HTTP callbacks triggered by specific events.
+description: "User-defined HTTP callbacks used to enable real-time, event-driven communication between different web services."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Webhooks">
+<ConceptTemplate title="Webhooks">
 
-A webhook in web development is a method of augmenting or altering the behavior of a web page or web application with custom callbacks. These callbacks may be maintained, modified, and managed by third-party users and developers who may not necessarily be affiliated with the originating website or application.
+Also known as "Reverse APIs", **Webhooks** are a way for an application to push real-time data to other applications when a specific event occurs.
 
-<Callout icon="success" title="Push vs Pull">
-  **Without Webhooks (Polling):** Your app asks Stripe every 5 minutes, "Did the user pay yet?" (Wastes massive amounts of server resources).
+## 1. Polling vs Webhooks
+Imagine you are building an e-commerce app using Stripe for payments. You need to know exactly when a user's credit card charge is approved so you can ship the product.
+
+- **The Bad Way (Polling)**: Your server runs a loop, sending a REST API request to Stripe every 10 seconds: *"Is order 123 paid yet?"*. This wastes immense amounts of bandwidth and CPU on both ends.
+- **The Webhook Way (Push)**: You register a URL on your server (e.g., `https://myapp.com/api/webhooks/stripe`) in the Stripe dashboard. When the payment finally succeeds, Stripe makes an HTTP POST request *to your server* containing the payment details.
+
+## 2. Implementing a Webhook Endpoint
+Because you are exposing a public URL that expects to receive data, you must handle security carefully. If a malicious user discovers your Stripe webhook URL, they could send fake "Payment Successful" payloads to give themselves free items.
+
+To secure Webhooks, providers (like Stripe, GitHub, Slack) include a cryptographic signature in the HTTP headers (e.g., `Stripe-Signature`). Your server must use a pre-shared secret key to verify this signature before processing the request.
+
+```javascript
+// Example Express.js Webhook Handler
+app.post('/webhook', (req, res) => {
+  const signature = req.headers['stripe-signature'];
   
-  **With Webhooks:** You give Stripe a URL (`https://yourapp.com/api/stripe-webhook`). When the user pays, Stripe instantly POSTs the payment data to your URL.
+  try {
+    // Cryptographically verify the payload is genuinely from Stripe
+    const event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
+    
+    if (event.type === 'payment_intent.succeeded') {
+       fulfillOrder(event.data.object);
+    }
+    
+    // Always return a 200 OK immediately so Stripe knows you received it
+    res.status(200).send();
+  } catch (err) {
+    res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+});
+```
+
+<Callout icon="warning" title="Idempotency">
+Webhook providers often guarantee "at least once" delivery. If a network glitch occurs, Stripe might send you the exact same "Payment Successful" webhook twice. Your application logic must be **Idempotent**—it must be able to safely handle duplicate webhooks without shipping the product twice.
 </Callout>
 
-## Security Considerations
-
-Because Webhooks are public URLs that accept data, they must be secured:
-
-<ComparisonTable 
-  headers={['Security Method', 'Description']}
-  rows={[
-    ['Secret Signatures', 'The sender (e.g., Stripe) hashes the payload using a secret key only you both know. You verify the hash before processing the payload.'],
-    ['IP Whitelisting', 'Your server only accepts POST requests to the webhook URL if the traffic originates from known, published IP addresses of the provider.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

@@ -1,25 +1,70 @@
 ---
 title: Observer Pattern
-description: A behavioral design pattern that lets you define a subscription mechanism to notify multiple objects about any events that happen to the object they're observing.
+description: "A behavioral design pattern that lets you define a subscription mechanism to notify multiple objects about any events that happen to the object they're observing."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Observer Pattern">
+<ConceptTemplate title="Observer Pattern">
 
-The Observer pattern is a software design pattern in which an object, named the subject, maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods.
+The **Observer Pattern** (also known as Pub/Sub) establishes a one-to-many relationship between a **Subject** (the state holder) and multiple **Observers** (the listeners). When the Subject changes state, all registered Observers are automatically notified and updated.
 
-<Callout icon="success" title="The Core of UI Frameworks">
-  This is the exact pattern that powers React, Vue, and Angular reactivity. When the internal state (Subject) changes, it immediately fires an event to the UI components (Observers) to re-render themselves.
+## 1. Real-World Analogy
+If you subscribe to a newspaper, you don't go to the printing press every day to ask if the new edition is ready (polling). Instead, the publisher maintains a list of subscribers. When a new edition is printed, they push it directly to your mailbox.
+
+## 2. Implementation
+The Subject maintains a list of observer references and provides methods to subscribe and unsubscribe.
+
+```typescript
+interface Observer {
+  update(temperature: number): void;
+}
+
+class WeatherStation {
+  private observers: Observer[] = [];
+  private temperature: number;
+
+  public subscribe(observer: Observer) {
+    this.observers.push(observer);
+  }
+
+  public unsubscribe(observer: Observer) {
+    this.observers = this.observers.filter(obs => obs !== observer);
+  }
+
+  // When state changes, notify everyone!
+  public setTemperature(temp: number) {
+    this.temperature = temp;
+    this.notifyObservers();
+  }
+
+  private notifyObservers() {
+    for (const observer of this.observers) {
+      observer.update(this.temperature);
+    }
+  }
+}
+
+// Concrete Observers
+class PhoneDisplay implements Observer {
+  update(temp: number) { console.log(`Phone updated: ${temp}°C`); }
+}
+class WindowDisplay implements Observer {
+  update(temp: number) { console.log(`Window updated: ${temp}°C`); }
+}
+
+// Usage
+const station = new WeatherStation();
+const phone = new PhoneDisplay();
+station.subscribe(phone);
+station.subscribe(new WindowDisplay());
+
+// Automatically triggers updates on both displays
+station.setTemperature(25); 
+```
+
+<Callout icon="info" title="Frontend Frameworks">
+If you have used React (`useEffect`), Vue, or RxJS, you are using advanced variations of the Observer pattern. The UI components are "Observers" that subscribe to changes in the Application State (the "Subject").
 </Callout>
 
-## Mechanism
-
-<ComparisonTable 
-  headers={['Component', 'Role']}
-  rows={[
-    ['Subject (Publisher)', 'Holds the main state. It has `subscribe(observer)` and `unsubscribe(observer)` methods.'],
-    ['Observer (Subscriber)', 'Implements an `update()` method. When the Subject changes, it loops through its array of Observers and calls `update()` on all of them.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

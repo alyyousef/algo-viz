@@ -1,38 +1,35 @@
 ---
 title: CAP Theorem
-description: A fundamental theorem of distributed computing stating that a distributed database can only provide two of three guarantees.
+description: "A fundamental theorem stating that a distributed data store can only simultaneously provide two of the following three guarantees: Consistency, Availability, and Partition Tolerance."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="CAP Theorem">
+<ConceptTemplate title="The CAP Theorem">
 
-Formulated by Eric Brewer in 2000, the **CAP Theorem** is the foundational principle of distributed systems design. It states that it is mathematically impossible for a distributed data store to simultaneously provide more than two of the following three guarantees:
+Formulated by Eric Brewer in 2000, the **CAP Theorem** is the foundational rule for understanding how distributed databases (like Cassandra, MongoDB, or CockroachDB) handle network failures.
 
-1. **Consistency (C)**: Every read receives the most recent write, or an error. (If I update my password, any subsequent read on any node in the world *must* reflect the new password).
-2. **Availability (A)**: Every request receives a non-error response, without the guarantee that it contains the most recent write. (The system will never refuse to answer, even if the answer is slightly outdated).
-3. **Partition Tolerance (P)**: The system continues to operate despite an arbitrary number of network failures (partitions) between nodes.
+It states that a distributed system can only guarantee **two out of three** of the following properties:
 
-<Callout icon="warning" title="The Illusion of Choice">
-  CAP is often explained as "Pick any 2." This is dangerously misleading. In the real world, network cables get cut, switches fail, and packets drop. **Network Partitions (P) are a physical reality, not a choice.** Therefore, distributed systems must always support Partition Tolerance.
-  The real choice is: **When a network partition happens, do you choose Consistency or Availability?**
+1. **Consistency (C)**: Every read receives the most recent write, or an error. If User A updates their name, User B *must* see the new name immediately.
+2. **Availability (A)**: Every request receives a non-error response, without the guarantee that it contains the most recent write.
+3. **Partition Tolerance (P)**: The system continues to operate despite an arbitrary number of messages being dropped (or delayed) by the network between nodes.
+
+## The Reality of CAP
+In a distributed system connected over the internet, network partitions (P) are a fact of physics. Cables get cut, switches fail, routers crash. Therefore, **you cannot choose CA**. You are forced to choose between **CP** and **AP** during a network failure.
+
+Imagine a database with Node 1 and Node 2. The network cable between them is cut (a Partition).
+
+### Scenario 1: Choose Consistency (CP)
+A user tries to write to Node 1. Node 1 cannot contact Node 2 to replicate the data. To remain Consistent, Node 1 *must* refuse the write and return an Error to the user. The system is Consistent, but **Unavailable**.
+*Examples: MongoDB, HBase, Redis.*
+
+### Scenario 2: Choose Availability (AP)
+A user tries to write to Node 1. Node 1 cannot contact Node 2, but accepts the write anyway to remain Available. A second user reads from Node 2 and gets the old, stale data. The system is Available, but **Inconsistent**.
+*Examples: Cassandra, DynamoDB.*
+
+<Callout icon="info" title="PACELC Theorem">
+CAP only applies *during a failure*. What about when the network is running perfectly? The **PACELC Theorem** extends CAP: "If there is a Partition (P), choose A or C. Else (E), choose between Latency (L) and Consistency (C)."
 </Callout>
-
-## CP vs. AP Systems
-
-When the network breaks, leaving Node A unable to talk to Node B, and a user tries to read data from Node A:
-
-### CP Systems (Consistency + Partition Tolerance)
-Node A knows it cannot talk to Node B to verify if it has the most recent data. Therefore, to protect **Consistency**, Node A completely shuts down and returns an error to the user. 
-- *Best for*: Financial systems, billing ledgers. (It is better to be offline than to show an incorrect bank balance).
-- *Examples*: MongoDB, HBase, Redis Cluster.
-
-### AP Systems (Availability + Partition Tolerance)
-Node A knows it cannot talk to Node B, but it prioritizes **Availability**. It responds to the user with whatever stale data it currently has in its local memory. 
-- *Best for*: Social media, shopping carts, metrics. (It is better to show an old Facebook comment than to show a crashing error page).
-- *Examples*: Cassandra, DynamoDB, CouchDB.
-
-## The Limitation of CAP
-
-CAP is heavily criticized today because it is too binary. It only describes what a system does *during a catastrophic network failure*. It completely ignores what the system does 99.9% of the time when the network is perfectly fine. This led to the creation of the **PACELC Theorem**.
 
 </ConceptTemplate>

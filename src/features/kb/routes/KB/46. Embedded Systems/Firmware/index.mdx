@@ -1,8 +1,23 @@
+---
+title: Firmware
+description: "Specialized software programmed directly onto the read-only memory of a hardware device."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Firmware">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the world of computers, we generally divide things into **Hardware** (the physical silicon) and **Software** (the programs you can easily download and install). 
+
+**Firmware** is the "middle ground." It is software, but it is tightly coupled to a specific piece of hardware. It provides the low-level control that dictates how the hardware functions. 
+
+## Characteristics of Firmware
+- **Stored in Non-Volatile Memory**: It is usually written to Flash memory, ROM, or EEPROM, meaning it persists even when power is lost.
+- **Hardware-Specific**: You cannot run the firmware for a Samsung TV on an LG TV. It is compiled for the exact electrical schematic and MCU of the target device.
+- **Infrequently Updated**: While you might update your web browser (software) every week, you might only update your router's firmware once a year (if ever).
+
+## Over-The-Air (OTA) Updates
+Historically, updating firmware required plugging a specialized hardware programmer (like a JTAG) directly into the circuit board. 
+
+Today, modern devices (like Tesla cars or smart thermostats) utilize **OTA Updates**. The device downloads the new firmware payload over Wi-Fi/Cellular, verifies its cryptographic signature, and flashes it directly to its own memory space, completely altering its own code.
 
 </ConceptTemplate>

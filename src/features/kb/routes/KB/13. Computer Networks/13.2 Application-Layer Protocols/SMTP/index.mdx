@@ -1,26 +1,38 @@
 ---
-title: SMTP (Simple Mail Transfer Protocol)
-description: The internet standard protocol used strictly for sending (pushing) email messages from a client to a server, or between servers.
+title: SMTP
+description: "Simple Mail Transfer Protocol, the internet standard communication protocol for electronic mail transmission."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="SMTP (Simple Mail Transfer Protocol)">
+<ConceptTemplate 
+  name="SMTP"
+  icon="mail"
+>
 
-When you click "Send" on an email, your email client uses **SMTP** (TCP Port 25, 465, or 587) to push the message to your email provider (like Gmail). Gmail then uses SMTP to push that message across the internet to the recipient's email provider (like Outlook).
+**SMTP (Simple Mail Transfer Protocol)** is the foundation of global email. It is the protocol used to *push* or send emails from a client to a mail server, and from one mail server to another.
 
-**SMTP is strictly a push protocol.** It cannot be used to retrieve or read emails.
+(Note: SMTP is only used for *sending* mail. To *retrieve* mail from a server to your phone or laptop, you use **IMAP** or **POP3**).
 
-## The SMTP Conversation
+## How Email Actually Works
 
-SMTP is entirely text-based. If you telnet into an SMTP server, you literally type commands like:
-- `HELO client.example.com` (Hello, I want to talk)
-- `MAIL FROM:<alice@example.com>`
-- `RCPT TO:<bob@example.com>`
-- `DATA` (Here comes the actual email body)
+If alice@gmail.com sends an email to bob@yahoo.com:
+1. Alice's phone connects to Google's SMTP server and authenticates.
+2. Google's SMTP server queries DNS for Yahoo's "MX" (Mail Exchange) record to find Yahoo's server IP.
+3. Google's server opens an SMTP connection to Yahoo's server on Port 25.
+4. They exchange a series of text-based commands (`EHLO`, `MAIL FROM`, `RCPT TO`, `DATA`).
+5. Yahoo accepts the email and drops it into Bob's inbox.
 
-## The Port 25 Problem
+## The Spam Problem
+SMTP was designed in 1982 when the internet was a small group of trusted academics. It inherently lacks authentication; anyone can connect to an SMTP server and claim to be "president@whitehouse.gov".
 
-Historically, all SMTP traffic used **Port 25** with zero authentication and zero encryption. Because of this, spammers could connect to any unprotected SMTP server (an "Open Relay") and use it to blast millions of spam emails, destroying the server's reputation.
-Today, almost all residential ISPs aggressively block outbound Port 25. Modern email clients are forced to use **Port 587 (SMTP over TLS)**, which mandates strict username/password authentication and TLS encryption before a single email can be sent.
+To combat spam and spoofing, the internet layered cryptographic verifications on top of SMTP:
+- **SPF (Sender Policy Framework)**: A DNS record listing the IP addresses allowed to send mail on behalf of a domain.
+- **DKIM (DomainKeys Identified Mail)**: Cryptographically signs every outgoing email so the receiver can verify it wasn't tampered with.
+- **DMARC**: Tells the receiving server what to do (reject or quarantine) if an email fails SPF or DKIM checks.
+
+<Callout icon="warning" title="Port 25 Blocking">
+If you rent a cloud server on AWS or DigitalOcean and try to build your own email server, you will find that outbound traffic on Port 25 is hard-blocked at the firewall level. Cloud providers do this to prevent hackers from renting servers to send millions of spam emails. You usually have to request manual unblocking from customer support.
+</Callout>
 
 </ConceptTemplate>

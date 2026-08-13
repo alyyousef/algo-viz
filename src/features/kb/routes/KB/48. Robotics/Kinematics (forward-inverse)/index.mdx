@@ -1,8 +1,40 @@
+---
+title: Kinematics (Forward & Inverse)
+description: "The branch of classical mechanics that describes the motion of points, bodies, and systems without considering the forces that cause them."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Kinematics (forward/inverse)">
+<ConceptTemplate title="Kinematics (Forward vs. Inverse)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine a robotic arm with a shoulder joint, an elbow joint, and a wrist joint. Attached to the wrist is a claw (the **End-Effector**). 
+
+**Kinematics** is the pure geometry and trigonometry required to figure out where that claw is in 3D space, or how to move the joints to get the claw to a specific target. (Note: Kinematics ignores gravity, mass, and torque. That is called *Dynamics*).
+
+## Forward Kinematics (FK)
+**Given:** The exact angle of every joint (e.g., Shoulder is 45°, Elbow is 90°, Wrist is 0°).
+**Find:** The X, Y, Z coordinate of the claw.
+
+Forward Kinematics is a **solved, deterministic problem**. Using basic trigonometry and matrix multiplication (specifically Denavit-Hartenberg parameters), there is exactly one correct answer. If you know the length of the robot's "bones" and the angles of its "joints", you can calculate exactly where the hand is.
+
+## Inverse Kinematics (IK)
+**Given:** The desired X, Y, Z coordinate of the claw (e.g., "Grab that coffee cup at coordinates [10, 5, 2]").
+**Find:** What angles should I set the shoulder, elbow, and wrist to?
+
+Inverse Kinematics is an **incredibly difficult, non-linear problem**. 
+
+<ComparisonTable 
+  headers={['Why is IK so hard?', 'Explanation']} 
+  rows={[
+    ['Multiple Solutions', 'Reach your own hand out and touch your computer screen. Now, keep your finger on the screen, but lift your elbow into the air. You just found two different joint configurations that achieve the exact same X,Y,Z coordinate.'],
+    ['No Solutions', 'If the coffee cup is 10 feet away, and the robot arm is only 3 feet long, there is no mathematical combination of joint angles that can reach it.'],
+    ['Singularities', 'Specific mathematical positions where the robot loses a degree of freedom (like when your arm is perfectly straight and locked), causing IK algorithms to divide by zero and fail catastrophically.']
+  ]} 
+/>
+
+<Callout icon="tip" title="How is IK solved?">
+Because IK often has no perfect algebraic solution, modern robots use **Numerical Methods** (like Gradient Descent or Jacobian Inverse matrices) to iteratively "guess and check" their way to the correct joint angles hundreds of times per second.
+</Callout>
 
 </ConceptTemplate>

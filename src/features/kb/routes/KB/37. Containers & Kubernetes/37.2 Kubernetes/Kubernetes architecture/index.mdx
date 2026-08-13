@@ -1,34 +1,33 @@
 ---
 title: Kubernetes Architecture
-description: The high-level master-worker architecture that powers the Kubernetes container orchestration engine.
+description: "The high-level architecture of Kubernetes, separating the Control Plane (the brain) from the Worker Nodes (the muscles)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Kubernetes Architecture">
 
-**Kubernetes (K8s)** is a distributed system designed to automate the deployment, scaling, and management of containerized applications across thousands of physical servers.
+**Kubernetes (K8s)** is an open-source container orchestration platform. While Docker allows you to run a container on one machine, K8s allows you to manage thousands of containers across hundreds of machines, handling automated rollouts, self-healing, scaling, and load balancing.
 
-To achieve this, Kubernetes uses a strict **Client-Server (Master-Worker)** architecture. The cluster is divided into two distinct components: the **Control Plane** (the brains) and the **Worker Nodes** (the muscle).
+Kubernetes operates on a declarative model: you write a YAML file describing your *Desired State* (e.g., "I want 3 instances of my web app running"), and K8s continuously monitors the *Actual State*, making changes until the two match.
 
-<Callout icon="info" title="Declarative State">
-  The fundamental philosophy of Kubernetes is **Declarative State**. You do not tell K8s *how* to do something (e.g., "start 3 containers"). You tell K8s the *Desired State* (e.g., "I want 3 containers to exist at all times"). K8s constantly monitors the cluster, and if a container crashes, it automatically intervenes to return the cluster to the Desired State.
+## 1. The Control Plane (The Brain)
+The Control Plane is the collection of services that manage the cluster, make global decisions, and respond to events.
+
+- **kube-apiserver**: The front door. Every single command (from developers using `kubectl` or internal components) goes through the API server.
+- **etcd**: The highly-available, distributed key-value store. It is the single source of truth for the cluster, storing the entire state and all YAML configurations.
+- **kube-scheduler**: Watches for newly created Pods that have no node assigned, and selects the most optimal Worker Node for them to run on based on CPU/Memory constraints.
+- **kube-controller-manager**: Runs various controllers in the background. For example, if a node crashes, the Node Controller notices and the ReplicaSet controller spins up replacement Pods.
+
+## 2. The Worker Nodes (The Muscles)
+These are the actual servers (VMs or bare metal) where your application containers run.
+
+- **kubelet**: The "captain" of the node. It communicates with the control plane, ensuring that the containers described by the API server are actually running and healthy.
+- **kube-proxy**: Manages network routing, maintaining network rules on the host to allow communication to the Pods from inside or outside the cluster.
+- **Container Runtime**: The actual software that runs the containers (e.g., **containerd** or **CRI-O**). Docker is no longer directly supported as a runtime in modern K8s.
+
+<Callout icon="info" title="Managed Kubernetes">
+Because the Control Plane (specifically etcd) is incredibly difficult to run and maintain in a highly-available way, 90% of companies use Managed Kubernetes services like **AWS EKS**, **Google GKE**, or **Azure AKS**, where the cloud provider completely hides and manages the Control Plane for you.
 </Callout>
-
-## The Control Plane (The Master)
-
-The Control Plane makes global decisions about the cluster (like scheduling) and detects/responds to cluster events. It consists of four core components:
-
-1. **kube-apiserver**: The central nervous system. Every single command you run (like \`kubectl get pods\`) and every internal component communication goes through this REST API. It is the only component that talks to the database.
-2. **etcd**: The brain's memory. A highly-available, distributed key-value store that holds the absolute truth of the cluster's state (what is supposed to be running vs. what is actually running).
-3. **kube-scheduler**: The dispatcher. It watches for newly created Pods that have no assigned node, and mathematically selects the optimal Worker Node for them to run on (based on CPU/RAM availability).
-4. **kube-controller-manager**: The enforcer. It runs continuous background loops comparing the Desired State to the Actual State, and takes action if they drift.
-
-## The Worker Nodes
-
-The Worker Nodes are the generic Linux servers that actually run your application containers. Each node runs three components:
-
-1. **kubelet**: The captain of the node. It is an agent that communicates with the Control Plane. It ensures that the containers described in the Pod specifications are actually running and healthy.
-2. **kube-proxy**: The network router. It maintains network rules on the host allowing network communication to your Pods from inside or outside the cluster.
-3. **Container Runtime**: The actual software that pulls the image and runs the container (e.g., containerd or CRI-O). K8s does not run containers directly!
 
 </ConceptTemplate>

@@ -1,48 +1,56 @@
 ---
 title: Dockerfile
-description: A text document containing all the commands a user could call on the command line to assemble a Docker image.
+description: "A text document containing all the commands a user could call on the command line to assemble an image."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Dockerfile">
 
-A **Dockerfile** is the blueprint for a container. It is a simple, declarative text file that tells the Docker Engine exactly how to construct a Docker Image, step-by-step. 
+A **Dockerfile** is the blueprint for a container. It is a simple script consisting of specialized instructions that the Docker daemon executes sequentially to build a Docker Image.
 
-<Callout icon="success" title="Infrastructure as Code">
-  The Dockerfile represents a massive leap forward in operations. Instead of a systems administrator manually typing commands into a server to configure a runtime environment, the entire environment is codified into a 10-line text file. This file is committed to Git, allowing the environment to be version-controlled, peer-reviewed, and perfectly reproduced by CI/CD pipelines.
+## 1. Common Instructions
+
+<ComparisonTable 
+  headers={['Instruction', 'Purpose', 'Example']} 
+  rows={[
+    ['`FROM`', 'Sets the base image. Must be the first instruction.', '`FROM node:18-alpine`'],
+    ['`WORKDIR`', 'Sets the working directory inside the container for subsequent instructions.', '`WORKDIR /app`'],
+    ['`COPY`', 'Copies files from the host machine into the container.', '`COPY package.json .`'],
+    ['`RUN`', 'Executes a command during the **build** phase (creating a new layer).', '`RUN npm install`'],
+    ['`ENV`', 'Sets environment variables.', '`ENV NODE_ENV=production`'],
+    ['`EXPOSE`', 'Documents which ports the application listens on (does not actually publish them).', '`EXPOSE 8080`'],
+    ['`CMD`', 'Specifies the default command to execute when the container **starts**.', '`CMD ["npm", "start"]`']
+  ]} 
+/>
+
+## 2. Example Dockerfile (Node.js)
+
+```dockerfile
+# 1. Base Image
+FROM node:20-alpine
+
+# 2. Set working directory
+WORKDIR /usr/src/app
+
+# 3. Copy dependencies first (for caching)
+COPY package*.json ./
+RUN npm ci --only=production
+
+# 4. Copy application source code
+COPY . .
+
+# 5. Drop root privileges for security
+USER node
+
+# 6. Start the application
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+<Callout icon="tip" title="CMD vs ENTRYPOINT">
+`CMD` provides default arguments that can be easily overridden from the CLI (e.g., `docker run myapp bash` replaces the CMD). `ENTRYPOINT` sets the primary executable that *cannot* be easily overridden, and any extra CLI arguments are passed to it instead.
 </Callout>
-
-## Anatomy of a Dockerfile
-
-Every instruction in a Dockerfile adds a new "Layer" to the final image. Common instructions include:
-
-- **\`FROM\`**: The foundation. Every Dockerfile must start with a base image (e.g., \`FROM node:18-alpine\` or \`FROM ubuntu:22.04\`).
-- **\`WORKDIR\`**: Sets the working directory inside the container for all subsequent commands.
-- **\`COPY\`**: Copies files from your local laptop/host machine into the container's file system. (e.g., \`COPY package.json .\`).
-- **\`RUN\`**: Executes a shell command inside the container *during the build process*. Used for installing dependencies. (e.g., \`RUN npm install\`).
-- **\`EXPOSE\`**: Documents which port the container will listen on. (Purely informational; it does not actually publish the port).
-- **\`CMD\`**: The default command that executes *when the container starts running*. (e.g., \`CMD ["npm", "start"]\`).
-
-## The Layer Caching System
-
-Docker builds images extremely fast using a caching system. Each line in the Dockerfile creates a read-only cryptographic layer.
-If you change line 8 of a Dockerfile, Docker perfectly caches and reuses lines 1 through 7, and only rebuilds line 8 and onwards.
-
-### The Dependency Anti-Pattern
-Because of caching, the *order* of instructions is critical. 
-A common mistake is copying the entire source code *before* installing dependencies:
-\`\`\`dockerfile
-COPY . .
-RUN npm install
-\`\`\`
-If you change a single CSS file in your source code, the \`COPY\` layer breaks the cache, forcing \`npm install\` to re-download 500MB of dependencies every single time you build.
-
-**The Correct Way:**
-\`\`\`dockerfile
-COPY package.json .
-RUN npm install
-COPY . .
-\`\`\`
-Now, the \`npm install\` cache is only broken if the \`package.json\` file actually changes!
 
 </ConceptTemplate>

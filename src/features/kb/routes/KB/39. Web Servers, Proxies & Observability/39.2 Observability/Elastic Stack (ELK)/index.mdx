@@ -1,8 +1,37 @@
+---
+title: Elastic Stack (ELK)
+description: "A powerful suite of tools used for searching, analyzing, and visualizing massive volumes of log data."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Elastic Stack (ELK)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have 50 microservices spread across 200 servers, you cannot SSH into individual machines and run `grep` to find error logs. You need a centralized logging solution. The most famous architecture for this is the **ELK Stack**.
+
+## 1. The ELK Components
+
+<ComparisonTable 
+  headers={['Component', 'Role', 'Metaphor']} 
+  rows={[
+    ['Logstash (or Beats)', 'The Data Shipper / Pipeline. Runs on the application servers, reads the local log files, parses them, and sends them over the network.', 'The Delivery Truck.'],
+    ['Elasticsearch', 'The highly-scalable, distributed NoSQL search engine. It indexes every single word of the logs for lightning-fast full-text search.', 'The Warehouse / Library.'],
+    ['Kibana', 'The web interface used by humans to search the logs, build dashboards, and create visualizations.', 'The Librarian / Search UI.']
+  ]} 
+/>
+
+## 2. How it works
+1. Your Node.js app writes a JSON log to `/var/log/app.log`.
+2. A lightweight agent (like **Filebeat**) running on the same server notices the new log line and forwards it to **Logstash**.
+3. Logstash parses the JSON, perhaps adds geographical data based on an IP address, and inserts it into **Elasticsearch**.
+4. An engineer opens **Kibana**, types `user_id: 123 AND status: error`, and Elasticsearch instantly returns the result out of billions of stored logs.
+
+## 3. The Cost Problem
+Elasticsearch is incredibly powerful because it indexes *everything*. However, maintaining a massive Elasticsearch cluster requires huge amounts of RAM and expensive SSDs. For many companies, storing application logs in ELK becomes more expensive than running the actual application itself.
+
+<Callout icon="info" title="Alternatives">
+Due to the high cost and complexity of running ELK, many teams have migrated to SaaS solutions like **Datadog** or **Splunk**, or cheaper open-source alternatives like **Grafana Loki** (which heavily sacrifices search speed in exchange for drastically lower storage costs using AWS S3).
+</Callout>
 
 </ConceptTemplate>

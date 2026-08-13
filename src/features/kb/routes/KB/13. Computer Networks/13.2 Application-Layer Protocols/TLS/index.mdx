@@ -1,24 +1,35 @@
 ---
-title: TLS (Transport Layer Security)
-description: The modern, cryptographically secure protocol that officially replaced SSL to provide encryption and authentication for the global internet.
+title: TLS
+description: "Transport Layer Security, the cryptographic protocol designed to provide communications security over a computer network (the 'S' in HTTPS)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="TLS (Transport Layer Security)">
+<ConceptTemplate 
+  name="TLS"
+  icon="lock"
+>
 
-When the IETF took over the development of SSL from Netscape in 1999, they completely overhauled the math, removed the proprietary code, and renamed it **TLS (Transport Layer Security)**.
+**TLS (Transport Layer Security)** is the successor to the deprecated **SSL (Secure Sockets Layer)**. It is the cryptographic armor that wraps around other protocols. When you wrap HTTP in TLS, you get HTTPS. When you wrap SMTP in TLS, you get SMTPS.
 
-TLS 1.2 became the absolute gold standard for internet encryption for over a decade.
+TLS provides three critical guarantees to internet communication:
+1. **Encryption**: Hides the data from eavesdroppers (ISPs, hackers on public Wi-Fi).
+2. **Authentication**: Proves you are actually talking to `google.com` and not an imposter intercepting the traffic.
+3. **Integrity**: Ensures the data wasn't altered in transit.
 
-## The TLS 1.3 Overhaul
+## The TLS Handshake (How it works)
 
-In 2018, **TLS 1.3** was released, completely revolutionizing how encryption handshakes are performed.
+When you navigate to `https://bank.com`:
+1. **Client Hello / Server Hello**: The browser and server agree on which cryptographic algorithms to use (the cipher suite).
+2. **Certificate Exchange**: The server sends its public key and its TLS Certificate (issued by a trusted Certificate Authority like Let's Encrypt). The browser verifies the certificate's cryptographic signature to prove the server is the real bank.
+3. **Key Exchange**: Because asymmetric encryption (public/private keys) is too slow for downloading streaming video, they only use it momentarily. The browser securely generates a random "Symmetric Session Key" and encrypts it using the server's public key.
+4. **Secure Tunnel**: The server decrypts the session key using its private key. Now, both the browser and server share a super-fast, symmetric secret key. All further HTTP traffic is encrypted using this session key.
 
-1. **Massive Speed Increases**: TLS 1.2 required two full round-trips across the internet just to negotiate the encryption keys before a single byte of HTTP data could be sent. TLS 1.3 optimized the math, requiring only *one* round-trip (and supporting 0-RTT for returning visitors), drastically speeding up the loading time of secure websites.
-2. **Culling Weak Algorithms**: For backwards compatibility, TLS 1.2 supported ancient, broken encryption algorithms from the 1990s (like MD5 and DES). Hackers could launch "Downgrade Attacks," forcing a server to use broken math. TLS 1.3 violently purged all legacy algorithms, leaving only bleeding-edge, mathematically unbreakable ciphers (like ChaCha20 and AES-GCM).
+## TLS 1.3
+Released in 2018, **TLS 1.3** was a massive overhaul. It ruthlessly stripped out dozens of outdated, vulnerable cryptographic algorithms (like MD5 and SHA-1) and reduced the handshake from two round-trips to **one round-trip (1-RTT)**, making the secure web significantly faster.
 
-<Callout icon="success" title="Perfect Forward Secrecy">
-  Historically, if a hacker recorded 5 years of your encrypted traffic, and then managed to steal the server's master private key, they could retroactively decrypt all 5 years of history. TLS 1.3 mandates **Perfect Forward Secrecy (PFS)** using Ephemeral Diffie-Hellman math. The server generates a brand new, unique encryption key for *every single session*, and deletes it instantly when you disconnect, making retroactive decryption mathematically impossible.
+<Callout icon="info" title="Let's Encrypt">
+Before 2015, TLS certificates cost hundreds of dollars a year, and configuring them was a nightmare. This meant 70% of the web was unencrypted. A non-profit called **Let's Encrypt** launched, providing automated, free TLS certificates to anyone. Today, over 95% of web traffic is encrypted, entirely changing the landscape of internet privacy.
 </Callout>
 
 </ConceptTemplate>

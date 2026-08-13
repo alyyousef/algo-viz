@@ -1,49 +1,56 @@
 ---
-title: Animations, Transitions & Transforms
-description: The high-performance CSS APIs utilized to smoothly animate elements using hardware-accelerated GPU processing.
+title: Animations & Transforms
+description: "Moving, scaling, rotating, and animating DOM elements smoothly using hardware-accelerated CSS properties."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Animations, Transitions & Transforms">
+<ConceptTemplate 
+  name="Animations & Transforms"
+  icon="play"
+>
 
-Historically, animating a dropdown menu or a loading spinner required heavy Javascript loops (`setInterval`). This was catastrophically bad for performance because it blocked the main CPU thread.
+Modern CSS provides powerful tools to create fluid, hardware-accelerated motion without writing a single line of JavaScript.
 
-CSS introduced native Animation APIs that offload the complex math directly to the GPU, guaranteeing a buttery-smooth 60 Frames Per Second (FPS).
+## Transforms (Static Changes)
+The `transform` property alters the visual appearance of an element without affecting the document flow (it won't push other elements out of the way).
+- `translate(x, y)`: Moves the element.
+- `scale(n)`: Enlarges or shrinks.
+- `rotate(deg)`: Spins the element.
 
-## The Big Three
+## Transitions (A to B)
+`transition` is used to smoothly interpolate between states (like a hover effect).
 
-### 1. Transforms
-The `transform` property allows you to mathematically manipulate the visual rendering of an element without disrupting the DOM layout.
-- `transform: translateX(50px)` (Moves it right)
-- `transform: scale(1.5)` (Makes it larger)
-- `transform: rotate(45deg)` (Spins it)
-
-*Crucial rule: Translating an element is 100x faster than animating its `margin-left`, because translating happens on the GPU and does not trigger a browser Layout Reflow.*
-
-### 2. Transitions
-A Transition tells the browser to automatically interpolate the frames between State A and State B when an interaction occurs.
 ```css
 .btn {
   background-color: blue;
-  transition: background-color 0.3s ease-in-out;
+  transform: scale(1);
+  transition: all 0.3s ease-in-out;
 }
+
 .btn:hover {
   background-color: red;
+  transform: scale(1.1);
 }
 ```
-When hovered, the browser automatically generates all the purple frames in between over 300 milliseconds.
 
-### 3. Keyframe Animations
-While Transitions require a user interaction (like a hover), Keyframes allow you to define complex, multi-step, infinitely looping animations.
+## Keyframe Animations (Complex Sequences)
+For continuous animations or complex multi-step sequences, you use `@keyframes`.
+
 ```css
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.loading-spinner {
-  animation: spin 1s linear infinite;
+.loading-dot {
+  animation: pulse 2s infinite linear;
 }
 ```
+
+<Callout icon="warning" title="Performance & The GPU">
+You should only ever animate `transform` and `opacity`. Animating properties like `width`, `margin`, or `box-shadow` forces the browser to recalculate the entire page layout on every single frame, causing severe lag on mobile devices. Transforms are offloaded directly to the device's GPU for silky smooth 60FPS motion.
+</Callout>
 
 </ConceptTemplate>

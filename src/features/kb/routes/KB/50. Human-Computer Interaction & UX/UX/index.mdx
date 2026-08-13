@@ -1,8 +1,43 @@
+---
+title: UX (User Experience)
+description: "How a person feels when interacting with a system, encompassing all aspects of the end-user's interaction with the company, its services, and its products."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="UX">
+<ConceptTemplate title="User Experience (UX)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**User Experience (UX)** is a broad, multidisciplinary field that goes far beyond just "making an app look nice." It is the holistic sum of every interaction a user has with a product, from the moment they discover it, to the onboarding process, to achieving their goal, to customer support.
+
+If UI is the "saddle, stirrups, and reins," UX is the "feeling you get when riding the horse."
+
+## UX vs UI
+
+These terms are often used interchangeably in job titles (UI/UX Designer), but they represent entirely different disciplines.
+
+<ComparisonTable 
+  headers={['Focus', 'User Experience (UX)', 'User Interface (UI)']} 
+  rows={[
+    ['Goal', 'Solve the user\'s underlying problem efficiently.', 'Make the solution visually appealing and interactive.'],
+    ['Deliverables', 'Wireframes, User Journeys, Personas, Research Reports.', 'Mockups, Typography, Color Palettes, Animations.'],
+    ['Analogy (House)', 'The structural floorplan: Where is the kitchen relative to the dining room?', 'The interior design: What color is the wallpaper in the kitchen?'],
+    ['Core Question', '"Is this feature useful and intuitive?"', '"Is this feature beautiful and accessible?"']
+  ]} 
+/>
+
+## The UX Design Process
+Good UX is never created in a vacuum; it requires rigorous, continuous feedback from actual humans.
+
+1. **Empathize (Research)**: Conduct user interviews and surveys. Find out *why* users are abandoning their shopping carts.
+2. **Define (Analysis)**: Create User Personas (e.g., "Busy Bob") and map out their pain points.
+3. **Ideate**: Brainstorm solutions. Should we add a 1-click checkout?
+4. **Prototype**: Create low-fidelity wireframes or clickable prototypes (using tools like Figma).
+5. **Test**: Put the prototype in front of real users. Watch them try to navigate it. Note where they get confused.
+6. **Iterate**: Fix the confusing parts and test again.
+
+<Callout icon="warning" title="The Trap of Aesthetics">
+A product can have a stunning, award-winning UI and still have terrible UX. If a visually breathtaking website hides the "Cancel Subscription" button behind 7 nested menus to trick the user (a "Dark Pattern"), the resulting UX is incredibly frustrating and toxic.
+</Callout>
 
 </ConceptTemplate>
