@@ -1,8 +1,24 @@
+---
+title: Graph Representations
+description: The fundamental mathematical structures used to store Graphs in memory, balancing the brutal tradeoff between space efficiency and edge-lookup speed.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Adjacency list/matrix representations">
+<ConceptTemplate title="Graph Representations">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Graph** is mathematically just a set of Vertices (Nodes) and Edges (Connections). Because computer memory is strictly linear, we must mathematically encode this multi-dimensional network into standard data structures. The two titans of Graph representation are the **Adjacency Matrix** and the **Adjacency List**.
+
+## 1. The Adjacency Matrix
+An Adjacency Matrix is a massive 2D Array of size $V \times V$ (where $V$ is the number of vertices). If Node 3 connects to Node 5, you simply write a $1$ at `Matrix[3][5]`.
+- **The Absolute Advantage**: Checking if an edge exists between two nodes is mathematically an instant $O(1)$ CPU operation.
+- **The Fatal Flaw**: If Facebook has 2 Billion users, the matrix requires $2\text{ Billion} \times 2\text{ Billion}$ slots. That requires **4 Exabytes of RAM**. Because most users only have a few hundred friends, $99.9999\%$ of the matrix is filled with zeroes. It is a mathematical catastrophe for Sparse Graphs.
+
+## 2. The Adjacency List
+To solve the memory crisis, the Adjacency List mathematically changes the architecture. It is an Array (or Hash Map) of size $V$. Each slot contains a Linked List (or Dynamic Array) holding only the neighbors of that specific vertex.
+- **The Absolute Advantage**: It only consumes memory for edges that *actually exist*. For a graph with $V$ vertices and $E$ edges, it requires just $O(V + E)$ memory, making it the undisputed king of real-world graphs.
+- **The Flaw**: Checking if Node A connects to Node B requires a linear $O(K)$ scan through Node A's list of neighbors. 
+
+## 3. The Edge List (Bonus)
+A third, highly specialized representation is the **Edge List**: a simple, flat 1D array of objects containing `[Source, Destination, Weight]`. While useless for traversal algorithms like BFS or DFS, it is the mathematically perfect representation for algorithms that only care about sorting edges, like **Kruskal's Minimum Spanning Tree**.
 
 </ConceptTemplate>

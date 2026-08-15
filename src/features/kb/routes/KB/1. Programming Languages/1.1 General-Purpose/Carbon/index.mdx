@@ -1,8 +1,53 @@
+---
+title: Carbon
+description: "An experimental, open-source programming language started by Google to serve as a modern successor to C++."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Carbon">
+<ConceptTemplate 
+  name="Carbon"
+  icon="shield"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Introduced by Google in 2022, **Carbon** is an experimental, general-purpose programming language designed to be a bi-directional, interoperable successor to **C++**. 
+
+## Why not just use Rust?
+Rust is technically superior to C++ in memory safety. However, migrating a 50-million-line C++ codebase to Rust is effectively impossible due to vastly different paradigms. Carbon is designed specifically for organizations with massive, entrenched C++ codebases that cannot afford to rewrite everything from scratch.
+
+## Key Goals
+
+1. **Bi-Directional Interoperability**: You can include a C++ header file in a Carbon file and use C++ classes natively, and vice-versa.
+2. **Modern Tooling**: Providing a package manager, fast builds, and modern syntax (similar to Swift or Rust).
+3. **Gentle Migration**: A tool that automatically translates idiomatic C++ into Carbon.
+
+## Syntax Example
+
+```cpp
+// Carbon syntax is currently experimental and subject to change
+package Geometry api;
+
+import Math;
+
+// Classes instead of structs
+class Circle {
+  var radius: f32;
+
+  // Methods
+  fn Area[me: Self]() -> f32 {
+    return Math.Pi * me.radius * me.radius;
+  }
+}
+
+fn Main() -> i32 {
+  var c: Circle = {.radius = 5.0};
+  Print("Area is {0}", c.Area());
+  return 0;
+}
+```
+
+<Callout icon="warning" title="Status: Experimental">
+Carbon is still in the highly experimental design phase. It is not ready for production use, and its syntax and feature set are actively mutating.
+</Callout>
 
 </ConceptTemplate>

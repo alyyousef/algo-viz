@@ -1,8 +1,45 @@
+---
+title: Crystal
+description: "A language that aims to be as fast as C, but as elegant and expressive as Ruby."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Crystal">
+<ConceptTemplate 
+  name="Crystal"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Crystal** is a compiled, statically typed language that was explicitly designed to mimic the syntax of **Ruby**. 
+
+Ruby is famous for its developer happiness and beautiful syntax, but infamous for being slow (as an interpreted language). Crystal solves this by using LLVM to compile Ruby-like syntax down to highly optimized, blazing-fast native machine code.
+
+## Key Features
+
+1. **Ruby-like Syntax**: Crystal is so similar to Ruby that many Ruby scripts will run perfectly in Crystal without any modifications.
+2. **Static Typing & Inference**: Unlike Ruby, Crystal is statically typed. However, its type inference engine is so powerful that you rarely have to explicitly write types.
+3. **Null Safety**: All types are non-nullable by default. If a value can be null, it must be explicitly defined as a Union type (e.g., `String | Nil`).
+
+## Syntax Example
+
+```crystal
+# Looks exactly like Ruby, but compiles to C-level speeds
+class Person
+  # Properties are automatically strongly-typed based on usage
+  property name : String
+  property age : Int32
+
+  def initialize(@name, @age)
+  end
+
+  def celebrate_birthday
+    @age += 1
+    puts "Happy birthday #{@name}! You are now #{@age}."
+  end
+end
+
+john = Person.new("John", 30)
+john.celebrate_birthday
+```
 
 </ConceptTemplate>

@@ -1,8 +1,25 @@
+---
+title: Singly Linked Lists
+description: A linear collection of data elements scattered randomly in memory, where each element strictly points to the physical address of the next.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Linked lists (singly">
+<ConceptTemplate title="Singly Linked Lists">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Arrays are rigid and mathematically contiguous, **Linked Lists** are completely fluid and fragmented. 
+A Linked List is constructed of individual objects called **Nodes**. When you create a Node, the OS places it randomly in memory wherever there is free space. To mathematically connect them, each Node holds exactly two things:
+1. The Data.
+2. A Pointer (the exact physical memory address) to the *next* Node.
+
+## 1. O(1) Insertions & Deletions
+Arrays require $O(N)$ time to insert an element at the beginning because they must mathematically shift everything down. 
+A Singly Linked List handles this in pure $O(1)$ time. If you want to insert a new Head node, you simply tell the new Node to mathematically point its address to the old Head, and update your master Head pointer. No shifting of existing data is required whatsoever.
+
+## 2. The O(N) Access Bottleneck
+Because the Nodes are scattered randomly in memory, there is no mathematical equation to calculate where the 500th element is. 
+To access index 500, you have absolutely no choice but to start at the Head, follow the address to Node 2, follow the address to Node 3, and traverse the chain $500$ times. This makes random access brutally slow at exactly $O(N)$.
+
+## 3. Cache Misses
+Because Nodes are scattered randomly, traversing a Linked List mathematically destroys the CPU's Spatial Locality. Every time the CPU follows a pointer to the next Node, it is almost guaranteed to trigger an L1 Cache Miss, forcing the CPU to wait hundreds of cycles to fetch the new address from main RAM.
 
 </ConceptTemplate>

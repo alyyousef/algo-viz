@@ -1,8 +1,24 @@
+---
+title: SGD (Stochastic Gradient Descent)
+description: The core optimization algorithm that updates weights using a single data point or small mini-batch at a time, drastically reducing mathematical computation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SGD">
+<ConceptTemplate title="SGD (Stochastic Gradient Descent)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard Gradient Descent requires calculating the error across the *entire dataset* before taking a single mathematical step. If your dataset has 10 million images, calculating a single gradient update could take weeks. 
+**Stochastic Gradient Descent (SGD)** mathematically bypasses this bottleneck by relying on statistical approximations.
+
+## 1. The "Stochastic" (Random) Element
+Instead of looking at the entire dataset, true SGD picks exactly **one random data point**, calculates the mathematical gradient for that single point, and immediately updates the weights. 
+Because it updates instantly, it can take 10 million mathematical steps in the time it takes standard Gradient Descent to take exactly one. 
+
+## 2. The Noisy Path
+Because it only looks at one random image at a time, the mathematical gradient is highly inaccurate (Noisy). 
+If a random image of a dog happens to be blurry, SGD might mathematically update the weights in completely the wrong direction. However, across millions of iterations, these random errors mathematically cancel out, and the algorithm violently zig-zags its way down to the global minimum.
+
+## 3. Mini-Batch SGD (The Industry Standard)
+True SGD (batch size of 1) is too erratic and cannot mathematically utilize the massive parallel processing power of modern GPUs. 
+The absolute industry standard is **Mini-Batch SGD**. It picks a random chunk of data (e.g., 64 or 256 images), calculates the gradient of that specific batch, and updates the weights. This mathematically perfectly balances the blazing speed of stochastic updates with the statistical stability of batch processing.
 
 </ConceptTemplate>

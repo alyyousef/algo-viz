@@ -1,8 +1,25 @@
+---
+title: HyperLogLog
+description: An incredibly advanced probabilistic algorithm that mathematically estimates the number of unique elements in a massive dataset using almost zero memory.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="HyperLogLog">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to count exactly how many *unique* users visited a website today, the standard approach is to push every IP address into a Set and count the size of the Set. 
+If Google wants to do this for 10 Billion visitors, the Set would require hundreds of gigabytes of RAM just to store the unique IPs. **HyperLogLog** is a mathematical miracle that estimates the exact same number with 99% accuracy using roughly **1.5 Kilobytes** of RAM.
+
+## 1. The Mathematical Coin Flip
+HyperLogLog relies on the mathematical properties of uniform randomness. 
+Imagine flipping a coin. Seeing one "Heads" is common. Seeing 10 "Heads" in a row is mathematically incredibly rare (a 1 in 1024 chance). 
+HyperLogLog hashes every incoming IP address into a massive binary string (e.g., `01001110...`). The Hash Function acts perfectly like a coin flip. 
+
+## 2. Counting the Zeroes
+The algorithm simply looks at the binary hash and counts the maximum number of **leading zeroes** it has ever seen. 
+If the maximum leading zeroes it ever saw was $3$ (`0001...`), it mathematically assumes it has processed roughly $2^3 = 8$ unique items. 
+If it suddenly sees a hash with $20$ leading zeroes, it mathematically knows that an event that rare could only happen if it had processed roughly $2^{20}$ (1 Million) unique items. 
+
+## 3. The Bucketing Trick
+Relying on a single hash is statistically dangerous (a random fluke could ruin the estimate). HyperLogLog uses the first few bits of the hash to mathematically split the data into thousands of different "Buckets". It tracks the maximum leading zeroes for every bucket independently, and then uses a **Harmonic Mean** to average them all together, mathematically neutralizing outliers and achieving a staggering 99% accuracy while consuming virtually zero memory.
 
 </ConceptTemplate>

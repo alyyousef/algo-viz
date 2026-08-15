@@ -1,8 +1,25 @@
+---
+title: Dynamic Arrays
+description: An array that mathematically resizes itself when full, providing the blazing-fast random access of standard arrays with the flexibility of variable size.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dynamic arrays">
+<ConceptTemplate title="Dynamic Arrays">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard arrays are fatally limited because their size is strictly fixed at creation. **Dynamic Arrays** (like Python's `list`, Java's `ArrayList`, or C++'s `std::vector`) solve this by mathematically managing the memory allocation in the background, giving the illusion of infinite capacity.
+
+## 1. The Geometric Expansion Rule
+Under the hood, a Dynamic Array is still just a standard, fixed-size array. 
+If you create a Dynamic Array, it might initialize a standard array of size $4$. You append elements: `[A, B, C, D]`. The array is now physically full. 
+If you append `E`, the Dynamic Array triggers a massive background operation:
+1. It requests a completely new, mathematically larger block of contiguous memory from the OS (usually exactly **double** the size: $8$).
+2. It physically copies `[A, B, C, D]` from the old memory to the new memory.
+3. It appends `E` to the new array.
+4. It mathematically destroys the old array.
+
+## 2. Amortized O(1) Insertion
+Because resizing requires an $O(N)$ mathematical copy of the entire array, you might assume appending to a Dynamic Array is slow. 
+However, because it mathematically doubles its capacity every time, resizing happens exponentially less often as the array grows. If you append $1,000,000$ elements, it only resizes 20 times. 
+Mathematically, the $O(N)$ cost is so violently diluted across the millions of cheap $O(1)$ appends that the *average* cost of appending remains **Amortized $O(1)$**.
 
 </ConceptTemplate>

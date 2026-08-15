@@ -1,8 +1,26 @@
+---
+title: Variational Autoencoders (VAEs)
+description: A probabilistic generative model that learns a continuous mathematical latent space, allowing it to generate entirely new, unseen data points.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Variational autoencoders (VAEs)">
+<ConceptTemplate title="Variational Autoencoders (VAEs)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard Autoencoder learns to perfectly compress an image of a cat into a tiny vector, and then decompress it back into a cat. The problem is that its latent space is mathematically jagged and discrete. If you randomly generate a new vector and decompress it, you get garbage. 
+**Variational Autoencoders (VAEs)** solve this by forcing the latent space to be a smooth, continuous mathematical distribution.
+
+## 1. The Probabilistic Latent Space
+Instead of compressing an image into a single, rigid vector (e.g., $[2.5, 3.1]$), the VAE mathematically compresses the image into two vectors:
+1. **A Vector of Means** ($mu$)
+2. **A Vector of Standard Deviations** ($sigma$)
+
+These two vectors define a mathematical Gaussian (Normal) Distribution. To generate the final compressed state, the network randomly *samples* a point from this distribution.
+
+## 2. The KL-Divergence Penalty
+To mathematically force the latent space to be smooth and continuous, the VAE's Loss Function includes a **KL-Divergence** penalty. This algebraically punishes the network if its latent distributions stray too far from a standard Normal distribution (Mean of 0, Variance of 1). 
+This forces all the different classes (Cats, Dogs, Cars) to mathematically overlap and blend smoothly into one another inside the latent space.
+
+## 3. Generative AI
+Because the latent space is a perfect, continuous sphere of probabilities, you can mathematically pick any random point inside that space and decompress it. The Decoder will successfully generate a completely unique, highly realistic image that has never existed before.
 
 </ConceptTemplate>

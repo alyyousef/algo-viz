@@ -1,8 +1,38 @@
+---
+title: Nim
+description: "A statically typed, compiled systems programming language combining successful concepts from Python, Ada, and Modula."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Nim">
+<ConceptTemplate 
+  name="Nim"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Nim** is a highly expressive, statically typed compiled programming language. It aims to offer the performance of C, the expressiveness of Python, and the extensibility of Lisp.
+
+## The Transpilation Engine
+Unlike most compilers that turn source code directly into Assembly/Machine Code via LLVM, the Nim compiler primarily transpiles Nim code into optimized **C, C++, or JavaScript**. This allows Nim to be compiled on virtually any platform that has a C compiler, and guarantees rock-solid interoperability with existing C libraries.
+
+## Key Features
+1. **Python-Like Syntax**: It relies on indentation rather than curly braces.
+2. **Metaprogramming**: Nim has an incredibly powerful macro system. Macros can manipulate the Abstract Syntax Tree (AST) at compile time, allowing developers to create entire Domain Specific Languages (DSLs) within Nim.
+3. **Memory Management**: Nim allows developers to choose between multiple garbage collection strategies or entirely manual memory management (`--gc:arc` or `--gc:none`) for real-time systems.
+
+## Syntax Example
+
+```nim
+# Define a procedure (function)
+proc greet(name: string) =
+  echo "Hello, ", name, "!"
+
+# Calling the procedure
+greet("World")
+
+# Uniform Function Call Syntax (UFCS)
+# This allows calling functions like methods, making chaining elegant
+"Nimlang".greet()
+```
 
 </ConceptTemplate>

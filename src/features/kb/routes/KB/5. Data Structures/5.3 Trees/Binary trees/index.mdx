@@ -1,8 +1,25 @@
+---
+title: Binary Trees
+description: A specialized tree structure where each node is mathematically restricted to having at most two children, strictly designated as left and right.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Binary trees">
+<ConceptTemplate title="Binary Trees">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard Tree can have infinite children per node (like a folder containing 500 files). A **Binary Tree** applies a massive mathematical restriction: every node can have a **maximum of exactly two children**, strictly labeled as the **Left Child** and the **Right Child**.
+
+## 1. Binary Architecture
+Because the branching factor is mathematically capped at $2$, Binary Trees are incredibly predictable. A "Perfect" Binary Tree is one where every single internal node has exactly two children, and all leaves are exactly on the same level.
+In a Perfect Binary Tree of height $H$, the total number of nodes is mathematically guaranteed to be exactly $2^{H+1} - 1$. This exponential growth allows massive amounts of data to be stored with incredibly short paths to the Root.
+
+## 2. Tree Traversals
+Because Arrays are linear, you just read them left to right. Because Binary Trees are 2D, traversing them requires mathematical algorithms. The three classic **Depth-First Traversals** are:
+- **In-Order**: (Left, Root, Right).
+- **Pre-Order**: (Root, Left, Right). Heavily used to physically copy a Tree.
+- **Post-Order**: (Left, Right, Root). Heavily used to safely delete a Tree from the bottom up.
+
+## 3. The Foundation for Search
+A pure Binary Tree does not enforce any rules about *where* data goes (a $10$ could be the child of a $2$). Without sorting rules, searching a Binary Tree takes a brutally slow $O(N)$ time. 
+However, the Binary Tree is the absolute architectural foundation for the **Binary Search Tree (BST)**, which applies strict mathematical sorting rules to achieve blazing-fast $O(log N)$ performance.
 
 </ConceptTemplate>

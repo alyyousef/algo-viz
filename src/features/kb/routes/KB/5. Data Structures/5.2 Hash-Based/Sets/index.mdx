@@ -1,8 +1,29 @@
+---
+title: Sets
+description: A collection data structure that mathematically guarantees all stored elements are entirely unique, typically backed by a Hash Table.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Sets">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In mathematics, a **Set** is a collection of distinct objects. In Computer Science, a Set is a highly optimized data structure designed strictly to enforce uniqueness and provide blazing-fast membership testing.
+
+## 1. The Core Operations
+Sets completely abandon the concept of "order" or "indices" (you cannot ask a Set for the "5th element"). Instead, they optimize for three mathematical operations:
+- `Add(x)`: Inserts `x` only if `x` does not already exist.
+- `Remove(x)`: Deletes `x` from the collection.
+- `Contains(x)`: Returns `True` if `x` exists.
+
+Because Sets are typically implemented using a Hash Table under the hood, all three of these operations mathematically execute in perfect **$O(1)$ time**.
+
+## 2. Set Mathematics
+Sets excel at relational algebra. If you have a Set of "Registered Users" and a Set of "Banned Users", you can instantly perform massive mathematical operations:
+- **Intersection**: Find users who exist in *both* Sets.
+- **Union**: Combine the Sets together, automatically destroying duplicates.
+- **Difference**: Find users who exist in the first Set, but *not* the second.
+
+## 3. The Implementation Trick
+Under the hood, most programming languages (like Python or Java) implement a Set simply by creating a standard Hash Map, but mathematically throwing away the "Values." 
+When you add `"Alice"` to a Set, it hashes the string and stores it in the underlying Hash Map as `{"Alice": NULL}`, leveraging the Map's inherent key uniqueness to build the Set.
 
 </ConceptTemplate>

@@ -1,8 +1,25 @@
+---
+title: Knowledge Distillation
+description: A powerful model compression technique where a massive, highly accurate "Teacher" model mathematically trains a smaller, faster "Student" model to replicate its nuanced probability distributions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Knowledge distillation">
+<ConceptTemplate title="Knowledge Distillation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Massive Large Language Models (like a 70-Billion parameter LLaMA) are highly accurate, but computationally impossible to run on a standard smartphone. **Knowledge Distillation** solves this by using the massive model (the Teacher) to train a tiny model (the Student) to mathematically replicate its exact behavior.
+
+## 1. The Mathematical Problem with Hard Labels
+In standard training, a model is trained on "Hard Labels": e.g., the image is 100% a Dog, 0% a Cat, 0% a Car.
+The problem is that a tiny model struggles to learn complex boundaries from rigid 1/0 data. It lacks the parameter count to build deep mathematical abstractions.
+
+## 2. Dark Knowledge (Soft Targets)
+When the massive Teacher model looks at an image of a Dog, it doesn't output 100%. It outputs a mathematical probability distribution (Soft Targets):
+- Dog: $85%$
+- Cat: $14%$
+- Car: $1%$
+
+This distribution contains what researchers call **Dark Knowledge**. The Teacher model is mathematically communicating that a Dog is visually similar to a Cat, but looks absolutely nothing like a Car. 
+During Knowledge Distillation, the Student model is trained to mathematically minimize the KL-Divergence between its own outputs and the Teacher's *Soft Targets*. 
+By learning the nuanced probabilities rather than rigid 1/0 labels, the tiny Student model is mathematically guided into replicating the exact complex decision boundaries of the Teacher, achieving accuracies impossible to reach if trained from scratch.
 
 </ConceptTemplate>

@@ -1,8 +1,26 @@
+---
+title: Dropout
+description: A brutal, highly effective regularization technique that prevents Neural Networks from overfitting by randomly disabling a percentage of neurons during training.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Dropout">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Deep Neural Networks have millions of parameters, meaning they easily memorize the training data (Overfitting) instead of mathematically learning the underlying patterns. **Dropout** is a regularization technique that forces the network to become robust by introducing chaos.
+
+## 1. The Mechanism of Chaos
+During training, a Dropout layer mathematically "turns off" a random percentage of neurons (usually 20% to 50%) in every single forward pass.
+- If a layer has 1,000 neurons, and Dropout is set to $0.5$, 500 neurons will mathematically output absolute $0$ for that specific batch of data. 
+- On the very next batch, a *different* random 500 neurons are disabled.
+
+## 2. The Mathematical Impact
+Why does crippling the network improve it? 
+It mathematically prevents **Co-Adaptation**. In a standard network, Neuron A might become lazy and rely entirely on Neuron B to detect edges. If Neuron B is randomly shut off via Dropout, Neuron A is forced to learn how to detect edges itself. 
+Dropout mathematically forces the network to build redundant, independent pathways, making the final model vastly more generalized and robust to unseen data.
+
+## 3. Inference Mode (Scaling)
+Dropout is strictly a training mechanism. When the model is deployed to production (Inference), you absolutely do not want random neurons turning off. 
+However, there is a mathematical catch: during training, if 50% of neurons were dropped, the next layer only received half the mathematical signal. During inference, when 100% of neurons are active, the signal will mathematically double, blowing up the network. 
+To fix this, the framework mathematically multiplies all weights by $0.5$ during inference to exactly replicate the expected signal strength.
 
 </ConceptTemplate>

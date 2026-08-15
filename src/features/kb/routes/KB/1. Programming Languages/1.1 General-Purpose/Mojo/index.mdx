@@ -1,8 +1,45 @@
+---
+title: Mojo
+description: "A new programming language designed for AI development, combining the usability of Python with the performance of C."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Mojo">
+<ConceptTemplate 
+  name="Mojo"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Released by Modular in 2023, **Mojo** is a programming language designed specifically for Artificial Intelligence and high-performance systems programming. It aims to be a strict superset of **Python** (like TypeScript is to JavaScript).
+
+## The AI Hardware Problem
+Python is the undisputed king of AI. However, Python is incredibly slow and cannot natively interface with GPUs or specialized AI hardware (like TPUs). To fix this, AI libraries (PyTorch, TensorFlow) are actually written in complex C++ and CUDA, with Python just acting as a simple wrapper wrapper on top. 
+
+Mojo allows developers to write high-performance systems code (capable of interacting directly with hardware and SIMD registers) while maintaining Python's beloved syntax.
+
+## Key Features
+
+1. **Python Superset**: Any valid Python code is valid Mojo code. You can even import standard Python libraries natively.
+2. **`fn` vs `def`**: While you can use Python's `def` for dynamic functions, Mojo introduces `fn` for strict, statically-typed, memory-safe, compiled functions.
+3. **Hardware Acceleration**: Mojo can compile directly to MLIR (Multi-Level Intermediate Representation), allowing it to optimize code for specific CPUs and GPUs flawlessly.
+
+## Syntax Example
+
+```python
+# This is standard Python, and valid Mojo
+def greet(name):
+    return "Hello " + name
+
+# This is Mojo-specific high-performance code
+# 'fn' enforces static typing, memory safety, and immutable arguments by default
+fn fast_greet(name: String) -> String:
+    return "Hello " + name
+
+fn main():
+    # Mojo supports SIMD (Single Instruction, Multiple Data) natively
+    let a = SIMD[DType.float32, 4](1.0, 2.0, 3.0, 4.0)
+    let b = SIMD[DType.float32, 4](2.0, 2.0, 2.0, 2.0)
+    print(a * b) # Parallelized multiplication at the hardware level
+```
 
 </ConceptTemplate>

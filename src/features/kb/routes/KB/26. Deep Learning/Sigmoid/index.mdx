@@ -1,8 +1,25 @@
+---
+title: Sigmoid Activation Function
+description: A classic activation function that mathematically squashes any real number into a strict probability between 0 and 1, famous for causing the vanishing gradient problem.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sigmoid">
+<ConceptTemplate title="Sigmoid Activation Function">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the early days of Deep Learning, the **Sigmoid** function was the absolute standard activation function. Because it creates a beautiful, smooth "S-curve" that mathematically squashes any input to a value between $0$ and $1$, it was considered the perfect mathematical representation of a biological neuron firing (or not firing).
+
+## 1. The Mathematical Equation
+$sigma(x) = rac{1}{1 + e^{-x}}$
+
+- If you input a massive positive number ($+100$), the math forces the output to mathematically lock at exactly $0.9999$.
+- If you input a massive negative number ($-100$), the math forces the output to exactly $0.0001$.
+- At exactly $0$, the output is exactly $0.5$.
+
+This makes Sigmoid the absolute mathematical standard for the final layer of a **Binary Classification** model (e.g., outputting an 85% probability that an email is Spam).
+
+## 2. The Fatal Flaw (Vanishing Gradients)
+While perfect for the final output layer, Sigmoid is mathematically catastrophic when used in the hidden layers of a Deep Neural Network. 
+Look at the edges of the S-curve. If the input is $+10$, the curve is perfectly flat. The mathematical derivative (the slope) of a flat line is exactly $0$. 
+During Backpropagation, Gradient Descent relies on multiplying these derivatives together. If the derivative is $0$ (or near $0$), the mathematical signal is instantly crushed to absolute zero. The network completely stops learning. This is the **Vanishing Gradient Problem**, and it is the exact reason ReLU replaced Sigmoid in hidden layers.
 
 </ConceptTemplate>

@@ -1,8 +1,46 @@
+---
+title: Kotlin
+description: "A modern, concise, and safe programming language by JetBrains, now the official language of Android development."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Kotlin">
+<ConceptTemplate 
+  name="Kotlin"
+  icon="code"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by JetBrains (the creators of IntelliJ IDEA), **Kotlin** is a statically-typed language that runs on the Java Virtual Machine (JVM). In 2019, Google announced Kotlin as the preferred language for Android app development, largely replacing Java.
+
+## Why Kotlin Beat Java on Android
+
+1. **100% Interoperability**: You can call Java code from Kotlin, and Kotlin code from Java, in the exact same project without performance penalties.
+2. **Conciseness**: Kotlin drastically reduces boilerplate code. What takes 50 lines of Java (getters, setters, equals, hashCode) takes one line in Kotlin using a `data class`.
+3. **Null Safety**: Kotlin's type system distinguishes between nullable and non-nullable types, killing the dreaded `NullPointerException` (The Billion Dollar Mistake).
+4. **Coroutines**: A lightweight mechanism for asynchronous programming that makes non-blocking network calls look like sequential, synchronous code.
+
+## Syntax Example
+
+```kotlin
+// A single line creates a fully-featured data model
+data class User(val name: String, val age: Int)
+
+fun main() {
+    // Type inference (no need to specify 'User')
+    val alice = User("Alice", 28)
+    
+    // Null safety (won't compile if you assign null to a non-nullable String)
+    var city: String = "New York"
+    // city = null // ERROR
+    
+    // Safe calls
+    var nickname: String? = null
+    println(nickname?.length ?: 0) // Prints 0 if nickname is null
+}
+```
+
+<Callout icon="tip" title="Beyond Android">
+While famous for Android, Kotlin is heavily used in backend development using frameworks like Spring Boot or Ktor, providing a modern alternative to Java for enterprise microservices.
+</Callout>
 
 </ConceptTemplate>

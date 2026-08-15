@@ -1,8 +1,42 @@
+---
+title: Ballerina
+description: "A modern, open-source programming language designed specifically for writing network-distributed applications and microservices."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Ballerina">
+<ConceptTemplate 
+  name="Ballerina"
+  icon="globe"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by WSO2 and released in 2017, **Ballerina** is a general-purpose, statically typed, concurrent programming language with a very specific focus: **Cloud-Native Integration**. 
+
+## The Network is Native
+
+In languages like Java or Python, making an HTTP request or defining an API endpoint requires importing heavy external libraries (like Spring Boot or Flask). In Ballerina, the network is built directly into the language syntax.
+
+Services, endpoints, JSON, and XML are native primitives.
+
+## Syntax Example
+
+Ballerina code is designed to look like sequence diagrams, making the flow of network calls explicitly clear.
+
+```ballerina
+import ballerina/http;
+
+// Define a network service listening on port 8080 natively
+service /hello on new http:Listener(8080) {
+
+    // Define a resource function (HTTP GET)
+    resource function get greeting(string name) returns string {
+        return "Hello, " + name + "!";
+    }
+}
+```
+
+<Callout icon="tip" title="Graphical Programming">
+Because of its strict syntax rules regarding network interactions, any Ballerina code can be automatically rendered into a highly accurate Sequence Diagram, allowing architects to visualize microservice communications instantly.
+</Callout>
 
 </ConceptTemplate>

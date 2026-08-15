@@ -1,8 +1,26 @@
+---
+title: Priority Queues
+description: A specialized queue where elements are mathematically served based on their assigned priority rather than their chronological order of arrival.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Priority queues">
+<ConceptTemplate title="Priority Queues">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard Queue (FIFO), the CEO of a company and a regular employee wait in the exact same line based strictly on who arrived first. A **Priority Queue** destroys fairness. It mathematically guarantees that the CEO is served immediately, regardless of when they arrived, based entirely on an attached "Priority Score."
+
+## 1. The Mathematical Mechanism
+A Priority Queue is an Abstract Data Type (ADT). When you call `Pop()`, it does not pop the oldest element; it mathematically scans the data and pops the element with the absolute highest (or lowest) priority score. 
+While you *could* implement this using a sorted Array, inserting a new element would take a disastrous $O(N)$ time. Because of this, Priority Queues are almost exclusively implemented using a **Binary Heap** (a specialized tree structure).
+
+## 2. Heap-Backed Performance
+By backing the Priority Queue with a Min-Heap or Max-Heap, the mathematics drastically improve:
+- **Peek Max Priority**: Instant $O(1)$
+- **Pop Max Priority**: $O(log N)$
+- **Insert New Element**: $O(log N)$
+
+This logarithmic scaling allows algorithms to instantly retrieve the most critical data from massive datasets of millions of elements in fractions of a microsecond.
+
+## 3. Dijkstra's Algorithm
+Priority Queues are the absolute mathematical engine behind **Dijkstra's Algorithm** (used by Google Maps to find the shortest path). As the algorithm explores millions of possible roads, it constantly pushes them into a Priority Queue ranked by total distance. Because the Queue mathematically always pops the absolute shortest known road first, Dijkstra's avoids wandering aimlessly and homes directly in on the destination.
 
 </ConceptTemplate>

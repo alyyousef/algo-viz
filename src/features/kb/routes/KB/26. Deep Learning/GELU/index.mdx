@@ -1,8 +1,26 @@
+---
+title: GELU (Gaussian Error Linear Unit)
+description: A probabilistic activation function that weights inputs by their statistical probability, serving as the standard for state-of-the-art Transformers like GPT-4.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GELU">
+<ConceptTemplate title="GELU (Gaussian Error Linear Unit)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While ReLU is the standard for Computer Vision, the **GELU** activation function is the mathematical standard for almost all modern Large Language Models (including BERT, GPT-3, and GPT-4). It replaces the harsh, rigid cutoff of ReLU with a smooth, statistically grounded curve.
+
+## 1. The Mathematical Intuition
+ReLU uses a harsh absolute rule: *If $x < 0$, drop it. If $x > 0$, keep it.* 
+GELU uses a probabilistic rule based on the Gaussian (Normal) Distribution. It asks: *"What is the mathematical probability that a random input is less than $x$?"*
+
+$GELU(x) = x cdot P(X le x)$
+
+- If $x$ is highly negative (e.g., -3), the probability of finding a number smaller than -3 in a normal distribution is mathematically near 0%. So GELU multiplies $x$ by 0, dropping it (like ReLU).
+- If $x$ is highly positive (e.g., +3), the probability is near 100%. So GELU multiplies $x$ by 1, keeping it (like ReLU).
+
+## 2. The Critical Difference (The Smooth Dip)
+The magic of GELU happens near zero. 
+In ReLU, -0.1 is instantly crushed to 0. 
+In GELU, because it relies on the Cumulative Distribution Function (CDF), slightly negative values are multiplied by a small probability (e.g., -0.1 * 0.46 = -0.046). 
+This creates a mathematically smooth, non-monotonic "dip" below zero before rising. This smoothness provides a perfect, non-zero gradient for Gradient Descent, completely eliminating the "Dying ReLU" problem while allowing the network to retain slightly negative information.
 
 </ConceptTemplate>

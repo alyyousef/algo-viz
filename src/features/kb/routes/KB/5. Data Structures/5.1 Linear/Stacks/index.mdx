@@ -1,8 +1,25 @@
+---
+title: Stacks
+description: A rigid Last-In-First-Out (LIFO) data structure where elements are mathematically added and removed strictly from the absolute top.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Stacks">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Stack** is not a unique physical memory layout; it is an **Abstract Data Type (ADT)**. It is essentially an Array or a Linked List that has been mathematically crippled. You are strictly forbidden from accessing the middle or the bottom. You can only interact with the absolute top element.
+
+## 1. LIFO (Last-In, First-Out)
+A Stack perfectly mimics a physical stack of dinner plates. 
+- **Push**: You place a new plate on top of the stack.
+- **Pop**: You mathematically must remove the top plate before you can access any plate underneath it.
+
+Because you only ever manipulate the single top pointer, both `Push` and `Pop` are mathematically guaranteed to be blazing fast $O(1)$ operations.
+
+## 2. The Call Stack
+Stacks are the absolute backbone of Computer Science architecture. When a Python script calls a function, the CPU mathematically pushes a "Stack Frame" (containing the local variables) onto the system **Call Stack**. If that function calls another function, a new frame is pushed on top. When a function finishes, the CPU pops its frame off the top, mathematically returning exactly to the previous function. 
+
+## 3. Depth-First Search (DFS)
+In graph theory, traversing a maze requires exploring deeply down a single path until hitting a dead end, and then backtracking. 
+A Stack mathematically perfectly simulates this. By pushing forks in the road onto a Stack, the algorithm explores the most recently discovered path first (LIFO), mathematically forming the core logic of all **Depth-First Search (DFS)** algorithms.
 
 </ConceptTemplate>

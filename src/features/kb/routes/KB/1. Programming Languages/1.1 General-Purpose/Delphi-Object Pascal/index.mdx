@@ -1,8 +1,47 @@
+---
+title: Delphi & Object Pascal
+description: "The rapid application development language that dominated the 1990s Windows software ecosystem."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Delphi/Object Pascal">
+<ConceptTemplate 
+  name="Delphi & Object Pascal"
+  icon="window"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Object Pascal** is an extension of the classic Pascal language that adds Object-Oriented capabilities. **Delphi** is the famous Integrated Development Environment (IDE) and visual framework created by Borland in 1995 to compile Object Pascal.
+
+## The King of the 90s
+
+Before web apps, almost all business software consisted of desktop applications. Delphi revolutionized Windows development by introducing **Rapid Application Development (RAD)**. Developers could literally drag and drop buttons, text boxes, and database grids onto a canvas, double-click them, and instantly write Object Pascal code to handle the events.
+
+It compiled instantly into a single standalone `.exe` file without needing heavy runtime frameworks (unlike Visual Basic or Java).
+
+## Syntax Example
+
+Object Pascal is famously verbose, using english keywords (`begin`, `end`) instead of curly braces.
+
+```pascal
+program HelloDelphi;
+
+// Explicit variable declaration block
+var
+  Message: string;
+  i: integer;
+
+begin
+  Message := 'Hello from Object Pascal!';
+  
+  for i := 1 to 3 do
+  begin
+    Writeln(Message);
+  end;
+end.
+```
+
+<Callout icon="info" title="Where is it now?">
+While Delphi's popularity plummeted with the rise of C# (.NET) and web applications, millions of lines of legacy enterprise Delphi code still run heavily in medical, point-of-sale, and financial systems globally.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,45 @@
+---
+title: D (Dlang)
+description: "A systems programming language with C-like syntax and static typing, combining performance with modern abstractions."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="D">
+<ConceptTemplate 
+  name="D"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Walter Bright in 2001, **D** (often called Dlang) was envisioned as the true successor to C++. It aimed to maintain the high performance and low-level control of C++ while drastically improving compilation speeds and adding modern conveniences like garbage collection and modules.
+
+## The Dual Nature of D
+
+D allows developers to write code in multiple paradigms:
+- **High-Level**: You can write D like Java or C#, utilizing its built-in Garbage Collector, classes, and dynamic arrays for rapid prototyping.
+- **Low-Level**: Using the `@nogc` attribute, you can explicitly disable the garbage collector, managing memory manually just like C for extreme performance optimization.
+
+## Syntax Example
+
+```d
+import std.stdio;
+
+// A simple function utilizing D's powerful 'auto' type inference
+auto multiply(T)(T a, T b) {
+    return a * b;
+}
+
+void main() {
+    // Standard high-level D
+    writeln("Hello, D!");
+    
+    // The template function works for both ints and floats
+    writeln(multiply(5, 5));     // 25
+    writeln(multiply(2.5, 2.0)); // 5.0
+}
+```
+
+<Callout icon="warning" title="Adoption Challenges">
+Despite its excellent design, D struggled to gain massive industry adoption. It was caught between C++ (which companies were hesitant to abandon) and newer languages like Rust and Go, which had the backing of massive tech giants (Mozilla and Google, respectively).
+</Callout>
 
 </ConceptTemplate>

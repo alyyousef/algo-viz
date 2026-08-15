@@ -1,8 +1,26 @@
+---
+title: Arrays
+description: The most fundamental linear data structure, storing elements in contiguous memory blocks for mathematically perfect O(1) random access.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Arrays">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The **Array** is the absolute foundation of all data structures. It is a linear collection of elements stored in strictly **contiguous (adjacent) memory locations**. 
+Because the memory is perfectly unbroken, the CPU can calculate the exact physical address of any element instantly using pure math.
+
+## 1. O(1) Random Access
+If you have an array of integers starting at memory address `1000`, and you want to access the 5th element (index 4), the CPU does not need to search. 
+Because every integer is exactly 4 bytes, the CPU mathematically calculates:
+`Address = Base + (Index * Size) = 1000 + (4 * 4) = 1016`
+It instantly fetches address `1016` in $O(1)$ time. This mathematical property makes arrays the fastest data structure in the universe for random reads.
+
+## 2. The Contiguous Bottleneck
+Because arrays must be strictly contiguous, they suffer from two fatal flaws:
+- **Fixed Size**: When you create an array of size 10, the OS carves out exactly 10 slots of contiguous memory. If you try to add an 11th element, the array mathematically cannot expand, because the 11th memory slot might already be owned by another program.
+- **$O(N)$ Insertions**: If you want to insert a new element at index $0$, you must physically shift every single existing element exactly one slot to the right to make room, taking $O(N)$ time.
+
+## 3. Cache Locality
+Modern CPUs do not fetch data from RAM one byte at a time; they fetch massive "Cache Lines" (e.g., 64 bytes). Because an array is contiguous, fetching the first element automatically pulls the next 15 elements directly into the ultra-fast L1 CPU Cache. This "Spatial Locality" makes iterating over arrays brutally fast compared to Linked Lists.
 
 </ConceptTemplate>

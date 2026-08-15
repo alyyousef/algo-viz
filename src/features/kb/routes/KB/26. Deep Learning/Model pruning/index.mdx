@@ -1,8 +1,24 @@
+---
+title: Model Pruning
+description: A model compression technique that mathematically deletes unimportant neurons or weights from a trained network, drastically reducing inference cost.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model pruning">
+<ConceptTemplate title="Model Pruning">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A fully trained 70-Billion parameter Neural Network contains massive amounts of "dead weight." Many specific weights are mathematically so close to zero that they have no actual impact on the final output. 
+**Model Pruning** mathematically identifies these useless parameters and permanently deletes them, compressing the model for deployment on edge devices like smartphones.
+
+## 1. Unstructured Pruning (Magnitude)
+The most basic mathematical approach. The algorithm looks at every single individual weight in the massive matrices. If a weight has an absolute value very close to zero (e.g., $0.00001$), it mathematically forces it to absolute $0$. 
+This creates highly sparse matrices. While this compresses the file size (using sparse storage formats), standard GPU hardware struggles to execute unstructured sparse math quickly, meaning it doesn't always speed up inference.
+
+## 2. Structured Pruning
+Instead of deleting random individual weights, **Structured Pruning** mathematically deletes entire structures (like a whole convolutional filter, or an entire attention head). 
+Because the remaining matrices are perfectly dense (just smaller), standard GPUs can process them vastly faster. This guarantees a massive speedup in inference, though it risks damaging the model's accuracy more than unstructured pruning.
+
+## 3. The Lottery Ticket Hypothesis
+Why train a massive 70B model just to prune it down to 10B? Why not just train a 10B model from scratch?
+The **Lottery Ticket Hypothesis** mathematically proved that within the massive random initialization of a 70B model, there exists a tiny "winning ticket" sub-network that is perfectly initialized to learn the task. The massive model is mathematically required just to guarantee you buy enough tickets to win. Once the winning ticket is trained, you can prune the rest of the network away.
 
 </ConceptTemplate>

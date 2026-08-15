@@ -1,8 +1,27 @@
+---
+title: Cuckoo Filters
+description: A highly advanced probabilistic data structure that improves upon Bloom Filters by mathematically allowing the deletion of elements while maintaining massive space efficiency.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cuckoo filters">
+<ConceptTemplate title="Cuckoo Filters">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Bloom Filter** is a famous probabilistic data structure that can tell you if an element exists using almost zero memory. However, Bloom Filters have a fatal mathematical flaw: you can *never* delete an element from them. Because multiple elements mathematically share the same bits, turning a bit back to $0$ might accidentally corrupt other elements. 
+**Cuckoo Filters** solve this completely.
+
+## 1. The Fingerprint
+Instead of turning single bits to $1$ (like a Bloom Filter), a Cuckoo Filter mathematically hashes the data into a tiny, compressed "Fingerprint" (e.g., an 8-bit integer). 
+It then stores this physical 8-bit fingerprint inside a massively compressed array. Because the actual fingerprint is stored, the algorithm can easily find it and mathematically delete it later.
+
+## 2. Cuckoo Hashing (The Eviction)
+What happens if the array slot is already full? 
+The filter mathematically acts like a Cuckoo bird (which famously kicks other birds' eggs out of their nests). 
+Every fingerprint is mathematically assigned exactly two possible array slots. If slot A is full, the new fingerprint violently kicks the old fingerprint out of the slot. The old fingerprint is then mathematically forced to fly to its alternate slot B. If slot B is full, it kicks *that* fingerprint out. This chain reaction mathematically cascades through the array until an empty slot is found, ensuring the array remains densely packed.
+
+## 3. Superiority to Bloom Filters
+Cuckoo Filters are rapidly replacing Bloom Filters in modern databases. 
+- They allow perfect mathematical $O(1)$ deletions.
+- They are significantly faster for lookup queries.
+- If the filter is relatively full (under 95%), they actually consume mathematically *less* memory than a Bloom Filter for the exact same False Positive rate.
 
 </ConceptTemplate>

@@ -1,8 +1,27 @@
+---
+title: Weighted Graphs
+description: A graph where edges possess a numerical weight or cost, forming the absolute mathematical foundation for routing algorithms and shortest paths.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Weighted graphs">
+<ConceptTemplate title="Weighted Graphs">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard graph, all edges are mathematically equal. Moving from Node A to Node B counts as "1 step." However, the real world is not equal. A **Weighted Graph** assigns a strict numerical value (Weight, Cost, or Distance) to every single edge.
+
+## 1. Representing Reality
+Weighted Graphs are the mathematical language of reality:
+- **Google Maps**: The Nodes are intersections, the Edges are roads, and the Weights are the exact driving time in seconds.
+- **Network Routing**: The Nodes are servers, the Edges are fiber-optic cables, and the Weights are the latency in milliseconds.
+- **Financial Arbitrage**: The Nodes are currencies (USD, EUR), the Edges are exchange rates, and the Weights are the mathematical conversion ratios.
+
+## 2. The Shortest Path Problem
+In an unweighted graph, finding the shortest path between two nodes is trivial: you just use **Breadth-First Search (BFS)** because the path with the fewest edges is mathematically guaranteed to be the shortest. 
+In a Weighted Graph, a path with 50 edges might have a total weight of $100$, while a path with just 1 edge might have a weight of $500$. BFS fails completely here.
+
+## 3. The Algorithmic Titans
+To mathematically conquer Weighted Graphs, Computer Science invented a triad of legendary algorithms:
+- **Dijkstra's Algorithm**: Uses a Priority Queue to find the absolute shortest path from a starting node to all other nodes, provided all weights are strictly positive.
+- **Bellman-Ford**: Slower than Dijkstra, but mathematically capable of handling **Negative Weights**.
+- **Floyd-Warshall**: A terrifying $O(V^3)$ dynamic programming algorithm that finds the shortest path between *every single pair* of nodes in the entire graph simultaneously.
 
 </ConceptTemplate>

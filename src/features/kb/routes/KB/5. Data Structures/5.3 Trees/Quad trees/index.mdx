@@ -1,8 +1,23 @@
+---
+title: Quadtrees
+description: A 2D spatial partitioning tree where each internal node has exactly four children, perfectly mathematically subdividing a two-dimensional plane.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quad trees">
+<ConceptTemplate title="Quadtrees">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While K-D Trees rotate their splitting axis, a **Quadtree** mathematically splits both the $X$ and $Y$ axis simultaneously. It is heavily optimized for massive 2-dimensional planes, completely dominating modern 2D game engines and image compression logic.
+
+## 1. The Four Quadrants
+A Quadtree starts by bounding the entire 2D universe in a single massive square (the Root). 
+If too many entities (like game enemies) enter that square, it mathematically violently shatters the square into exactly four equal sub-squares (Northwest, Northeast, Southwest, Southeast). These become the four children of the Root. 
+If one of those sub-squares gets too crowded, it shatters again into four smaller squares. 
+
+## 2. Collision Detection Optimization
+If you have 10,000 asteroids in a 2D space game, checking every asteroid against every other asteroid for collisions requires an apocalyptic $100,000,000$ mathematical checks per frame ($O(N^2)$).
+By inserting all asteroids into a Quadtree, the physics engine only checks asteroids that share the exact same geometric leaf square. Asteroids in different squares are mathematically guaranteed not to collide, dropping the calculations to $O(N log N)$ and allowing the game to run at 60 FPS.
+
+## 3. Image Compression
+Quadtrees can mathematically compress images. If a $1024 \times 1024$ image has a massive section of pure black sky, a Quadtree does not need a million pixels. It simply creates a single massive square node representing the entire sky block, and only shatters into smaller pixels when it hits areas with high detail.
 
 </ConceptTemplate>

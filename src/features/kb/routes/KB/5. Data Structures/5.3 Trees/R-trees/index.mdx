@@ -1,8 +1,21 @@
+---
+title: R-Trees
+description: A massive spatial index structure used heavily in databases to quickly query spatial data like geometric bounding boxes and geographical polygons.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="R-trees">
+<ConceptTemplate title="R-Trees">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While K-D trees organize points, and Quadtrees divide space rigidly, **R-Trees (Rectangle Trees)** are specifically designed to organize dynamic **Bounding Boxes**. They are the absolute mathematical foundation of spatial databases like **PostGIS** and systems like Google Maps.
+
+## 1. Bounding Box Hierarchies
+Instead of mathematically slicing the world in half, an R-Tree mathematically groups nearby objects and wraps them in a **Minimum Bounding Rectangle (MBR)**. 
+The leaf nodes contain the actual geometric objects (like the outline of a specific coffee shop). The parent nodes contain a massive Bounding Box that completely encloses all the coffee shops in that neighborhood. The Root node contains a gigantic Bounding Box covering the entire city.
+
+## 2. Overlapping Regions
+Unlike Quadtrees, the bounding boxes in an R-Tree can mathematically overlap. If you search for "restaurants in this 5-mile radius", the database checks the Root. If your search radius overlaps with two different neighborhood bounding boxes, the algorithm mathematically descends into both branches simultaneously. 
+
+## 3. Database Optimization (Disk I/O)
+Quadtrees are great for RAM, but terrible for hard drives. R-Trees are mathematically designed exactly like **B-Trees**. They have massive branching factors (e.g., 50 children per node), ensuring the tree is incredibly wide and extremely shallow. This guarantees that finding a spatial object on a physical hard drive takes at most 3 or 4 mathematical disk reads.
 
 </ConceptTemplate>

@@ -1,8 +1,50 @@
+---
+title: Perl
+description: "The Swiss Army chainsaw of scripting languages, famous for its unmatched text processing capabilities and dense syntax."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Perl">
+<ConceptTemplate 
+  name="Perl"
+  icon="terminal"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Larry Wall in 1987, **Perl** (Practical Extraction and Reporting Language) was originally designed as a Unix scripting language to make report processing easier. It quickly evolved into the "duct tape of the Internet" during the 1990s dot-com boom.
+
+## The Master of Regex
+
+Perl is legendary for its built-in Regular Expression (Regex) engine. In almost all modern languages (Python, JavaScript, Java), Regex implementation is heavily inspired by Perl (PCRE - Perl Compatible Regular Expressions).
+
+## Syntax Example
+
+Perl is famous (and sometimes criticized) for its extreme conciseness and its motto: "There Is More Than One Way To Do It" (TIMTOWTDI). It uses sigils (`$`, `@`, `%`) to denote variable types.
+
+```perl
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Scalar ($) - Single value
+my $name = "World";
+
+# Array (@) - List of values
+my @colors = ("red", "green", "blue");
+
+# Hash (%) - Key/Value pairs
+my %ages = ("Alice" => 25, "Bob" => 30);
+
+print "Hello $name!\n";
+
+# Perl's legendary Regex integration
+my $text = "The quick brown fox";
+if ($text =~ /brown (\w+)/) {
+    print "Found the animal: $1\n"; # Prints "fox"
+}
+```
+
+<Callout icon="warning" title="Write-Only Language?">
+Because Perl allows developers to write incredibly dense, cryptic code using implicit variables (like `$_`), it earned a reputation as a "write-only" language—code that is easy to write but nearly impossible to read or maintain six months later. This complexity heavily contributed to developers fleeing to Python and Ruby in the 2000s.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,25 @@
+---
+title: Neural Architecture Search (NAS)
+description: An automated meta-learning process where an AI algorithm mathematically searches for and discovers the optimal neural network architecture for a specific dataset.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Neural architecture search">
+<ConceptTemplate title="Neural Architecture Search (NAS)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Designing a neural network requires massive human intuition. How many layers? Should we use a $3	imes 3$ or $5	imes 5$ convolution? Should there be skip connections? 
+**Neural Architecture Search (NAS)** mathematically removes the human from the equation. It uses an AI to design the AI.
+
+## 1. The Search Space
+The algorithm is first given a massive mathematical **Search Space**. This defines the Lego blocks the AI is allowed to use (e.g., specific convolutions, pooling layers, activation functions, and how they can be wired together). The space is theoretically infinite, containing trillions of possible unique architectures.
+
+## 2. The Controller (Reinforcement Learning)
+In classic NAS (like Google's AutoML), a Recurrent Neural Network (the Controller) mathematically generates a string representing a specific architecture. 
+That architecture is instantly built, trained on the dataset for a few epochs, and evaluated for accuracy. 
+The resulting accuracy score is mathematically fed back to the Controller as a **Reward** via Reinforcement Learning. If the architecture scored high, the Controller mathematically updates its internal weights to generate more architectures that look similar to the winning design.
+
+## 3. Differentiable Search (DARTS)
+The RL approach required thousands of GPU hours to evaluate millions of designs. 
+**Differentiable Architecture Search (DARTS)** revolutionized NAS. Instead of trying discrete architectures one by one, DARTS mathematically constructs one massive "Super-Network" that contains *every possible connection* simultaneously. It applies a mathematical weight (a probability) to every single connection. 
+During training, Gradient Descent mathematically pushes the weights of bad connections to $0$, and good connections to $1$. Once training is complete, the network simply prunes the $0$ connections, instantly revealing the mathematically perfect architecture in a fraction of the time.
 
 </ConceptTemplate>

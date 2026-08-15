@@ -1,8 +1,56 @@
+---
+title: Objective-C
+description: "The primary programming language utilized by Apple for macOS and iOS operating systems before the advent of Swift."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Objective-C">
+<ConceptTemplate 
+  name="Objective-C"
+  icon="smartphone"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed in the early 1980s, **Objective-C** is a strict superset of C that adds Smalltalk-style messaging capabilities. It was famously adopted by NeXT (Steve Jobs' company after leaving Apple) for its NeXTSTEP operating system, which eventually became the foundation for Apple's **macOS** and **iOS**.
+
+## The Messaging Paradigm
+Unlike C++ or Java where you "call a method" on an object, in Objective-C you "send a message" to an object. 
+If an object doesn't understand a message, the application doesn't necessarily crash immediately; the message can be forwarded or ignored dynamically at runtime. This dynamic nature gave Apple's UI frameworks (Cocoa and Cocoa Touch) incredible flexibility.
+
+## Syntax Example
+Objective-C is famous for its verbose, bracket-heavy syntax, which many developers found intimidating.
+
+```objc
+#import <Foundation/Foundation.h>
+
+// Interface (Header)
+@interface Person : NSObject
+@property NSString *name;
+- (void)sayHello;
+@end
+
+// Implementation
+@implementation Person
+- (void)sayHello {
+    // Sending the 'NSLog' message
+    NSLog(@"Hello, my name is %@", self.name);
+}
+@end
+
+int main() {
+    @autoreleasepool {
+        // Nested bracket syntax for allocation and initialization
+        Person *steve = [[Person alloc] init];
+        steve.name = @"Steve";
+        
+        // Sending the 'sayHello' message
+        [steve sayHello];
+    }
+    return 0;
+}
+```
+
+<Callout icon="info" title="Replaced by Swift">
+In 2014, Apple introduced **Swift** to replace Objective-C. Swift removed the brackets, added type safety, and eliminated manual memory management headers. While Apple now strongly recommends Swift for all new apps, millions of lines of Objective-C still power core Apple operating system frameworks today.
+</Callout>
 
 </ConceptTemplate>

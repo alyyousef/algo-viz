@@ -1,8 +1,51 @@
+---
+title: ReasonML & ReScript
+description: "A fast, typed language providing the semantics of OCaml with a syntax familiar to JavaScript developers."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="ReasonML/ReScript">
+<ConceptTemplate 
+  name="ReasonML & ReScript"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**ReasonML** was created by Facebook (Meta) as a syntax extension and toolchain for OCaml, designed to make OCaml look like JavaScript and compile to React natively.
+
+Eventually, the ecosystem split. The team focused specifically on compiling to JavaScript rebranded the language as **ReScript**. 
+
+## Why ReScript over TypeScript?
+
+TypeScript is fundamentally bound by JavaScript's semantics. If JavaScript does something weird, TypeScript must support it. 
+
+ReScript provides a completely sound type system (based on OCaml's legendary Hindley-Milner type system). It offers blazing-fast compilation (measured in milliseconds, not seconds), pattern matching, and 100% type soundness, but compiles to incredibly clean JavaScript.
+
+## Syntax Example
+
+Notice how it looks like JavaScript, but features powerful functional concepts like variant types and pattern matching.
+
+```javascript
+// Define a Variant (similar to Enums in other languages, but can hold data)
+type userStatus =
+  | LoggedIn(string) // Holds the username
+  | Guest
+  | Banned(int) // Holds the days remaining
+
+// Pattern matching (the compiler guarantees all cases are handled)
+let getMessage = (status) => {
+  switch status {
+  | LoggedIn(name) => "Welcome back, " ++ name
+  | Guest => "Please log in."
+  | Banned(days) => "You are banned for " ++ Belt.Int.toString(days) ++ " days."
+  }
+}
+
+let currentUser = LoggedIn("Alice")
+Js.log(getMessage(currentUser))
+```
+
+<Callout icon="info" title="React Integration">
+ReScript was built by the original creator of React (Jordan Walke). Because of this, writing React code in ReScript is widely considered a significantly smoother and safer experience than using raw TypeScript.
+</Callout>
 
 </ConceptTemplate>

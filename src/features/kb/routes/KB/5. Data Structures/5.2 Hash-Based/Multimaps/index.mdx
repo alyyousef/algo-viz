@@ -1,8 +1,24 @@
+---
+title: Multimaps
+description: A dictionary-like data structure that mathematically permits a single key to map to multiple different values simultaneously.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Multimaps">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard Hash Map (Dictionary), keys must be mathematically unique. If you map `"Alice" -> "Admin"`, and then later map `"Alice" -> "User"`, the standard Map will violently overwrite the first value. A **Multimap** is designed to allow a single Key to mathematically hold an entire collection of different Values.
+
+## 1. The Implementation
+Under the hood, a Multimap does not actually break the mathematical rules of Hashing. It simply changes the data type of the Value. 
+Instead of mapping a String to a String, it maps a String to a **List** or a **Set**.
+`{"Alice": ["Admin", "User", "Billing"]}`
+
+When you insert a new value for `"Alice"`, the structure mathematically fetches the underlying List in $O(1)$ time, and dynamically appends the new value to it.
+
+## 2. Graph Adjacency Lists
+Multimaps are the absolute core of Graph Theory. To represent a massive social network where a single person has thousands of friends, the Graph is mathematically constructed as a Multimap where the Key is a User ID, and the Values are a List of all their friends' User IDs. 
+
+## 3. Reverse Indexing
+When building a Search Engine, you must map a single word (like `"Algorithm"`) to the thousands of different websites that contain that word. This is mathematically impossible with a standard Hash Map. A Multimap allows you to instantly build a massive **Reverse Index**, mapping one keyword to an infinitely expanding list of URLs.
 
 </ConceptTemplate>

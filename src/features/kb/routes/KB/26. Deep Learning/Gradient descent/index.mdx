@@ -1,8 +1,27 @@
+---
+title: Gradient Descent
+description: The fundamental mathematical optimization algorithm that trains all Neural Networks by iteratively adjusting weights in the opposite direction of the gradient.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gradient descent">
+<ConceptTemplate title="Gradient Descent">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If the Loss Function defines how "wrong" a Neural Network is, **Gradient Descent** is the mathematical engine that figures out exactly how to fix it. It is the core algorithm that allows AI to mathematically "learn".
+
+## 1. The Calculus of the Gradient
+Imagine standing on a mountain blindfolded, trying to reach the valley floor (the lowest possible error). You cannot see the valley, but you can feel the slope of the ground beneath your feet. 
+Using Calculus (Backpropagation), the network calculates the **Gradient**: the vector of partial derivatives representing the exact mathematical slope of the Loss Function with respect to every single weight in the network.
+
+## 2. The Update Rule
+The Gradient mathematically points in the direction of the *steepest ascent* (up the mountain). To minimize the error, we must mathematically move in the opposite direction.
+
+$W_{new} = W_{old} - (	ext{Learning Rate} cdot 	ext{Gradient})$
+
+By subtracting the Gradient, we mathematically force the weights to roll downhill toward a lower error.
+
+## 3. The Variants
+Standard Gradient Descent requires calculating the error on the entire massive dataset before taking a single step, which is computationally impossible for modern AI.
+- **Stochastic Gradient Descent (SGD)**: Calculates the gradient using a single random data point. It is blazing fast, but highly erratic.
+- **Mini-Batch Gradient Descent**: The industry standard. Calculates the gradient using a small batch (e.g., 32 or 256 images). It mathematically balances the speed of SGD with the algebraic stability of full batch processing.
 
 </ConceptTemplate>

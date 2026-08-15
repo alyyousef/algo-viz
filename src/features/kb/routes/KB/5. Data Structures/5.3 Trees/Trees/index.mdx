@@ -1,8 +1,29 @@
+---
+title: Trees (General)
+description: A fundamental hierarchical data structure consisting of nodes connected by edges, simulating a branching tree structure originating from a single root.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Trees">
+<ConceptTemplate title="Trees (General)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Arrays and Linked Lists represent flat, one-dimensional data, **Trees** represent hierarchical, multi-dimensional data. A Tree is a non-linear data structure that simulates a biological hierarchy, mathematically constructed of **Nodes** connected by **Edges**.
+
+## 1. The Anatomy of a Tree
+Every Tree is strictly governed by biological and architectural terminology:
+- **Root**: The absolute top node. A Tree must have exactly one Root.
+- **Child / Parent**: A node mathematically directly underneath another is its Child. The node above it is its Parent.
+- **Leaf**: A node with absolutely zero children (the end of a branch).
+- **Subtree**: Every child node is mathematically the Root of its own perfectly formed Subtree.
+- **Height/Depth**: The maximum number of edges from the Root to the furthest Leaf.
+
+## 2. Acyclicity
+Mathematically, a Tree is a specialized form of a **Graph**. However, Trees have a strict mathematical restriction: **They cannot contain cycles**. 
+There must be exactly one unique path from the Root to any specific node. If a Leaf mathematically loops back and connects to the Root, the structure is instantly destroyed as a Tree and becomes a standard Graph.
+
+## 3. Real-World Architecture
+Trees are the absolute foundation of hierarchical computing.
+- **The DOM**: Every HTML website is rendered as a Tree (the Document Object Model), where `<html>` is the Root, and `<body>` and `<head>` are its children.
+- **File Systems**: Linux and Windows organize all folders as a massive Tree.
+- **JSON**: Every JSON object mathematically forms a Tree.
 
 </ConceptTemplate>

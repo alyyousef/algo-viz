@@ -1,8 +1,25 @@
+---
+title: Mixed-Precision Training
+description: A hardware-level technique that dramatically speeds up training by dynamically swapping between 16-bit and 32-bit floats.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mixed-precision training">
+<ConceptTemplate title="Mixed-Precision Training">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, Deep Learning mathematically processed all numbers as **FP32 (32-bit floats)**. This offered massive mathematical precision, but consumed enormous amounts of VRAM and bottlenecked GPU calculation speeds. 
+**Mixed-Precision Training** is a revolutionary hardware technique that dynamically mixes FP16 and FP32, doubling training speed and halving VRAM usage with zero loss in final accuracy.
+
+## 1. The Mathematical Math (FP16)
+The forward pass and backward pass (calculating the massive matrix multiplications) do not require microscopic mathematical precision. 
+In Mixed-Precision, the GPU mathematically downcasts the weights and activations into **FP16 (16-bit floats)**. 
+Because FP16 matrices are exactly half the size, the GPU's highly specialized Tensor Cores can multiply them at blazing speeds, slashing training time by up to 50%.
+
+## 2. The Master Weights (FP32)
+If FP16 is so fast, why not use it for everything?
+Because during the final step of Gradient Descent, the optimizer subtracts a microscopic learning rate from the weight. FP16 simply does not have the decimal precision to mathematically represent numbers that small. The weight update would become zero, and the model would stop learning.
+Mixed-Precision solves this by keeping a master copy of the weights in **FP32**. The microscopic updates are applied mathematically to the FP32 master weights, which are then downcasted back to FP16 for the next blazing-fast forward pass.
+
+## 3. Gradient Scaling
+Because FP16 cannot mathematically represent extremely small numbers, tiny gradients can "underflow" and become absolute zero. To fix this, the framework mathematically multiplies all gradients by a massive number (e.g., $1000$) before converting to FP16, calculates the math, and then mathematically divides by $1000$ before updating the FP32 weights.
 
 </ConceptTemplate>

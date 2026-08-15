@@ -1,8 +1,55 @@
+---
+title: Odin
+description: "A fast, concise, readable, pragmatic and open sourced systems programming language."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Odin">
+<ConceptTemplate 
+  name="Odin"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Odin** is a modern systems programming language created by Ginger Bill. It is designed as a direct, pragmatic alternative to C, focusing on high performance, fast compilation times, and readability, without the extreme complexity of C++ or the steep learning curve of Rust.
+
+## The Pragmatic Alternative
+
+Unlike Rust, which relies heavily on a strict borrow checker to guarantee memory safety, Odin takes a different approach: it gives the programmer absolute control over memory, but provides excellent, modern tools (like explicit custom allocators) to make memory management easier and more explicit than in C.
+
+It is particularly popular in the **Game Development** community for building custom engines.
+
+## Syntax Example
+
+Odin's syntax is clean and heavily inspired by Go and Pascal, avoiding the header-file mess of C.
+
+```odin
+package main
+
+import "core:fmt"
+
+// Structs are simple data containers
+Person :: struct {
+    name: string,
+    age:  int,
+}
+
+main :: proc() {
+    // Implicit type inference
+    p := Person{"Odin Developer", 25}
+    
+    // Explicit format printing
+    fmt.printf("Hello, my name is %s and I am %d years old.\n", p.name, p.age)
+    
+    // Arrays and slices
+    numbers := [?]int{1, 2, 3, 4, 5}
+    for n in numbers {
+        fmt.printf("%d ", n)
+    }
+}
+```
+
+<Callout icon="tip" title="Built-in Custom Allocators">
+Odin's defining feature is its context system, which allows you to pass custom memory allocators (like arena allocators) implicitly to functions. This allows game developers to allocate memory instantly without expensive OS-level `malloc` calls, drastically improving framerates.
+</Callout>
 
 </ConceptTemplate>

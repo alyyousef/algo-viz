@@ -1,8 +1,28 @@
+---
+title: Deques (Double-Ended Queues)
+description: A generalized queue that mathematically allows blazing-fast O(1) insertions and deletions at both the absolute front and absolute back.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Deques">
+<ConceptTemplate title="Deques (Double-Ended Queues)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Pronounced "Deck", the **Deque** (Double-Ended Queue) mathematically fuses the capabilities of both a Stack and a Queue into a single, unified data structure. It completely removes the LIFO/FIFO restrictions, allowing you to seamlessly push and pop from either extreme end of the data structure.
+
+## 1. The Four Operations
+A true Deque mathematically guarantees perfect $O(1)$ time complexity for all four extreme operations:
+1. `PushFront`
+2. `PushBack`
+3. `PopFront`
+4. `PopBack`
+
+If you restrict yourself to just `PushBack` and `PopBack`, the Deque mathematically behaves exactly like a Stack. If you use `PushBack` and `PopFront`, it behaves exactly like a Queue.
+
+## 2. Implementation (The Ring Buffer vs Doubly Linked List)
+While you can trivially implement a Deque using a Doubly Linked List, the memory overhead and Cache Misses are disastrous. 
+Modern languages (like Python's `collections.deque` or C++'s `std::deque`) mathematically implement it as a massive array of smaller, fixed-size contiguous arrays (Chunks). This hybrid architecture provides the $O(1)$ flexibility of a Linked List while retaining the brutal CPU cache efficiency of an Array.
+
+## 3. Sliding Window Algorithms
+Deques are absolutely legendary in algorithm interviews for solving **Sliding Window Maximum** problems. 
+By using a Deque to mathematically store only the indices of useful, strictly decreasing elements within a window, the algorithm can instantly peek at the absolute maximum value at the front of the Deque in $O(1)$ time, allowing it to process massive arrays in perfectly linear $O(N)$ time.
 
 </ConceptTemplate>

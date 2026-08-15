@@ -1,8 +1,24 @@
+---
+title: Adam (Adaptive Moment Estimation)
+description: The absolute standard optimization algorithm in Deep Learning, dynamically adjusting the learning rate for every single parameter based on historical gradients.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Adam">
+<ConceptTemplate title="Adam (Adaptive Moment Estimation)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard Stochastic Gradient Descent (SGD) applies one single, global Learning Rate to every weight in the network. **Adam** (Adaptive Moment Estimation) mathematically tracks the history of each individual weight and dynamically adjusts its specific learning rate, leading to significantly faster convergence.
+
+## 1. The Mathematical Intuition (Momentum + RMSProp)
+Adam mathematically combines the best features of two older optimization algorithms:
+
+1. **Momentum (First Moment)**: Adam calculates a rolling average of past gradients. If the algorithm has been rolling downhill in the same direction for the last 100 steps, it mathematically builds "momentum" and speeds up, easily blasting through shallow local minima.
+2. **RMSProp (Second Moment)**: Adam tracks the *squared* gradients to measure variance. If a specific parameter (like a rare vocabulary word) updates very infrequently, Adam mathematically increases its individual learning rate to ensure it doesn't get ignored. If a parameter updates wildly, Adam mathematically throttles its learning rate down to prevent explosions.
+
+## 2. Bias Correction
+Because Adam initializes its momentum trackers at absolute zero, the first few training steps are mathematically biased towards zero (making the algorithm sluggish at the very beginning). 
+Adam applies an algebraic **Bias Correction** formula to artificially inflate the momentum during the first few epochs, ensuring rapid initial learning before naturally decaying back to the raw averages.
+
+## 3. The Tradeoff vs SGD
+While Adam converges vastly faster than standard SGD during training, it is mathematically prone to settling into slightly inferior, sharper local minima. In massive computer vision competitions (like ImageNet), researchers sometimes train with Adam for the first 80%, and then manually switch to standard SGD with Momentum to mathematically guarantee the absolute optimal convergence.
 
 </ConceptTemplate>

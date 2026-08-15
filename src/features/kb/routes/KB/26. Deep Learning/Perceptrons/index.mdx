@@ -1,8 +1,28 @@
+---
+title: Perceptrons
+description: The earliest and simplest mathematical model of a biological neuron, capable of learning simple linear decision boundaries.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Perceptrons">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented in 1957, the **Perceptron** is the absolute foundational atom of Artificial Intelligence. It was the first mathematical attempt to replicate how a biological neuron fires in the human brain, serving as the direct ancestor to all modern Deep Learning.
+
+## 1. The Mathematical Mechanism
+A Perceptron is incredibly mathematically simple. It takes multiple inputs ($X$), multiplies them by specific weights ($W$), and adds them all together. 
+$Z = (x_1 cdot w_1) + (x_2 cdot w_2) + 	ext{Bias}$
+
+It then passes that sum through a harsh **Step Function**:
+- If $Z > 0$, the Perceptron outputs $1$ (It "fires").
+- If $Z le 0$, the Perceptron outputs $0$ (It stays silent).
+
+## 2. The Perceptron Learning Rule
+Before Gradient Descent was invented, the Perceptron learned via a brutal, iterative algebraic rule. 
+If it predicted $1$, but the true answer was $0$, it would mathematically subtract the inputs from its weights to force the sum lower. Over thousands of iterations, the Perceptron would mathematically rotate its decision boundary until it perfectly separated the two classes.
+
+## 3. The XOR Crisis (The AI Winter)
+In 1969, researchers mathematically proved a fatal flaw: The Perceptron can only draw a perfectly straight line (Linear Separability). 
+It could successfully learn the logic for AND or OR gates. But it was mathematically impossible for a single Perceptron to learn the **XOR** (Exclusive OR) gate, because XOR points cannot be separated by a single straight line. 
+This simple mathematical proof caused the first "AI Winter," freezing funding for neural networks for a decade until the invention of the Multi-Layer Perceptron and Backpropagation solved the nonlinear problem.
 
 </ConceptTemplate>

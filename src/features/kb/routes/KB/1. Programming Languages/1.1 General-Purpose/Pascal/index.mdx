@@ -1,8 +1,53 @@
+---
+title: Pascal
+description: "The highly influential procedural programming language that taught a generation of developers how to code."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Pascal">
+<ConceptTemplate 
+  name="Pascal"
+  icon="file-text"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Niklaus Wirth in 1970, **Pascal** was designed specifically as a teaching language to encourage good programming practices using structured programming and data structuring.
+
+## A Legacy of Structure
+
+Before Pascal, many languages (like early BASIC or Fortran) relied heavily on `GOTO` statements, leading to unmaintainable "spaghetti code". Pascal forced developers into a strict, block-structured paradigm using `begin` and `end`, procedures, and explicit variable typing.
+
+It was wildly successful. Throughout the 1980s, Pascal (specifically Borland's Turbo Pascal) was the most popular teaching language in the world and the primary language for Apple's original Macintosh operating system.
+
+## Syntax Example
+
+Pascal is famously readable, reading almost like plain English.
+
+```pascal
+program HelloPascal;
+
+var
+  Name: string;
+  Age: integer;
+
+begin
+  Write('Enter your name: ');
+  ReadLn(Name);
+  
+  Age := 25; { Assignment uses := instead of = }
+  
+  if Age >= 18 then
+  begin
+    WriteLn('Hello ', Name, ', you are an adult.');
+  end
+  else
+  begin
+    WriteLn('Hello ', Name, ', you are a minor.');
+  end;
+end.
+```
+
+<Callout icon="info" title="The Successor">
+While classic Pascal is purely procedural, it evolved into **Object Pascal** (and the Delphi framework), which brought object-oriented features and dominated Windows development in the late 1990s.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,27 @@
+---
+title: Sparse Tables
+description: A static, highly specialized data structure that answers Range Minimum Queries (RMQ) in a mathematically perfect O(1) time after an O(N log N) precomputation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sparse tables">
+<ConceptTemplate title="Sparse Tables">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a massive array of 1 Million temperatures, and you are repeatedly asked, "What was the absolute minimum temperature between index 4,000 and 80,000?", scanning that range takes $O(K)$ time. If you receive a million queries, the CPU will melt. 
+A **Sparse Table** is a mathematical structure that pre-computes the data, allowing it to answer any Range Minimum Query in a mathematically perfect, instant **$O(1)$ time**.
+
+## 1. The O(N log N) Precomputation
+A Sparse Table relies entirely on the mathematical powers of $2$. 
+It builds a massive 2D matrix. It pre-computes the minimum value for intervals of size $1$, size $2$, size $4$, size $8$, size $16$, etc., starting from every single index in the array.
+Because there are $N$ starting positions, and $log N$ possible powers of 2, building the table takes exactly $O(N log N)$ time and memory.
+
+## 2. The Overlapping O(1) Trick
+If someone queries the minimum between index $10$ and $24$ (a range of $15$ elements), $15$ is not a power of $2$. 
+However, the Sparse Table mathematically exploits the fact that **minimum operations can overlap**. 
+It finds the largest power of 2 that fits inside $15$ (which is $8$). 
+It instantly looks up the pre-computed minimum for the 8 elements starting at index $10$. It then looks up the pre-computed minimum for the 8 elements ending at index $24$. 
+These two blocks of $8$ completely cover the range of $15$ (they overlap in the middle). The overall minimum is simply the `Math.min()` of those two pre-computed blocks. Two instant lookups yield a perfect $O(1)$ answer.
+
+## 3. The Immutable Constraint
+Sparse Tables have a fatal mathematical flaw: they are completely **Static**. If you change a single value in the original array, it mathematically destroys the entire table, forcing you to recalculate it from scratch in $O(N log N)$ time. For dynamic arrays, a **Segment Tree** must be used instead.
 
 </ConceptTemplate>

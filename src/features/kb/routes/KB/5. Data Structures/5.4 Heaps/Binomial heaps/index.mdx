@@ -1,8 +1,24 @@
+---
+title: Binomial Heaps
+description: A collection of binomial trees that mathematically allows for blazing-fast merging of two entirely different heaps in O(log N) time.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Binomial heaps">
+<ConceptTemplate title="Binomial Heaps">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard **Binary Heap** is incredible for Priority Queues, but it has one devastating mathematical flaw: if you want to merge two massive Binary Heaps together, it takes $O(N)$ time. The **Binomial Heap** completely solves this, allowing two heaps to be merged in blistering **$O(log N)$ time**.
+
+## 1. Forests of Trees
+A Binomial Heap is not a single tree. It is mathematically a **Forest** (a collection) of perfectly structured **Binomial Trees**. 
+A Binomial Tree of order $0$ is a single node. An order $1$ tree is two order $0$ trees linked together. An order $K$ tree is mathematically constructed by taking two trees of order $K-1$ and linking the root of one to the root of the other. 
+
+## 2. Binary Arithmetic Merging
+Because of this strict mathematical construction, a Binomial Heap behaves exactly like **Binary Arithmetic**. 
+If a heap has $13$ elements, the binary representation of $13$ is `1101`. This mathematically guarantees the heap consists of exactly one tree of order $3$ (8 nodes), one tree of order $2$ (4 nodes), and one tree of order $0$ (1 node). 
+
+When you merge two Binomial Heaps, you literally just perform binary addition. You merge the order $0$ trees. If there is a "carry", you mathematically carry the resulting order $1$ tree over to the next column. This strict binary logic guarantees the merge takes exactly $O(log N)$ time.
+
+## 3. Strict vs Lazy Heaps
+While Binomial Heaps are theoretically beautiful, they enforce strict structural rules after every single operation. This strictness limits their real-world speed compared to **Fibonacci Heaps**, which are lazier versions of Binomial Heaps that delay all the mathematical merging until absolutely necessary.
 
 </ConceptTemplate>

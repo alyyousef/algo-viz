@@ -1,8 +1,23 @@
+---
+title: Ray
+description: A unified compute framework designed specifically to scale AI Python workloads from a single laptop to a massive Kubernetes cluster effortlessly.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Ray">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing Python code that mathematically executes on a single CPU is easy. Writing Python code that mathematically orchestrates thousands of GPUs across 100 physical servers to train an AI is a distributed systems nightmare. **Ray** solves this.
+
+## 1. The Distributed Primitive
+Ray replaces Python's standard multiprocessing with a highly advanced, ultra-low latency distributed engine. By adding a single simple Python decorator (`@ray.remote`) above a function or class, Ray mathematically hijacks that object and executes it on any available CPU or GPU in the cluster. It automatically handles the complex mathematical serialization, memory management, and network routing in the background.
+
+## 2. The AI Ecosystem (Ray Train & Ray Serve)
+While Ray can execute any Python script, it is specifically designed to be the ultimate infrastructure layer for AI:
+- **Ray Train**: Automatically wraps PyTorch or TensorFlow code, mathematically distributing the training process across thousands of GPUs using Data Parallelism.
+- **Ray Tune**: A hyperparameter optimization engine that mathematically orchestrates thousands of simultaneous training runs to discover the perfect architecture (NAS).
+- **Ray Serve**: A highly scalable inference engine that allows you to mathematically deploy massive models (like LLaMA) in production, dynamically auto-scaling the hardware based on traffic.
+
+## 3. Industry Dominance
+Ray is the absolute industry standard for massive AI scaling. It was famously the core infrastructure used by OpenAI to mathematically distribute the Reinforcement Learning training process of ChatGPT across their massive Azure supercomputer.
 
 </ConceptTemplate>

@@ -1,200 +1,384 @@
 import fs from 'fs/promises'
 import path from 'path'
 
-const TICK3 = '\`\`\`'
-const TICK1 = '\`'
+const TICK3 = '```'
+const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/19. Language-Specific Ecosystems/The Java Ecosystem/index.mdx': `---
-title: The Java Ecosystem
-description: The core architecture of the JVM, JRE, JDK, and the build systems that power global enterprise software.
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Ada/index.mdx': `---
+title: Ada
+description: "A highly robust, statically typed programming language designed by the US Department of Defense for mission-critical systems."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Java Ecosystem">
+<ConceptTemplate 
+  name="Ada"
+  icon="shield"
+>
 
-Java was created in 1995 with the revolutionary promise of **"Write Once, Run Anywhere" (WORA)**. Instead of compiling code into machine-specific binaries (like C++), Java compiles into mathematical byte-code that runs inside a virtual machine.
+Named after Ada Lovelace, the first computer programmer, **Ada** was developed in the late 1970s under a contract from the United States Department of Defense (DoD). Its primary goal was to replace the hundreds of different programming languages used across military hardware with a single, ultra-reliable standard.
 
-## 1. JVM, JRE, and JDK
-To understand Java, you must understand its three core layers:
+## Built for Mission-Critical Systems
 
-- **JVM (Java Virtual Machine)**: The engine itself. It takes the compiled Java byte-code and executes it on the host operating system. The JVM is not just for Java; languages like Kotlin, Scala, and Clojure also compile to JVM byte-code.
-- **JRE (Java Runtime Environment)**: The JVM + the core Java class libraries. This is all a user needs installed on their computer to *run* a Java application.
-- **JDK (Java Development Kit)**: The JRE + the compiler (TICK1javacTICK1) and debugging tools. This is what you need installed to *write* Java code.
+Ada is legendary for its strictness. If an Ada program compiles, it is incredibly unlikely to fail at runtime. It features built-in contract-based programming, extreme strong typing, and explicit concurrency (tasks).
 
-## 2. Build Systems (Maven vs Gradle)
-Java applications consist of thousands of classes and external libraries (TICK1.jarTICK1 files). Build systems automate the downloading of these libraries and the compilation process.
+Because of this, Ada is the language of choice for systems where human lives are on the line:
+- Avionics (Boeing 777, Airbus A380 flight control systems)
+- Air Traffic Control
+- Satellites and Spacecraft (NASA, ESA)
+- High-Speed Rail systems
 
-### Apache Maven
-The historical industry standard. Maven uses an XML file (TICK1pom.xmlTICK1) to declare dependencies and relies heavily on strict convention over configuration.
-TICK3xml
-<!-- pom.xml example -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-TICK3
+## Syntax Example
 
-### Gradle
-The modern, mathematically superior successor to Maven. Instead of static XML, Gradle uses a Domain-Specific Language (Groovy or Kotlin DSL) in its TICK1build.gradleTICK1 file. It uses advanced caching and incremental compilation, making it massively faster than Maven. It is the official build system for Android development.
+Ada's syntax is heavily inspired by Pascal, prioritizing readability and explicit declarations over conciseness.
+
+${TICK3}ada
+with Ada.Text_IO; use Ada.Text_IO;
+
+procedure Hello is
+   -- Variables are declared before the 'begin' block
+   Message : constant String := "Hello, World!";
+begin
+   Put_Line (Message);
+end Hello;
+${TICK3}
+
+<Callout icon="info" title="The SPARK Subset">
+SPARK is a formally defined subset of the Ada language. It removes features that are hard to verify mathematically (like dynamic memory allocation) and allows developers to write mathematical proofs that guarantee the software will never experience a buffer overflow or runtime exception.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/19. Language-Specific Ecosystems/The .NET Ecosystem/index.mdx': `---
-title: The .NET Ecosystem
-description: The architecture of Microsoft's cross-platform framework, the CLR, and the C# programming language.
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Ballerina/index.mdx': `---
+title: Ballerina
+description: "A modern, open-source programming language designed specifically for writing network-distributed applications and microservices."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The .NET Ecosystem">
+<ConceptTemplate 
+  name="Ballerina"
+  icon="globe"
+>
 
-Historically, the **.NET Framework** was deeply tied to the Windows operating system. However, with the release of **.NET Core** (and later just **.NET 5+**), Microsoft completely rewrote the ecosystem to be highly-performant, open-source, and natively cross-platform (Linux, macOS, Windows).
+Developed by WSO2 and released in 2017, **Ballerina** is a general-purpose, statically typed, concurrent programming language with a very specific focus: **Cloud-Native Integration**. 
 
-## 1. The CLR (Common Language Runtime)
-Much like Java's JVM, .NET utilizes a virtual machine called the **CLR**. 
-When you write C# or F# code, it is compiled into **CIL (Common Intermediate Language)**. The CLR then mathematically executes this CIL code using a JIT (Just-In-Time) compiler, turning it into optimized native machine code.
+## The Network is Native
 
-## 2. C# and LINQ
-**C# (C-Sharp)** is the primary language of .NET. It is widely considered one of the best designed object-oriented languages in existence. 
-One of its greatest mathematical innovations is **LINQ (Language Integrated Query)**. LINQ allows developers to write SQL-like queries directly inside C# code to filter, map, and sort arrays or database tables, with strict compile-time type safety.
+In languages like Java or Python, making an HTTP request or defining an API endpoint requires importing heavy external libraries (like Spring Boot or Flask). In Ballerina, the network is built directly into the language syntax.
 
-TICK3csharp
-// LINQ Example
-var richCustomers = users
-    .Where(u => u.Balance > 10000)
-    .OrderBy(u => u.Name)
-    .Select(u => new { u.Name, u.Email });
-TICK3
+Services, endpoints, JSON, and XML are native primitives.
 
-## 3. Tooling (NuGet & MSBuild)
-- **NuGet**: The official package manager for .NET (equivalent to TICK1npmTICK1 for Node or TICK1pipTICK1 for Python). Developers define dependencies in a TICK1.csprojTICK1 file, and NuGet downloads the compiled DLL files from the central repository.
-- **MSBuild**: The internal build engine for .NET. When you run TICK1dotnet buildTICK1 in the CLI, MSBuild mathematically resolves the dependency tree and compiles the C# code into a final binary executable.
+## Syntax Example
+
+Ballerina code is designed to look like sequence diagrams, making the flow of network calls explicitly clear.
+
+${TICK3}ballerina
+import ballerina/http;
+
+// Define a network service listening on port 8080 natively
+service /hello on new http:Listener(8080) {
+
+    // Define a resource function (HTTP GET)
+    resource function get greeting(string name) returns string {
+        return "Hello, " + name + "!";
+    }
+}
+${TICK3}
+
+<Callout icon="tip" title="Graphical Programming">
+Because of its strict syntax rules regarding network interactions, any Ballerina code can be automatically rendered into a highly accurate Sequence Diagram, allowing architects to visualize microservice communications instantly.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/19. Language-Specific Ecosystems/The Python Ecosystem/index.mdx': `---
-title: The Python Ecosystem
-description: The CPython interpreter, the GIL, and the historically chaotic landscape of Python dependency management.
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Crystal/index.mdx': `---
+title: Crystal
+description: "A language that aims to be as fast as C, but as elegant and expressive as Ruby."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Python Ecosystem">
+<ConceptTemplate 
+  name="Crystal"
+  icon="cpu"
+>
 
-Python is the undisputed king of Data Science, Artificial Intelligence, and rapid scripting. However, its core architecture and dependency management are notoriously complex.
+**Crystal** is a compiled, statically typed language that was explicitly designed to mimic the syntax of **Ruby**. 
 
-## 1. CPython and the GIL
-When people say "Python," they are almost always referring to **CPython**, the reference implementation of the language written in C.
-CPython relies on the **GIL (Global Interpreter Lock)**. The GIL is a mathematical mutex that prevents multiple native threads from executing Python bytecodes at once. 
-This means Python is effectively single-threaded. If you spawn 8 threads on an 8-core CPU to do heavy math, they will lock each other out and run sequentially. (To achieve true parallelism in Python, you must use **Multiprocessing**, which spawns entirely separate OS processes).
+Ruby is famous for its developer happiness and beautiful syntax, but infamous for being slow (as an interpreted language). Crystal solves this by using LLVM to compile Ruby-like syntax down to highly optimized, blazing-fast native machine code.
 
-## 2. The Dependency Management Chaos
-Unlike Node.js (which has exactly one standard TICK1package.jsonTICK1), Python's dependency ecosystem is heavily fragmented.
+## Key Features
 
-### pip & venv (The Standard)
-TICK1pipTICK1 is the standard package installer (pulling from PyPI). However, if you run TICK1pip install djangoTICK1, it installs it globally across your entire OS, breaking other projects.
-To solve this, developers use **venv (Virtual Environments)**. This creates a hidden TICK1.venvTICK1 folder containing an isolated Python binary. You must "activate" the environment before running pip. Dependencies are tracked via a simple text file: TICK1requirements.txtTICK1.
+1. **Ruby-like Syntax**: Crystal is so similar to Ruby that many Ruby scripts will run perfectly in Crystal without any modifications.
+2. **Static Typing & Inference**: Unlike Ruby, Crystal is statically typed. However, its type inference engine is so powerful that you rarely have to explicitly write types.
+3. **Null Safety**: All types are non-nullable by default. If a value can be null, it must be explicitly defined as a Union type (e.g., TICK1String | NilTICK1).
 
-### Conda (The Data Science Standard)
-Data Science libraries (like NumPy and TensorFlow) rely on massive, complex C++ and Fortran binaries. TICK1pipTICK1 often struggles to compile these from scratch.
-**Conda** is a package manager that distributes pre-compiled binaries, specifically designed to mathematically resolve complex C/C++ dependency trees. It is the absolute standard for AI development.
+## Syntax Example
 
-### Poetry (The Modern Standard)
-TICK1requirements.txtTICK1 is heavily flawed because it doesn't lock sub-dependencies. **Poetry** is the modern solution. It introduces a TICK1pyproject.tomlTICK1 file and a strict TICK1poetry.lockTICK1 file, providing a robust, deterministic build system similar to TICK1npmTICK1 or TICK1yarnTICK1.
+${TICK3}crystal
+# Looks exactly like Ruby, but compiles to C-level speeds
+class Person
+  # Properties are automatically strongly-typed based on usage
+  property name : String
+  property age : Int32
+
+  def initialize(@name, @age)
+  end
+
+  def celebrate_birthday
+    @age += 1
+    puts "Happy birthday #{@name}! You are now #{@age}."
+  end
+end
+
+john = Person.new("John", 30)
+john.celebrate_birthday
+${TICK3}
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/19. Language-Specific Ecosystems/The Ruby Ecosystem/index.mdx': `---
-title: The Ruby Ecosystem
-description: The developer-happiness focused ecosystem, Gems, Bundler, and the architecture of background job processing.
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/D/index.mdx': `---
+title: D (Dlang)
+description: "A systems programming language with C-like syntax and static typing, combining performance with modern abstractions."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Ruby Ecosystem">
+<ConceptTemplate 
+  name="D"
+  icon="cpu"
+>
 
-Ruby is a dynamic, object-oriented language created by Yukihiro Matsumoto (Matz) with a singular philosophy: **Developer Happiness**. It intentionally sacrifices raw execution speed to provide an incredibly elegant, human-readable syntax.
+Created by Walter Bright in 2001, **D** (often called Dlang) was envisioned as the true successor to C++. It aimed to maintain the high performance and low-level control of C++ while drastically improving compilation speeds and adding modern conveniences like garbage collection and modules.
 
-## 1. RubyGems and Bundler
-In the Ruby ecosystem, third-party libraries are called **Gems**.
-- **RubyGems**: The package manager that allows you to install libraries globally (TICK1gem install railsTICK1).
-- **Bundler**: Because global gems conflict across projects, Bundler was created. You define your dependencies in a TICK1GemfileTICK1, and run TICK1bundle installTICK1. Bundler mathematically resolves the dependency graph and generates a TICK1Gemfile.lockTICK1, ensuring absolute determinism across all developer machines.
+## The Dual Nature of D
 
-## 2. Version Managers (rbenv & RVM)
-Ruby undergoes major version changes frequently (e.g., Ruby 2.7 to 3.0). To manage this, developers use tools like **rbenv** or **RVM** (Ruby Version Manager). 
-These tools allow a developer to have 10 different versions of the Ruby interpreter installed on their Mac, dynamically switching between them using a TICK1.ruby-versionTICK1 file inside a project folder.
+D allows developers to write code in multiple paradigms:
+- **High-Level**: You can write D like Java or C#, utilizing its built-in Garbage Collector, classes, and dynamic arrays for rapid prototyping.
+- **Low-Level**: Using the TICK1@nogcTICK1 attribute, you can explicitly disable the garbage collector, managing memory manually just like C for extreme performance optimization.
 
-## 3. Sidekiq (The Standard for Concurrency)
-Ruby, much like Python, historically struggled with heavy multi-threading. 
-Because web frameworks like Ruby on Rails are heavily utilized for massive web apps, they needed a way to process heavy background tasks (like sending 10,000 emails).
-**Sidekiq** became the absolute standard. It is a mathematical marvel that uses Redis as an in-memory queue, allowing Ruby to spawn thousands of lightweight background worker processes to execute jobs asynchronously outside of the main HTTP request cycle.
+## Syntax Example
+
+${TICK3}d
+import std.stdio;
+
+// A simple function utilizing D's powerful 'auto' type inference
+auto multiply(T)(T a, T b) {
+    return a * b;
+}
+
+void main() {
+    // Standard high-level D
+    writeln("Hello, D!");
+    
+    // The template function works for both ints and floats
+    writeln(multiply(5, 5));     // 25
+    writeln(multiply(2.5, 2.0)); // 5.0
+}
+${TICK3}
+
+<Callout icon="warning" title="Adoption Challenges">
+Despite its excellent design, D struggled to gain massive industry adoption. It was caught between C++ (which companies were hesitant to abandon) and newer languages like Rust and Go, which had the backing of massive tech giants (Mozilla and Google, respectively).
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/19. Language-Specific Ecosystems/The Go Ecosystem/index.mdx': `---
-title: The Go Ecosystem
-description: Google's systems language, the evolution of Go Modules, and the revolutionary concurrency architecture of Goroutines.
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Delphi-Object Pascal/index.mdx': `---
+title: Delphi & Object Pascal
+description: "The rapid application development language that dominated the 1990s Windows software ecosystem."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Go Ecosystem">
+<ConceptTemplate 
+  name="Delphi & Object Pascal"
+  icon="window"
+>
 
-Go (Golang) was designed at Google to solve the complexity of massive C++ codebases. It provides C-like speed, instant compilation, and memory safety (via garbage collection), packaged into a mathematically simple syntax.
+**Object Pascal** is an extension of the classic Pascal language that adds Object-Oriented capabilities. **Delphi** is the famous Integrated Development Environment (IDE) and visual framework created by Borland in 1995 to compile Object Pascal.
 
-## 1. The Concurrency Revolution (Goroutines)
-The primary reason Go dominates Cloud Native development (Docker, Kubernetes, Terraform) is its concurrency model.
-Standard OS Threads consume 1-2MB of RAM. If you spawn 10,000 OS threads, your server crashes.
-Go invented **Goroutines**. A Goroutine is a "green thread" managed by the Go runtime, requiring only **2KB of RAM**. 
+## The King of the 90s
 
-TICK3go
-// Spawns a new concurrent thread instantly
-go fetchDatabaseData()
-TICK3
+Before web apps, almost all business software consisted of desktop applications. Delphi revolutionized Windows development by introducing **Rapid Application Development (RAD)**. Developers could literally drag and drop buttons, text boxes, and database grids onto a canvas, double-click them, and instantly write Object Pascal code to handle the events.
 
-You can easily spawn 1,000,000 Goroutines on a standard laptop. To communicate between them safely without Race Conditions, Go uses **Channels**, mathematical pipes that allow Goroutines to pass data to each other synchronously.
+It compiled instantly into a single standalone TICK1.exeTICK1 file without needing heavy runtime frameworks (unlike Visual Basic or Java).
 
-## 2. Dependency Management Evolution
-### The Legacy GOPATH Disaster
-Historically, Go did not have a package manager. All code (yours, and third-party code pulled from GitHub) had to live inside exactly one rigid directory on your hard drive called the TICK1GOPATHTICK1. It lacked versioning entirely (TICK1go getTICK1 always pulled the TICK1masterTICK1 branch), causing massive production instability.
+## Syntax Example
 
-### Go Modules (The Modern Standard)
-In Go 1.11, Google introduced **Go Modules**.
-You simply run TICK1go mod init github.com/user/projectTICK1 inside any folder. It generates a TICK1go.modTICK1 file (acting like package.json) and a TICK1go.sumTICK1 file (the lock file). 
-Go mathematically resolves dependencies and caches them globally on your machine, completely eliminating the need for the legacy GOPATH workspace.
+Object Pascal is famously verbose, using english keywords (TICK1beginTICK1, TICK1endTICK1) instead of curly braces.
+
+${TICK3}pascal
+program HelloDelphi;
+
+// Explicit variable declaration block
+var
+  Message: string;
+  i: integer;
+
+begin
+  Message := 'Hello from Object Pascal!';
+  
+  for i := 1 to 3 do
+  begin
+    Writeln(Message);
+  end;
+end.
+${TICK3}
+
+<Callout icon="info" title="Where is it now?">
+While Delphi's popularity plummeted with the rise of C# (.NET) and web applications, millions of lines of legacy enterprise Delphi code still run heavily in medical, point-of-sale, and financial systems globally.
+</Callout>
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/19. Language-Specific Ecosystems/The Rust Ecosystem/index.mdx': `---
-title: The Rust Ecosystem
-description: The most loved language in the world, featuring the revolutionary Borrow Checker, zero-cost abstractions, and the Cargo build system.
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Groovy/index.mdx': `---
+title: Groovy
+description: "A dynamic, agile language for the Java Virtual Machine, widely used for build scripts and CI/CD pipelines."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Rust Ecosystem">
+<ConceptTemplate 
+  name="Groovy"
+  icon="cpu"
+>
 
-Rust is a systems programming language that guarantees memory safety and thread safety without utilizing a Garbage Collector. It achieves C++ levels of raw execution speed, making it the modern language of choice for game engines, operating systems, and ultra-fast web servers.
+**Apache Groovy** is an optionally-typed, dynamic language that runs on the Java Virtual Machine (JVM). It was created to bring the flexibility and conciseness of languages like Ruby and Python into the rigid Java ecosystem.
 
-## 1. The Borrow Checker
-In languages like C++, developers must manually allocate and free RAM. If they forget, it causes Memory Leaks. If they free it twice, it causes catastrophic Segfaults.
-Rust mathematically solves this at compile time using **Ownership and Borrowing**.
-1. Every piece of data in RAM has exactly ONE owner variable.
-2. When the owner goes out of scope, the memory is instantly, automatically freed.
-3. You can "borrow" a reference to the data, but the compiler mathematically enforces that you cannot mutate data while someone else is reading it.
-If you write code with a memory leak or a race condition, the Rust compiler simply refuses to compile the code.
+## The Power of Groovy
 
-## 2. Cargo and Crates.io
-Unlike C++ (which has a notoriously horrific dependency management system), Rust provides the best build system in the modern programming era: **Cargo**.
-- **Crates.io**: The central repository for Rust packages (called Crates).
-- **Cargo.toml**: The declarative configuration file.
+1. **Java Compatibility**: Groovy compiles directly to Java bytecode. Almost any valid Java code is also valid Groovy code.
+2. **Dynamic Typing**: You can drop the verbose Java types and just use TICK1defTICK1.
+3. **Closures**: Groovy introduced powerful anonymous functions (closures) long before Java 8 finally added lambdas.
 
-When you run TICK1cargo buildTICK1, Cargo automatically downloads all dependencies, resolves the version graph, and mathematically compiles the entire tree into a single, massive, statically-linked binary executable.
+## Syntax Example
 
-## 3. Asynchronous Rust (Tokio)
-Rust does not have a built-in asynchronous runtime in its standard library. Instead, the community relies on external crates. 
-**Tokio** is the absolute standard async runtime for Rust. It provides the event loop, thread pools, and async I/O primitives required to build web servers (like Axum or Actix) that can process millions of concurrent network connections using negligible RAM.
+Notice how Groovy drops the boilerplate (semicolons, explicit types, public modifiers) required by traditional Java.
+
+${TICK3}groovy
+// Java style (also valid Groovy)
+String name = "World";
+System.out.println("Hello " + name);
+
+// Groovy style
+def groovyName = "World"
+println "Hello ${'$'}groovyName" // String interpolation
+
+// Closures (similar to Lambdas)
+def numbers = [1, 2, 3, 4]
+numbers.each { num -> 
+    println num * 2 
+}
+${TICK3}
+
+<Callout icon="tip" title="The Language of DevOps">
+While Groovy is rarely used to build primary backend applications anymore (Kotlin largely won that battle), it remains universally relevant because it is the primary scripting language for **Jenkins pipelines (Jenkinsfile)** and **Gradle build scripts**.
+</Callout>
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Nim/index.mdx': `---
+title: Nim
+description: "A statically typed, compiled systems programming language combining successful concepts from Python, Ada, and Modula."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Nim"
+  icon="cpu"
+>
+
+**Nim** is a highly expressive, statically typed compiled programming language. It aims to offer the performance of C, the expressiveness of Python, and the extensibility of Lisp.
+
+## The Transpilation Engine
+Unlike most compilers that turn source code directly into Assembly/Machine Code via LLVM, the Nim compiler primarily transpiles Nim code into optimized **C, C++, or JavaScript**. This allows Nim to be compiled on virtually any platform that has a C compiler, and guarantees rock-solid interoperability with existing C libraries.
+
+## Key Features
+1. **Python-Like Syntax**: It relies on indentation rather than curly braces.
+2. **Metaprogramming**: Nim has an incredibly powerful macro system. Macros can manipulate the Abstract Syntax Tree (AST) at compile time, allowing developers to create entire Domain Specific Languages (DSLs) within Nim.
+3. **Memory Management**: Nim allows developers to choose between multiple garbage collection strategies or entirely manual memory management (TICK1--gc:arcTICK1 or TICK1--gc:noneTICK1) for real-time systems.
+
+## Syntax Example
+
+${TICK3}nim
+# Define a procedure (function)
+proc greet(name: string) =
+  echo "Hello, ", name, "!"
+
+# Calling the procedure
+greet("World")
+
+# Uniform Function Call Syntax (UFCS)
+# This allows calling functions like methods, making chaining elegant
+"Nimlang".greet()
+${TICK3}
+
+</ConceptTemplate>
+`,
+
+  'src/features/kb/routes/KB/1. Programming Languages/1.1 General-Purpose/Objective-C/index.mdx': `---
+title: Objective-C
+description: "The primary programming language utilized by Apple for macOS and iOS operating systems before the advent of Swift."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+<ConceptTemplate 
+  name="Objective-C"
+  icon="smartphone"
+>
+
+Developed in the early 1980s, **Objective-C** is a strict superset of C that adds Smalltalk-style messaging capabilities. It was famously adopted by NeXT (Steve Jobs' company after leaving Apple) for its NeXTSTEP operating system, which eventually became the foundation for Apple's **macOS** and **iOS**.
+
+## The Messaging Paradigm
+Unlike C++ or Java where you "call a method" on an object, in Objective-C you "send a message" to an object. 
+If an object doesn't understand a message, the application doesn't necessarily crash immediately; the message can be forwarded or ignored dynamically at runtime. This dynamic nature gave Apple's UI frameworks (Cocoa and Cocoa Touch) incredible flexibility.
+
+## Syntax Example
+Objective-C is famous for its verbose, bracket-heavy syntax, which many developers found intimidating.
+
+${TICK3}objc
+#import <Foundation/Foundation.h>
+
+// Interface (Header)
+@interface Person : NSObject
+@property NSString *name;
+- (void)sayHello;
+@end
+
+// Implementation
+@implementation Person
+- (void)sayHello {
+    // Sending the 'NSLog' message
+    NSLog(@"Hello, my name is %@", self.name);
+}
+@end
+
+int main() {
+    @autoreleasepool {
+        // Nested bracket syntax for allocation and initialization
+        Person *steve = [[Person alloc] init];
+        steve.name = @"Steve";
+        
+        // Sending the 'sayHello' message
+        [steve sayHello];
+    }
+    return 0;
+}
+${TICK3}
+
+<Callout icon="info" title="Replaced by Swift">
+In 2014, Apple introduced **Swift** to replace Objective-C. Swift removed the brackets, added type safety, and eliminated manual memory management headers. While Apple now strongly recommends Swift for all new apps, millions of lines of Objective-C still power core Apple operating system frameworks today.
+</Callout>
 
 </ConceptTemplate>
 `,

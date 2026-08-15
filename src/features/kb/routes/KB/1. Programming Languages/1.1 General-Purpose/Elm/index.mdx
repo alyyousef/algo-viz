@@ -1,8 +1,58 @@
+---
+title: Elm
+description: "A purely functional programming language that compiles to JavaScript, guaranteeing zero runtime exceptions."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Elm">
+<ConceptTemplate 
+  name="Elm"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Elm** is a domain-specific programming language for creating web browser-based graphical user interfaces. It is purely functional, statically typed, and compiles to JavaScript.
+
+## The Promise: No Runtime Exceptions
+Elm is famous for its compiler. If an Elm program compiles successfully, it is virtually guaranteed not to throw a runtime exception in the browser (no `undefined is not a function`). The compiler achieves this via a remarkably strict, sound type system and by banning side-effects from core logic.
+
+## The Elm Architecture (TEA)
+Elm introduced a state-management pattern that revolutionized frontend development. In fact, **Redux** (the famous React state manager) was explicitly created as an attempt to bring The Elm Architecture to JavaScript.
+
+The architecture consists of three parts:
+1. **Model**: The state of your application.
+2. **View**: A function that turns the Model into HTML.
+3. **Update**: A function that updates the Model based on messages/events.
+
+## Syntax Example
+
+```elm
+-- Model
+type alias Model = Int
+
+-- Update (Pattern matching ensures all cases are handled)
+type Msg = Increment | Decrement
+
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    Increment ->
+      model + 1
+
+    Decrement ->
+      model - 1
+
+-- View (Declarative HTML rendering)
+view : Model -> Html Msg
+view model =
+  div []
+    [ button [ onClick Decrement ] [ text "-" ]
+    , div [] [ text (String.fromInt model) ]
+    , button [ onClick Increment ] [ text "+" ]
+    ]
+```
+
+<Callout icon="warning" title="Adoption">
+While beloved by those who use it, Elm's strictness, steep learning curve (functional programming), and small ecosystem mean it has not achieved mainstream commercial adoption compared to React, Vue, or Angular.
+</Callout>
 
 </ConceptTemplate>

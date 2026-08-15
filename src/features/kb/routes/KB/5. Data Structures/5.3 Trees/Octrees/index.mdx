@@ -1,8 +1,23 @@
+---
+title: Octrees
+description: The 3D mathematical equivalent of a Quadtree, subdividing three-dimensional space into exactly eight distinct octants for rendering and physics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Octrees">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An **Octree** is the absolute mathematical escalation of a Quadtree into the 3rd dimension. It forms the backbone of almost all modern 3D game engines (like Unreal Engine and Unity), 3D rendering, and voxel-based worlds like Minecraft.
+
+## 1. The Eight Octants
+Instead of a 2D square splitting into $4$, an Octree bounds the 3D universe in a massive Cube. 
+When the cube becomes crowded, it mathematically shatters across the $X$, $Y$, and $Z$ axes simultaneously, splitting into exactly **8 smaller cubes (Octants)**. 
+
+## 2. Frustum Culling
+When a 3D camera looks into a massive world, the GPU cannot afford to render millions of objects behind the player's back. 
+The camera projects a 3D mathematical cone of vision called a **Frustum**. The game engine tests the Frustum against the massive Root cube of the Octree. If the Frustum completely misses a child cube, the engine mathematically instantly discards millions of objects inside that cube without checking them individually.
+
+## 3. Voxel Engines
+Games like Minecraft use highly specialized Octrees called **Sparse Voxel Octrees (SVO)**. 
+Because $90\%$ of the sky in Minecraft is empty air, and the deep underground is solid rock, the SVO merges massive $16 \times 16 \times 16$ chunks of identical blocks into a single node. The tree only shatters down to the individual block level when there is a sudden mathematical change in materials (like a cave wall intersecting the stone).
 
 </ConceptTemplate>

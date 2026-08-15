@@ -1,8 +1,50 @@
+---
+title: R
+description: "The lingua franca of statistics, data visualization, and academic research."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="R">
+<ConceptTemplate 
+  name="R"
+  icon="bar-chart"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1993, **R** is a programming language and software environment explicitly designed for statistical computing, data analysis, and graphical visualization.
+
+While Python dominates Machine Learning and general-purpose data science, R absolutely dominates academia, bioinformatics, and pure statistical research.
+
+## The Power of R
+
+1. **Built for Statisticians**: R wasn't built by software engineers; it was built by statisticians. Operations like linear regression, ANOVA, and hypothesis testing are baked into the core language.
+2. **DataFrames are Native**: Long before Python had Pandas, R had native DataFrames.
+3. **ggplot2**: R is legendary for its visualization libraries. The `ggplot2` library is widely considered the most powerful and grammatically elegant data visualization tool in existence.
+
+## Syntax Example
+
+R syntax can look a bit alien to traditional programmers, heavily utilizing the `<-` operator for assignment.
+
+```r
+# Assignment using the arrow operator
+data <- c(10, 20, 30, 40, 50)
+
+# Calculate standard deviation natively
+sd_value <- sd(data)
+
+# Create a DataFrame natively
+patients <- data.frame(
+  Name = c("John", "Jane", "Steve"),
+  Age = c(25, 30, 45),
+  Healthy = c(TRUE, FALSE, TRUE)
+)
+
+# Linear regression in one line (Predict Age based on Health)
+model <- lm(Age ~ Healthy, data=patients)
+summary(model)
+```
+
+<Callout icon="warning" title="General Purpose Limitations">
+R is highly specialized. While it is incredible for crunching a CSV file and generating a PDF report, it is rarely used to build web backends, APIs, or interactive software.
+</Callout>
 
 </ConceptTemplate>

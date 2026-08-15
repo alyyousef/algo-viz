@@ -1,8 +1,50 @@
+---
+title: PureScript
+description: "A strongly-typed, purely functional programming language that compiles to readable JavaScript."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="PureScript">
+<ConceptTemplate 
+  name="PureScript"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**PureScript** is a purely functional, strongly-typed programming language written in and heavily inspired by **Haskell**. Its primary goal is to bring the immense safety and mathematical rigor of Haskell's type system to the frontend web ecosystem by compiling directly to JavaScript.
+
+## Why not just use TypeScript?
+
+TypeScript is a superset of JavaScript; it adds types, but it retains all of JavaScript's messy behaviors (mutability, side-effects, implicit type coercion). 
+
+PureScript is a completely different language. It enforces:
+1. **Immutability**: Data cannot be changed once created.
+2. **Purity**: Functions cannot have side-effects (like manipulating the DOM or making HTTP requests) unless explicitly wrapped in a special algebraic effect type (like the `Effect` monad).
+3. **Soundness**: If PureScript compiles, you are virtually guaranteed not to have runtime type errors.
+
+## Syntax Example
+
+The syntax is nearly identical to Haskell.
+
+```haskell
+module Main where
+
+import Prelude
+import Effect (Effect)
+import Effect.Console (log)
+
+-- A pure function with a strict type signature
+add :: Int -> Int -> Int
+add x y = x + y
+
+-- The main function returns an 'Effect Unit' (a side-effect that returns nothing)
+main :: Effect Unit
+main = do
+  let result = add 5 10
+  log ("The result is: " <> show result)
+```
+
+<Callout icon="tip" title="Readable Output">
+Unlike many other languages that compile to JS (which output unreadable minified blobs), PureScript is famous for compiling into very clean, readable, standard JavaScript, making it easy to integrate with existing JS libraries.
+</Callout>
 
 </ConceptTemplate>

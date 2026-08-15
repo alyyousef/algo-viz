@@ -1,8 +1,51 @@
+---
+title: Lua
+description: "A fast, lightweight, embeddable scripting language heavily used in the video game industry."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Lua">
+<ConceptTemplate 
+  name="Lua"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Lua** (Portuguese for "Moon") was created in Brazil in 1993. It was explicitly designed to be a lightweight, embeddable scripting language. The entire Lua interpreter is written in clean C and is astonishingly small (under 300KB).
+
+## The King of Game Scripting
+
+Because Lua is so fast, lightweight, and easy to bind to C/C++, it became the absolute standard for scripting logic inside game engines. 
+- **World of Warcraft**: The entire UI and addon system is written in Lua.
+- **Roblox**: The sole programming language used to build Roblox games (Luau, a specialized fork).
+- **Angry Birds**: Built entirely using the Lua-based framework LÖVE.
+
+## Key Features
+
+1. **Tables**: Lua's only data structuring mechanism is the "Table" (an associative array). It functions as arrays, hashes, objects, and namespaces all at once.
+2. **Embeddability**: You write the heavy physics engine in C++, and expose high-level functions to Lua so game designers can quickly script quest logic without recompiling the C++ engine.
+3. **1-Based Indexing**: Famously, arrays in Lua start at index 1, not 0.
+
+## Syntax Example
+
+```lua
+-- Variables
+local player_health = 100
+local player_name = "Hero"
+
+-- Tables (used as arrays or dictionaries)
+local inventory = { "Sword", "Shield", "Potion" }
+local stats = { str = 10, dex = 15, int = 8 }
+
+-- Functions
+function take_damage(amount)
+    player_health = player_health - amount
+    if player_health <= 0 then
+        print("Player died!")
+    end
+end
+
+-- Arrays start at 1!
+print("Equipped: " .. inventory[1]) -- Prints "Sword"
+```
 
 </ConceptTemplate>

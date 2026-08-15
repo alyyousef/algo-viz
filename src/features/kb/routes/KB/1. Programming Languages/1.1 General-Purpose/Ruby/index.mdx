@@ -1,8 +1,54 @@
+---
+title: Ruby
+description: "A dynamic, open-source programming language with a focus on simplicity, productivity, and developer happiness."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Ruby">
+<ConceptTemplate 
+  name="Ruby"
+  icon="gem"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Yukihiro "Matz" Matsumoto in 1995, **Ruby** is a dynamic, interpreted, purely object-oriented programming language. Matz explicitly designed Ruby to prioritize **"Developer Happiness"** above all else—valuing human readability and joy over raw machine performance.
+
+## The Web Startup King (Ruby on Rails)
+
+In 2004, David Heinemeier Hansson released **Ruby on Rails**, a web framework written in Ruby. Rails revolutionized web development by introducing "Convention over Configuration". Developers could scaffold an entire database-backed web application in minutes.
+
+Because of Rails, Ruby became the absolute standard for Silicon Valley startups in the late 2000s and 2010s. Massive companies like GitHub, Shopify, Airbnb, and Stripe were all originally built on Ruby on Rails.
+
+## Syntax Example
+
+Everything in Ruby is an object. There are no primitives. Even numbers have methods.
+
+```ruby
+# A simple class
+class Developer
+  # Automatically generate getters and setters
+  attr_accessor :name, :language
+
+  def initialize(name, language)
+    @name = name
+    @language = language
+  end
+
+  def code
+    puts "#{@name} is happily coding in #{@language}!"
+  end
+end
+
+dev = Developer.new("Alice", "Ruby")
+dev.code
+
+# Everything is an object
+5.times do
+  print "Ruby! "
+end
+```
+
+<Callout icon="tip" title="The Magic of Ruby">
+Ruby is famous for its Metaprogramming (code that writes code). This allows frameworks like Rails to feel like "magic" (e.g., dynamically generating database query methods based on the names of your database columns at runtime).
+</Callout>
 
 </ConceptTemplate>

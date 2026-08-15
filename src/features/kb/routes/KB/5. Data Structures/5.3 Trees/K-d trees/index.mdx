@@ -1,8 +1,25 @@
+---
+title: K-D Trees (K-Dimensional Trees)
+description: A space-partitioning data structure for mathematically organizing points in a k-dimensional space, heavily used in nearest neighbor searches.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="K-d trees">
+<ConceptTemplate title="K-D Trees (K-Dimensional Trees)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard Binary Search Tree can mathematically sort 1-dimensional numbers. But what if your data has multiple dimensions? (e.g., A coordinate with an $X$, $Y$, and $Z$ axis). If you want to find the closest coffee shop to your GPS location, you cannot sort the tree by $X$ without destroying the sorting of $Y$. The **K-D Tree** solves this by rotating the axis of sorting at every level.
+
+## 1. Cycling the Dimensions
+A K-D Tree is mathematically a binary tree, but the sorting rule physically changes at every depth level:
+- **Level 0 (Root)**: Splits data exactly by the $X$-axis. Left child is smaller $X$, Right is larger $X$.
+- **Level 1**: Splits data exactly by the $Y$-axis. 
+- **Level 2**: Splits data exactly by the $Z$-axis.
+- **Level 3**: Mathematically loops back and splits by the $X$-axis again.
+
+## 2. Spatial Partitioning
+Because every node mathematically draws a physical line (or plane) through the space, the K-D Tree violently cuts the multidimensional universe into smaller and smaller geometric boxes. 
+
+## 3. Nearest Neighbor Search (KNN)
+If you ask the tree to find the closest point to your location, it walks down the tree to find the geometric box you are standing in. 
+It finds the closest point in that box. But then it performs a massive mathematical optimization: it mathematically calculates if a closer point could possibly exist on the *other side* of the geometric plane it just crossed. If the distance to the splitting plane is larger than the distance to your current best point, the algorithm can instantly discard the entire other half of the universe, resulting in blistering fast $O(log N)$ search times.
 
 </ConceptTemplate>

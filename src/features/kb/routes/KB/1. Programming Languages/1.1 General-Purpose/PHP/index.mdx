@@ -1,8 +1,55 @@
+---
+title: PHP
+description: "The legendary server-side scripting language that powers the vast majority of websites on the internet."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="PHP">
+<ConceptTemplate 
+  name="PHP"
+  icon="server"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**PHP** (PHP: Hypertext Preprocessor) was created by Rasmus Lerdorf in 1994. Originally a simple set of Common Gateway Interface (CGI) binaries written in C, it evolved into the most widely used server-side language on the web.
+
+Today, PHP powers nearly **80% of all websites** whose server-side programming language is known, largely due to the massive dominance of Content Management Systems (CMS) like **WordPress**, Joomla, and Drupal.
+
+## Why it Won the Web
+
+1. **Incredible Deployment Simplicity**: Unlike Node.js or Java (which require a running process server), early PHP was completely stateless. You just dropped a `.php` file into an Apache server directory, requested the URL, and the server executed the script and died.
+2. **Embedded in HTML**: PHP was designed to be interleaved directly with HTML output.
+
+## Syntax Example
+
+```php
+<?php
+// Variables start with a dollar sign
+$name = "Visitor";
+$isLoggedIn = true;
+
+// Modern PHP supports strict typing
+function calculateTax(float $amount, float $rate): float {
+    return $amount * $rate;
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<body>
+    <!-- Interleaving PHP directly into HTML -->
+    <h1>Welcome, <?php echo htmlspecialchars($name); ?>!</h1>
+    
+    <?php if ($isLoggedIn): ?>
+        <p>Your dashboard is ready.</p>
+    <?php else: ?>
+        <p>Please log in.</p>
+    <?php endif; ?>
+</body>
+</html>
+```
+
+<Callout icon="info" title="The Renaissance">
+PHP historically suffered from a terrible reputation regarding inconsistent function names and poor security defaults. However, with the release of PHP 7 and PHP 8, the language experienced a massive renaissance, adding strong typing, incredible performance improvements (JIT), and a highly professional modern framework ecosystem driven by **Laravel**.
+</Callout>
 
 </ConceptTemplate>

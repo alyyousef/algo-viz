@@ -1,8 +1,24 @@
+---
+title: Collision Resolution (Open Addressing)
+description: A Hash Table conflict strategy where colliding elements are systematically pushed into the next available adjacent memory slot rather than creating a secondary data structure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="open addressing)">
+<ConceptTemplate title="Collision Resolution (Open Addressing)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When two completely different pieces of data are mathematically hashed into the exact same memory index of a Hash Table, a **Collision** occurs. **Open Addressing** solves this not by building secondary Linked Lists (Chaining), but by mathematically searching the existing array for the next empty slot.
+
+## 1. Linear Probing
+The simplest Open Addressing strategy. If you try to place `"Apple"` into Index $5$, but Index $5$ is already taken by `"Banana"`, Linear Probing simply checks Index $6$. If $6$ is full, it checks $7$. It steps forward exactly $1$ slot at a time until it finds an empty space.
+- **Advantage**: It is brutally fast for the CPU because it mathematically preserves perfectly contiguous **Cache Locality**.
+- **Disadvantage (Clustering)**: If $50$ elements hash to Index $5$, they will fill indices $5$ through $54$. This creates a massive mathematical "blockade" (Primary Clustering), causing future insertions to slow down to $O(N)$ as they crawl over the cluster.
+
+## 2. Quadratic Probing
+To mathematically break apart clusters, Quadratic Probing changes the step size. Instead of checking $1, 2, 3, 4$ slots ahead, it checks $1^2, 2^2, 3^2, 4^2$ slots ahead ($+1, +4, +9, +16$). 
+This violently scatters colliding elements across the array, preventing Primary Clustering, though it sacrifices a small amount of Cache Locality.
+
+## 3. Double Hashing
+The absolute mathematically superior form of Open Addressing. If a collision occurs, it does not step forward by a fixed number. It runs the data through a **Second Hash Function** to dynamically calculate the step size. 
+Because every unique key will mathematically produce a completely different step size, it perfectly eliminates all forms of clustering, providing the absolute theoretical maximum efficiency for a Hash Table.
 
 </ConceptTemplate>

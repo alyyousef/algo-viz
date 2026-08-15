@@ -1,8 +1,45 @@
+---
+title: Groovy
+description: "A dynamic, agile language for the Java Virtual Machine, widely used for build scripts and CI/CD pipelines."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Groovy">
+<ConceptTemplate 
+  name="Groovy"
+  icon="cpu"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Apache Groovy** is an optionally-typed, dynamic language that runs on the Java Virtual Machine (JVM). It was created to bring the flexibility and conciseness of languages like Ruby and Python into the rigid Java ecosystem.
+
+## The Power of Groovy
+
+1. **Java Compatibility**: Groovy compiles directly to Java bytecode. Almost any valid Java code is also valid Groovy code.
+2. **Dynamic Typing**: You can drop the verbose Java types and just use `def`.
+3. **Closures**: Groovy introduced powerful anonymous functions (closures) long before Java 8 finally added lambdas.
+
+## Syntax Example
+
+Notice how Groovy drops the boilerplate (semicolons, explicit types, public modifiers) required by traditional Java.
+
+```groovy
+// Java style (also valid Groovy)
+String name = "World";
+System.out.println("Hello " + name);
+
+// Groovy style
+def groovyName = "World"
+println "Hello $groovyName" // String interpolation
+
+// Closures (similar to Lambdas)
+def numbers = [1, 2, 3, 4]
+numbers.each { num -> 
+    println num * 2 
+}
+```
+
+<Callout icon="tip" title="The Language of DevOps">
+While Groovy is rarely used to build primary backend applications anymore (Kotlin largely won that battle), it remains universally relevant because it is the primary scripting language for **Jenkins pipelines (Jenkinsfile)** and **Gradle build scripts**.
+</Callout>
 
 </ConceptTemplate>

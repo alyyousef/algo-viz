@@ -1,8 +1,22 @@
+---
+title: Layer Normalisation
+description: The absolute standard normalization technique for Transformers, calculating mean and variance across the features of a single data point rather than across the batch.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Layer normalisation">
+<ConceptTemplate title="Layer Normalisation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While **Batch Normalisation** is the standard for Computer Vision (CNNs), it mathematically collapses in Natural Language Processing. 
+In NLP, sequences have variable lengths, and batch sizes are often tiny due to massive model sizes. Batch Normalisation relies on calculating averages *across the batch*. If the batch size is 2, the variance calculation is mathematically chaotic. **Layer Normalisation** is the architectural fix that makes Transformers (like GPT) possible.
+
+## 1. The Mathematical Pivot
+Instead of calculating the mean and variance for one specific feature across 32 different images, Layer Normalisation calculates the mean and variance for *all features* across *one single sequence*.
+
+If a sentence is embedded into a vector of 512 numbers, Layer Normalisation mathematically looks only at those 512 numbers. It finds their mean, finds their variance, and normalizes them.
+Because it mathematically isolates each data point from the rest of the batch, Layer Normalisation functions perfectly even if the batch size is exactly 1.
+
+## 2. Pre-Norm vs Post-Norm
+In the original Transformer paper, Layer Normalisation was applied *after* the self-attention mechanism (Post-Norm). 
+Modern LLMs (like LLaMA and GPT-4) mathematically flipped this to **Pre-Norm** (applying Layer Normalisation immediately *before* self-attention). This seemingly minor architectural tweak mathematically stabilizes the gradients in ultra-deep networks, preventing the model from collapsing during the early stages of training.
 
 </ConceptTemplate>

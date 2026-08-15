@@ -1,8 +1,44 @@
+---
+title: Ada
+description: "A highly robust, statically typed programming language designed by the US Department of Defense for mission-critical systems."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Ada">
+<ConceptTemplate 
+  name="Ada"
+  icon="shield"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Named after Ada Lovelace, the first computer programmer, **Ada** was developed in the late 1970s under a contract from the United States Department of Defense (DoD). Its primary goal was to replace the hundreds of different programming languages used across military hardware with a single, ultra-reliable standard.
+
+## Built for Mission-Critical Systems
+
+Ada is legendary for its strictness. If an Ada program compiles, it is incredibly unlikely to fail at runtime. It features built-in contract-based programming, extreme strong typing, and explicit concurrency (tasks).
+
+Because of this, Ada is the language of choice for systems where human lives are on the line:
+- Avionics (Boeing 777, Airbus A380 flight control systems)
+- Air Traffic Control
+- Satellites and Spacecraft (NASA, ESA)
+- High-Speed Rail systems
+
+## Syntax Example
+
+Ada's syntax is heavily inspired by Pascal, prioritizing readability and explicit declarations over conciseness.
+
+```ada
+with Ada.Text_IO; use Ada.Text_IO;
+
+procedure Hello is
+   -- Variables are declared before the 'begin' block
+   Message : constant String := "Hello, World!";
+begin
+   Put_Line (Message);
+end Hello;
+```
+
+<Callout icon="info" title="The SPARK Subset">
+SPARK is a formally defined subset of the Ada language. It removes features that are hard to verify mathematically (like dynamic memory allocation) and allows developers to write mathematical proofs that guarantee the software will never experience a buffer overflow or runtime exception.
+</Callout>
 
 </ConceptTemplate>

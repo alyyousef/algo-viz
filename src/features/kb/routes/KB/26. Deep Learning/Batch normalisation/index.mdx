@@ -1,8 +1,30 @@
+---
+title: Batch Normalisation
+description: A transformative technique that stabilizes deep neural networks by mathematically normalizing the inputs of each layer across the mini-batch during training.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Batch normalisation">
+<ConceptTemplate title="Batch Normalisation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a Deep Neural Network, Layer 5 relies on the outputs of Layer 4. But as the network trains, Layer 4 is constantly updating its weights, meaning the distribution of the data it passes to Layer 5 is constantly shifting. This is mathematically known as **Internal Covariate Shift**. It makes training deep networks painfully slow and unstable.
+
+## 1. The Mathematical Solution
+**Batch Normalisation (BatchNorm)** adds a mathematical operation between layers.
+For every mini-batch of data passing through the layer, it:
+1. Calculates the **Mean** ($mu$) of the batch.
+2. Calculates the **Variance** ($sigma^2$) of the batch.
+3. Mathematically normalizes the batch so the mean is $0$ and the standard deviation is $1$.
+
+By mathematically guaranteeing that Layer 5 will *always* receive data perfectly centered at $0$, the network is stabilized and can be trained with vastly higher Learning Rates.
+
+## 2. The Gamma and Beta Parameters
+If we strictly force the data to a mean of $0$ and variance of $1$, we mathematically destroy the expressive power of the network. (Maybe the network *wants* the data to be shifted to the right to trigger a specific ReLU activation).
+BatchNorm introduces two learnable parameters:
+- **Gamma ($gamma$)**: Scales the variance.
+- **Beta ($eta$)**: Shifts the mean.
+The network can mathematically learn to restore the original distribution if it is optimal, but it now has full algebraic control over the flow.
+
+## 3. The Flaw (Small Batches)
+Because BatchNorm relies on statistical averages, it mathematically collapses if the batch size is too small. If your batch size is 2, the mean and variance are statistically meaningless, and the network will rapidly destabilize. For tasks requiring tiny batches (like massive LLMs), **Layer Normalisation** is used instead.
 
 </ConceptTemplate>

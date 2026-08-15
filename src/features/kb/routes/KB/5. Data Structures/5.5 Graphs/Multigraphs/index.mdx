@@ -1,8 +1,25 @@
+---
+title: Multigraphs
+description: A relaxed mathematical graph where multiple distinct edges are permitted to connect the exact same pair of vertices simultaneously.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Multigraphs">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard Simple Graph, the relationship between Node A and Node B is mathematically binary: an edge either exists between them, or it doesn't. You cannot have two edges connecting the same two nodes. A **Multigraph** shatters this rule, allowing infinite parallel edges between the same vertices.
+
+## 1. Parallel Edges
+If you are modeling an airline network, Node A is New York, and Node B is London. 
+In a Simple Graph, you can only draw one edge connecting them (meaning "a flight exists"). 
+In a Multigraph, you can mathematically draw 50 different edges between New York and London, representing 50 different daily flights, each with a completely different Weight (price, departure time, airline). 
+
+## 2. Self-Loops
+Depending on the strict mathematical definition used, some Multigraphs (often called Pseudographs) also permit **Self-Loops**—an edge that connects Node A directly back to Node A. This is heavily used in finite state machines to represent an action that keeps the system in its current state.
+
+## 3. Representation Challenges
+Multigraphs completely break the **Adjacency Matrix**. If you write a $1$ at `Matrix[A][B]`, you cannot mathematically represent that there are actually 5 different edges there. 
+To implement a Multigraph, you must either:
+- Modify the Adjacency Matrix to store an integer representing the *count* of edges.
+- Use an **Adjacency List** where the list for Node A simply contains Node B five different times, optionally pointing to edge-specific data objects.
 
 </ConceptTemplate>
