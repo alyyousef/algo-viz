@@ -1,25 +1,34 @@
 ---
 title: Dynamic Arrays
-description: An array that mathematically resizes itself when full, providing the blazing-fast random access of standard arrays with the flexibility of variable size.
+description: A smart wrapper around a static array that automatically resizes itself when it runs out of capacity, providing the illusion of an infinitely expandable list.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dynamic Arrays">
+<ConceptTemplate title="Dynamic Arrays (ArrayList, std::vector, list)">
 
-Standard arrays are fatally limited because their size is strictly fixed at creation. **Dynamic Arrays** (like Python's `list`, Java's `ArrayList`, or C++'s `std::vector`) solve this by mathematically managing the memory allocation in the background, giving the illusion of infinite capacity.
+A standard Array is fixed in size. If you allocate space for 10 items, you cannot add an 11th. 
+A **Dynamic Array** (known as `ArrayList` in Java, `std::vector` in C++, and simply `list` in Python) solves this by automatically managing memory reallocation behind the scenes.
 
-## 1. The Geometric Expansion Rule
-Under the hood, a Dynamic Array is still just a standard, fixed-size array. 
-If you create a Dynamic Array, it might initialize a standard array of size $4$. You append elements: `[A, B, C, D]`. The array is now physically full. 
-If you append `E`, the Dynamic Array triggers a massive background operation:
-1. It requests a completely new, mathematically larger block of contiguous memory from the OS (usually exactly **double** the size: $8$).
-2. It physically copies `[A, B, C, D]` from the old memory to the new memory.
-3. It appends `E` to the new array.
-4. It mathematically destroys the old array.
+## 1. How It Works (The Growth Factor)
 
-## 2. Amortized O(1) Insertion
-Because resizing requires an $O(N)$ mathematical copy of the entire array, you might assume appending to a Dynamic Array is slow. 
-However, because it mathematically doubles its capacity every time, resizing happens exponentially less often as the array grows. If you append $1,000,000$ elements, it only resizes 20 times. 
-Mathematically, the $O(N)$ cost is so violently diluted across the millions of cheap $O(1)$ appends that the *average* cost of appending remains **Amortized $O(1)$**.
+Under the hood, a dynamic array is just a standard, fixed-size static array combined with two integer variables:
+- `Size`: The number of items currently inside the array.
+- `Capacity`: The physical size of the underlying static array.
+
+When you append items, the `Size` increases. When `Size == Capacity`, the dynamic array executes its resize routine:
+1. It requests a brand new, larger block of contiguous memory from the OS (usually double the current capacity, a **growth factor of 2**).
+2. It copies every single element from the old array into the new array.
+3. It deletes the old array and frees the memory.
+
+## 2. Amortized $O(1)$ Time Complexity
+
+Wait, if resizing requires copying every element, isn't appending an item $O(N)$? 
+Yes, the *worst-case* append is $O(N)$. However, because the array doubles in size every time, these expensive resizes happen exponentially less frequently as the array grows.
+
+If you average out the cost of all the cheap $O(1)$ appends and the rare $O(N)$ resizes over time, the average cost per append mathematically approaches a constant time. This is called **Amortized $O(1)$** complexity.
+
+<Callout icon="warning" title="The Capacity Trap">
+  If you know you are going to add 1 million items to a dynamic array, do not just blindly append them in a loop. The array will have to resize and copy memory roughly 20 times. Always pre-allocate the capacity if you know the final size in advance (e.g., `new ArrayList<>(1000000)`).
+</Callout>
 
 </ConceptTemplate>

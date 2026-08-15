@@ -1,0 +1,33 @@
+---
+title: AWS Lambda
+description: The pioneering Serverless compute service that lets you run code without provisioning or managing servers, scaling automatically based on incoming events.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="AWS Lambda">
+
+Introduced in 2014, **AWS Lambda** single-handedly invented the concept of Serverless computing (FaaS). It revolutionized cloud architecture by completely removing the need to manage EC2 virtual machines.
+
+## 1. Event-Driven Architecture
+
+Lambda is fundamentally event-driven. A Lambda function does absolutely nothing and costs absolutely nothing until an **Event** triggers it.
+Common triggers include:
+- An HTTP request hitting an AWS API Gateway.
+- A user uploading an image to an S3 Bucket (triggering a Lambda to create a thumbnail).
+- A message arriving in an SQS Queue.
+- A scheduled cron job from EventBridge running every 5 minutes.
+
+## 2. Extreme Concurrency
+
+If your API receives 1 request, AWS spins up 1 micro-container to run your Lambda.
+If a Super Bowl commercial airs and your API receives 10,000 requests in a single second, AWS instantly spins up 10,000 isolated micro-containers to process them all simultaneously. 
+
+You do not need to configure Load Balancers or Autoscaling Groups. The concurrency is managed entirely by AWS.
+
+## 3. The Execution Limits
+
+Lambda is not meant for long-running processes. It is designed for microservices.
+- **Time Limit**: A Lambda function is hard-killed by AWS if it runs for more than 15 minutes. (If you have a batch job that takes 2 hours, you must use EC2 or ECS, not Lambda).
+- **Statelessness**: Because containers are constantly created and destroyed, Lambda functions are entirely stateless. You cannot save a file to the local hard drive and expect it to be there on the next request. All state must be saved to an external database like DynamoDB.
+
+</ConceptTemplate>

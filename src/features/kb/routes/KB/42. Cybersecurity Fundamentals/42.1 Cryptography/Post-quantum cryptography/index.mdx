@@ -1,8 +1,38 @@
+---
+title: Post-Quantum Cryptography
+description: The next generation of cryptographic algorithms designed to resist the devastating mathematical attacks of future large-scale quantum computers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Post-quantum cryptography">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+<ConceptTemplate title="Post-Quantum Cryptography (PQC)">
+
+Currently, the entire internet (HTTPS, banking, VPNs, blockchains) is secured by asymmetric algorithms like **RSA** and **ECC**. These algorithms rely on mathematical problems (like prime factorization and elliptic curve logarithms) that are practically impossible for classical supercomputers to solve.
+
+However, a sufficiently powerful **Quantum Computer** running **Shor's Algorithm** can mathematically shatter RSA and ECC in hours. **Post-Quantum Cryptography (PQC)** refers to a new class of cryptographic algorithms designed to run on normal, classical computers, but which rely on entirely different mathematical branches that even Quantum Computers cannot efficiently solve.
+
+## 1. The Threat: Shor's and Grover's Algorithms
+
+- **Shor's Algorithm**: A quantum algorithm that solves Prime Factorization and Discrete Logarithms exponentially faster than classical computers. It utterly destroys all currently deployed Asymmetric Encryption (RSA, Diffie-Hellman, ECC).
+- **Grover's Algorithm**: A quantum search algorithm that quadraticly speeds up brute-force attacks against Symmetric Encryption (like AES) and Hash Functions (like SHA-256). 
+  - *The Fix for Grover's*: Simply double the key size. AES-128 is vulnerable, but AES-256 is mathematically completely immune to quantum computers. 
+
+## 2. The NIST Standardization
+
+Realizing the apocalyptic threat of "Q-Day" (the day a cryptographically relevant quantum computer is turned on), the US National Institute of Standards and Technology (NIST) spent years running a global competition to select the new PQC standards. In 2024, they officially published the winners:
+
+### Lattice-Based Cryptography
+The absolute core of the new PQC era. It relies on the "Learning With Errors" (LWE) problem and the Shortest Vector Problem within multi-dimensional mathematical grids (lattices). Quantum computers cannot easily navigate these lattices.
+- **ML-KEM (formerly CRYSTALS-Kyber)**: The new standard for Key Exchange (replacing Diffie-Hellman/RSA key establishment).
+- **ML-DSA (formerly CRYSTALS-Dilithium)**: The primary new standard for Digital Signatures.
+
+### Hash-Based Signatures
+Relies entirely on the proven security of cryptographic hash functions rather than algebraic math.
+- **SLH-DSA (formerly SPHINCS+)**: A backup Digital Signature standard. It produces massive signature files (kilobytes in size) and is slow, but its mathematical security is ironclad and deeply understood.
+
+<Callout icon="warning" title="Harvest Now, Decrypt Later">
+  Why are tech giants like Apple (iMessage PQ3) and Google (Chrome TLS) deploying PQC *today*, even though quantum computers don't exist yet? 
+  Because nation-state intelligence agencies are currently vacuuming up and storing petabytes of encrypted internet traffic. They are simply waiting 10 years until they build a quantum computer to retroactively decrypt all the state secrets they harvested today. You must deploy PQC before the data is intercepted.
+</Callout>
 
 </ConceptTemplate>

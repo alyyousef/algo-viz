@@ -1,36 +1,28 @@
 ---
 title: PACELC Theorem
-description: An extension to the CAP Theorem that addresses the trade-off between Latency and Consistency during normal operation.
+description: An extension of the CAP Theorem that addresses what tradeoffs distributed systems make during normal operation when the network is perfectly healthy.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="PACELC Theorem">
 
-The **PACELC Theorem**, formulated by Daniel Abadi in 2010, is a modern extension of the CAP Theorem. 
+The CAP theorem proves that in the event of a network Partition (P), you must choose between Availability (A) or Consistency (C). 
+However, network partitions are rare. What happens during normal operation? The **PACELC Theorem** extends CAP to explain the trade-offs systems make when the network is perfectly healthy.
 
-While CAP focuses exclusively on how a database behaves during a rare network outage, PACELC acknowledges that distributed systems face a constant, everyday trade-off even when the network is perfectly healthy: the trade-off between **Latency** and **Consistency**.
+It is an acronym that reads:
+**If P (Partition), choose A or C. Else (E), choose L or C.**
 
-<Callout icon="info" title="Decoding the Acronym">
-  **PACELC** stands for:
-  If there is a **P**artition, how does the system trade off **A**vailability and **C**onsistency?
-  **E**lse (during normal operation), how does the system trade off **L**atency and **C**onsistency?
-</Callout>
+## 1. The "Else" Clause (Latency vs Consistency)
 
-## The "E-L-C" Tradeoff (Normal Operation)
+When there is no network failure (Else), a distributed database must still make a fundamental architectural choice every time a user writes data to Node A:
 
-Imagine a globally distributed database with nodes in New York and Tokyo. The network is working perfectly. A user in New York updates their profile.
+1. **Choose L (Latency over Consistency)**: Node A instantly tells the user "Write Successful", and then quietly copies the data to Node B in the background. The user experiences zero Latency. However, for a few milliseconds, Node A and Node B are Inconsistent. (Example: DynamoDB).
+2. **Choose C (Consistency over Latency)**: Node A tells the user "Please wait". Node A copies the data to Node B, waits for Node B to confirm receipt, and *only then* tells the user "Write Successful". The system is perfectly Consistent, but the user experiences massive Latency. (Example: CockroachDB).
 
-- **Prioritize Consistency (PC/EC)**: The New York node must pause, send the data to Tokyo over the undersea fiber-optic cable, wait for Tokyo to acknowledge receipt, and then tell the user "Success." This guarantees perfect consistency worldwide, but introduces massive **Latency** (hundreds of milliseconds).
-- **Prioritize Latency (PA/EL)**: The New York node saves the data locally and immediately tells the user "Success" (zero latency). It then syncs to Tokyo in the background. For a brief window, the system is perfectly fast, but Tokyo is serving stale data (sacrificing Consistency).
+## 2. Real-World Classifications
 
-## Database Classifications under PACELC
-
-PACELC allows us to classify NoSQL databases much more accurately:
-
-- **DynamoDB, Cassandra, Riak (PA/EL)**: When a partition happens, they prioritize Availability. When the network is fine, they prioritize low Latency (by using asynchronous replication). They are built for extreme speed and uptime.
-- **MongoDB, HBase (PC/EC)**: When a partition happens, they prioritize Consistency (by electing a new primary and refusing writes until it's ready). When the network is fine, they prioritize Consistency (writes must be acknowledged by a quorum).
-- **VoltDB, CockroachDB (PC/EC)**: NewSQL databases designed explicitly for perfect, global consistency at the cost of latency.
-
-PACELC proves that in distributed systems, the speed of light is your ultimate enemy. You cannot have instantaneous writes (low latency) and instant global replication (high consistency) at the same time.
+- **Cassandra (PA/EL)**: If partitioned, favors Availability. Normally, favors Latency (speed) over perfect Consistency.
+- **MongoDB (PC/EC)**: If partitioned, favors Consistency (shuts down). Normally, favors Consistency over Latency.
+- **DynamoDB (PA/EL)**: The quintessential highly available, extremely fast, eventually consistent database.
 
 </ConceptTemplate>

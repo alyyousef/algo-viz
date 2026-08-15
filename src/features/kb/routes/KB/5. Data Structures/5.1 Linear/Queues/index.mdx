@@ -1,26 +1,31 @@
 ---
 title: Queues
-description: A rigid First-In-First-Out (FIFO) data structure, mathematically simulating a waiting line where elements join at the back and leave from the front.
+description: A strict FIFO (First-In-First-Out) data structure used to process items in the exact order they arrived, essential for task scheduling and breadth-first search.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Queues">
+<ConceptTemplate title="Queues (FIFO)">
 
-Like a Stack, a **Queue** is an Abstract Data Type (ADT) that restricts how you interact with the underlying data. While Stacks prioritize the newest data, Queues strictly prioritize the oldest data. It mathematically enforces strict fairness: the first element in is guaranteed to be the first element out.
+A **Queue** is an abstract data structure that perfectly mimics a line of people waiting at a grocery store checkout. It operates on a strict **First-In-First-Out (FIFO)** principle. 
 
-## 1. FIFO (First-In, First-Out)
-A Queue operates exactly like a queue of humans at a grocery store checkout.
-- **Enqueue (Push)**: A new element mathematically attaches itself exclusively to the absolute **Back** (Tail) of the line.
-- **Dequeue (Pop)**: The algorithm mathematically serves and removes exclusively from the absolute **Front** (Head) of the line.
+The first item added to the queue will absolutely be the first item removed. You cannot skip the line.
 
-If implemented correctly (usually via a Doubly Linked List), both Enqueue and Dequeue operations are perfectly $O(1)$.
+## 1. The Core Operations
 
-## 2. System Architecture & Buffering
-Queues are the absolute mathematical foundation of asynchronous distributed systems. 
-If 10,000 users click a button simultaneously, the backend server cannot process them all instantly. It mathematically pushes all 10,000 requests into an **Event Queue** (like RabbitMQ or Kafka). The server then sequentially dequeues and processes the requests one by one, ensuring no data is dropped and strict chronological order is maintained.
+A queue is heavily restricted. You are only allowed to perform two primary actions, both of which operate in strictly $O(1)$ time:
+- **Enqueue**: Add a new item to the absolute *back* of the line (the "Tail").
+- **Dequeue**: Remove and return the item at the absolute *front* of the line (the "Head").
 
-## 3. Breadth-First Search (BFS)
-While Stacks power Depth-First Search, Queues mathematically power **Breadth-First Search (BFS)**. 
-When scanning a social network graph, a Queue forces the algorithm to explore all friends at distance 1 before moving to friends at distance 2. Because it prioritizes the oldest discovered nodes (FIFO), BFS mathematically guarantees it will find the absolute shortest path to any target.
+## 2. Common Use Cases
+
+Queues are heavily used in operating systems and distributed architectures whenever a system is receiving work faster than it can process it.
+
+1. **Task Scheduling**: A printer queue holds documents in the exact order they were submitted by different users.
+2. **Breadth-First Search (BFS)**: The BFS graph algorithm relies on a queue to explore neighboring nodes level-by-level before moving deeper.
+3. **Message Brokers**: Enterprise systems like Apache Kafka or RabbitMQ are essentially massive, distributed queues that ensure millions of API events are processed in chronological order.
+
+<Callout icon="error" title="The Array Dequeue Problem">
+  Do not implement a Queue using a standard Array! If you `Dequeue` the item at index 0, you must physically shift every other item in the array to the left, resulting in an incredibly slow $O(N)$ operation. Queues should always be implemented using a Linked List, or a specialized **Circular Buffer**, to ensure $O(1)$ dequeues.
+</Callout>
 
 </ConceptTemplate>

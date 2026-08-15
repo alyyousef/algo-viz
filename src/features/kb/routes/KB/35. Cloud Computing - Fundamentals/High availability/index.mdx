@@ -1,0 +1,28 @@
+---
+title: High Availability (HA) & Fault Tolerance
+description: The architectural principles of designing systems that remain continuously operational for a specific percentage of time, eliminating single points of failure.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="High Availability (HA) & Fault Tolerance">
+
+Hardware fails. Hard drives corrupt, power supplies explode, and fiber optic cables get cut by construction workers. 
+If your application runs on a single server, and that server dies, your application goes offline. **High Availability (HA)** is the architectural practice of ensuring your app stays online even when the underlying hardware inevitably burns down.
+
+## 1. The Nines (Service Level Agreements)
+
+Availability is measured in "Nines", representing the percentage of time a system is guaranteed to be online per year:
+- **99% (Two Nines)**: 3.65 days of allowable downtime per year.
+- **99.9% (Three Nines)**: 8.77 hours of downtime.
+- **99.99% (Four Nines)**: 52.6 minutes of downtime.
+- **99.999% (Five Nines)**: 5.26 *minutes* of downtime per year. (Considered the gold standard for telecom and financial systems).
+
+## 2. Eliminating Single Points of Failure (SPOF)
+
+To achieve HA, you must remove every Single Point of Failure in your architecture through **Redundancy**.
+
+1. **Load Balancing**: Instead of 1 web server, you run 3 web servers behind a Load Balancer. If Server A crashes, the Load Balancer instantly detects it and routes all traffic to Servers B and C.
+2. **Availability Zones (AZs)**: If all 3 servers are in the same physical data center, a massive power outage takes them all down. Cloud providers split Regions into multiple Availability Zones (physically separated data centers 50 miles apart on different power grids). You must deploy Server A in AZ-1, Server B in AZ-2, and Server C in AZ-3.
+3. **Database Replication**: A single database is a massive SPOF. You must configure Primary-Replica replication, preferably spanning across multiple Availability Zones, so if the Primary datacenter floods, the Replica instantly takes over.
+
+</ConceptTemplate>

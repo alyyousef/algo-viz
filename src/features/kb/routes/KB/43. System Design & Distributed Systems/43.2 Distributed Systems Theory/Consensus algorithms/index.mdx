@@ -1,33 +1,25 @@
 ---
 title: Consensus Algorithms
-description: Protocols used by distributed systems to agree on a single data value or network state, even in the presence of node failures.
+description: The complex mathematical protocols used by distributed systems to agree on a single source of truth when multiple nodes are writing data simultaneously.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Consensus Algorithms">
 
-In distributed systems, a **Consensus Algorithm** is a complex mathematical protocol that allows a cluster of independent computers to agree on a single truth, even if network cables are unplugged, servers crash, or messages are delayed.
+If you have a database cluster with 5 nodes, and User A sends a command to Node 1 to set `x=10`, while User B sends a command to Node 2 to set `x=20` at the exact same millisecond, what is the final value of `x`?
 
-<Callout icon="info" title="The Problem of Agreement">
-  Imagine a 5-node database cluster. The user sends a command: `SET x = 10`. Node A receives it, but before it can tell the others, it crashes. Did the write happen? Node B thinks `x=5`. Node C thinks `x=10`. If they don't agree, the database is corrupted. Consensus algorithms ensure that the cluster moves forward as a single, unified entity.
-</Callout>
+A **Consensus Algorithm** is the protocol the nodes use to talk to each other, elect a leader, and agree on the exact chronological order of events, ensuring the entire cluster maintains a single source of truth.
 
-## The Goal: Replicated State Machines
+## 1. The Byzantine Generals Problem
 
-Most consensus algorithms are designed to build a **Replicated State Machine**. The goal is to ensure that every server in the cluster executes the exact same sequence of commands, in the exact same order. If they all start at the same state and execute the same commands in the same order, they will all end up with perfectly identical data.
+Consensus algorithms are designed to solve variations of the Byzantine Generals Problem: How do independent actors coordinate an attack over an unreliable communication network where some actors might be dead, and some actors might actively be lying (Byzantine Fault)?
 
-## Paxos (The Pioneer)
+In traditional database consensus, we assume nodes might crash, but they don't actively lie (Fail-Stop model). In blockchain consensus, we assume nodes *are* actively lying (Byzantine model).
 
-Invented by Leslie Lamport in 1989, **Paxos** is the theoretical grandfather of all consensus algorithms. It mathematically proved that consensus is possible in asynchronous networks. 
-However, Paxos is notoriously difficult to understand and even harder to implement correctly in code. It relies on Proposers, Acceptors, and Learners passing multiple rounds of complex messages.
+## 2. Prominent Algorithms
 
-## Raft (The Industry Standard)
-
-Because Paxos was so incredibly difficult to implement, researchers at Stanford created **Raft** in 2013, designed explicitly for "understandability." Raft is now the industry standard, powering systems like Kubernetes (etcd), MongoDB, and Consul.
-
-Raft achieves consensus by dividing the problem into three pieces:
-1. **Leader Election**: The cluster automatically holds an election. One node becomes the Leader. The others become Followers. If the Leader crashes, the Followers detect the timeout and immediately elect a new Leader.
-2. **Log Replication**: All user writes are sent exclusively to the Leader. The Leader appends the command to its log and sends it to the Followers.
-3. **Safety (Quorum)**: The Leader only commits the write to the database *after* a majority (Quorum) of the Followers reply that they have successfully logged the command. This guarantees that even if a minority of servers explode, the data is safe.
+1. **Paxos**: Invented in 1989, it is mathematically beautiful but notoriously impossible for humans to understand or implement in code. It requires complex multi-phase voting to agree on a single value.
+2. **Raft**: Invented in 2013 specifically to be understandable. It relies on strict Leader Election. Only one node (the Leader) is allowed to accept writes. If the Leader crashes, the remaining nodes start a randomized timer; the first one to wake up requests votes to become the new Leader. Raft is the engine behind modern systems like **etcd** and **Consul**.
+3. **Proof of Work / Proof of Stake**: The Byzantine fault-tolerant consensus algorithms used by blockchains like Bitcoin and Ethereum to agree on ledgers when nodes are actively malicious.
 
 </ConceptTemplate>

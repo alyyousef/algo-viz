@@ -1,36 +1,57 @@
 ---
-title: Asymmetric Encryption (Public-Key)
-description: The mathematical miracle that solved the Key Distribution Problem, allowing secure communication without a pre-shared secret.
+title: Asymmetric Encryption
+description: The foundational cryptography protocol that utilizes mathematically linked public and private key pairs to securely exchange data across untrusted networks.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
+
+
 
 <ConceptTemplate title="Asymmetric Encryption">
 
-Asymmetric Encryption (Public-Key Cryptography) was invented in the 1970s and mathematically solved the greatest problem in cryptography: how two strangers can securely communicate over a hostile network without ever meeting to exchange a secret key.
+In the early days of cryptography, Alice and Bob had to share the exact same secret key to encrypt and decrypt messages (Symmetric Encryption). The fatal flaw was the **Key Distribution Problem**: how do you securely send the secret key to someone across an unsecured internet without a hacker stealing it?
 
-## 1. The Public and Private Key Pair
-Instead of a single shared secret key, Asymmetric Encryption mathematically generates a **Key Pair** for every user:
-1. **The Public Key**: Can be shouted from the rooftops. You can put it on your website, your Twitter bio, or hand it directly to hackers.
-2. **The Private Key**: Must be guarded with your life. It never, ever leaves your physical device.
+**Asymmetric Encryption** (Public-Key Cryptography) solved this by splitting the key into two mathematically linked, but fundamentally distinct parts: a **Public Key** and a **Private Key**.
 
-The mathematical miracle is this: **Data encrypted with the Public Key can ONLY be decrypted by the Private Key.** It mathematically cannot be decrypted by the Public Key that locked it.
+## 1. The Two Keys
 
-## 2. How the Communication Works
-If Alice wants to send a top-secret file to Bob:
-1. Alice requests Bob's **Public Key**.
-2. Alice uses Bob's Public Key to encrypt the file into ciphertext.
-3. Alice sends the ciphertext to Bob over the open internet.
-4. A hacker intercepts the ciphertext. The hacker *also* has Bob's Public Key, but it is mathematically useless for decryption.
-5. Bob receives the ciphertext and uses his **Private Key** to decrypt it.
+- **Public Key**: Handed out to everyone in the world. It can only **encrypt** data or **verify** signatures.
+- **Private Key**: Kept absolutely secret. It can only **decrypt** data or **create** signatures.
 
-## 3. The Computational Cost
-While Asymmetric Encryption (like RSA or ECC) is mathematically brilliant, it relies on massive, computationally heavy mathematical operations (like prime factorization or elliptic curve geometry).
+<Callout icon="tip" title="The Padlock Analogy">
+  Think of the Public Key as an open padlock that you distribute to anyone. Anyone can put their data in a box and snap your padlock shut (encrypt). However, once the padlock is closed, even the person who closed it cannot open it. Only you hold the physical key (the Private Key) that can unlock it (decrypt).
+</Callout>
 
-As a result, Asymmetric Encryption is **1,000x to 10,000x slower** than Symmetric Encryption.
+## 2. Core Workflows
 
-<Callout icon="info" title="The Hybrid Architecture">
-Because Asymmetric Encryption is so slow, it is never used to encrypt large files (like a 4GB movie). Instead, the internet uses a Hybrid Architecture (like TLS). Asymmetric Encryption is used *only* to securely transmit a tiny, 256-bit Symmetric Key. Once both parties have the Symmetric Key, they switch to blazing-fast Symmetric Encryption (AES) for the rest of the session.
+There are two primary ways Asymmetric Encryption is used:
+
+### A. Secure Communication (Encryption)
+If Bob wants to send a secret message to Alice:
+1. Bob fetches Alice's **Public Key**.
+2. Bob encrypts the message using Alice's Public Key.
+3. Bob sends the ciphertext over the internet.
+4. Alice uses her perfectly secret **Private Key** to decrypt the message.
+
+### B. Digital Signatures (Authentication)
+If Alice wants to prove she wrote a message:
+1. Alice encrypts a hash of the message using her **Private Key** (creating a signature).
+2. She sends the message and the signature to Bob.
+3. Bob uses Alice's **Public Key** to decrypt the signature. If it decrypts correctly, he knows with 100% mathematical certainty that the person who holds the Private Key (Alice) signed it.
+
+## 3. Asymmetric vs. Symmetric
+
+<ComparisonTable 
+  headers={['Feature', 'Asymmetric Encryption', 'Symmetric Encryption']} 
+  rows={[
+    ['Keys', 'Two (Public and Private)', 'One (Shared Secret)'],
+    ['Speed', 'Extremely Slow (Heavy Math)', 'Extremely Fast (Bitwise operations)'],
+    ['Primary Use Case', 'Key Exchange, Digital Signatures (RSA, ECC)', 'Bulk Data Encryption (AES, ChaCha20)'],
+    ['Key Exchange Problem', 'Solved (Public keys are public)', 'Fatal (Must securely share the key)']
+  ]} 
+/>
+
+<Callout icon="warning" title="The Hybrid Approach (TLS)">
+  Because Asymmetric encryption is incredibly slow, the modern internet (HTTPS/TLS) uses a **Hybrid System**. It uses Asymmetric Encryption (like RSA) purely to securely exchange a temporary Symmetric Key. Once both sides have the Symmetric Key, they switch to Symmetric Encryption (like AES) for the rest of the web session to stream data at high speeds.
 </Callout>
 
 </ConceptTemplate>

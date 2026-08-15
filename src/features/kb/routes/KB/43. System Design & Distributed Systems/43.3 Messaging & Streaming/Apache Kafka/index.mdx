@@ -1,27 +1,28 @@
 ---
 title: Apache Kafka
-description: An open-source distributed event streaming platform used for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.
+description: An ultra-high-throughput, distributed event streaming platform used to handle millions of real-time events per second without dropping a single packet.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Apache Kafka">
+<ConceptTemplate title="Apache Kafka">
 
-Apache Kafka is an open-source distributed event streaming platform developed by LinkedIn and donated to the Apache Software Foundation. It is designed to handle trillions of events a day.
+A standard message queue (like RabbitMQ) deletes a message the moment a consumer reads it. It is designed for simple task delegation. 
+**Apache Kafka** is completely different. It is a **Distributed Event Streaming Platform**. It operates like an append-only, immutable database log. When you write a message to Kafka, it stays on the hard drive permanently (or for a configured retention period).
 
-<Callout icon="warning" title="Not a Message Queue">
-  Kafka is technically an **Append-Only Distributed Log**. Unlike RabbitMQ, where a message is deleted after it is read, Kafka retains the message on disk for a configured time (e.g., 7 days). This allows new services to "replay" history.
+## 1. The Anatomy of Kafka
+
+- **Topics**: Data is organized into Topics (e.g., `user-clicks`).
+- **Partitions**: To handle millions of events per second, a single Topic is broken apart into Partitions spread across multiple physical servers.
+- **Producers**: Applications that aggressively dump events onto the end of a Partition log.
+- **Consumers**: Applications that read from the log. Because the data isn't deleted, you can have 50 different microservices all reading the exact same `user-clicks` log simultaneously, at their own pace, using an **Offset** (a bookmark indicating the last message they read).
+
+## 2. High Throughput
+
+Kafka is famous for processing millions of messages per second on cheap hardware. It achieves this by bypassing RAM entirely. 
+It uses a Linux kernel feature called **Zero-Copy**, moving data directly from the network socket to the hard drive, and directly from the hard drive back to the network socket, utilizing sequential disk I/O which is blazingly fast.
+
+<Callout icon="info" title="Kafka vs Traditional Queues">
+  Use RabbitMQ or AWS SQS when you want to execute a specific task exactly once (like sending an email). Use Kafka when you want to broadcast a massive stream of events (like website clicks, IoT sensor data, or financial ticker prices) to multiple different analytical systems simultaneously.
 </Callout>
 
-## Core Concepts
-
-<ComparisonTable 
-  headers={['Term', 'Description']}
-  rows={[
-    ['Topic', 'A logical channel where events are published. (e.g., `user-clicks`).'],
-    ['Partition', 'Topics are split into multiple Partitions across different servers. This allows Kafka to scale horizontally to massive throughput.'],
-    ['Producer', 'The application sending data into a Kafka Topic.'],
-    ['Consumer Group', 'A group of applications reading from a Topic. Kafka ensures that each Partition is only read by ONE consumer in the group, ensuring work is balanced and never duplicated.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

@@ -1,44 +1,46 @@
 ---
 title: Digital Signatures
-description: Utilizing asymmetric cryptography in reverse to mathematically prove identity, authenticity, and non-repudiation.
+description: The cryptographic mechanism that guarantees the authenticity, integrity, and non-repudiation of digital documents and network messages.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
+
 
 <ConceptTemplate title="Digital Signatures">
 
-**Digital Signatures** are the mathematical equivalent of a physical signature, but infinitely more secure. They mathematically guarantee three things:
-1. **Authentication**: The sender is exactly who they claim to be.
-2. **Data Integrity**: The message was not mathematically altered in transit.
-3. **Non-Repudiation**: The sender cannot mathematically deny sending the message later.
+A **Digital Signature** is the mathematical equivalent of a handwritten signature or a wax seal on an envelope. It uses Public-Key Cryptography to prove that a message originated from a specific person and that the message was not tampered with during transit.
 
-## 1. Reversing Asymmetric Encryption
-In normal Asymmetric Encryption, you encrypt with a Public Key, and decrypt with a Private Key.
-Digital Signatures mathematically invert this paradigm: **You encrypt with the Private Key, and verify with the Public Key.**
+They are the foundational security mechanism behind SSL/TLS Certificates, Software Updates, Cryptocurrency transactions, and secure emails.
 
-Because *only* you possess your Private Key, if someone can successfully decrypt a message using your Public Key, it mathematically proves that *you* must have been the one to encrypt it.
+## 1. The Three Guarantees
 
-## 2. The Step-by-Step Mathematical Process
-Encrypting a 5GB PDF document with a slow RSA Private Key would take hours. Therefore, Digital Signatures combine Hashing and Asymmetric Encryption.
+Digital Signatures provide three absolute cryptographic guarantees:
+1. **Authentication**: Proves the sender is who they claim to be (because only they possess the Private Key).
+2. **Integrity**: Proves the message was not altered by a hacker in transit. (If a single comma is changed, the signature verification mathematically fails).
+3. **Non-Repudiation**: The sender cannot legally or mathematically deny having sent the message, as only their unique Private Key could have generated the signature.
 
-**Signing (Alice's Computer):**
-1. Alice writes a contract (a PDF).
-2. Alice mathematically runs the PDF through a Hash Function (like SHA-256), resulting in a tiny 256-bit string.
-3. Alice encrypts *only the 256-bit Hash* using her **Private Key**. This encrypted hash is the **Digital Signature**.
-4. Alice sends the original plaintext PDF and the Digital Signature to Bob.
+## 2. How it Works (The Workflow)
 
-**Verifying (Bob's Computer):**
-1. Bob receives the PDF and the Digital Signature.
-2. Bob mathematically runs the exact same Hash Function (SHA-256) on the plaintext PDF to generate his own local hash.
-3. Bob uses Alice's **Public Key** to decrypt the Digital Signature, revealing the hash Alice calculated.
-4. Bob mathematically compares his local hash with Alice's decrypted hash.
+Digital Signatures operate by running Asymmetric Encryption *in reverse*.
 
-### The Conclusion:
-- If the hashes match perfectly, the signature is mathematically valid. The file is un-tampered, and Alice definitely sent it.
-- If a hacker changed a single comma in the PDF, Bob's local hash would change (Avalanche Effect), the hashes would mathematically fail to match, and the signature is rejected.
+### Step 1: Signing (The Sender)
+Alice wants to send a signed contract to Bob.
+1. Alice runs the contract through a Hashing Algorithm (like SHA-256) to generate a fixed-length **Hash**.
+2. Alice **encrypts** that Hash using her own secret **Private Key**. This encrypted hash is the "Digital Signature".
+3. Alice sends the plain-text contract and the Digital Signature to Bob.
 
-<Callout icon="info" title="JWTs (JSON Web Tokens)">
-Modern web architecture relies on Digital Signatures for authentication. When you log in, the server generates a JSON object (JWT) containing your User ID, and signs it using the Server's Private Key. The JWT is stored in your browser cookies. On subsequent requests, the server mathematically verifies the signature on the JWT, proving you are authenticated without needing to query a database.
+### Step 2: Verification (The Receiver)
+1. Bob receives the document and the signature.
+2. Bob runs the document through the exact same Hashing Algorithm (SHA-256) to generate his own Hash.
+3. Bob uses Alice's publically available **Public Key** to **decrypt** the Digital Signature. 
+4. Bob compares the Hash he generated with the Hash he just decrypted. If they are a 100% perfect match, the signature is valid.
+
+<Callout icon="info" title="Why Hash first?">
+  Asymmetric encryption (like RSA) is mathematically incredibly slow and has strict data size limits. You cannot encrypt a 500-page PDF using a Private Key. By hashing the PDF into a tiny 256-bit string first, the cryptography only has to encrypt the hash, taking milliseconds rather than hours.
 </Callout>
+
+## 3. Real-World Applications
+
+- **HTTPS / SSL Certificates**: When you visit your bank's website, your browser verifies a Digital Signature from a Certificate Authority (like DigiCert) to ensure the server actually belongs to the bank.
+- **Software Binaries**: When you download an iOS update or a Windows `.exe`, the operating system verifies Apple's or Microsoft's digital signature to ensure a hacker didn't inject malware into the download.
 
 </ConceptTemplate>

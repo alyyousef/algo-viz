@@ -1,0 +1,25 @@
+---
+title: Cloud Computing
+description: The delivery of computing services—including servers, storage, databases, networking, and software—over the Internet on a pay-as-you-go basis.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Cloud Computing">
+
+Historically, if a company wanted to launch a website, they had to physically purchase a $10,000 server, plug it into the wall, install an operating system, and hire a systems administrator to keep it from catching fire. 
+
+**Cloud Computing** is the practice of renting those servers from massive tech companies (like Amazon, Microsoft, or Google) instead of buying them yourself.
+
+## 1. The Core Benefits
+
+- **Capital Expense (CapEx) to Variable Expense (OpEx)**: Instead of spending millions upfront building data centers, you pay only for the exact amount of CPU and RAM you consume, billed by the millisecond.
+- **Elasticity (Scaling)**: If your app suddenly goes viral, you don't have to wait 3 weeks to order new hardware. You click a button, and the cloud provider instantly provisions 1,000 extra servers for you, and automatically destroys them when traffic dies down.
+- **Global Reach**: You can deploy your application to servers in Tokyo, London, and New York simultaneously with a single click, providing low latency to users worldwide.
+
+## 2. Cloud Deployment Models
+
+- **Public Cloud**: Owned by a third-party provider (AWS, Azure) and accessed over the public internet. You share the underlying physical hardware with thousands of other companies (Multi-tenant).
+- **Private Cloud**: A cloud environment dedicated entirely to one single organization, usually maintained on-site behind a corporate firewall. Extremely expensive, but required by some banks and governments.
+- **Hybrid Cloud**: A combination of both. A bank might run its highly sensitive database on a Private Cloud, but run its front-end web servers on the Public Cloud to handle traffic spikes.
+
+</ConceptTemplate>

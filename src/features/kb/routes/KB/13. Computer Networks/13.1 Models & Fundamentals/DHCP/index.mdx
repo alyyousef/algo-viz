@@ -1,29 +1,31 @@
 ---
 title: DHCP (Dynamic Host Configuration Protocol)
-description: The automated service that leases IP addresses, Subnet Masks, and DNS configurations to devices the moment they join a network.
+description: The automated network management protocol that dynamically assigns IP addresses and configuration parameters to devices joining a network.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="DHCP (Dynamic Host Configuration Protocol)">
 
-If you connect to an airport Wi-Fi, you do not have to open your computer settings and manually type in an IP address, Subnet Mask, and Default Gateway Router. 
+In the early days of networking, network administrators had to manually walk to every computer and manually type in a static IP address, Subnet Mask, and Default Gateway. If two computers were accidentally given the same IP, the network crashed.
 
-This automation is handled by **DHCP** (Operating at Layer 7, via UDP Ports 67/68).
+**DHCP** automated this process. It is a client-server protocol (running on UDP ports 67 and 68) that automatically leases IP addresses to devices the millisecond they connect to the network.
 
-## The D.O.R.A. Process
+## 1. The DORA Process
 
-When a device connects to a network without an IP address, it initiates a 4-step negotiation called D.O.R.A.:
+When you connect your phone to a Wi-Fi network, the DHCP exchange occurs in 4 steps (DORA):
 
-1. **Discover (Broadcast)**: The laptop has no IP, so it screams a broadcast to the entire network: *"Are there any DHCP Servers out there?"*
-2. **Offer (Unicast/Broadcast)**: The DHCP Server hears the scream, looks at its pool of available IP addresses, and replies: *"Yes! I can offer you 192.168.1.50."*
-3. **Request (Broadcast)**: The laptop officially replies to the network: *"I accept the offer for 192.168.1.50!"*
-4. **Acknowledge (Unicast/Broadcast)**: The server formally locks the IP in its database and sends the final ACK, containing the Subnet Mask, Default Gateway, and DNS server IPs.
+1. **Discover**: Your phone has no IP address. It shouts a broadcast message to the entire network: *"Are there any DHCP servers here? I need an IP!"*
+2. **Offer**: The router (acting as the DHCP server) hears the shout, checks its pool of available IPs, and replies: *"I am a DHCP server. I can offer you 192.168.1.15."*
+3. **Request**: Your phone replies: *"I accept 192.168.1.15. Please reserve it for me."*
+4. **Acknowledge**: The server finalizes the lease and replies: *"Confirmed. You own 192.168.1.15 for the next 24 hours. Your Default Gateway is 192.168.1.1, and your DNS server is 8.8.8.8."*
 
-<Callout icon="info" title="IP Leasing">
-  DHCP does not give you an IP address permanently; it **Leases** it to you. A lease might last 24 hours. At the 12-hour mark (50% of the lease), your laptop will silently contact the DHCP server and ask to renew the lease. If you leave the airport, the lease eventually expires, and the server reclaims the IP address to give to a new passenger.
+## 2. IP Leases
+
+DHCP does not give out permanent IP addresses. It provides **Leases**. 
+A lease might last 24 hours. When the lease is 50% expired (12 hours), the client automatically contacts the server to ask for a renewal. If the laptop is turned off and the lease fully expires, the DHCP server reclaims the IP address and gives it to a different device, preventing the network from running out of addresses.
+
+<Callout icon="warning" title="Rogue DHCP Servers">
+  Because the **Discover** message is a broadcast, a hacker can plug a rogue laptop into a corporate network and run their own DHCP server. If the hacker's server replies with an **Offer** faster than the legitimate corporate router, it can assign victims a fake DNS server, silently redirecting all their web traffic to phishing sites.
 </Callout>
-
-## Static Assignments (Reservations)
-Servers and Printers should never change their IP addresses. Instead of manually configuring them, Admins create **DHCP Reservations**. They tell the DHCP server: *"If you ever see a request from MAC Address AA:BB:CC, ALWAYS offer it 192.168.1.100."* This centralizes all IP management into the DHCP server.
 
 </ConceptTemplate>

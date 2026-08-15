@@ -1,25 +1,32 @@
 ---
 title: Stacks
-description: A rigid Last-In-First-Out (LIFO) data structure where elements are mathematically added and removed strictly from the absolute top.
+description: A strict LIFO (Last-In-First-Out) data structure used to track states, handle function calls, and manage deeply nested recursive algorithms.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stacks">
+<ConceptTemplate title="Stacks (LIFO)">
 
-A **Stack** is not a unique physical memory layout; it is an **Abstract Data Type (ADT)**. It is essentially an Array or a Linked List that has been mathematically crippled. You are strictly forbidden from accessing the middle or the bottom. You can only interact with the absolute top element.
+A **Stack** perfectly mimics a physical stack of dinner plates. If you want a plate, you must take the one directly off the top. You cannot pull a plate from the bottom without breaking the entire stack.
 
-## 1. LIFO (Last-In, First-Out)
-A Stack perfectly mimics a physical stack of dinner plates. 
-- **Push**: You place a new plate on top of the stack.
-- **Pop**: You mathematically must remove the top plate before you can access any plate underneath it.
+It operates on a strict **Last-In-First-Out (LIFO)** principle. The most recently added item is the first one removed.
 
-Because you only ever manipulate the single top pointer, both `Push` and `Pop` are mathematically guaranteed to be blazing fast $O(1)$ operations.
+## 1. The Core Operations
 
-## 2. The Call Stack
-Stacks are the absolute backbone of Computer Science architecture. When a Python script calls a function, the CPU mathematically pushes a "Stack Frame" (containing the local variables) onto the system **Call Stack**. If that function calls another function, a new frame is pushed on top. When a function finishes, the CPU pops its frame off the top, mathematically returning exactly to the previous function. 
+Like Queues, Stacks restrict your access to the data. You are only allowed two primary $O(1)$ operations:
+- **Push**: Add a new item to the top of the stack.
+- **Pop**: Remove and return the item from the top of the stack.
+- *(Optional) **Peek**: Look at the top item without actually removing it.*
 
-## 3. Depth-First Search (DFS)
-In graph theory, traversing a maze requires exploring deeply down a single path until hitting a dead end, and then backtracking. 
-A Stack mathematically perfectly simulates this. By pushing forks in the road onto a Stack, the algorithm explores the most recently discovered path first (LIFO), mathematically forming the core logic of all **Depth-First Search (DFS)** algorithms.
+## 2. Common Use Cases
+
+Stacks are the fundamental backbone of program execution and state management.
+
+1. **The Call Stack**: Whenever a function calls another function, the CPU "Pushes" the current state (local variables and the return memory address) onto the Call Stack. When the function finishes, the CPU "Pops" that state off the stack to resume exactly where it left off.
+2. **Undo/Redo Mechanisms**: Every action you take in a text editor is pushed onto a stack. When you hit Ctrl+Z, the editor pops the most recent action off the stack and reverses it.
+3. **Depth-First Search (DFS)**: The DFS algorithm uses a stack (either explicitly, or implicitly via recursion) to plunge as deep into a graph as possible before backtracking.
+
+<Callout icon="warning" title="Stack Overflow">
+  The OS limits the physical RAM allocated to the Call Stack (often just a few megabytes). If you write a recursive function that never hits its base case, the CPU will continuously push new frames onto the stack until it physically runs out of memory, instantly crashing the program with a **Stack Overflow** error.
+</Callout>
 
 </ConceptTemplate>

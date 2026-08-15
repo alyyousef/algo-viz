@@ -1,41 +1,35 @@
 ---
 title: Binary Search Trees (BST)
-description: The fundamental non-linear data structure enabling O(log n) search, insertion, and deletion by enforcing a strict sorted property.
+description: A node-based tree structure that maintains sorted data in memory, allowing for fast O(log N) searches, insertions, and deletions.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Binary Search Trees (BST)">
 
-A **Binary Search Tree (BST)** is a node-based data structure where each node has at most two children (Left and Right). It enforces a strict mathematical property: 
-For any given node, all elements in its **Left Subtree** must be strictly less than the node's value, and all elements in its **Right Subtree** must be strictly greater than the node's value.
+An Array provides fast lookups but terrible $O(N)$ insertions. A Linked List provides fast insertions but terrible $O(N)$ lookups. 
+A **Binary Search Tree (BST)** bridges this gap, providing $O(\log N)$ time complexity for *both* lookups and insertions.
 
-## 1. The Core Operations
+## 1. The Golden Rule of a BST
 
-If the tree is perfectly balanced, a BST allows you to instantly discard half of the remaining data at every step (similar to Binary Search on an array).
+A BST is composed of Nodes. Every Node has a value, a Left pointer, and a Right pointer. 
+To qualify as a valid BST, the tree must strictly obey one mathematically invariant rule:
 
-<ComparisonTable 
-  headers={['Operation', 'Time Complexity (Average)', 'Time Complexity (Worst)']} 
-  rows={[
-    ['Search', 'O(log n)', 'O(n)'],
-    ['Insert', 'O(log n)', 'O(n)'],
-    ['Delete', 'O(log n)', 'O(n)']
-  ]} 
-/>
+For any given Node:
+1. **Every** value in its entire Left Subtree must be **less** than the Node's value.
+2. **Every** value in its entire Right Subtree must be **greater** than the Node's value.
 
-### In-Order Traversal
-Because of the BST property, performing an **In-Order Traversal** (Left -> Root -> Right) on a BST will naturally visit every single node in perfectly sorted, ascending order in exactly `O(n)` time.
+## 2. The $O(\log N)$ Search
 
-## 2. The Worst-Case Nightmare
-The Achilles' heel of a standard BST is that it has no self-balancing mechanism. 
-If you insert data that is already sorted (e.g., inserting 1, 2, 3, 4, 5 into a new BST), every new node is attached to the Right child. 
+If you are looking for the number 42 in a BST:
+1. You start at the Root Node (e.g., 50).
+2. Because 42 is less than 50, you know with absolute certainty that 42 cannot be on the right side of the tree. You move Left.
+3. You are now at Node 30. 42 is greater than 30, so you move Right.
+4. You instantly found 42.
 
-The BST violently degenerates into a **Linked List**. 
-Your `O(log n)` tree operations mathematically collapse into `O(n)`. Searching for "5" requires traversing every single node. 
+Every time you make a decision, you eliminate exactly half of the remaining tree from consideration. This halving mechanism is what provides the logarithmic $O(\log N)$ speed.
 
-<Callout icon="warning" title="The Balancing Solution">
-Because a standard BST is mathematically vulnerable to `O(n)` degeneration, it is almost never used in production software. Instead, engineers use **Self-Balancing BSTs** (like AVL Trees or Red-Black Trees) which detect when the tree is becoming lopsided and mathematically rotate the nodes to guarantee `O(log n)` worst-case performance.
+<Callout icon="warning" title="The Unbalanced Degeneration">
+  If you insert pre-sorted data (e.g., 1, 2, 3, 4, 5) into a naive BST, it will exclusively build down the right side. It degrades into a straight line (a Linked List), utterly destroying its efficiency and resulting in $O(N)$ lookups. In production environments, engineers never use naive BSTs; they use **Self-Balancing Trees** (like AVL Trees or Red-Black Trees) that automatically rotate their nodes to guarantee the tree never becomes lopsided.
 </Callout>
 
 </ConceptTemplate>

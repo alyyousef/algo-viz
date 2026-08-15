@@ -1,8 +1,31 @@
+---
+title: Function Calling (Tool Use)
+description: The critical capability allowing an LLM to reliably trigger external APIs, run code, or query databases to interact with the real world.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Function calling">
+<ConceptTemplate title="Function Calling (Tool Use)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standalone Large Language Model is trapped in a box. It cannot browse the internet, check the weather, book a flight, or query a live SQL database. It only knows what was in its training data.
+
+**Function Calling** (or Tool Use) bridges this gap. It allows the developer to hand the LLM a list of available tools (APIs) and empowers the LLM to intelligently decide when and how to use them.
+
+## 1. The Workflow
+
+1. **Provide the Tools**: The developer sends a prompt to the LLM, but also includes a JSON schema describing the available functions (e.g., `get_weather(location, unit)`).
+2. **The LLM Decides**: The user asks *"Do I need an umbrella in Tokyo today?"* The LLM realizes it doesn't know the live weather.
+3. **The Halt**: Instead of answering the user, the LLM outputs a specialized JSON object: `{"name": "get_weather", "arguments": {"location": "Tokyo", "unit": "celsius"}}`.
+4. **Execution**: The developer's backend server parses that JSON, physically runs the actual Weather API, and gets the result (e.g., "Raining").
+5. **The Final Answer**: The developer sends the API result back into the LLM's context window. The LLM reads it and finally generates English for the user: *"Yes, it is currently raining in Tokyo, so bring an umbrella."*
+
+## 2. Why is this revolutionary?
+
+Before native Function Calling, developers had to use aggressive Prompt Engineering (like ReAct) to beg the model to output parsable strings, which frequently failed. 
+
+Modern models (like GPT-4 and Claude 3.5 Sonnet) are explicitly **Fine-Tuned for Tool Use**. They have been rigorously trained to understand JSON schemas, flawlessly extract variables from user requests, and halt their generation perfectly when an external tool is required.
+
+<Callout icon="warning" title="Security Risks (Prompt Injection)">
+  Giving an LLM the ability to execute tools is highly dangerous if the tools have destructive power (like `delete_database_row()` or `send_email()`). A malicious user can execute a Prompt Injection attack, tricking the LLM into calling your internal APIs to delete data. Always keep a "Human in the Loop" for destructive functions.
+</Callout>
 
 </ConceptTemplate>

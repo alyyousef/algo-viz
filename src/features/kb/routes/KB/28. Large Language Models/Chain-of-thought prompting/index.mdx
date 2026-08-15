@@ -1,8 +1,28 @@
+---
+title: Chain-of-Thought Prompting
+description: A groundbreaking prompt engineering technique that forces an LLM to explicitly generate intermediate reasoning steps before arriving at a final answer, vastly improving performance on complex logic tasks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Chain-of-thought prompting">
+<ConceptTemplate title="Chain-of-Thought Prompting">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Large Language Models are essentially ultra-advanced autocomplete engines predicting the next word based on mathematical probability. If you ask a standard LLM a complex math word problem, it often hallucinates the final answer immediately, because it tries to predict the output in a single step without "thinking."
+
+**Chain-of-Thought (CoT)** prompting solves this by forcing the model to write out its internal reasoning step-by-step *before* generating the final answer.
+
+## 1. How It Works (The Mechanics)
+
+When an LLM generates text, every new word it writes is fed back into its Context Window to help it predict the *next* word. 
+If an LLM immediately outputs "The answer is 42," it has no contextual basis for that number. If the LLM instead outputs: *"First, John has 5 apples. He buys 3 more, so 5 + 3 = 8. Then he gives half away, so 8 / 2 = 4..."* 
+Because all of that intermediate math is now physically present in the Context Window, the LLM can use those generated tokens as a highly accurate launchpad to correctly predict the final answer.
+
+## 2. Zero-Shot vs Few-Shot CoT
+
+- **Zero-Shot CoT**: You simply append a magic phrase to the end of your prompt: *"Let's think step by step."* This simple trigger is often enough to shift the model's probabilistic weights toward generating a reasoned breakdown.
+- **Few-Shot CoT**: You provide the model with a few examples of questions paired with detailed, step-by-step reasoning blocks. This explicitly teaches the model the exact format and depth of logic you expect.
+
+<Callout icon="tip" title="System 1 vs System 2 Thinking">
+  Chain-of-Thought artificially mimics human "System 2" thinking (slow, deliberate, analytical reasoning) rather than "System 1" thinking (fast, instinctive reactions). Modern models like OpenAI's "o1" series have CoT hardcoded directly into their architecture, generating hidden reasoning tokens before they respond to the user.
+</Callout>
 
 </ConceptTemplate>

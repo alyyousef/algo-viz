@@ -1,29 +1,26 @@
 ---
 title: Rate Limiting
-description: "A technique used to control the amount of incoming traffic to a network or application to prevent abuse and ensure stability."
+description: A defensive architecture mechanism used to control the amount of incoming traffic to an API, preventing server exhaustion, DDoS attacks, and abuse.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 <ConceptTemplate title="Rate Limiting">
 
-If a single user (or a malicious bot) sends 10,000 requests per second to your login endpoint, your database will crash, taking the entire application offline for everyone. **Rate Limiting** prevents this by artificially capping the number of requests a user can make within a specific time window.
+If you expose a public API, a single malicious user (or a poorly written script) can send 100,000 requests per second, completely exhausting your server's CPU and crashing the database. 
 
-When a limit is exceeded, the server stops processing the request and returns an **HTTP 429 Too Many Requests** response.
+**Rate Limiting** is a defensive shield (usually deployed at the API Gateway level) that explicitly restricts how many requests a user can make in a given timeframe (e.g., "100 requests per minute per IP address"). If they exceed the limit, the server immediately drops the request and returns an **HTTP 429 Too Many Requests** error.
 
-## Common Algorithms
+## 1. The Algorithms
 
-<ComparisonTable 
-  headers={['Algorithm', 'How it works', 'Pros & Cons']} 
-  rows={[
-    ['Token Bucket', 'Tokens are added to a bucket at a fixed rate (e.g., 1 per second). Every request costs 1 token. If the bucket is empty, drop the request.', 'Pro: Allows sudden, brief bursts of traffic. Standard for most APIs (like AWS/Stripe).'],
-    ['Leaky Bucket', 'Requests are placed in a queue (the bucket) that leaks (processes) at a strict, constant rate.', 'Pro: Smooths out bursts, ensuring a perfectly stable load on backend servers.'],
-    ['Fixed Window Counter', 'Divides time into fixed windows (e.g., 1:00-1:01). Increments a counter. Resets at the start of the next minute.', 'Con: The "Burst at Edge" problem. A user can send 100 requests at 1:00:59, and 100 more at 1:01:01, crushing the server with 200 requests in 2 seconds.'],
-    ['Sliding Window Log', 'Keeps a timestamp of every single request in a Redis sorted set. Calculates exact rate based on current time minus 1 minute.', 'Pro: Perfectly accurate. Con: Consumes massive amounts of RAM to store all those timestamps.']
-  ]} 
-/>
+Engineers implement Rate Limiting using several standard mathematical algorithms, usually backed by an ultra-fast in-memory cache like **Redis**:
 
-## Implementation
-Rate limiting is rarely implemented inside the application code itself. It is almost always handled at the edge by the **API Gateway**, Load Balancer, or WAF (Web Application Firewall) (e.g., Cloudflare, Nginx, Kong), using Redis to share the rate limit counters across all edge servers.
+- **Token Bucket**: The most common algorithm (used by Amazon and Stripe). You are given a bucket with 10 tokens. Every request costs 1 token. A background process refills the bucket at a rate of 1 token per second. If the bucket is empty, you are rate-limited. It allows for short "bursts" of traffic.
+- **Leaky Bucket**: Requests enter the bucket at any speed, but they leak out of the bottom to the server at a strict, constant rate. This smooths out traffic spikes into a perfectly steady stream.
+- **Fixed Window**: The system counts requests starting exactly at the top of the minute (12:00:00 to 12:01:00). *Flaw:* A user can send 100 requests at 12:00:59, and 100 more at 12:01:01, effectively sending 200 requests in 2 seconds and crashing the server.
+
+## 2. Distributed Rate Limiting
+
+Rate limiting on a single server is easy (just keep a hash map in RAM). 
+In a distributed system with 50 API servers behind a Load Balancer, it becomes incredibly difficult. You cannot store the counts in local RAM, because Server 1 doesn't know how many requests Server 2 processed. You must use a centralized, atomic Redis cluster to track counts globally, which introduces latency.
 
 </ConceptTemplate>

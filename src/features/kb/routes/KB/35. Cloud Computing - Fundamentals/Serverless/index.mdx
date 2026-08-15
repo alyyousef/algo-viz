@@ -1,0 +1,30 @@
+---
+title: Serverless Computing
+description: An execution model where the cloud provider dynamically manages the allocation of machine resources, and customers are billed strictly for the exact milliseconds their code executes.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Serverless Computing (FaaS)">
+
+**Serverless** is a terrible name, because there are absolutely still servers involved. 
+However, from the developer's perspective, the servers no longer exist. You do not provision them, you do not manage them, and most importantly, **you do not pay for them when they are idle.**
+
+## 1. Function as a Service (FaaS)
+
+The core of Serverless is FaaS. Instead of deploying an entire monolithic application, you deploy a single, isolated function (e.g., a function that resizes an image).
+
+When a user uploads an image, the cloud provider instantly spins up a micro-container, executes your function, and destroys the container. 
+If 10,000 users upload images simultaneously, the provider spins up 10,000 containers in parallel. 
+If nobody uploads an image for a month, you pay exactly **$0.00**.
+
+## 2. The Cold Start Problem
+
+Because the provider destroys the server when it's idle, the next time someone triggers the function, the provider has to boot the container back up from scratch. This takes about 500 milliseconds and is known as a **Cold Start**. 
+For highly interactive web APIs, a 500ms delay on the first request can be unacceptable, requiring complex workarounds to keep the functions "warm".
+
+## 3. Serverless Databases
+
+The Serverless concept has expanded beyond compute. A traditional database (like AWS RDS) charges you $100/month just to keep the server spinning, even if you never query it. 
+A **Serverless Database** (like Amazon DynamoDB or Serverless Aurora) charges you based entirely on the number of Read/Write operations you perform, offering infinite scalability and zero idle costs.
+
+</ConceptTemplate>

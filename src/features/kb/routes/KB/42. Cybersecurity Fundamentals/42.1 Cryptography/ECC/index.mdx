@@ -1,43 +1,50 @@
 ---
-title: Elliptic-Curve Cryptography (ECC)
-description: An approach to public-key cryptography based on the algebraic structure of elliptic curves.
+title: ECC (Elliptic Curve Cryptography)
+description: The modern successor to RSA, providing vastly superior cryptographic security using significantly smaller key sizes, making it ideal for mobile devices and modern web servers.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Elliptic-Curve Cryptography (ECC)">
 
-Elliptic-Curve Cryptography (ECC) is a modern approach to public-key (asymmetric) cryptography. It provides the exact same level of security as older systems like RSA, but it uses vastly smaller key sizes, resulting in significantly faster computations and lower memory usage.
 
-<Callout icon="success" title="The Replacement for RSA">
-  For decades, the internet relied on RSA for secure connections. However, as computers got faster, RSA key sizes had to double and quadruple to remain secure (from 512-bit up to 4096-bit). This mathematical overhead became too slow for mobile devices and high-traffic web servers. ECC solved this performance crisis and is now the gold standard for modern TLS/HTTPS.
-</Callout>
+<ConceptTemplate title="ECC (Elliptic Curve Cryptography)">
 
-## The Mathematics of Curves
+For decades, the internet relied on **RSA** for public-key encryption. RSA derives its security from the mathematical difficulty of factoring massively large prime numbers. However, as computers got faster, RSA keys had to grow exponentially larger (from 1024-bit, to 2048-bit, to 4096-bit) to remain secure, eating up CPU power and bandwidth on mobile devices.
 
-While RSA relies on the difficulty of factoring massive prime numbers, ECC relies on the **Elliptic Curve Discrete Logarithm Problem (ECDLP)**.
+**Elliptic Curve Cryptography (ECC)** is the modern replacement. It derives its security from the algebraic structure of elliptic curves over finite fields, offering massive security with incredibly tiny key sizes.
 
-An elliptic curve is a specific type of mathematical graph, looking somewhat like a sideways bell curve. ECC relies on a strange geometric property of these curves:
-1. You pick a starting point on the curve.
-2. You draw a line through it, intersecting the curve at a new point, and reflect it across the axis.
-3. You repeat this "dot and reflect" process $n$ times (where $n$ is your Private Key).
-4. The final resting point on the graph is your Public Key.
+## 1. The Mathematics (The Point Addition Trapdoor)
 
-**The Trapdoor:** If you know the starting point, the curve equation, and $n$, calculating the final point is incredibly fast. However, if a hacker only knows the starting point and the final point, it is computationally impossible to figure out how many times ($n$) you bounced around the curve to get there.
+An Elliptic Curve is a symmetric, swooping mathematical graph defined by the equation $y^2 = x^3 + ax + b$.
 
-## Key Size Comparison
+ECC relies on a "Trapdoor Function" (easy to do in one direction, practically impossible to reverse).
+1. You pick a starting point on the curve (Point A).
+2. You draw a tangent line, see where it intersects the curve, and reflect it across the X-axis to find Point B. 
+3. You repeat this "bouncing" process $n$ times to land at a final Point Z.
 
-The math behind ECC is much harder to break than the factoring problem behind RSA. Therefore, an ECC key can be exponentially smaller while providing the exact same cryptographic strength.
+- **Private Key**: The number of bounces ($n$).
+- **Public Key**: The final coordinates (Point Z).
+
+If a hacker intercepts Point Z and Point A, it is mathematically infeasible for them to determine how many times ($n$) you bounced around the curve to get there. Unlike prime factorization, there is no known shortcut algorithm for the Elliptic Curve Discrete Logarithm Problem.
+
+## 2. The Size Advantage
+
+Because the math behind ECC is so much harder to crack than RSA's prime factorization, it requires vastly smaller keys to achieve the exact same level of security.
 
 <ComparisonTable 
-  headers={['Security Level (Symmetric Equivalent)', 'RSA Key Size', 'ECC Key Size', 'Size Ratio']}
+  headers={['Security Level (Symmetric Equivalent)', 'RSA Key Size', 'ECC Key Size']} 
   rows={[
-    ['80-bit (Legacy)', '1024-bit', '160-bit', '~ 1:6'],
-    ['112-bit (Standard)', '2048-bit', '224-bit', '~ 1:9'],
-    ['128-bit (Highly Secure)', '3072-bit', '256-bit', '~ 1:12'],
-    ['256-bit (Top Secret / Military)', '15360-bit (Unusable)', '512-bit', '~ 1:30']
-  ]}
+    ['112-bit (Minimum Secure)', '2048-bit', '224-bit'],
+    ['128-bit (Standard)', '3072-bit', '256-bit'],
+    ['192-bit (Top Secret)', '7680-bit', '384-bit'],
+    ['256-bit (Quantum-resistant symmetric)', '15360-bit', '521-bit']
+  ]} 
 />
 
-A 256-bit ECC key (often using the `secp256r1` curve) is the modern standard for securing websites, generating Bitcoin wallets, and signing secure messages on mobile devices.
+A 256-bit ECC key offers the same security as a massive 3072-bit RSA key. 
+This means ECC requires significantly less CPU power to generate, less battery drain on smartphones, and less network bandwidth to transmit during SSL/TLS handshakes.
 
-</TechnologyTemplate>
+<Callout icon="success" title="The Bitcoin Standard">
+  ECC is so efficient that it is the exclusive cryptographic foundation of Bitcoin and Ethereum. Every single cryptocurrency wallet address is mathematically derived from an Elliptic Curve public key using the **secp256k1** curve standard.
+</Callout>
+
+</ConceptTemplate>

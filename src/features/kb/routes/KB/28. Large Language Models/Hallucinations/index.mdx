@@ -1,36 +1,32 @@
 ---
 title: Hallucinations
-description: Phenomenon where AI models confidently generate false or nonsensical information.
+description: The phenomenon where an LLM confidently generates completely false, fabricated, or mathematically impossible information while presenting it as absolute fact.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Hallucinations">
+<ConceptTemplate title="Hallucinations">
 
-In the context of Large Language Models (LLMs), a hallucination occurs when the model generates text that is grammatically correct and sounds confident, but is factually incorrect, nonsensical, or ungrounded in the provided source material.
+The most dangerous flaw of Large Language Models is their propensity to **Hallucinate**. 
+Because an LLM is not a database of facts, but a probabilistic engine predicting the next statistically likely word, it does not actually "know" what is true. It only knows what sounds plausible.
 
-<Callout icon="warning" title="Not a Bug, A Feature">
-  Hallucinations are not a bug in the code; they are a fundamental feature of how generative AI works. LLMs are not databases looking up facts; they are probabilistic engines predicting the next most likely word. Sometimes, the most statistically likely sequence of words forms a factual lie.
+If you ask an LLM for a biography of a fake historical figure, it will not say "I don't know." It will confidently invent dates, battles, and fake book citations that sound perfectly academic.
+
+## 1. Why do they happen?
+
+- **Compression and Generalization**: An LLM compresses petabytes of internet text into billions of mathematical weights. Exact facts are blurred. The model generalizes patterns, meaning it might merge the attributes of two similar politicians into one fabricated event.
+- **Sycophancy**: Models are fine-tuned using RLHF to be "helpful" to the human. If a human asks a leading question (*"Why did the iPhone 4 have a holographic projector?"*), the model is heavily biased to agree with the premise and will confidently explain how the fake projector worked.
+- **Sparse Data**: If a topic is rarely mentioned in the training data, the model lacks the dense mathematical connections required to predict the right answer, so it defaults to generic, statistically safe (but factually wrong) vocabulary.
+
+## 2. Mitigation Strategies
+
+You cannot completely eliminate hallucinations in a pure LLM. You must build architectural guardrails around the model:
+
+1. **RAG (Retrieval-Augmented Generation)**: The absolute gold standard. You force the LLM to read a verified database document in its context window, and explicitly prompt it: *"Answer the user ONLY using the provided text. If the text does not contain the answer, output 'I do not know'."*
+2. **Temperature Control**: Setting the `temperature` parameter to $0.0$ removes all randomness from the word selection, forcing the model to pick the absolute highest-probability token every time, reducing creative fabrications.
+3. **Chain-of-Thought**: Forcing the model to write out its logic step-by-step prevents it from instantly jumping to a statistically likely, but logically impossible, conclusion.
+
+<Callout icon="error" title="The Danger of Confidence">
+  Unlike humans, who usually use tentative language when they are guessing ("I think it might be..."), LLMs are inherently designed to sound authoritative. A hallucination is dangerous specifically because the grammar, tone, and formatting are flawless, easily tricking humans into trusting the output.
 </Callout>
 
-## Why Hallucinations Happen
-
-1. **Training Data Gaps**: If the model was never trained on a specific niche topic, it will attempt to extrapolate based on similar words in its latent space, often resulting in plausible-sounding fiction.
-2. **Compression**: An LLM compresses terabytes of internet text into a few gigabytes of weights. Exact facts are lost, and only statistical relationships remain.
-3. **Sycophancy**: Models fine-tuned via RLHF (human feedback) are trained to be helpful and polite. They will often hallucinate to agree with a user's false premise rather than correct the user and risk a negative human rating.
-4. **Context Window Limitations**: If an prompt is too long, the model's attention mechanism may lose track of earlier constraints, causing it to drift off-topic and hallucinate.
-
-## Mitigation Strategies
-
-Because hallucinations cannot be 100% eliminated from the base architecture, engineers use external systems to bound the model's behavior.
-
-<ComparisonTable 
-  headers={['Strategy', 'Description']}
-  rows={[
-    ['RAG (Retrieval-Augmented Generation)', 'Providing the exact factual text in the prompt and strictly instructing the model: "Answer ONLY using the provided text."'],
-    ['Chain of Thought (CoT)', 'Forcing the model to write out its reasoning steps before providing an answer. This grounds the final token generation in the logic it just produced.'],
-    ['Temperature Control', 'Setting the API temperature parameter to 0.0 forces the model to always pick the most probable next token, reducing creative drift and hallucinations in factual tasks.'],
-    ['Self-Correction/Critique', 'Using a second LLM agent (or a second pass from the same model) to verify the output of the first model against a set of facts.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

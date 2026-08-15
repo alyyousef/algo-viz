@@ -1,41 +1,39 @@
 ---
 title: RSA (Rivest-Shamir-Adleman)
-description: The pioneering asymmetric encryption algorithm based on the mathematical impossibility of factoring massive prime numbers.
+description: The original and most widely deployed Public-Key cryptographic system, deriving its unbreakable security from the mathematical impossibility of factoring massively large prime numbers.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="RSA">
 
-Invented in 1977, **RSA** is the original and most famous Asymmetric (Public-Key) algorithm. It relies entirely on a specific mathematical asymmetry in number theory: **Prime Factorization**.
+<ConceptTemplate title="RSA (Rivest-Shamir-Adleman)">
 
-## 1. The Mathematical Foundation
-It is computationally trivial for a computer to multiply two massive prime numbers together (`p * q = n`). 
-However, if you are given only the massive 600-digit number `n`, there is no known efficient mathematical algorithm in existence to reverse-engineer which two primes were multiplied to create it. 
+Invented in 1977, **RSA** was the first practical implementation of Asymmetric (Public-Key) Cryptography. For over 40 years, it has been the absolute backbone of internet security, responsible for securing SSL/TLS certificates, PGP emails, and secure SSH connections.
 
-### Key Generation Process
-1. Mathematically generate two massive, random prime numbers, `p` and `q`.
-2. Calculate the modulus `n = p * q`. (This `n` forms the mathematical lock).
-3. Calculate Carmichael's totient function `λ(n)`.
-4. Choose an integer `e` (often 65537) that is coprime to `λ(n)`. 
-5. The **Public Key** is mathematically defined as `(n, e)`.
-6. Calculate the modular multiplicative inverse of `e` modulo `λ(n)` to find `d`. 
-7. The **Private Key** is mathematically defined as `(n, d)`.
+## 1. The Mathematics (Prime Factorization)
 
-## 2. Encryption and Decryption
-Once the keys are mathematically established, encryption is simply modular exponentiation.
+RSA is based on a mathematically elegant Trapdoor Function.
+It is extremely easy for a computer to take two massive prime numbers and multiply them together. It is practically impossible for a computer to take the massive resulting number and figure out which two prime numbers created it.
 
-- **Encrypting (using Public Key)**: `Ciphertext = (Message^e) mod n`
-- **Decrypting (using Private Key)**: `Message = (Ciphertext^d) mod n`
+1. **Key Generation**: 
+   - Pick two randomly generated, gigantic prime numbers (e.g., $p$ and $q$, each hundreds of digits long).
+   - Multiply them together to create the Modulus ($n = p \times q$). 
+   - Through Euler's Totient Function, calculate an exponent ($e$) for the Public Key, and an exponent ($d$) for the Private Key.
+2. **The Public Key**: The numbers $(n, e)$. Handed to the world.
+3. **The Private Key**: The numbers $(n, d)$. Kept strictly secret.
 
-## 3. The Downfall of RSA
-While mathematically beautiful, RSA is dying in modern systems for two reasons:
+Because the Private Key $d$ is mathematically derived directly from the secret primes $p$ and $q$, a hacker who only has the Public Key $n$ must successfully factor $n$ back into $p$ and $q$ to steal the private key. For a 2048-bit RSA key, this would take classical supercomputers trillions of years.
 
-1. **Massive Key Sizes**: To maintain mathematical security against modern GPUs, an RSA key must be at least **2048 bits** (preferably 4096 bits). These massive keys consume huge amounts of bandwidth during TLS handshakes.
-2. **Shor's Algorithm**: In 1994, Peter Shor published a quantum algorithm that mathematically solves prime factorization in polynomial time. Once a sufficiently large Quantum Computer is built, RSA is instantly and mathematically broken forever.
+## 2. How it Encrypts and Signs
 
-<Callout icon="tip" title="The Modern Replacement">
-Modern systems have overwhelmingly replaced RSA with **Elliptic Curve Cryptography (ECC)**. ECC relies on the mathematical impossibility of traversing points on a 2D elliptic curve. A 256-bit ECC key is mathematically as secure as a massive 3072-bit RSA key, making it exponentially faster for servers and mobile devices.
+RSA relies entirely on modular exponentiation.
+
+- **To Encrypt a message ($M$)**: $ \text{Ciphertext} = M^e \pmod n $
+- **To Decrypt the Ciphertext ($C$)**: $ \text{Message} = C^d \pmod n $
+
+The math is perfectly symmetrical. You can also use it in reverse for **Digital Signatures**: encrypt a document hash with the Private Key ($d$), and anyone in the world can verify it using the Public Key ($e$).
+
+<Callout icon="warning" title="The Death of RSA">
+  While foundational, RSA is slowly being phased out of modern systems in favor of **ECC (Elliptic Curve Cryptography)**. Because computers are getting faster at factoring primes, RSA keys have had to grow to massive, bloated sizes (2048-bit or 4096-bit) to remain secure, which slows down TLS handshakes. Furthermore, a future Quantum Computer running Shor's Algorithm will effortlessly crack RSA's prime factorization in hours.
 </Callout>
 
 </ConceptTemplate>

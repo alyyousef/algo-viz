@@ -1,0 +1,33 @@
+---
+title: Platform as a Service (PaaS)
+description: A cloud model that abstracts away the operating system and servers, providing a managed platform where developers only need to upload their application code.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Platform as a Service (PaaS)">
+
+While IaaS gives you a raw Virtual Machine and forces you to install the Operating System and configure the web server yourself, **PaaS (Platform as a Service)** abstracts the entire underlying infrastructure away.
+
+## 1. The Developer Experience
+
+In a PaaS model, you do not even know what operating system the server is running. You simply write your Node.js or Python code on your laptop, and upload it to the platform. 
+
+The PaaS provider automatically:
+1. Provisions the servers.
+2. Installs the correct version of Node.js.
+3. Sets up a Load Balancer.
+4. Secures the operating system with the latest patches.
+5. Automatically spins up more servers if traffic spikes.
+
+## 2. Examples of PaaS
+
+- **Heroku**: The pioneer of PaaS. Developers simply ran `git push heroku master`, and their code was instantly live on the internet.
+- **AWS Elastic Beanstalk**: Amazon's managed PaaS offering.
+- **Vercel / Netlify**: Modern PaaS platforms optimized specifically for Frontend frameworks like Next.js and React.
+
+## 3. The Trade-off
+
+PaaS drastically accelerates development speed because software engineers don't have to waste time acting as system administrators. 
+However, you lose control over the underlying environment. If your application strictly requires a specific, obscure C++ library to be installed at the OS level, the PaaS provider might not allow you to install it, forcing you to downgrade back to IaaS.
+
+</ConceptTemplate>

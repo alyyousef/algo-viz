@@ -2000,6 +2000,46 @@
     "matchText": "blockchain and web3 zk kb 55 blockchain and web3 zk"
   },
   {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/Cloud computing/index.mdx",
+    "title": "Cloud computing",
+    "breadcrumb": "Cloud Computing - Fundamentals",
+    "route": "/kb/35-cloud-computing-fundamentals/cloud-computing",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/cloud-computing",
+    "matchText": "cloud computing fundamentals cloud computing kb 35 cloud computing fundamentals cloud computing"
+  },
+  {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/High availability/index.mdx",
+    "title": "High availability",
+    "breadcrumb": "Cloud Computing - Fundamentals",
+    "route": "/kb/35-cloud-computing-fundamentals/high-availability",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/high-availability",
+    "matchText": "cloud computing fundamentals high availability kb 35 cloud computing fundamentals high availability"
+  },
+  {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/IaaS/index.mdx",
+    "title": "IaaS",
+    "breadcrumb": "Cloud Computing - Fundamentals",
+    "route": "/kb/35-cloud-computing-fundamentals/iaas",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/iaas",
+    "matchText": "cloud computing fundamentals iaas kb 35 cloud computing fundamentals iaas"
+  },
+  {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/PaaS/index.mdx",
+    "title": "PaaS",
+    "breadcrumb": "Cloud Computing - Fundamentals",
+    "route": "/kb/35-cloud-computing-fundamentals/paas",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/paas",
+    "matchText": "cloud computing fundamentals paas kb 35 cloud computing fundamentals paas"
+  },
+  {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/Serverless/index.mdx",
+    "title": "Serverless",
+    "breadcrumb": "Cloud Computing - Fundamentals",
+    "route": "/kb/35-cloud-computing-fundamentals/serverless",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/serverless",
+    "matchText": "cloud computing fundamentals serverless kb 35 cloud computing fundamentals serverless"
+  },
+  {
     "id": "./routes/KB/35. Cloud Computing - Fundamentals/35.1 Amazon Web Services/Amazon Web Services (AWS)/index.mdx",
     "title": "Amazon Web Services (AWS)",
     "breadcrumb": "Cloud Computing - Fundamentals / 1 Amazon Web Services",
@@ -2024,12 +2064,36 @@
     "matchText": "cloud computing fundamentals 1 amazon web services ec2 kb 35 cloud computing fundamentals 35 1 amazon web services ec2"
   },
   {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/35.1 Amazon Web Services/IAM/index.mdx",
+    "title": "IAM",
+    "breadcrumb": "Cloud Computing - Fundamentals / 1 Amazon Web Services",
+    "route": "/kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/iam",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/iam",
+    "matchText": "cloud computing fundamentals 1 amazon web services iam kb 35 cloud computing fundamentals 35 1 amazon web services iam"
+  },
+  {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/35.1 Amazon Web Services/Lambda/index.mdx",
+    "title": "Lambda",
+    "breadcrumb": "Cloud Computing - Fundamentals / 1 Amazon Web Services",
+    "route": "/kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/lambda",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/lambda",
+    "matchText": "cloud computing fundamentals 1 amazon web services lambda kb 35 cloud computing fundamentals 35 1 amazon web services lambda"
+  },
+  {
     "id": "./routes/KB/35. Cloud Computing - Fundamentals/35.1 Amazon Web Services/S3/index.mdx",
     "title": "S3",
     "breadcrumb": "Cloud Computing - Fundamentals / 1 Amazon Web Services",
     "route": "/kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/s3",
     "routeLabel": "kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/s3",
     "matchText": "cloud computing fundamentals 1 amazon web services s3 kb 35 cloud computing fundamentals 35 1 amazon web services s3"
+  },
+  {
+    "id": "./routes/KB/35. Cloud Computing - Fundamentals/35.1 Amazon Web Services/VPC/index.mdx",
+    "title": "VPC",
+    "breadcrumb": "Cloud Computing - Fundamentals / 1 Amazon Web Services",
+    "route": "/kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/vpc",
+    "routeLabel": "kb/35-cloud-computing-fundamentals/35-1-amazon-web-services/vpc",
+    "matchText": "cloud computing fundamentals 1 amazon web services vpc kb 35 cloud computing fundamentals 35 1 amazon web services vpc"
   },
   {
     "id": "./routes/KB/35. Cloud Computing — Fundamentals/Autoscaling/index.mdx",

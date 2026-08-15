@@ -1,48 +1,36 @@
 ---
 title: Hash Tables
-description: A data structure that implements an associative array abstract data type, mapping keys to values using a hash function.
+description: The ultimate key-value data structure, providing magical O(1) average time complexity for inserts, deletes, and lookups by passing keys through a mathematical hashing function.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hash Tables">
+<ConceptTemplate title="Hash Tables (Hash Maps / Dictionaries)">
 
-A **Hash Table** is one of the most important and frequently used data structures in computer science. It implements the associative array (dictionary) abstract data type, allowing you to map keys to values with extraordinary speed.
+If you want to find an employee's salary using their ID number, an Array forces you to check every single element ($O(N)$). If the data is sorted, Binary Search gets it down to $O(\log N)$. 
 
-<Callout icon="success" title="The Magic of O(1)">
-  In an array, finding a specific value by scanning takes $O(n)$ time. A Hash Table allows you to find, insert, or delete a value based on its key in **$O(1)$ average time**, meaning it is practically instantaneous regardless of whether the table has 10 items or 10 billion items.
+A **Hash Table** allows you to find the exact salary in **$O(1)$ constant time**, regardless of whether the company has 10 employees or 10 million. 
+
+## 1. How It Works (The Hash Function)
+
+A Hash Table is fundamentally just an array under the hood. The magic is how it decides *where* in the array to put the data.
+
+1. **The Key**: You want to store the key-value pair `("Alice", $90000)`.
+2. **The Hash Function**: You pass the string "Alice" into a mathematical Hash Function. It scrambles the letters and deterministically spits out a massive integer: `84729104`.
+3. **The Modulo**: You take that massive integer and use the modulo operator against the size of your array (e.g., `84729104 % 10 = 4`).
+4. **Storage**: The Hash Table instantly stores Alice's salary at Array Index 4.
+
+When you want to look up Alice later, you don't search the array. You just hash "Alice" again, the math instantly gives you Index 4, and you grab the data directly.
+
+## 2. Collisions
+
+What happens if the hash function calculates Index 4 for "Alice", but later calculates Index 4 for "Bob" as well? This is a **Collision**.
+
+You cannot put two items in the same array slot. Hash Tables handle collisions using two main strategies:
+- **Chaining**: Index 4 stops holding a raw value, and instead holds a Linked List. Both Alice and Bob are appended to the linked list at Index 4. 
+- **Open Addressing**: If Index 4 is taken, the algorithm simply probes forward (checking Index 5, then Index 6) until it finds an empty slot for Bob.
+
+<Callout icon="error" title="Worst-Case Complexity">
+  While Hash Tables are famous for $O(1)$ lookups, if you use a terrible hash function that puts *every single item* into the exact same array slot (a 100% collision rate), the Hash Table degrades into a single massive Linked List, resulting in a catastrophic $O(N)$ lookup time. 
 </Callout>
-
-## The Anatomy of a Hash Table
-
-A Hash Table consists of three primary components:
-1. **The Array (Buckets)**: The underlying data structure that stores the actual data in indexed slots.
-2. **The Hash Function**: A mathematical algorithm that takes a key (like a string "user_id") and scrambles it into an integer.
-3. **The Modulo Operation**: The integer is divided by the size of the array, and the remainder is used as the exact index where the value will be stored.
-
-`Index = hash_function(key) % array_size`
-
-## Hash Collisions
-
-Because the array has a limited size, and there are an infinite number of possible keys, it is a mathematical certainty (Pigeonhole Principle) that eventually, two different keys will hash to the exact same index. This is called a **Collision**.
-
-Hash Tables must implement a strategy to resolve collisions.
-
-### 1. Separate Chaining
-Instead of storing the value directly in the array slot, each array slot holds a pointer to a Linked List. If a collision occurs, the new key-value pair is simply appended to the end of the linked list at that slot.
-- **Pros**: Easy to implement; the table never physically fills up.
-- **Cons**: Cache performance is poor due to pointers; if many collisions happen, lookup degrades to $O(n)$ as you traverse the linked list.
-
-### 2. Open Addressing (Linear Probing)
-All values are stored directly within the array. If a collision occurs at Index 5, the algorithm simply looks at Index 6. If 6 is full, it looks at 7, and so on, until it finds an empty slot.
-- **Pros**: Excellent CPU cache performance (memory locality).
-- **Cons**: Subject to "clustering" (long continuous blocks of filled slots) which drastically slows down future insertions.
-
-## The Load Factor and Resizing
-
-The **Load Factor** is the ratio of stored items to the total size of the array ($n/k$). 
-
-If a hash table using Open Addressing has a capacity of 100 slots and you insert 95 items, every new insertion will cause massive collision chains. To prevent this, when the Load Factor reaches a certain threshold (usually 0.7 or 70%), the Hash Table will automatically **Resize**.
-
-It allocates a new array double the size of the old one, and completely re-hashes every single item from the old array into the new one. This is an expensive $O(n)$ operation, but because it happens infrequently, the *amortized* cost of insertion remains $O(1)$.
 
 </ConceptTemplate>

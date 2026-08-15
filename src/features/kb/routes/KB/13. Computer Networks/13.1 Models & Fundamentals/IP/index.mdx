@@ -1,40 +1,34 @@
 ---
-title: Internet Protocol (IP)
-description: The mathematical addressing system that binds the entire global internet, allowing packets to route across thousands of disconnected networks.
+title: IP (Internet Protocol)
+description: The fundamental network-layer protocol responsible for addressing and routing packets of data across vast, interconnected global networks.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Internet Protocol (IP)">
+<ConceptTemplate title="IP (Internet Protocol)">
 
-Operating at Layer 3 (Network), the **Internet Protocol (IP)** is the primary architectural foundation of the internet. Its sole mathematical purpose is to provide logical addressing and to route individual packets across a chaotic web of millions of independent routers.
+While MAC addresses allow two computers to talk on the exact same local switch, they cannot route traffic across the globe. 
+The **Internet Protocol (IP)** operates at Layer 3 of the OSI model. It provides the logical addressing system and the routing mechanics required to send a packet of data from a laptop in Tokyo, through 15 different routers, to a server in New York.
 
-## 1. Logical Addressing
-At Layer 2, devices communicate using hardcoded MAC addresses. However, a MAC address is mathematically flat; it provides absolutely zero geographical or topological information (like a Social Security Number). You cannot use MAC addresses to route traffic across the globe.
+## 1. Connectionless and Best-Effort
 
-IP Addresses are **Logical** and **Hierarchical** (like a Zip Code). They mathematically define exactly where in the global network topology a device resides.
+IP is inherently a **Connectionless** and **Unreliable** protocol.
+- **Connectionless**: It does not set up a dedicated circuit before sending data. It just blindly throws packets at the nearest router and hopes for the best.
+- **Best-Effort**: IP offers absolutely zero guarantees that a packet will arrive. If a router gets congested, it will mercilessly drop the IP packet into the void. IP does not care, and it will not attempt to resend it. (Reliability is entirely the responsibility of the Layer 4 protocol, TCP).
 
-## 2. IPv4 vs IPv6
+## 2. The Anatomy of an IP Packet
 
-The internet originally ran on **IPv4**, which uses 32-bit mathematical addresses (e.g., `192.168.1.1`). 
-A 32-bit space mathematically yields exactly `2^32` (4.3 billion) unique addresses. In the 1980s, this seemed infinite. By 2011, the world officially ran out of IPv4 addresses.
+When a piece of data is sent over the internet, it is wrapped in an IP Header. The most critical fields are:
+- **Source IP Address**: Who sent it.
+- **Destination IP Address**: Where it is going.
+- **TTL (Time to Live)**: A countdown timer. Every time the packet passes through a router, the router subtracts 1 from the TTL. If the TTL hits 0, the router destroys the packet. This prevents a misconfigured packet from looping around the internet infinitely and crashing the global network.
 
-To save the internet, engineers deployed **IPv6**, which uses massive 128-bit mathematical addresses (e.g., `2001:0db8:85a3:0000:0000:8a2e:0370:7334`). 
-A 128-bit space yields `2^128` addresses. This is a number so mathematically incomprehensible that we could assign an IP address to every single atom on the surface of the Earth, and still have enough addresses left for a trillion other planets.
+## 3. Fragmentation
 
-<ComparisonTable 
-  headers={['Feature', 'IPv4', 'IPv6']} 
-  rows={[
-    ['Address Length', '32 bits (4.3 billion addresses)', '128 bits (340 undecillion addresses)'],
-    ['Format', 'Dotted Decimal (192.168.1.1)', 'Hexadecimal (2001:db8::ff00:42:8329)'],
-    ['Header Size', 'Variable (20-60 bytes)', 'Fixed (40 bytes), heavily optimized for routers.'],
-    ['NAT (Network Address Translation)', 'Absolutely critical to share public IPs and delay exhaustion.', 'Mathematically obsolete. Every device gets a true Public IP.']
-  ]} 
-/>
+Different networks have different physical limits on how large a packet can be (the **MTU** - Maximum Transmission Unit). Standard Ethernet MTU is 1500 bytes. 
+If an IP packet is 4000 bytes long, the IP protocol will automatically slice it into three smaller "fragments," label them with sequence numbers, and send them individually. The receiving computer's IP layer will wait for all three fragments to arrive and seamlessly stitch them back together before handing the data up to the application.
 
-## 3. Best-Effort Delivery
-It is critical to understand that IP is a **Connectionless, Best-Effort** protocol.
-IP does absolutely nothing to guarantee that a packet actually arrives. It does not retransmit lost packets, and it does not care if packets arrive completely out of order. 
-It relies entirely on Layer 4 (TCP) to handle reliability and error-checking. The IP protocol's only job is to look at the destination IP address, look at its local routing table, and throw the packet out the correct physical port toward the next hop.
+<Callout icon="info" title="IPv4 vs IPv6">
+  The original standard, IPv4, only supported 4.3 billion addresses, which ran out entirely in the 2010s. The internet is currently undergoing a multi-decade, agonizingly slow migration to **IPv6**, which supports $3.4 \times 10^{38}$ addresses (enough to assign an IP address to every single atom on the surface of the Earth).
+</Callout>
 
 </ConceptTemplate>

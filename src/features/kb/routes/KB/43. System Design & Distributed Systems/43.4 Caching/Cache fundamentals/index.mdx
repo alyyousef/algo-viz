@@ -1,8 +1,27 @@
+---
+title: Cache Fundamentals
+description: The architectural strategy of storing expensive database queries in ultra-fast RAM to reduce latency and protect backend infrastructure from traffic spikes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cache fundamentals">
+<ConceptTemplate title="Cache Fundamentals">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Querying a relational database requires hitting the physical hard drive and performing complex mathematical `JOIN` operations. It is slow and expensive. 
+
+A **Cache** is a temporary storage layer composed entirely of ultra-fast RAM (like Redis or Memcached). By storing the results of expensive queries in RAM, the system can return data to the user in microseconds, completely bypassing the database.
+
+## 1. Cache Strategies
+
+How do you get data into the cache?
+- **Cache-Aside (Lazy Loading)**: The application asks the cache for a User Profile. If it's missing (a Cache Miss), the application hits the database, gets the profile, sends it to the user, and then saves it in the cache for the *next* time.
+- **Write-Through**: The application writes data directly to the cache, and the cache immediately writes it synchronously to the database. Slower write speeds, but guarantees the cache is never stale.
+- **Write-Back (Write-Behind)**: The application writes data only to the cache and instantly returns success. The cache asynchronously flushes the data to the database later. Extremely fast, but if the cache loses power, data is permanently lost.
+
+## 2. Cache Invalidation (The Hardest Problem)
+
+A famous computer science quote states: *"There are only two hard things in Computer Science: cache invalidation and naming things."*
+
+If a user updates their profile picture in the database, the cache still holds the old picture. You must explicitly tell the cache to delete (invalidate) the old data. If the invalidation logic fails, your application will serve stale, corrupted data to users indefinitely.
+Engineers mitigate this using **TTL (Time to Live)**, forcing the cache to automatically delete data after a certain timeframe (e.g., 5 minutes) as a safety net.
 
 </ConceptTemplate>

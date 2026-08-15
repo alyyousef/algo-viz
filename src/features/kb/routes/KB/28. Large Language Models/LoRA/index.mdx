@@ -1,8 +1,32 @@
+---
+title: LoRA (Low-Rank Adaptation)
+description: A revolutionary Parameter-Efficient Fine-Tuning (PEFT) technique that mathematically freezes a massive LLM and trains a tiny, lightweight adapter, democratizing AI training.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LoRA">
+<ConceptTemplate title="LoRA (Low-Rank Adaptation)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to fine-tune a 70 Billion parameter Llama 3 model to write like Shakespeare, the traditional method (Full Fine-Tuning) requires updating all 70 billion mathematical weights. This requires a massive cluster of expensive GPUs and terabytes of VRAM just to store the optimizer states.
+
+**LoRA (Low-Rank Adaptation)** is a mathematical breakthrough that allows you to fine-tune massive models on a single consumer-grade graphics card.
+
+## 1. The Mathematics of LoRA
+
+Instead of changing the original, massive matrices of the base model, LoRA introduces a clever mathematical bypass:
+
+1. **Freeze the Base Model**: The original 70B weights are completely locked. They are never updated. They require zero VRAM for gradients.
+2. **Inject the Adapter**: LoRA creates a brand new, extremely small matrix pathway alongside the frozen one.
+3. **Low-Rank Matrix Factorization**: A massive $10,000 \times 10,000$ matrix has 100 million parameters. LoRA mathematically decomposes this into two tiny matrices (e.g., $10,000 \times 8$ and $8 \times 10,000$), totaling only 160,000 parameters.
+4. **Train the Adapter**: During training, the GPU only calculates gradients and updates the weights for these 160,000 parameters.
+
+## 2. The Benefits of LoRA
+
+- **Extreme Hardware Efficiency**: You can fine-tune a 7B model on a single 16GB GPU (like an RTX 4080) instead of an $80,000 A100 server.
+- **Tiny File Sizes**: A fully fine-tuned 70B model requires a 140 GB file. A LoRA adapter file is often less than 100 Megabytes. 
+- **Modular Swapping**: Because the base model remains frozen and untouched, you can load the massive base model into RAM once, and instantly hot-swap tiny 100MB LoRA adapters on the fly depending on the user's request (e.g., swapping a "Coding LoRA" for a "Medical LoRA" in milliseconds).
+
+<Callout icon="tip" title="QLoRA">
+  **QLoRA (Quantized LoRA)** takes this efficiency one step further. It quantizes (crushes) the massive frozen base model down to 4-bit precision, drastically reducing the RAM required to hold it, while training a slightly higher-precision LoRA adapter on top of it. This is the absolute standard for home-brew AI training.
+</Callout>
 
 </ConceptTemplate>

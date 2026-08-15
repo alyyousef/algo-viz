@@ -1,37 +1,45 @@
 ---
 title: bcrypt
-description: A robust, adaptive password-hashing function designed to resist hardware brute-force attacks.
+description: The industry-standard, deliberately slow cryptographic hashing algorithm designed exclusively to safely store user passwords and defeat brute-force attacks.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="bcrypt">
 
-bcrypt is a password-hashing function designed in 1999 based on the Blowfish cipher. Despite its age, it remains one of the most widely recommended and utilized algorithms in the software industry for securely storing user passwords.
+<ConceptTemplate title="bcrypt">
 
-<Callout icon="success" title="The GPU Defense">
-  Standard hashing algorithms (like SHA-256) rely purely on CPU cycles. Hackers realized they could use Graphics Processing Units (GPUs), which contain thousands of cores, to guess passwords millions of times faster. bcrypt was explicitly designed to be **memory-bound**. It constantly requires random reads and writes to RAM, neutralizing the advantage of GPUs and custom ASICs.
+Standard hashing algorithms like **MD5**, **SHA-1**, and **SHA-256** were designed for speed. They can hash gigabytes of data per second. 
+When storing user passwords in a database, speed is a catastrophic vulnerability. A hacker who steals a database of SHA-256 password hashes can rent an array of GPUs and brute-force (guess) billions of passwords per second until they find the matches.
+
+**bcrypt** is a cryptographic hashing algorithm designed in 1999 specifically for password storage. Its primary defining feature is that it is **deliberately, computationally slow**.
+
+## 1. The Cost Factor (Work Factor)
+
+bcrypt relies on the Blowfish cipher and introduces a mathematical parameter called the **Cost Factor** (often denoted as a two-digit number, like `10` or `12`).
+
+The Cost Factor dictates how many iterations of the internal hashing loop are executed, scaling logarithmically ($2^{\text{cost}}$ iterations). 
+- A cost of 10 requires $2^{10}$ (1,024) iterations.
+- A cost of 12 requires $2^{12}$ (4,096) iterations, taking 4 times longer.
+
+<Callout icon="tip" title="Future-Proofing">
+  As hardware gets faster (Moore's Law), bcrypt remains secure because developers can simply increment the Cost Factor in their code. If GPUs become twice as fast next year, you increase the cost factor by 1, doubling the mathematical work required, perfectly neutralizing the hardware upgrade.
 </Callout>
 
-## Anatomy of a bcrypt Hash
+## 2. Built-in Salting
 
-A bcrypt output string isn't just a raw hash; it is a self-contained data structure containing all the metadata required to verify the password later. It always starts with `$2a$`, `$2b$`, or `$2y$`.
+A fatal flaw of early password storage was the failure to use a **Salt** (random data appended to a password before hashing). Without salts, two users with the password `password123` would have the exact same database hash, and hackers could use pre-computed Rainbow Tables to crack them instantly.
 
-Example bcrypt string:
-`$2b$12$w3d4C.D/z4E6J8K0L2M4N.abc123DEF456ghi789JKL012mno345p`
+bcrypt inherently forces the use of salts. The algorithm automatically generates a cryptographically secure 128-bit salt and bakes it directly into the final output string.
 
-Let's break this 60-character string down into its 4 components:
+## 3. Anatomy of a bcrypt Hash
 
-1. **Algorithm Identifier (`$2b$`)**: Tells the system this is a bcrypt hash (specifically revision 'b').
-2. **Work Factor / Cost (`12`)**: The computational cost parameter. The math is run $2^{12}$ (4,096) times. Every time you increment this number by 1, the hashing time doubles.
-3. **The Salt (`w3d4C.D/z4E6J8K0L2M4N.`)**: The next 22 characters are the 128-bit cryptographically secure random salt that bcrypt automatically generated.
-4. **The Hash (`abc123DEF456ghi789JKL012mno345p`)**: The final 31 characters are the actual computed hash output.
+A standard bcrypt hash looks like this:
+`$2b$12$eImiTXuWVxfM37uY4JANjQ==.xyzABC1234567890qwertyuiopasdfg`
 
-## Adaptive Security (Moore's Law)
+- **`$2b$`**: The algorithm version identifier.
+- **`12$`**: The Cost Factor (2^12 iterations).
+- **`eImiTXuWVxfM37uY4JANjQ==`**: The 22-character randomly generated Salt.
+- **`.xyzABC...`**: The actual 31-character hashed password output.
 
-The genius of bcrypt is the **Cost parameter**. 
+Because the algorithm version, cost, and salt are all stored in plain text inside the string, the authentication server has all the information it needs to re-hash the user's login attempt and compare the results, without needing a separate database column for the salt.
 
-In 2005, a cost of `08` might have taken a server 200 milliseconds to compute. By 2015, faster CPUs could compute a cost of `08` in 10 milliseconds, making brute-forcing easier. 
-
-Because bcrypt is adaptive, administrators can simply increase the cost to `12` in their code. Now, new passwords will take 200 milliseconds on the new hardware. The algorithm scales perfectly with Moore's Law without requiring a fundamental rewrite of the cryptography.
-
-</TechnologyTemplate>
+</ConceptTemplate>

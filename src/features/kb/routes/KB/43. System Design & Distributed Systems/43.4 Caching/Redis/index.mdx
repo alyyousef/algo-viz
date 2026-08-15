@@ -1,29 +1,32 @@
 ---
 title: Redis
-description: An open-source, in-memory data structure store, used as a database, cache, and message broker.
+description: The world's fastest in-memory key-value data store, used universally for caching, rate limiting, and real-time leaderboards.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Redis (Remote Dictionary Server)">
+<ConceptTemplate title="Redis (Remote Dictionary Server)">
 
-Redis is an open-source (BSD licensed), in-memory data structure store, used as a database, cache, and message broker. It supports data structures such as strings, hashes, lists, sets, sorted sets with range queries, bitmaps, hyperloglogs, geospatial indexes, and streams.
+Redis is an open-source, in-memory, NoSQL key-value store. Because it bypasses the hard drive and stores everything exclusively in RAM, it is capable of performing millions of read and write operations per second with sub-millisecond latency.
 
-<Callout icon="info" title="In-Memory Speed">
-  Because Redis stores all data directly in RAM, it responds to queries in sub-milliseconds. It is commonly used as a caching layer in front of a slow SQL database to store highly accessed data (like user session tokens or top 10 leaderboards).
+It is universally deployed in almost every modern system design architecture.
+
+## 1. More Than Just Strings
+
+While Memcached can only store simple strings, Redis is famous for supporting advanced native data structures:
+- **Strings**: Storing JSON blobs or counting page views (using atomic `INCR` commands).
+- **Lists**: Implementing basic queues or showing the 10 most recent comments.
+- **Sets**: Ensuring uniqueness (e.g., storing the IP addresses of users who already voted in a poll).
+- **Sorted Sets**: The holy grail of Redis. It automatically keeps data sorted by a numerical score. Used to build real-time global gaming leaderboards in $O(\log N)$ time.
+
+## 2. Single-Threaded Event Loop
+
+Redis is notoriously **single-threaded**. It processes every single command sequentially, one at a time. 
+While this sounds slow, because RAM access is so incredibly fast, a single thread can process 100,000+ commands per second. 
+
+The massive advantage of being single-threaded is that Redis commands are **Atomic**. If two web servers simultaneously send an `INCR` command to increase a view counter, Redis guarantees they will not overwrite each other (no race conditions). This makes Redis the perfect engine for distributed locks and rate limiters.
+
+<Callout icon="warning" title="Data Persistence">
+  Because Redis lives in RAM, if the server loses power, all data is instantly annihilated. While Redis offers persistence features (RDB snapshots to disk, or AOF append-only logs), they degrade performance. Redis is primarily used as an ephemeral cache, not a primary source of truth.
 </Callout>
 
-## Data Structures
-
-Redis is not just a simple string Key-Value store; it supports complex structures:
-
-<ComparisonTable 
-  headers={['Structure', 'Use Case']}
-  rows={[
-    ['Strings', 'Caching raw JSON payloads, incrementing view counters.'],
-    ['Lists', 'A queue system, storing a timeline of recent events.'],
-    ['Hashes', 'Storing object data (e.g., a User object with `name`, `email`, `age` fields).'],
-    ['Sorted Sets', 'Automatically sorting data by a score. Perfect for gaming Leaderboards or Priority Queues.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

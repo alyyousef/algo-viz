@@ -1,43 +1,32 @@
 ---
 title: Fine-Tuning
-description: The process of taking a pre-trained model and training it further on a smaller, domain-specific dataset.
+description: The process of taking a massive, pre-trained base model and updating its internal weights on a highly specific, curated dataset to specialize its behavior.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Fine-Tuning">
+<ConceptTemplate title="Fine-Tuning">
 
-Fine-Tuning is the process of taking a large, pre-trained base model (which has already learned the statistical structure of language and general facts) and training it further on a smaller, carefully curated dataset to specialize its behavior, tone, or domain knowledge.
+Training a foundational Large Language Model from scratch (like GPT-4 or Llama 3) requires tens of thousands of GPUs running for months, costing hundreds of millions of dollars. The resulting "Base Model" is highly intelligent but acts like an unruly autocomplete engine; it just wants to predict the next word of internet text.
 
-<Callout icon="info" title="Pre-training vs Fine-tuning">
-  **Pre-training** takes months, millions of dollars, and trillions of words to teach a model *how to speak*. **Fine-tuning** takes hours, a few hundred dollars, and a few thousand examples to teach the model *what you want it to say*.
+**Fine-Tuning** is the much cheaper, secondary process of taking that pre-trained model and running a smaller, highly controlled training pass over it to teach it a specific skill or format.
+
+## 1. Why Fine-Tune?
+
+You do **not** fine-tune a model to teach it new facts (that is what RAG is for, as fine-tuning is prone to hallucinations and cannot be easily updated). You fine-tune a model to teach it a **behavior, tone, or format**.
+
+- **Format Compliance**: Teaching the model to strictly output perfectly formatted JSON for an API, rather than chatty English.
+- **Tone/Persona**: Teaching a customer service bot to adopt the exact speaking style and brevity of a specific brand.
+- **Domain Specialization**: Teaching a medical AI the nuanced structural patterns of radiology reports.
+
+## 2. Instruction Tuning (The Chatbot Transformation)
+
+The most important type of fine-tuning is **Instruction Tuning**. 
+A Base Model fed the prompt *"What is the capital of France?"* might autocomplete it with *"What is the capital of Spain?"* because it thinks it is completing a list of trivia questions from a website.
+
+By fine-tuning the model on tens of thousands of specific `Prompt -> Ideal Response` pairs, the model's weights shift. It learns to stop autocompleting documents and instead adopt the persona of a helpful AI assistant that answers instructions directly.
+
+<Callout icon="success" title="PEFT and LoRA">
+  Historically, fine-tuning required updating all 70 billion weights of a model (Full Fine-Tuning), which required massive GPU clusters. Today, developers use **LoRA (Low-Rank Adaptation)**, which freezes the base model and only trains a tiny, lightweight "adapter" of weights. You can fine-tune a massive Llama model on a single consumer GPU in a few hours using LoRA.
 </Callout>
 
-## Why Fine-Tune?
-
-While Prompt Engineering and RAG are effective, they consume valuable tokens in the context window and can be forgotten over long conversations. Fine-tuning bakes the desired behavior directly into the model's weights.
-
-- **Tone and Persona**: Training a model to always answer like a pirate, or to adhere strictly to corporate brand guidelines.
-- **Domain Specialization**: Teaching a model complex medical terminology or proprietary internal coding syntax that wasn't in its public training data.
-- **Structured Output**: Forcing a model to reliably output perfect JSON or SQL without needing a massive prompt every time.
-
-## Types of Fine-Tuning
-
-### 1. Instruction Tuning (SFT)
-Supervised Fine-Tuning (SFT) transforms a "base model" (which just autocomplete text) into an "instruct model" (which acts like a helpful assistant). It is trained on thousands of prompt-response pairs so it learns to follow instructions rather than just continuing the sentence.
-
-### 2. RLHF (Reinforcement Learning from Human Feedback)
-After SFT, models often undergo RLHF. Humans rate the model's outputs, and a reward model is trained to predict human preference. The LLM is then fine-tuned via reinforcement learning (using algorithms like PPO) to maximize this reward, making it safer, more helpful, and less toxic.
-
-## Parameter-Efficient Fine-Tuning (PEFT)
-
-Full fine-tuning requires updating billions of weights, which requires massive VRAM (multiple high-end GPUs). PEFT techniques solve this by freezing the original model weights and only training a tiny number of new parameters.
-
-<ComparisonTable 
-  headers={['Technique', 'Description']}
-  rows={[
-    ['LoRA (Low-Rank Adaptation)', 'Injects small, trainable rank-decomposition matrices into the transformer layers. Reduces trainable parameters by 99% while maintaining near-full performance.'],
-    ['QLoRA', 'Combines LoRA with model quantization (e.g., 4-bit precision). Allows fine-tuning of massive models (like a 70B Llama) on a single consumer GPU.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

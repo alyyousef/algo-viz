@@ -1,46 +1,44 @@
 ---
 title: Diffie-Hellman Key Exchange
-description: A method of securely exchanging cryptographic keys over a public channel.
+description: A groundbreaking mathematical protocol allowing two parties to establish a shared secret over an insecure channel without ever transmitting the secret itself.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Diffie-Hellman Key Exchange">
 
-The Diffie-Hellman (DH) key exchange was the first published public-key algorithm (invented by Whitfield Diffie and Martin Hellman in 1976). It solved a problem that had plagued cryptography for millennia: **How do two people, who have never met, agree on a secret key over a public network where everyone is listening?**
+<ConceptTemplate title="Diffie-Hellman Key Exchange">
 
-<Callout icon="success" title="The Paint Mixing Analogy">
-  Imagine Alice and Bob want to agree on a secret color.
-  1. They agree publicly on a common paint color (Yellow).
-  2. They each choose a secret color (Alice chooses Red, Bob chooses Blue). They never reveal this to anyone.
-  3. They mix their secret color with the public color. (Alice gets Orange. Bob gets Green).
-  4. They exchange their mixed colors over the public internet. (A hacker intercepts Orange and Green, but un-mixing paint is practically impossible).
-  5. Alice adds her secret Red to Bob's Green. Bob adds his secret Blue to Alice's Orange.
-  6. **They both arrive at the exact same final color: Brown.** They now have a shared secret key.
+Before 1976, if Alice and Bob wanted to encrypt their communications using a symmetric key (like AES), they had to physically meet in a dark alley to hand off a briefcase containing the key. If they sent it over the wire, a spy could intercept it.
+
+The **Diffie-Hellman Key Exchange (DH)** is a mathematical miracle. It allows Alice and Bob to shout numbers at each other across a crowded, wiretapped room, and through modular arithmetic, both arrive at the exact same secret number, while the spy listening to every word learns absolutely nothing.
+
+## 1. The Paint Mixing Analogy
+
+The easiest way to understand the math is through mixing paint:
+1. Alice and Bob agree on a **Public Common Paint Color** (Yellow). The Spy also sees Yellow.
+2. Alice picks a **Secret Color** (Red). Bob picks a **Secret Color** (Blue). They never reveal these.
+3. Alice mixes her Red with the public Yellow, creating **Orange**.
+4. Bob mixes his Blue with the public Yellow, creating **Green**.
+5. Alice and Bob exchange their mixed colors in plain sight. The Spy intercepts Orange and Green. 
+6. Alice takes Bob's Green and adds her secret Red. (Result: **Brown**).
+7. Bob takes Alice's Orange and adds his secret Blue. (Result: **Brown**).
+
+Alice and Bob now both share the secret color **Brown**. The Spy has Orange, Green, and Yellow, but it is chemically impossible to "unmix" paint to discover the original secret colors. The Spy cannot create Brown.
+
+## 2. The Real Mathematics (Modular Arithmetic)
+
+Instead of paint, Diffie-Hellman uses prime numbers and the **Discrete Logarithm Problem**.
+It relies on the mathematical fact that $ (g^a)^b \pmod p = (g^b)^a \pmod p $.
+
+1. Alice and Bob publicly agree on a prime modulus $p$ and a generator base $g$.
+2. Alice selects a secret integer $a$. She computes $A = g^a \pmod p$ and sends $A$ to Bob.
+3. Bob selects a secret integer $b$. He computes $B = g^b \pmod p$ and sends $B$ to Alice.
+4. Alice computes $S = B^a \pmod p$.
+5. Bob computes $S = A^b \pmod p$.
+
+Both Alice and Bob now possess the exact same shared secret $S$. The Spy saw $p$, $g$, $A$, and $B$, but without knowing $a$ or $b$, calculating $S$ requires solving the discrete logarithm, which takes modern supercomputers billions of years.
+
+<Callout icon="warning" title="The Man-in-the-Middle Flaw">
+  Diffie-Hellman provides perfect secrecy against eavesdroppers, but it provides **zero authentication**. A hacker can intercept Alice's message, pretend to be Bob, and establish a shared key with Alice, while simultaneously establishing a second key with Bob. This is why modern TLS pairs Diffie-Hellman with **RSA or ECDSA Digital Signatures** to cryptographically prove the identities of the parties before exchanging keys.
 </Callout>
 
-## The Mathematics (Discrete Logarithms)
-
-Instead of mixing paint, Diffie-Hellman mixes massive prime numbers using modular arithmetic. 
-The system relies on the **Discrete Logarithm Problem**: it is computationally simple to calculate $g^x \pmod{p}$, but if you are given the result, it is computationally impossible to figure out what $x$ was.
-
-### The Protocol Steps:
-1. **Public Agreement**: Alice and Bob publicly agree on a prime number ($p$) and a generator base ($g$). The hacker knows $p$ and $g$.
-2. **Private Values**: Alice chooses a secret integer ($a$). Bob chooses a secret integer ($b$).
-3. **Public Mixing**: 
-   - Alice calculates $A = g^a \pmod{p}$ and sends $A$ to Bob.
-   - Bob calculates $B = g^b \pmod{p}$ and sends $B$ to Alice.
-4. **Shared Secret**:
-   - Alice takes Bob's $B$ and calculates: $Secret = B^a \pmod{p}$
-   - Bob takes Alice's $A$ and calculates: $Secret = A^b \pmod{p}$
-
-Because of the associative properties of exponents, $(g^a)^b$ is exactly the same as $(g^b)^a$. They both independently calculate the exact same secret number, without ever transmitting it across the network.
-
-## The Flaw: Man-in-the-Middle
-
-While Diffie-Hellman brilliantly solves key exchange, it provides **zero authentication**. 
-
-If a hacker intercepts the connection, they can intercept Alice's public mix, reply with their own mix pretending to be Bob, and establish a shared secret with Alice. They do the same with Bob, establishing a second shared secret. The hacker now secretly decrypts, reads, and re-encrypts all traffic passing between them.
-
-To solve this, DH is almost always paired with Digital Signatures (like RSA or ECDSA) to authenticate the identities of the parties before exchanging the DH parameters.
-
-</TechnologyTemplate>
+</ConceptTemplate>
