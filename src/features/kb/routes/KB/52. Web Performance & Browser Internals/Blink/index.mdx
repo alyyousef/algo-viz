@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Blink
+description: The rendering engine used by Chromium.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Blink">
+<TechnologyTemplate 
+  title="Blink"
+  subtitle="The Chromium rendering heart"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Chromium_Logo.svg/512px-Chromium_Logo.svg.png"
+  description="Blink is the rendering engine developed by Google as part of the Chromium project. It mathematically parses HTML/CSS and calculates layout."
+  yearCreated={2013}
+  creator="Google"
+  isOpenSource={true}
+  websiteUrl="https://www.chromium.org/blink"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the early days of Chrome, Google actually used Apple's WebKit engine. However, as Chrome's multi-process architecture became mathematically complex, Google forked WebKit in 2013 to create **Blink**.
 
-</ConceptTemplate>
+<Callout icon="success" title="Multi-Process Architecture">
+  Blink's greatest architectural advantage is how it physically isolates tabs. 
+  
+  If you open 10 tabs in Chrome, Blink mathematically spawns 10 separate OS-level rendering processes. If an infinite CSS animation crashes Tab 1, it is biologically impossible for it to crash Tab 2, ensuring unparalleled browser stability.
+</Callout>
+
+</TechnologyTemplate>

@@ -1,8 +1,17 @@
+---
+title: Routing algorithms
+description: Algorithms used to find optimal paths through a network of roads or other transportation infrastructure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Routing algorithms">
+<ConceptTemplate title="Routing Algorithms">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When Google Maps mathematically plots your drive from New York to Los Angeles, it executes a **Routing Algorithm**.
+
+<Callout icon="info" title="A* Search on the Highway">
+  The Earth's road network is mathematically represented as a massive Graph (Intersections are Nodes, Roads are Edges). 
+  
+  Dijkstra's Algorithm is biologically too slow to search a graph of 100 million roads. Modern GIS uses **A* (A-Star) Search** combined with Hierarchical algorithms (like Contraction Hierarchies). The math heavily penalizes side-streets and prioritizes highways, allowing the computer to mathematically guarantee the fastest biological route across an entire continent in under 50 milliseconds.
+</Callout>
 
 </ConceptTemplate>

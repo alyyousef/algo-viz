@@ -1,8 +1,14 @@
+---
+title: Reranking
+description: The final stage of a recommendation system, applying business logic and diversity constraints to the mathematically ranked list before displaying it to the user.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reranking">
+<ConceptTemplate title="Reranking (Filtering)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Ranking stage is mathematically pure—it only cares about maximizing your click probability. However, this leads to a biological disaster: the top 10 videos might all be mathematically identical (e.g., 10 different videos of the exact same Minecraft gameplay).
+
+**Reranking** applies human biological business logic at the very end.
+It mathematically forces diversity (ensuring no more than 2 videos from the same creator), removes videos you biologically already watched, injects sponsored ads into specific slots, and filters out clickbait or mathematically flagged toxic content.
 
 </ConceptTemplate>

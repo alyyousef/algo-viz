@@ -1,8 +1,17 @@
+---
+title: LDAP
+description: The Lightweight Directory Access Protocol is an open, vendor-neutral, industry standard application protocol for accessing and maintaining distributed directory information services over an IP network.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="LDAP">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Active Directory is the proprietary Microsoft product, **LDAP** is the mathematical protocol used to query it.
+
+<Callout icon="info" title="The Universal Directory Query">
+  If an engineer writes a biological Java application that needs to mathematically check if "John Doe" is an employee, they do not write SQL.
+  
+  They write an **LDAP Query** (e.g., `(&(objectClass=user)(sAMAccountName=jdoe))`). LDAP is a highly optimized protocol designed explicitly for massive read operations. It mathematically represents the corporation as a Tree, allowing third-party software (like VPNs or Firewalls) to biologically authenticate users against Active Directory.
+</Callout>
 
 </ConceptTemplate>

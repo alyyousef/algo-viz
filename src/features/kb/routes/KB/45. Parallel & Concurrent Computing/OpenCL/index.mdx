@@ -1,8 +1,34 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: OpenCL
+description: An open standard for cross-platform, parallel programming of diverse processors found in personal computers, servers, mobile devices and embedded platforms.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="OpenCL">
+<TechnologyTemplate 
+  title="OpenCL"
+  subtitle="The open alternative to CUDA"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/OpenCL_logo.svg/512px-OpenCL_logo.svg.png"
+  description="Open Computing Language (OpenCL) is an open, royalty-free standard maintained by the Khronos Group. It allows developers to write parallel code that can execute on CPUs, GPUs (AMD, NVIDIA, Intel), DSPs, and even FPGAs."
+  yearCreated={2009}
+  creator="Khronos Group (originally Apple)"
+  isOpenSource={true}
+  websiteUrl="https://www.khronos.org/opencl/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If CUDA is the "Apple iOS" of parallel computing (highly polished but strictly locked to one company's hardware), **OpenCL** is the "Android" of parallel computing.
 
-</ConceptTemplate>
+OpenCL was designed to be mathematically agnostic. An OpenCL Kernel written in C can be compiled and executed on an AMD graphics card, an Intel CPU, or a mobile ARM processor, completely unmodified.
+
+<Callout icon="warning" title="The Ecosystem Loss">
+  Despite being the open standard, OpenCL largely lost the AI war to CUDA. Because OpenCL had to support a massive variety of hardware architectures, its API was mathematically much more verbose, difficult to write, and often less optimized for specific GPU silicon compared to NVIDIA's laser-focused CUDA compiler.
+</Callout>
+
+## The Mathematics of Portability
+
+To achieve extreme portability, OpenCL mathematically abstracts the hardware into:
+1. **Host:** The main CPU.
+2. **Compute Devices:** The GPUs or DSPs.
+3. **Compute Units:** Cores within a device.
+4. **Processing Elements:** The individual mathematical ALUs executing the threads (called "Work-Items" in OpenCL).
+
+</TechnologyTemplate>

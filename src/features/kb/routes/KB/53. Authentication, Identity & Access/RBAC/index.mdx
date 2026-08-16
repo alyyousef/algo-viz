@@ -1,36 +1,19 @@
 ---
-title: Role-Based Access Control (RBAC)
-description: A security paradigm that restricts system access based on the predefined roles assigned to individual users within an organization.
+title: RBAC (Role-Based Access Control)
+description: A policy-neutral access-control mechanism defined around roles and privileges.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Role-Based Access Control (RBAC)">
 
-Once a user is Authenticated (we know who they are), we must determine what they are Authorized to do. 
-The most widely adopted authorization architecture in software engineering is **Role-Based Access Control (RBAC)**.
+Once a user is Authenticated (we know who they are), we must mathematically calculate their **Authorization** (what are they allowed to do?).
 
-## 1. The Matrix
-In a naive system, you might assign permissions directly to users (e.g., "Give User John permission to delete databases"). If John moves to a new team, you have to manually audit and remove 50 specific permissions. This scales terribly.
+**RBAC** is the industry standard for mapping permissions.
 
-In RBAC, you introduce an intermediate abstraction layer: **The Role**.
-1. **Permissions** are assigned to **Roles** (e.g., The `DBA_Role` has the `delete_db` permission).
-2. **Users** are assigned to **Roles** (e.g., John is assigned the `DBA_Role`).
-
-If John moves to Marketing, you simply revoke the `DBA_Role` and grant the `Marketing_Role`.
-
-## 2. Principle of Least Privilege
-RBAC is heavily designed around the Principle of Least Privilege. Users should only be assigned the absolute minimum roles necessary to perform their daily job functions. 
-A common pattern is having a "Base User" role with read-only access, and temporarily escalating to an "Admin" role only when executing dangerous operations.
-
-## 3. RBAC vs ABAC
-While RBAC is industry standard, it lacks granular context. 
-If you need a rule like: *"Doctors can only view patient records IF the patient is assigned to them AND it is during hospital working hours,"* RBAC fails completely (you would need thousands of micro-roles).
-
-For this, architects graduate to **Attribute-Based Access Control (ABAC)**, which evaluates boolean logic policies dynamically based on User Attributes, Resource Attributes, and Environmental context (like IP address or Time of day).
-
-<Callout icon="tip" title="JWT Implementation">
-In modern microservices, the user's RBAC roles are often embedded directly inside the JWT Payload (e.g., `"roles": ["editor", "admin"]`). The backend API gateway simply decodes the JWT, checks if `"admin"` exists in the array, and either allows the request or throws a `403 Forbidden` error.
+<Callout icon="info" title="The Role Abstraction">
+  Instead of mathematically assigning 50 individual permissions to Alice (e.g., `can_read_db`, `can_delete_user`), you create a **Role** called `Admin`. 
+  
+  You assign the 50 permissions to the `Admin` role. Then, you biologically assign Alice the role of `Admin`. If Alice leaves the company, you just remove her from the role, instantly revoking all 50 permissions. It mathematically prevents security oversights by utilizing group theory.
 </Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,30 @@
+---
+title: FedRAMP (Federal Risk and Authorization Management Program)
+description: The incredibly rigorous, standardized approach to security assessment required for cloud providers selling to the US Federal Government.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="FedRAMP">
+<ConceptTemplate title="FedRAMP (Federal Risk and Authorization Management Program)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a startup builds an amazing cloud application and wants to sell it to the Pentagon, the Department of Energy, or the IRS, they cannot simply sign a contract. The software must first achieve **FedRAMP Authorization**.
+
+FedRAMP is a government-wide program that provides a standardized approach to security assessment, authorization, and continuous monitoring for cloud products.
+
+<Callout icon="warning" title="The Highest Barrier to Entry">
+  FedRAMP is notoriously the most difficult, expensive, and time-consuming compliance framework in the world. Achieving High Authorization can take a company 12-24 months and cost millions of dollars in engineering and auditing fees, but it unlocks access to billions of dollars in federal contracts.
+</Callout>
+
+## Impact Levels
+
+FedRAMP categorizes cloud service offerings into three impact levels, based on the potential impact of a mathematical security breach:
+
+<ComparisonTable 
+  headers={['Impact Level', 'Data Types', 'Security Controls']}
+  rows={[
+    ['Low', 'Publicly available data. Loss of confidentiality would have a limited adverse effect on the agency.', '~125 Controls. Basic security hygiene.'],
+    ['Moderate', 'Data that is not available to the public, such as PII (Personally Identifiable Information). Loss would have a serious adverse effect.', '~325 Controls. Very strict monitoring, encryption, and access controls.'],
+    ['High', 'Highly sensitive, unclassified data (e.g., law enforcement, financial, health data). Loss would have a severe or catastrophic adverse effect.', '~421 Controls. The absolute maximum level of civilian cybersecurity. Requires FIPS 140-2 validated cryptography.']
+  ]}
+/>
 
 </ConceptTemplate>

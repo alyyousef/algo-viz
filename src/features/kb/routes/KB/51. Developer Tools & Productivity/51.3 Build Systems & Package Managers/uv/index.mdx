@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: uv
+description: An extremely fast Python package installer and resolver, written in Rust.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="uv">
+<TechnologyTemplate 
+  title="uv"
+  subtitle="The Rust-powered pip killer"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
+  description="Released by Astral (the creators of Ruff), 'uv' is a drop-in replacement for pip and pip-tools, written entirely in Rust. It is mathematically 10x to 100x faster than pip."
+  yearCreated={2024}
+  creator="Astral"
+  isOpenSource={true}
+  websiteUrl="https://github.com/astral-sh/uv"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Python's `pip` is written in Python. When installing a massive machine learning project with hundreds of dependencies, `pip` spends minutes mathematically resolving version conflicts.
 
-</ConceptTemplate>
+<Callout icon="success" title="The Rust Revolution">
+  `uv` mathematically replaces the Python resolution engine with a highly concurrent Rust architecture. 
+  
+  It uses a global cache and parallelized network requests. A complex `pip install` that takes 2 minutes in standard Python will mathematically resolve and install in less than 500 milliseconds using `uv`. It is rapidly becoming the standard for modern Python CI/CD pipelines.
+</Callout>
+
+</TechnologyTemplate>

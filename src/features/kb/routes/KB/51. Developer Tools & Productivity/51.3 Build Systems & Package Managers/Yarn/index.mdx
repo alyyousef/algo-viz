@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Yarn
+description: A software packaging system developed in 2016 by Facebook for the Node.js JavaScript runtime environment.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Yarn">
+<TechnologyTemplate 
+  title="Yarn"
+  subtitle="Facebook's npm killer"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Yarn_logo.svg/512px-Yarn_logo.svg.png"
+  description="In 2016, npm was mathematically slow and lacked determinism. Facebook engineered Yarn to solve npm's massive caching and security flaws, forcing the entire JavaScript ecosystem to evolve."
+  yearCreated={2016}
+  creator="Facebook"
+  isOpenSource={true}
+  websiteUrl="https://yarnpkg.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, if Developer A ran `npm install`, they might mathematically get different sub-dependency versions than Developer B running the same command 5 minutes later. This caused catastrophic production bugs.
 
-</ConceptTemplate>
+<Callout icon="tip" title="The Lockfile Innovation">
+  Yarn introduced the `yarn.lock` file. 
+  
+  When you install a package, Yarn mathematically calculates the exact cryptographic hash and version of every single nested sub-dependency and writes it to the lockfile. This guarantees that every developer on Earth gets the exact same biological byte-code when they install the project.
+</Callout>
+
+*(Note: npm mathematically copied this feature a year later with `package-lock.json`, restoring its dominance).*
+
+</TechnologyTemplate>

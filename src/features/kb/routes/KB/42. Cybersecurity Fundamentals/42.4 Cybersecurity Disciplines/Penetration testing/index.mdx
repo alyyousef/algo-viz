@@ -1,8 +1,28 @@
+---
+title: Penetration Testing (Pentesting)
+description: The authorized, simulated cyberattack against a computer system to evaluate its security posture.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Penetration testing">
+<ConceptTemplate title="Penetration Testing (Pentesting)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Automated vulnerability scanners (like Nessus) are excellent at finding outdated software, but they cannot mathematically link vulnerabilities together to achieve a complex goal. 
+
+**Penetration Testing**, or ethical hacking, is the practice of hiring human experts to actively attack your networks, applications, and employees in a controlled environment to find vulnerabilities before the real hackers do.
+
+<Callout icon="success" title="The Proof of Concept">
+  Unlike an automated scanner that outputs a 500-page PDF of theoretical risks, a penetration tester delivers a mathematical "Proof of Concept." They demonstrate exactly how a seemingly low-risk flaw in an obscure web form allowed them to completely extract the CEO\'s emails.
+</Callout>
+
+## Types of Pentesting
+
+<ComparisonTable 
+  headers={['Type', 'Knowledge Level', 'Use Case']}
+  rows={[
+    ['Black Box', 'Zero knowledge. The testers are given only the company\'s name and must rely entirely on open-source intelligence (OSINT) and external scanning.', 'Simulating an attack from a random, unprivileged internet hacker.'],
+    ['White Box', 'Full knowledge. The testers are given the network diagrams, administrator credentials, and the raw source code of the applications.', 'Deep architectural review to find complex, hidden mathematical logic flaws that a Black Box test would miss.'],
+    ['Gray Box', 'Partial knowledge. The testers are given a standard user account on the application.', 'Simulating an attack from a malicious insider or a customer whose account was compromised.']
+  ]}
+/>
 
 </ConceptTemplate>

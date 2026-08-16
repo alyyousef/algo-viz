@@ -1,8 +1,17 @@
+---
+title: Arithmetic coding
+description: A form of entropy encoding used in lossless data compression that encodes the entire message into a single number.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Arithmetic coding">
+<ConceptTemplate title="Arithmetic Coding">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Huffman Coding is mathematically brilliant, but it has a biological flaw: the absolute shortest code you can assign to a letter is 1 Bit. If a letter is so incredibly common that it mathematically deserves to cost 0.3 Bits, Huffman cannot do it.
+
+<Callout icon="info" title="The Fractional Bit">
+  **Arithmetic Coding** abandons replacing letters with individual binary codes.
+  
+  Instead, it reads the entire file and mathematically converts the *entire message* into a single, insanely precise fractional number between 0.0 and 1.0 (e.g., `0.8432569...`). By doing this, it can effectively encode letters in fractional bits, allowing it to mathematically approach the absolute theoretical limit of Shannon Entropy. It is heavily used in modern video codecs (like H.264 CABAC).
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,26 @@
+---
+title: Snort
+description: The original, legendary open-source Network Intrusion Detection System created by Sourcefire.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Snort">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Martin Roesch in 1998, **Snort** is arguably the most famous Network Intrusion Detection System (NIDS) in the world. Now owned by Cisco, it fundamentally defined how signature-based threat detection operates.
+
+<Callout icon="warning" title="Snort Rules">
+  The true value of Snort is its syntax. "Snort Rules" have become the lingua franca of the cybersecurity industry. Almost all major commercial firewalls and competing open-source tools (like Suricata) natively understand and import Snort rules.
+</Callout>
+
+## Anatomy of a Snort Rule
+
+A Snort rule consists of a **Rule Header** (who, where, and what) and **Rule Options** (the specific mathematical payload to look for).
+
+`alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SQL Injection Attempt"; content:"%27 OR 1=1"; sid:100001;)`
+
+- **Action:** `alert` (Log the packet)
+- **Protocol:** `tcp`
+- **Source/Dest:** From any external IP to our internal HTTP servers.
+- **Payload Math:** Look for the exact byte sequence of `' OR 1=1` URL-encoded.
 
 </ConceptTemplate>

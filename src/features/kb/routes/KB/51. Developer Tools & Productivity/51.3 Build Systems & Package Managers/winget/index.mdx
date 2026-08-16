@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: winget (Windows Package Manager)
+description: A free and open-source package manager designed by Microsoft for Windows 10 and Windows 11.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="winget">
+<TechnologyTemplate 
+  title="winget"
+  subtitle="Microsoft's official Chocolatey killer"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Windows_Package_Manager_Icon.svg/512px-Windows_Package_Manager_Icon.svg.png"
+  description="After watching Chocolatey dominate Windows automation for a decade, Microsoft mathematically surrendered and built their own official, first-party command-line package manager."
+  yearCreated={2020}
+  creator="Microsoft"
+  isOpenSource={true}
+  websiteUrl="https://github.com/microsoft/winget-cli"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+\`winget\` is physically built into modern Windows 11 installations by default. 
 
-</ConceptTemplate>
+Unlike Chocolatey (which requires community volunteers to package \`.nupkg\` files), \`winget\` acts primarily as a mathematical manifest reader. It reads a YAML file hosted on GitHub, grabs the official download URL from the publisher, and executes it silently.
+
+Because it is native, \`winget\` can mathematically detect and upgrade software that the user previously installed manually via Chrome, a feature that third-party package managers struggle with.
+
+</TechnologyTemplate>

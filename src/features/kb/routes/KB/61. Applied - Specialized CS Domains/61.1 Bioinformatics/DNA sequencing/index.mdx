@@ -1,8 +1,17 @@
+---
+title: DNA sequencing
+description: The process of determining the nucleic acid sequence – the order of nucleotides in DNA.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DNA sequencing">
+<ConceptTemplate title="DNA Sequencing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You cannot biologically extract a single continuous 3-Gigabyte string of DNA from a cell. The DNA naturally breaks into millions of tiny, randomized fragments.
+
+<Callout icon="warning" title="The Jigsaw Puzzle">
+  **DNA Sequencing** is the algorithmic nightmare of putting the fragments back together.
+  
+  Sequencing machines read millions of 150-letter fragments simultaneously. Computer scientists then use massive string-matching algorithms (like De Bruijn graphs) to mathematically stitch these millions of overlapping strings back into the single original 3-billion-letter string. This is computationally identical to assembling a 10-million-piece jigsaw puzzle where all the pieces are almost exactly the same color.
+</Callout>
 
 </ConceptTemplate>

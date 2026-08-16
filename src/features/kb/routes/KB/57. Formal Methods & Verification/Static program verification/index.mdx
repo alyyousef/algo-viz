@@ -1,8 +1,17 @@
+---
+title: Static program verification
+description: The process of verifying code properties without executing the program.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Static program verification">
+<ConceptTemplate title="Static Program Verification">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Modern TypeScript or Rust compilers perform a lightweight version of this, but true **Static Program Verification** goes much deeper than checking if a variable is a `string`.
+
+<Callout icon="success" title="Automated Logic Checking">
+  Static verifiers mathematically read the source code and convert the entire control flow into mathematical formulas. 
+  
+  They then feed these formulas into a solver. The solver mathematically proves that certain catastrophic biological events (like a Null Pointer Dereference, a Buffer Overflow, or an Array Out Of Bounds error) can *never* occur, regardless of what input the user types into the keyboard.
+</Callout>
 
 </ConceptTemplate>

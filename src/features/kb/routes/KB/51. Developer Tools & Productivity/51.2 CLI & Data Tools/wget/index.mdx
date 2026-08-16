@@ -1,8 +1,19 @@
+---
+title: wget
+description: A computer program that retrieves content from web servers, part of the GNU Project.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="wget">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While `curl` is designed to *transfer* data (both sending and receiving), **`wget`** is designed exclusively to *download* data to the hard drive.
+
+<Callout icon="warning" title="Recursive Mirroring">
+  The true mathematical power of `wget` is its **Recursive (`-r`)** flag. 
+  
+  `wget -r -l 2 https://example.com`
+  
+  This command will mathematically download the index page of `example.com`. It will then parse the HTML, find every single `<a>` link on the page, and automatically download those pages too, up to 2 levels deep. It allows a developer to perfectly mirror an entire website to their local hard drive for offline viewing.
+</Callout>
 
 </ConceptTemplate>

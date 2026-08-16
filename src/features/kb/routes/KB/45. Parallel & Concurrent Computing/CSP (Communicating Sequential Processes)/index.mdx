@@ -1,8 +1,26 @@
+---
+title: Communicating Sequential Processes (CSP)
+description: A formal language for describing patterns of interaction in concurrent systems, famously popularized by the Go programming language.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CSP (Communicating Sequential Processes)">
+<ConceptTemplate title="Communicating Sequential Processes (CSP)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+> *"Do not communicate by sharing memory; instead, share memory by communicating."* — The Go Proverb
+
+Like the Actor Model, **CSP** is a mathematical model of concurrency that completely rejects Shared Memory and Mutexes. However, it approaches communication differently.
+
+In the Actor Model, entities communicate by sending messages directly to a specific Actor's private mailbox. 
+
+In **CSP**, entities communicate anonymously through mathematical conduits called **Channels**.
+
+<Callout icon="info" title="The Go Implementation">
+  CSP was mathematically formalized by Tony Hoare in 1978, but it became a household name when Google designed the **Go** language around it. In Go, you spawn lightweight threads called *Goroutines*, and they pass data back and forth exclusively through *Channels*.
+</Callout>
+
+## Mathematical Properties of CSP Channels
+
+1. **Anonymity:** A Sender pushes a message into `Channel A`. It mathematically does not know or care which Worker will read it. A Receiver pulls from `Channel A`. It mathematically does not care who sent it.
+2. **Blocking Synchronization:** By default, CSP channels are *Unbuffered*. If a Sender tries to push data into a channel, the Sender mathematically halts (blocks) until a Receiver is physically ready to pull the data out. This creates an automatic, flawless mathematical synchronization point between the two threads.
 
 </ConceptTemplate>

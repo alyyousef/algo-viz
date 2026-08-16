@@ -1,8 +1,19 @@
+---
+title: Internal Developer Platforms (IDP)
+description: A layer on top of the tech and tooling an engineering organization uses, designed to reduce cognitive load on developers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Internal developer platforms">
+<ConceptTemplate title="Internal Developer Platforms (IDP)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 2010s, the "DevOps" philosophy mandated that Developers should also be System Administrators ("You build it, you run it"). 
+
+This biologically failed. Forcing a Frontend React developer to mathematically understand Kubernetes ingress controllers, Terraform state files, and AWS IAM roles created overwhelming cognitive overload, crippling productivity.
+
+<Callout icon="success" title="Platform as a Product">
+  **Platform Engineering** emerged to fix this. 
+  
+  An organization creates a dedicated "Platform Team" that builds an **Internal Developer Platform (IDP)**. The IDP mathematically abstracts away the underlying infrastructure. It treats the internal developers as *customers*, providing them with a simplified, paved road to deploy their code without ever needing to touch raw Kubernetes YAML files.
+</Callout>
 
 </ConceptTemplate>

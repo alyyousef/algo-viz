@@ -1,36 +1,28 @@
 ---
 title: Caching Strategies
-description: "Common patterns for deciding when to read from and write to a high-speed cache versus the primary database."
+description: The architectural patterns used to keep the cache and the primary database synchronized.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 <ConceptTemplate title="Caching Strategies">
 
-Reading from a database (like PostgreSQL) requires slow disk I/O. Reading from a Cache (like Redis or Memcached) is done entirely in RAM and is orders of magnitude faster. However, because caches are volatile and have limited capacity, you must employ specific strategies to keep the cache synchronized with the database.
+Reading from a database (disk) takes ~1 millisecond. Reading from a cache like Redis (RAM) takes ~0.1 milliseconds. Caching is mathematically required for high-throughput systems.
 
-## 1. Read Strategies
+However, caching introduces the hardest problem in computer science: **Cache Invalidation**. When the data in the database mathematically changes, how do you ensure the cache isn't serving stale, incorrect data?
 
-<ComparisonTable 
-  headers={['Strategy', 'How it works', 'Pros & Cons']} 
-  rows={[
-    ['Cache-Aside (Lazy Loading)', 'Application asks Cache. If miss, app asks DB, then writes result to Cache.', 'Pro: Cache only contains requested data. Con: The first request is penalized with a cache miss latency.'],
-    ['Read-Through', 'Application asks Cache. If miss, the *Cache itself* (not the app) fetches from the DB, saves it, and returns it.', 'Pro: App logic is much simpler. Con: Requires specific cache software that supports DB connections.']
-  ]} 
-/>
+<Callout icon="info" title="The Golden Rule of Caching">
+  You must never cache data unless you have a mathematically rigorous plan for exactly how and when that cache will be deleted or updated.
+</Callout>
 
-## 2. Write Strategies
+## Core Architectural Strategies
 
 <ComparisonTable 
-  headers={['Strategy', 'How it works', 'Pros & Cons']} 
+  headers={['Strategy', 'Data Flow', 'Trade-offs']}
   rows={[
-    ['Write-Through', 'Application writes to the Cache, and the Cache immediately writes synchronously to the DB.', 'Pro: Data is always 100% consistent. Con: Every write incurs the latency of writing to both systems.'],
-    ['Write-Behind (Write-Back)', 'App writes *only* to the Cache. The Cache asynchronously writes to the DB later in a batch.', 'Pro: Extremely fast writes. Con: High risk of data loss if the Cache crashes before flushing to the DB.'],
-    ['Write-Around', 'App writes directly to the DB, bypassing the Cache entirely.', 'Pro: Prevents the cache from filling up with data that won\'t be read soon. Con: The next read will be a cache miss.']
-  ]} 
+    ['Cache-Aside (Lazy Loading)', 'The application mathematically checks the cache. If it\'s a Miss, the application queries the DB, returns the data, and writes it to the cache.', 'Pro: Only requested data is cached. Con: The first user to request new data experiences a slow mathematical DB hit.'],
+    ['Write-Through', 'The application mathematically writes to the cache and the DB simultaneously in the exact same transaction.', 'Pro: The cache is mathematically guaranteed to never be stale. Con: Every write operation is slower because it requires two network hops.'],
+    ['Write-Behind (Write-Back)', 'The application writes ONLY to the cache and returns success to the user instantly. An asynchronous worker mathematically flushes the cache to the DB later.', 'Pro: Extreme write throughput. Con: If the cache server crashes before flushing, data is permanently lost.']
+  ]}
 />
-
-## 3. Eviction Policies
-When the RAM is full, the cache must delete old data to make room for new data. The most common algorithm is **LRU (Least Recently Used)**, which discards the item that has not been read in the longest amount of time.
 
 </ConceptTemplate>

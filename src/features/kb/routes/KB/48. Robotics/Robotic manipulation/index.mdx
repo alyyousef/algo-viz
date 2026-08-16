@@ -1,8 +1,25 @@
+---
+title: Robotic Manipulation
+description: The ways robots interact with the physical world, grasp objects, and perform fine-grained mechanical tasks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Robotic manipulation">
+<ConceptTemplate title="Robotic Manipulation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Driving a robot across a room (Navigation) is a solved mathematical problem. Reaching out, picking up a raw egg without crushing it, and placing it perfectly in a carton (Manipulation) is currently one of the hardest unsolved problems in robotics.
+
+<Callout icon="warning" title="The Grasping Problem">
+  Humans intuitively understand the physics of friction, weight, and fragility. 
+  
+  If a robotic arm attempts to grasp a coffee mug, it must mathematically calculate:
+  1. **Force Closure:** Where exactly should the 3 fingers touch the mug so that gravity cannot pull it down?
+  2. **Tactile Feedback:** The fingers must contain microscopic pressure sensors to stop squeezing the moment friction is achieved, preventing the ceramic from shattering.
+</Callout>
+
+## MoveIt!
+
+In the ROS ecosystem, the absolute standard framework for manipulation is **MoveIt**. 
+
+You feed MoveIt a 3D CAD model of your robotic arm (a URDF file). You tell MoveIt, *"I want the end-effector to touch this specific XYZ coordinate."* MoveIt uses massive mathematical planners (like OMPL) to instantly calculate the Inverse Kinematics, check for physical self-collisions (so the robot doesn't punch itself in the face), and generate a smooth velocity trajectory for all 6 joints to execute the movement.
 
 </ConceptTemplate>

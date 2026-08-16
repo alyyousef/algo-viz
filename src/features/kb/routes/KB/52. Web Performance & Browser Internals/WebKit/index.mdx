@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: WebKit
+description: The web browser engine used by Safari, Mail, App Store, and many other macOS, iOS, and Linux applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="WebKit">
+<TechnologyTemplate 
+  title="WebKit"
+  subtitle="The Apple Engine"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Safari_browser_logo.svg/512px-Safari_browser_logo.svg.png"
+  description="WebKit is the open-source rendering engine developed primarily by Apple. It mathematically powers all web views on iOS devices."
+  yearCreated={2001}
+  creator="Apple"
+  isOpenSource={true}
+  websiteUrl="https://webkit.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+WebKit was originally a mathematical fork of the KHTML engine from KDE Linux. 
 
-</ConceptTemplate>
+Apple famously optimized WebKit to be incredibly biologically efficient regarding battery life and memory usage on mobile devices. Because Apple forces all iOS applications (including in-app browsers in Facebook and Twitter) to use `WKWebView`, WebKit is the undisputed king of mobile web rendering.
+
+</TechnologyTemplate>

@@ -1,8 +1,21 @@
+---
+title: Cloud-native networking
+description: The methods and technologies used to connect containers, microservices, and nodes in a cloud-native environment.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cloud-native networking">
+<ConceptTemplate title="Cloud-Native Networking">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a legacy data center, servers had static, physical IP addresses. You plugged an ethernet cable into a switch.
+
+In Kubernetes, networking is entirely **Software-Defined (SDN)**. 
+
+Because K8s might mathematically destroy 500 containers and respawn them on different physical servers 3 seconds later, every new container gets a completely randomized IP address. Relying on static IP addresses is biologically impossible.
+
+<Callout icon="tip" title="The CNI and CoreDNS">
+  Cloud-Native Networking relies on two mathematical components:
+  1. **CNI (Container Network Interface):** Plugins like Calico or Cilium that mathematically program the Linux kernel (using eBPF or iptables) to route virtual packets between randomized container IPs across different physical servers.
+  2. **Service Discovery (CoreDNS):** Because IPs change constantly, microservices must communicate using mathematical DNS names (e.g., `http://billing-service.default.svc.cluster.local`). CoreDNS dynamically updates the IP routing table the exact millisecond a container boots.
+</Callout>
 
 </ConceptTemplate>

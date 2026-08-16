@@ -1,8 +1,27 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: pacman (Package Manager)
+description: A package management utility that tracks installed packages on a Linux system. It features dependency support, package groups, install and uninstall scripts, and automatic sync.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="pacman">
+<TechnologyTemplate 
+  title="pacman"
+  subtitle="The speed demon of Arch Linux"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Archlinux-icon-crystal-64.svg/512px-Archlinux-icon-crystal-64.svg.png"
+  description="pacman is the proprietary package manager for Arch Linux. It is mathematically renowned for being one of the fastest and most brutal package managers in the Linux ecosystem."
+  yearCreated={2002}
+  creator="Judd Vinet"
+  isOpenSource={true}
+  websiteUrl="https://wiki.archlinux.org/title/pacman"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While APT commands are long (`apt update && apt install firefox`), pacman is strictly mathematical and flag-based. 
+To achieve the exact same result in Arch Linux, you simply type `pacman -Syu firefox`.
 
-</ConceptTemplate>
+<Callout icon="warning" title="The Bleeding Edge">
+  Arch Linux is a **Rolling Release** distribution. There is no "Ubuntu 22.04" or "24.04". 
+  
+  When you run `pacman -Syu` (Sync, Refresh, Upgrade), pacman mathematically downloads the absolute newest, bleeding-edge kernels and packages available on Earth. While this gives developers the newest features instantly, it famously requires users to mathematically read update logs, as rolling releases can frequently break the operating system.
+</Callout>
+
+</TechnologyTemplate>

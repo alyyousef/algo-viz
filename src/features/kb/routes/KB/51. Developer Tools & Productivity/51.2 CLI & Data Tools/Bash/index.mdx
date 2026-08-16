@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Bash (Bourne Again SHell)
+description: A Unix shell and command language written by Brian Fox for the GNU Project as a free software replacement for the Bourne shell.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Bash">
+<TechnologyTemplate 
+  title="Bash"
+  subtitle="The undisputed king of the Linux Terminal"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bash_Logo_Colored.svg/512px-Bash_Logo_Colored.svg.png"
+  description="Bash is the default command-line interface and scripting language for almost every Linux distribution on Earth. If you are interacting with a remote server, you are almost certainly speaking Bash."
+  yearCreated={1989}
+  creator="Brian Fox (GNU Project)"
+  isOpenSource={true}
+  websiteUrl="https://www.gnu.org/software/bash/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A shell is a program that takes commands from the keyboard and mathematically passes them to the operating system's kernel to execute. 
 
-</ConceptTemplate>
+Bash is not just an interactive prompt; it is a **Turing-complete programming language**. You can write massive `.sh` scripts with `if` statements, `for` loops, and variables to mathematically automate the deployment of an entire server infrastructure.
+
+<Callout icon="warning" title="The Pipes Architecture">
+  The core mathematical philosophy of Bash (and Unix) is **Pipes (`|`)**.
+  
+  Unix tools are designed to do exactly one thing perfectly. A Pipe takes the standard output (`stdout`) of Program A and mathematically injects it as the standard input (`stdin`) of Program B. 
+  
+  Example: `ls -l | grep "txt" | wc -l`. This mathematically lists files, filters only the text files, and counts how many there are, chaining three completely isolated C programs together instantly.
+</Callout>
+
+</TechnologyTemplate>

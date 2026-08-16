@@ -1,8 +1,29 @@
+---
+title: Red Teaming
+description: An advanced, objective-based simulation of a real-world Advanced Persistent Threat (APT) attack.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Red teaming">
+<ConceptTemplate title="Red Teaming">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Penetration Testing focuses on finding *as many vulnerabilities as possible* within a specific scope (e.g., "test this web app"), **Red Teaming** is vastly different. 
+
+Red Teaming is an objective-based, covert operation designed to test an organization\'s entire detection and response capability. The goal is not to find every bug; the goal is to silently compromise the objective (e.g., "Steal the source code database") without the internal security team (the Blue Team) ever knowing they are there.
+
+<Callout icon="warning" title="No Rules Engagement">
+  A penetration test stops at the firewall. A Red Team engagement might involve social engineering, dropping malware-infected USB drives in the company parking lot, calling the IT helpdesk pretending to be a panicked executive who forgot their password, or even physically picking the locks to the server room.
+</Callout>
+
+## The Cyber Kill Chain
+
+Red Teams meticulously follow the Lockheed Martin Cyber Kill Chain to model their attacks:
+
+1. **Reconnaissance:** Harvesting email addresses, social media profiles, and open ports.
+2. **Weaponization:** Coupling a mathematical exploit with a backdoor payload into a deliverable file (like a PDF).
+3. **Delivery:** Sending the weaponized PDF via a highly targeted phishing email (Spear-phishing).
+4. **Exploitation:** The payload mathematically triggers a buffer overflow when the PDF is opened.
+5. **Installation:** Establishing a persistent backdoor so access remains even if the computer is rebooted.
+6. **Command and Control (C2):** The compromised host beacons out to a server controlled by the Red Team.
+7. **Actions on Objectives:** Pivoting through the internal network, dumping Active Directory passwords, and quietly exfiltrating the target data.
 
 </ConceptTemplate>

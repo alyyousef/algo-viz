@@ -1,8 +1,25 @@
+---
+title: Church-Turing Thesis
+description: A hypothesis about the nature of computable functions, stating that a function on the natural numbers can be calculated by an effective method if and only if it is computable by a Turing machine.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Church-Turing thesis">
+<ConceptTemplate title="Church-Turing Thesis">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 1930s, Alonzo Church mathematically defined computation using Lambda Calculus. A few months later, Alan Turing mathematically defined computation using a mechanical tape machine (the Turing Machine).
+
+They both proved that their completely different mathematical systems had the exact same limits. 
+
+The **Church-Turing Thesis** fundamentally asserts that *any real-world mathematical calculation that can be performed by any mechanical or biological process can be perfectly simulated by a Turing Machine.*
+
+<Callout icon="info" title="A Thesis, Not a Proof">
+  It is called a "Thesis" (or hypothesis) because you mathematically cannot prove it. To prove it, you would have to discover every possible algorithm in the universe and verify a Turing Machine can run it. However, in 90 years, no one has ever found a mechanical algorithm that a Turing Machine cannot simulate.
+</Callout>
+
+## Implications for Software Engineering
+
+This thesis is why software engineers don't care about the physical hardware when designing algorithms. 
+
+Because of the Church-Turing Thesis, we mathematically know that a Python script running on a $5 Raspberry Pi can compute the exact same algorithms as a $50,000 AWS GPU cluster. The GPU cluster is just physically faster; mathematically, their power is identical.
 
 </ConceptTemplate>

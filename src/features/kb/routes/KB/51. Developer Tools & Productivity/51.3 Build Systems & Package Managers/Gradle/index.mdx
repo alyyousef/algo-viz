@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Gradle
+description: An open-source build automation tool that is designed to be flexible enough to build almost any type of software.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Gradle">
+<TechnologyTemplate 
+  title="Gradle"
+  subtitle="The Android Build Engine"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Gradle_logo.svg/512px-Gradle_logo.svg.png"
+  description="Gradle is a massive, mathematically complex JVM build system. It abandoned XML for a Groovy/Kotlin DSL, allowing developers to write actual Turing-complete code to dictate how their software builds."
+  yearCreated={2007}
+  creator="Hans Dockter"
+  isOpenSource={true}
+  websiteUrl="https://gradle.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Maven relied on incredibly strict, declarative XML (`pom.xml`). If a developer needed to execute a custom mathematical script during the build process, Maven made it notoriously difficult.
 
-</ConceptTemplate>
+Gradle solved this by making the build file (`build.gradle`) a literal executable script. 
+
+<Callout icon="success" title="The Android Standard">
+  Gradle achieved absolute global dominance when Google mathematically forced it to become the official build system for **Android Studio**. 
+  
+  Android builds are incredibly complex (compiling Kotlin, shrinking byte-code with ProGuard, packaging XML resources into an APK, generating multiple Flavors for Free vs. Paid apps). Gradle's task-based DAG (Directed Acyclic Graph) architecture was the only mathematical engine capable of handling this complexity efficiently.
+</Callout>
+
+</TechnologyTemplate>

@@ -1,8 +1,28 @@
+---
+title: Metasploit Framework
+description: The world's most used penetration testing framework, containing thousands of weaponized exploits.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Metasploit">
+<ConceptTemplate title="Metasploit Framework">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Owned by Rapid7, the Metasploit Framework is a massive, open-source Ruby project that provides information about security vulnerabilities and aids in penetration testing and IDS signature development.
+
+It essentially standardizes exploitation. Instead of a hacker having to write a custom Python script for every new vulnerability, Metasploit provides a unified interface to point, click, and fire weaponized code.
+
+<Callout icon="warning" title="The Meterpreter Payload">
+  The true power of Metasploit is **Meterpreter**. When you successfully exploit a machine, instead of getting a dumb command shell, Metasploit injects Meterpreter entirely into the victim\'s RAM. It provides advanced commands to dump passwords, take screenshots, pivot into other networks, and completely evade hard-drive anti-virus scans.
+</Callout>
+
+## Core Terminology
+
+<ComparisonTable 
+  headers={['Term', 'Description']}
+  rows={[
+    ['Exploit', 'The actual code that takes advantage of a mathematical flaw in the target system (e.g., a buffer overflow in an old Windows SMB service).'],
+    ['Payload', 'The code that the exploit delivers and executes on the target machine (e.g., "Connect back to my IP address and give me a command shell").'],
+    ['Auxiliary', 'Modules that don\'t execute payloads, but perform useful tasks like port scanning, brute-forcing FTP passwords, or sniffing network traffic.']
+  ]}
+/>
 
 </ConceptTemplate>

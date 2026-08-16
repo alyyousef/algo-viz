@@ -1,8 +1,26 @@
+---
+title: Power Management & Sleep Modes
+description: Techniques used in embedded systems to minimize energy consumption, crucial for battery-operated devices.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Power management (sleep modes)">
+<ConceptTemplate title="Power Management & Sleep Modes">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the desktop world, a CPU constantly drawing 100 Watts of power is normal. In the Embedded world, a microcontroller might be powered by a single CR2032 coin battery that mathematically must last for 10 years.
+
+To achieve this, Embedded Engineers do not just optimize code for speed; they optimize it for **Microamps (µA)**.
+
+<Callout icon="tip" title="The Deep Sleep Paradigm">
+  If an IoT temperature sensor only needs to send data once an hour, leaving the CPU running at 80 MHz in an empty `while(1)` loop will drain the battery in 2 days. 
+  
+  Instead, the engineer writes code to mathematically shut off the physical clock signal to the CPU core. The CPU enters **Deep Sleep**, drawing a microscopic 1 µA of power. The only thing left running is a tiny, ultra-low-power internal timer. 60 minutes later, the timer fires a Hardware Interrupt, waking the CPU up for exactly 50 milliseconds to send the Wi-Fi packet, before immediately going back to sleep.
+</Callout>
+
+## Progressive Degradation of Power
+
+Microcontrollers offer granular control over what physical silicon is currently powered on:
+1. **Run Mode:** CPU, Flash, and all peripherals are fully powered. (Highest drain).
+2. **Sleep Mode:** CPU core is halted, but peripherals (UART, SPI) are still running and can wake the CPU.
+3. **Deep Sleep / Stop Mode:** CPU and all main clocks are physically shut down. RAM is barely maintained. Only an external physical pin interrupt (like a button press) can wake the system.
 
 </ConceptTemplate>

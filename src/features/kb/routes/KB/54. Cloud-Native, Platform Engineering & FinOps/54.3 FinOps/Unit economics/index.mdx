@@ -1,8 +1,21 @@
+---
+title: Unit economics
+description: The practice of measuring cloud spend against a specific business metric (e.g., cost per transaction, cost per active user).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Unit economics">
+<ConceptTemplate title="Cloud Unit Economics">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The absolute Holy Grail of FinOps is **Unit Economics**.
+
+If your AWS bill increases from $100,000 to $150,000, is that biologically "bad"? You cannot mathematically answer that question using only raw dollars.
+
+<Callout icon="success" title="The True Value Metric">
+  If the bill went up because a developer left an idle server running, it is mathematically bad. 
+  
+  But if the bill went up because your startup acquired 50,000 new paying customers, it is mathematically *fantastic*. 
+  
+  **Unit Economics** measures the cost *per business unit*. Instead of tracking "$150,000 total", you track: **"$0.05 per API transaction"** or **"$2.10 per Active User"**. If the total bill goes up, but the Cost Per User mathematically goes *down*, the engineering team is successfully optimizing the architecture for hyper-growth.
+</Callout>
 
 </ConceptTemplate>

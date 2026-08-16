@@ -1,8 +1,24 @@
+---
+title: grep
+description: A command-line utility for searching plain-text data sets for lines that match a regular expression.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="grep">
+<ConceptTemplate title="grep (Global Regular Expression Print)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**grep** is the absolute foundation of Linux text searching. Its only job is to mathematically scan a file (or a data stream) and print every line that matches a specific pattern.
+
+<Callout icon="success" title="Regular Expressions (Regex)">
+  While you can search for exact words (`grep "error" log.txt`), grep's true mathematical power lies in its native support for **Regular Expressions**.
+  
+  `grep -E "^[0-9]{3}-[0-9]{4}$" data.txt`
+  This command mathematically scans a 5-million-line file and instantly extracts every single line that perfectly matches the structure of a phone number.
+</Callout>
+
+## Modern Replacements: ripgrep (rg)
+
+While `grep` is installed everywhere, it was written in the 1970s and is strictly single-threaded. 
+
+The modern software industry has largely adopted **ripgrep (`rg`)**. Written in Rust, `ripgrep` mathematically splits the search query across every CPU core simultaneously and automatically ignores files specified in your `.gitignore`. It is often 10x to 50x faster than GNU grep when searching massive, multi-gigabyte codebases.
 
 </ConceptTemplate>

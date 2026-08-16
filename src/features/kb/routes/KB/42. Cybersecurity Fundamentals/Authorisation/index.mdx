@@ -1,8 +1,29 @@
+---
+title: Authorization (Access Control)
+description: The function of specifying access rights/privileges to resources related to information security and computer security in general.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Authorisation">
+<ConceptTemplate title="Authorization (Access Control)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If *Authentication* is verifying your identity at the front door of the building, **Authorization** is the mathematical process of determining which specific rooms inside the building your keycard can open.
+
+Once a system knows exactly who you are, it must enforce strict mathematical rules to ensure you can only perform actions (Read, Write, Delete) on resources you are explicitly permitted to access.
+
+<Callout icon="warning" title="The Golden Rule">
+  The core tenet of Authorization is the **Principle of Least Privilege**. A user or system should mathematically be granted the absolute minimum level of access necessary to perform their job functions, and nothing more.
+</Callout>
+
+## Common Authorization Models
+
+<ComparisonTable 
+  headers={['Model', 'Acronym', 'Description']}
+  rows={[
+    ['Role-Based Access Control', 'RBAC', 'Access is mathematically granted based on the user\'s job role (e.g., "Managers" can approve expenses, "Engineers" cannot). This is the most common model in enterprise software.'],
+    ['Attribute-Based Access Control', 'ABAC', 'A much finer-grained model. Access is mathematically calculated dynamically based on attributes (e.g., "Allow access IF user=Manager AND time=BusinessHours AND location=Office").'],
+    ['Discretionary Access Control', 'DAC', 'The owner of the data mathematically decides who gets access (e.g., Google Drive, where you can click "Share" and type a friend\'s email).'],
+    ['Mandatory Access Control', 'MAC', 'Used by the military. The system strictly enforces mathematical clearance levels (e.g., Top Secret). Even the owner of a document cannot override the system to share it with an unauthorized person.']
+  ]}
+/>
 
 </ConceptTemplate>

@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Coq
+description: An interactive theorem prover that allows the expression of mathematical assertions, mechanically checks proofs of these assertions, helps to find formal proofs, and extracts a certified program from the constructive proof of its formal specification.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Coq">
+<TechnologyTemplate 
+  title="Coq"
+  subtitle="The French Theorem Prover"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Coq_Logo.svg/512px-Coq_Logo.svg.png"
+  description="Coq is an interactive theorem prover mathematically famous for verifying the CompCert C compiler, proving that the compiler itself has absolutely zero translation bugs."
+  yearCreated={1989}
+  creator="INRIA"
+  isOpenSource={true}
+  websiteUrl="https://coq.inria.fr/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing code in Coq is not standard software engineering. You are mathematically writing the Calculus of Inductive Constructions.
 
-</ConceptTemplate>
+When you finish writing a function in Coq, and successfully write the mathematical proof that it works, Coq biologically performs "Code Extraction". It mathematically translates your perfect, bug-free proof directly into running OCaml or Haskell code. The resulting software is mathematically certified to be flawless.
+
+</TechnologyTemplate>

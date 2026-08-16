@@ -1,8 +1,19 @@
+---
+title: ERC-721
+description: A free, open standard that describes how to build non-fungible or unique tokens on the Ethereum blockchain.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ERC-721">
+<ConceptTemplate title="ERC-721 (Non-Fungible Tokens)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+ERC-20 tokens are mathematically **Fungible**. Every single BobCoin is identical to every other BobCoin. 
+
+But what if you want to mathematically represent a unique piece of digital art, or the deed to a physical house?
+
+<Callout icon="info" title="The Unique Identifier">
+  **ERC-721** introduced the mathematical concept of Non-Fungibility.
+  
+  Instead of a balance mapping (`Alice has 50 coins`), an ERC-721 contract maintains a mapping of unique IDs (`Alice owns Token #402`). Every single token mathematically has a unique ID, making it impossible to mutually interchange them.
+</Callout>
 
 </ConceptTemplate>

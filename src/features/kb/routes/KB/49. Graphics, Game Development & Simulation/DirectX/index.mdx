@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: DirectX (Direct3D)
+description: A collection of application programming interfaces for handling tasks related to multimedia, especially game programming and video, on Microsoft platforms.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="DirectX">
+<TechnologyTemplate 
+  title="DirectX (Direct3D)"
+  subtitle="The absolute ruler of PC and Xbox gaming"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Directx_logo.svg/512px-Directx_logo.svg.png"
+  description="DirectX is a proprietary suite of multimedia APIs created by Microsoft. Its 3D graphics component, Direct3D, is the industry standard for virtually all AAA PC games."
+  yearCreated={1995}
+  creator="Microsoft"
+  isOpenSource={false}
+  websiteUrl="https://docs.microsoft.com/en-us/windows/win32/directx"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 1990s, if you built a PC game, it ran in MS-DOS. When Microsoft launched Windows 95, game developers refused to use it because the Windows OS physically blocked direct access to the graphics card, making games incredibly slow.
 
-</ConceptTemplate>
+Microsoft created **DirectX** to give game developers a mathematical backdoor through the OS to access the raw GPU hardware.
+
+<Callout icon="info" title="DirectX 11 vs DirectX 12">
+  Just like the transition from OpenGL to Vulkan:
+  - **DirectX 11:** A high-level, single-threaded, state-machine API. (Easy to write, high overhead).
+  - **DirectX 12:** A brutal, low-level, multi-threaded explicit API. (Incredibly hard to write, massive performance). DX12 was mathematically required to unlock the multi-core potential of modern CPUs for PC and Xbox Series X games.
+</Callout>
+
+Because it is proprietary to Microsoft, DirectX mathematically cannot run natively on macOS, Linux, or PlayStation.
+
+</TechnologyTemplate>

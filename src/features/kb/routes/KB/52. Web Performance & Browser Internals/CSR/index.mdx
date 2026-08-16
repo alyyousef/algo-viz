@@ -1,40 +1,19 @@
 ---
-title: Client-Side Rendering (CSR)
-description: The architecture where the browser downloads a massive JavaScript bundle and dynamically generates the entire UI on the user's local CPU.
+title: CSR (Client-Side Rendering)
+description: The process of rendering web pages directly in the browser using JavaScript.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Client-Side Rendering (CSR)">
 
-Client-Side Rendering (CSR) is the default architecture for modern Single Page Applications (SPAs) built with raw React, Vue, or Angular. Instead of the server sending HTML, the server delegates all UI generation to the user's browser.
+In the modern React/Vue era, **Client-Side Rendering** became the default architectural paradigm for Single Page Applications (SPAs).
 
-## 1. The Lifecycle
-1. The browser requests `/app`.
-2. The server instantly returns a nearly empty HTML file: `<div id="root"></div>` alongside a massive `<script>` tag.
-3. The browser stares at a blank white screen.
-4. The browser downloads the 2MB JavaScript bundle.
-5. The browser executes the JavaScript, which boots up React, queries the backend API for JSON data, and finally injects the generated DOM elements into the `#root` div.
+When a user navigates to a CSR website, the server does not send them a populated HTML document. It mathematically sends them a completely blank HTML file containing only a single `<div id="root"></div>` and a massive `<script src="bundle.js">` tag.
 
-## 2. SSR vs CSR
-
-<ComparisonTable 
-  headers={['Metric', 'Client-Side Rendering (CSR)', 'Server-Side Rendering (SSR)']} 
-  rows={[
-    ['Initial Load Time (LCP)', 'Extremely Slow. Users stare at a blank screen or spinner while JS downloads.', 'Extremely Fast. Users see the populated HTML instantly.'],
-    ['Subsequent Navigation', 'Blazingly Fast. Clicking a link just swaps local React components instantly.', 'Slower. Clicking a link requires a full network round-trip to the server.'],
-    ['Server Costs', 'Near Zero. You can host CSR apps for free on AWS S3 or Vercel Edge Networks.', 'High. Requires expensive Node.js CPU compute for every request.'],
-    ['SEO Capability', 'Terrible. Crawlers see a blank `<div id="root">`.', 'Perfect. Crawlers see the fully rendered HTML.']
-  ]} 
-/>
-
-## 3. When to use CSR
-Despite its SEO flaws, CSR is the absolute best choice for **Highly Interactive, Authenticated Applications** (e.g., Spotify, Figma, Discord, Admin Dashboards). 
-Because these apps are hidden behind a login screen, SEO does not matter. The user only pays the heavy load penalty once upon logging in, and from then on, the app feels like a lightning-fast native desktop application with zero page refreshes.
-
-<Callout icon="tip" title="Code Splitting">
-To mitigate the brutal initial load time of CSR, architects use **Code Splitting**. Instead of forcing the user to download the entire 5MB app at launch, Webpack splits the code into smaller chunks. The user only downloads the JavaScript required for the *Login Screen*, and the *Settings Page* JS is lazily downloaded in the background.
+<Callout icon="warning" title="The Performance Trade-off">
+  **Pros:** Once the JS bundle is downloaded, navigating between pages is mathematically instantaneous because the browser never has to request a new HTML file from the server.
+  
+  **Cons:** The initial page load (LCP) is biologically terrible. The user stares at a blank white screen until the massive JavaScript bundle physically finishes downloading, parsing, and executing in the V8 engine to construct the DOM from scratch.
 </Callout>
 
 </ConceptTemplate>

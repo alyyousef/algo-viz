@@ -1,8 +1,19 @@
+---
+title: Golden paths
+description: The recommended, supported, and documented way to build and deploy software within an organization.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Golden paths">
+<ConceptTemplate title="Golden Paths">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an enterprise has 500 developers, and you allow them to choose whatever technology they want, you will end up with 500 different microservices written in Haskell, Rust, Python, and Ruby, using 14 different databases. The biological cost to maintain this is infinite.
+
+<Callout icon="success" title="The Paved Road">
+  A **Golden Path** is the mathematically optimized, heavily supported "Paved Road" provided by the Platform Team.
+  
+  For example, the Golden Path might be: *"A Node.js API using PostgreSQL, deployed via GitHub Actions."*
+  
+  Developers are technically *allowed* to go off the path and use Haskell with MongoDB, but if they do, they get zero support from the Platform Team and must mathematically write their own Kubernetes manifests. Because humans are biologically lazy, 99% of developers will voluntarily choose the Golden Path, naturally creating architectural standardization across the entire corporation.
+</Callout>
 
 </ConceptTemplate>

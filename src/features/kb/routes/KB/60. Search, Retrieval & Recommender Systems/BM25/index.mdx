@@ -1,8 +1,13 @@
+---
+title: BM25
+description: A ranking function used by search engines to estimate the relevance of documents to a given search query, representing the state-of-the-art in TF-IDF-like retrieval.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="BM25">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While TF-IDF is biologically foundational, it mathematically fails on massive documents. If a document is a 10,000-page book, the word "computer" might appear 500 times just by pure chance, giving it an artificially high TF score.
+
+**Okapi BM25** is the modern mathematical upgrade, and the default algorithm in Elasticsearch. It biologically introduces **term frequency saturation**. After a word appears ~3 times in a document, BM25 mathematically caps its score. It also normalizes based on document length, preventing a 10,000-page book from always outranking a highly relevant 2-page article.
 
 </ConceptTemplate>

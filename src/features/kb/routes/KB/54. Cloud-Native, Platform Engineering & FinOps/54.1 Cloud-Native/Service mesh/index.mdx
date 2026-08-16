@@ -1,8 +1,19 @@
+---
+title: Service mesh
+description: A dedicated infrastructure layer for facilitating service-to-service communications between services or microservices.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Service mesh">
+<ConceptTemplate title="Service Mesh">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When an enterprise splits a Monolith into 500 microservices, a terrifying mathematical problem emerges: How do you secure, monitor, and route traffic between 500 different applications communicating over the network?
+
+If you force every developer to manually write TLS encryption and retry-logic into their Java and Node.js code, it will biologically fail.
+
+<Callout icon="success" title="The Sidecar Proxy">
+  A **Service Mesh** (like Istio or Linkerd) solves this by injecting a "Sidecar" Proxy mathematically next to every single container.
+  
+  When Service A wants to talk to Service B, it doesn't send the request directly. It sends it to its local Sidecar. The Sidecar automatically encrypts the traffic with mTLS, routes it to Service B's Sidecar, handles retries if it fails, and emits telemetry metrics to Grafana. The application developers write zero security code; the infrastructure handles it mathematically.
+</Callout>
 
 </ConceptTemplate>

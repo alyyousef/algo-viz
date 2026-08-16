@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Pylint
+description: A static code analysis tool for the Python programming language.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Pylint">
+<TechnologyTemplate 
+  title="Pylint"
+  subtitle="The strict Python teacher"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
+  description="Pylint is one of the oldest and most rigid linters in the Python ecosystem. It mathematically enforces both logic checks and strict PEP-8 style guidelines."
+  yearCreated={2003}
+  creator="Sylvain Thénault"
+  isOpenSource={true}
+  websiteUrl="https://pylint.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you write a Python function and name it `CalculateTax`, Pylint will mathematically throw an error. Why? Because the official Python PEP-8 specification states that functions *must* be named using `snake_case` (`calculate_tax`).
 
-</ConceptTemplate>
+<Callout icon="info" title="The 10.0 Scoring System">
+  Pylint is famous for its brutal scoring system. 
+  
+  When you run Pylint on your codebase, it calculates a mathematical grade out of 10.0. If you have unused variables, missing docstrings, or lines that are too long, Pylint will biologically shame you by outputting: `Your code has been rated at 4.52/10`.
+</Callout>
+
+</TechnologyTemplate>

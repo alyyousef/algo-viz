@@ -1,8 +1,27 @@
+---
+title: Network Segmentation
+description: The architectural practice of splitting a computer network into smaller, isolated sub-networks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Network segmentation">
+<ConceptTemplate title="Network Segmentation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a bank is robbed, the robbers shouldn't be able to easily walk from the lobby straight into the vault. The building is mathematically divided into secure zones with locked doors between them.
+
+**Network Segmentation** applies this physical concept to digital architecture. Instead of having one massive, flat network where the intern's laptop can directly ping the production database, the network is divided into isolated subnets (VLANs) separated by internal firewalls.
+
+<Callout icon="info" title="Containing the Blast Radius">
+  The primary mathematical goal of segmentation is limiting lateral movement. If an attacker breaches a marketing employee's laptop via phishing, segmentation ensures that the malware cannot physically route its packets to the engineering servers, drastically reducing the blast radius of the attack.
+</Callout>
+
+## Implementation Strategies
+
+<ComparisonTable 
+  headers={['Strategy', 'Technology', 'Description']}
+  rows={[
+    ['Macro-Segmentation', 'VLANs & Firewalls', 'Splitting the network into broad categories (e.g., Guest WiFi, Employee Laptops, Datacenter Servers). Traffic between these zones must pass through a strict firewall.'],
+    ['Micro-Segmentation', 'Software-Defined Networking', 'A Zero-Trust approach. Segmenting down to the individual server level. Even two web servers sitting next to each other in the same rack are mathematically forbidden from talking to each other unless explicitly allowed.']
+  ]}
+/>
 
 </ConceptTemplate>

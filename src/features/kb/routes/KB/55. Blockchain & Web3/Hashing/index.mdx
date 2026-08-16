@@ -1,8 +1,21 @@
+---
+title: Hashing
+description: The process of transforming any given key or a string of characters into another value.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hashing">
+<ConceptTemplate title="Cryptographic Hashing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How do you mathematically guarantee that a block of data has not been secretly modified?
+
+You run the data through a Cryptographic Hash Function (like **SHA-256**).
+
+<Callout icon="success" title="The Avalanche Effect">
+  If you hash the entire text of the Harry Potter book, it generates exactly 64 random characters (e.g., `4f8b...`). 
+  
+  If a hacker changes a *single comma* on page 300, and re-hashes the book, the resulting 64 characters will be mathematically completely different (e.g., `9a2c...`).
+  
+  In a Blockchain, Block 2 contains the mathematical Hash of Block 1. Block 3 contains the Hash of Block 2. If a hacker tries to biologically alter a transaction in Block 1, the Hash changes, instantly invalidating the entire mathematical chain forever.
+</Callout>
 
 </ConceptTemplate>

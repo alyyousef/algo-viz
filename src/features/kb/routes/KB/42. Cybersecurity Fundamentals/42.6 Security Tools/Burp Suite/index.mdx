@@ -1,8 +1,28 @@
+---
+title: Burp Suite
+description: The industry-standard interception proxy used by web application penetration testers and bug bounty hunters.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Burp Suite">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by PortSwigger, Burp Suite is the definitive tool for web application security testing. It sits as a "Man-in-the-Middle" proxy between your web browser and the target server.
+
+Normally, when you click "Submit" on a webpage, the browser instantly sends the HTTP request. With Burp Suite intercepting, the request is paused on your screen. You can mathematically alter hidden fields, tamper with cookies, or rewrite JSON before allowing the request to travel to the server.
+
+<Callout icon="success" title="The Bug Bounty Gold Standard">
+  Almost every major web vulnerability (SQL Injection, Cross-Site Scripting, Insecure Direct Object References) found in modern bug bounty programs is discovered using Burp Suite to manipulate requests in ways the frontend developers never anticipated.
+</Callout>
+
+## Core Tools
+
+<ComparisonTable 
+  headers={['Tool', 'Function']}
+  rows={[
+    ['Proxy', 'The core feature. Intercepts, inspects, and modifies HTTP/HTTPS traffic in real-time.'],
+    ['Repeater', 'Allows a hacker to take a captured HTTP request, tweak a specific parameter, and manually resend it to the server hundreds of times to test how the server reacts to malformed math or logic.'],
+    ['Intruder', 'A highly customizable brute-forcer. You define a payload position in the HTTP request (e.g., the `id=123` parameter) and Intruder automatically fires thousands of requests substituting payloads from a dictionary to find vulnerabilities.']
+  ]}
+/>
 
 </ConceptTemplate>

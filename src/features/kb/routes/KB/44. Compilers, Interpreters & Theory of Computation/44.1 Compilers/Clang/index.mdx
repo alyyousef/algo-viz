@@ -1,8 +1,33 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Clang
+description: A compiler front end for the C, C++, Objective-C, and Objective-C++ programming languages, as well as the OpenMP, OpenCL, RenderScript, SYCL, and CUDA frameworks.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Clang">
+<TechnologyTemplate 
+  title="Clang"
+  subtitle="The modern, modular C++ compiler"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Clang_logo.svg/512px-Clang_logo.svg.png"
+  description="Clang is the official C, C++, and Objective-C Front-End for the LLVM compiler infrastructure. Originally built by Apple to replace GCC, it is now the default compiler on macOS and FreeBSD, and heavily used at Google."
+  yearCreated={2007}
+  creator="Chris Lattner (Apple)"
+  isOpenSource={true}
+  websiteUrl="https://clang.llvm.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For 20 years, GCC held a mathematical monopoly over C/C++ compilation. However, GCC's monolithic architecture made it impossible to use its internal parser to build IDE tools (like autocompletion or static analysis).
 
-</ConceptTemplate>
+Apple created **Clang** specifically to solve this. Clang is designed as a set of highly modular, mathematically strict C++ libraries.
+
+<Callout icon="success" title="World-Class Diagnostics">
+  Because Clang retains the exact mathematical structure of the original source code in its AST (unlike GCC, which historically stripped it early), Clang became famous for producing highly human-readable error messages. If you miss a semicolon, Clang doesn't just crash; it mathematically points to the exact column in the code where the semicolon should be.
+</Callout>
+
+## The Clang Ecosystem
+
+Because Clang is a library, the C++ ecosystem exploded with powerful tools mathematically built on top of its parser:
+- **Clangd:** A Language Server (LSP) that provides flawless C++ autocomplete in VS Code.
+- **Clang-Tidy:** A world-class linter that mathematically proves logic errors in C++ code.
+- **Clang-Format:** The absolute industry standard for mathematically formatting C++ source files.
+
+</TechnologyTemplate>

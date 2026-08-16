@@ -1,8 +1,30 @@
+---
+title: scrypt
+description: A password-based key derivation function explicitly designed to be resistant to custom hardware attacks (ASICs).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="scrypt">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Older hashing algorithms like MD5 and SHA-256 are purely computational. An attacker can build custom silicon chips (ASICs) that calculate billions of SHA-256 hashes per second to brute-force a stolen password database.
+
+**scrypt** (pronounced "ess-crypt") was designed specifically to defeat hardware brute-forcing by making the mathematical derivation process **memory-hard**.
+
+<Callout icon="tip" title="The Memory Bottleneck">
+  To calculate an scrypt hash, the algorithm forces you to generate a massive array of pseudo-random data in RAM, and then rapidly perform mathematical operations by jumping around that array unpredictably. While ASICs can do math quickly, adding gigabytes of ultra-fast RAM to a custom chip is astronomically expensive, rendering hardware brute-forcing economically impossible.
+</Callout>
+
+## Configuration Parameters
+
+Developers configure scrypt using three primary parameters to perfectly balance user login speed against attacker difficulty:
+
+<ComparisonTable 
+  headers={['Parameter', 'Function']}
+  rows={[
+    ['N (Cost)', 'The CPU/Memory cost parameter. It must be a power of 2. Doubling N doubles both the required compute time and the required RAM.'],
+    ['r (Block Size)', 'Specifies the block size of the underlying hash functions, affecting memory bandwidth utilization.'],
+    ['p (Parallelization)', 'Determines how many independent mathematical threads can run concurrently. Useful for servers with multiple cores.']
+  ]}
+/>
 
 </ConceptTemplate>

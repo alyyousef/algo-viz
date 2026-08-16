@@ -1,0 +1,25 @@
+---
+title: Automotive Embedded Systems
+description: Specialized embedded systems designed for vehicles, prioritizing extreme safety, real-time determinism, and standardized communication.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Automotive Embedded Systems (AUTOSAR & CAN Bus)">
+
+A modern luxury car is mathematically a data center on wheels. It contains over **100 independent microcontrollers** (called ECUs - Electronic Control Units), running over 100 million lines of C code. 
+
+There is an ECU for the engine, an ECU for the brakes, an ECU for the windows, and an ECU for the seat massager.
+
+<Callout icon="success" title="The CAN Bus">
+  If you physically wired every ECU directly to every other ECU, the copper wire alone would weigh hundreds of pounds. 
+  
+  Instead, all ECUs are connected to a single, mathematically robust 2-wire network called the **CAN Bus (Controller Area Network)**. When you press a button on the steering wheel to roll down the window, the steering wheel ECU broadcasts a mathematical packet onto the CAN Bus. The Window ECU mathematically recognizes the packet and activates the motor.
+</Callout>
+
+## The AUTOSAR Standard
+
+Because cars are built using parts from 50 different suppliers (Bosch, Continental, Denso), making 100 microcontrollers talk to each other safely was a mathematical nightmare.
+
+In 2003, the industry created **AUTOSAR (Automotive Open System Architecture)**. It is a massive, incredibly strict software architecture standard. It mathematically forces all suppliers to separate their Bare-Metal hardware code from the Application logic, allowing a car manufacturer (like BMW) to easily swap a Bosch chip for a Denso chip without rewriting the fundamental braking logic.
+
+</ConceptTemplate>

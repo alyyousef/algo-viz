@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: CMake
+description: An open-source, cross-platform family of tools designed to build, test and package software.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="cmake">
+<TechnologyTemplate 
+  title="CMake"
+  subtitle="The C++ Meta-Build System"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Cmake.svg/512px-Cmake.svg.png"
+  description="CMake is not a compiler. It is a 'Meta-Build System'. It mathematically generates the actual build files (Makefiles or Visual Studio Solutions) required to compile C/C++ code across different operating systems."
+  yearCreated={2000}
+  creator="Kitware"
+  isOpenSource={true}
+  websiteUrl="https://cmake.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you write a C++ program on Linux, you use `make` (GCC). If you write it on Windows, you use `MSBuild` (Visual Studio). If you want your open-source C++ library to run on both, you historically had to maintain two completely separate mathematical build systems.
 
-</ConceptTemplate>
+CMake solved this. You write a single `CMakeLists.txt` file. 
+When a Linux user runs CMake, it mathematically generates a Linux `Makefile`. When a Windows user runs CMake, it mathematically generates a Windows `.sln` Visual Studio project. It is the absolute standard for cross-platform C++.
+
+</TechnologyTemplate>

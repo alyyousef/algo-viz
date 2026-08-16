@@ -1,32 +1,21 @@
 ---
 title: Rendering Engines
-description: The core C++ browser components responsible for parsing HTML/CSS, calculating layouts, and painting pixels to the user's screen.
+description: Software that draws text and images on the screen.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Rendering Engines">
 
-When a browser receives raw bytes over the network, it must convert that data into the beautiful buttons and text you see on screen. This monumental task is handled by the **Rendering Engine** (e.g., Blink for Chrome/Edge, WebKit for Safari, Gecko for Firefox).
+If you download an HTML file, it is just mathematically raw text. How does that text biologically become a physical, clickable button on your screen?
 
-## 1. The Critical Rendering Path
-The engine follows a strict, mathematical pipeline to draw the screen:
+The **Rendering Engine** is the architectural heart of the browser responsible for the "Critical Rendering Path".
 
-1. **Parse HTML (DOM)**: The engine reads the raw HTML bytes, converts them into characters, identifies tags, and constructs the **Document Object Model (DOM) Tree**.
-2. **Parse CSS (CSSOM)**: It concurrently reads the CSS and constructs the **CSS Object Model (CSSOM)**, determining the exact styling rules for every node.
-3. **Render Tree**: The engine combines the DOM and CSSOM to create the Render Tree. *Crucially, nodes with `display: none` are excluded from the Render Tree.*
-4. **Layout (Reflow)**: The engine calculates the exact geometric mathematical position and size (width, height, X/Y coordinates) of every node on the viewport.
-5. **Paint**: The engine fills in the pixels (colors, shadows, text) onto separate visual layers.
-6. **Composite**: The GPU takes the painted layers and flattens them together onto the screen.
-
-## 2. Reflow vs Repaint
-Performance drops happen when your JavaScript forces the Rendering Engine to redo its work.
-
-- **Repaint**: Changing `color: blue` to `color: red`. The element hasn't moved, so the engine skips Layout and just re-executes Paint and Composite. (Fast).
-- **Reflow (Layout Thrashing)**: Changing an element's `width`, `height`, or `margin`. The engine must completely recalculate the geometry of that element, *and all of its children*, *and all of its siblings*. This triggers Layout -> Paint -> Composite. (Extremely Slow).
-
-<Callout icon="tip" title="Hardware Acceleration">
-To achieve butter-smooth 60fps animations, you should only ever animate `transform` (e.g., `translateX`) and `opacity`. These properties completely bypass Layout and Paint, and are handed directly to the GPU for the **Composite** step, resulting in zero Main Thread CPU overhead.
+<Callout icon="tip" title="The Critical Rendering Path">
+  1. **Parse HTML:** It converts HTML string into a physical memory tree called the **DOM** (Document Object Model).
+  2. **Parse CSS:** It converts CSS strings into the **CSSOM** (CSS Object Model).
+  3. **Render Tree:** It mathematically combines the DOM and CSSOM to calculate exactly which elements are visible.
+  4. **Layout (Reflow):** It calculates the exact X/Y pixel coordinates of every node.
+  5. **Paint:** It physically draws the pixels onto the computer monitor.
 </Callout>
 
 </ConceptTemplate>

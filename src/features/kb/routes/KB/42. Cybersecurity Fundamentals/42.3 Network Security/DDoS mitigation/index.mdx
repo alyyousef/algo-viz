@@ -1,8 +1,28 @@
+---
+title: DDoS Mitigation
+description: The mathematical strategies and technologies used to protect networks from Distributed Denial of Service attacks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DDoS mitigation">
+<ConceptTemplate title="DDoS Mitigation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Distributed Denial of Service (DDoS)** attack is a brute-force mathematical assault. An attacker commands a botnet of 100,000 infected IoT devices to all load your website at the exact same second. The sheer volume of traffic overwhelms your servers, crashing the site for legitimate users.
+
+Traditional firewalls cannot stop large-scale DDoS attacks because the volume of junk data is larger than the physical internet pipe leading into the building. 
+
+<Callout icon="tip" title="The Cloud Scrubbing Center">
+  The only way to survive a massive DDoS attack is to have a pipe bigger than the attacker's. Companies use cloud mitigation providers like Cloudflare or Akamai. When an attack hits, traffic is mathematically re-routed via BGP to massive, globally distributed "Scrubbing Centers." The junk traffic is absorbed and filtered out, and only clean traffic is sent to the origin server.
+</Callout>
+
+## Types of DDoS Attacks
+
+<ComparisonTable 
+  headers={['Type', 'Mechanism', 'Mitigation']}
+  rows={[
+    ['Volumetric Attacks', 'Pure bandwidth exhaustion. The attacker sends massive amounts of UDP junk data to clog the physical internet connection.', 'Anycast network routing to absorb the mathematical scale of the attack.'],
+    ['Protocol Attacks', 'Exploiting weaknesses in Layer 3/4. (e.g., A SYN Flood, which mathematically exhausts the server\'s connection state tables without using much bandwidth).', 'Intelligent hardware firewalls that validate TCP handshakes before passing them to the server.'],
+    ['Application (Layer 7) Attacks', 'The most sophisticated. The attacker sends completely valid HTTP requests (like loading an expensive database search query) over and over to exhaust CPU/RAM.', 'Web Application Firewalls (WAFs) and mathematical Rate Limiting.']
+  ]}
+/>
 
 </ConceptTemplate>

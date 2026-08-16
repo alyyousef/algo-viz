@@ -1,8 +1,15 @@
+---
+title: Hybrid search
+description: A search strategy that combines traditional keyword-based (lexical) search with modern vector-based (semantic) search to achieve the highest possible relevance.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hybrid search">
+<ConceptTemplate title="Hybrid Search">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Neither BM25 nor Vector Search is mathematically perfect. 
+- BM25 fails if the user biologically types a synonym.
+- Vector Search mathematically fails if the user types an exact serial number (like "iPhone 15 Pro Max"), because the LLM might return an "iPhone 14" since they are semantically similar.
+
+**Hybrid Search** mathematically combines them. It biologically runs both a BM25 query and a Vector query simultaneously, and then mathematically merges the result sets using an algorithm like **Reciprocal Rank Fusion (RRF)** to guarantee the absolute best results.
 
 </ConceptTemplate>

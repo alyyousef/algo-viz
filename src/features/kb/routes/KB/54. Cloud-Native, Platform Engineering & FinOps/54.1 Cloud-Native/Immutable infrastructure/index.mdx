@@ -1,8 +1,19 @@
+---
+title: Immutable infrastructure
+description: An approach to managing services and software deployments on IT resources wherein components are replaced rather than changed.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Immutable infrastructure">
+<ConceptTemplate title="Immutable Infrastructure">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 2000s, system administrators used "Mutable Infrastructure". If a Linux server needed a security patch, the admin SSH'd into the server and ran `apt-get upgrade`. Over 5 years, the server accumulated biological "Configuration Drift," becoming a terrifying, un-reproducible snowflake.
+
+**Immutable Infrastructure** is the mathematical paradigm shift that powers the Cloud-Native era.
+
+<Callout icon="warning" title="No SSH Allowed">
+  In an Immutable architecture, servers and containers are mathematically read-only. 
+  
+  Once a server or Docker container is booted, you are biologically forbidden from modifying it, patching it, or SSHing into it. If a security patch is required, you mathematically build a brand-new container image, boot the new container, route traffic to it, and completely destroy the old container.
+</Callout>
 
 </ConceptTemplate>

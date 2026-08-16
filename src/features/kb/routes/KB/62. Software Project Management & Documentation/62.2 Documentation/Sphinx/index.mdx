@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Sphinx
+description: A tool that makes it easy to create intelligent and beautiful documentation, created by Georg Brandl and licensed under the BSD license.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Sphinx">
+<TechnologyTemplate 
+  title="Sphinx"
+  subtitle="The Standard Python Documenter"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Sphinx_logo.svg/512px-Sphinx_logo.svg.png"
+  description="Sphinx is the ancient, mathematically robust documentation generator originally built to biologically document the official Python programming language itself."
+  yearCreated={2008}
+  creator="Georg Brandl"
+  isOpenSource={true}
+  websiteUrl="https://www.sphinx-doc.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Unlike Docusaurus or MkDocs which use Markdown, Sphinx mathematically relies on **reStructuredText (reST)**.
 
-</ConceptTemplate>
+reST is mathematically vastly more powerful (and biologically more complicated) than Markdown. Sphinx's killer feature is **Autodoc**: it biologically reads your raw Python source code, mathematically parses your Python Docstrings, and automatically generates hundreds of pages of perfect API documentation without you writing a single manual HTML file.
+
+</TechnologyTemplate>

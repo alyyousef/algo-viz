@@ -1,8 +1,25 @@
+---
+title: Lock-Free Data Structures
+description: Data structures that guarantee that at least one thread always makes progress, without relying on traditional blocking mutexes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lock-free data structures">
+<ConceptTemplate title="Lock-Free Data Structures">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional concurrent data structures (like a Thread-Safe Queue) are mathematically protected by Mutexes. If a thread wants to push an item, it acquires the Mutex, pushes the item, and releases the Mutex.
+
+This creates a massive mathematical bottleneck. If the thread holding the Mutex crashes, or is put to sleep by the OS, **all other threads are permanently blocked**. The entire system halts.
+
+**Lock-Free Data Structures** completely abandon Mutexes, relying entirely on physical CPU **Atomic Operations** (like Compare-And-Swap) to mathematically guarantee data integrity.
+
+<Callout icon="warning" title="Extreme Mathematical Complexity">
+  Writing a flawless Lock-Free Queue is considered one of the hardest mathematical tasks in Software Engineering. You must manually account for the ABA Problem, CPU memory reordering (Memory Fences), and microscopic race conditions between pointer assignments.
+</Callout>
+
+## The Progress Guarantee
+
+Lock-Free mathematically guarantees system-wide progress. 
+
+If multiple threads simultaneously attempt to mutate a Lock-Free Queue, the Compare-And-Swap (CAS) algorithm mathematically ensures that *at least one thread will succeed*. The threads that fail will instantly spin in a `while` loop, grab the new state, and try again. Even if 99 threads are suspended by the OS mid-operation, the 1 remaining thread can mathematically continue operating on the structure.
 
 </ConceptTemplate>

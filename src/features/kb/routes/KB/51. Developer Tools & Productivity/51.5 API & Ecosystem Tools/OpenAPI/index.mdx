@@ -1,8 +1,20 @@
+---
+title: OpenAPI Specification (OAS)
+description: A broadly adopted industry standard for describing modern APIs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OpenAPI">
+<ConceptTemplate title="OpenAPI (formerly Swagger)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How do you tell a frontend developer exactly what JSON a backend API will return? Writing a Microsoft Word document is biologically prone to human error and instantly becomes outdated.
+
+The **OpenAPI Specification** (formerly known as Swagger) is a mathematical standard for defining APIs in a strict YAML or JSON format.
+
+<Callout icon="info" title="The Single Source of Truth">
+  You write a `openapi.yaml` file that mathematically declares:
+  *"The `/users` endpoint accepts a POST request with a `name` (String, required) and returns a `201` with a `userId` (UUID)."*
+  
+  Because the definition is strictly mathematical, you can use tools to auto-generate the frontend TypeScript interfaces, auto-generate the backend routing boilerplate, and automatically generate beautiful documentation websites, ensuring the code and documentation are biologically incapable of diverging.
+</Callout>
 
 </ConceptTemplate>

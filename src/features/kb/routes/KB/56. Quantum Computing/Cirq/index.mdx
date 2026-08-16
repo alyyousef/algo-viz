@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Cirq
+description: A Python software library for writing, manipulating, and optimizing quantum circuits and running them against quantum computers and simulators.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Cirq">
+<TechnologyTemplate 
+  title="Cirq"
+  subtitle="Google's NISQ Framework"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Google_Cloud_logo.svg/512px-Google_Cloud_logo.svg.png"
+  description="Cirq is Google's open-source Python framework specifically mathematically optimized for creating algorithms on NISQ-era quantum processors."
+  yearCreated={2018}
+  creator="Google"
+  isOpenSource={true}
+  websiteUrl="https://quantumai.google/cirq"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While IBM's Qiskit focuses on broad general quantum computing, Google's Cirq is mathematically focused on the biological reality of the NISQ era (noisy hardware). 
 
-</ConceptTemplate>
+It exposes the physical constraints of the specific quantum hardware to the developer. If Google's Sycamore chip has Qubits laid out in a 2D grid, Cirq forces the developer to mathematically acknowledge that Qubit 1 can only be entangled with Qubit 2 if they are biologically physically next to each other on the silicon chip.
+
+</TechnologyTemplate>

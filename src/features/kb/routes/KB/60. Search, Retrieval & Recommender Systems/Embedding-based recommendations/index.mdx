@@ -1,8 +1,17 @@
+---
+title: Embedding-based recommendations
+description: Recommendation systems that represent users and items as dense vectors (embeddings) in a shared latent space, allowing for similarity calculations via dot products.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Embedding-based recommendations">
+<ConceptTemplate title="Embedding-Based Recommendations">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Modern deep learning replaces classic Matrix Factorization with **Embeddings**.
+
+<Callout icon="info" title="The Shared Latent Space">
+  An AI model mathematically converts both the User and the Item into 128-dimensional vectors. 
+  
+  These vectors are biologically plotted in the exact same mathematical universe. If User A loves Action movies, the AI moves User A's vector physically closer to the vector for "Die Hard". To generate recommendations, the system just performs a rapid Nearest Neighbor mathematical search around the User's vector, instantly returning the 50 closest items.
+</Callout>
 
 </ConceptTemplate>

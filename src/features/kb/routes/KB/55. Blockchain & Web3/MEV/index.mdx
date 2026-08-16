@@ -1,8 +1,19 @@
+---
+title: MEV
+description: Maximal Extractable Value refers to the maximum value that can be extracted from block production in excess of the standard block reward and gas fees by including, excluding, and changing the order of transactions in a block.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MEV">
+<ConceptTemplate title="Maximal Extractable Value (MEV)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you submit a transaction to Ethereum (e.g., buying a token on Uniswap), it does not mathematically execute instantly. It biologically sits in a public waiting room called the **Mempool**.
+
+<Callout icon="warning" title="The Front-Running Crisis">
+  Because the Mempool is public, predatory bots mathematically scan it. 
+  
+  If a bot sees you are about to buy $100,000 of a token (which will biologically drive the price up), the bot mathematically executes a transaction to buy the token *first*, by paying a higher Gas bribe to the miner. The bot buys the token, your transaction executes (driving the price up), and the bot instantly sells the token back to you for a massive profit.
+  
+  This invisible mathematical theft is known as **MEV (Maximal Extractable Value)**, and it drains billions of dollars from retail users every year.
+</Callout>
 
 </ConceptTemplate>

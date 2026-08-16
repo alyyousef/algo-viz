@@ -1,8 +1,13 @@
+---
+title: Matrix factorisation
+description: A class of collaborative filtering algorithms used in recommender systems that factorizes the user-item interaction matrix into the product of two lower-dimensional rectangular matrices.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Matrix factorisation">
+<ConceptTemplate title="Matrix Factorization">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine a massive Excel spreadsheet where rows are 100,000 Users and columns are 10,000 Movies. The cells contain ratings (1-5 stars). Most cells are biologically empty because nobody has watched every movie.
+
+**Matrix Factorization** (made famous during the Netflix Prize) is the hardcore linear algebra used to mathematically fill in the blanks. It mathematically decomposes the massive sparse matrix into two smaller, dense matrices (User embeddings and Item embeddings). By multiplying these smaller matrices back together, it mathematically predicts exactly what rating User 42 would give Movie 99, even if they have never seen it.
 
 </ConceptTemplate>

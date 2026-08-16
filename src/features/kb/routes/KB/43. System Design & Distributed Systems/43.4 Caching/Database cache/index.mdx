@@ -1,8 +1,28 @@
+---
+title: Database Caching
+description: Internal memory management mechanisms used by database management systems to hold frequently accessed data in RAM.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Database cache">
+<ConceptTemplate title="Database Caching">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before you ever deploy a Redis cluster, you should mathematically ensure you are fully utilizing your database's built-in caching mechanisms. 
+
+Modern databases like PostgreSQL and MySQL are incredibly sophisticated. They do not read directly from the physical hard drive on every query. They reserve a massive chunk of the server's RAM to act as an internal **Buffer Pool**.
+
+<Callout icon="tip" title="The 80/20 Rule of RAM">
+  A common mathematical rule of thumb for database server tuning is allocating 80% of the physical server RAM directly to the Database Cache (e.g., PostgreSQL's `shared_buffers`).
+</Callout>
+
+## Types of Internal Database Caches
+
+<ComparisonTable 
+  headers={['Cache Type', 'Mechanism', 'Details']}
+  rows={[
+    ['Buffer Pool / Page Cache', 'The DB mathematically caches the raw 8KB blocks of disk data in RAM.', 'If a user queries User #123, the DB loads the entire 8KB block containing User 123 into RAM. The next 1,000 queries for that user will hit RAM, bypassing the disk.'],
+    ['Query Result Cache', 'The DB hashes the exact SQL string (e.g., `SELECT COUNT(*) FROM Users`) and caches the final number.', 'MySQL famously deprecated and removed this feature in version 8.0 because the mathematical overhead of invalidating the cache every time a new user signed up became slower than just running the query.'],
+    ['Index Cache', 'Holding B-Tree indexes entirely in RAM.', 'Mathematically critical. If an index does not fit entirely in RAM, the DB will physically Thrash the hard drive to find records, crushing performance.']
+  ]}
+/>
 
 </ConceptTemplate>

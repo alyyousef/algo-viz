@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Compression (Gzip)
+description: A file format and a software application used for file compression and decompression.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Gzip)">
+<TechnologyTemplate 
+  title="Gzip"
+  subtitle="The legacy standard of web compression"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/512px-Tux.svg.png"
+  description="Gzip is the foundational mathematical compression algorithm that powered the entire internet for two decades before the invention of Brotli."
+  yearCreated={1992}
+  creator="Jean-loup Gailly and Mark Adler"
+  isOpenSource={true}
+  websiteUrl="https://www.gnu.org/software/gzip/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Gzip is mathematically based on the DEFLATE algorithm, which is a combination of LZ77 and Huffman coding. 
 
-</ConceptTemplate>
+While Brotli is now the industry standard for compressing static web assets (HTML/CSS/JS), Gzip is still universally supported by 100.0% of all web browsers globally. It remains the absolute fallback compression method for legacy systems and API JSON payloads.
+
+</TechnologyTemplate>

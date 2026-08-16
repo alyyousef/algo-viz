@@ -1,8 +1,13 @@
+---
+title: Options pricing
+description: The mathematical process of determining the fair value of an options contract.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Options pricing">
+<ConceptTemplate title="Options Pricing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Black-Scholes is famous, it makes strict mathematical assumptions (like assuming volatility is constant, which is biologically false).
+
+Modern **Options Pricing** involves massive computational power. Quants write C++ programs to mathematically solve complex Partial Differential Equations (PDEs) or use Binomial Tree algorithms to calculate the price of "Exotic Options" (contracts with insane biological rules, like "The payoff depends on the average price over the last 30 days, but only if the price never dropped below $50").
 
 </ConceptTemplate>

@@ -1,8 +1,21 @@
+---
+title: Consensus mechanisms (PoW)
+description: Proof of work is a form of cryptographic zero-knowledge proof in which one party proves to others that a certain amount of a specific computational effort has been expended.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Consensus mechanisms (PoW">
+<ConceptTemplate title="Proof of Work (PoW)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If 10,000 anonymous strangers on the internet are maintaining a database, who gets to decide what data is written to the next block?
+
+If anyone can write, a hacker could simply create 50,000 fake computers to instantly outvote the network (a Sybil Attack).
+
+<Callout icon="warning" title="Thermodynamic Security">
+  **Proof of Work** mathematically solves this by tying voting power to physics.
+  
+  To write a block to the Bitcoin network, you must mathematically guess a random number (a Nonce) that generates a specific SHA-256 hash. Because hashing is random, the only way to find the number is to biologically burn massive amounts of electricity guessing trillions of times per second. 
+  
+  A hacker cannot create 50,000 fake computers; they must physically purchase 50,000 real GPUs and pay the electric bill.
+</Callout>
 
 </ConceptTemplate>

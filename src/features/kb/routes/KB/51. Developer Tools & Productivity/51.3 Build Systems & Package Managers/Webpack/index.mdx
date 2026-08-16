@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Webpack
+description: A static module bundler for modern JavaScript applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Webpack">
+<TechnologyTemplate 
+  title="Webpack"
+  subtitle="The undisputed king of JavaScript bundling"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Webpack.svg/512px-Webpack.svg.png"
+  description="Webpack completely redefined frontend architecture. It mathematically treats every file (JavaScript, CSS, PNGs) as a module, parses their dependencies, and compiles them into a single, highly optimized static bundle."
+  yearCreated={2012}
+  creator="Tobias Koppers"
+  isOpenSource={true}
+  websiteUrl="https://webpack.js.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, browsers mathematically could not understand `import` statements. If you had 50 JavaScript files, you had to manually order 50 `<script>` tags in your HTML file, hoping you didn't mess up the global variables.
 
-</ConceptTemplate>
+<Callout icon="warning" title="The Dependency Graph">
+  Webpack mathematically parses your `index.js` file, finds every `import`, opens those files, finds their `imports`, and recursively maps a massive mathematical Dependency Graph. 
+  
+  It then injects Loaders (like Babel to compile React JSX, or SASS-loader to compile CSS), and bundles everything into exactly one `main.js` file that the browser can perfectly execute.
+</Callout>
+
+While Webpack is incredibly powerful, its configuration (`webpack.config.js`) is notoriously complex, leading to the rise of Zero-Config tools like Vite.
+
+</TechnologyTemplate>

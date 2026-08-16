@@ -1,8 +1,27 @@
+---
+title: Context-Free Grammars
+description: A formal grammar in which every production rule is of the form A → α, where A is a single nonterminal symbol and α is a string of terminals and/or nonterminals.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Context-free grammars">
+<ConceptTemplate title="Context-Free Grammars (CFG)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A level above Regular Languages in the mathematical Chomsky Hierarchy lies the **Context-Free Grammar (CFG)**.
+
+A CFG is a set of recursive mathematical rules that completely define a language. It is called "Context-Free" because the rules apply universally, regardless of the surrounding context. 
+
+If a rule states that a `String` is a valid `Expression`, then a `String` is mathematically valid anywhere an `Expression` is allowed, period.
+
+<Callout icon="tip" title="The Language of Parsers">
+  Almost every programming language (C, Java, Python) is mathematically defined using a Context-Free Grammar. This is why we can write Parsers (Pushdown Automata) to mathematically construct Abstract Syntax Trees from source code.
+</Callout>
+
+## Anatomy of a CFG
+
+A CFG is mathematically defined by four components:
+1. **Terminals:** The literal characters or tokens (e.g., `if`, `+`, `123`).
+2. **Non-Terminals:** Abstract placeholders that can be replaced (e.g., `Expression`, `Statement`).
+3. **Production Rules:** The mathematical mapping (e.g., `Expression -> Expression + Expression`).
+4. **Start Symbol:** The single Non-Terminal that represents the entire program.
 
 </ConceptTemplate>

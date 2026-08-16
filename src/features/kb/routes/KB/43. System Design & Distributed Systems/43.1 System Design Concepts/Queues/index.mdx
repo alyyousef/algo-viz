@@ -1,8 +1,28 @@
+---
+title: Message Queues
+description: A form of asynchronous service-to-service communication used in serverless and microservices architectures.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Queues">
+<ConceptTemplate title="Message Queues">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a synchronous architecture, if the Web Server calls the Email Server to send a receipt, the Web Server mathematically blocks its own execution until the email is sent. If the Email Server crashes, the Web Server crashes.
+
+A **Message Queue** introduces mathematical **Decoupling**.
+
+<Callout icon="success" title="Asynchronous Reliability">
+  The Web Server simply drops a JSON message ("Send Receipt to User A") into the Queue and instantly returns an HTTP 200 OK to the user. The Web Server's job is done. A separate Worker process will mathematically pull the message from the queue and send the email at its own pace.
+</Callout>
+
+## Core Queue Mechanics
+
+<ComparisonTable 
+  headers={['Concept', 'Description', 'Real-world Analogy']}
+  rows={[
+    ['Point-to-Point', 'A message mathematically goes to exactly one consumer. If you have 5 workers, only one worker will process the "Send Email" task.', 'A line at a grocery store checkout. One cashier serves one customer.'],
+    ['Durability', 'The queue writes messages to a physical hard drive. If the queue server loses power, the messages are mathematically saved and restored on reboot.', 'Writing tasks down in a physical notebook instead of keeping them in your head.'],
+    ['Dead Letter Queue (DLQ)', 'If a worker mathematically fails to process a message 5 times in a row, the queue moves the message to the DLQ so human engineers can debug it without blocking the main queue.', 'A post office "Return to Sender" bin for letters with invalid addresses.']
+  ]}
+/>
 
 </ConceptTemplate>

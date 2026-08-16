@@ -1,8 +1,21 @@
+---
+title: Hoare logic
+description: A formal system with a set of logical rules for reasoning rigorously about the correctness of computer programs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hoare logic">
+<ConceptTemplate title="Hoare Logic">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Tony Hoare in 1969, **Hoare Logic** is the foundational mathematics that makes Formal Verification possible.
+
+<Callout icon="info" title="The Hoare Triple">
+  It operates on the mathematical concept of the **Hoare Triple**: `{P} C {Q}`.
+  
+  - **P (Precondition)**: The mathematical state of the world *before* the code runs (e.g., `x > 0`).
+  - **C (Command)**: The actual code (e.g., `y = x * 2`).
+  - **Q (Postcondition)**: The mathematical state of the world *after* the code runs (e.g., `y > 0`).
+  
+  By chaining thousands of these triples together, a computer can mathematically trace the logic of an entire application from start to finish, proving that if P is true, Q will *always* biologically be true.
+</Callout>
 
 </ConceptTemplate>

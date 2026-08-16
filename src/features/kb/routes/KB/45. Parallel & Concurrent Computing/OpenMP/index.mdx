@@ -1,8 +1,32 @@
+---
+title: OpenMP
+description: An application programming interface that supports multi-platform shared-memory multiprocessing programming in C, C++, and Fortran.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OpenMP">
+<ConceptTemplate title="OpenMP (Open Multi-Processing)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing raw \`pthreads\` in C or managing \`std::thread\` in C++ is highly error-prone and mathematically complex.
+
+**OpenMP** was created to make Shared-Memory parallelism trivially easy for scientists and engineers. It is an API built directly into modern C/C++/Fortran compilers (like GCC and Clang) that uses simple \`#pragma\` directives to mathematically transform sequential code into parallel code.
+
+<Callout icon="success" title="The Magic For-Loop">
+  Imagine a massive \`for\` loop that iterates 1 million times. To parallelize this manually, you would have to calculate thread ID offsets, spawn 8 threads, and mathematically join them. 
+  
+  With OpenMP, you write exactly one line of code above the loop: 
+  \`#pragma omp parallel for\`
+  
+  The compiler automatically injects all the multithreading mathematics, splits the 1 million iterations perfectly across all available CPU cores, and merges them.
+</Callout>
+
+## The Fork-Join Mathematical Model
+
+OpenMP mathematically operates strictly on the **Fork-Join Model**. 
+1. The program starts as a single Main Thread.
+2. When it hits an OpenMP \`#pragma\`, the Main Thread mathematically **Forks** into a team of worker threads.
+3. The workers execute the block in parallel.
+4. At the end of the block, there is an implicit mathematical barrier. The workers synchronize and **Join** back into the single Main Thread.
+
+*(Note: OpenMP is strictly for Shared Memory on a single motherboard. If you need to scale across multiple servers, you must combine OpenMP with MPI.)*
 
 </ConceptTemplate>

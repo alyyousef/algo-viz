@@ -1,42 +1,35 @@
 ---
-title: The Halting Problem
-description: "A foundational theorem proving that it is impossible to write a program that can perfectly determine if another program will eventually stop running or run forever."
+title: Halting Problem
+description: The problem of determining, from a description of an arbitrary computer program and an input, whether the program will finish running, or continue to run forever.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Halting Problem">
+<ConceptTemplate title="Halting Problem">
 
-Can we write a magical debugger program—let's call it `halts(code, input)`—that analyzes any piece of source code and tells us **True** (the code will eventually finish) or **False** (the code contains an infinite loop and will run forever)?
+The **Halting Problem**, proved by Alan Turing in 1936, is the most famous uncomputable problem in Computer Science.
 
-In 1936, Alan Turing mathematically proved that **no such program can ever exist**. This is the **Halting Problem**.
+It asks: *"Can you write a compiler tool (let's call it `doesItHalt(code)`) that reads the source code of another program, mathematically analyzes it, and returns `true` if the code will eventually finish, or `false` if it contains an infinite loop?"*
 
-## The Proof by Contradiction
+Turing mathematically proved that such a tool is **impossible to build**.
 
-Turing used a brilliant paradox to prove this. 
-Assume the magical `halts()` function *does* exist. We then write a malicious new program called `paradox()` that uses it:
+<Callout icon="warning" title="The Paradox Proof">
+  Turing proved it using a paradox. Imagine you successfully built `doesItHalt()`. 
+  
+  I write a malicious program called `Paradox`:
+  ```javascript
+  function Paradox() {
+    if ( doesItHalt(Paradox) == true ) {
+       while(true) {} // trigger an infinite loop!
+    } else {
+       return; // halt immediately!
+    }
+  }
+  ```
+  If your tool says my code *will* halt, my code intentionally loops forever. If your tool says my code *will loop forever*, my code intentionally halts. Your tool is mathematically forced to be wrong 100% of the time.
+</Callout>
 
-```python
-def paradox(code):
-    if halts(code, code) == True:
-        # If the analyzer says this code WILL stop, 
-        # we purposely loop forever!
-        while True: 
-            pass 
-    else:
-        # If the analyzer says this code will loop FOREVER, 
-        # we purposely stop immediately!
-        return 
-```
+## Engineering Impact
 
-Now, what happens if we feed the `paradox` program into itself? 
-`paradox(paradox)`
-
-- If `halts` says the paradox *will stop*, the `if` statement executes and the paradox loops forever. (`halts` was wrong).
-- If `halts` says the paradox *will run forever*, the `else` statement executes and the paradox stops immediately. (`halts` was wrong).
-
-## The Implications
-Because `halts()` can be mathematically tricked, it cannot be perfectly accurate. Therefore, a universal program that can predict the behavior of all other programs is impossible. 
-
-This proves that there are fundamental, mathematical limits to what computers can do. For example, it is theoretically impossible to write a perfect anti-virus software or a perfect static analysis tool.
+Because of the Halting Problem, it is mathematically impossible to write a perfect Static Analyzer (like ESLint). We cannot mathematically prove if a piece of code is perfectly safe, free of deadlocks, or free of infinite loops without actually running it.
 
 </ConceptTemplate>

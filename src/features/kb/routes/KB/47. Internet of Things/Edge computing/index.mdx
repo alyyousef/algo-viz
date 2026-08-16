@@ -1,25 +1,23 @@
 ---
 title: Edge Computing
-description: "A distributed computing paradigm that brings computation and data storage closer to the sources of data."
+description: A distributed computing paradigm that brings computation and data storage closer to the location where it is needed.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Edge Computing">
 
-In traditional cloud computing, sensors collect data and blindly stream it across the internet to massive AWS or Azure data centers for processing. 
+In traditional IoT architectures, a sensor reads data (e.g., a camera takes a photo), blindly sends that massive file up to the AWS Cloud, and the Cloud mathematically processes it using AI to see if a human is in the photo.
 
-**Edge Computing** flips this model. Instead of moving data to the computer, it moves the computer to the data. Small, powerful servers (the "Edge") are placed physically on-site (in a factory, in a hospital, or inside a self-driving car) to process the data immediately.
+**Edge Computing** mathematically reverses this paradigm. It forces the AI processing to happen *locally* on the physical device (the Edge) before sending anything to the cloud.
 
-## Why is Edge Computing Necessary?
-
-1. **Latency**: A self-driving car traveling at 70 MPH cannot wait 150 milliseconds for a server in Virginia to tell it to hit the brakes. The AI model must run on a GPU inside the trunk of the car (the Edge) to react in 5 milliseconds.
-2. **Bandwidth Costs**: A modern jet engine generates a terabyte of diagnostic data per flight. Sending this over an expensive satellite connection would cost thousands of dollars. The Edge computer on the plane filters the data, throwing away 99% of it, and only transmits anomalies to the cloud.
-3. **Privacy and Security**: Security cameras in a hospital might use Edge computing to run facial recognition locally, blurring out faces *before* the video is ever uploaded to the cloud, ensuring compliance with privacy laws.
-4. **Offline Capability**: If a tractor on a farm loses cellular connection, it can still use its Edge server to navigate the field and operate autonomously.
-
-<Callout icon="warning" title="The Convergence">
-The lines between Cloud and Edge are blurring. Technologies like **Kubernetes** are heavily used to manage Edge deployments, allowing engineers to deploy Docker containers to a server in a factory exactly the same way they deploy to a server in AWS.
+<Callout icon="tip" title="Why Edge Computing?">
+  1. **Latency:** If an autonomous car sees a pedestrian, it mathematically cannot wait 200 milliseconds for a cloud server in Virginia to tell it to brake.
+  2. **Bandwidth:** Sending 4K video feeds from 1,000 security cameras to the cloud 24/7 will destroy a factory's internet connection. The Edge processes the video locally and only sends a 1-byte message: "Intruder detected."
+  3. **Privacy:** The actual raw video feed never mathematically leaves the physical building.
 </Callout>
+
+## TinyML
+
+Edge Computing has given rise to **TinyML**. Engineers are mathematically shrinking massive Neural Networks so they can execute directly on tiny, $3 microcontrollers with only 256KB of RAM, running entirely on coin-cell batteries without any internet connection at all.
 
 </ConceptTemplate>

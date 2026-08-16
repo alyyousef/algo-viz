@@ -1,8 +1,23 @@
+---
+title: Direct Preference Optimization (DPO)
+description: A stable, lightweight alternative to RLHF that aligns language models without requiring a separate reward model.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DPO">
+<ConceptTemplate title="Direct Preference Optimization (DPO)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, aligning LLMs to human preferences required Reinforcement Learning from Human Feedback (RLHF). RLHF is notoriously unstable, complex, and requires training a completely separate "Reward Model" to score the outputs of the primary model during PPO (Proximal Policy Optimization).
+
+Direct Preference Optimization (DPO) simplifies this immensely by mathematically proving that the reward model can be bypassed entirely. 
+
+<Callout icon="success" title="The DPO Breakthrough">
+  DPO frames the alignment process as a simple classification problem. Instead of reinforcement learning, it uses standard supervised learning techniques directly on the preference data (e.g., "Response A is better than Response B"), making alignment radically simpler, cheaper, and often better.
+</Callout>
+
+## How it Works
+
+1. **Preference Data:** You collect a dataset where a prompt has two responses: a "chosen" response and a "rejected" response.
+2. **The Loss Function:** DPO mathematically increases the probability of the chosen response while simultaneously decreasing the probability of the rejected response.
+3. **Implicit Reward:** The math elegantly demonstrates that optimizing this loss function is exactly equivalent to training a reward model and then performing RLHF, but in a single, stable step.
 
 </ConceptTemplate>

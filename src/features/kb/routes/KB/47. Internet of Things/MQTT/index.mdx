@@ -1,34 +1,36 @@
 ---
-title: MQTT (Message Queuing Telemetry Transport)
-description: "A lightweight, publish-subscribe network protocol that transports messages between devices, designed specifically for constrained IoT networks."
+title: MQTT
+description: A lightweight, publish-subscribe network protocol that transports messages between devices, designed for connections with remote locations.
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="MQTT (Message Queuing Telemetry Transport)">
+<TechnologyTemplate 
+  title="MQTT"
+  subtitle="The absolute standard protocol of IoT"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/MQTT_logo.svg/512px-MQTT_logo.svg.png"
+  description="Message Queuing Telemetry Transport (MQTT) is a wildly popular, ultra-lightweight messaging protocol specifically mathematically designed for constrained devices with terrible internet connections."
+  yearCreated={1999}
+  creator="IBM"
+  isOpenSource={true}
+  websiteUrl="https://mqtt.org/"
+>
 
-If HTTP is the language of the Web, **MQTT** is the language of the Internet of Things. 
+If an ESP32 tries to send a standard HTTP REST API request (`POST /api/temperature`), the HTTP headers alone are mathematically massive (often 500+ bytes). For a battery-powered device on a weak cellular network, this is completely unacceptable.
 
-Invented in 1999 to monitor oil pipelines over expensive, unreliable satellite links, MQTT was designed to be incredibly lightweight. It uses a **Publish/Subscribe (Pub/Sub)** architecture, completely decoupling the devices sending data from the applications receiving it.
+**MQTT** solves this. The mathematical overhead of an MQTT message can be as small as **2 bytes**. 
 
-## The Pub/Sub Model
-In HTTP, a client connects directly to a server and asks for data. 
-In MQTT, clients never talk to each other directly. Instead, they all connect to a central server called the **MQTT Broker**.
-
-1. **Publish**: A temperature sensor publishes a message `"22.5"` to a specific "Topic", like `home/livingroom/temperature`.
-2. **Subscribe**: A smart thermostat app subscribes to the topic `home/livingroom/temperature`.
-3. **Routing**: When the Broker receives the message from the sensor, it immediately pushes it to the thermostat app (and any other apps listening to that topic).
-
-## Why MQTT is Perfect for IoT
-- **Tiny Overhead**: An HTTP header can be hundreds of bytes. An MQTT header is as small as 2 bytes. This saves massive amounts of battery and cellular bandwidth.
-- **Quality of Service (QoS)**: MQTT has three levels of guarantee:
-  - **QoS 0 (At most once)**: Fire and forget. (Good for frequent sensor readings).
-  - **QoS 1 (At least once)**: Guaranteed delivery, but might arrive twice.
-  - **QoS 2 (Exactly once)**: Safest, but slowest. (Good for billing systems).
-- **Last Will and Testament (LWT)**: If a device suddenly loses power or cell service, the Broker will automatically publish a pre-configured "death certificate" message to notify the rest of the system that the device has flatlined.
-
-<Callout icon="tip" title="Popular Brokers">
-**Mosquitto** is the most popular open-source MQTT broker for small/medium projects. Enterprise cloud providers (AWS IoT Core, Azure IoT Hub) heavily use MQTT under the hood to ingest data.
+<Callout icon="success" title="The Publish/Subscribe Architecture">
+  Unlike HTTP (where the client constantly polls the server), MQTT uses a **Pub/Sub Broker**.
+  1. The IoT Thermostat (Publisher) connects to the Broker and publishes a message to a specific string **Topic** (e.g., `house/livingroom/temp`).
+  2. A Mobile App (Subscriber) connects to the Broker and subscribes to that exact Topic.
+  3. The Broker mathematically routes the message instantly. The Thermostat never knows the Mobile App exists.
 </Callout>
 
-</ConceptTemplate>
+## Quality of Service (QoS)
+
+MQTT is mathematically designed for terrible networks. It offers three strict Quality of Service levels:
+- **QoS 0 (At most once):** "Fire and forget." The sensor sends the data. If it drops, who cares.
+- **QoS 1 (At least once):** The sensor sends the data and mathematically waits for an acknowledgment. If it doesn't get one, it sends it again (potentially creating duplicates).
+- **QoS 2 (Exactly once):** A complex, 4-step mathematical handshake guaranteeing the message is delivered exactly one time, no matter how bad the network is.
+
+</TechnologyTemplate>

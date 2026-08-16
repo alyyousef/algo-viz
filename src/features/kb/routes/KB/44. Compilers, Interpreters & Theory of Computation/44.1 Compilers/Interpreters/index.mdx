@@ -1,8 +1,25 @@
+---
+title: Interpreters
+description: A computer program that directly executes instructions written in a programming or scripting language, without requiring them previously to have been compiled into a machine language program.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Interpreters">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Compiler** translates your entire source code into mathematical CPU instructions (a binary `.exe`) *before* the user ever runs it. 
+
+An **Interpreter** translates and executes the source code mathematically *line-by-line, while the program is actually running*.
+
+Languages like Python, Ruby, and JavaScript are historically Interpreted. Languages like C, C++, and Rust are Compiled.
+
+<Callout icon="warning" title="The Performance Penalty">
+  Because an Interpreter must physically run the Lexer, Parser, and execution logic *while* the user is waiting, interpreted languages are mathematically 10x to 100x slower than compiled languages.
+</Callout>
+
+## The Evolution of Execution
+
+1. **Pure Tree-Walk Interpreters:** The oldest and slowest mathematical method. The interpreter builds the Abstract Syntax Tree (AST), and then recursively walks the tree, executing C++ code for every node it touches.
+2. **Bytecode Interpreters:** Python uses this. It compiles the code into an intermediate mathematical bytecode (e.g., `.pyc` files) and then runs a virtual machine (a massive `switch` statement) to execute the bytecode. It is faster than Tree-Walking.
+3. **Just-In-Time (JIT) Compilers:** The modern miracle behind JavaScript (V8 Engine). It starts by interpreting the bytecode. But if it mathematically detects a `for` loop running 10,000 times, it pauses, instantly compiles that specific loop into ultra-fast physical Machine Code, and swaps it out. JIT achieves near-native C++ speeds in interpreted languages.
 
 </ConceptTemplate>

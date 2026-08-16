@@ -1,8 +1,34 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: ROS 2
+description: The next generation of the Robot Operating System, rebuilt from the ground up to support industrial, production, and real-time environments.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="ROS2">
+<TechnologyTemplate 
+  title="ROS 2"
+  subtitle="Bringing ROS to production and self-driving cars"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Ros_logo.svg/512px-Ros_logo.svg.png"
+  description="ROS 2 is a total architectural rewrite of ROS 1. It mathematically removes the centralized Master Node and introduces strict Real-Time constraints, making it legal for use in industrial factories and autonomous vehicles."
+  yearCreated={2017}
+  creator="Open Robotics"
+  isOpenSource={true}
+  websiteUrl="https://docs.ros.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While ROS 1 conquered academia, companies like Tesla and Boston Dynamics refused to use it in production. It lacked security, it could not mathematically guarantee Real-Time deadlines, and it relied on a fragile centralized `roscore` server.
 
-</ConceptTemplate>
+To fix this, the community built **ROS 2**.
+
+<Callout icon="tip" title="The DDS Backbone">
+  ROS 2 mathematically stripped out the custom TCP/IP networking stack of ROS 1 and replaced it with **DDS (Data Distribution Service)**.
+  
+  DDS is a massive, military-grade communication standard used by the US Navy to coordinate battleships. It is completely decentralized (no `roscore`). It allows Nodes to mathematically discover each other via UDP multicast, and provides incredibly strict **Quality of Service (QoS)** policies, guaranteeing that a brake command reaches the wheels in exactly 2 milliseconds.
+</Callout>
+
+## Security (SROS2)
+
+In ROS 1, anyone connected to the Wi-Fi could open a terminal, type `rostopic pub /cmd_vel`, and physically drive your robot into a wall. 
+
+ROS 2 introduced **SROS2**. Every single Node requires mathematical X.509 cryptographic certificates to communicate. The traffic is fully encrypted, making it viable for NASA rovers and commercial delivery drones operating in the public sphere.
+
+</TechnologyTemplate>

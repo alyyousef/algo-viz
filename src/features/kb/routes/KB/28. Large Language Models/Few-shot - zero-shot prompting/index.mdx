@@ -1,8 +1,25 @@
+---
+title: Zero-Shot & Few-Shot Prompting
+description: Techniques to steer the behavior of an LLM at inference time without modifying its internal weights.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Few-shot / zero-shot prompting">
+<ConceptTemplate title="Zero-Shot & Few-Shot Prompting">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before massive LLMs, getting a machine learning model to perform a new task (like sentiment analysis) required gathering thousands of examples and fine-tuning the model\'s weights.
+
+Modern LLMs possess the emergent ability of **In-Context Learning**. They can learn how to perform a new task purely from the text provided in the prompt, entirely at runtime.
+
+<Callout icon="info" title="Zero-Shot vs Few-Shot">
+  **Zero-Shot:** You give the model the task with no examples. ("Translate 'Hello' to French:")
+  
+  **Few-Shot:** You provide 2-5 examples of the task being completed correctly before asking the actual question. This drastically increases accuracy and enforces specific formatting.
+</Callout>
+
+## The Mathematics of In-Context Learning
+
+When you provide a Few-Shot prompt, you are not permanently changing the model. You are simply altering the dense representation (the KV Cache) that the attention mechanism uses. 
+
+The attention heads mathematically recognize the pattern in your examples (e.g., "Input -> Output") and apply that exact pattern to the final, unanswered query. As soon as the generation is complete, the prompt is discarded and the model retains no memory of the examples.
 
 </ConceptTemplate>

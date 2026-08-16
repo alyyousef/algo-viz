@@ -1,8 +1,30 @@
+---
+title: Distributed Transactions
+description: Transactions that alter data on multiple databases mathematically simultaneously, requiring complex coordination to maintain ACID properties.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Distributed transactions">
+<ConceptTemplate title="Distributed Transactions">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a Microservices architecture, you intentionally slice your database into smaller, isolated databases (e.g., a dedicated PostgreSQL server for Orders, and a dedicated PostgreSQL server for Inventory). 
+
+While this mathematically improves horizontal scalability, it creates a massive engineering nightmare: **Distributed Transactions**.
+
+If an Order requires deducting $50 and deducting 1 item, how do you mathematically guarantee that BOTH databases commit the change, or BOTH databases rollback the change?
+
+<Callout icon="error" title="The Microservices Trap">
+  Many engineers enthusiastically split their monolithic database into microservices without realizing they have mathematically destroyed ACID transactional guarantees. Without a distributed transaction strategy, you will inevitably encounter "partial failures" resulting in severe data corruption.
+</Callout>
+
+## Mathematical Strategies
+
+<ComparisonTable 
+  headers={['Strategy', 'How it works', 'Verdict']}
+  rows={[
+    ['Two-Phase Commit (2PC)', 'A central coordinator mathematically locks rows across all databases, asks if they are ready, and then broadcasts a global commit.', 'Synchronous, highly consistent, but terribly slow. Creates massive mathematical bottlenecks.'],
+    ['Saga Pattern', 'An asynchronous sequence of local transactions. Service A commits its local DB, then fires an Event to Service B. If Service B fails, it fires a "Compensating Event" to Service A to mathematically reverse the first transaction.', 'Complex to build, but highly scalable and performant. The modern standard for microservices.'],
+    ['Outbox Pattern', 'Writing the business data AND the "Event message" to the exact same local database table in one single local ACID transaction. A background worker reads the table and forwards the message to the queue.', 'Mathematically guarantees that the event is fired if and only if the data is saved.']
+  ]}
+/>
 
 </ConceptTemplate>

@@ -1,8 +1,23 @@
+---
+title: Cache Invalidation
+description: The process of removing or updating stale entries in a cache when the underlying data in the source database changes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cache invalidation">
+<ConceptTemplate title="Cache Invalidation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+> *"There are only two hard things in Computer Science: cache invalidation and naming things."* — Phil Karlton
+
+**Cache Invalidation** is the mathematical nightmare of ensuring that a blazing-fast cache does not serve old, incorrect data to the user. If an item's price changes in the database from $10 to $20, but the cache still says $10, the company loses money.
+
+<Callout icon="error" title="The Distributed State Problem">
+  Invalidation is mathematically difficult because the Database and the Cache are two physically separate computers. There is no atomic transaction that guarantees both change simultaneously without creating a massive performance bottleneck.
+</Callout>
+
+## The Three Mathematical Approaches
+
+1. **Absolute TTL (Time-To-Live):** The simplest approach. Give every cache key a mathematical expiration of 5 minutes. You accept the fact that data might be mathematically incorrect for up to 4 minutes and 59 seconds.
+2. **Event-Driven Invalidation:** When the Application writes to the Database, it immediately publishes a message to a Message Queue (e.g., "Product 123 Updated"). A separate worker listens to this queue and mathematically deletes `Product:123` from Redis.
+3. **Write-Through:** The Application mathematically forces the Cache to update the exact millisecond the Database updates.
 
 </ConceptTemplate>

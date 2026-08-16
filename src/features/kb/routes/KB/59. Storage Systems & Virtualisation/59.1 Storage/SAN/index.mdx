@@ -1,8 +1,17 @@
+---
+title: SAN (Storage Area Network)
+description: A specialized, high-speed network that provides block-level network access to storage.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SAN">
+<ConceptTemplate title="SAN (Storage Area Network)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **SAN** is a highly expensive, enterprise-grade biological network dedicated entirely to storage.
+
+<Callout icon="warning" title="Fiber Channel Block Storage">
+  It uses dedicated fiber-optic cables (Fibre Channel or iSCSI) to connect massive arrays of hard drives to servers. 
+  
+  Crucially, a SAN provides **Block Storage** over the network. When a server boots up and connects to the SAN, the OS mathematically believes a physical hard drive was just plugged directly into its motherboard. SANs provide extreme low-latency performance for clustered databases running across multiple servers.
+</Callout>
 
 </ConceptTemplate>

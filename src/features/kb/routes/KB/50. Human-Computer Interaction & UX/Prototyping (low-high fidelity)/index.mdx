@@ -1,8 +1,23 @@
+---
+title: Prototyping
+description: An early sample, model, or release of a product built to test a concept or process.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prototyping (low/high fidelity)">
+<ConceptTemplate title="Prototyping">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Wireframe is a static picture. A **Prototype** is a mathematically interactive simulation. 
+
+You cannot test if a workflow is frustrating by staring at a JPEG. You must physically give the user a screen and tell them to click the buttons. Prototypes allow teams to identify massive logical failures without spending $100,000 on engineering code.
+
+<Callout icon="success" title="The Spectrum of Fidelity">
+  - **Paper Prototypes:** You literally draw the app screens on 5 pieces of paper. When the user taps a "button" with their finger, you manually swap the paper to the next screen. Brutally simple, mathematically effective.
+  - **Clickable Prototypes (Figma/InVision):** High-fidelity images linked together with hot-spots. It feels like a real app, but contains zero backend logic.
+  - **Coded Prototypes:** Actual HTML/React code, but hardcoded to fake the database interactions. Used for complex micro-interactions or physics testing.
+</Callout>
+
+## The "Fail Fast" Philosophy
+
+The mathematical purpose of a prototype is to fail. If a prototype succeeds instantly, you didn't need a prototype. The goal is to build a fake app in 2 days, watch 5 users completely misunderstand how to use it, and fix the design before handing it to a team of 10 developers who take 3 months to build the real thing.
 
 </ConceptTemplate>

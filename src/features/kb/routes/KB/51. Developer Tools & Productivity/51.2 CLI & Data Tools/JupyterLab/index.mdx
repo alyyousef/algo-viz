@@ -1,8 +1,27 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: JupyterLab
+description: The latest web-based interactive development environment for notebooks, code, and data.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="JupyterLab">
+<TechnologyTemplate 
+  title="JupyterLab"
+  subtitle="The IDE of Data Science"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/512px-Jupyter_logo.svg.png"
+  description="JupyterLab (and Jupyter Notebooks) completely revolutionized Data Science. It is a web-based IDE that allows scientists to write Python code, execute it in small chunks, and render visual data graphs directly inline."
+  yearCreated={2018}
+  creator="Project Jupyter"
+  isOpenSource={true}
+  websiteUrl="https://jupyter.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard IDE (like VS Code), if you have a script that takes 5 minutes to download a 10GB CSV file and 1 second to print a graph, you must mathematically wait 5 minutes every single time you change the color of the graph.
 
-</ConceptTemplate>
+<Callout icon="success" title="The REPL Cell Architecture">
+  Jupyter mathematically isolates the execution state into **Cells**. 
+  
+  You execute Cell 1 (which downloads the 10GB CSV into the `df` variable in RAM). It takes 5 minutes.
+  You then edit the graph color in Cell 2 and execute *only* Cell 2. It runs in 1 millisecond, utilizing the `df` variable already stored in the kernel's RAM. This allows for instantaneous, highly iterative mathematical data exploration.
+</Callout>
+
+</TechnologyTemplate>

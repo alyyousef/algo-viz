@@ -1,8 +1,25 @@
+---
+title: Durability
+description: The ACID property which guarantees that transactions that have committed will survive permanently.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Durability">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Durability** is the absolute mathematical guarantee that once a database tells the user "Success! Your data is saved", that data will survive a catastrophic failure (like someone instantly ripping the power cord out of the server wall).
+
+<Callout icon="warning" title="The OS Page Cache Lie">
+  When an application tells the Operating System to write to a file, the OS lies. It puts the data in a fast RAM buffer (the Page Cache) and returns "Success!" to the application. It flushes the RAM to the physical hard drive later. If the power cuts out before the flush, the data vanishes.
+</Callout>
+
+## How Databases Achieve True Durability
+
+To achieve true mathematical durability, databases use a mechanism called a **Write-Ahead Log (WAL)**.
+
+1. The database receives an `INSERT` command.
+2. It appends the raw command to an append-only file (the WAL).
+3. Crucially, the database executes a system call like `fsync()` or `fdatasync()`. This mathematically forces the OS to bypass the RAM cache and physically burn the bytes onto the magnetic platters or SSD flash chips before returning.
+4. Only after the physical hardware confirms the burn does the database return "Success" to the user.
+5. If the server loses power a microsecond later, upon reboot, the database reads the WAL from the hard drive and perfectly reconstructs the mathematical state.
 
 </ConceptTemplate>

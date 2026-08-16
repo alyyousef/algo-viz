@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Vulkan
+description: A low-overhead, cross-platform 3D graphics and computing API intended for high-performance real-time 3D graphics applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Vulkan">
+<TechnologyTemplate 
+  title="Vulkan"
+  subtitle="The brutal, low-level successor to OpenGL"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Vulkan_Logo.svg/512px-Vulkan_Logo.svg.png"
+  description="Vulkan is a modern, explicit, low-overhead cross-platform API. It mathematically strips away the massive driver abstractions of OpenGL, giving the programmer absolute, terrifying control over the raw GPU memory."
+  yearCreated={2016}
+  creator="Khronos Group"
+  isOpenSource={true}
+  websiteUrl="https://www.vulkan.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because OpenGL was a global state machine with a massive driver hiding all the physics, the CPU wasted an immense amount of time just managing the OpenGL driver.
 
-</ConceptTemplate>
+**Vulkan** destroyed the abstraction. 
+
+<Callout icon="warning" title="The Explicit API">
+  In OpenGL, drawing a triangle takes 50 lines of C++ code. The Driver handles memory allocation automatically.
+  
+  In Vulkan, drawing a triangle takes **1,000 lines of C++ code**. You must mathematically allocate the specific megabytes of VRAM yourself. You must manually orchestrate the synchronization barriers between the GPU and CPU. 
+</Callout>
+
+## Multi-Threading Mastery
+
+Because there is no global state machine, Vulkan is perfectly designed for multi-core CPUs. Core 1 can build mathematical command buffers for the UI, while Core 2 builds command buffers for the lighting, and they can all be mathematically submitted to the GPU simultaneously. This results in massive frame-rate improvements in modern AAA games like *DOOM Eternal*.
+
+</TechnologyTemplate>

@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Isabelle
+description: A generic proof assistant. It allows mathematical formulas to be expressed in a formal language and provides tools for proving those formulas in a logical calculus.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Isabelle">
+<TechnologyTemplate 
+  title="Isabelle / HOL"
+  subtitle="The Higher-Order Logic Prover"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Isabelle_logo.svg/512px-Isabelle_logo.svg.png"
+  description="Isabelle is Coq's primary biological rival, highly favored in academia and used to mathematically verify the seL4 microkernel."
+  yearCreated={1986}
+  creator="Lawrence Paulson"
+  isOpenSource={true}
+  websiteUrl="https://isabelle.in.tum.de/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The crowning achievement of Isabelle was the mathematical verification of **seL4**. 
 
-</ConceptTemplate>
+seL4 is an operating system microkernel. Using Isabelle, mathematicians proved that the 10,000 lines of C code running the OS contain absolutely zero buffer overflows, zero memory leaks, and mathematically cannot crash. It is the most biologically secure piece of software on Earth, completely immune to standard hacking techniques.
+
+</TechnologyTemplate>

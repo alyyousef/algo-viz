@@ -1,8 +1,27 @@
+---
+title: Procedural Generation
+description: In computing, procedural generation is a method of creating data algorithmically as opposed to manually, typically through a combination of human-generated assets and algorithms coupled with computer-generated randomness and processing power.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Procedural generation">
+<ConceptTemplate title="Procedural Generation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want a video game map the size of the real-world Earth (like *Minecraft* or *No Man's Sky*), it is mathematically impossible for a human level-designer to manually place 10 trillion trees. Furthermore, the 3D data for an Earth-sized map would require 50 Petabytes of hard drive space.
+
+The solution is **Procedural Generation**. 
+
+<Callout icon="success" title="Noise Algorithms (Perlin / Simplex)">
+  Procedural Generation is not "pure random." Pure randomness creates white noise static. 
+  
+  Instead, engines use mathematical **Gradient Noise Algorithms** (like Perlin Noise). Perlin Noise generates a smooth, continuously flowing mathematical wave of numbers between 0 and 1. 
+  - If the number is `0.1`, the engine renders an Ocean.
+  - If the number is `0.5`, it renders Grass.
+  - If the number is `0.9`, it renders a Mountain.
+</Callout>
+
+## The Seed
+
+The most powerful mathematical property of Procedural Generation is the **Seed**. 
+Because the algorithm is deterministic, if you input the exact same mathematical Seed (e.g., `12345`), the algorithm will output the exact same 10 trillion trees in the exact same physical coordinates every single time. This allows a 50-Petabyte universe to mathematically fit inside a 5-Megabyte game file.
 
 </ConceptTemplate>

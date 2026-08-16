@@ -1,8 +1,23 @@
+---
+title: Speculative Decoding
+description: A powerful inference optimization that uses a small draft model to massively accelerate the generation of a large model.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Speculative decoding">
+<ConceptTemplate title="Speculative Decoding">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard autoregressive generation is entirely memory-bandwidth bound. A 70B parameter model must load 140GB of weights from VRAM into the compute cores to generate a single token, leaving the GPU\'s actual math units mostly idle.
+
+**Speculative Decoding** solves this by generating multiple tokens at once using a tiny "Draft" model, and then verifying them in parallel with the massive "Target" model.
+
+<Callout icon="success" title="Speedup without Quality Loss">
+  Because the massive Target model always gets the final say, Speculative Decoding guarantees the exact same mathematical output as standard generation, but often 2x to 3x faster.
+</Callout>
+
+## The Mechanism
+
+1. **Drafting:** A tiny, incredibly fast model (e.g., 1B parameters) guesses the next $K$ tokens (e.g., $K=4$).
+2. **Verification:** The massive model (e.g., 70B parameters) processes all $K$ tokens in a single forward pass. Because modern GPUs have massive parallel compute capabilities, evaluating 4 tokens takes almost the exact same time as evaluating 1 token.
+3. **Accept/Reject:** If the Target model agrees with the Draft model\'s guess for token 1, it accepts it. If it disagrees on token 2, it rejects token 2 (and all subsequent drafted tokens) and uses its own generation for token 2. The process then repeats.
 
 </ConceptTemplate>

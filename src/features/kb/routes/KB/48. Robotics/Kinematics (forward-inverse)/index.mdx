@@ -1,40 +1,29 @@
 ---
 title: Kinematics (Forward & Inverse)
-description: "The branch of classical mechanics that describes the motion of points, bodies, and systems without considering the forces that cause them."
+description: The branch of classical mechanics that describes the motion of points, bodies, and systems of bodies without considering the forces that cause them to move.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Kinematics (Forward vs. Inverse)">
+<ConceptTemplate title="Kinematics (Forward & Inverse)">
 
-Imagine a robotic arm with a shoulder joint, an elbow joint, and a wrist joint. Attached to the wrist is a claw (the **End-Effector**). 
+In Robotics, **Kinematics** is the pure geometry of motion. It answers the question: *"If I bend the robot's elbow by 30 degrees, exactly where is the robot's hand in 3D space?"*
 
-**Kinematics** is the pure geometry and trigonometry required to figure out where that claw is in 3D space, or how to move the joints to get the claw to a specific target. (Note: Kinematics ignores gravity, mass, and torque. That is called *Dynamics*).
+Kinematics completely ignores gravity, weight, and force. It is strictly mathematical trigonometry and matrix algebra.
 
-## Forward Kinematics (FK)
-**Given:** The exact angle of every joint (e.g., Shoulder is 45°, Elbow is 90°, Wrist is 0°).
-**Find:** The X, Y, Z coordinate of the claw.
-
-Forward Kinematics is a **solved, deterministic problem**. Using basic trigonometry and matrix multiplication (specifically Denavit-Hartenberg parameters), there is exactly one correct answer. If you know the length of the robot's "bones" and the angles of its "joints", you can calculate exactly where the hand is.
+<Callout icon="info" title="Forward Kinematics">
+  **Input:** Joint Angles ($	heta_1, 	heta_2, 	heta_3$)  
+  **Output:** XYZ Coordinate of the Hand (End Effector)
+  
+  Forward Kinematics is mathematically trivial. If you know the length of the bicep, the length of the forearm, and the exact angles of the shoulder and elbow motors, you can easily use basic Trigonometry (Sine and Cosine) to calculate exactly where the hand is in 3D space.
+</Callout>
 
 ## Inverse Kinematics (IK)
-**Given:** The desired X, Y, Z coordinate of the claw (e.g., "Grab that coffee cup at coordinates [10, 5, 2]").
-**Find:** What angles should I set the shoulder, elbow, and wrist to?
 
-Inverse Kinematics is an **incredibly difficult, non-linear problem**. 
+**Input:** XYZ Coordinate of the Hand  
+**Output:** Joint Angles ($	heta_1, 	heta_2, 	heta_3$)
 
-<ComparisonTable 
-  headers={['Why is IK so hard?', 'Explanation']} 
-  rows={[
-    ['Multiple Solutions', 'Reach your own hand out and touch your computer screen. Now, keep your finger on the screen, but lift your elbow into the air. You just found two different joint configurations that achieve the exact same X,Y,Z coordinate.'],
-    ['No Solutions', 'If the coffee cup is 10 feet away, and the robot arm is only 3 feet long, there is no mathematical combination of joint angles that can reach it.'],
-    ['Singularities', 'Specific mathematical positions where the robot loses a degree of freedom (like when your arm is perfectly straight and locked), causing IK algorithms to divide by zero and fail catastrophically.']
-  ]} 
-/>
+Inverse Kinematics is mathematically brutally difficult. If you tell a robotic arm, *"Move your hand to XYZ coordinate (10, 5, 2)"*, the robot must mathematically calculate exactly what angles to set its shoulder, elbow, and wrist to reach that point.
 
-<Callout icon="tip" title="How is IK solved?">
-Because IK often has no perfect algebraic solution, modern robots use **Numerical Methods** (like Gradient Descent or Jacobian Inverse matrices) to iteratively "guess and check" their way to the correct joint angles hundreds of times per second.
-</Callout>
+Often, there are **infinite mathematical solutions** (e.g., your human hand can stay in the exact same XYZ position in space while your elbow flaps up and down). IK is usually solved using complex Jacobian matrices or iterative gradient descent algorithms.
 
 </ConceptTemplate>

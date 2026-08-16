@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Keycloak
+description: An open source identity and access management solution.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Keycloak)">
+<TechnologyTemplate 
+  title="Keycloak"
+  subtitle="The Open-Source Auth0 Alternative"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Keycloak_Logo.png/512px-Keycloak_Logo.png"
+  description="While Auth0 and Okta charge massive enterprise SaaS fees, Keycloak is a free, mathematically powerful open-source Identity Provider developed by Red Hat."
+  yearCreated={2014}
+  creator="Red Hat"
+  isOpenSource={true}
+  websiteUrl="https://www.keycloak.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because Keycloak is open-source (written in Java), enterprises can physically host it on their own Kubernetes clusters. 
 
-</ConceptTemplate>
+This is biologically mandatory for certain high-security organizations (like government agencies or defense contractors) that mathematically refuse to send their citizens' sensitive password hashes to an external cloud provider like Auth0. Keycloak provides standard OIDC, SAML, and OAuth 2.0 capabilities completely for free.
+
+</TechnologyTemplate>

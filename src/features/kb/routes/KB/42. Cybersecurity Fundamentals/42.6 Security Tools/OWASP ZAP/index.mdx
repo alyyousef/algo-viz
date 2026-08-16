@@ -1,8 +1,28 @@
+---
+title: OWASP ZAP (Zed Attack Proxy)
+description: A highly capable, free, and open-source web application security scanner and proxy.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OWASP ZAP">
+<ConceptTemplate title="OWASP ZAP (Zed Attack Proxy)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Burp Suite is the commercial gold standard for web application testing, the **Zed Attack Proxy (ZAP)** is the flagship open-source alternative maintained by the Open Worldwide Application Security Project (OWASP).
+
+It operates identically as a "Man-in-the-Middle" proxy, allowing developers and penetration testers to intercept, inspect, and mathematically manipulate HTTP traffic between their browser and the web application.
+
+<Callout icon="tip" title="CI/CD Integration">
+  Because ZAP is completely free and has a robust headless API, it is universally used in DevSecOps pipelines. Developers configure GitHub Actions to automatically spin up ZAP and mathematically scan the staging environment for vulnerabilities (like XSS or SQLi) before every production deployment.
+</Callout>
+
+## Key Features
+
+<ComparisonTable 
+  headers={['Feature', 'Description']}
+  rows={[
+    ['Active Scanner', 'Automatically fires thousands of known attack payloads at the target website to discover mathematical flaws in the backend logic.'],
+    ['Spider / Crawler', 'Automatically navigates the website, parsing HTML and JavaScript to discover all hidden endpoints, APIs, and directories.'],
+    ['Fuzzer', 'Allows testers to inject massive arrays of random, malformed data into specific input fields to cause unhandled exceptions or crashes.']
+  ]}
+/>
 
 </ConceptTemplate>

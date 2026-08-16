@@ -1,8 +1,19 @@
+---
+title: ISR (Incremental Static Regeneration)
+description: An architecture that allows you to create or update static pages after you've built your site.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ISR">
+<ConceptTemplate title="Incremental Static Regeneration (ISR)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+SSG is mathematically perfect for speed, but what if you have an e-commerce site with 2,000,000 products? Running `npm run build` to generate 2 million HTML files would take 4 hours. If a price changes, you'd have to rebuild the entire site.
+
+Next.js invented **ISR** to mathematically solve this scaling problem.
+
+<Callout icon="success" title="Stale-While-Revalidate">
+  With ISR, you can mathematically tell Next.js: *"Generate this product page at build time, but revalidate it every 60 seconds."*
+  
+  When a user visits, they instantly get the cached static HTML. If 60 seconds have passed, Next.js triggers a background Node.js thread to rebuild the HTML for *just that one page* and silently updates the CDN cache. You get the biological speed of SSG with the dynamic real-time data of SSR.
+</Callout>
 
 </ConceptTemplate>

@@ -1,45 +1,24 @@
 ---
 title: Recurrent Neural Networks (RNNs)
-description: Networks designed to process sequential data by maintaining a hidden state.
+description: Neural networks designed to handle sequential data by maintaining an internal state (memory).
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Recurrent Neural Networks (RNNs)">
+<ConceptTemplate title="Recurrent Neural Networks (RNNs)">
 
-A Recurrent Neural Network (RNN) is a class of artificial neural networks where connections between nodes form a directed graph along a temporal sequence. This allows it to exhibit temporal dynamic behavior. Unlike feedforward neural networks, RNNs can use their internal state (memory) to process variable length sequences of inputs.
+Recurrent Neural Networks (RNNs) are a class of neural networks designed to process sequential data (like time series, text, or audio). Unlike standard feedforward networks, RNNs have loops in them, allowing information to persist.
 
-<Callout icon="info" title="The Sequence Problem">
-  Traditional neural networks cannot handle sequential data natively because they assume all inputs and outputs are independent of each other. If you want to predict the next word in a sentence, it is essential to know which words came before it.
+<Callout icon="warning" title="The Vanishing Gradient Problem">
+  Standard RNNs suffer catastrophically from the **Vanishing Gradient Problem**. During Backpropagation Through Time (BPTT), gradients are multiplied repeatedly. If the gradients are slightly less than 1, they exponentially shrink to zero, meaning the RNN mathematically cannot learn long-term dependencies (it "forgets" earlier parts of the sequence).
 </Callout>
 
-## How RNNs Work
+## How they maintain state
 
-An RNN processes sequences by iterating through the elements and maintaining a **hidden state** containing information relative to what it has seen so far.
+In a standard MLP, $Output = Activation(Weights \times Input)$.
 
-At each time step $t$, the RNN takes two inputs:
-1. The current input data $x_t$ (e.g., a word in a sentence).
-2. The hidden state from the previous time step $h_{t-1}$.
+In an RNN, the output depends not just on the current input, but on the hidden state from the *previous* time step:
+$HiddenState_t = Activation(Weights_{input} \times Input_t + Weights_{hidden} \times HiddenState_{t-1})$
 
-It combines these to produce the new hidden state $h_t$ and potentially an output $y_t$.
+This means an RNN processing the word "World" in the sentence "Hello World" mathematically "remembers" that it just saw the word "Hello". This made them the dominant architecture for Natural Language Processing before Transformers were invented.
 
-<ArchitectureDiagram chart={`
-graph LR
-  X_t[Input x_t] --> RNN((RNN Cell))
-  H_prev[Hidden State h_t-1] --> RNN
-  RNN --> H_next[Hidden State h_t]
-  RNN --> Y_t[Output y_t]
-`} />
-
-## The Vanishing Gradient Problem
-
-While RNNs are theoretically capable of learning long-term dependencies (e.g., connecting a subject at the start of a paragraph to a verb at the end), they struggle in practice. 
-
-During training using Backpropagation Through Time (BPTT), the gradients can become extremely small (vanish) as they are propagated back across many time steps. This means the weights connecting early steps are barely updated, causing the network to "forget" earlier information.
-
-<Callout icon="error" title="Exploding Gradients">
-  Conversely, gradients can also grow exponentially large (explode), causing the weights to oscillate wildly or become NaN. This is typically managed using a technique called gradient clipping.
-</Callout>
-
-To solve the vanishing gradient problem, advanced RNN architectures were created, most notably **LSTMs** and **GRUs**.
-
-</TechnologyTemplate>
+</ConceptTemplate>

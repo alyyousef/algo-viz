@@ -1,8 +1,28 @@
+---
+title: Parameter-Efficient Fine-Tuning (PEFT)
+description: Techniques to fine-tune massive LLMs on consumer hardware by training only a tiny fraction of parameters.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PEFT">
+<ConceptTemplate title="Parameter-Efficient Fine-Tuning (PEFT)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Fine-tuning a 70-Billion parameter model requires updating 70 billion weights. The optimizer states and gradients required for this process demand hundreds of gigabytes of VRAM, which is impossible on consumer GPUs.
+
+Parameter-Efficient Fine-Tuning (PEFT) solves this by freezing the massive pretrained base model and mathematically injecting a tiny number of trainable parameters.
+
+<Callout icon="tip" title="LoRA (Low-Rank Adaptation)">
+  LoRA is the undisputed king of PEFT. It freezes the base model and injects trainable rank-decomposition matrices into the Transformer layers. It can reduce the number of trainable parameters by 10,000x and GPU memory requirements by 3x, allowing a 7B model to be fine-tuned on a single 16GB gaming GPU.
+</Callout>
+
+## Popular PEFT Methods
+
+<ComparisonTable 
+  headers={['Method', 'Mechanism']}
+  rows={[
+    ['LoRA', 'Uses low-rank matrix decomposition to approximate the weight updates. The resulting LoRA "adapter" is often just a few megabytes in size and can be hot-swapped at runtime.'],
+    ['QLoRA', 'Quantizes the frozen base model to 4-bit precision, and trains the LoRA adapters in 16-bit precision. This maximizes VRAM efficiency.'],
+    ['Prompt Tuning', 'Appends a sequence of trainable continuous "virtual tokens" to the prompt. Only these virtual tokens are updated during backpropagation.']
+  ]}
+/>
 
 </ConceptTemplate>

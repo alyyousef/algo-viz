@@ -1,31 +1,28 @@
 ---
 title: Processes
-description: "An instance of a computer program that is being executed by one or many threads."
+description: An instance of a computer program that is being executed by one or many threads, representing the fundamental unit of resource allocation by the OS.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Processes">
 
-When you write a C program, it sits on your hard drive as an inert binary file (an executable). 
+When you double-click an `.exe` file (or run `node app.js`), the Operating System takes the static, lifeless code from the hard drive, loads it into RAM, and mathematically brings it to life as a **Process**.
 
-When you double-click that file, the Operating System loads it into RAM, assigns it a Process ID (PID), and begins executing it. It transforms from a static file into a **Process**.
+A Process is mathematically the heaviest, most secure execution unit in Computer Science. It is an isolated island of execution.
 
-## 1. The Anatomy of a Process
-Every process is given its own isolated virtual address space by the OS. It cannot directly read the memory of any other process. The memory is divided into segments:
-- **Text (Code)**: The compiled machine code instructions.
-- **Data**: Global and static variables.
-- **Heap**: Memory dynamically allocated at runtime (e.g., using `malloc()` in C).
-- **Stack**: Local variables and function call frames. Grows and shrinks as functions are called and return.
-
-## 2. Context Switching
-If your CPU only has 4 cores, how can you run Spotify, Chrome, Discord, and VS Code simultaneously?
-
-The OS uses a **Scheduler**. It runs Process A for 10 milliseconds, halts it, saves its exact state (registers, program counter), and swaps in Process B for 10 milliseconds. This is called a **Context Switch**. Because it happens hundreds of times per second, it creates the illusion of parallel execution.
-
-<Callout icon="warning" title="Heavyweight">
-Creating a new process (e.g., via `fork()` in Linux) is very expensive. The OS must duplicate the entire memory space and setup new tables. Furthermore, because processes are isolated, communicating between them requires complex **Inter-Process Communication (IPC)** like Pipes, Sockets, or Shared Memory.
+<Callout icon="warning" title="Memory Isolation">
+  The OS mathematically guarantees that Process A can NEVER access the memory of Process B. If your Chrome browser (Process A) crashes because of a memory leak, it mathematically cannot corrupt the RAM of your Spotify app (Process B). They exist in completely separate Virtual Memory spaces.
 </Callout>
+
+## Anatomy of a Process
+
+When the OS creates a Process, it mathematically allocates a massive bundle of resources:
+1. **The Code Segment:** The actual compiled machine code instructions.
+2. **The Data Segment:** Global variables initialized by the programmer.
+3. **The Heap:** A massive chunk of raw RAM used for dynamic allocations (`malloc` or `new`).
+4. **The Stack:** The call stack that mathematically tracks which functions are currently executing and their local variables.
+5. **File Descriptors:** Mathematical pointers to open files or network sockets.
+
+Because a Process is so heavy, switching the CPU from executing Process A to Process B (a **Context Switch**) is mathematically very slow.
 
 </ConceptTemplate>

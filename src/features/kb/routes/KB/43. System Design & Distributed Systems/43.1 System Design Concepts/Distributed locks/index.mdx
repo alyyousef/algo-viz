@@ -1,8 +1,30 @@
+---
+title: Distributed Locks
+description: A mechanism for controlling access to a shared resource by multiple independent processes running in a distributed system.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Distributed locks">
+<ConceptTemplate title="Distributed Locks">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you run a single Python script on a single server, and two threads want to edit a file, you use a simple Mutex (Mutual Exclusion lock) in local RAM. 
+
+But what if you have 50 independent Python servers running in the cloud, and they all want to edit the exact same row in a database? A local Mutex is mathematically useless because the servers do not share RAM. You need a **Distributed Lock**.
+
+<Callout icon="warning" title="The Race Condition">
+  If User A has $100, and two servers simultaneously try to deduct $10, without a lock, they will both mathematically read $100, deduct $10, and write back $90. The user was charged twice, but only $10 was deducted.
+</Callout>
+
+## Implementing Distributed Locks
+
+To acquire a lock, all 50 servers must talk to a single, mathematically consistent external system.
+
+<ComparisonTable 
+  headers={['Mechanism', 'How it Works', 'Drawbacks']}
+  rows={[
+    ['Redis (Redlock Algorithm)', 'A server writes a key to Redis with a strict Time-To-Live (TTL): `SET lock_key 1 NX PX 5000`. The `NX` flag mathematically guarantees only the first server succeeds.', 'Redis is generally fast, but the Redlock algorithm is controversial in high-stakes mathematical safety scenarios due to clock drift.'],
+    ['ZooKeeper / Etcd', 'Uses a pure consensus algorithm (Raft/ZAB) to mathematically guarantee absolute safety.', 'Slower than Redis, requires maintaining a complex cluster.'],
+    ['Database Row Locks', '`SELECT ... FOR UPDATE` in PostgreSQL.', 'Easy to implement, but mathematically locks the database row, crushing throughput.']
+  ]}
+/>
 
 </ConceptTemplate>

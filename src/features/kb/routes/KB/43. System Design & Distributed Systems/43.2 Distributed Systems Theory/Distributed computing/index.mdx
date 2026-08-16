@@ -1,8 +1,32 @@
+---
+title: Distributed Computing
+description: A field of computer science that studies distributed systems—systems whose components are located on different networked computers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Distributed computing">
+<ConceptTemplate title="Distributed Computing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Distributed Computing** is the mathematical and architectural discipline of taking a massive computational problem, breaking it into thousands of smaller chunks, and distributing those chunks across thousands of independent computers over a network.
+
+Whether it is Google indexing the entire internet, CERN analyzing petabytes of particle collision data, or a cluster rendering CGI frames for a movie, the fundamental mathematical principles are the same.
+
+<Callout icon="info" title="The Fallacies of Distributed Computing">
+  In 1994, Peter Deutsch formulated the mathematical fallacies that inexperienced engineers often falsely assume when moving from a single server to a distributed cluster:
+  1. The network is reliable.
+  2. Latency is zero.
+  3. Bandwidth is infinite.
+  4. The network is secure.
+</Callout>
+
+## Core Paradigms
+
+<ComparisonTable 
+  headers={['Paradigm', 'Description', 'Real-world Tech']}
+  rows={[
+    ['MapReduce', 'A mathematical programming model where data is "Mapped" (filtered and sorted across thousands of nodes) and then "Reduced" (summarized into a final result).', 'Apache Hadoop.'],
+    ['Microservices', 'Splitting a monolithic application into dozens of small, independently deployable services that communicate via HTTP or RPC.', 'Kubernetes, gRPC.'],
+    ['Edge Computing', 'Moving the physical computation mathematically closer to the user (IoT devices, CDN edge nodes) rather than sending data all the way back to a central cloud.', 'Cloudflare Workers, AWS Greengrass.']
+  ]}
+/>
 
 </ConceptTemplate>

@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Sigstore
+description: An open-source project and service for signing, verifying, and protecting software components.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Sigstore">
+<TechnologyTemplate 
+  title="Sigstore"
+  subtitle="Let's Encrypt for Software Signing"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Sigstore_logo.svg/512px-Sigstore_logo.svg.png"
+  description="Sigstore mathematically eliminates the nightmare of managing biological private keys for Software Signing."
+  yearCreated={2021}
+  creator="Linux Foundation"
+  isOpenSource={true}
+  websiteUrl="https://www.sigstore.dev/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, if an Open Source developer wanted to mathematically sign their code, they had to generate a GPG Private Key and biologically store it on a USB drive. If they lost the drive, or a hacker stole it, the supply chain was destroyed.
 
-</ConceptTemplate>
+**Sigstore** abandons long-lived keys. It issues mathematically ephemeral, short-lived certificates tied directly to an OpenID Connect identity (like your GitHub login). You biologically log in, Sigstore issues a 10-minute certificate, you sign the code, and the mathematical certificate is appended to an immutable Transparency Log (Rekor) to prove exactly who signed it and when.
+
+</TechnologyTemplate>

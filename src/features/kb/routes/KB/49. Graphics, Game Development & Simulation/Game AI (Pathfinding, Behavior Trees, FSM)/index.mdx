@@ -1,0 +1,24 @@
+---
+title: Game AI (Pathfinding, Behavior Trees, FSM)
+description: Techniques used in computer and video games to produce the illusion of intelligence in the behavior of non-player characters (NPCs).
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Game AI (Behavior Trees & NavMeshes)">
+
+"Game AI" has absolutely nothing to do with Machine Learning or Large Language Models. True Machine Learning is mathematically unpredictable; if you use an LLM to control an enemy boss, it might randomly decide to walk off a cliff. 
+
+Game AI is highly structured, predictable mathematical decision-making designed purely to be fun for the player.
+
+<Callout icon="info" title="Decision Architectures">
+  - **Finite State Machines (FSM):** The legacy approach. The enemy has 3 states: `Patrol`, `Chase`, `Attack`. It mathematically transitions between them based on distance. FSMs become an unmanageable spaghetti nightmare if you have 50 states.
+  - **Behavior Trees:** The modern AAA standard (invented for *Halo 2*). It is a hierarchical tree of nodes (Selectors and Sequences). It mathematically evaluates the tree from top to bottom every frame. If the enemy is being shot at, the "Take Cover" branch evaluates to True, overriding the "Patrol" branch.
+</Callout>
+
+## The NavMesh and A*
+
+To mathematically walk around a room, the enemy does not use raw level geometry. The engine pre-calculates a **NavMesh (Navigation Mesh)**—an invisible layer of simplified polygons painted over the floor. 
+
+The enemy uses the **A* (A-Star)** pathfinding algorithm to mathematically calculate the shortest path across the NavMesh polygons, completely avoiding walls and obstacles.
+
+</ConceptTemplate>

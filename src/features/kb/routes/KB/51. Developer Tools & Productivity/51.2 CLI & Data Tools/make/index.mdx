@@ -1,8 +1,27 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Make
+description: A build automation tool that automatically builds executable programs and libraries from source code by reading files called Makefiles which specify how to derive the target program.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="make">
+<TechnologyTemplate 
+  title="Make"
+  subtitle="The grandfather of build automation"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/512px-Tux.svg.png"
+  description="Invented in 1976 at Bell Labs, 'make' is a command-line tool that mathematically evaluates dependency graphs to compile massive C/C++ projects efficiently."
+  yearCreated={1976}
+  creator="Stuart Feldman"
+  isOpenSource={true}
+  websiteUrl="https://www.gnu.org/software/make/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a C program with 500 `.c` files, running `gcc` 500 times manually is impossible. 
 
-</ConceptTemplate>
+You write a **Makefile** that mathematically maps which files depend on each other. 
+When you type `make`, it reads the graph. If you only edited exactly 1 file (`main.c`), `make` is mathematically smart enough to recompile *only* `main.c` and link the other 499 cached binaries. It turns a 2-hour compile time into a 5-second compile time.
+
+<Callout icon="warning" title="The Tab Character Trap">
+  Makefiles are notoriously hated for their syntax. The commands mathematically MUST be indented with a physical `Tab` character. If a developer uses 4 spaces instead of a Tab, `make` will instantly crash with a cryptic "missing separator" error.
+</Callout>
+
+</TechnologyTemplate>

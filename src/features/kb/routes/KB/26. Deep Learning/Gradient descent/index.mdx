@@ -1,27 +1,26 @@
 ---
 title: Gradient Descent
-description: The fundamental mathematical optimization algorithm that trains all Neural Networks by iteratively adjusting weights in the opposite direction of the gradient.
+description: The foundational optimization algorithm used to minimize the loss function in Machine Learning models.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Gradient Descent">
 
-If the Loss Function defines how "wrong" a Neural Network is, **Gradient Descent** is the mathematical engine that figures out exactly how to fix it. It is the core algorithm that allows AI to mathematically "learn".
+Gradient Descent is a first-order iterative optimization algorithm for finding a local minimum of a differentiable function. In the context of Deep Learning, it is the mechanism that actually updates the network\'s weights based on the gradients computed by Backpropagation.
 
-## 1. The Calculus of the Gradient
-Imagine standing on a mountain blindfolded, trying to reach the valley floor (the lowest possible error). You cannot see the valley, but you can feel the slope of the ground beneath your feet. 
-Using Calculus (Backpropagation), the network calculates the **Gradient**: the vector of partial derivatives representing the exact mathematical slope of the Loss Function with respect to every single weight in the network.
+<Callout icon="info" title="The Mountain Analogy">
+  Imagine you are blindfolded on a rugged mountain and need to reach the lowest valley (minimum error). You feel the slope of the ground beneath your feet (the gradient). You take a step in the steepest downward direction. You repeat this until the ground is flat. That is Gradient Descent.
+</Callout>
 
-## 2. The Update Rule
-The Gradient mathematically points in the direction of the *steepest ascent* (up the mountain). To minimize the error, we must mathematically move in the opposite direction.
+## Variants
 
-$W_{new} = W_{old} - (	ext{Learning Rate} cdot 	ext{Gradient})$
-
-By subtracting the Gradient, we mathematically force the weights to roll downhill toward a lower error.
-
-## 3. The Variants
-Standard Gradient Descent requires calculating the error on the entire massive dataset before taking a single step, which is computationally impossible for modern AI.
-- **Stochastic Gradient Descent (SGD)**: Calculates the gradient using a single random data point. It is blazing fast, but highly erratic.
-- **Mini-Batch Gradient Descent**: The industry standard. Calculates the gradient using a small batch (e.g., 32 or 256 images). It mathematically balances the speed of SGD with the algebraic stability of full batch processing.
+<ComparisonTable 
+  headers={['Variant', 'Mechanism', 'Pros & Cons']}
+  rows={[
+    ['Batch Gradient Descent', 'Calculates the gradient over the ENTIRE training dataset before taking a single step.', 'Guarantees convergence to the global minimum (for convex functions), but is computationally impossible for massive datasets.'],
+    ['Stochastic Gradient Descent (SGD)', 'Calculates the gradient and updates weights for a SINGLE randomly chosen data point at a time.', 'Extremely fast and memory efficient, but the path to the minimum is highly chaotic and noisy.'],
+    ['Mini-Batch Gradient Descent', 'The industry standard. Calculates the gradient over a small batch (e.g., 32 or 64 samples) before updating.', 'The perfect middle ground. Exploits GPU vectorization for speed while maintaining a stable path to the minimum.']
+  ]}
+/>
 
 </ConceptTemplate>

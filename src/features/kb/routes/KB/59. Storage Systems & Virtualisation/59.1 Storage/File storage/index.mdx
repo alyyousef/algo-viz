@@ -1,8 +1,13 @@
+---
+title: File storage
+description: A hierarchical storage methodology used to organize and store data on a computer hard drive or on network-attached storage (NAS).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="File storage">
+<ConceptTemplate title="File Storage">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Unlike Block Storage, **File Storage** (like AWS EFS) operates at a high level of biological abstraction.
+
+The storage system manages the File System for you. You don't format raw blocks; you just ask the system to `Create Folder` or `Save photo.jpg`. It uses protocols like NFS or SMB to allow multiple different servers to biologically connect to the exact same shared folder simultaneously, which is impossible with raw Block Storage. The tradeoff is slightly higher latency due to the network file system overhead.
 
 </ConceptTemplate>

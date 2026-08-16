@@ -1,8 +1,23 @@
+---
+title: Session Hijacking
+description: The exploitation of a valid computer session—sometimes also called a session key—to gain unauthorized access to information or services in a computer system.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Session hijacking">
+<ConceptTemplate title="Session Hijacking">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because HTTP is a mathematically stateless protocol, web applications use Session Cookies or JWTs (JSON Web Tokens) to remember who you are after you log in. This token is essentially your temporary digital passport.
+
+If an attacker can mathematically steal your Session Cookie, they do not need your username, your password, or your 2FA code. They can simply inject the cookie into their own browser and instantly become you.
+
+<Callout icon="tip" title="The Firesheep Era">
+  In the early 2010s, a browser extension called Firesheep made session hijacking terrifyingly easy. If you were on public WiFi, it would mathematically sniff the unencrypted HTTP traffic, grab the Facebook session cookies of everyone in the coffee shop, and let the attacker click a button to log into their accounts. This forced the entire internet to adopt HTTPS.
+</Callout>
+
+## How Sessions are Hijacked
+
+1. **Cross-Site Scripting (XSS):** If an attacker can inject malicious JavaScript into a page you visit, they can execute `document.cookie` and mathematically send your session token to their server. (Mitigation: Set the `HttpOnly` flag on the cookie).
+2. **Packet Sniffing:** Intercepting unencrypted traffic over HTTP. (Mitigation: Force HTTPS everywhere and use the `Secure` flag on the cookie).
+3. **Session Fixation:** The attacker forces the victim to log in using a specific session ID that the attacker already mathematically knows.
 
 </ConceptTemplate>

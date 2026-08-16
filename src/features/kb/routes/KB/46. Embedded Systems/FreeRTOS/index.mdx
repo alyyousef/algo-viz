@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: FreeRTOS
+description: A market-leading real-time operating system (RTOS) for microcontrollers and small microprocessors.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="FreeRTOS">
+<TechnologyTemplate 
+  title="FreeRTOS"
+  subtitle="The undisputed king of microcontrollers"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/FreeRTOS_logo.svg/512px-FreeRTOS_logo.svg.png"
+  description="FreeRTOS is a tiny, open-source real-time operating system kernel designed specifically for microcontrollers. It is so small that the core kernel consists of only three C files."
+  yearCreated={2003}
+  creator="Richard Barry (Now maintained by AWS)"
+  isOpenSource={true}
+  websiteUrl="https://www.freertos.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing Bare-Metal C for a microcontroller is fine if you only have one task (e.g., blink an LED). But if you need to blink an LED, poll a temperature sensor, and maintain a Wi-Fi connection simultaneously, writing a single massive `while(1)` loop becomes an unmaintainable nightmare.
 
-</ConceptTemplate>
+**FreeRTOS** solves this. It provides a tiny scheduler that allows you to mathematically spawn standard "Tasks" (threads), complete with Mutexes, Semaphores, and Message Queues, even on a chip with only 16KB of RAM.
+
+<Callout icon="success" title="The AWS Acquisition">
+  In 2017, Amazon Web Services (AWS) formally took over the stewardship of FreeRTOS. They did this because they realized that to dominate the Internet of Things (IoT) cloud market, they needed the actual endpoint devices to connect seamlessly to AWS IoT Core. AWS provides FreeRTOS completely free, bundled with secure AWS MQTT networking libraries.
+</Callout>
+
+## Memory Footprint
+
+FreeRTOS is a marvel of mathematical optimization. The entire OS Kernel compiles down to roughly **4 Kilobytes** of Flash memory, making it perfectly viable to run on $0.20 Cortex-M0 chips.
+
+</TechnologyTemplate>

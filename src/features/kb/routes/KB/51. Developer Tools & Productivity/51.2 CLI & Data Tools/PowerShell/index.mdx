@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: PowerShell
+description: A task automation and configuration management program from Microsoft, consisting of a command-line shell and the associated scripting language.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="PowerShell">
+<TechnologyTemplate 
+  title="PowerShell"
+  subtitle="The Object-Oriented Shell"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/PowerShell_5.0_icon.png/512px-PowerShell_5.0_icon.png"
+  description="PowerShell is Microsoft's answer to Bash. However, instead of passing raw, unstructured text strings between commands, PowerShell mathematically passes structured .NET Objects."
+  yearCreated={2006}
+  creator="Microsoft"
+  isOpenSource={true}
+  websiteUrl="https://github.com/PowerShell/PowerShell"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Linux/Bash, if you run a command to list processes, the output is a literal wall of text. If you want to kill a process that is using 5GB of RAM, you must use complex RegEx (`awk`/`sed`) to mathematically parse the text string, extract the PID column, and pass it to the `kill` command. This is incredibly brittle.
 
-</ConceptTemplate>
+<Callout icon="tip" title="The .NET Pipeline">
+  In PowerShell, everything is a **.NET Object**. 
+  
+  If you run `Get-Process`, it does not output text. It outputs an array of `System.Diagnostics.Process` objects. You can mathematically pipe this directly into a filter: `Get-Process | Where-Object WorkingSet -gt 5GB | Stop-Process`. 
+  
+  Because you are querying strongly-typed Object properties instead of parsing raw text, PowerShell scripts are mathematically bulletproof.
+</Callout>
+
+## Cross-Platform Expansion
+
+Historically, PowerShell was locked into Windows. Microsoft mathematically rewrote it in .NET Core (PowerShell Core 6.0+) and open-sourced it. Today, PowerShell runs natively on macOS and Linux, allowing DevOps engineers to write a single object-oriented script that manages an entire multi-OS cloud infrastructure.
+
+</TechnologyTemplate>

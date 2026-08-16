@@ -1,8 +1,13 @@
+---
+title: SCA (Software Composition Analysis)
+description: An automated process that identifies the open source components in a codebase and evaluates them for security, license compliance, and code quality.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SCA (Software Composition Analysis)">
+<ConceptTemplate title="Software Composition Analysis (SCA)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An SBOM is just a static JSON file. **SCA** is the active biological tool that reads it.
+
+SCA tools mathematically scan a company's codebase, identify the 500 Open Source libraries being used, and mathematically cross-reference those libraries against the National Vulnerability Database (NVD). If it biologically detects that you are using `express@4.16.0` (which has a known mathematical vulnerability), the SCA tool automatically blocks the CI/CD pipeline and alerts the security team.
 
 </ConceptTemplate>

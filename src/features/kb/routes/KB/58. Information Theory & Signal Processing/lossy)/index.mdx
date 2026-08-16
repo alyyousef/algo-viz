@@ -1,8 +1,19 @@
+---
+title: Lossy compression
+description: The class of data encoding methods that uses inexact approximations and partial data discarding to represent the content.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="lossy)">
+<ConceptTemplate title="Lossy Compression">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you try to losslessly compress a 4K video using ZIP, it might only shrink by 5%, because raw camera static is mathematically almost pure Entropy (pure randomness with no redundancy).
+
+To stream video over Netflix, you must use **Lossy Compression**.
+
+<Callout icon="warning" title="Exploiting Human Biology">
+  Lossy compression mathematically throws away data permanently, prioritizing what the biological human eye/ear cannot perceive.
+  
+  If a video frame contains a blue sky with 5,000 slightly different shades of blue pixels, a Lossy codec (like JPEG or H.264) mathematically averages them into a single shade of blue. It permanently deletes 99% of the original data. The mathematically reconstructed image is technically completely wrong, but the human brain cannot biologically tell the difference.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,26 @@
+---
+title: Wireshark
+description: The world's most widely-used network protocol analyzer, capable of inspecting data at a microscopic packet level.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Wireshark">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Wireshark is the undisputed king of network protocol analyzers. It captures live network traffic passing through your computer\'s network interface card (NIC) and allows you to mathematically inspect every single byte of every single packet across hundreds of different protocols.
+
+<Callout icon="warning" title="Promiscuous Mode">
+  By default, a network card ignores packets that aren\'t addressed specifically to its MAC address. Wireshark places the card into **Promiscuous Mode**, forcing it to capture ALL packets traveling across the local network segment.
+</Callout>
+
+## Primary Use Cases
+
+<ComparisonTable 
+  headers={['Use Case', 'Description']}
+  rows={[
+    ['Malware Analysis', 'Security researchers use Wireshark to watch exactly what servers a virus attempts to contact (Command and Control) after infecting a machine.'],
+    ['Troubleshooting', 'If a web application is randomly dropping connections, engineers use Wireshark to mathematically analyze the TCP handshake to see if the server is sending RST (Reset) packets.'],
+    ['Protocol Reverse Engineering', 'Hackers use Wireshark to capture the traffic between a mobile game and its server, allowing them to decipher the undocumented API and write custom bots.']
+  ]}
+/>
 
 </ConceptTemplate>

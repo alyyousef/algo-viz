@@ -1,8 +1,23 @@
+---
+title: Man-in-the-Middle (MITM) Attacks
+description: A cyberattack where the attacker secretly relays and possibly alters the communications between two parties who believe they are directly communicating with each other.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MITM attacks">
+<ConceptTemplate title="Man-in-the-Middle (MITM)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Alice wants to send a secret letter to Bob, she hands it to the postman. If the postman secretly opens the letter, reads it, mathematically alters the contents, reseals it, and hands it to Bob, that is a **Man-in-the-Middle (MITM)** attack.
+
+In networking, an attacker positions themselves logically between the victim's device and the gateway router (often using techniques like ARP Spoofing or rogue WiFi hotspots).
+
+<Callout icon="warning" title="Bypassing Encryption">
+  TLS encryption makes MITM attacks incredibly difficult. If the attacker intercepts Alice's connection to her bank, they must present a valid TLS certificate for the bank, otherwise Alice's browser will throw a massive red warning screen.
+</Callout>
+
+## Types of MITM Attacks
+
+1. **Rogue Access Points:** An attacker sets up a fake WiFi hotspot named "Starbucks_Free_WiFi." When victims connect, all their traffic routes through the attacker's laptop.
+2. **ARP Spoofing:** The attacker mathematically poisons the local network, telling the victim's computer "I am the router," and telling the actual router "I am the victim."
+3. **DNS Spoofing:** The attacker compromises the DNS server. When the victim types `google.com`, the DNS server maliciously returns the IP address of the attacker's fake Google server.
 
 </ConceptTemplate>

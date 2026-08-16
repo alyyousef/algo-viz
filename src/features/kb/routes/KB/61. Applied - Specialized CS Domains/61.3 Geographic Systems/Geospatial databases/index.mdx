@@ -1,8 +1,13 @@
+---
+title: Geospatial databases
+description: A database designed to store, query, and manipulate geographic information and spatial data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Geospatial databases">
+<ConceptTemplate title="Geospatial Databases">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to find all coffee shops within a 5-mile radius of a user, a standard SQL database mathematically fails. Scanning the Latitude and Longitude of 10 million businesses using standard `>` and `<` operators is $O(N)$ and biologically too slow.
+
+**Geospatial Databases** use specialized mathematical indexing structures like **R-Trees** or **Geohashes**. These indexes mathematically divide the 2D map into a grid of bounding boxes, allowing the database to instantly filter out 99% of the Earth and mathematically execute the radius query in sub-millisecond time.
 
 </ConceptTemplate>

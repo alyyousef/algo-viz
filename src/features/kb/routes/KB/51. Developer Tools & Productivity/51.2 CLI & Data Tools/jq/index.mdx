@@ -1,8 +1,29 @@
+---
+title: jq
+description: A lightweight and flexible command-line JSON processor.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="jq">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+`grep`, `awk`, and `sed` were invented in the 1970s to parse flat, line-based text. 
+Modern APIs do not return flat text. They return massively nested **JSON** objects. Using `awk` to parse a 10-level deep JSON object is a mathematical nightmare.
+
+**`jq`** is the modern solution. It is `sed` specifically engineered for JSON.
+
+<Callout icon="success" title="The Object Query Architecture">
+  If an API returns: `{ "users": [ { "name": "Alice" }, { "name": "Bob" } ] }`
+  
+  You can pipe it into `jq`:
+  `curl https://api.example.com/data | jq '.users[].name'`
+  
+  `jq` mathematically parses the raw string into an actual JSON AST (Abstract Syntax Tree), navigates directly into the `users` array, and extracts the `name` keys, outputting pure, clean text:
+  `"Alice"`
+  `"Bob"`
+</Callout>
+
+## JSON Mutation
+
+`jq` is not just a reader. You can mathematically mutate JSON on the fly. You can add new keys, map over arrays, or delete passwords from a JSON stream before saving it to a log file. It is the absolute standard tool for any DevOps engineer working with REST APIs or Kubernetes config maps.
 
 </ConceptTemplate>

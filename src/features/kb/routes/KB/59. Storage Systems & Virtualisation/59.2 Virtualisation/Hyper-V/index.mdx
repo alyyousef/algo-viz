@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Hyper-V
+description: A native hypervisor; it can create virtual machines on x86-64 systems running Windows.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Hyper-V">
+<TechnologyTemplate 
+  title="Hyper-V"
+  subtitle="The Windows Hypervisor"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Hyper-V_Logo.png/512px-Hyper-V_Logo.png"
+  description="Hyper-V is Microsoft's proprietary Type-1 hypervisor mathematically built directly into Windows 10/11 Pro and Windows Server."
+  yearCreated={2008}
+  creator="Microsoft"
+  isOpenSource={false}
+  websiteUrl="https://learn.microsoft.com/en-us/virtualization/hyper-v-on-windows/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you enable Hyper-V on your Windows 11 laptop, something mathematically terrifying happens: your biological Host OS is secretly demoted.
 
-</ConceptTemplate>
+Hyper-V physically injects itself underneath your running Windows OS, turning Windows 11 into a "Root Partition" VM. The hypervisor now owns the bare metal. This mathematical architecture provides incredible security and performance, and is the absolute foundation of the massive Microsoft Azure public cloud infrastructure.
+
+</TechnologyTemplate>

@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Bitcoin
+description: The first decentralized cryptocurrency. Nodes in the peer-to-peer bitcoin network verify transactions through cryptography and record them in a public distributed ledger, called a blockchain.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Bitcoin">
+<TechnologyTemplate 
+  title="Bitcoin (BTC)"
+  subtitle="The genesis of Decentralized Finance"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Bitcoin.svg/512px-Bitcoin.svg.png"
+  description="Invented in 2008 by the anonymous Satoshi Nakamoto, Bitcoin mathematically proved that digital scarcity could exist without a central bank."
+  yearCreated={2009}
+  creator="Satoshi Nakamoto"
+  isOpenSource={true}
+  websiteUrl="https://bitcoin.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Bitcoin is mathematically designed to be slow, rigid, and stupid. 
 
-</ConceptTemplate>
+<Callout icon="warning" title="Turing Incompleteness">
+  Unlike modern blockchains, Bitcoin is mathematically **Turing Incomplete**. 
+  
+  You cannot write complex "Smart Contracts" on Bitcoin. You cannot easily loop code. This was a deliberate biological design choice by Satoshi. By making the scripting language incredibly limited, the attack surface is mathematically minimized to near-zero. It does exactly one thing—transfer value securely—and it does it perfectly.
+</Callout>
+
+</TechnologyTemplate>

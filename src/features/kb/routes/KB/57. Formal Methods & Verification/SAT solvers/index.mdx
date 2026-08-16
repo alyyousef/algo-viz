@@ -1,8 +1,19 @@
+---
+title: SAT solvers
+description: A program that solves the Boolean satisfiability problem, determining if there exists an interpretation that satisfies a given Boolean formula.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SAT solvers">
+<ConceptTemplate title="SAT Solvers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+At the absolute bottom of computer science is the **Boolean Satisfiability Problem (SAT)**.
+
+You are given a massive mathematical formula consisting of thousands of `AND`, `OR`, and `NOT` gates. The question is: *Is there any possible combination of True/False inputs that makes the final output True?*
+
+<Callout icon="warning" title="The NP-Complete Engine">
+  SAT is the defining NP-Complete problem. It is mathematically terrifying because the number of combinations grows exponentially.
+  
+  However, modern **SAT Solvers** (like MiniSat) use brilliant biological heuristics to solve formulas with millions of variables in seconds. These solvers are the hidden mathematical engines that power modern package managers (like `npm` or `cargo`) to resolve dependency version conflicts, and are used to verify the physical silicon logic gates in Intel CPUs.
+</Callout>
 
 </ConceptTemplate>

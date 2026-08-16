@@ -1,8 +1,29 @@
+---
+title: Lamport Clocks
+description: A simple logical clock algorithm used to determine the order of events in a distributed computer system.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lamport clocks">
+<ConceptTemplate title="Lamport Clocks">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a single computer, if Event A happens before Event B, you mathematically know this because the CPU clock records `09:00:01` and `09:00:02`. 
+
+In a distributed system, Server 1 in New York and Server 2 in Tokyo have different physical quartz clocks. Due to mathematical "Clock Drift", Server 2's clock might be 5 seconds faster. It is mathematically impossible to use physical timestamps to perfectly order events across a network.
+
+To solve this, Leslie Lamport invented the **Logical Clock**.
+
+<Callout icon="tip" title="The Core Insight">
+  Lamport realized that we don't actually care about the *physical time* an event happened. We only mathematically care about **Causality**—did Event A *cause* Event B? If they are completely unrelated, the order doesn't matter.
+</Callout>
+
+## The Algorithm
+
+A Lamport Clock is just a simple mathematical integer counter.
+
+1. **Local Increment:** Every time a process does *anything*, it mathematically increments its local counter by 1.
+2. **Piggybacking:** When Process A sends a network message to Process B, it attaches its current counter value (e.g., `T=5`).
+3. **Synchronization:** When Process B receives the message, it looks at the attached timestamp (`5`). It updates its own local counter to be mathematically greater than *both* its current value and the received value: `counter = MAX(local_counter, received_time) + 1`.
+
+This mathematically guarantees that if Event A caused Event B, the timestamp of A will always be strictly less than B.
 
 </ConceptTemplate>

@@ -1,8 +1,33 @@
+---
+title: PCI-DSS (Payment Card Industry Data Security Standard)
+description: The strict, globally mandated security standard for any organization that handles credit card information.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PCI-DSS">
+<ConceptTemplate title="PCI-DSS (Payment Card Industry Data Security Standard)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 2004, Visa, MasterCard, Discover, and American Express realized that disparate security standards were leading to massive credit card breaches. They joined forces to create the PCI Security Standards Council and launched **PCI-DSS**.
+
+If your business accepts, processes, stores, or transmits credit card data, you **must** comply with PCI-DSS. Failure to comply can result in massive monthly fines or the permanent loss of the ability to process credit cards.
+
+<Callout icon="warning" title="Scope Reduction">
+  The number one rule of PCI-DSS compliance is: **Don\'t store credit card numbers if you don\'t have to.** Modern businesses use payment gateways like Stripe or Braintree to tokenize the transaction on the frontend. The raw credit card number mathematically bypasses the company\'s servers entirely, drastically reducing their PCI compliance scope.
+</Callout>
+
+## The 12 Requirements
+
+PCI-DSS is incredibly prescriptive, containing 12 core requirements grouped into 6 goals:
+
+<ComparisonTable 
+  headers={['Goal', 'Requirements']}
+  rows={[
+    ['Build and Maintain a Secure Network', '1. Install and maintain firewalls. \n2. Do not use vendor-supplied defaults for system passwords.'],
+    ['Protect Cardholder Data', '3. Protect stored cardholder data (Encryption/Hashing). \n4. Encrypt transmission of data across open, public networks (TLS).'],
+    ['Maintain a Vulnerability Management Program', '5. Protect all systems against malware and regularly update anti-virus. \n6. Develop and maintain secure systems and applications.'],
+    ['Implement Strong Access Control Measures', '7. Restrict access to cardholder data by business need-to-know. \n8. Identify and authenticate access to system components. \n9. Restrict physical access to cardholder data.'],
+    ['Regularly Monitor and Test Networks', '10. Track and monitor all access to network resources and cardholder data. \n11. Regularly test security systems and processes (Penetration testing).'],
+    ['Maintain an Information Security Policy', '12. Maintain a policy that addresses information security for all personnel.']
+  ]}
+/>
 
 </ConceptTemplate>

@@ -1,25 +1,28 @@
 ---
-title: Multi-Layer Perceptrons (MLP)
-description: The foundational deep neural network architecture, consisting of a fully connected input layer, hidden layers, and an output layer.
+title: Multi-Layer Perceptrons (MLPs)
+description: The classic feedforward neural network that solves the linear separability problem.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-Layer Perceptrons (MLP)">
+<ConceptTemplate title="Multi-Layer Perceptrons (MLPs)">
 
-The **Multi-Layer Perceptron (MLP)** is the classic, absolute foundation of Deep Learning. Also known as a "Dense Network" or "Fully Connected Network," it mathematically proves that Artificial Intelligence can approximate any continuous function in the universe.
+A Multi-Layer Perceptron (MLP) is a class of feedforward artificial neural network. An MLP consists of at least three layers of nodes: an input layer, a hidden layer, and an output layer. 
 
-## 1. The Architecture
-An MLP consists of three distinct mathematical structures:
-1. **Input Layer**: A vector representing the raw data (e.g., 784 pixels of an image).
-2. **Hidden Layers**: One or more layers in the middle. Every single neuron in a hidden layer is mathematically connected to every single neuron in the previous layer.
-3. **Output Layer**: A final vector outputting the prediction (e.g., 10 probabilities for digit classification).
+By stacking perceptrons and using **non-linear activation functions** (like Sigmoid or ReLU) instead of a simple binary step function, MLPs can mathematically approximate any continuous mathematical function.
 
-## 2. The Universal Approximation Theorem
-A single Perceptron can only draw a straight line (Linear). By adding just one single Hidden Layer and applying a Non-Linear Activation Function (like ReLU or Sigmoid), the MLP gains the mathematical ability to bend and warp its decision boundaries. 
-The **Universal Approximation Theorem** mathematically proves that an MLP with just a single hidden layer (with enough neurons) can perfectly approximate *any continuous mathematical function*, no matter how complex.
+<Callout icon="success" title="Universal Approximation Theorem">
+  The Universal Approximation Theorem mathematically guarantees that an MLP with a single, sufficiently wide hidden layer and a non-linear activation function can approximate ANY continuous function, no matter how complex. This solved the XOR problem that plagued the original perceptrons.
+</Callout>
 
-## 3. The Flaw (Spatial Awareness)
-While MLPs are mathematically universal, they are terribly inefficient for unstructured data. 
-If you feed a $1000 	imes 1000$ image into an MLP, the first hidden layer requires a matrix of $1,000,000$ inputs. The number of weights mathematically explodes into the billions instantly. Furthermore, because it connects everything to everything, an MLP has zero mathematical concept of "spatial geometry" (it doesn't realize that two pixels next to each other form an edge). This flaw led to the invention of Convolutional Neural Networks (CNNs).
+## Architecture
+
+<ComparisonTable 
+  headers={['Layer Type', 'Function']}
+  rows={[
+    ['Input Layer', 'Passively receives the raw features (e.g., pixel intensities of an image).'],
+    ['Hidden Layers', 'The computational engine. Each neuron here learns to detect increasingly abstract features. The "Deep" in Deep Learning refers to having many hidden layers.'],
+    ['Output Layer', 'Produces the final prediction (e.g., probability of "Cat" vs "Dog").']
+  ]}
+/>
 
 </ConceptTemplate>

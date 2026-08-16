@@ -1,8 +1,29 @@
+---
+title: Locks
+description: An abstract synchronization mechanism for enforcing limits on access to a resource in an environment where there are many threads of execution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Locks">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While "Mutex" usually refers to the low-level mathematical object provided by the Operating System, a **Lock** is a higher-level abstract concept provided by programming languages (like Java's `ReentrantLock` or C#'s `lock` statement).
+
+All Mutexes are Locks, but not all Locks are Mutexes.
+
+<Callout icon="tip" title="Spinlocks vs. Mutexes">
+  If a thread asks for a Mutex and it is unavailable, the OS puts the thread to sleep. Waking it up later is mathematically slow.
+  
+  A **Spinlock** takes a different approach. Instead of sleeping, the thread sits in an infinite, blazing-fast `while` loop, checking the lock billions of times a second until it becomes available. Spinlocks waste 100% of the CPU core's power, but they acquire the lock mathematically instantly the millisecond it frees up.
+</Callout>
+
+## Types of Higher-Level Locks
+
+<ComparisonTable 
+  headers={['Lock Type', 'Mathematical Behavior', 'Use Case']}
+  rows={[
+    ['Reentrant Lock', 'Allows the *same* thread to acquire the exact same lock multiple times without causing a Deadlock against itself.', 'When a locked function recursively calls another function that requires the same lock.'],
+    ['Read-Write Lock', 'Mathematically allows 100 threads to read the data simultaneously, but enforces strict Mutual Exclusion if any thread wants to Write.', 'Data structures that are read thousands of times a second, but only updated once an hour (e.g., Application Configs).']
+  ]}
+/>
 
 </ConceptTemplate>

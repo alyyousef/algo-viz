@@ -1,8 +1,23 @@
+---
+title: INP (Interaction to Next Paint)
+description: A Core Web Vital metric that assesses a page's overall responsiveness to user interactions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="INP">
+<ConceptTemplate title="Interaction to Next Paint (INP)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In March 2024, Google officially replaced FID with **INP**.
+
+FID was biologically flawed because it only measured the *delay* before the event handler started. It didn't measure how long the event handler itself took to execute, nor how long it took the browser to physically paint the resulting UI change.
+
+<Callout icon="tip" title="The Total Time Metric">
+  INP mathematically measures the entire lifecycle of a user interaction:
+  1. The user clicks a button.
+  2. The browser waits for the Event Loop to free up (Input Delay).
+  3. The JavaScript `onClick` handler executes (Processing Time).
+  4. The browser calculates the DOM changes and paints the new pixels (Presentation Delay).
+  
+  To pass, the entire mathematical process must complete in **under 200 milliseconds**.
+</Callout>
 
 </ConceptTemplate>

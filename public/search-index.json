@@ -4512,14 +4512,6 @@
     "matchText": "compilers interpreters and theory of computation 1 compilers lexers kb 44 compilers interpreters and theory of computation 44 1 compilers lexers"
   },
   {
-    "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.1 Compilers/Lexical analysis/index.mdx",
-    "title": "Lexical analysis",
-    "breadcrumb": "Compilers, Interpreters & Theory of Computation / 1 Compilers",
-    "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-1-compilers/lexical-analysis",
-    "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-1-compilers/lexical-analysis",
-    "matchText": "compilers interpreters and theory of computation 1 compilers lexical analysis kb 44 compilers interpreters and theory of computation 44 1 compilers lexical analysis"
-  },
-  {
     "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.1 Compilers/Linking/index.mdx",
     "title": "Linking",
     "breadcrumb": "Compilers, Interpreters & Theory of Computation / 1 Compilers",
@@ -4560,14 +4552,6 @@
     "matchText": "compilers interpreters and theory of computation 1 compilers optimisation passes kb 44 compilers interpreters and theory of computation 44 1 compilers optimisation passes"
   },
   {
-    "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.1 Compilers/Parsers/index.mdx",
-    "title": "Parsers",
-    "breadcrumb": "Compilers, Interpreters & Theory of Computation / 1 Compilers",
-    "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-1-compilers/parsers",
-    "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-1-compilers/parsers",
-    "matchText": "compilers interpreters and theory of computation 1 compilers parsers kb 44 compilers interpreters and theory of computation 44 1 compilers parsers"
-  },
-  {
     "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.1 Compilers/Parsing/index.mdx",
     "title": "Parsing",
     "breadcrumb": "Compilers, Interpreters & Theory of Computation / 1 Compilers",
@@ -4598,14 +4582,6 @@
     "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-1-compilers/virtual-machines",
     "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-1-compilers/virtual-machines",
     "matchText": "compilers interpreters and theory of computation 1 compilers virtual machines kb 44 compilers interpreters and theory of computation 44 1 compilers virtual machines"
-  },
-  {
-    "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.2 Theory of Computation/Automata/index.mdx",
-    "title": "Automata",
-    "breadcrumb": "Compilers, Interpreters & Theory of Computation / 2 Theory of Computation",
-    "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/automata",
-    "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/automata",
-    "matchText": "compilers interpreters and theory of computation 2 theory of computation automata kb 44 compilers interpreters and theory of computation 44 2 theory of computation automata"
   },
   {
     "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.2 Theory of Computation/Church-Turing thesis/index.mdx",
@@ -4648,12 +4624,12 @@
     "matchText": "compilers interpreters and theory of computation 2 theory of computation decidability kb 44 compilers interpreters and theory of computation 44 2 theory of computation decidability"
   },
   {
-    "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.2 Theory of Computation/Finite automata (DFA/index.mdx",
-    "title": "Finite automata (DFA",
+    "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.2 Theory of Computation/Finite automata/index.mdx",
+    "title": "Finite automata",
     "breadcrumb": "Compilers, Interpreters & Theory of Computation / 2 Theory of Computation",
-    "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/finite-automata-dfa",
-    "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/finite-automata-dfa",
-    "matchText": "compilers interpreters and theory of computation 2 theory of computation finite automata dfa kb 44 compilers interpreters and theory of computation 44 2 theory of computation finite automata dfa"
+    "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/finite-automata",
+    "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/finite-automata",
+    "matchText": "compilers interpreters and theory of computation 2 theory of computation finite automata kb 44 compilers interpreters and theory of computation 44 2 theory of computation finite automata"
   },
   {
     "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.2 Theory of Computation/Halting problem/index.mdx",
@@ -4662,14 +4638,6 @@
     "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/halting-problem",
     "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/halting-problem",
     "matchText": "compilers interpreters and theory of computation 2 theory of computation halting problem kb 44 compilers interpreters and theory of computation 44 2 theory of computation halting problem"
-  },
-  {
-    "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.2 Theory of Computation/NFA)/index.mdx",
-    "title": "NFA)",
-    "breadcrumb": "Compilers, Interpreters & Theory of Computation / 2 Theory of Computation",
-    "route": "/kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/nfa",
-    "routeLabel": "kb/44-compilers-interpreters-and-theory-of-computation/44-2-theory-of-computation/nfa",
-    "matchText": "compilers interpreters and theory of computation 2 theory of computation nfa kb 44 compilers interpreters and theory of computation 44 2 theory of computation nfa"
   },
   {
     "id": "./routes/KB/44. Compilers, Interpreters & Theory of Computation/44.2 Theory of Computation/Pushdown automata/index.mdx",
@@ -6184,36 +6152,12 @@
     "matchText": "cybersecurity fundamentals authorisation kb 42 cybersecurity fundamentals authorisation"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/Availability/index.mdx",
-    "title": "Availability",
-    "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/availability",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/availability",
-    "matchText": "cybersecurity fundamentals availability kb 42 cybersecurity fundamentals availability"
-  },
-  {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/CIA triad/index.mdx",
     "title": "CIA triad",
     "breadcrumb": "Cybersecurity Fundamentals",
     "route": "/kb/42-cybersecurity-fundamentals/cia-triad",
     "routeLabel": "kb/42-cybersecurity-fundamentals/cia-triad",
     "matchText": "cybersecurity fundamentals cia triad kb 42 cybersecurity fundamentals cia triad"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/CIS Controls)/index.mdx",
-    "title": "CIS Controls)",
-    "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/cis-controls",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/cis-controls",
-    "matchText": "cybersecurity fundamentals cis controls kb 42 cybersecurity fundamentals cis controls"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/Confidentiality/index.mdx",
-    "title": "Confidentiality",
-    "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/confidentiality",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/confidentiality",
-    "matchText": "cybersecurity fundamentals confidentiality kb 42 cybersecurity fundamentals confidentiality"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/Defence in depth/index.mdx",
@@ -6224,44 +6168,12 @@
     "matchText": "cybersecurity fundamentals defence in depth kb 42 cybersecurity fundamentals defence in depth"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/DREAD)/index.mdx",
-    "title": "DREAD)",
-    "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/dread",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/dread",
-    "matchText": "cybersecurity fundamentals dread kb 42 cybersecurity fundamentals dread"
-  },
-  {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/Exploits/index.mdx",
     "title": "Exploits",
     "breadcrumb": "Cybersecurity Fundamentals",
     "route": "/kb/42-cybersecurity-fundamentals/exploits",
     "routeLabel": "kb/42-cybersecurity-fundamentals/exploits",
     "matchText": "cybersecurity fundamentals exploits kb 42 cybersecurity fundamentals exploits"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/IAM/index.mdx",
-    "title": "IAM",
-    "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/iam",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/iam",
-    "matchText": "cybersecurity fundamentals iam kb 42 cybersecurity fundamentals iam"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/Integrity/index.mdx",
-    "title": "Integrity",
-    "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/integrity",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/integrity",
-    "matchText": "cybersecurity fundamentals integrity kb 42 cybersecurity fundamentals integrity"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/ISO 27001/index.mdx",
-    "title": "ISO 27001",
-    "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/iso-27001",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/iso-27001",
-    "matchText": "cybersecurity fundamentals iso 27001 kb 42 cybersecurity fundamentals iso 27001"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/Least privilege/index.mdx",
@@ -6288,20 +6200,20 @@
     "matchText": "cybersecurity fundamentals risk assessment kb 42 cybersecurity fundamentals risk assessment"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/Security frameworks (NIST/index.mdx",
-    "title": "Security frameworks (NIST",
+    "id": "./routes/KB/42. Cybersecurity Fundamentals/Security frameworks (NIST, ISO 27001, CIS Controls)/index.mdx",
+    "title": "Security frameworks (NIST, ISO 27001, CIS Controls)",
     "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/security-frameworks-nist",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/security-frameworks-nist",
-    "matchText": "cybersecurity fundamentals security frameworks nist kb 42 cybersecurity fundamentals security frameworks nist"
+    "route": "/kb/42-cybersecurity-fundamentals/security-frameworks-nist-iso-27001-cis-controls",
+    "routeLabel": "kb/42-cybersecurity-fundamentals/security-frameworks-nist-iso-27001-cis-controls",
+    "matchText": "cybersecurity fundamentals security frameworks nist iso 27001 cis controls kb 42 cybersecurity fundamentals security frameworks nist iso 27001 cis controls"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/Threat modelling (STRIDE/index.mdx",
-    "title": "Threat modelling (STRIDE",
+    "id": "./routes/KB/42. Cybersecurity Fundamentals/Threat modelling (STRIDE, DREAD)/index.mdx",
+    "title": "Threat modelling (STRIDE, DREAD)",
     "breadcrumb": "Cybersecurity Fundamentals",
-    "route": "/kb/42-cybersecurity-fundamentals/threat-modelling-stride",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/threat-modelling-stride",
-    "matchText": "cybersecurity fundamentals threat modelling stride kb 42 cybersecurity fundamentals threat modelling stride"
+    "route": "/kb/42-cybersecurity-fundamentals/threat-modelling-stride-dread",
+    "routeLabel": "kb/42-cybersecurity-fundamentals/threat-modelling-stride-dread",
+    "matchText": "cybersecurity fundamentals threat modelling stride dread kb 42 cybersecurity fundamentals threat modelling stride dread"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/Threats/index.mdx",
@@ -6568,14 +6480,6 @@
     "matchText": "cybersecurity fundamentals 2 web security directory traversal kb 42 cybersecurity fundamentals 42 2 web security directory traversal"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.2 Web Security/DOM-based)/index.mdx",
-    "title": "DOM-based)",
-    "breadcrumb": "Cybersecurity Fundamentals / 2 Web Security",
-    "route": "/kb/42-cybersecurity-fundamentals/42-2-web-security/dom-based",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-2-web-security/dom-based",
-    "matchText": "cybersecurity fundamentals 2 web security dom based kb 42 cybersecurity fundamentals 42 2 web security dom based"
-  },
-  {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.2 Web Security/Insecure deserialization/index.mdx",
     "title": "Insecure deserialization",
     "breadcrumb": "Cybersecurity Fundamentals / 2 Web Security",
@@ -6590,14 +6494,6 @@
     "route": "/kb/42-cybersecurity-fundamentals/42-2-web-security/owasp-top-10",
     "routeLabel": "kb/42-cybersecurity-fundamentals/42-2-web-security/owasp-top-10",
     "matchText": "cybersecurity fundamentals 2 web security owasp top 10 kb 42 cybersecurity fundamentals 42 2 web security owasp top 10"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.2 Web Security/reflected/index.mdx",
-    "title": "reflected",
-    "breadcrumb": "Cybersecurity Fundamentals / 2 Web Security",
-    "route": "/kb/42-cybersecurity-fundamentals/42-2-web-security/reflected",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-2-web-security/reflected",
-    "matchText": "cybersecurity fundamentals 2 web security reflected kb 42 cybersecurity fundamentals 42 2 web security reflected"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.2 Web Security/Security headers/index.mdx",
@@ -6632,12 +6528,12 @@
     "matchText": "cybersecurity fundamentals 2 web security ssrf kb 42 cybersecurity fundamentals 42 2 web security ssrf"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.2 Web Security/XSS (stored/index.mdx",
-    "title": "XSS (stored",
+    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.2 Web Security/XSS (Stored, Reflected, DOM-based)/index.mdx",
+    "title": "XSS (Stored, Reflected, DOM-based)",
     "breadcrumb": "Cybersecurity Fundamentals / 2 Web Security",
-    "route": "/kb/42-cybersecurity-fundamentals/42-2-web-security/xss-stored",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-2-web-security/xss-stored",
-    "matchText": "cybersecurity fundamentals 2 web security xss stored kb 42 cybersecurity fundamentals 42 2 web security xss stored"
+    "route": "/kb/42-cybersecurity-fundamentals/42-2-web-security/xss-stored-reflected-dom-based",
+    "routeLabel": "kb/42-cybersecurity-fundamentals/42-2-web-security/xss-stored-reflected-dom-based",
+    "matchText": "cybersecurity fundamentals 2 web security xss stored reflected dom based kb 42 cybersecurity fundamentals 42 2 web security xss stored reflected dom based"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.2 Web Security/XXE/index.mdx",
@@ -6720,14 +6616,6 @@
     "matchText": "cybersecurity fundamentals 3 network security network segmentation kb 42 cybersecurity fundamentals 42 3 network security network segmentation"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.3 Network Security/Nmap/index.mdx",
-    "title": "Nmap",
-    "breadcrumb": "Cybersecurity Fundamentals / 3 Network Security",
-    "route": "/kb/42-cybersecurity-fundamentals/42-3-network-security/nmap",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-3-network-security/nmap",
-    "matchText": "cybersecurity fundamentals 3 network security nmap kb 42 cybersecurity fundamentals 42 3 network security nmap"
-  },
-  {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.3 Network Security/Packet sniffing/index.mdx",
     "title": "Packet sniffing",
     "breadcrumb": "Cybersecurity Fundamentals / 3 Network Security",
@@ -6758,14 +6646,6 @@
     "route": "/kb/42-cybersecurity-fundamentals/42-3-network-security/waf",
     "routeLabel": "kb/42-cybersecurity-fundamentals/42-3-network-security/waf",
     "matchText": "cybersecurity fundamentals 3 network security waf kb 42 cybersecurity fundamentals 42 3 network security waf"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.3 Network Security/Wireshark/index.mdx",
-    "title": "Wireshark",
-    "breadcrumb": "Cybersecurity Fundamentals / 3 Network Security",
-    "route": "/kb/42-cybersecurity-fundamentals/42-3-network-security/wireshark",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-3-network-security/wireshark",
-    "matchText": "cybersecurity fundamentals 3 network security wireshark kb 42 cybersecurity fundamentals 42 3 network security wireshark"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.3 Network Security/Zero Trust networking/index.mdx",
@@ -6808,14 +6688,6 @@
     "matchText": "cybersecurity fundamentals 4 cybersecurity disciplines cloud security kb 42 cybersecurity fundamentals 42 4 cybersecurity disciplines cloud security"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.4 Cybersecurity Disciplines/Compliance)/index.mdx",
-    "title": "Compliance)",
-    "breadcrumb": "Cybersecurity Fundamentals / 4 Cybersecurity Disciplines",
-    "route": "/kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/compliance",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/compliance",
-    "matchText": "cybersecurity fundamentals 4 cybersecurity disciplines compliance kb 42 cybersecurity fundamentals 42 4 cybersecurity disciplines compliance"
-  },
-  {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.4 Cybersecurity Disciplines/Container security/index.mdx",
     "title": "Container security",
     "breadcrumb": "Cybersecurity Fundamentals / 4 Cybersecurity Disciplines",
@@ -6840,12 +6712,12 @@
     "matchText": "cybersecurity fundamentals 4 cybersecurity disciplines endpoint security kb 42 cybersecurity fundamentals 42 4 cybersecurity disciplines endpoint security"
   },
   {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.4 Cybersecurity Disciplines/GRC (Governance/index.mdx",
-    "title": "GRC (Governance",
+    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.4 Cybersecurity Disciplines/GRC (Governance, Risk, Compliance)/index.mdx",
+    "title": "GRC (Governance, Risk, Compliance)",
     "breadcrumb": "Cybersecurity Fundamentals / 4 Cybersecurity Disciplines",
-    "route": "/kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/grc-governance",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/grc-governance",
-    "matchText": "cybersecurity fundamentals 4 cybersecurity disciplines grc governance kb 42 cybersecurity fundamentals 42 4 cybersecurity disciplines grc governance"
+    "route": "/kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/grc-governance-risk-compliance",
+    "routeLabel": "kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/grc-governance-risk-compliance",
+    "matchText": "cybersecurity fundamentals 4 cybersecurity disciplines grc governance risk compliance kb 42 cybersecurity fundamentals 42 4 cybersecurity disciplines grc governance risk compliance"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.4 Cybersecurity Disciplines/IAM/index.mdx",
@@ -6926,14 +6798,6 @@
     "route": "/kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/reverse-engineering",
     "routeLabel": "kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/reverse-engineering",
     "matchText": "cybersecurity fundamentals 4 cybersecurity disciplines reverse engineering kb 42 cybersecurity fundamentals 42 4 cybersecurity disciplines reverse engineering"
-  },
-  {
-    "id": "./routes/KB/42. Cybersecurity Fundamentals/42.4 Cybersecurity Disciplines/Risk/index.mdx",
-    "title": "Risk",
-    "breadcrumb": "Cybersecurity Fundamentals / 4 Cybersecurity Disciplines",
-    "route": "/kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/risk",
-    "routeLabel": "kb/42-cybersecurity-fundamentals/42-4-cybersecurity-disciplines/risk",
-    "matchText": "cybersecurity fundamentals 4 cybersecurity disciplines risk kb 42 cybersecurity fundamentals 42 4 cybersecurity disciplines risk"
   },
   {
     "id": "./routes/KB/42. Cybersecurity Fundamentals/42.4 Cybersecurity Disciplines/SOC operations/index.mdx",
@@ -10152,12 +10016,12 @@
     "matchText": "embedded systems arm cortex m a kb 46 embedded systems arm cortex m a"
   },
   {
-    "id": "./routes/KB/46. Embedded Systems/Automotive embedded (AUTOSAR/index.mdx",
-    "title": "Automotive embedded (AUTOSAR",
+    "id": "./routes/KB/46. Embedded Systems/Automotive embedded/index.mdx",
+    "title": "Automotive embedded",
     "breadcrumb": "Embedded Systems",
-    "route": "/kb/46-embedded-systems/automotive-embedded-autosar",
-    "routeLabel": "kb/46-embedded-systems/automotive-embedded-autosar",
-    "matchText": "embedded systems automotive embedded autosar kb 46 embedded systems automotive embedded autosar"
+    "route": "/kb/46-embedded-systems/automotive-embedded",
+    "routeLabel": "kb/46-embedded-systems/automotive-embedded",
+    "matchText": "embedded systems automotive embedded kb 46 embedded systems automotive embedded"
   },
   {
     "id": "./routes/KB/46. Embedded Systems/Bare-metal programming/index.mdx",
@@ -10174,14 +10038,6 @@
     "route": "/kb/46-embedded-systems/bootloaders",
     "routeLabel": "kb/46-embedded-systems/bootloaders",
     "matchText": "embedded systems bootloaders kb 46 embedded systems bootloaders"
-  },
-  {
-    "id": "./routes/KB/46. Embedded Systems/CAN bus)/index.mdx",
-    "title": "CAN bus)",
-    "breadcrumb": "Embedded Systems",
-    "route": "/kb/46-embedded-systems/can-bus",
-    "routeLabel": "kb/46-embedded-systems/can-bus",
-    "matchText": "embedded systems can bus kb 46 embedded systems can bus"
   },
   {
     "id": "./routes/KB/46. Embedded Systems/Cross-compilation toolchains/index.mdx",
@@ -10240,12 +10096,12 @@
     "matchText": "embedded systems i2c kb 46 embedded systems i2c"
   },
   {
-    "id": "./routes/KB/46. Embedded Systems/Industrial control systems (PLC/index.mdx",
-    "title": "Industrial control systems (PLC",
+    "id": "./routes/KB/46. Embedded Systems/Industrial control systems/index.mdx",
+    "title": "Industrial control systems",
     "breadcrumb": "Embedded Systems",
-    "route": "/kb/46-embedded-systems/industrial-control-systems-plc",
-    "routeLabel": "kb/46-embedded-systems/industrial-control-systems-plc",
-    "matchText": "embedded systems industrial control systems plc kb 46 embedded systems industrial control systems plc"
+    "route": "/kb/46-embedded-systems/industrial-control-systems",
+    "routeLabel": "kb/46-embedded-systems/industrial-control-systems",
+    "matchText": "embedded systems industrial control systems kb 46 embedded systems industrial control systems"
   },
   {
     "id": "./routes/KB/46. Embedded Systems/Interrupts/index.mdx",
@@ -10278,14 +10134,6 @@
     "route": "/kb/46-embedded-systems/microprocessors",
     "routeLabel": "kb/46-embedded-systems/microprocessors",
     "matchText": "embedded systems microprocessors kb 46 embedded systems microprocessors"
-  },
-  {
-    "id": "./routes/KB/46. Embedded Systems/Modbus)/index.mdx",
-    "title": "Modbus)",
-    "breadcrumb": "Embedded Systems",
-    "route": "/kb/46-embedded-systems/modbus",
-    "routeLabel": "kb/46-embedded-systems/modbus",
-    "matchText": "embedded systems modbus kb 46 embedded systems modbus"
   },
   {
     "id": "./routes/KB/46. Embedded Systems/Power management (sleep modes)/index.mdx",
@@ -10720,28 +10568,12 @@
     "matchText": "graphics game development and simulation animation systems kb 49 graphics game development and simulation animation systems"
   },
   {
-    "id": "./routes/KB/49. Graphics, Game Development & Simulation/behavior trees/index.mdx",
-    "title": "behavior trees",
-    "breadcrumb": "Graphics, Game Development & Simulation",
-    "route": "/kb/49-graphics-game-development-and-simulation/behavior-trees",
-    "routeLabel": "kb/49-graphics-game-development-and-simulation/behavior-trees",
-    "matchText": "graphics game development and simulation behavior trees kb 49 graphics game development and simulation behavior trees"
-  },
-  {
     "id": "./routes/KB/49. Graphics, Game Development & Simulation/Computational geometry for graphics/index.mdx",
     "title": "Computational geometry for graphics",
     "breadcrumb": "Graphics, Game Development & Simulation",
     "route": "/kb/49-graphics-game-development-and-simulation/computational-geometry-for-graphics",
     "routeLabel": "kb/49-graphics-game-development-and-simulation/computational-geometry-for-graphics",
     "matchText": "graphics game development and simulation computational geometry for graphics kb 49 graphics game development and simulation computational geometry for graphics"
-  },
-  {
-    "id": "./routes/KB/49. Graphics, Game Development & Simulation/compute)/index.mdx",
-    "title": "compute)",
-    "breadcrumb": "Graphics, Game Development & Simulation",
-    "route": "/kb/49-graphics-game-development-and-simulation/compute",
-    "routeLabel": "kb/49-graphics-game-development-and-simulation/compute",
-    "matchText": "graphics game development and simulation compute kb 49 graphics game development and simulation compute"
   },
   {
     "id": "./routes/KB/49. Graphics, Game Development & Simulation/Computer graphics fundamentals/index.mdx",
@@ -10768,28 +10600,12 @@
     "matchText": "graphics game development and simulation entity component system ecs kb 49 graphics game development and simulation entity component system ecs"
   },
   {
-    "id": "./routes/KB/49. Graphics, Game Development & Simulation/finite state machines)/index.mdx",
-    "title": "finite state machines)",
+    "id": "./routes/KB/49. Graphics, Game Development & Simulation/Game AI (Pathfinding, Behavior Trees, FSM)/index.mdx",
+    "title": "Game AI (Pathfinding, Behavior Trees, FSM)",
     "breadcrumb": "Graphics, Game Development & Simulation",
-    "route": "/kb/49-graphics-game-development-and-simulation/finite-state-machines",
-    "routeLabel": "kb/49-graphics-game-development-and-simulation/finite-state-machines",
-    "matchText": "graphics game development and simulation finite state machines kb 49 graphics game development and simulation finite state machines"
-  },
-  {
-    "id": "./routes/KB/49. Graphics, Game Development & Simulation/fragment/index.mdx",
-    "title": "fragment",
-    "breadcrumb": "Graphics, Game Development & Simulation",
-    "route": "/kb/49-graphics-game-development-and-simulation/fragment",
-    "routeLabel": "kb/49-graphics-game-development-and-simulation/fragment",
-    "matchText": "graphics game development and simulation fragment kb 49 graphics game development and simulation fragment"
-  },
-  {
-    "id": "./routes/KB/49. Graphics, Game Development & Simulation/Game AI (pathfinding/index.mdx",
-    "title": "Game AI (pathfinding",
-    "breadcrumb": "Graphics, Game Development & Simulation",
-    "route": "/kb/49-graphics-game-development-and-simulation/game-ai-pathfinding",
-    "routeLabel": "kb/49-graphics-game-development-and-simulation/game-ai-pathfinding",
-    "matchText": "graphics game development and simulation game ai pathfinding kb 49 graphics game development and simulation game ai pathfinding"
+    "route": "/kb/49-graphics-game-development-and-simulation/game-ai-pathfinding-behavior-trees-fsm",
+    "routeLabel": "kb/49-graphics-game-development-and-simulation/game-ai-pathfinding-behavior-trees-fsm",
+    "matchText": "graphics game development and simulation game ai pathfinding behavior trees fsm kb 49 graphics game development and simulation game ai pathfinding behavior trees fsm"
   },
   {
     "id": "./routes/KB/49. Graphics, Game Development & Simulation/Game loops/index.mdx",
@@ -10912,12 +10728,12 @@
     "matchText": "graphics game development and simulation rigging kb 49 graphics game development and simulation rigging"
   },
   {
-    "id": "./routes/KB/49. Graphics, Game Development & Simulation/Shaders (vertex/index.mdx",
-    "title": "Shaders (vertex",
+    "id": "./routes/KB/49. Graphics, Game Development & Simulation/Shaders (Vertex, Fragment, Compute)/index.mdx",
+    "title": "Shaders (Vertex, Fragment, Compute)",
     "breadcrumb": "Graphics, Game Development & Simulation",
-    "route": "/kb/49-graphics-game-development-and-simulation/shaders-vertex",
-    "routeLabel": "kb/49-graphics-game-development-and-simulation/shaders-vertex",
-    "matchText": "graphics game development and simulation shaders vertex kb 49 graphics game development and simulation shaders vertex"
+    "route": "/kb/49-graphics-game-development-and-simulation/shaders-vertex-fragment-compute",
+    "routeLabel": "kb/49-graphics-game-development-and-simulation/shaders-vertex-fragment-compute",
+    "matchText": "graphics game development and simulation shaders vertex fragment compute kb 49 graphics game development and simulation shaders vertex fragment compute"
   },
   {
     "id": "./routes/KB/49. Graphics, Game Development & Simulation/Three.js/index.mdx",
@@ -11208,28 +11024,12 @@
     "matchText": "human computer interaction and ux prototyping low high fidelity kb 50 human computer interaction and ux prototyping low high fidelity"
   },
   {
-    "id": "./routes/KB/50. Human-Computer Interaction & UX/surveys/index.mdx",
-    "title": "surveys",
-    "breadcrumb": "Human-Computer Interaction & UX",
-    "route": "/kb/50-human-computer-interaction-and-ux/surveys",
-    "routeLabel": "kb/50-human-computer-interaction-and-ux/surveys",
-    "matchText": "human computer interaction and ux surveys kb 50 human computer interaction and ux surveys"
-  },
-  {
     "id": "./routes/KB/50. Human-Computer Interaction & UX/UI/index.mdx",
     "title": "UI",
     "breadcrumb": "Human-Computer Interaction & UX",
     "route": "/kb/50-human-computer-interaction-and-ux/ui",
     "routeLabel": "kb/50-human-computer-interaction-and-ux/ui",
     "matchText": "human computer interaction and ux ui kb 50 human computer interaction and ux ui"
-  },
-  {
-    "id": "./routes/KB/50. Human-Computer Interaction & UX/usability studies)/index.mdx",
-    "title": "usability studies)",
-    "breadcrumb": "Human-Computer Interaction & UX",
-    "route": "/kb/50-human-computer-interaction-and-ux/usability-studies",
-    "routeLabel": "kb/50-human-computer-interaction-and-ux/usability-studies",
-    "matchText": "human computer interaction and ux usability studies kb 50 human computer interaction and ux usability studies"
   },
   {
     "id": "./routes/KB/50. Human-Computer Interaction & UX/Usability testing/index.mdx",
@@ -11240,12 +11040,12 @@
     "matchText": "human computer interaction and ux usability testing kb 50 human computer interaction and ux usability testing"
   },
   {
-    "id": "./routes/KB/50. Human-Computer Interaction & UX/User research (interviews/index.mdx",
-    "title": "User research (interviews",
+    "id": "./routes/KB/50. Human-Computer Interaction & UX/User research (Interviews, Surveys, Usability Studies)/index.mdx",
+    "title": "User research (Interviews, Surveys, Usability Studies)",
     "breadcrumb": "Human-Computer Interaction & UX",
-    "route": "/kb/50-human-computer-interaction-and-ux/user-research-interviews",
-    "routeLabel": "kb/50-human-computer-interaction-and-ux/user-research-interviews",
-    "matchText": "human computer interaction and ux user research interviews kb 50 human computer interaction and ux user research interviews"
+    "route": "/kb/50-human-computer-interaction-and-ux/user-research-interviews-surveys-usability-studies",
+    "routeLabel": "kb/50-human-computer-interaction-and-ux/user-research-interviews-surveys-usability-studies",
+    "matchText": "human computer interaction and ux user research interviews surveys usability studies kb 50 human computer interaction and ux user research interviews surveys usability studies"
   },
   {
     "id": "./routes/KB/50. Human-Computer Interaction & UX/UX/index.mdx",
@@ -15152,12 +14952,12 @@
     "matchText": "parallel and concurrent computing locks kb 45 parallel and concurrent computing locks"
   },
   {
-    "id": "./routes/KB/45. Parallel & Concurrent Computing/Memory models (sequential consistency/index.mdx",
-    "title": "Memory models (sequential consistency",
+    "id": "./routes/KB/45. Parallel & Concurrent Computing/Memory models/index.mdx",
+    "title": "Memory models",
     "breadcrumb": "Parallel & Concurrent Computing",
-    "route": "/kb/45-parallel-and-concurrent-computing/memory-models-sequential-consistency",
-    "routeLabel": "kb/45-parallel-and-concurrent-computing/memory-models-sequential-consistency",
-    "matchText": "parallel and concurrent computing memory models sequential consistency kb 45 parallel and concurrent computing memory models sequential consistency"
+    "route": "/kb/45-parallel-and-concurrent-computing/memory-models",
+    "routeLabel": "kb/45-parallel-and-concurrent-computing/memory-models",
+    "matchText": "parallel and concurrent computing memory models kb 45 parallel and concurrent computing memory models"
   },
   {
     "id": "./routes/KB/45. Parallel & Concurrent Computing/MPI/index.mdx",
@@ -15222,14 +15022,6 @@
     "route": "/kb/45-parallel-and-concurrent-computing/race-conditions",
     "routeLabel": "kb/45-parallel-and-concurrent-computing/race-conditions",
     "matchText": "parallel and concurrent computing race conditions kb 45 parallel and concurrent computing race conditions"
-  },
-  {
-    "id": "./routes/KB/45. Parallel & Concurrent Computing/relaxed ordering)/index.mdx",
-    "title": "relaxed ordering)",
-    "breadcrumb": "Parallel & Concurrent Computing",
-    "route": "/kb/45-parallel-and-concurrent-computing/relaxed-ordering",
-    "routeLabel": "kb/45-parallel-and-concurrent-computing/relaxed-ordering",
-    "matchText": "parallel and concurrent computing relaxed ordering kb 45 parallel and concurrent computing relaxed ordering"
   },
   {
     "id": "./routes/KB/45. Parallel & Concurrent Computing/ROCm/index.mdx",
@@ -20256,28 +20048,12 @@
     "matchText": "system design and distributed systems 4 caching database cache kb 43 system design and distributed systems 43 4 caching database cache"
   },
   {
-    "id": "./routes/KB/43. System Design & Distributed Systems/43.4 Caching/Eviction policies (LRU/index.mdx",
-    "title": "Eviction policies (LRU",
+    "id": "./routes/KB/43. System Design & Distributed Systems/43.4 Caching/Eviction policies/index.mdx",
+    "title": "Eviction policies",
     "breadcrumb": "System Design & Distributed Systems / 4 Caching",
-    "route": "/kb/43-system-design-and-distributed-systems/43-4-caching/eviction-policies-lru",
-    "routeLabel": "kb/43-system-design-and-distributed-systems/43-4-caching/eviction-policies-lru",
-    "matchText": "system design and distributed systems 4 caching eviction policies lru kb 43 system design and distributed systems 43 4 caching eviction policies lru"
-  },
-  {
-    "id": "./routes/KB/43. System Design & Distributed Systems/43.4 Caching/FIFO)/index.mdx",
-    "title": "FIFO)",
-    "breadcrumb": "System Design & Distributed Systems / 4 Caching",
-    "route": "/kb/43-system-design-and-distributed-systems/43-4-caching/fifo",
-    "routeLabel": "kb/43-system-design-and-distributed-systems/43-4-caching/fifo",
-    "matchText": "system design and distributed systems 4 caching fifo kb 43 system design and distributed systems 43 4 caching fifo"
-  },
-  {
-    "id": "./routes/KB/43. System Design & Distributed Systems/43.4 Caching/LFU/index.mdx",
-    "title": "LFU",
-    "breadcrumb": "System Design & Distributed Systems / 4 Caching",
-    "route": "/kb/43-system-design-and-distributed-systems/43-4-caching/lfu",
-    "routeLabel": "kb/43-system-design-and-distributed-systems/43-4-caching/lfu",
-    "matchText": "system design and distributed systems 4 caching lfu kb 43 system design and distributed systems 43 4 caching lfu"
+    "route": "/kb/43-system-design-and-distributed-systems/43-4-caching/eviction-policies",
+    "routeLabel": "kb/43-system-design-and-distributed-systems/43-4-caching/eviction-policies",
+    "matchText": "system design and distributed systems 4 caching eviction policies kb 43 system design and distributed systems 43 4 caching eviction policies"
   },
   {
     "id": "./routes/KB/43. System Design & Distributed Systems/43.4 Caching/Memcached/index.mdx",

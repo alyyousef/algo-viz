@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: H.265
+description: High Efficiency Video Coding (HEVC), also known as H.265, is a video compression standard designed as a successor to the widely used Advanced Video Coding (AVC, H.264).
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="H.265">
+<TechnologyTemplate 
+  title="H.265 (HEVC)"
+  subtitle="The 4K Era Codec"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/HEVC_logo.svg/512px-HEVC_logo.svg.png"
+  description="H.265 mathematically delivers the exact same biological visual quality as H.264, but at half the file size, enabling the global streaming of 4K HDR video."
+  yearCreated={2013}
+  creator="ITU-T / MPEG"
+  isOpenSource={false}
+  websiteUrl="https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+H.264 divided the video screen into 16x16 pixel "Macroblocks" to mathematically track motion. 
 
-</ConceptTemplate>
+H.265 upgraded this to **Coding Tree Units (CTUs)** up to 64x64 pixels. If a large portion of the screen is completely flat (like a massive blue sky), H.265 mathematically covers it with a single 64x64 block, drastically reducing the data required. However, the extreme mathematical complexity of searching for these optimizations requires 3x more biological CPU power to decode than H.264.
+
+</TechnologyTemplate>

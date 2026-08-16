@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: KVM (Kernel-based Virtual Machine)
+description: A virtualization module in the Linux kernel that allows the kernel to function as a hypervisor.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="KVM">
+<TechnologyTemplate 
+  title="KVM"
+  subtitle="The Linux Hypervisor"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Kvm-logo.svg/512px-Kvm-logo.svg.png"
+  description="KVM is an open-source technology built directly into the Linux kernel that mathematically turns any Linux server into a Type-1 Hypervisor."
+  yearCreated={2007}
+  creator="Qumranet (Red Hat)"
+  isOpenSource={true}
+  websiteUrl="https://www.linux-kvm.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Instead of writing a massive standalone OS like VMware ESXi, the creators of KVM realized Linux already knows how to manage memory, schedule CPUs, and talk to hard drives.
 
-</ConceptTemplate>
+By loading the KVM module, Linux mathematically promotes Virtual Machines into standard Linux processes. A VM is managed by the kernel exactly like a normal biological program. KVM is the absolute backbone of the modern public cloud, heavily powering massive infrastructure like Google Cloud Platform (GCP) and AWS EC2 (via Nitro).
+
+</TechnologyTemplate>

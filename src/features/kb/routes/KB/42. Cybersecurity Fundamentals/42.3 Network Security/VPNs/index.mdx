@@ -1,8 +1,28 @@
+---
+title: Virtual Private Networks (VPN)
+description: A technology that creates a secure, encrypted connection over a less secure network, such as the public internet.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="VPNs">
+<ConceptTemplate title="Virtual Private Networks (VPN)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When an employee works from a coffee shop, any hacker on that public WiFi can mathematically intercept their unencrypted traffic. 
+
+A **Virtual Private Network (VPN)** solves this by creating a cryptographic tunnel. The VPN software on the laptop mathematically encrypts all outbound data, sends it through the public internet to the corporate VPN server, where it is decrypted and allowed onto the secure internal network.
+
+<Callout icon="warning" title="The VPN Bottleneck">
+  Traditional corporate VPNs have a major flaw: "Hairpinning." If a remote employee wants to access Salesforce (a cloud app), their traffic must first travel all the way to the corporate VPN server in New York, just to be sent right back out to the internet to reach Salesforce. This creates massive mathematical latency.
+</Callout>
+
+## Types of VPNs
+
+<ComparisonTable 
+  headers={['Type', 'Use Case', 'Description']}
+  rows={[
+    ['Remote Access VPN', 'Employees working from home', 'Connects an individual user\'s device securely to the corporate network. (e.g., Cisco AnyConnect, OpenVPN).'],
+    ['Site-to-Site VPN', 'Connecting branch offices', 'Mathematically connects entire networks together. A router in the London office establishes a permanent encrypted tunnel to a router in the New York office, so the two networks appear as one.'],
+    ['Consumer VPN', 'Privacy enthusiasts', 'Services like NordVPN or ExpressVPN. They encrypt traffic to hide the user\'s IP address from their ISP and bypass geographical restrictions, but they do not connect the user to a corporate network.']
+  ]}
+/>
 
 </ConceptTemplate>

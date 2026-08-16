@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: DBeaver
+description: A free and open source universal database tool for developers and database administrators.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="DBeaver">
+<TechnologyTemplate 
+  title="DBeaver"
+  subtitle="The Universal Database Client"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/DBeaver_logo.svg/512px-DBeaver_logo.svg.png"
+  description="DBeaver is an incredibly popular, Java-based universal database client. Instead of needing 5 different IDEs for 5 different databases, DBeaver connects to almost everything."
+  yearCreated={2010}
+  creator="Serge Rider"
+  isOpenSource={true}
+  websiteUrl="https://dbeaver.io/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a developer works at a company using PostgreSQL for the backend, MySQL for a legacy app, and MongoDB for analytics, they traditionally needed three separate software clients.
 
-</ConceptTemplate>
+DBeaver solves this by using **JDBC Drivers**. It mathematically abstracts the database connection. You provide DBeaver with the database URL, and it automatically downloads the exact Java driver required to talk to PostgreSQL, MySQL, SQLite, Oracle, or Cassandra, providing a single, unified GUI to query them all.
+
+</TechnologyTemplate>

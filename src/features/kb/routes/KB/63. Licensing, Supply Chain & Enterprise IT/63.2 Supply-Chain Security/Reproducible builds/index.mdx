@@ -1,8 +1,13 @@
+---
+title: Reproducible builds
+description: A set of software development practices that create an independently-verifiable path from source code to the binary code used by computers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reproducible builds">
+<ConceptTemplate title="Reproducible Builds">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you download Open Source code and biologically compile it, and the author compiles the exact same code, the resulting binary `.exe` files will mathematically have different hashes.
+
+Why? Because the compiler injects biological metadata (like the exact timestamp of the compile, or the specific OS path). This is a security nightmare, because you mathematically cannot verify if the author's binary matches the Open Source code. **Reproducible Builds** strips all non-deterministic biological variables from the compiler, mathematically guaranteeing that the exact same source code will *always* produce the exact same binary hash, bit-for-bit.
 
 </ConceptTemplate>

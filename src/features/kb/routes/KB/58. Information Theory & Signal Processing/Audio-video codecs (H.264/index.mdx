@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Audio-video codecs (H.264)
+description: Advanced Video Coding, also known as H.264, is a video compression standard based on block-oriented, motion-compensated integer-DCT coding.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Audio/video codecs (H.264">
+<TechnologyTemplate 
+  title="H.264 (AVC)"
+  subtitle="The Codec that Built YouTube"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/H264_logo.svg/512px-H264_logo.svg.png"
+  description="H.264 is the most widely used video codec in human history, mathematically powering Blu-ray, Netflix, YouTube, and FaceTime."
+  yearCreated={2003}
+  creator="ITU-T / MPEG"
+  isOpenSource={false}
+  websiteUrl="https://en.wikipedia.org/wiki/Advanced_Video_Coding"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Uncompressed 1080p video mathematically requires 3 Gigabytes per minute. Streaming it over a 2010 internet connection was physically impossible.
 
-</ConceptTemplate>
+H.264 achieves massive biological compression through **Motion Compensation**. Instead of saving every frame as a unique image, H.264 mathematically saves a single "Keyframe", and for the next 30 frames, it only saves the *mathematical differences* (the vectors of how pixels moved). If the camera is still, the background pixels are biologically frozen, saving 99% of the data.
+
+</TechnologyTemplate>

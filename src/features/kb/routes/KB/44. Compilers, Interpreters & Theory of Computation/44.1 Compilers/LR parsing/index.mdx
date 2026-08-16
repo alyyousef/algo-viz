@@ -1,8 +1,25 @@
+---
+title: LR Parsing (Bottom-Up)
+description: A type of bottom-up parser that reads input from Left to right and produces a Rightmost derivation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LR parsing">
+<ConceptTemplate title="LR Parsing (Bottom-Up)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In compiler theory, **LR** stands for:
+- **L:** Read the tokens from **L**eft to right.
+- **R:** Construct a **R**ightmost derivation of the tree in reverse.
+
+Unlike LL parsers (which start at the root and mathematically guess downward), LR Parsers are **Bottom-Up Parsers**. They read tokens and pile them onto a mathematical Stack. Once the pile of tokens exactly matches a known grammatical rule, they "Reduce" the pile into a single AST node, building the tree from the leaves up to the root.
+
+<Callout icon="success" title="Mathematical Superiority">
+  LR Parsers are mathematically superior to LL parsers. They can parse a vastly larger set of grammars, they completely ignore the Left-Recursion infinite loop problem, and they never have to "guess" what rule to apply. 
+</Callout>
+
+## Why aren't they used everywhere?
+
+If LR is mathematically superior, why do GCC and Clang use handwritten Recursive Descent (LL)?
+
+Because LR parsers are essentially massive, complex mathematical State Machines (Pushdown Automata). They are so complicated that humans cannot write them by hand. You must use a tool (like YACC or Bison) to automatically generate the parser code. The resulting code is mathematically impossible for humans to read, making it brutally difficult to output high-quality, human-readable syntax error messages.
 
 </ConceptTemplate>

@@ -1,50 +1,26 @@
 ---
-title: Interrupts
-description: "A signal to the processor emitted by hardware or software indicating an event that needs immediate attention."
+title: Interrupts (ISRs)
+description: A signal to the processor emitted by hardware or software indicating an event that needs immediate attention.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Interrupts">
+<ConceptTemplate title="Interrupts (ISRs)">
 
-How does a Microcontroller know when a user has pressed a button?
+Imagine you are waiting for a very important email. 
+- **Polling:** You hit refresh on your browser 1,000 times a second. This wastes massive amounts of energy and CPU cycles.
+- **Interrupts:** You turn on push notifications and go to sleep. The moment the email arrives, your phone physically vibrates, instantly waking you up.
 
-The bad way is **Polling**. The CPU runs an infinite loop, constantly asking: *"Is the button pressed? No. Is the button pressed? No."* This wastes 100% of the CPU's processing power and drains the battery immediately.
+In Embedded Systems, **Interrupts** are mathematical hardware signals that force the CPU to instantly drop whatever it is doing and execute a specific function.
 
-The correct way is using **Interrupts**.
-
-## How Interrupts Work
-An Interrupt is a hardware mechanism that allows the CPU to go to sleep or do other work. When the physical button is pressed, the electrical signal travels directly into the MCU's Interrupt Controller. 
-
-The Controller forces the CPU to instantly pause its current program, save its exact state, and jump to a special function called an **Interrupt Service Routine (ISR)**. 
-
-```c
-// This function is NOT called by the main() loop.
-// It is triggered by the hardware silicon the exact microsecond Pin 2 goes HIGH.
-void button_press_ISR() {
-    turn_on_led();
-    clear_interrupt_flag();
-}
-
-void main() {
-    setup_hardware_interrupt(PIN_2, RISING_EDGE);
-    
-    while(1) {
-        // CPU can sleep here, saving 99% battery!
-        enter_low_power_sleep();
-    }
-}
-```
-
-Once the ISR finishes, the CPU resumes its original task exactly where it left off.
-
-## Interrupt Priorities
-Modern MCUs can have dozens of interrupt sources (Timers, Wi-Fi chips, Buttons, UART). What happens if two interrupts trigger at the exact same millisecond?
-
-The MCU assigns **Priorities** to every interrupt. If the CPU is executing a Low Priority ISR (like a button press), and a High Priority Interrupt arrives (like a critical motor failure), the CPU will interrupt the interrupt, handle the motor failure, then return to the button press, then return to the main code.
-
-<Callout icon="warning" title="Keep ISRs Short!">
-A golden rule of embedded programming is that an ISR must be as short and fast as possible. You should **never** put delays, loops, or complex math inside an ISR. Usually, an ISR just sets a boolean flag (e.g., `button_was_pressed = true`) and immediately exits, letting the main loop handle the heavy processing later.
+<Callout icon="error" title="The Interrupt Service Routine (ISR)">
+  When a hardware pin receives 3.3V (e.g., the user pressed a physical button), the CPU mathematically pauses the `main()` infinite loop, saves all its current variables to the Stack, and instantly jumps to a special function called an **ISR (Interrupt Service Routine)**.
+  
+  ISRs MUST be mathematically microscopic. If your ISR contains a `delay()` or an infinite loop, the entire CPU is permanently frozen and the main program will never resume.
 </Callout>
+
+## Hardware vs Software Interrupts
+
+- **Hardware Interrupts:** Triggered by physical electricity. A timer reaching zero, a UART pin receiving a byte of data, or an ADC finishing a voltage reading.
+- **Software Interrupts:** Triggered mathematically by code (Exceptions). Division by zero, or a Page Fault in an OS.
 
 </ConceptTemplate>

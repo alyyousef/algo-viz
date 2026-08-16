@@ -1,8 +1,27 @@
+---
+title: Vector Clocks
+description: An algorithm for generating a partial ordering of events in a distributed system and detecting causality violations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Vector clocks">
+<ConceptTemplate title="Vector Clocks">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Lamport Clocks have a mathematical flaw: If Event A has timestamp `5` and Event B has timestamp `10`, Lamport guarantees that A *might* have caused B, but it cannot mathematically prove it. They might be completely independent events that just happened to get those numbers.
+
+**Vector Clocks** mathematically solve this. Instead of a single integer, every node in the cluster maintains an entire array (a vector) of integers—one for every node in the system.
+
+<Callout icon="warning" title="Conflict Detection (DynamoDB)">
+  Vector clocks are the exact mathematical foundation of Amazon DynamoDB's conflict resolution. If two users simultaneously update the same shopping cart on different servers, the system uses the vector clock to mathematically prove there was a "Concurrent Write" conflict, forcing the application to resolve it.
+</Callout>
+
+## The Algorithm
+
+Imagine a 3-Node cluster. Every node has an array: `[0, 0, 0]`.
+
+1. **Local Action:** If Node 0 does work, it increments its own slot: `[1, 0, 0]`.
+2. **Sending a Message:** Node 0 sends a message to Node 1, attaching `[1, 0, 0]`.
+3. **Receiving a Message:** Node 1 receives it, and mathematically takes the `MAX()` of every single slot in the array independently: `[MAX(1,0), MAX(0,0), MAX(0,0)]`. Then it increments its own slot. The new vector on Node 1 is `[1, 1, 0]`.
+
+By mathematically comparing the arrays later, a database can definitively prove if one array is a direct ancestor of another, or if they branched off concurrently (a conflict).
 
 </ConceptTemplate>

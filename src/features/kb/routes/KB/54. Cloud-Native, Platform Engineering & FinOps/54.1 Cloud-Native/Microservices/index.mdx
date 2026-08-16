@@ -1,8 +1,21 @@
+---
+title: Microservices
+description: An architectural style that structures an application as a collection of services that are highly maintainable and testable, loosely coupled, independently deployable, and organized around business capabilities.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Microservices">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, applications were **Monoliths**: A single, massive codebase containing the UI, the database logic, the billing system, and the user management system. If the billing system had a memory leak, the entire application crashed.
+
+**Microservices** mathematically divide the monolith into dozens of tiny, independent applications.
+
+<Callout icon="warning" title="The Distributed Systems Cost">
+  In a microservices architecture, the `Billing Service` (written in Java) is a separate codebase from the `User Service` (written in Node.js). They communicate over the network via HTTP APIs or gRPC.
+  
+  **Pros:** You can deploy the Billing Service without touching the User Service. If Billing crashes, Users can still log in.
+  
+  **Cons:** You have mathematically introduced Network Latency. If an API request requires fetching data from 6 different microservices, the biological overhead of 6 network hops can drastically cripple performance compared to a simple SQL `JOIN` inside a Monolith.
+</Callout>
 
 </ConceptTemplate>

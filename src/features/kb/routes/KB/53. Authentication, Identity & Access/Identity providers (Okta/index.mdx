@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Identity Providers (IdP) & Okta
+description: A system entity that creates, maintains, and manages identity information for principals while providing authentication services.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Identity providers (Okta">
+<TechnologyTemplate 
+  title="Identity Providers (Okta)"
+  subtitle="The Enterprise SSO Standard"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Okta_logo.svg/512px-Okta_logo.svg.png"
+  description="An Identity Provider (IdP) is the centralized mathematical authority in a corporation that dictates who you are. Okta is the undisputed global standard for enterprise IdPs."
+  yearCreated={2009}
+  creator="Todd McKinnon & Frederic Kerrest"
+  isOpenSource={false}
+  websiteUrl="https://www.okta.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an enterprise has 50,000 employees and 400 internal SaaS applications (Slack, Jira, Workday), managing 20,000,000 separate passwords is mathematically impossible.
 
-</ConceptTemplate>
+<Callout icon="tip" title="The Single Source of Truth">
+  **Okta** serves as the central directory. 
+  
+  When an HR manager fires an employee, they biologically click "Deactivate" exactly once inside Okta. Okta mathematically triggers an API cascade, instantly revoking that employee's access to all 400 applications simultaneously via SAML/OIDC. It is the architectural linchpin of enterprise security.
+</Callout>
+
+</TechnologyTemplate>

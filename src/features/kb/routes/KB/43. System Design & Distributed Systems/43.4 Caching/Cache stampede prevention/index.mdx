@@ -1,8 +1,29 @@
+---
+title: Cache Stampede Prevention
+description: Architectural techniques used to prevent a database from being overwhelmed when a highly popular cached item suddenly expires.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cache stampede prevention">
+<ConceptTemplate title="Cache Stampede Prevention">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Cache Stampede** (also known as a Thundering Herd) is a catastrophic mathematical failure mode in distributed systems.
+
+Imagine a highly popular article on a news site receiving 10,000 requests per second. The article is cached in Redis with a TTL. The instant the TTL mathematically expires, Redis deletes the key. 
+
+In that exact millisecond, 10,000 concurrent user requests check Redis. They all experience a Cache Miss simultaneously. All 10,000 requests bypass the cache and mathematically slam the PostgreSQL database at the exact same time. The database instantly OOMs and crashes.
+
+<Callout icon="warning" title="The Danger of Simplicity">
+  Standard Cache-Aside architecture provides absolutely zero mathematical protection against Cache Stampedes. You must actively engineer a prevention mechanism.
+</Callout>
+
+## Mathematical Prevention Strategies
+
+<ComparisonTable 
+  headers={['Strategy', 'How it Works', 'Drawback']}
+  rows={[
+    ['Mutex Locks (Distributed Locking)', 'When the key expires, the first thread to realize it mathematically acquires a Redis Lock. The other 9,999 threads are forced to sleep/wait. The first thread queries the DB, repopulates the cache, and releases the lock. The sleeping threads wake up and safely read the new cache.', 'Creates a mathematical bottleneck. The 9,999 threads consume RAM while sleeping.'],
+    ['Probabilistic Early Expiration (PER)', 'Threads use a mathematical algorithm (involving a random number) to "pretend" the cache has expired slightly *before* it actually does. One lucky thread repopulates the cache while the TTL is still technically alive, so the other 9,999 threads just get the slightly older cached version.', 'Mathematically complex to tune the probability algorithms correctly.']
+  ]}
+/>
 
 </ConceptTemplate>

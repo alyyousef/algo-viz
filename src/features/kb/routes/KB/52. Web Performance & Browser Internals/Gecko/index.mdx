@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Gecko
+description: The browser engine developed by Mozilla.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Gecko">
+<TechnologyTemplate 
+  title="Gecko"
+  subtitle="The Mozilla Engine"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/512px-Firefox_logo%2C_2019.svg.png"
+  description="Gecko is the open-source layout engine used by Firefox. It is the only mathematical counterweight preventing a complete Chromium/WebKit global duopoly."
+  yearCreated={1997}
+  creator="Mozilla"
+  isOpenSource={true}
+  websiteUrl="https://developer.mozilla.org/en-US/docs/Mozilla/Gecko"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Gecko was originally written for Netscape Navigator in 1997. It is a massive, mathematically complex C++ and Rust codebase.
 
-</ConceptTemplate>
+<Callout icon="info" title="Project Quantum">
+  In 2017, Mozilla integrated "Quantum", replacing major C++ components of Gecko with **Rust**. 
+  
+  Because Rust guarantees thread-safety, Gecko can mathematically calculate the CSS styles for hundreds of DOM elements simultaneously across multiple CPU cores, something that older single-threaded engines struggled to do without crashing.
+</Callout>
+
+</TechnologyTemplate>

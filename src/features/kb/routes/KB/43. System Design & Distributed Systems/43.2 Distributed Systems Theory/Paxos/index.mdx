@@ -1,8 +1,26 @@
+---
+title: Paxos
+description: A family of protocols for solving consensus in a network of unreliable processors, discovered by Leslie Lamport.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Paxos">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 1989, legendary computer scientist Leslie Lamport published a paper detailing the **Paxos** algorithm. It was the first mathematically rigorous solution to the problem of distributed consensus in an asynchronous network where nodes might crash or messages might be delayed.
+
+For 25 years, Paxos was the undisputed king of distributed systems theory, serving as the mathematical foundation for Google's Spanner database and Amazon's original Dynamo architecture.
+
+<Callout icon="error" title="The Notorious Complexity">
+  Lamport originally explained Paxos using a metaphor about a fictional Greek parliament on the island of Paxos. The metaphor was so mathematically obtuse that no one understood the paper, forcing him to rewrite it years later. It remains incredibly difficult to implement correctly in C++ or Java.
+</Callout>
+
+## The Mathematical Mechanism
+
+Unlike Raft, which relies on a strict Leader Dictator, basic Paxos is mathematically a multi-phase democratic voting protocol:
+
+1. **Phase 1 (Prepare):** A Proposer asks the cluster: "I want to propose a value with Proposal Number N. Will you listen to me?"
+2. **Phase 2 (Accept):** If a mathematical Quorum (majority) of nodes reply "Yes, N is the highest number I have seen", the Proposer sends the actual value. If a Quorum accepts the value, consensus is mathematically achieved.
+
+*Because Paxos allows multiple Proposers to shout at the same time, it can mathematically lead to "Dueling Proposers" (livelock), where they constantly out-bid each other's Proposal Numbers without ever committing.*
 
 </ConceptTemplate>

@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Ceph
+description: A massively scalable, open source, software-defined storage system that provides object, block and file system storage in a single platform.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Ceph">
+<TechnologyTemplate 
+  title="Ceph"
+  subtitle="The Unified Distributed Cluster"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Ceph_Logo.svg/512px-Ceph_Logo.svg.png"
+  description="Ceph is the open-source Linux standard for building mathematically indestructible distributed storage clusters, heavily used to back OpenStack clouds."
+  yearCreated={2004}
+  creator="Sage Weil"
+  isOpenSource={true}
+  websiteUrl="https://ceph.io/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Ceph is mathematically brilliant because it is unified: from a single cluster of physical hard drives, Ceph can simultaneously provide **Block Storage** (RBD), **Object Storage** (S3-compatible RGW), and **File Storage** (CephFS).
 
-</ConceptTemplate>
+It relies on the **CRUSH algorithm**, a mathematical hash function that dictates exactly which server holds which piece of data. Because it uses math instead of a central lookup table, there is absolutely zero biological bottleneck; thousands of clients can read/write to the cluster simultaneously at wire speed.
+
+</TechnologyTemplate>

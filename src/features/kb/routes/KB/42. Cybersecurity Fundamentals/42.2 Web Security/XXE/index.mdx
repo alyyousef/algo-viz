@@ -1,8 +1,23 @@
+---
+title: XML External Entity (XXE)
+description: A severe vulnerability occurring when weakly configured XML parsers process XML input containing a reference to an external entity.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="XXE">
+<ConceptTemplate title="XML External Entity (XXE)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Many older enterprise applications (and modern APIs like SOAP) communicate using XML instead of JSON. The XML specification includes a legacy feature called **Entities**, which act like variables. 
+
+An **External Entity** allows the XML document to mathematically fetch data from a local file path or a URL and inject it into the document as it parses. If a server allows a user to upload XML and blindly parses it, an attacker can use XXE to steal files off the server.
+
+<Callout icon="tip" title="The /etc/passwd Attack">
+  An attacker uploads this payload: `<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><user>&xxe;</user>`. If the XML parser is vulnerable, it will mathematically read the sensitive Linux password file from the hard drive and embed the text into the API response!
+</Callout>
+
+## The Impact of XXE
+
+1. **Local File Disclosure:** The attacker can read sensitive configuration files, stealing AWS API keys or database passwords stored on the disk.
+2. **Server-Side Request Forgery (SSRF):** Instead of pointing the entity at a local file (`file://`), the attacker points it at an internal IP address (`http://192.168.1.50`). The server will make an HTTP request to that internal machine, allowing the attacker to scan the private network behind the firewall.
+3. **Billion Laughs Attack (DoS):** A Denial of Service attack where the attacker defines mathematical entities that expand exponentially. 10 entities that each call 10 other entities can crash the server's RAM in milliseconds.
 
 </ConceptTemplate>

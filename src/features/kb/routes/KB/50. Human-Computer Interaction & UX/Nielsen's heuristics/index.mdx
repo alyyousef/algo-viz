@@ -1,26 +1,23 @@
 ---
 title: Nielsen's Heuristics
-description: "10 broad rules of thumb for interaction design invented by Jakob Nielsen in 1994, which serve as the foundation of modern usability."
+description: Ten broad rules of thumb for interaction design developed by Jakob Nielsen, widely used for usability inspections.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Nielsen's 10 Usability Heuristics">
 
-In 1994, Jakob Nielsen published 10 general principles for interaction design. They are called "heuristics" because they are broad rules of thumb, rather than specific, rigid guidelines. 
+In 1994, Jakob Nielsen published 10 mathematical "Rules of Thumb" for Interface Design. Decades later, they remain the absolute gold standard for identifying UI/UX flaws.
 
-Despite being written decades before the invention of the smartphone, they remain the absolute gold standard for evaluating User Interfaces today.
+<Callout icon="info" title="The Core Heuristics">
+  Here are 4 of the most critical heuristics:
+  1. **Visibility of System Status:** The system must always tell the user what is happening. If a file is uploading, mathematically show a progress bar. Do not leave the user guessing if the app crashed.
+  2. **Match Between System and Real World:** Use words, phrases, and concepts familiar to the user. Do not use internal database error codes (`Error 0x80040154`). Use human language (*"We couldn't connect to the internet"*).
+  3. **User Control and Freedom:** Humans make mistakes constantly. Every single action must have a mathematical "Emergency Exit" (e.g., an "Undo" button).
+  4. **Consistency and Standards:** Users spend 99% of their time on *other* websites. Your website should mathematically work exactly like those other websites. Do not invent a new shape for a checkbox.
+</Callout>
 
-## The 10 Heuristics (Summarized)
+## Heuristic Evaluation
 
-1. **Visibility of System Status**: The system should always keep users informed about what is going on (e.g., showing a progress bar when uploading a file).
-2. **Match Between System and the Real World**: Speak the user's language. Use a Shopping Cart icon for e-commerce, not a floppy disk.
-3. **User Control and Freedom**: Users often click things by mistake. Every action must have a clear "Emergency Exit" (e.g., an Undo button, or a way to easily cancel a wizard).
-4. **Consistency and Standards**: Users should not have to wonder whether different words, situations, or actions mean the same thing. Follow platform conventions (e.g., links should be underlined or colored).
-5. **Error Prevention**: Good error messages are important, but the best designs prevent problems from occurring in the first place (e.g., greying out the 'Submit' button until all required fields are filled).
-6. **Recognition Rather than Recall**: Minimize the user's memory load. It is much easier to recognize an item in a dropdown list than it is to recall the exact spelling and type it into a blank text box.
-7. **Flexibility and Efficiency of Use**: Accelerators—unseen by the novice user—may often speed up the interaction for the expert user. (e.g., allowing a power user to press `Ctrl+S` instead of clicking File -> Save).
-8. **Aesthetic and Minimalist Design**: Interfaces should not contain information that is irrelevant or rarely needed. Every extra unit of information competes with the relevant units of information.
-9. **Help Users Recognize, Diagnose, and Recover from Errors**: Error messages should be expressed in plain language (no error codes like "ERR_X99_DB"), precisely indicate the problem, and constructively suggest a solution.
-10. **Help and Documentation**: Even though it is better if the system can be used without documentation, it may be necessary to provide help. It should be easy to search and focused on the user's task.
+When a company hires a UX Consultant, the consultant does not randomly click around. They perform a **Heuristic Evaluation**. They systematically mathematically grade every single screen in the app against Nielsen's 10 rules, generating an objective, quantifiable report of the software's usability failures.
 
 </ConceptTemplate>

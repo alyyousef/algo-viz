@@ -1,8 +1,31 @@
+---
+title: Hash-based Message Authentication Code (HMAC)
+description: A specific type of cryptographic checksum that mathematically proves both the integrity and authenticity of a message.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HMAC">
+<ConceptTemplate title="Hash-based Message Authentication Code (HMAC)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard hash (like SHA-256) proves that a message hasn\'t changed (Integrity). However, if an attacker intercepts your message "Pay Alice $10" and its hash, they can change the message to "Pay Bob $1000", generate a brand new SHA-256 hash, and forward it. The receiver won\'t know it was tampered with.
+
+**HMAC** solves this by mathematically combining a standard cryptographic hash function with a secret cryptographic key that only the sender and receiver know.
+
+<Callout icon="info" title="The HMAC Guarantee">
+  An HMAC proves **Integrity** (the message wasn\'t altered) AND **Authenticity** (the message definitely came from someone holding the secret key). It is universally used in API authentication, including JSON Web Tokens (JWT) and AWS API requests.
+</Callout>
+
+## The Mathematical Construction
+
+You cannot just append a secret key to a message and hash it (`Hash(Key + Message)`), because this is vulnerable to mathematical "length extension attacks."
+
+HMAC uses a brilliant two-pass mathematical structure defined in RFC 2104:
+$HMAC(K, m) = H((K \oplus opad) \parallel H((K \oplus ipad) \parallel m))$
+
+1. The Key ($K$) is XORed with an inner pad ($ipad$).
+2. The message ($m$) is appended, and the whole thing is hashed ($H$).
+3. The original Key ($K$) is XORed with an outer pad ($opad$).
+4. The result of step 2 is appended, and hashed again.
+
+This mathematical sandwich completely immunizes HMAC against length extension vulnerabilities.
 
 </ConceptTemplate>

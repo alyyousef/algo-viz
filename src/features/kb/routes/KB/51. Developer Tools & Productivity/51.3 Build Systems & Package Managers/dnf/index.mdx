@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: DNF (Dandified YUM)
+description: A software package manager that installs, updates, and removes packages on RPM-based Linux distributions.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="dnf">
+<TechnologyTemplate 
+  title="DNF"
+  subtitle="The architect of Red Hat & Fedora"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bash_Logo_Colored.svg/512px-Bash_Logo_Colored.svg.png"
+  description="While Ubuntu uses APT, enterprise distributions like Red Hat (RHEL), CentOS, and Fedora use DNF. It is mathematically engineered to handle RPM packages."
+  yearCreated={2013}
+  creator="Red Hat"
+  isOpenSource={true}
+  websiteUrl="https://dnf.readthedocs.io/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, Red Hat systems used **YUM**. However, YUM was written in Python 2, was notoriously slow, and its dependency resolver mathematically consumed massive amounts of RAM.
 
-</ConceptTemplate>
+<Callout icon="success" title="The SAT Solver">
+  DNF completely replaced YUM by integrating **libsolv** (written by SUSE). 
+  
+  Dependency resolution is biologically a Boolean Satisfiability Problem (SAT). `libsolv` is a mathematically rigorous C/C++ engine that solves these complex dependency graphs exponentially faster and with vastly less memory than YUM ever could.
+</Callout>
+
+</TechnologyTemplate>

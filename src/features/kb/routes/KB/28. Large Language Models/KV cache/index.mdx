@@ -1,8 +1,30 @@
+---
+title: KV Cache (Key-Value Cache)
+description: The critical optimization that makes autoregressive generation in Transformers computationally feasible.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="KV cache">
+<ConceptTemplate title="KV Cache (Key-Value Cache)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In an autoregressive decoder model, generating the 100th token requires calculating attention scores against the previous 99 tokens. Generating the 101th token requires calculating against the previous 100 tokens. 
+
+Without optimization, the model would re-calculate the mathematical Key (K) and Value (V) matrices for all preceding tokens at every single step, leading to catastrophic $O(N^2)$ computational waste.
+
+<Callout icon="success" title="The Solution">
+  The **KV Cache** solves this by saving the computed K and V matrices for past tokens in GPU memory. When generating the next token, the model only computes the K and V for the *new* token, and appends it to the cache.
+</Callout>
+
+## The Memory Bottleneck
+
+While KV Caching drastically reduces compute (FLOPs), it consumes a massive amount of VRAM.
+
+<ComparisonTable 
+  headers={['Problem', 'Modern Solutions']}
+  rows={[
+    ['Memory Exhaustion', 'As context windows grow to 1 Million+ tokens, the KV Cache can consume hundreds of gigabytes of VRAM, far exceeding the model weights themselves.'],
+    ['Multi-Query Attention (MQA)', 'Forces all attention heads to share a single K and V matrix, drastically reducing KV Cache size with minimal performance loss.'],
+    ['Grouped-Query Attention (GQA)', 'A middle ground used by Llama 3: groups of attention heads share a K and V matrix, balancing quality and memory efficiency.']
+  ]}
+/>
 
 </ConceptTemplate>

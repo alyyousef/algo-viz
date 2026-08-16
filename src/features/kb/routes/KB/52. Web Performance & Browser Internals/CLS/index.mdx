@@ -1,8 +1,19 @@
+---
+title: CLS (Cumulative Layout Shift)
+description: A Core Web Vital metric that measures the largest burst of layout shift scores for every unexpected layout shift that occurs during the entire lifespan of a page.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CLS">
+<ConceptTemplate title="Cumulative Layout Shift (CLS)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You are reading a news article on your phone. Suddenly, an advertisement loads at the top of the page. The text you were reading mathematically shifts down by 400 pixels, causing you to accidentally click on the ad. 
+
+This is **Cumulative Layout Shift**, one of the most biologically infuriating UI errors in web development.
+
+<Callout icon="success" title="How to Fix CLS">
+  Google mathematically demands a CLS score of **less than 0.1**. 
+  
+  To fix this, developers must always explicitly declare the mathematical `width` and `height` attributes on all `<img>` and `<iframe>` tags. By explicitly defining the dimensions, the browser's Rendering Engine mathematically reserves the exact empty space on the screen *before* the image finishes downloading, ensuring zero layout shifting occurs when the image finally appears.
+</Callout>
 
 </ConceptTemplate>

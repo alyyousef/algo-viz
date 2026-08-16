@@ -1,36 +1,19 @@
 ---
 title: OAuth 2.0
-description: The industry-standard protocol for authorization, allowing users to grant third-party applications secure, delegated access to their resources without sharing passwords.
+description: The industry-standard protocol for authorization.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="OAuth 2.0">
 
-Before **OAuth 2.0**, if you wanted a new app to read your Gmail contacts, you had to type your actual Google password into the app. This was a catastrophic security risk because the new app now had god-level access to your entire Google account.
+If you play a new mobile game, and it asks *"Allow this game to access your Google Contacts?"*, how do you do this safely?
 
-OAuth 2.0 solved this by introducing **Delegated Authorization** via Access Tokens.
+If you biologically give the game your Google Password, the game could delete your email account. This is mathematically unacceptable. **OAuth 2.0** solves this.
 
-## 1. The Core Roles
-The OAuth specification defines four distinct entities:
-1. **Resource Owner (You)**: The human user who owns the data.
-2. **Client (The App)**: The third-party application requesting access to your data (e.g., a CRM app).
-3. **Authorization Server**: The secure identity provider that issues tokens (e.g., Google's login server).
-4. **Resource Server**: The API holding the actual data (e.g., Google Contacts API).
-
-## 2. The Authorization Code Flow
-This is the most secure and common flow for web applications.
-
-1. **The Redirect**: The Client redirects you to Google's Authorization Server (`https://accounts.google.com/auth`).
-2. **The Consent**: You log into Google and see a prompt: *"App X wants to read your contacts."* You click "Allow".
-3. **The Code**: Google redirects you back to the Client with a temporary **Authorization Code** in the URL.
-4. **The Token Exchange**: The Client takes that Code, attaches its own secret API key, and makes a hidden backend HTTP request to Google to exchange the Code for an **Access Token**.
-5. **The API Call**: The Client uses the Access Token to securely fetch your contacts from the Resource Server.
-
-## 3. OAuth is NOT Authentication
-<Callout icon="warning" title="The Biggest Misconception">
-OAuth 2.0 is strictly an **Authorization** protocol (granting access). It is explicitly *not* an Authentication protocol (proving who you are). It provides no standard way for the Client to get your email address or verify your identity. If you want Authentication, you must use **OpenID Connect (OIDC)**, which is built on top of OAuth 2.0.
+<Callout icon="tip" title="Delegated Authorization">
+  OAuth 2.0 is an **Authorization** protocol, not an Authentication protocol. It is mathematically designed to grant a third-party application limited access to a user's resources without exposing the user's password.
+  
+  Instead of a password, Google mathematically issues an **Access Token** to the game. The Access Token has restricted "Scopes" (e.g., `read:contacts`). If the game attempts to use that token to read emails, the Google API mathematically rejects it.
 </Callout>
 
 </ConceptTemplate>

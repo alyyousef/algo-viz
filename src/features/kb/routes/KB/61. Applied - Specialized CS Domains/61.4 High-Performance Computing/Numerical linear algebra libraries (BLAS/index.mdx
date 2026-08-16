@@ -1,8 +1,17 @@
+---
+title: BLAS (Basic Linear Algebra Subprograms)
+description: A specification that prescribes a set of low-level routines for performing common linear algebra operations such as vector addition, scalar multiplication, dot products, linear combinations, and matrix multiplication.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Numerical linear algebra libraries (BLAS">
+<ConceptTemplate title="BLAS">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Almost all Scientific Computing, Physics Simulations, and modern Artificial Intelligence mathematically boils down to one simple operation: **Matrix Multiplication**.
+
+<Callout icon="warning" title="The Hardware Baseline">
+  **BLAS** is the biological bedrock of computation. 
+  
+  It is a specification for the lowest-level linear algebra routines. Hardware vendors (like Intel, AMD, and NVIDIA) mathematically hand-write their own hyper-optimized BLAS libraries in raw assembly code to perfectly match the cache sizes and vector registers of their physical silicon chips. When you write `import numpy as np; np.dot(A, B)` in Python, Python is biologically doing zero math; it is just handing the data down to the C/Assembly BLAS library.
+</Callout>
 
 </ConceptTemplate>

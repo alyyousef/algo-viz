@@ -1,8 +1,25 @@
+---
+title: Bulkhead Pattern
+description: A software design pattern that isolates elements of an application into pools so that if one fails, the others will continue to function.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bulkhead pattern">
+<ConceptTemplate title="Bulkhead Pattern">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+On a submarine, the hull is mathematically divided into separate, watertight compartments called **Bulkheads**. If a torpedo blasts a hole in Compartment 3, you seal the heavy steel doors. Compartment 3 floods, but the rest of the submarine remains perfectly buoyant.
+
+In System Design, the Bulkhead Pattern applies this exact physical principle to software architecture to prevent **Cascading Failures**.
+
+<Callout icon="warning" title="The Threat of Thread Exhaustion">
+  Imagine a single web server that handles two APIs: `/checkout` and `/generate-pdf`. If the PDF library freezes, 100 users trying to generate PDFs will mathematically consume all 100 available Apache worker threads. Now, even though `/checkout` works perfectly, no one can buy anything because the server has zero threads left to accept new connections.
+</Callout>
+
+## Software Bulkhead Implementations
+
+To mathematically guarantee survival, engineers separate resources:
+
+1. **Thread Pool Bulkheads:** Assign exactly 80 threads to `/checkout` and a strict maximum of 20 threads to `/generate-pdf`. Even if the PDF service completely locks up, it can only consume its 20 threads, leaving the checkout system 100% operational.
+2. **Database Bulkheads:** Instead of putting all microservices on a massive single PostgreSQL cluster, give the highly-critical Payment service its own physically separate database cluster. If the Analytics microservice executes a terrible query and crashes its database, Payments are mathematically unaffected.
+3. **Hardware Bulkheads:** Deploying software across multiple isolated Availability Zones (AZs) so a localized power failure cannot sink the entire fleet.
 
 </ConceptTemplate>

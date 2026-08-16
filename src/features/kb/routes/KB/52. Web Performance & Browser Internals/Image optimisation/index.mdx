@@ -1,8 +1,19 @@
+---
+title: Image optimisation
+description: The process of delivering images in the right format, dimension, and resolution while keeping the smallest possible size.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Image optimisation">
+<ConceptTemplate title="Image Optimisation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Images mathematically account for over 60% of all data transferred on the modern web. If your JavaScript bundle is heavily optimized to 50KB, but you render a 4MB uncompressed PNG as a background image, you have completely failed at Web Performance.
+
+<Callout icon="tip" title="Modern Formats">
+  Modern image optimization requires abandoning legacy formats (JPEG, PNG).
+  
+  Google mathematically invented **WebP**, and later the industry developed **AVIF**. These next-generation formats use advanced mathematical compression algorithms to reduce a 1MB JPEG down to a visually identical 150KB AVIF file, drastically improving the LCP metric. 
+  
+  Additionally, responsive `<picture>` tags are used to ensure a mobile phone downloads a 400px width version, while a 4K monitor downloads a 2000px width version.
+</Callout>
 
 </ConceptTemplate>

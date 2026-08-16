@@ -1,31 +1,25 @@
 ---
 title: Consistent Hashing
-description: "A specialized hashing algorithm that minimizes the number of keys that need to be remapped when a hash table is resized."
+description: A special kind of hashing such that when a hash table is resized, only n/m keys need to be remapped on average.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Consistent Hashing">
 
-Imagine you are storing 1 million user profiles across a cluster of 4 Redis servers (Servers A, B, C, and D). 
-To figure out which server holds User 123, you use a simple modulo hash: `serverIndex = hash("User123") % 4`.
+In distributed systems, we often use the mathematical modulo operator to route data. If we have 4 cache servers, we route a user to a server using: `Hash(UserID) % 4`.
 
-This works perfectly until Server C crashes. Now you only have 3 servers. You change the formula to `% 3`. Suddenly, almost every single user maps to a completely different server index. **You just invalidated your entire cache.**
+This works perfectly until Server #4 dies. Now we only have 3 servers. If we use `Hash(UserID) % 3`, almost *every single user* mathematically maps to a completely different server than they did before. The entire cache is instantly invalidated, causing a catastrophic "Cache Stampede" against the database.
 
-## The Solution: The Hash Ring
+**Consistent Hashing** is a brilliant mathematical algorithm that solves this.
 
-**Consistent Hashing** solves this by mapping both the data keys *and* the servers onto a conceptual circle (a "hash ring" from 0 to 360 degrees).
-
-1. Hash the IP addresses of Servers A, B, C, and D, and place them on the ring (e.g., at 10°, 90°, 180°, 270°).
-2. Hash the user ID (e.g., "User123" hashes to 45°).
-3. To find the server for User 123, move clockwise around the ring from 45° until you hit the first server. (In this case, Server B at 90°).
-
-## Adding or Removing Servers
-If Server C (180°) crashes, the keys that were stored on it simply continue clockwise and fall onto Server D (270°). 
-**The brilliant part:** All the keys on Server A, Server B, and Server D remain exactly where they are. Only the data on the broken server needs to be remapped. 
-
-<Callout icon="info" title="Virtual Nodes">
-To prevent data from bunching up unevenly if servers happen to hash close together on the ring, implementations use **Virtual Nodes**. Instead of hashing Server A once, they hash Server A 100 times (e.g., A1, A2, A3) to spread it evenly across the entire 360-degree ring.
+<Callout icon="success" title="The Mathematical Ring">
+  Instead of a simple modulo, Consistent Hashing places all servers on a theoretical mathematical ring (from 0 to 360 degrees). When a key is hashed, it is placed on the ring. It then walks clockwise until it mathematically collides with the first server it finds.
 </Callout>
+
+## The Elegance of the Ring
+
+1. **Adding a Server:** If you add Server #5 to the mathematical ring, it only steals a tiny slice of the keys from its immediate clockwise neighbor. The other 4 servers are completely unaffected.
+2. **Removing a Server:** If Server #2 dies, its keys simply walk further clockwise to Server #3. The rest of the ring remains perfectly intact.
+3. **Virtual Nodes:** To prevent one server from mathematically taking on an unfair share of the circle, each physical server is assigned dozens of "Virtual Nodes" scattered randomly around the ring, ensuring a perfectly even distribution of data.
 
 </ConceptTemplate>

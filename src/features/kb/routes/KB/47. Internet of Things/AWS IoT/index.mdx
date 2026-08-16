@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: AWS IoT
+description: Amazon Web Services' managed cloud platform that lets connected devices easily and securely interact with cloud applications and other devices.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="AWS IoT">
+<TechnologyTemplate 
+  title="AWS IoT (Internet of Things)"
+  subtitle="The undisputed market leader in Cloud IoT"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Amazon_Web_Services_Logo.svg/512px-Amazon_Web_Services_Logo.svg.png"
+  description="AWS IoT Core is a massive, highly scalable managed cloud service that allows billions of physical devices to connect and route trillions of MQTT messages to AWS services securely."
+  yearCreated={2015}
+  creator="Amazon Web Services"
+  isOpenSource={false}
+  websiteUrl="https://aws.amazon.com/iot/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you build an IoT thermostat, you do not want to mathematically manage the scaling of a massive Mosquitto MQTT broker on an EC2 instance. If 1,000,000 thermostats all try to reconnect at the exact same millisecond after a power outage, your EC2 instance will instantly crash.
 
-</ConceptTemplate>
+**AWS IoT Core** mathematically handles this massive, instantaneous spike in TCP connections seamlessly.
+
+<Callout icon="success" title="The Rules Engine">
+  The true mathematical power of AWS IoT is its **Rules Engine**. 
+  
+  When a thermostat publishes a tiny MQTT JSON message (`{"temp": 72}`), the Rules Engine intercepts it. You can write a SQL-like rule: `SELECT * FROM 'house/temp' WHERE temp > 80`. If the rule triggers, AWS automatically routes that specific message to AWS Lambda, AWS DynamoDB, or AWS Kinesis, instantly integrating physical reality with the massive AWS cloud ecosystem.
+</Callout>
+
+## The FreeRTOS Synergy
+
+To physically lock in enterprise customers, Amazon legally acquired the **FreeRTOS** operating system. They bundled AWS IoT cryptographic libraries directly into the RTOS kernel, meaning if a company uses FreeRTOS on their microcontrollers, the mathematical path of least resistance is to exclusively use AWS IoT in the cloud.
+
+</TechnologyTemplate>

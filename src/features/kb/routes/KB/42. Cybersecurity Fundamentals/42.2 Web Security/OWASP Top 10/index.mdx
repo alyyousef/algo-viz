@@ -1,8 +1,30 @@
+---
+title: OWASP Top 10
+description: The industry-standard awareness document outlining the most critical security risks to web applications.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="OWASP Top 10">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Open Worldwide Application Security Project (OWASP) is a nonprofit foundation dedicated to software security. Their flagship publication, the **OWASP Top 10**, is universally recognized as the canonical list of the most dangerous and prevalent web application vulnerabilities.
+
+It is updated every few years (most recently in 2021) based on massive amounts of data collected from cybersecurity firms worldwide.
+
+<Callout icon="warning" title="The Regulatory Standard">
+  The OWASP Top 10 is not just advice; it is a regulatory benchmark. Frameworks like PCI-DSS explicitly mandate that developers be trained on the OWASP Top 10 and that applications are mathematically tested against these specific vulnerabilities before going to production.
+</Callout>
+
+## The 2021 Top 10 List
+
+1. **A01: Broken Access Control:** Users acting outside of their intended mathematical permissions.
+2. **A02: Cryptographic Failures:** Storing passwords in plaintext, or using deprecated algorithms like MD5.
+3. **A03: Injection:** Malicious data being sent to an interpreter (like SQLi or XSS).
+4. **A04: Insecure Design:** Missing security controls at the architectural level.
+5. **A05: Security Misconfiguration:** Default passwords left unchanged, verbose error messages.
+6. **A06: Vulnerable and Outdated Components:** Using old npm packages with known CVEs.
+7. **A07: Identification and Authentication Failures:** Weak password policies, lack of MFA.
+8. **A08: Software and Data Integrity Failures:** Deserialization flaws, CI/CD pipeline compromise.
+9. **A09: Security Logging and Monitoring Failures:** Not logging critical events, allowing attackers to remain hidden.
+10. **A10: Server-Side Request Forgery (SSRF):** Forcing the server to make arbitrary HTTP requests on the attacker's behalf.
 
 </ConceptTemplate>

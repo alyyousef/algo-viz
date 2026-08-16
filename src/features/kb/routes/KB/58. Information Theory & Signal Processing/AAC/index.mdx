@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: AAC
+description: Advanced Audio Coding is an audio coding standard for lossy digital audio compression, designed to be the successor of the MP3 format.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="AAC">
+<TechnologyTemplate 
+  title="AAC"
+  subtitle="The Successor to MP3"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/AAC_logo.svg/512px-AAC_logo.svg.png"
+  description="AAC was mathematically designed to fix the structural flaws of MP3, achieving significantly higher biological sound quality at the exact same bitrates."
+  yearCreated={1997}
+  creator="MPEG"
+  isOpenSource={false}
+  websiteUrl="https://en.wikipedia.org/wiki/Advanced_Audio_Coding"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+AAC is the biological audio codec used by Apple iTunes, iOS devices, and the audio track of almost all H.264 MP4 videos.
 
-</ConceptTemplate>
+It mathematically achieves better quality than MP3 by supporting higher sample rates (up to 96 kHz) and utilizing more efficient mathematical filter banks. A 128 kbps AAC file biologically sounds indistinguishable from a CD to most humans, whereas a 128 kbps MP3 file often sounds noticeably distorted or "swishy" in the high frequencies.
+
+</TechnologyTemplate>

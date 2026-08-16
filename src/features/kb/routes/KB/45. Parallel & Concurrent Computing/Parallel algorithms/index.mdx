@@ -1,8 +1,32 @@
+---
+title: Parallel Algorithms
+description: An algorithm which can do multiple operations in a given time, designed to be executed simultaneously across multiple processing devices.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Parallel algorithms">
+<ConceptTemplate title="Parallel Algorithms">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard sequential algorithm mathematically executes one step at a time. A **Parallel Algorithm** mathematically splits the problem into independent chunks, executes them simultaneously across multiple CPU cores, and merges the final results.
+
+<Callout icon="error" title="Amdahl's Law">
+  Amdahl's Law is the brutal mathematical reality of Parallel Algorithms. It states that the maximum theoretical speedup of an algorithm is strictly limited by the portion of the algorithm that CANNOT be parallelized. 
+  
+  If 5% of your algorithm must be strictly sequential (e.g., merging the final results), the absolute maximum speedup you can EVER achieve—even if you have 1 million CPU cores—is exactly 20x.
+</Callout>
+
+## Embarrassingly Parallel vs. Tightly Coupled
+
+<ComparisonTable 
+  headers={['Type', 'Mathematical Definition', 'Example']}
+  rows={[
+    ['Embarrassingly Parallel', 'The dataset can be mathematically sliced into pieces that require absolutely zero communication with each other.', 'Rendering a 3D movie (each frame is rendered independently by a different server).'],
+    ['Tightly Coupled', 'The mathematical steps are highly dependent on the results of adjacent steps, requiring constant synchronization.', 'Weather forecasting simulations (the wind in Sector A instantly affects the pressure in Sector B).']
+  ]}
+/>
+
+## Common Architectures
+
+- **MapReduce:** A framework that mathematically filters/sorts data (`Map`) on a massive cluster of independent nodes, and then aggregates the results (`Reduce`).
+- **Divide and Conquer:** Parallelizing algorithms like Merge Sort by splitting the array in half and handing each half to a separate thread.
 
 </ConceptTemplate>

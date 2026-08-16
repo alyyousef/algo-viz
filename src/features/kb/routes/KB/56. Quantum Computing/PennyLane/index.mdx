@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: PennyLane
+description: A cross-platform Python library for differentiable programming of quantum computers, heavily used for Quantum Machine Learning.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="PennyLane">
+<TechnologyTemplate 
+  title="PennyLane"
+  subtitle="The Quantum Machine Learning SDK"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
+  description="PennyLane is a Python library mathematically designed to merge Neural Networks (PyTorch/TensorFlow) with Quantum Circuits."
+  yearCreated={2018}
+  creator="Xanadu"
+  isOpenSource={true}
+  websiteUrl="https://pennylane.ai/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+PennyLane introduces the mathematical concept of **Quantum Differentiable Programming**.
 
-</ConceptTemplate>
+It treats a Quantum Computer exactly like a biological GPU. You can build a Machine Learning model where layer 1 is a classical PyTorch neural network, layer 2 mathematically executes on an IBM Quantum Computer, and layer 3 goes back to PyTorch. PennyLane handles the insane calculus required to backpropagate gradients *through* the subatomic quantum measurements.
+
+</TechnologyTemplate>

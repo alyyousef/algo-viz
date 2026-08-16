@@ -1,8 +1,19 @@
+---
+title: SSG (Static Site Generation)
+description: The process of generating a full static HTML website based on raw data and a set of templates at build time.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SSG">
+<ConceptTemplate title="Static Site Generation (SSG)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+SSR is mathematically fast for the user, but biologically expensive for the server. If 100,000 users visit a blog post, the Node.js server must physically execute React and query the database 100,000 times to generate the exact same HTML document.
+
+**Static Site Generation** solves this by shifting the rendering to **Build Time**.
+
+<Callout icon="tip" title="Compile-Time Rendering">
+  When the developer runs `npm run build` on their laptop (or in CI/CD), the build system (Next.js/Gatsby/Astro) mathematically queries the database *once*, generates 500 physical `.html` files, and uploads them to a static CDN.
+  
+  When a user visits the site, there is zero backend computation. The CDN just serves the raw HTML file in 5 milliseconds. It is the absolute pinnacle of web performance.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,17 @@
+---
+title: NVMe (Non-Volatile Memory Express)
+description: An open logical device interface specification for accessing non-volatile storage media attached via a PCI Express bus.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="NVMe">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Early SSDs were biologically bottlenecked. They were plugged into SATA cables, which were mathematically designed in the 2000s for slow, spinning HDDs. 
+
+<Callout icon="tip" title="Unleashing the PCIe Bus">
+  **NVMe** is a new protocol that bypasses SATA entirely. 
+  
+  NVMe drives plug directly into the motherboard's PCIe lanes (the same lanes used by GPUs). While the old SATA protocol had a single queue that could only hold 32 commands, NVMe mathematically supports 64,000 queues, each holding 64,000 commands. It allows a modern CPU to read gigabytes of data in parallel, unleashing the true speed of raw flash memory.
+</Callout>
 
 </ConceptTemplate>

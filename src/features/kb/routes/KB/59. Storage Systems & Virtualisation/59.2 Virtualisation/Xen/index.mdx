@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Xen
+description: A type-1 hypervisor, providing services that allow multiple computer operating systems to execute on the same computer hardware concurrently.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Xen">
+<TechnologyTemplate 
+  title="Xen Project"
+  subtitle="The Original Cloud Hypervisor"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Xen_logo.svg/512px-Xen_logo.svg.png"
+  description="Xen is the legendary open-source Type-1 hypervisor that mathematically pioneered the concept of 'Paravirtualization' and originally powered AWS."
+  yearCreated={2003}
+  creator="University of Cambridge"
+  isOpenSource={true}
+  websiteUrl="https://xenproject.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 2003, CPUs biologically did not have hardware virtualization support (Intel VT-x). Running VMs was mathematically incredibly slow.
 
-</ConceptTemplate>
+Xen solved this via **Paravirtualization**. Instead of lying to the Guest OS, Xen demanded that the Linux kernel be mathematically modified to *know* it was running inside a VM. This allowed the Guest OS to bypass the slow emulation layer and talk directly to the Xen hypervisor, resulting in massive biological performance gains. This exact technology allowed Amazon to launch EC2 in 2006, creating the modern cloud computing era.
+
+</TechnologyTemplate>

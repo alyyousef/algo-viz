@@ -1,42 +1,30 @@
 ---
 title: Attention Mechanisms
-description: A technique that allows models to focus on specific parts of the input sequence when producing the output.
+description: The mathematical concept allowing neural networks to focus on specific parts of the input.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Attention Mechanisms">
+<ConceptTemplate title="Attention Mechanisms">
 
-Attention is a mechanism in deep learning that dynamically weighs the importance of different parts of the input data. Originally developed for Neural Machine Translation, it solved the bottleneck problem of early Sequence-to-Sequence (Seq2Seq) models.
+Attention mechanisms were originally introduced to solve the bottleneck problem in sequence-to-sequence RNNs (like language translation). Instead of trying to compress an entire sentence into a single fixed-length vector, Attention allows the decoder to "look back" at specific, relevant words in the input sentence while generating each translated word.
 
-<Callout icon="info" title="The Cocktail Party Effect">
-  Attention is biologically inspired by human cognitive focus. Just as you can focus on a single voice in a noisy room while ignoring the rest, an attention mechanism allows a neural network to focus on specific words in a sentence when translating or answering a question.
+<Callout icon="info" title="The Query, Key, Value Model">
+  Modern attention (especially in Transformers) uses the **QKV database abstraction**:
+  - **Query (Q):** What I am currently looking for.
+  - **Key (K):** What I have to offer.
+  - **Value (V):** The actual content.
+  
+  The mathematical similarity (dot product) between a Query and all Keys determines how much "Attention" is paid to the corresponding Values.
 </Callout>
 
-## The Problem with Seq2Seq
+## Scaled Dot-Product Attention
+The mathematical core of Transformer attention is defined as:
 
-Before attention, Seq2Seq models (often using RNNs or LSTMs) worked by taking an entire input sentence and encoding it into a single, fixed-size vector (the context vector). The decoder then used this single vector to generate the output sentence.
+$Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$
 
-The problem: You cannot compress a 50-word sentence into the same fixed-size vector as a 5-word sentence without losing critical information. Performance drastically degraded on long sequences.
+1. $QK^T$ computes the similarity scores between all tokens.
+2. We divide by the square root of the dimension size ($\sqrt{d_k}$) to prevent gradients from exploding.
+3. We apply a $softmax$ function to turn the scores into probabilities (summing to 1).
+4. We multiply by $V$ to get the final weighted representation.
 
-## How Attention Solves This
-
-Instead of relying on a single context vector, Attention provides the decoder with access to the hidden states of *all* input tokens. At every step of decoding, the model calculates an "attention score" for each input word, essentially asking: *"To generate the next output word, which input words should I focus on?"*
-
-1. **Calculate Scores**: The decoder looks at its current state and compares it against all encoder hidden states.
-2. **Apply Softmax**: The scores are passed through a softmax function, turning them into weights that sum to 1.
-3. **Context Vector**: The encoder hidden states are multiplied by their respective weights and summed up to create a dynamic, step-specific context vector.
-
-## The Key-Value-Query (QKV) Analogy
-
-Modern attention (especially in Transformers) uses the QKV analogy, borrowed from database retrieval:
-- **Query (Q)**: What the decoder is currently looking for.
-- **Key (K)**: What each encoder state offers.
-- **Value (V)**: The actual content of the encoder state.
-
-The attention mechanism calculates the similarity (dot product) between the Query and all Keys. The most similar Keys get the highest weights, and the resulting Context Vector is a weighted sum of the Values.
-
-<Callout icon="success" title="The Foundation of Transformers">
-  Attention was so successful that in 2017, researchers realized they didn't need RNNs or LSTMs at all. The paper "Attention Is All You Need" introduced the Transformer architecture, which relies entirely on *Self-Attention* and fundamentally changed the AI landscape.
-</Callout>
-
-</TechnologyTemplate>
+</ConceptTemplate>

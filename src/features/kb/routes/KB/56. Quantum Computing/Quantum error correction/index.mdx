@@ -1,8 +1,19 @@
+---
+title: Quantum error correction
+description: Techniques used in quantum computing to protect quantum information from errors due to decoherence and other quantum noise.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantum error correction">
+<ConceptTemplate title="Quantum Error Correction">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A classical bit on your hard drive is biologically stable. It will remain a `1` for 50 years.
+
+A Qubit is mathematically terrifyingly fragile. If a stray cosmic ray, a tiny fluctuation in room temperature, or even the microwave pulses used to control it bump the Qubit, the Superposition collapses and the data is destroyed (Quantum Decoherence). Qubits usually only survive for about 50 microseconds.
+
+<Callout icon="warning" title="Logical vs. Physical Qubits">
+  To run Shor's algorithm, we need **Quantum Error Correction**. 
+  
+  You cannot simply "copy" a Qubit to back it up (due to the No-Cloning Theorem). Instead, scientists must biologically entangle 1,000 fragile "Physical Qubits" together to mathematically simulate a single, stable **"Logical Qubit"**. This means a true, fault-tolerant quantum computer requires millions of physical Qubits, which is a massive engineering hurdle.
+</Callout>
 
 </ConceptTemplate>

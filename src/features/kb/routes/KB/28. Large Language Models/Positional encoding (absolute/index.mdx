@@ -1,8 +1,26 @@
+---
+title: Absolute Positional Encoding
+description: The original mathematical trick used by the 2017 Transformer to understand word order.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Positional encoding (absolute">
+<ConceptTemplate title="Absolute Positional Encoding">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because the Transformer processes an entire sentence simultaneously in parallel (unlike the sequential RNN), it naturally has no concept of order. It sees the sentence as a "bag of words."
+
+The original *Attention Is All You Need* paper solved this by mathematically injecting **Absolute Positional Encodings** directly into the word embeddings before they entered the network.
+
+<Callout icon="warning" title="The Extrapolation Problem">
+  Absolute encodings are rarely used in modern LLMs because they fail at extrapolation. If you train a model on 512 tokens, it learns the absolute encoding for position 512. If you pass it a 600-token prompt during inference, the math breaks down because the model has never seen the encoding for position 513. This was replaced by relative encodings like RoPE.
+</Callout>
+
+## The Sine and Cosine Math
+
+To ensure the model could recognize position mathematically, the creators used alternating sine and cosine functions of different frequencies:
+
+$PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}})$
+$PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}})$
+
+This complex mathematical wave ensures that every single position has a completely unique, deterministic vector, and that the mathematical distance between position 5 and 6 is identical to the distance between position 500 and 501.
 
 </ConceptTemplate>

@@ -1,8 +1,24 @@
+---
+title: Byte-Pair Encoding (BPE)
+description: The industry standard tokenization algorithm used by GPT, Llama, and almost all modern LLMs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tokenisation (BPE">
+<ConceptTemplate title="Byte-Pair Encoding (BPE)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Byte-Pair Encoding (BPE) is a simple data compression technique from 1994 that was ingeniously adapted for Natural Language Processing. It is the dominant tokenization strategy used by OpenAI (tiktoken) and Meta (Llama).
+
+Instead of operating on Unicode characters, modern BPE operates directly on **raw bytes**. This guarantees that the model can process absolutely any text, in any language, or any random string of code, with a completely fixed vocabulary size and zero "Unknown" (`<UNK>`) tokens.
+
+<Callout icon="tip" title="The Glitch Tokens">
+  Because BPE relies on frequency, it sometimes creates strange tokens. For example, if a specific Reddit username appeared thousands of times in the training data, BPE might merge it into a single token. If that token isn\'t trained well, asking the model about it can cause bizarre "glitch" hallucinations.
+</Callout>
+
+## The BPE Algorithm
+
+1. Treat every individual byte in the training corpus as a separate token.
+2. Find the most frequently adjacent pair of tokens (e.g., `t` and `h`).
+3. Merge them into a new single token (`th`).
+4. Repeat this process until you reach your target vocabulary size (usually around 32,000 to 128,000 tokens).
 
 </ConceptTemplate>

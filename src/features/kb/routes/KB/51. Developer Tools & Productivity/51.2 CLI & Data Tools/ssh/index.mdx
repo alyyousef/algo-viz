@@ -1,8 +1,19 @@
+---
+title: SSH (Secure Shell)
+description: A cryptographic network protocol for operating network services securely over an unsecured network.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ssh">
+<ConceptTemplate title="SSH (Secure Shell)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 1980s, administrators used `Telnet` to connect to remote servers. `Telnet` sent everything in raw, unencrypted plain text. If you typed your root password, anyone on the WiFi network could read it.
+
+**SSH (Secure Shell)** replaced Telnet. It is a mathematical protocol that creates a perfectly encrypted, cryptographic tunnel between your laptop and the remote server.
+
+<Callout icon="success" title="Public Key Cryptography">
+  Instead of typing a password every time, SSH relies on **RSA / Ed25519 Key Pairs**.
+  
+  You mathematically generate a Private Key (which stays on your laptop) and a Public Key (which you upload to the server's `~/.ssh/authorized_keys` file). When you run `ssh root@server`, the server sends a mathematical cryptographic challenge that only your Private Key can solve. You are logged in instantly, with zero passwords, and it is mathematically impossible to brute-force.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Bruno
+description: An open-source API client aimed at revolutionizing the status quo represented by Postman, Insomnia and similar tools out there.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Bruno">
+<TechnologyTemplate 
+  title="Bruno"
+  subtitle="The Git-native API client"
+  logoUrl="https://www.usebruno.com/favicon.ico"
+  description="Bruno represents the modern rebellion against proprietary API clients. It mathematically stores all API requests as plain text files directly in your Git repository."
+  yearCreated={2021}
+  creator="Anoop M D"
+  isOpenSource={true}
+  websiteUrl="https://www.usebruno.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Postman and Insomnia store your API collections in massive, proprietary JSON blobs or hidden SQLite databases. If you want to mathematically track changes to an API endpoint over time, you are forced to use their proprietary cloud syncing.
 
-</ConceptTemplate>
+<Callout icon="success" title="The Bru Language">
+  Bruno mathematically solves this by introducing a proprietary markup language (`.bru`). 
+  
+  Every single API request is saved as a physically distinct `.bru` text file inside your project folder. You commit these files to GitHub right alongside your backend source code. 
+  
+  If a developer changes an API endpoint, it appears as a clean, mathematically perfect Git Diff in the Pull Request. There is no cloud, no sync, and no vendor lock-in.
+</Callout>
+
+</TechnologyTemplate>

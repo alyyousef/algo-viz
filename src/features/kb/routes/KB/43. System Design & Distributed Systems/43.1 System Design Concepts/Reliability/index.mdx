@@ -1,8 +1,25 @@
+---
+title: Reliability
+description: The probability that a system will produce correct outputs up to some given time, under specified operating conditions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Reliability">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While *Availability* asks "Is the server turned on?", **Reliability** asks "Is the server actually doing the math correctly?"
+
+A system can be 100% Highly Available (always returning an HTTP 200 OK status code), but if it mathematically returns the wrong bank account balance to the user, it has zero Reliability.
+
+<Callout icon="tip" title="MTBF and MTTR">
+  Reliability engineering is heavily driven by two mathematical metrics:
+  1. **MTBF (Mean Time Between Failures):** The average time the system runs perfectly before encountering an error. You want this number to be as high as possible.
+  2. **MTTR (Mean Time To Recovery):** Once a failure occurs, how fast can the automated systems detect and fix it? You want this number to be close to zero.
+</Callout>
+
+## Building Reliable Systems
+
+1. **Idempotency:** A critical mathematical property. If a user clicks the "Pay Now" button twice due to a network stutter, the system must mathematically guarantee they are only charged once. The operation must be idempotent.
+2. **Chaos Engineering:** Instead of hoping the system doesn't fail, engineers deliberately inject mathematical chaos (e.g., randomly shutting down databases in production using tools like Netflix's Chaos Monkey) to mathematically prove the system recovers correctly.
+3. **Data Integrity Checks:** Using checksums, hashes, and foreign-key constraints to ensure data doesn't silently corrupt on the hard drive over time.
 
 </ConceptTemplate>

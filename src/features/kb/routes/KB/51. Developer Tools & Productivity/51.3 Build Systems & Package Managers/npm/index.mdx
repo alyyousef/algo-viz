@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: npm (Node Package Manager)
+description: The default package manager for the JavaScript runtime environment Node.js.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="npm">
+<TechnologyTemplate 
+  title="npm"
+  subtitle="The largest software registry in human history"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Npm-logo.svg/512px-Npm-logo.svg.png"
+  description="npm is the default package manager for Node.js. It mathematically revolutionized software development by allowing developers to instantly download and share millions of open-source JavaScript libraries."
+  yearCreated={2010}
+  creator="Isaac Z. Schlueter"
+  isOpenSource={true}
+  websiteUrl="https://www.npmjs.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before npm, if you wanted to use jQuery, you mathematically had to go to the jQuery website, download a `.js` file, put it in your folder, and link it in an HTML `<script>` tag. If jQuery updated, you had to manually do it again.
 
-</ConceptTemplate>
+<Callout icon="success" title="The package.json Revolution">
+  npm introduced the `package.json` file. 
+  
+  You simply run `npm install express`. npm connects to the global registry, mathematically downloads the Express library into the `node_modules` folder, and automatically resolves and downloads every single nested dependency that Express relies on.
+</Callout>
+
+## The node_modules Black Hole
+
+npm's dependency resolution mathematically isolates every package. If Package A needs `lodash v1` and Package B needs `lodash v2`, npm physically downloads *both* versions into nested `node_modules` folders. This ensures version safety but famously results in the `node_modules` folder consuming gigabytes of disk space, leading to the joke that `node_modules` is the heaviest object in the universe.
+
+</TechnologyTemplate>

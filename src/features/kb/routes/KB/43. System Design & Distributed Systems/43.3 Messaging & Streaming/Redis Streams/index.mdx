@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Redis Streams
+description: A data type that models a log data structure in Redis, providing a way to store multiple fields and string values with an automatically generated, time-based sequence.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Redis Streams">
+<TechnologyTemplate 
+  title="Redis Streams"
+  subtitle="The lightweight alternative to Apache Kafka"
+  logoUrl="https://upload.wikimedia.org/wikipedia/en/6/6b/Redis_Logo.svg"
+  description="Introduced in Redis 5.0, Redis Streams is an append-only log data structure. It brings the mathematical persistence and replayability of Apache Kafka directly into the lightning-fast, in-memory world of Redis."
+  yearCreated={2018}
+  creator="Salvatore Sanfilippo"
+  isOpenSource={true}
+  websiteUrl="https://redis.io/docs/data-types/streams/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are already using Redis for caching, and you need an Event Stream, deploying a massive Java-based Apache Kafka cluster is often severe overkill. Redis Streams provides 80% of Kafka's functionality with 1% of the operational complexity.
 
-</ConceptTemplate>
+<Callout icon="tip" title="In-Memory Speed">
+  Because Redis Streams lives entirely in RAM (though it can be persisted to disk via RDB/AOF), it is mathematically faster than Kafka for small-to-medium datasets, routinely achieving sub-millisecond read/write latency.
+</Callout>
+
+## Core Features
+
+- **Consumer Groups:** Borrowed directly from Kafka's architecture. It allows a mathematical group of worker nodes to cooperate, ensuring that each event in the stream is delivered to exactly one worker in the group.
+- **XADD / XREAD:** The core commands. `XADD` appends an event to the stream and mathematically generates a unique timestamp-based ID (e.g., `1518951480106-0`). `XREAD` allows consumers to block and listen for new events.
+- **Memory Limits:** Unlike Kafka (which stores terabytes on cheap HDDs), Redis Streams uses expensive RAM. You must mathematically cap the stream length using `MAXLEN` (e.g., `XADD mystream MAXLEN 100000 *`) to prevent OOM crashes.
+
+</TechnologyTemplate>

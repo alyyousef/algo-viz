@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Black
+description: The uncompromising Python code formatter.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Black">
+<TechnologyTemplate 
+  title="Black"
+  subtitle="The Prettier of Python"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
+  description="Black is the 'uncompromising' code formatter for Python. It mathematically applies the exact same philosophical dictatorial control to Python that Prettier applied to JavaScript."
+  yearCreated={2018}
+  creator="Łukasz Langa"
+  isOpenSource={true}
+  websiteUrl="https://black.readthedocs.io/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+*"Any color you like, as long as it's black."* - Henry Ford.
 
-</ConceptTemplate>
+<Callout icon="success" title="Zero Configuration">
+  Black mathematically refuses to let you configure it. 
+  
+  If you use single quotes (`'string'`), Black will maliciously rewrite them to double quotes (`"string"`). If your function parameters exceed 88 characters, Black will mathematically snap them onto multiple lines. By being completely unyielding, it forced the entire global Python ecosystem into visual consistency.
+</Callout>
+
+</TechnologyTemplate>

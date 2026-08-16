@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Firefox
+description: A free and open-source web browser developed by the Mozilla Foundation.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Firefox">
+<TechnologyTemplate 
+  title="Firefox"
+  subtitle="The last independent web engine"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/512px-Firefox_logo%2C_2019.svg.png"
+  description="Firefox is the only major web browser that is not mathematically derived from Chromium or WebKit. It is the final guardian against an absolute Google/Apple engine monopoly."
+  yearCreated={2004}
+  creator="Mozilla"
+  isOpenSource={true}
+  websiteUrl="https://www.mozilla.org/en-US/firefox/new/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Firefox is physically powered by the **Gecko** rendering engine and the **SpiderMonkey** JavaScript engine.
 
-</ConceptTemplate>
+In 2017, Mozilla released **Firefox Quantum**, which mathematically rewrote massive portions of the browser in **Rust**, introducing unparalleled parallel CSS rendering (Stylo) to compete with Google Chrome's dominance.
+
+</TechnologyTemplate>

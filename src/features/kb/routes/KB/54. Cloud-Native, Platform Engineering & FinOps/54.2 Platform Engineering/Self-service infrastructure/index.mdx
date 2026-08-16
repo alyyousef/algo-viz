@@ -1,8 +1,19 @@
+---
+title: Self-service infrastructure
+description: An operating model where developers can provision the infrastructure they need without having to open IT tickets.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Self-service infrastructure">
+<ConceptTemplate title="Self-Service Infrastructure">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, if a developer needed a new PostgreSQL database, they had to biologically open a Jira ticket and wait 3 weeks for the Database Administrator (DBA) to manually provision it.
+
+This mathematically destroyed agility.
+
+<Callout icon="tip" title="API-Driven Provisioning">
+  Platform Engineering solves this via **Self-Service Infrastructure**.
+  
+  The Platform Team writes Terraform modules that mathematically define secure, compliant infrastructure. They expose these modules through a web portal or API. When the developer needs a database, they click a button in a UI. The system automatically executes the Terraform code, creates the AWS RDS instance, and mathematically injects the database credentials directly into the developer's application in exactly 4 minutes. Zero Jira tickets required.
+</Callout>
 
 </ConceptTemplate>

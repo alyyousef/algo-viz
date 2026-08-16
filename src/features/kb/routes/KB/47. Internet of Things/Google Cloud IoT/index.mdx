@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Google Cloud IoT Core
+description: A fully managed service that allowed you to easily and securely connect, manage, and ingest data from millions of globally dispersed devices.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Google Cloud IoT">
+<TechnologyTemplate 
+  title="Google Cloud IoT Core"
+  subtitle="The graveyard of a massive ecosystem"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Google_Cloud_logo.svg/512px-Google_Cloud_logo.svg.png"
+  description="Google Cloud IoT Core was Google's official, highly scalable MQTT broker and device management platform, designed to compete with AWS and Azure."
+  yearCreated={2017}
+  creator="Google"
+  isOpenSource={false}
+  websiteUrl="https://cloud.google.com/iot-core"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, Google Cloud provided **IoT Core**, which was mathematically excellent. It integrated seamlessly with Google Pub/Sub and BigQuery for massive, real-time data analytics.
 
-</ConceptTemplate>
+However, in August 2022, Google did what Google is famous for doing: they announced they were mathematically **killing the product**.
+
+<Callout icon="error" title="The Sunsetting Disaster">
+  Google officially shut down IoT Core in August 2023. 
+  
+  This was an absolute mathematical disaster for companies that had built their physical hardware around Google's specific MQTT endpoints and cryptographic workflows. Migrating 100,000 physical devices in the field to AWS or Azure via an Over-The-Air (OTA) update before the deadline was a nightmare. 
+</Callout>
+
+## The Aftermath
+
+Google's decision mathematically destroyed their reputation in the enterprise hardware sector. Because physical hardware cannot be easily updated if an OTA fails, hardware companies demand 15-year guarantees on cloud infrastructure. Today, almost no major enterprise trusts Google Cloud for raw IoT Device Management, defaulting entirely to AWS or Azure.
+
+</TechnologyTemplate>

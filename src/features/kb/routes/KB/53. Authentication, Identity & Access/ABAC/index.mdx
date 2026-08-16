@@ -1,8 +1,26 @@
+---
+title: ABAC (Attribute-Based Access Control)
+description: An access control paradigm whereby access rights are granted to users through the use of policies which combine attributes together.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ABAC">
+<ConceptTemplate title="Attribute-Based Access Control (ABAC)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+RBAC is mathematically flawed for highly complex enterprise requirements. 
+
+What if the policy is: *"A doctor can only read a medical record IF they are the assigned doctor for that specific patient, AND they are accessing it from a hospital IP address, AND it is during their scheduled shift."*
+
+RBAC mathematically cannot handle `IF` conditions. **ABAC** can.
+
+<Callout icon="success" title="The Mathematical Ruleset">
+  ABAC replaces static Roles with dynamic mathematical **Policies**. 
+  
+  It evaluates multiple attributes in real-time:
+  1. **Subject Attributes:** (User is a Doctor)
+  2. **Resource Attributes:** (Patient ID matches Assigned Patient ID)
+  3. **Environment Attributes:** (Time is 2:00 PM, IP is 192.168.1.1)
+  
+  If the mathematical equation returns `True`, access is granted. ABAC is the absolute pinnacle of granular enterprise authorization.
+</Callout>
 
 </ConceptTemplate>

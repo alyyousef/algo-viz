@@ -1,8 +1,27 @@
+---
+title: find
+description: A command-line utility that searches one or more directory trees of a file system, locates files based on some user-specified criteria, and applies a user-specified action on each matched file.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="find">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Windows, if you want to find a file, you type its name in the search bar. 
+
+In Linux, **`find`** is a massive, mathematically rigid querying engine that can search for files based on physical hardware properties, not just names.
+
+<Callout icon="warning" title="Querying by Metadata">
+  `find` interacts directly with the Linux filesystem inodes. You can execute brutal mathematical queries:
+  - Find all files modified in the exact last 7 days: `find . -mtime -7`
+  - Find all files larger than 1 Gigabyte: `find . -size +1G`
+  - Find all files owned by the user 'root': `find . -user root`
+</Callout>
+
+## The `-exec` Flag
+
+The most dangerous and powerful feature of `find` is the **`-exec`** flag. It mathematically takes every file it finds and executes an arbitrary bash command on it.
+
+`find . -name "*.log" -mtime +30 -exec rm {} \;`
+This command mathematically finds every log file older than 30 days and instantly permanently deletes them. It is the foundation of automated server cleanup scripts.
 
 </ConceptTemplate>

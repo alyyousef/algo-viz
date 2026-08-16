@@ -1,8 +1,24 @@
+---
+title: Bug Bounty Programs
+description: Crowdsourced security initiatives where organizations financially reward ethical hackers for discovering and reporting vulnerabilities.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bug bounty programs">
+<ConceptTemplate title="Bug Bounty Programs">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A company can only hire a limited number of penetration testers. **Bug Bounty Programs** democratize security testing by inviting the entire global community of ethical hackers to mathematically attack the company\'s public assets in exchange for cash rewards.
+
+Platforms like HackerOne and Bugcrowd facilitate these programs, providing a safe legal framework for researchers to operate within.
+
+<Callout icon="success" title="The Economics of Bounties">
+  Bug bounties are incredibly cost-effective. A company might pay $10,000 for a critical SQL Injection report. However, if a malicious hacker found that same vulnerability on the black market, it could cost the company $10 million in GDPR fines and lost customer trust.
+</Callout>
+
+## How it Works
+
+1. **Scope Definition:** The company explicitly defines the mathematical boundaries. (e.g., `*.example.com` is allowed, but the physical office WiFi and employee phishing are strictly forbidden).
+2. **Discovery & Reporting:** A researcher finds a vulnerability, writes a detailed proof-of-concept, and submits it privately through the bounty platform.
+3. **Triage:** The company\'s internal security team verifies the mathematical validity of the bug and ensures it is not a duplicate.
+4. **Reward:** Based on the severity (using CVSS scoring), the researcher is paid. (Minor bugs might pay $50; critical remote code execution bugs can pay over $100,000).
 
 </ConceptTemplate>

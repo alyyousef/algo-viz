@@ -1,8 +1,13 @@
+---
+title: Distributed systems
+description: A system whose components are located on different networked computers, which communicate and coordinate their actions by passing messages to one another.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Distributed systems">
+<ConceptTemplate title="Distributed Systems (Interview Prep)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a Senior Engineering interview, you are expected to understand the mathematical horrors of the network.
+
+You must prove you know that networks biologically fail. If Server A sends a payment request to Server B, and the network drops the packet, how do you prevent the user from being charged twice? You must discuss mathematical concepts like **Idempotency keys**, distributed locking (via Redis or ZooKeeper), Message Queues (Kafka) for asynchronous processing, and eventual consistency.
 
 </ConceptTemplate>

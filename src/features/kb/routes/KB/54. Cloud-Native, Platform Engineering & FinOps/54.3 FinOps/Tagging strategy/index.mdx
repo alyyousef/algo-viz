@@ -1,8 +1,21 @@
+---
+title: Tagging strategy
+description: A standardized system of applying metadata to cloud resources for tracking, management, and cost allocation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tagging strategy">
+<ConceptTemplate title="Tagging Strategy">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If your company gets a $200,000 AWS bill at the end of the month, the CFO will biologically ask: *"Who spent this money?"*
+
+If you just have 1,000 raw EC2 instances, it is mathematically impossible to know if the "Data Science" team or the "Frontend" team generated the cost. 
+
+<Callout icon="success" title="The Foundational Metric">
+  A **Tagging Strategy** is the absolute foundation of FinOps. 
+  
+  Every single cloud resource (VMs, S3 buckets, Databases) must be mathematically tagged with metadata (e.g., `Team: Backend`, `Environment: Production`, `Project: Project-X`). 
+  
+  By enforcing mandatory tagging (usually via automated Terraform policies), the AWS Billing Dashboard can mathematically group costs. The CFO can see exactly that Team Backend spent $150,000 and the Data Science team spent $50,000, enabling precise accountability.
+</Callout>
 
 </ConceptTemplate>

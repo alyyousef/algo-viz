@@ -1,8 +1,26 @@
+---
+title: yq
+description: A portable command-line YAML, JSON, XML, CSV and properties processor.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="yq">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If `jq` is the mathematical engine for JSON, **`yq`** is the engine for **YAML**.
+
+With the absolute dominance of Kubernetes, GitHub Actions, and Docker Compose, modern infrastructure is defined almost entirely in highly sensitive, indentation-dependent YAML files.
+
+<Callout icon="warning" title="The Indentation Problem">
+  You cannot use `sed` to mutate a YAML file. If `sed` accidentally injects exactly 1 extra space of whitespace, the entire Kubernetes cluster mathematically crashes due to a YAML parsing error.
+</Callout>
+
+## Safe YAML Mutation
+
+`yq` solves this by parsing the YAML into memory, applying the mutation, and writing it back out with mathematically perfect indentation.
+
+If you need a CI/CD pipeline to automatically update the Docker image tag in a Kubernetes deployment file before pushing it:
+`yq -i '.spec.template.spec.containers[0].image = "nginx:1.21"' deployment.yaml`
+
+This mathematically guarantees the YAML structure remains physically intact, making it an indispensable tool for GitOps workflows.
 
 </ConceptTemplate>

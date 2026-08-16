@@ -1,8 +1,29 @@
+---
+title: Device Provisioning
+description: The process of configuring a new IoT device to securely connect to the appropriate cloud services and user accounts.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Device provisioning">
+<ConceptTemplate title="Device Provisioning">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you build an IoT Smart Bulb, the factory flashes the exact same firmware into 1,000,000 bulbs. 
+
+When a user buys that bulb and plugs it into their wall, how does the bulb mathematically know which Wi-Fi network to connect to, which AWS Cloud endpoint to hit, and which User Account it belongs to?
+
+That highly complex, mathematically secure workflow is called **Device Provisioning**.
+
+<Callout icon="warning" title="The Security Nightmare">
+  You cannot hardcode your AWS Database credentials into the firmware. If you do, a hacker can buy one bulb, physically extract the firmware using JTAG, read the hardcoded password, and mathematically destroy your entire cloud database. 
+  
+  Every single device must be assigned a mathematically unique, asymmetric cryptographic certificate at the factory.
+</Callout>
+
+## Provisioning Workflows
+
+The most common consumer provisioning workflow (AP Mode):
+1. The unconfigured bulb turns on and broadcasts its own temporary Wi-Fi network (`SmartBulb-123`).
+2. The user connects their phone to the bulb's Wi-Fi.
+3. The phone sends the user's home Wi-Fi credentials to the bulb over a local HTTP connection.
+4. The bulb mathematically connects to the home Wi-Fi, reaches out to AWS IoT, presents its unique physical certificate, and is successfully registered to the user's account.
 
 </ConceptTemplate>

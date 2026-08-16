@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: APT (Advanced Package Tool)
+description: A free software user interface that works with core libraries to handle the installation and removal of software on Debian, Ubuntu, and related Linux distributions.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="apt">
+<TechnologyTemplate 
+  title="APT"
+  subtitle="The heart of Debian & Ubuntu"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bash_Logo_Colored.svg/512px-Bash_Logo_Colored.svg.png"
+  description="APT is the mathematical OS-level package manager for Debian and Ubuntu. If you spin up a server in AWS, the first command you type is almost always 'sudo apt update'."
+  yearCreated={1998}
+  creator="Debian Project"
+  isOpenSource={true}
+  websiteUrl="https://wiki.debian.org/Apt"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before APT, Linux users mathematically had to download `.deb` binaries and manually install them. If a `.deb` required an older version of `libc`, the installation would crash (Dependency Hell).
 
-</ConceptTemplate>
+<Callout icon="info" title="Dependency Resolution">
+  APT completely automated this. 
+  
+  When you run `apt install nginx`, APT connects to canonical's massive global repositories, mathematically calculates every single low-level C library that Nginx requires, downloads them all, and installs them in the mathematically correct order.
+</Callout>
+
+</TechnologyTemplate>

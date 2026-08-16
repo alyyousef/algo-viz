@@ -1,8 +1,33 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: WebGPU
+description: A future web standard and JavaScript API for accelerated graphics and compute, aiming to provide modern 3D graphics and computation capabilities.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="WebGPU">
+<TechnologyTemplate 
+  title="WebGPU"
+  subtitle="The future of graphics in the browser"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/WebGPU_logo.svg/512px-WebGPU_logo.svg.png"
+  description="WebGPU is the modern successor to WebGL. It exposes the massive, low-level mathematical power of Vulkan, Metal, and DirectX 12 directly to JavaScript and WebAssembly in the browser."
+  yearCreated={2023}
+  creator="W3C (Apple, Google, Mozilla, Microsoft)"
+  isOpenSource={true}
+  websiteUrl="https://www.w3.org/TR/webgpu/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, if you wanted 3D graphics in a web browser, you used **WebGL**. However, WebGL is mathematically based on OpenGL ES from 2007. It is single-threaded, highly abstracted, and completely incapable of utilizing modern GPU compute power.
 
-</ConceptTemplate>
+**WebGPU** is the massive, industry-wide standard created to fix this.
+
+<Callout icon="success" title="The Universal Wrapper">
+  Because Apple only allows Metal, and Windows relies on DirectX, WebGPU acts as a mathematical translation layer. 
+  
+  You write your WebGPU code in the browser once. If the user is on a Mac, Chrome translates the WebGPU math into Metal. If they are on Windows, Chrome translates it into DirectX 12. If they are on Android, it translates into Vulkan.
+</Callout>
+
+## Compute Shaders
+
+The most important feature of WebGPU is the introduction of **Compute Shaders** to the web. 
+Compute shaders allow JavaScript developers to hijack the GPU to run massive, highly parallel mathematics (like Artificial Intelligence matrices, physics simulations, or crypto hashing) that have absolutely nothing to do with rendering 3D graphics.
+
+</TechnologyTemplate>

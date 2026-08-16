@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Swagger UI
+description: A collection of HTML, Javascript, and CSS assets that dynamically generate beautiful documentation from a Swagger-compliant API.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Swagger UI">
+<TechnologyTemplate 
+  title="Swagger UI"
+  subtitle="Interactive API documentation"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Swagger-logo.png/512px-Swagger-logo.png"
+  description="Swagger UI physically reads an OpenAPI YAML file and mathematically renders an interactive, beautifully styled webpage where developers can read about and directly test API endpoints."
+  yearCreated={2011}
+  creator="SmartBear Software"
+  isOpenSource={true}
+  websiteUrl="https://swagger.io/tools/swagger-ui/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an API has an OpenAPI specification, providing a raw YAML file to a client is terrible developer experience.
 
-</ConceptTemplate>
+Swagger UI is a frontend React/Vanilla app that biologically parses that YAML and generates interactive buttons. A client can go to `api.example.com/docs`, open the `/users` accordion, visually see the required JSON schema, and click a physical **"Try it out"** button to mathematically execute a real HTTP request directly from their browser window.
+
+</TechnologyTemplate>

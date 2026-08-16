@@ -1,8 +1,25 @@
+---
+title: SentencePiece
+description: A language-independent subword tokenizer that treats spaces as normal characters.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SentencePiece)">
+<ConceptTemplate title="SentencePiece">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+SentencePiece is an open-source tokenization library developed by Google. While BPE and WordPiece are algorithms, SentencePiece is a complete software package that can implement either of them.
+
+Its primary innovation is that it is completely language-independent.
+
+<Callout icon="success" title="The Space Problem">
+  Traditional tokenizers assume that words are separated by spaces. This completely breaks down for languages like Chinese, Japanese, or Thai, which do not use spaces. 
+</Callout>
+
+## The SentencePiece Solution
+
+SentencePiece solves the space problem by treating the input as a raw, continuous stream of characters. It replaces all whitespace with a special meta-symbol (usually ` `, U+2581). 
+
+- "Hello World" becomes ` Hello World`
+- The algorithm then runs BPE or Unigram on this stream.
+- This allows the model to learn that the space character is just part of the token, and makes tokenization mathematically identical for English and Japanese.
 
 </ConceptTemplate>

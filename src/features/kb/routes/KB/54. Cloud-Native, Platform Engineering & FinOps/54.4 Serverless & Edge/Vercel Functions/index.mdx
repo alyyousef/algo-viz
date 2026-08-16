@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Vercel Functions
+description: Serverless functions optimized for frontend frameworks and deployed at the edge.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Vercel Functions">
+<TechnologyTemplate 
+  title="Vercel Functions"
+  subtitle="Serverless for the Frontend"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Vercel_logo_black.svg/512px-Vercel_logo_black.svg.png"
+  description="Vercel mathematically abstracted the complexity of AWS Lambda, packaging it specifically for Next.js and frontend developers."
+  yearCreated={2018}
+  creator="Vercel"
+  isOpenSource={false}
+  websiteUrl="https://vercel.com/docs/functions"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a frontend developer wants to create a simple API endpoint to send an email, forcing them to biologically configure AWS IAM roles, API Gateways, and Terraform is mathematically abusive.
 
-</ConceptTemplate>
+Vercel solved this. The developer simply creates a file named `app/api/email/route.ts` in their Next.js project. When they run `git push`, Vercel automatically detects the file, compiles it, provisions the AWS infrastructure invisibly, and deploys it globally as a Serverless Function. It is the absolute pinnacle of Developer Experience (DX).
+
+</TechnologyTemplate>

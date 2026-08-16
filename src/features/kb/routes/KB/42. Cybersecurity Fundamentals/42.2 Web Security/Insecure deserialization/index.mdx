@@ -1,8 +1,24 @@
+---
+title: Insecure Deserialization
+description: A vulnerability occurring when untrusted data is used to abuse the logic of an application, often leading to Remote Code Execution (RCE).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Insecure deserialization">
+<ConceptTemplate title="Insecure Deserialization">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Serialization** is the mathematical process of taking a complex object in memory (like a Java User object) and converting it into a flat string of bytes so it can be saved to a database or sent over a network. **Deserialization** is putting it back together.
+
+**Insecure Deserialization** occurs when an application receives serialized data from the user and blindly deserializes it without mathematically verifying its contents.
+
+<Callout icon="warning" title="The Equifax Breach">
+  Insecure Deserialization is incredibly dangerous because it almost always leads to full Remote Code Execution (RCE). The devastating 2017 Equifax breach, which compromised the financial data of 147 million Americans, was caused by an insecure deserialization flaw in the Apache Struts framework.
+</Callout>
+
+## How the Attack Works
+
+1. The developer serializes a `User` object and sends it to the browser as a cookie (e.g., `{ "role": "user", "isAdmin": false }` converted to Base64).
+2. The attacker decodes the Base64, mathematically changes the payload to `{ "role": "admin", "isAdmin": true }`, and re-serializes it.
+3. When the server deserializes the modified payload, it blindly instantiates the object in memory, instantly granting the attacker administrative privileges.
+4. **Advanced RCE:** If the attacker understands the mathematical structure of the backend language (Java, Python Pickle, PHP), they can craft a malicious object that mathematically executes a shell command (like `whoami` or `rm -rf /`) the exact millisecond the server attempts to instantiate the object.
 
 </ConceptTemplate>

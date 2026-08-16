@@ -1,8 +1,23 @@
+---
+title: Cross-Origin Resource Sharing (CORS)
+description: An HTTP-header based mechanism that allows a server to indicate any origins (domain, scheme, or port) other than its own from which a browser should permit loading resources.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CORS vulnerabilities">
+<ConceptTemplate title="Cross-Origin Resource Sharing (CORS)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+By default, web browsers strictly enforce the **Same-Origin Policy (SOP)**. If JavaScript running on `frontend.com` tries to make an API `fetch()` call to `api.backend.com`, the browser will mathematically block it because the domains do not match.
+
+**CORS** is the mathematical mechanism that allows servers to punch a deliberate hole in the SOP, telling the browser: "It is safe to let `frontend.com` read this data."
+
+<Callout icon="warning" title="The Wildcard Danger">
+  The most common CORS vulnerability is a lazy configuration. If a developer sets `Access-Control-Allow-Origin: *`, they are mathematically telling the browser that *any website on the internet* is allowed to read data from their API using the victim's session cookies.
+</Callout>
+
+## The Preflight Request (OPTIONS)
+
+Before the browser sends a complex request (like a POST with JSON data) across origins, it first mathematically sends a stealthy `OPTIONS` request, known as a **Preflight**. 
+
+The browser asks the API: "Are you configured to accept a POST request from my origin?" If the API responds with the correct CORS headers, the browser mathematically releases the actual POST request. If not, the browser throws a CORS error in the console.
 
 </ConceptTemplate>

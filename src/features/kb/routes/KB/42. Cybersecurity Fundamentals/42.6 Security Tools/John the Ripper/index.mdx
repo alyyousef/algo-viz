@@ -1,8 +1,28 @@
+---
+title: John the Ripper
+description: A legendary, extremely fast password cracking software tool.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="John the Ripper">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a hacker steals a database of passwords, they don\'t get the plaintext passwords; they get cryptographic hashes (like MD5, SHA-256, or bcrypt). To find the real passwords, they must "crack" the hashes.
+
+**John the Ripper (JtR)** is one of the oldest and most famous open-source password crackers. It is incredibly versatile and runs on CPU architectures.
+
+<Callout icon="info" title="The Auto-Detect Magic">
+  John the Ripper\'s most famous feature is that it mathematically analyzes the structure of the hash (e.g., length, character set, prefixes like `$1$`) and automatically detects the hashing algorithm used, requiring zero configuration from the user.
+</Callout>
+
+## Cracking Modes
+
+<ComparisonTable 
+  headers={['Mode', 'Description']}
+  rows={[
+    ['Dictionary Attack', 'Takes a massive text file of common passwords (like the famous `rockyou.txt`), hashes each one, and mathematically compares it to the stolen hash.'],
+    ['Brute Force', 'Mathematically tries every single possible combination of characters (`a`, `b`, `c`... `aaaa`, `aaab`). Guaranteed to work eventually, but usually takes millions of years for long passwords.'],
+    ['Rule-based Attack', 'The most effective mode. It takes a dictionary word (e.g., `password`) and applies mathematical mutations (e.g., capitalizing the first letter, appending `123`, changing `a` to `@`) to create highly probable guesses (`P@ssword123`).']
+  ]}
+/>
 
 </ConceptTemplate>

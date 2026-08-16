@@ -1,8 +1,17 @@
+---
+title: SMT solvers
+description: Satisfiability Modulo Theories solvers determine whether a mathematical formula is satisfiable, extending SAT solvers to include theories like integers, real numbers, and arrays.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SMT solvers">
+<ConceptTemplate title="SMT Solvers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A SAT solver mathematically only understands `True` and `False`. If your software uses numbers (like `x + y > 10`), a SAT solver is biologically useless.
+
+<Callout icon="success" title="Z3 and the Infinite Numbers">
+  **SMT (Satisfiability Modulo Theories)** solvers extend SAT solvers to understand complex mathematics: integers, real numbers, bit-vectors, and arrays.
+  
+  The most famous is **Z3**, built by Microsoft Research. You can feed Z3 a terrifying piece of C++ code, and ask: *"Is there any possible integer X that causes this function to return a negative number?"* Z3 will mathematically rip apart the universe of integers and either return `UNSAT` (proving the code is safe), or return `SAT: X = 42`, providing you the exact input that triggers the bug.
+</Callout>
 
 </ConceptTemplate>

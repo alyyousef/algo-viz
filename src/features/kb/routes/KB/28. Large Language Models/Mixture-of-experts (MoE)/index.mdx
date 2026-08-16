@@ -1,8 +1,28 @@
+---
+title: Mixture-of-Experts (MoE)
+description: A neural network architecture that massively scales parameter count while keeping inference compute costs low.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mixture-of-experts (MoE)">
+<ConceptTemplate title="Mixture-of-Experts (MoE)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Mixture-of-Experts (MoE) is an architectural pattern that replaces standard dense feedforward layers with multiple smaller "Expert" networks and a "Router" network. 
+
+During inference, instead of activating every single parameter in the model, the Router mathematically selects only the top 1 or 2 Experts to process a specific token. This allows you to build a 1-Trillion parameter model that runs as fast as a 100-Billion parameter model.
+
+<Callout icon="info" title="The Open Source MoE Boom">
+  Mistral\'s **Mixtral 8x7B** proved that open-source MoE models could rival GPT-3.5 while running on consumer hardware. It has 47 billion total parameters, but only uses 12 billion parameters during inference.
+</Callout>
+
+## Core Components
+
+<ComparisonTable 
+  headers={['Component', 'Function']}
+  rows={[
+    ['The Router (Gating Network)', 'A small neural network that looks at the current token and outputs a probability distribution over the available Experts.'],
+    ['The Experts', 'Standard feedforward neural networks. In an 8x MoE, there are 8 independent experts. They often naturally specialize (e.g., one expert becomes good at math, another at French) without explicit human direction.'],
+    ['Sparse Activation', 'The defining feature of MoE. The system only executes the math for the top-K experts (usually K=2) chosen by the Router.']
+  ]}
+/>
 
 </ConceptTemplate>

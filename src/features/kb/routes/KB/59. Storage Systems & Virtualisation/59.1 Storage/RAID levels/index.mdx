@@ -1,8 +1,15 @@
+---
+title: RAID levels
+description: Redundant Array of Independent Disks is a data storage virtualization technology that combines multiple physical disk drive components into one or more logical units.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RAID levels">
+<ConceptTemplate title="RAID Levels">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Hard drives biologically fail. **RAID** is the mathematical science of strapping multiple hard drives together to survive failures.
+
+- **RAID 0 (Striping)**: Data is mathematically split across two drives. Result: 2x speed, but 0x safety. If one drive dies, *all* data is permanently destroyed.
+- **RAID 1 (Mirroring)**: Data is duplicated exactly across two drives. Result: 1x speed, 2x safety. If one drive dies, the other has a perfect biological copy.
+- **RAID 5 (Parity)**: Uses 3 or more drives. It mathematically calculates XOR parity bits across the drives. If *any single drive* explodes, the RAID controller can mathematically reconstruct the missing data from the surviving drives.
 
 </ConceptTemplate>

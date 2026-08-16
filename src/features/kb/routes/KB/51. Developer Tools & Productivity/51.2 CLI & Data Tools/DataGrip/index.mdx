@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: DataGrip
+description: A cross-platform IDE for databases and SQL by JetBrains.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="DataGrip">
+<TechnologyTemplate 
+  title="DataGrip"
+  subtitle="The IntelliJ of SQL"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/DataGrip_Icon.svg/512px-DataGrip_Icon.svg.png"
+  description="DataGrip is JetBrains' premium, paid database IDE. It applies the exact same terrifying mathematical AST intelligence of IntelliJ IDEA directly to SQL."
+  yearCreated={2015}
+  creator="JetBrains"
+  isOpenSource={false}
+  websiteUrl="https://www.jetbrains.com/datagrip/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing raw SQL in a text editor is dangerous because there is no compiler. If you type `SELECT usr_name FROM users`, the text editor doesn't know that the column is actually spelled `user_name`. It will mathematically fail at runtime.
 
-</ConceptTemplate>
+DataGrip physically connects to the database, downloads the entire mathematical schema, and provides real-time, IDE-level auto-completion and error checking. If you misspell a column name, DataGrip mathematically underlines it in red *before* you execute the query.
+
+</TechnologyTemplate>

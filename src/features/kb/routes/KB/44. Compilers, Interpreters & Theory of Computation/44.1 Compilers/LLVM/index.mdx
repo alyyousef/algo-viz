@@ -1,34 +1,35 @@
 ---
 title: LLVM
-description: "A collection of modular and reusable compiler and toolchain technologies used to build modern programming languages."
+description: A set of compiler and toolchain technologies, which can be used to develop a front end for any programming language and a back end for any instruction set architecture.
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="LLVM">
+<TechnologyTemplate 
+  title="LLVM"
+  subtitle="The modular heart of modern compilation"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/LLVM_Logo.svg/512px-LLVM_Logo.svg.png"
+  description="LLVM (originally Low Level Virtual Machine) revolutionized compiler architecture. Instead of a massive monolith like GCC, LLVM is a collection of mathematically strict, independent C++ libraries."
+  yearCreated={2003}
+  creator="Chris Lattner"
+  isOpenSource={true}
+  websiteUrl="https://llvm.org/"
+>
 
-Originally standing for "Low Level Virtual Machine" (a name that is now officially obsolete), **LLVM** is the most important piece of compiler infrastructure in modern software engineering.
+LLVM brought mathematical sanity to compiler development by strictly enforcing the **Three-Phase Architecture**.
 
-Before LLVM, if you invented a new programming language, you had to write your own parser, figure out how to optimize code, and learn the dense machine-code manuals for Intel, AMD, and ARM processors just to get your language to run.
+1. **Front-Ends:** You write a parser for your new language (Rust, Swift, Zig) and have it output standard mathematical LLVM IR.
+2. **The Optimizer:** LLVM takes your IR and runs it through decades of world-class mathematical optimization passes, completely independent of the source language.
+3. **Back-Ends:** LLVM translates the optimized IR into physical Machine Code for x86, ARM, WebAssembly, or GPUs.
 
-## The LLVM Revolution
-LLVM solved this by providing a world-class **Middle-end** and **Backend**. 
-
-If you invent a new language today, you only have to write the **Frontend**: a parser that converts your syntax into **LLVM IR** (LLVM's Intermediate Representation). 
-
-Once you hand that IR to LLVM, LLVM automatically:
-1. Runs decades of state-of-the-art optimizations on your code.
-2. Translates it perfectly to x86, ARM, WebAssembly, or almost any other hardware architecture.
-
-## Languages Powered by LLVM
-Because LLVM makes building high-performance compilers so accessible, it powered an explosion of modern languages:
-- **Rust**: Uses LLVM as its primary backend.
-- **Swift**: Created by Apple using LLVM.
-- **Clang**: The LLVM-based C/C++ frontend that replaced GCC on macOS.
-- **Julia**: Uses LLVM for JIT compilation.
-
-<Callout icon="info" title="LLVM IR">
-LLVM IR is strongly typed and uses **Static Single Assignment (SSA)** form, meaning every variable is assigned a value exactly once. This mathematical property makes it incredibly easy for the optimizer to analyze and transform the code without making mistakes.
+<Callout icon="success" title="The Cambrian Explosion of Languages">
+  Before LLVM, creating a new compiled language like Rust would require an army of engineers 10 years to write optimizations and target different CPUs. Because of LLVM, the Rust team only had to write the Front-End. They mathematically inherited 20 years of Apple and Google's optimization logic and hardware support for free.
 </Callout>
 
-</ConceptTemplate>
+## Major LLVM Projects
+
+- **Clang:** The C/C++ Front-End for LLVM (built by Apple to replace GCC).
+- **Rustc:** The official Rust compiler.
+- **Swift:** Apple's proprietary language, written by Chris Lattner alongside LLVM.
+- **Julia:** A scientific language that mathematically JIT-compiles via LLVM.
+
+</TechnologyTemplate>

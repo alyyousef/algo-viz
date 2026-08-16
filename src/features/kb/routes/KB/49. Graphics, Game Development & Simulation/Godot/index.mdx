@@ -1,68 +1,30 @@
 ---
 title: Godot
-description: A free and open-source game engine.
+description: A cross-platform, free and open-source game engine released under the MIT license, known for its unique node-based architecture.
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate title="Godot">
+<TechnologyTemplate 
+  title="Godot"
+  subtitle="The Open-Source rebel"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Godot_icon.svg/512px-Godot_icon.svg.png"
+  description="Godot is the 'Blender' of game engines. It is 100% free, fiercely open-source (MIT License), and takes exactly 0% of your game's revenue. It has exploded in popularity among indie developers."
+  yearCreated={2014}
+  creator="Juan Linietsky and Ariel Manzur"
+  isOpenSource={true}
+  websiteUrl="https://godotengine.org/"
+>
 
-The Godot Engine is a free, all-in-one, cross-platform game engine that makes it easy for developers to create 2D and 3D games. It is completely open-source under the MIT license, meaning no royalties, no subscription fees, and no strings attached.
+Unreal takes a 5% royalty fee. Unity recently attempted a highly controversial "Runtime Fee" business model. Because **Godot** is MIT Licensed, you legally own 100% of the game you build.
 
-<Callout icon="tip" title="The Node Tree Paradigm">
-  Unlike Unity's component-based system, Godot uses an object-oriented approach where everything is a **Node**. Nodes are arranged in a tree structure. A Scene is just a tree of Nodes, and Scenes can be nested inside other Scenes endlessly.
+<Callout icon="tip" title="The Node Hierarchy Architecture">
+  Unlike Unity's flat `GameObject` list, Godot relies on a strict **Tree Hierarchy of Nodes**.
+  
+  In Godot, everything is a Node. A `Player` is not an object; it is a Scene containing a tree of nodes (a `KinematicBody` node, which contains a `CollisionShape` node and a `Sprite` node). You can mathematically instance this entire `Player` scene directly inside a `Level` scene. It is incredibly clean, modular, and strongly resembles the DOM tree in web development.
 </Callout>
 
 ## GDScript
 
-While Godot supports C# and C++ (via GDExtension), its primary language is **GDScript**, a Python-like dynamically typed language built specifically for the engine. It is tightly integrated, meaning no compile times and instant hot-reloading.
-
-<ComparisonTable 
-  headers={['Language', 'Integration', 'Use Case']}
-  rows={[
-    ['GDScript', 'Native, seamless', 'Gameplay logic, UI, rapid prototyping.'],
-    ['C#', '.NET module', 'Heavy computational tasks, existing enterprise developers.'],
-    ['C++ / Rust', 'GDExtension', 'Maximum performance, engine modification, custom physics.']
-  ]}
-/>
-
-## Example: A Simple Godot Script
-
-Scripts are attached directly to Nodes. This script moves a Node to the right.
-
-```gdscript
-extends CharacterBody2D
-
-var speed: float = 400.0
-
-func _ready():
-    print("Node is ready and entered the scene tree!")
-
-func _physics_process(delta: float):
-    # Get input direction (-1, 0, or 1)
-    var direction = Input.get_axis("ui_left", "ui_right")
-    
-    # Update velocity
-    velocity.x = direction * speed
-    
-    # Built-in function to handle collision and movement
-    move_and_slide()
-```
-
-## Architecture & Signals
-
-Godot uses the Observer pattern extensively via **Signals**. Instead of Nodes tightly coupling and calling functions on each other directly, they emit Signals (events) that other Nodes can listen to.
-
-<ArchitectureDiagram chart={`
-graph TD
-  Button[Button Node]
-  Player[Player Node]
-  Audio[AudioStreamPlayer Node]
-  
-  Button -- emits "pressed" signal --> Player
-  Button -- emits "pressed" signal --> Audio
-  
-  Player -. _on_button_pressed() .-> Action[Jumps]
-  Audio -. _on_button_pressed() .-> Sound[Plays "Click.wav"]
-`} />
+While Godot supports C# and C++, its primary language is **GDScript**—a custom, Python-like language mathematically optimized specifically for Godot's internal Node architecture. It is incredibly fast to write, perfectly integrated into the editor, and bypasses the heavy compilation times of C#.
 
 </TechnologyTemplate>

@@ -1,8 +1,13 @@
+---
+title: Software signing
+description: The process of digitally signing executables and scripts to confirm the software author and guarantee that the code has not been altered or corrupted.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Software signing">
+<ConceptTemplate title="Software Signing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How does your biological Mac mathematically know that the Google Chrome installer actually came from Google, and not a Russian hacker?
+
+**Software Signing** uses Asymmetric Cryptography. Google mathematically hashes the Chrome `.dmg` file and signs the hash with their Private Key. When you download it, Apple macOS mathematically verifies the signature using Google's Public Key. If a hacker biologically altered even a single byte of the Chrome installer during the download, the mathematical signature instantly fails, and macOS blocks the installation.
 
 </ConceptTemplate>

@@ -1,8 +1,25 @@
+---
+title: The TLS Handshake
+description: The complex cryptographic protocol that secures every HTTPS connection on the internet.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TLS handshake">
+<ConceptTemplate title="The TLS Handshake">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Whenever you navigate to an `https://` website, your browser and the server must securely agree on an encryption key before sending any actual data. Because the internet is fundamentally public, they must agree on this secret key while sending messages across open, unencrypted channels that anyone can read.
+
+This mathematical negotiation is called the **Transport Layer Security (TLS) Handshake**.
+
+<Callout icon="success" title="The Hybrid Approach">
+  The TLS handshake solves the core problem of cryptography by using **Asymmetric Encryption** (RSA or Elliptic Curves) to securely verify identity and exchange a shared secret, and then instantly switches to **Symmetric Encryption** (AES) using that shared secret for the rest of the connection because AES is thousands of times faster.
+</Callout>
+
+## TLS 1.3 Handshake Steps
+
+TLS 1.3 revolutionized the protocol by cutting the handshake from two round-trips down to just one.
+
+1. **Client Hello:** The browser sends supported cipher suites, a random byte string, and immediately mathematically guesses the key exchange protocol (e.g., sending an Elliptic Curve Diffie-Hellman public share).
+2. **Server Hello & Certificate:** The server receives the client\'s public share. It calculates the final shared secret, chooses the cipher suite, and sends its public share back, along with its digital certificate (to prove it is actually `google.com`).
+3. **Secure Connection Established:** The browser verifies the certificate against its trusted Root CAs, calculates the same shared secret, and both parties begin encrypting HTTP traffic with AES.
 
 </ConceptTemplate>

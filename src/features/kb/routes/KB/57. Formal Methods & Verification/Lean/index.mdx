@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Lean
+description: A functional programming language and theorem prover aimed at mathematical formalization.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Lean">
+<TechnologyTemplate 
+  title="Lean"
+  subtitle="The Modern Mathematician's Prover"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Lean_logo.svg/512px-Lean_logo.svg.png"
+  description="Lean is a modern, rapidly growing theorem prover mathematically designed to be highly accessible to standard mathematicians, backed by Microsoft Research."
+  yearCreated={2013}
+  creator="Leonardo de Moura"
+  isOpenSource={true}
+  websiteUrl="https://leanprover.github.io/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Coq and Isabelle are biologically ancient and difficult to use, Lean is incredibly modern.
 
-</ConceptTemplate>
+It has massive momentum in the pure mathematics community. The **mathlib** project is currently using Lean to mathematically digitize and verify all known human mathematics. If a mathematician claims to have solved a famous unsolved problem, the new standard is to write the proof in Lean; if Lean compiles it, the proof is mathematically absolute and the debate is instantly over.
+
+</TechnologyTemplate>

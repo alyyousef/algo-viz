@@ -1,8 +1,28 @@
+---
+title: DNS Attacks
+description: Cyberattacks that target the Domain Name System to disrupt availability or redirect users to malicious servers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DNS attacks">
+<ConceptTemplate title="DNS Attacks">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Domain Name System (DNS) is the phonebook of the internet; it translates human-readable names (like `google.com`) into the mathematical IP addresses computers use to route traffic. 
+
+Because every single action on the internet begins with a DNS lookup, compromising the DNS infrastructure is one of the most devastating attacks mathematically possible.
+
+<Callout icon="tip" title="DNSSEC">
+  To combat DNS tampering, the industry developed **DNSSEC** (Domain Name System Security Extensions). It adds cryptographic signatures to DNS records, allowing browsers to mathematically verify that the IP address returned actually came from the true owner of the domain, not a hacker.
+</Callout>
+
+## Common Attack Vectors
+
+<ComparisonTable 
+  headers={['Attack', 'Description']}
+  rows={[
+    ['DNS Spoofing (Cache Poisoning)', 'The attacker injects forged DNS data into the cache of a DNS resolver. When users ask for `bank.com`, the poisoned resolver mathematically directs them to the attacker\'s fake server.'],
+    ['DNS Amplification (DDoS)', 'The attacker sends a tiny DNS request with a spoofed source IP address to a vulnerable server. The server responds with a massive mathematical payload, directing all that traffic at the victim, overwhelming their bandwidth.'],
+    ['DNS Tunneling', 'A stealthy exfiltration technique. An attacker inside a restricted network encodes stolen data into the text of a DNS query, bypassing the firewall because DNS port 53 is almost never blocked.']
+  ]}
+/>
 
 </ConceptTemplate>

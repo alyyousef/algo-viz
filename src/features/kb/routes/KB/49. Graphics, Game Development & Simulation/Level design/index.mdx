@@ -1,8 +1,24 @@
+---
+title: Level Design
+description: A discipline of game development involving the creation of video game levels—locales, stages, or missions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Level design">
+<ConceptTemplate title="Level Design">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Level Design** is the intersection of architecture, psychology, and gameplay mathematics. It is the process of physically building the environment the player will navigate.
+
+<Callout icon="info" title="The Whitebox Phase">
+  A level designer never starts by placing high-resolution 3D assets or lighting. 
+  
+  They start with **Whiteboxing (Blockout)**. They use raw, untextured grey cubes to mathematically block out the walls, cover, and distances. The entire focus is purely on metrics: "Is this gap exactly 5 meters wide so the player's jump physics can mathematically clear it?" Once the geometry plays perfectly, the artists replace the grey cubes with high-resolution castles or spaceships.
+</Callout>
+
+## Leading the Player
+
+Because players get lost easily, level designers use subconscious psychological triggers to guide them without using UI arrows:
+- **Lighting:** Humans mathematically walk toward light sources. Putting a bright spotlight above a door guarantees the player will notice it.
+- **Color Theory (The "Yellow Paint" trope):** In games like *Resident Evil* or *Horizon*, climbable ledges are splashed with highly contrasting yellow paint to immediately draw the player's eye.
+- **Weenies:** A term invented by Walt Disney. A massive, towering landmark (like a giant volcano) visible from anywhere in the level that mathematically provides constant geographic orientation.
 
 </ConceptTemplate>

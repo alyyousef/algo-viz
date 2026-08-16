@@ -1,8 +1,31 @@
+---
+title: sed (Stream Editor)
+description: A Unix utility that parses and transforms text, using a simple, compact programming language.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="sed">
+<ConceptTemplate title="sed (Stream Editor)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**sed** is a brutal, mathematical text-transformation engine. 
+
+While a normal text editor requires you to open a file, press `Ctrl+F`, type a word, and click "Replace", `sed` performs this action purely via the terminal pipeline, allowing you to mathematically mutate text on the fly.
+
+<Callout icon="tip" title="The Substitution Command">
+  The most common mathematical use of `sed` is the **Substitution (`s`)** command.
+  
+  `echo "Hello World" | sed 's/World/Universe/'`
+  Output: `Hello Universe`
+  
+  The syntax is strictly `s/FIND/REPLACE/FLAGS`. 
+  If you add the `g` (global) flag, it mathematically replaces every instance on the line, not just the first one.
+</Callout>
+
+## In-Place Editing
+
+If you have a massive JSON config file and need to change the database port from `5432` to `3306` during an automated Docker deployment, you cannot open VS Code. 
+
+You execute an **In-Place (`-i`)** substitution:
+`sed -i 's/5432/3306/g' config.json`
+The file is mathematically mutated on the hard drive instantly.
 
 </ConceptTemplate>

@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Qiskit
+description: An open-source SDK for working with quantum computers at the level of pulses, circuits, and application modules.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Qiskit">
+<TechnologyTemplate 
+  title="Qiskit"
+  subtitle="IBM's Quantum SDK"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Qiskit_Logo.svg/512px-Qiskit_Logo.svg.png"
+  description="Qiskit is the industry-standard, Python-based open-source framework developed by IBM for writing mathematical quantum circuits."
+  yearCreated={2017}
+  creator="IBM"
+  isOpenSource={true}
+  websiteUrl="https://qiskit.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Qiskit mathematically bridges the gap between biological Python code and subatomic physics.
 
-</ConceptTemplate>
+A developer simply writes Python code: `circuit.h(0)` to apply a Hadamard gate to Qubit 0, and `circuit.cx(0, 1)` to Entangle it with Qubit 1. 
+
+When the user runs the script, Qiskit mathematically compiles the code into microwave pulse instructions, sends it over the internet to IBM's biological Quantum Data Center in New York, fires the lasers at the subatomic particles in a cryogenic freezer, and returns the result to your laptop.
+
+</TechnologyTemplate>

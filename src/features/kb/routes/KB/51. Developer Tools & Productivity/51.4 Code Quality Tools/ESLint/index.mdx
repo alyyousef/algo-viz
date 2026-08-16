@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: ESLint
+description: A static code analysis tool for identifying problematic patterns found in JavaScript code.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="ESLint">
+<TechnologyTemplate 
+  title="ESLint"
+  subtitle="The absolute standard for JavaScript quality"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/ESLint_logo.svg/512px-ESLint_logo.svg.png"
+  description="ESLint is the mathematically ubiquitous linter for the entire JavaScript and TypeScript ecosystem. It prevents developers from doing things that are technically legal in JS, but biologically stupid."
+  yearCreated={2013}
+  creator="Nicholas C. Zakas"
+  isOpenSource={true}
+  websiteUrl="https://eslint.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+JavaScript is a notoriously forgiving language. It allows you to mathematically compare a String to an Array without throwing an error. 
 
-</ConceptTemplate>
+ESLint solves this by enforcing strict rules. If you attempt to use the `==` operator instead of the strict `===` operator, ESLint will mathematically throw an error in your CI/CD pipeline, physically preventing the code from merging to production.
+
+<Callout icon="tip" title="Plugin Architecture">
+  ESLint's true power is its extensibility. 
+  
+  React developers install `eslint-plugin-react-hooks`. If a developer accidentally puts a `useEffect` hook inside an `if` statement (which mathematically breaks React's render cycle), ESLint detects it instantly and throws a fatal error before the code even runs.
+</Callout>
+
+</TechnologyTemplate>

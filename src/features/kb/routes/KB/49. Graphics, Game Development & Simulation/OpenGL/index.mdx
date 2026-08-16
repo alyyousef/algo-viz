@@ -1,48 +1,30 @@
 ---
 title: OpenGL
-description: A cross-language, cross-platform API for rendering 2D and 3D vector graphics.
+description: A cross-language, cross-platform application programming interface for rendering 2D and 3D vector graphics.
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate title="OpenGL">
+<TechnologyTemplate 
+  title="OpenGL"
+  subtitle="The legacy standard of 3D graphics"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/OpenGL_logo.svg/512px-OpenGL_logo.svg.png"
+  description="Open Graphics Library (OpenGL) is an open, cross-platform API used to interact with a GPU to achieve hardware-accelerated rendering. It dominated the industry for 20 years."
+  yearCreated={1992}
+  creator="Silicon Graphics (Now Khronos Group)"
+  isOpenSource={true}
+  websiteUrl="https://www.opengl.org/"
+>
 
-OpenGL (Open Graphics Library) is a cross-language, cross-platform application programming interface (API) for rendering 2D and 3D vector graphics. The API is typically used to interact with a Graphics Processing Unit (GPU), to achieve hardware-accelerated rendering.
+Before OpenGL, every graphics card had its own proprietary programming language. If you wrote a game for an NVIDIA card, it physically would not boot on an ATI card. 
 
-<Callout icon="warning" title="Legacy Status">
-  While OpenGL is still widely used in older games and educational software, Apple has deprecated it in favor of Metal, and the Khronos Group (creators of OpenGL) have created **Vulkan** as its modern, low-overhead successor. 
+**OpenGL** created a mathematical abstraction layer. You write C++ OpenGL code, and the specific GPU Driver (written by NVIDIA or AMD) mathematically translates your OpenGL calls into the proprietary silicon instructions.
+
+<Callout icon="error" title="The State Machine Problem">
+  OpenGL is mathematically designed as a massive, global **State Machine**. 
+  
+  To draw a red triangle, you cannot just call `Draw(triangle, red)`. You must mathematically bind the Triangle data to the global state, then bind the Red Shader to the global state, then call `glDrawArrays()`. Because it is a global state machine, it is incredibly difficult to multi-thread. You generally cannot have 4 CPU cores sending OpenGL commands simultaneously, making it a severe bottleneck for modern, massive video games.
 </Callout>
 
-## The Graphics Pipeline
-
-OpenGL is a state machine. You set the state (bind textures, load shaders, set buffers), and then issue a draw call. The data then flows through the programmable graphics pipeline.
-
-<ComparisonTable 
-  headers={['Pipeline Stage', 'Type', 'Purpose']}
-  rows={[
-    ['Vertex Shader', 'Programmable', 'Transforms 3D coordinates into 2D screen coordinates.'],
-    ['Primitive Assembly', 'Fixed', 'Connects vertices into triangles or lines.'],
-    ['Rasterization', 'Fixed', 'Converts triangles into fragments (pixels).'],
-    ['Fragment Shader', 'Programmable', 'Calculates the final color and lighting of each pixel.']
-  ]}
-/>
-
-## Architecture
-
-OpenGL uses a client-server architecture where your C++ program is the client, and the GPU is the server.
-
-<ArchitectureDiagram chart={`
-graph LR
-  CPU[CPU (C++ Program)]
-  RAM[System RAM]
-  VRAM[(GPU VRAM)]
-  GPU[GPU Cores]
-  Screen[Display]
-  
-  CPU -- Load Vertices --> RAM
-  CPU -- glBufferData --> VRAM
-  CPU -- glDrawArrays --> GPU
-  VRAM -. Read Data .-> GPU
-  GPU -- Rasterize --> Screen
-`} />
+While still widely used for education and older software, OpenGL is officially deprecated by Apple and has been largely superseded by Vulkan.
 
 </TechnologyTemplate>

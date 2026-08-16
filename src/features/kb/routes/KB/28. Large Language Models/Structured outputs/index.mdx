@@ -1,8 +1,28 @@
+---
+title: Structured Outputs
+description: Forcing LLMs to generate text that strictly adheres to a predefined mathematical schema like JSON.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Structured outputs">
+<ConceptTemplate title="Structured Outputs">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When integrating LLMs into software pipelines, relying on the model to "hopefully" output valid JSON is a catastrophic point of failure. The model might add conversational filler (e.g., "Here is your JSON:") or hallucinate invalid keys, crashing the downstream application.
+
+Structured Outputs enforce strict mathematical guarantees that the LLM\'s output will perfectly match a provided schema (like a Pydantic model or JSON Schema).
+
+<Callout icon="tip" title="Constrained Decoding">
+  Modern engines achieve 100% reliability using **Constrained Decoding**. During generation, the engine calculates the allowed next tokens based on a Finite State Machine derived from the JSON Schema. If the schema requires a boolean, the engine mathematically forces the probability of the word "true" or "false" to 100%, and masks out all other tokens in the vocabulary.
+</Callout>
+
+## Implementation Strategies
+
+<ComparisonTable 
+  headers={['Strategy', 'Reliability', 'Mechanism']}
+  rows={[
+    ['Prompt Engineering', 'Low', 'Telling the model "You must output valid JSON. Do not include markdown." It often disobeys.'],
+    ['JSON Mode', 'Medium', 'The inference engine forces the output to be valid JSON, but cannot guarantee it matches your specific schema keys.'],
+    ['Constrained Decoding (Structured Outputs)', '100% Guaranteed', 'The token probabilities are mathematically masked at the logits level using a Grammar or Finite State Machine to perfectly follow the schema.']
+  ]}
+/>
 
 </ConceptTemplate>

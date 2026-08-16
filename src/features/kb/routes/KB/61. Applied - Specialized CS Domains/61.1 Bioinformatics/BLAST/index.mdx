@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: BLAST
+description: Basic Local Alignment Search Tool is an algorithm and program for comparing primary biological sequence information, such as the amino-acid sequences of proteins or the nucleotides of DNA and/or RNA sequences.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="BLAST">
+<TechnologyTemplate 
+  title="BLAST"
+  subtitle="The Search Engine of Biology"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Blast_logo.png/512px-Blast_logo.png"
+  description="BLAST is the most famous algorithm in bioinformatics, acting as the biological Google Search for DNA and protein sequences."
+  yearCreated={1990}
+  creator="Altschul, Gish, Miller, Myers, Lipman"
+  isOpenSource={true}
+  websiteUrl="https://blast.ncbi.nlm.nih.gov/Blast.cgi"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Running exact Dynamic Programming sequence alignment on a massive database of all known life is mathematically too slow ($O(N^2)$).
 
-</ConceptTemplate>
+**BLAST** sacrifices perfect accuracy for biological speed. It uses a mathematical heuristic approach. It chops the search query into tiny "words" (e.g., 11 letters long), rapidly scans the database for exact matches of those tiny words, and only performs the expensive alignment math on the regions where a seed word was found. It mathematically reduced weeks of supercomputer calculation into seconds.
+
+</TechnologyTemplate>

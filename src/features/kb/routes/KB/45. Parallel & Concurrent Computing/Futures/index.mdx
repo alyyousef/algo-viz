@@ -1,8 +1,26 @@
+---
+title: Futures
+description: A programming construct representing the result of an asynchronous computation that may not yet have completed.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Futures">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional sequential programming, if you call a function that downloads a 50MB file, your entire program mathematically halts and waits for 5 seconds until the download finishes.
+
+A **Future** (also known as a Promise or Deferred) is a mathematical abstraction for asynchronous concurrency. When you ask the system to download the file, the function mathematically returns instantly. However, instead of returning the actual file, it returns a "Future" object.
+
+<Callout icon="success" title="The IOU">
+  A Future is mathematically an IOU from the Operating System. It is a placeholder object that says: *"I don't have your data right now, but I mathematically guarantee I will eventually hold either the successful File Data, or an Error."*
+</Callout>
+
+## Mathematical States
+
+A Future exists in exactly one of three mathematical states:
+1. **Pending:** The background mathematical operation is still running.
+2. **Resolved (Fulfilled):** The operation succeeded, and the Future now mathematically contains the result.
+3. **Rejected:** The operation failed, and the Future mathematically contains an Exception.
+
+While the Future is Pending, the Main Thread is mathematically free to do other work, keeping the UI responsive or handling other web requests.
 
 </ConceptTemplate>

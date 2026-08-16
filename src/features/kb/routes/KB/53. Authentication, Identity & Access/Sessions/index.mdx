@@ -1,8 +1,22 @@
+---
+title: Sessions (Stateful Authentication)
+description: A method of authentication where the server stores the authentication state of a user.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sessions">
+<ConceptTemplate title="Sessions (Stateful Authentication)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+HTTP is mathematically a **Stateless** protocol. If you log in on `/login`, and then navigate to `/dashboard`, the server has absolutely no biological memory of who you are.
+
+To solve this, developers invented **Session-based Authentication**.
+
+<Callout icon="info" title="The Architecture">
+  1. **Login:** The user sends their username/password.
+  2. **Session Creation:** The backend mathematically creates a "Session Object" in its RAM (or a Redis database) containing `{ userId: 123, role: "admin" }`.
+  3. **The Cookie:** The backend sends a Set-Cookie header containing a random string: `session_id=abcxyz`.
+  4. **Subsequent Requests:** Every time the browser makes a request, it biologically sends the `session_id` cookie. The backend looks up `abcxyz` in its Redis database, mathematically proves the user is logged in, and allows access.
+</Callout>
+
+This is highly secure but mathematically difficult to scale, because if you have 3 backend servers, you must synchronize the Session database across all of them.
 
 </ConceptTemplate>

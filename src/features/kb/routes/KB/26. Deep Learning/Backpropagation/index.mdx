@@ -1,54 +1,24 @@
 ---
 title: Backpropagation
-description: The mathematical algorithm used to train neural networks.
+description: The mathematical engine that allows neural networks to learn by calculating gradients backwards from the error.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Backpropagation">
+<ConceptTemplate title="Backpropagation">
 
-Backpropagation (short for "backward propagation of errors") is the fundamental algorithm used to train neural networks. While forward propagation is how a network *makes a guess*, backpropagation is how the network actually *learns from its mistakes*.
+Backpropagation (short for "backward propagation of errors") is the fundamental mathematical algorithm used to train neural networks. It is an efficient method for computing the gradient of the loss function with respect to every single weight in the network, using the **Chain Rule of Calculus**.
 
-<Callout icon="error" title="The Core Problem">
-  If a neural network predicts "Dog" but the image was a "Cat", the network knows it is wrong. But a deep network has millions of weights. Which specific weight caused the error? Should it be adjusted up or down? By how much? Backpropagation answers this using calculus.
+<Callout icon="tip" title="The Forward and Backward Pass">
+  Training involves two phases:
+  1. **Forward Pass:** The data flows through the network to generate a prediction. The prediction is compared to the ground truth to calculate the Error (Loss).
+  2. **Backward Pass:** Backpropagation calculates exactly how much each weight contributed to that Error by taking partial derivatives.
 </Callout>
 
-## The 4 Steps of Learning
+## The Mathematics
 
-<ComparisonTable 
-  headers={['Step', 'Action', 'Description']}
-  rows={[
-    ['1', 'Forward Pass', 'The input data passes through the network to generate a prediction (e.g., 0.2).'],
-    ['2', 'Calculate Loss', 'A Loss Function compares the prediction to the true target (e.g., 1.0) and computes the total error (e.g., 0.8).'],
-    ['3', 'Backward Pass', 'Using the Chain Rule of calculus, compute the partial derivative (Gradient) of the Loss with respect to every single weight in the network.'],
-    ['4', 'Gradient Descent', 'Slightly adjust the weights in the exact opposite direction of the gradient to minimize the loss for the next time.']
-  ]}
-/>
+1. Calculate the Loss ($L$) at the output layer.
+2. Use the Chain Rule to calculate the partial derivative of the Loss with respect to the output layer\'s weights ($\frac{\partial L}{\partial W_{out}}$).
+3. "Propagate" these error gradients backward to the previous layer.
+4. Repeat until you have the gradient for every single weight in the entire network. Once you have the gradients, you use an optimizer (like Gradient Descent) to slightly adjust the weights in the opposite direction of the gradient.
 
-## Gradient Descent
-
-Imagine the Loss Function as a rugged mountain landscape. The network wants to reach the absolute bottom of the valley (zero error). 
-Backpropagation calculates the slope of the mountain at the current position. Gradient descent tells the network to take a step downward.
-
-<ArchitectureDiagram chart={`
-graph TD
-  Loss[High Loss / Error]
-  
-  subgraph Gradient Descent
-    Step1(Calculate Slope / Derivative)
-    Step2(Update Weights: W = W - (Learning_Rate * Slope))
-  end
-  
-  Min[Global Minimum\n(Lowest Error)]
-  
-  Loss --> Step1
-  Step1 --> Step2
-  Step2 -- Loop until convergence --> Min
-`} />
-
-## The Vanishing Gradient Problem
-
-In very deep networks (many hidden layers), as the error is propagated backward layer by layer, the gradients get multiplied together. Because these numbers are often less than 1, multiplying them repeatedly causes the gradient to shrink exponentially until it "vanishes" to zero. When the gradient is zero, the earliest layers of the network completely stop learning. 
-
-This was solved historically by using the **ReLU** (Rectified Linear Unit) activation function instead of Sigmoid.
-
-</TechnologyTemplate>
+</ConceptTemplate>

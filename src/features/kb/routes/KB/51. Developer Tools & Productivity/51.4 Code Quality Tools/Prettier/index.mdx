@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Prettier
+description: An opinionated code formatter.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Prettier">
+<TechnologyTemplate 
+  title="Prettier"
+  subtitle="The undisputed formatting dictator"
+  logoUrl="https://prettier.io/icon.png"
+  description="Prettier is an 'opinionated' code formatter for JavaScript, TypeScript, CSS, and HTML. It mathematically stops all arguments over code style by strictly enforcing one universal format."
+  yearCreated={2017}
+  creator="James Long"
+  isOpenSource={true}
+  websiteUrl="https://prettier.io/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Prettier, developers used ESLint for both formatting *and* linting. This was mathematically chaotic, as ESLint's formatting rules were highly configurable and brittle.
 
-</ConceptTemplate>
+<Callout icon="warning" title="The Opinionated Philosophy">
+  Prettier is biologically arrogant by design. 
+  
+  It offers almost zero configuration options. You cannot tell Prettier to align your variables in a specific custom way. It mathematically parses your code and prints it back out exactly how *it* thinks it should look. By removing all choices, it eliminated 100% of code styling arguments across the entire global frontend ecosystem.
+</Callout>
+
+</TechnologyTemplate>

@@ -1,32 +1,25 @@
 ---
-title: Motion Planning
-description: "The process of detailing the exact physical movements (velocities, accelerations, and timings) required to execute a geometric path."
+title: Motion Planning & Trajectory Generation
+description: The process of breaking down a desired movement task into discrete motions that satisfy movement constraints and possibly optimize some aspect of the movement.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Motion Planning (Trajectory Generation)">
+<ConceptTemplate title="Motion Planning & Trajectory Generation">
 
-**Path Planning** and **Motion Planning** are often confused, but they are distinct steps in the robotics pipeline.
+**Path Planning** mathematically draws a line on a map from Point A to Point B. But a line is just geometry. 
 
-- **Path Planning** gives you a geometric line on a map. (e.g., "Go from X to Y to Z to avoid the wall").
-- **Motion Planning** takes that line and adds the physics of time, velocity, and acceleration. 
+**Motion Planning** takes that line and adds Time, Velocity, and Acceleration constraints. It answers the question: *"Exactly how fast should the wheels spin at millisecond 400 to follow this line without the robot physically tipping over?"*
 
-## Why Motion Planning is Necessary
-If Path Planning says, *"Move from Coordinate A to Coordinate B,"* you cannot simply tell the robot's motors to spin at 100% speed instantly. 
-
-If a 4,000-pound self-driving car instantly requests infinite acceleration, the tires will spin out. If it reaches Coordinate B and requests infinite deceleration, the passengers will fly through the windshield.
-
-Motion Planning converts the geometric path into a **Trajectory**—a smooth sequence of setpoints that respect the physical limits of the robot.
-
-## Velocity Profiles
-To move smoothly from A to B, Motion Planners generate Velocity Profiles.
-
-1. **Trapezoidal Profile**: The robot accelerates at a constant rate, cruises at a max velocity, and decelerates at a constant rate. (If you graph velocity over time, it looks like a trapezoid).
-2. **S-Curve Profile (Jerk Control)**: A trapezoidal profile has sudden "jerks" when acceleration starts and stops (spilling coffee in a self-driving car). An S-Curve smooths out the acceleration itself, resulting in buttery-smooth robotic movement.
-
-<Callout icon="tip" title="Dynamic Obstacles">
-Motion planning is also responsible for dynamic obstacle avoidance. If Path Planning gives a route down a hallway, and a human suddenly steps in front of the robot, the Motion Planner must instantly recalculate a localized trajectory (a "Local Planner") to swerve around the human, while still following the overall global path.
+<Callout icon="tip" title="The Jerk Constraint">
+  In physics, the derivative of Acceleration is called **Jerk**. 
+  
+  If a robot accelerates instantly from 0 to 10 mph, the Jerk is mathematically infinite. The robot's physical gears will violently grind and snap. Motion Planning algorithms mathematically generate smooth "S-Curve" velocity profiles to ensure that Acceleration ramps up slowly, keeping Jerk physically manageable.
 </Callout>
+
+## Obstacle Avoidance (Local Planning)
+
+The global path plan says "Go down the hallway." But suddenly, a human steps into the hallway. 
+
+The Local Motion Planner (like the **Dynamic Window Approach - DWA**) constantly runs at 20 Hz. It mathematically simulates 50 different arc-shaped trajectories the robot could drive in the next 1 second. It scores each trajectory (Penalizing driving near the human, rewarding driving toward the hallway goal), picks the best mathematical score, and executes it.
 
 </ConceptTemplate>

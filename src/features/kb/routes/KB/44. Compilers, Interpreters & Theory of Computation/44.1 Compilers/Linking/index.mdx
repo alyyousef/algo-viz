@@ -1,8 +1,24 @@
+---
+title: Linking
+description: The process of combining multiple compiled object files into a single executable binary.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Linking">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you compile a massive C++ video game, the compiler does not process the entire 1,000,000 lines of code at once. It mathematically compiles each `.cpp` file individually into an isolated binary chunk called an **Object File** (`.o` or `.obj`).
+
+If `player.cpp` calls a mathematical function `drawScreen()` which is physically located in `graphics.cpp`, the compiler leaves a blank placeholder in the `player.o` binary, essentially saying: *"I don't know where this function is in RAM, someone else needs to figure out the memory address later."*
+
+The **Linker** is the final tool in the toolchain. It mathematically stitches all the disparate Object Files together into one final `.exe` or `ELF` executable.
+
+<Callout icon="info" title="Static vs. Dynamic Linking">
+  In **Static Linking**, the linker physically copies the mathematical code of the standard library (like `printf`) directly into your `.exe`, making it massive but portable. In **Dynamic Linking**, the `.exe` just contains a mathematical pointer to a shared library file (`.dll` on Windows, `.so` on Linux) that the Operating System will load into RAM at runtime.
+</Callout>
+
+## The Linker's Mathematical Job
+
+1. **Symbol Resolution:** It matches every undefined function call in File A to the actual mathematical definition of that function in File B. If it can't find it, it throws the infamous `Undefined Reference to Symbol` Linker Error.
+2. **Relocation:** It mathematically shifts the memory addresses of the compiled code so that File B perfectly aligns after File A in the final contiguous binary file.
 
 </ConceptTemplate>

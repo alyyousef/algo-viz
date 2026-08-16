@@ -1,8 +1,23 @@
+---
+title: Path Tracing
+description: A computer graphics Monte Carlo method of rendering images of three-dimensional scenes such that the global illumination is faithful to reality.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Path tracing">
+<ConceptTemplate title="Path Tracing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Ray Tracing is the simulation of a single light bounce, **Path Tracing** is the brutal mathematical simulation of *infinite* light bounces. It is the holy grail of photorealism.
+
+<Callout icon="warning" title="Global Illumination">
+  In the real world, if you shine a red flashlight at a white wall inside a dark room, the white wall turns red. But the light *bounces* off that wall and faintly illuminates the floor with a soft red glow. 
+  
+  Standard Rasterisation cannot do this. Path Tracing achieves this **Global Illumination** by shooting a ray out of the camera, hitting the floor, and then randomly scattering 100 secondary rays in a hemisphere to mathematically "gather" the ambient light bouncing off the red wall.
+</Callout>
+
+## Monte Carlo Integration
+
+Because a ray could theoretically bounce forever, Path Tracing uses probability math (Monte Carlo Integration). The GPU randomly terminates the rays (Russian Roulette) to prevent infinite loops. 
+
+Because the rays scatter randomly, the resulting image is mathematically highly inaccurate if you only shoot 1 ray per pixel (it looks like massive TV static/noise). To fix this, you must shoot thousands of rays per pixel and mathematically average them out, or use AI Denoising algorithms to blur the static into a clean image.
 
 </ConceptTemplate>

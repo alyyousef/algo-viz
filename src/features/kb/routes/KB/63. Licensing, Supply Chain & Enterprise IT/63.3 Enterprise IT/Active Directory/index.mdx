@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Active Directory
+description: A directory service developed by Microsoft for Windows domain networks. It is included in most Windows Server operating systems as a set of processes and services.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Active Directory">
+<TechnologyTemplate 
+  title="Active Directory (AD)"
+  subtitle="The Identity Brain of the Enterprise"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Microsoft_Active_Directory.svg/512px-Microsoft_Active_Directory.svg.png"
+  description="Active Directory is the biological central nervous system of a corporation. It mathematically stores all user accounts, passwords, and permissions."
+  yearCreated={1999}
+  creator="Microsoft"
+  isOpenSource={false}
+  websiteUrl="https://learn.microsoft.com/en-us/windows-server/identity/active-directory-domain-services"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you sit down at a random Dell computer in a corporate office and type in your password, how does the computer mathematically know who you are?
 
-</ConceptTemplate>
+It biologically asks the **Active Directory Domain Controller**. AD is a massive, hierarchical mathematical database that uses the Kerberos protocol to mathematically authenticate users. If a hacker biologically gains "Domain Admin" privileges in Active Directory, they mathematically own the entire corporation.
+
+</TechnologyTemplate>

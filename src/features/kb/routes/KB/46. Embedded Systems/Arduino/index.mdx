@@ -1,8 +1,34 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Arduino
+description: An open-source hardware and software company, project, and user community that designs and manufactures single-board microcontrollers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Arduino">
+<TechnologyTemplate 
+  title="Arduino"
+  subtitle="The gateway drug to embedded systems"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Arduino_Logo.svg/512px-Arduino_Logo.svg.png"
+  description="Arduino completely revolutionized the embedded industry by taking brutally complex Bare-Metal C programming and wrapping it in an incredibly simple, beginner-friendly C++ abstraction layer."
+  yearCreated={2005}
+  creator="Massimo Banzi & Team"
+  isOpenSource={true}
+  websiteUrl="https://www.arduino.cc/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before 2005, if you wanted to blink an LED, you had to read a 500-page datasheet, buy a $150 proprietary programmer cable, and manually calculate hexadecimal RAM addresses to flip physical hardware bits. 
 
-</ConceptTemplate>
+Arduino mathematically abstracted all of that away with a single C++ function: `digitalWrite(13, HIGH)`.
+
+<Callout icon="info" title="The Hardware vs The Framework">
+  "Arduino" is actually two different things:
+  1. **The Hardware:** The physical blue circuit boards (like the Arduino Uno, which runs on an 8-bit Microchip ATmega328P).
+  2. **The Framework:** The open-source C++ library (`setup()` and `loop()`). Today, the Arduino Framework is mathematically ported to almost every major microcontroller in existence, meaning you can write Arduino code to control powerful 32-bit chips that Arduino didn't even manufacture.
+</Callout>
+
+## The Abstraction Cost
+
+While Arduino is brilliant for education and rapid prototyping, it is mathematically inefficient. 
+
+A standard `digitalWrite()` call executes roughly 50 machine instructions to check boundaries and map pins safely. Writing directly to the Bare-Metal memory address takes exactly 1 machine instruction. Therefore, the Arduino framework is rarely used in professional, mass-produced consumer electronics where power and speed are critical.
+
+</TechnologyTemplate>

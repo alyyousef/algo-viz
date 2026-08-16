@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: HPC job schedulers (Slurm)
+description: A highly scalable, open-source cluster management and job scheduling system for large and small Linux clusters.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="HPC job schedulers (Slurm)">
+<TechnologyTemplate 
+  title="Slurm"
+  subtitle="The Traffic Cop of Supercomputers"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Slurm_Workload_Manager.svg/512px-Slurm_Workload_Manager.svg.png"
+  description="Slurm is the dominant open-source workload manager that mathematically allocates resources across the massive nodes of a supercomputer cluster."
+  yearCreated={2002}
+  creator="Livermore Computing"
+  isOpenSource={true}
+  websiteUrl="https://slurm.schedmd.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If 50 different scientists mathematically want to run 50 different massive simulations on a single 10,000-node supercomputer, chaos would biologically ensue.
 
-</ConceptTemplate>
+**Slurm** solves this. A scientist submits a "Job Script" mathematically defining their requirements (`I need 400 CPUs and 50 GPUs for 48 hours`). Slurm puts the job in a queue. It then biologically analyzes the cluster, waits for other jobs to finish, and the exact millisecond the hardware becomes available, it mathematically wakes up the scientist's script on exactly those specific 400 nodes, ensuring 100% biological utilization of the multi-million-dollar supercomputer.
+
+</TechnologyTemplate>

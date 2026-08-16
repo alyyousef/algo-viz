@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: GNU Compiler Collection (GCC)
+description: An open-source optimizing compiler produced by the GNU Project supporting various programming languages, hardware architectures and operating systems.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="GCC">
+<TechnologyTemplate 
+  title="GNU Compiler Collection (GCC)"
+  subtitle="The compiler that built the open-source world"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/GNU_Compiler_Collection_logo.svg/512px-GNU_Compiler_Collection_logo.svg.png"
+  description="GCC is arguably one of the most important pieces of software ever written. Released by Richard Stallman in 1987, it was the first free compiler, and it became the mathematical foundation upon which the entire Linux kernel and open-source ecosystem was built."
+  yearCreated={1987}
+  creator="Richard Stallman (GNU Project)"
+  isOpenSource={true}
+  websiteUrl="https://gcc.gnu.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+GCC is a behemoth. It is mathematically capable of compiling C, C++, Objective-C, Fortran, Ada, Go, and D, and generating highly optimized machine code for almost every CPU architecture on Earth.
 
-</ConceptTemplate>
+<Callout icon="info" title="The Monolithic Architecture">
+  For decades, GCC was intentionally designed as a mathematically monolithic block of code. Richard Stallman did this on purpose to prevent proprietary tech companies from using GCC's internal parsers in closed-source software. While politically successful, it made the GCC codebase notoriously difficult to maintain or use as a library.
+</Callout>
+
+## The Challenge from LLVM
+
+Because GCC was mathematically monolithic, it was impossible for companies like Apple to extract just the C++ Parser to build IDE tools (like code completion or syntax highlighting). 
+
+This architectural decision is what ultimately caused Apple and Google to heavily fund **LLVM and Clang**, a highly modular modern compiler infrastructure, which has since overtaken GCC in many modern toolchains.
+
+</TechnologyTemplate>

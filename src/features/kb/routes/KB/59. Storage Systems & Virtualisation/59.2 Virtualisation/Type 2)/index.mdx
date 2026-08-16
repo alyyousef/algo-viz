@@ -1,8 +1,13 @@
+---
+title: Type 2 Hypervisor
+description: Hosted hypervisors that run on a conventional operating system just as other computer programs do.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Type 2)">
+<ConceptTemplate title="Type 2 Hypervisor (Hosted)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Type 2 Hypervisor** (like VirtualBox or VMware Workstation) is just a standard biological software application.
+
+You install a normal OS (like Windows 11), and then install the Hypervisor like you would install Microsoft Word. When the VM tries to access the CPU, the request mathematically passes through the Hypervisor, then through the Host OS, and finally to the hardware. This causes significant biological latency and performance overhead, making Type 2 strictly for local developer laptops, never for production data centers.
 
 </ConceptTemplate>

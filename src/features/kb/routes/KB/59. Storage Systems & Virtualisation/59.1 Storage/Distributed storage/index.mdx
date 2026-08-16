@@ -1,8 +1,13 @@
+---
+title: Distributed storage
+description: A computer network where information is stored on more than one node, often in a replicated fashion.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Distributed storage">
+<ConceptTemplate title="Distributed Storage">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Hardware inevitably dies. If a single SAN or NAS hardware controller catches fire, the entire company biologically goes offline.
+
+**Distributed Storage** mathematically solves this by linking dozens (or thousands) of standard, cheap commodity servers together into a massive cluster. When you upload a file, the software mathematically chops the file into pieces and replicates those pieces across 3 different servers in 3 different server racks. You can physically hit one of the servers with a hammer, and the cluster will biologically instantly self-heal using the surviving replicas.
 
 </ConceptTemplate>

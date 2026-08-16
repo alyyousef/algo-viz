@@ -1,8 +1,26 @@
+---
+title: Nmap (Network Mapper)
+description: The industry-standard open-source utility for network discovery and security auditing.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Nmap">
+<ConceptTemplate title="Nmap (Network Mapper)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Nmap is a free and open-source utility used by network administrators and penetration testers to discover hosts and services on a computer network. It does this by sending mathematically crafted packets to target machines and analyzing the highly specific ways the targets respond.
+
+<Callout icon="info" title="The Hollywood Hacker Tool">
+  Nmap is so ubiquitous in real-world hacking that it has been featured in movies like *The Matrix Reloaded*, *The Bourne Ultimatum*, and *Snowden* as the primary tool used by the protagonists.
+</Callout>
+
+## Core Capabilities
+
+<ComparisonTable 
+  headers={['Scan Type', 'Flag', 'Mechanism']}
+  rows={[
+    ['TCP SYN Scan (Stealth)', '`-sS`', 'Sends a SYN packet. If the server replies with SYN/ACK, Nmap knows the port is open, but immediately sends an RST to tear down the connection before it fully opens. This avoids logging on older systems.'],
+    ['Version Detection', '`-sV`', 'Once a port is found, Nmap sends specific probes (like an HTTP GET request to a weird port) and matches the response against a massive database to mathematically deduce exactly what software (e.g., Apache 2.4.41) is running.'],
+    ['OS Detection', '`-O`', 'Different operating systems implement the TCP/IP stack slightly differently. By sending malformed packets and analyzing the mathematically unique quirks in the response (TCP Sequence generation, Window size), Nmap can guess the exact OS version.']
+  ]}
+/>
 
 </ConceptTemplate>

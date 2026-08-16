@@ -1,64 +1,28 @@
 ---
 title: Transformers
-description: The architecture that revolutionized Natural Language Processing and powers ChatGPT.
+description: The architecture that powers LLMs, replacing recurrence with parallelizable self-attention.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Transformers">
+<ConceptTemplate title="Transformers">
 
-Introduced by Google in the landmark 2017 paper *"Attention Is All You Need"*, the Transformer is a deep learning architecture that fundamentally changed Artificial Intelligence. It completely replaced older models (like RNNs and LSTMs) and serves as the architectural foundation for all modern Large Language Models (LLMs) like GPT-4, Claude, and LLaMA.
+Introduced by Google researchers in the seminal 2017 paper *"Attention Is All You Need"*, the Transformer architecture completely discarded the sequential nature of RNNs. Instead, it processes all tokens in a sequence simultaneously using **Self-Attention mechanisms**.
 
-<Callout icon="tip" title="No Recurrence">
-  Before Transformers, networks read text sequentially, one word at a time (like humans do). This was slow and forgot early context. 
-  
-  Transformers read the **entire sentence at once** in parallel, making them incredibly fast to train on massive GPU clusters.
+This architecture powers ChatGPT (Generative Pre-trained Transformer), Claude, and essentially all state-of-the-art AI systems today.
+
+<Callout icon="success" title="The Hardware Advantage">
+  Because RNNs are sequential, you cannot compute step 5 until you finish step 4. This made them terrible for GPUs. Transformers process the entire sequence in parallel via massive matrix multiplications, which is exactly what modern GPUs (like Nvidia H100s) are built to do at astronomical speeds.
 </Callout>
 
-## The Secret Sauce: Self-Attention
-
-The core innovation of the Transformer is the **Self-Attention Mechanism**. 
-
-When processing a word, Self-Attention allows the model to look at every other word in the sentence to gather context. For example, in the sentence *"The bank of the river"*, the model uses attention to know "bank" means land, not a financial institution, by paying heavy attention to the word "river".
+## Core Innovations
 
 <ComparisonTable 
-  headers={['Component', 'Function']}
+  headers={['Innovation', 'Description']}
   rows={[
-    ['Positional Encoding', 'Because words are processed in parallel, the model has no concept of word order. Positional Encoding injects math to tell the model "this word came first, this word came second."'],
-    ['Multi-Head Attention', 'Runs multiple self-attention mechanisms in parallel, allowing the model to focus on different things (e.g., Head 1 focuses on grammar, Head 2 focuses on emotion).'],
-    ['Feed-Forward Network', 'A standard neural network applied to each position separately and identically to process the output of the attention mechanism.']
+    ['Self-Attention', 'Allows each word in a sequence to mathematically "look at" every other word to gather context. For example, understanding that "bank" means a river bank versus a financial bank based on the surrounding words.'],
+    ['Positional Encoding', 'Because the network ingests all words simultaneously, it has no concept of order. Positional encodings mathematically inject sine/cosine waves into the word embeddings so the network knows the position of each word.'],
+    ['Multi-Head Attention', 'Running the self-attention mechanism multiple times in parallel, allowing the network to simultaneously focus on different types of relationships (e.g., grammar vs semantics).']
   ]}
 />
 
-## Architecture
-
-A standard Transformer consists of an **Encoder** (reads the input and builds context) and a **Decoder** (generates the output word-by-word).
-
-<ArchitectureDiagram chart={`
-graph TD
-  Input["Input: 'Bonjour'"]
-  
-  subgraph Encoder Block
-    Attn1[Multi-Head Self Attention]
-    FF1[Feed Forward Network]
-    Attn1 --> FF1
-  end
-  
-  subgraph Decoder Block
-    Attn2[Masked Self Attention]
-    Attn3[Encoder-Decoder Attention]
-    FF2[Feed Forward Network]
-    Attn2 --> Attn3 --> FF2
-  end
-  
-  Output["Output: 'Hello'"]
-  
-  Input --> Attn1
-  FF1 -- Context Vectors --> Attn3
-  FF2 --> Output
-`} />
-
-## Why it changed everything
-
-Transformers aren't just for text anymore. Because they are so good at finding patterns in sequences, researchers have successfully applied Transformer architectures to **Images** (Vision Transformers), **Audio**, and even **Protein Folding** (AlphaFold).
-
-</TechnologyTemplate>
+</ConceptTemplate>

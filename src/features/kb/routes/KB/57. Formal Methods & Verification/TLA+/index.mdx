@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: TLA+
+description: A formal specification language developed by Leslie Lamport to design, model, document, and verify concurrent systems.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="TLA+">
+<TechnologyTemplate 
+  title="TLA+"
+  subtitle="The Logic of Time and Action"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Tla-logo.svg/512px-Tla-logo.svg.png"
+  description="Invented by Turing Award winner Leslie Lamport, TLA+ is the mathematical industry standard for verifying massive, distributed cloud systems."
+  yearCreated={1999}
+  creator="Leslie Lamport"
+  isOpenSource={true}
+  websiteUrl="https://lamport.azurewebsites.net/tla/tla.html"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+TLA+ is biologically heavily used by Amazon Web Services (AWS) to verify S3 and DynamoDB.
 
-</ConceptTemplate>
+You do not write C++ in TLA+. You write mathematical formulas that describe the *architecture* of your system. You describe how Server A talks to Server B. The TLA+ Model Checker then mathematically explores every single possible network delay, server crash, and dropped packet. It mathematically guarantees that even if 5 data centers catch fire simultaneously, your database will never biologically corrupt user data.
+
+</TechnologyTemplate>

@@ -1,8 +1,28 @@
+---
+title: Network Security
+description: The foundational discipline of protecting the underlying networking infrastructure from unauthorized access, misuse, or theft.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Network security">
+<ConceptTemplate title="Network Security">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before you can secure the applications or the data, you must secure the digital highways they travel on. **Network Security** is the practice of implementing hardware and software controls to protect the usability and integrity of your network.
+
+It relies on a layered, mathematical approach called "Defense in Depth." If an attacker bypasses the perimeter firewall, they should immediately hit a secondary internal firewall, an Intrusion Prevention System, and strict VLAN routing rules.
+
+<Callout icon="warning" title="The Death of the Perimeter">
+  Historically, networks were built like castles: a hard outer shell (the firewall) and a soft, trusted inside. With the rise of cloud computing and remote work, this model is mathematically broken. An employee\'s laptop at a coffee shop is inside the "perimeter." This necessitated the shift to Zero Trust Architecture.
+</Callout>
+
+## Core Network Security Technologies
+
+<ComparisonTable 
+  headers={['Technology', 'Function']}
+  rows={[
+    ['Next-Generation Firewalls (NGFW)', 'Unlike old firewalls that just blocked IP addresses and ports, NGFWs perform Deep Packet Inspection (DPI) to mathematically analyze the application-level data (e.g., blocking Facebook traffic while allowing Salesforce traffic).'],
+    ['Intrusion Prevention Systems (IPS)', 'Actively scans network traffic for known malware signatures and instantly drops the packets before they reach the target server.'],
+    ['Network Access Control (NAC)', 'Mathematically verifies the security posture of a device before letting it join the network. (e.g., "This laptop doesn\'t have antivirus installed; put it in the Quarantine VLAN").']
+  ]}
+/>
 
 </ConceptTemplate>

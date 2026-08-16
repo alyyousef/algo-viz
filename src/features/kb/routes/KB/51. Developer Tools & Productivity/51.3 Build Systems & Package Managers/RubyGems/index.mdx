@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: RubyGems
+description: A package manager for the Ruby programming language that provides a standard format for distributing Ruby programs and libraries.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="RubyGems">
+<TechnologyTemplate 
+  title="RubyGems"
+  subtitle="The foundation of the Rails ecosystem"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Ruby_logo.svg/512px-Ruby_logo.svg.png"
+  description="RubyGems is the mathematical package manager for Ruby. The packages themselves are universally referred to as 'Gems'."
+  yearCreated={2004}
+  creator="Chad Fowler & Richard Kilmer"
+  isOpenSource={true}
+  websiteUrl="https://rubygems.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+RubyGems mathematically predates `npm` and `pip`, and its elegant CLI design heavily influenced the entire modern package management ecosystem.
 
-</ConceptTemplate>
+<Callout icon="success" title="Bundler">
+  While RubyGems installs packages, the true mathematical power of Ruby dependency management comes from **Bundler**. 
+  
+  Invented in 2010, Bundler introduced the `Gemfile` and the `Gemfile.lock`. It was the very first tool in software engineering history to mathematically prove the necessity of lockfiles to prevent dependency drift across environments, paving the way for `yarn.lock` and `package-lock.json`.
+</Callout>
+
+</TechnologyTemplate>

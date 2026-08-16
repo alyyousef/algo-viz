@@ -1,34 +1,27 @@
 ---
-title: OTA Updates (Over-The-Air)
-description: "The wireless delivery of new software, firmware, or other data to mobile devices and IoT endpoints."
+title: Over-The-Air (OTA) Updates
+description: The wireless delivery of new software, firmware, or other data to mobile devices or IoT hardware.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 <ConceptTemplate title="Over-The-Air (OTA) Updates">
 
-In traditional embedded engineering, if a bug was found in a pacemaker or a car's engine controller, the manufacturer had to issue a massive, expensive physical recall.
+If an engineer discovers a critical security vulnerability in the C code of an IoT door lock, the company mathematically cannot recall 500,000 door locks. They must wirelessly beam a new `.bin` firmware file directly into the physical Flash memory of every lock in the world. 
 
-**Over-The-Air (OTA)** updates changed the paradigm. Devices can now download patches over Wi-Fi or Cellular networks and automatically flash their own microcontrollers, fixing bugs or adding new features while the device sits in the customer's driveway.
+This is an **Over-The-Air (OTA) Update**.
+
+<Callout icon="error" title="The Brick Risk">
+  OTA is the most mathematically dangerous operation in embedded systems. If a door lock is downloading the new firmware over Wi-Fi and the homeowner's router crashes halfway through, the firmware file is mathematically corrupted. If the device tries to boot corrupted firmware, it becomes a permanent "brick," physically destroying the device forever.
+</Callout>
 
 ## The A/B Partition Architecture
-Flashing firmware is dangerous. If the device loses battery power when the update is 50% written to memory, the device is "bricked"—it no longer has a functional operating system and is permanently dead.
 
-To prevent this, almost all OTA architectures use an **A/B Partition Scheme**.
+To prevent bricking, all modern, professional IoT devices mathematically divide their physical Flash memory exactly in half (Partition A and Partition B).
 
-<ComparisonTable 
-  headers={['Step', 'Action', 'Memory State']} 
-  rows={[
-    ['1. Normal Operation', 'The device runs off Partition A. Partition B is empty.', 'Running: A'],
-    ['2. Downloading', 'The device continues running normally on Partition A, while secretly downloading the new update into Partition B in the background.', 'Running: A | Writing: B'],
-    ['3. Reboot', 'The device reboots and the Bootloader is instructed to switch pointers and boot from Partition B.', 'Running: B'],
-    ['4. Fallback (Safety)', 'If Partition B crashes on boot, the Bootloader automatically switches the pointer back to Partition A, restoring the device to its previous working state.', 'Reverted to A']
-  ]} 
-/>
-
-## Cryptographic Security
-Because an OTA update is literally rewriting the core brain of the device, it is the ultimate target for hackers.
-
-To prevent a hacker from pushing malicious firmware, the binary payload must be cryptographically signed (usually using Asymmetric Encryption like RSA or ECDSA). The device's Bootloader will mathematically verify the signature against a hardcoded public key before it ever attempts to write the payload to memory.
+1. The device is currently running firmware from Partition A.
+2. The OTA update begins. The device downloads the new firmware and writes it exclusively into Partition B.
+3. The device mathematically verifies the SHA-256 cryptographic hash of Partition B to ensure perfection.
+4. The Bootloader is mathematically instructed to boot from Partition B on the next restart.
+5. If Partition B immediately crashes upon boot, the Bootloader automatically detects the failure and physically rolls back to Partition A, saving the device from destruction.
 
 </ConceptTemplate>

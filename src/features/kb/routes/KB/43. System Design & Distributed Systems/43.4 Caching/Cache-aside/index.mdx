@@ -1,8 +1,29 @@
+---
+title: Cache-Aside (Lazy Loading)
+description: A caching pattern where the application code is responsible for checking the cache, loading data from the database if there's a cache miss, and then updating the cache.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cache-aside">
+<ConceptTemplate title="Cache-Aside (Lazy Loading)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Cache-Aside** (also known as Lazy Loading) is the most common mathematical caching strategy in the world. It is the default approach for 95% of web applications.
+
+In this architecture, the Cache server (e.g., Redis) and the Database (e.g., PostgreSQL) have absolutely no knowledge of each other. The Application code acts as the mathematical mediator between the two.
+
+<Callout icon="info" title="The Data Flow">
+  1. The App asks Redis: "Do you have User #123?" (Cache Hit = Return to User immediately).
+  2. If Redis says "No" (Cache Miss), the App queries PostgreSQL.
+  3. The App receives the data from PostgreSQL, mathematically writes a copy of it into Redis, and *then* returns it to the User.
+</Callout>
+
+## Mathematical Trade-Offs
+
+<ComparisonTable 
+  headers={['Pros', 'Cons']}
+  rows={[
+    ['Resilient to Cache Failure: If Redis mathematically crashes, the App just experiences a 100% Miss rate and safely falls back to querying the DB directly.', 'The First Penalty: The very first user to request a piece of data always experiences the maximum latency (Cache check + DB query + Cache Write).'],
+    ['Efficient RAM Usage: Data is only cached if a user actually requests it. You never waste RAM caching data that no one looks at.', 'Stale Data: If a separate process updates the DB, the Cache is mathematically unaware, serving stale data until the TTL expires.']
+  ]}
+/>
 
 </ConceptTemplate>

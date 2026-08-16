@@ -1,8 +1,17 @@
+---
+title: Candidate generation
+description: The first stage of a modern recommendation system, designed to rapidly retrieve a small subset of hundreds of items from a massive corpus of millions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Candidate generation">
+<ConceptTemplate title="Candidate Generation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you open YouTube, the recommendation system mathematically has 50 milliseconds to pick 10 videos out of a database of 2 Billion videos. It is biologically impossible to run complex AI models on all 2 Billion videos.
+
+<Callout icon="warning" title="The Funnel Architecture">
+  The system uses a mathematical funnel. **Candidate Generation** is the top of the funnel.
+  
+  It uses highly biological, lightweight algorithms (like Collaborative Filtering or approximate nearest neighbors) to ruthlessly filter the 2 Billion videos down to a pool of ~500 "Candidates". These 500 videos are roughly relevant to you, mathematically eliminating 99.9% of the database in less than 10 milliseconds.
+</Callout>
 
 </ConceptTemplate>

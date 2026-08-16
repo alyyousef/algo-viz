@@ -1,8 +1,17 @@
+---
+title: Databases
+description: An organized collection of data, generally stored and accessed electronically from a computer system.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Databases">
+<ConceptTemplate title="Databases (Interview Prep)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A system design interview will heavily focus on the **Database Layer**.
+
+<Callout icon="warning" title="SQL vs NoSQL">
+  You must mathematically justify your database choice.
+  
+  If the data has strict financial relationships, you must choose a Relational DB (PostgreSQL) and discuss ACID transactions and foreign keys. If the data is unstructured biological telemetry logs arriving at 100,000 requests per second, you must mathematically pivot to a NoSQL DB (Cassandra or MongoDB) and discuss eventual consistency and document schemas.
+</Callout>
 
 </ConceptTemplate>

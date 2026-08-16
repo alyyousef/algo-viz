@@ -1,8 +1,27 @@
+---
+title: Decidability
+description: The property of a formal system or logical problem wherein there exists an effective method for determining whether a given formula is a theorem of the system or whether the problem has a solution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Decidability">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Computability Theory, a problem is mathematically considered **Decidable** if it is possible to construct a Turing Machine that will always halt and return a correct YES or NO answer for every single possible input.
+
+If a problem might cause the Turing Machine to loop forever without ever finding the answer, the problem is mathematically **Undecidable**.
+
+<Callout icon="info" title="The Subset Relationship">
+  The Halting Problem is the most famous example of an Undecidable problem. Alan Turing proved that no algorithm can reliably output YES or NO for every possible input program.
+</Callout>
+
+## Semi-Decidability
+
+There is a mathematical grey area called **Semi-Decidability** (or Turing-Recognizability).
+
+For a Semi-Decidable problem:
+- If the true answer is YES, the computer will mathematically find it and halt.
+- If the true answer is NO, the computer might mathematically loop forever, fruitlessly searching for a YES that doesn't exist. You will never know if the answer is actually NO, or if the computer just needs more time.
+
+*Example: "Does the number 7 exist in the digits of Pi?" We can write a program to search Pi. If it finds a 7, it halts (YES). If Pi didn't contain a 7, our program would loop until the universe died.*
 
 </ConceptTemplate>

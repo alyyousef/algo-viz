@@ -1,8 +1,30 @@
+---
+title: Leader Election
+description: The process of designating a single process as the organizer of some task distributed among several computers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Leader election">
+<ConceptTemplate title="Leader Election">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a distributed cluster of 5 identical Database Replicas, they cannot all mathematically accept Writes at the same time, or they will overwrite each other's data and destroy the system. They must agree on a single **Leader**.
+
+**Leader Election** is the mathematical consensus process where a cluster of independent nodes communicates over the network to democratically agree on which specific node is in charge.
+
+<Callout icon="error" title="The Split-Brain Problem">
+  If the network cord between Node A and Node B is mathematically cut, Node A might think the Leader died, and elect itself. Now you have two Leaders simultaneously accepting conflicting writes. This is called a "Split-Brain," and it is the most terrifying scenario in distributed systems.
+</Callout>
+
+## Consensus Algorithms
+
+To prevent Split-Brain, Leader Election algorithms strictly enforce a mathematical **Quorum** (usually an odd number of nodes, requiring a simple majority to win an election).
+
+<ComparisonTable 
+  headers={['Algorithm', 'Description', 'Real-World Usage']}
+  rows={[
+    ['Paxos', 'The original, highly mathematical consensus algorithm. It is notoriously complex and difficult for humans to understand or implement correctly.', 'Google Spanner, Amazon DynamoDB (originally).'],
+    ['Raft', 'Created specifically to be mathematically equivalent to Paxos in safety, but drastically easier for humans to understand and implement.', 'Etcd (the brain of Kubernetes), Consul, modern MongoDB.'],
+    ['Zookeeper Atomic Broadcast (ZAB)', 'A specialized consensus protocol built exclusively for Apache ZooKeeper.', 'Apache Kafka (legacy architecture).']
+  ]}
+/>
 
 </ConceptTemplate>

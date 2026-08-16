@@ -1,8 +1,24 @@
+---
+title: Gossip Protocols
+description: A class of computer-to-computer communication protocols based on the way epidemics spread.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gossip protocols">
+<ConceptTemplate title="Gossip Protocols">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a massive distributed system with 10,000 servers (like Amazon's Dynamo or Apache Cassandra), having a central "Master Server" mathematically track the health of every single node is impossible; the Master would become a massive bottleneck.
+
+**Gossip Protocols** (also known as Epidemic Protocols) solve this by using decentralized, randomized mathematical communication—exactly how a rumor spreads through a high school or a virus spreads through a population.
+
+<Callout icon="success" title="Mathematical Convergence">
+  Because exponential mathematical growth is so powerful, a rumor starting at 1 node in a 10,000-node cluster will mathematically reach every single node in just `O(log N)` rounds of communication (usually less than a second).
+</Callout>
+
+## How it Works
+
+1. **Random Selection:** Every second, Node A mathematically selects 1 or 2 random peers from its known list.
+2. **State Sync:** Node A connects to the random peers and swaps "Gossip State" (e.g., "I saw Node 50 crash 2 seconds ago. I saw Node 102 boot up 5 seconds ago").
+3. **Exponential Spread:** In the next second, those 2 peers pick 2 random peers, spreading the news to 4, then 8, then 16.
+4. **Result:** Without any central server, the entire 10,000-node cluster mathematically achieves a unified view of which servers are healthy and which are dead.
 
 </ConceptTemplate>

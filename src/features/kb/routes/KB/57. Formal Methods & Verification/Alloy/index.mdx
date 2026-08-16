@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Alloy
+description: A declarative specification language for expressing complex structural constraints and behavior in a software system.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Alloy">
+<TechnologyTemplate 
+  title="Alloy"
+  subtitle="Lightweight Relational Modeling"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Alloy_logo.png/512px-Alloy_logo.png"
+  description="Alloy is a lightweight formal methods tool mathematically designed by MIT to find logical flaws in software designs before a single line of code is written."
+  yearCreated={1997}
+  creator="Daniel Jackson (MIT)"
+  isOpenSource={true}
+  websiteUrl="https://alloytools.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While TLA+ is mathematically terrifying and requires months to learn, Alloy is biologically easy.
 
-</ConceptTemplate>
+It uses simple relational logic. If you are designing an Access Control system, you write a short Alloy script detailing the rules (`Users can belong to Groups`, `Only Admins can delete Files`). You hit a button, and the Alloy Analyzer mathematically attempts to find a loophole where a normal User can delete a File. If it finds one, it biologically draws a visual graph showing you exactly how the exploit works.
+
+</TechnologyTemplate>

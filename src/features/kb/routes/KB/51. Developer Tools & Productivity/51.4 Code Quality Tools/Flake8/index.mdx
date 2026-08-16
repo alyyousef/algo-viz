@@ -1,8 +1,27 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Flake8
+description: A wrapper around PyFlakes, pycodestyle, and McCabe scripts for Python.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Flake8">
+<TechnologyTemplate 
+  title="Flake8"
+  subtitle="The fast Python linter"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
+  description="Flake8 is the historical competitor to Pylint. Instead of doing deep, slow mathematical type inference, Flake8 focuses on blazing-fast style and syntax checking."
+  yearCreated={2010}
+  creator="Tarek Ziadé"
+  isOpenSource={true}
+  websiteUrl="https://flake8.pycqa.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Pylint is mathematically heavy; it practically executes your code to check for complex inheritance errors. 
 
-</ConceptTemplate>
+Flake8 is just a fast wrapper around three tools:
+1. **PyFlakes:** Checks for logical errors (unused imports, syntax errors).
+2. **pycodestyle:** Checks for PEP-8 formatting compliance.
+3. **McCabe:** Calculates the mathematical Cyclomatic Complexity of your functions (warning you if a function has too many `if/else` branches).
+
+Because it is so fast, Flake8 became the absolute standard for Python CI/CD pipelines until the recent invention of Ruff.
+
+</TechnologyTemplate>

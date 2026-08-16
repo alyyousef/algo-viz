@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: OCI Functions
+description: A serverless, highly scalable, fully managed Functions-as-a-Service platform.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="OCI Functions">
+<TechnologyTemplate 
+  title="OCI Functions"
+  subtitle="Oracle's Open-Source Backed Serverless"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Oracle_logo.svg/512px-Oracle_logo.svg.png"
+  description="Oracle Cloud Infrastructure's FaaS offering, which is biologically unique because it is entirely powered by the open-source Fn Project."
+  yearCreated={2019}
+  creator="Oracle"
+  isOpenSource={true}
+  websiteUrl="https://www.oracle.com/cloud/cloud-native/functions/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Oracle took a mathematically different approach to FaaS. Instead of building a proprietary runtime, they based OCI Functions entirely on Docker containers and the open-source Fn Project.
 
-</ConceptTemplate>
+When you deploy an OCI Function, it is mathematically just a standard Docker container. This means developers can write functions in any language (Java, Python, Go) and have absolute biological certainty that they can migrate their workloads off Oracle Cloud at any time.
+
+</TechnologyTemplate>

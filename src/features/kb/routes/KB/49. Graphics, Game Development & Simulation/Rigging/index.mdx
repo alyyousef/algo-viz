@@ -1,8 +1,27 @@
+---
+title: Skeletal Rigging
+description: "A technique in computer animation in which a character is represented in two parts: a surface representation used to draw the character, and a hierarchical set of interconnected bones used to animate the mesh."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rigging">
+<ConceptTemplate title="Skeletal Rigging">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A 3D character is just a massive array of 50,000 triangles (the Mesh). If you want the character to bend its elbow, mathematically modifying the XYZ coordinates of 50,000 individual triangles by hand every frame is impossible.
+
+This is solved via **Skeletal Rigging**.
+
+<Callout icon="warning" title="Bones and Weight Painting">
+  An artist creates an invisible mathematical skeleton (Armature) inside the 3D mesh. 
+  
+  The artist then performs **Weight Painting**. They mathematically assign every single triangle in the mesh a percentage of influence to a specific bone. 
+  - The bicep triangles are weighted 100% to the Upper_Arm bone.
+  - The elbow triangles are mathematically split: 50% weighted to the Upper_Arm bone, and 50% to the Forearm bone.
+</Callout>
+
+## Skeletal Mesh Deformation
+
+In the game engine, the programmer only rotates the invisible Forearm Bone. 
+
+The engine's Vertex Shader mathematically calculates the transformation matrix of the bone, looks at the Weight Paint data, and instantly deforms the 50,000 physical triangles of the mesh to follow the bone. Because the elbow triangles are weighted 50/50, they mathematically stretch and compress perfectly, simulating human skin and muscle.
 
 </ConceptTemplate>

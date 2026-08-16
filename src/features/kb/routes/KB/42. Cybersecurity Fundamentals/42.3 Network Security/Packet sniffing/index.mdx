@@ -1,8 +1,23 @@
+---
+title: Packet Sniffing
+description: The interception and logging of traffic passing over a digital network.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Packet sniffing">
+<ConceptTemplate title="Packet Sniffing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you send data over a network (like loading a webpage or sending an email), that data is chopped up into thousands of tiny mathematical pieces called **Packets**. 
+
+**Packet Sniffing** (or Network Analysis) is the act of using software (like **Wireshark** or `tcpdump`) to capture these raw packets off the wire and reassemble them to read the data inside. 
+
+<Callout icon="success" title="The Death of Plaintext">
+  Historically, packet sniffing was devastating. If someone logged into a website on public WiFi, a hacker sniffing the airwaves could literally read their password in plaintext. The universal adoption of HTTPS (TLS encryption) mathematically broke this attack. Today, a packet sniffer only sees encrypted gibberish.
+</Callout>
+
+## Promiscuous Mode
+
+By default, a computer's Network Interface Card (NIC) ignores all packets on the network unless the packet is mathematically addressed directly to its specific MAC address. 
+
+To sniff a network effectively, the NIC must be placed into **Promiscuous Mode** (or Monitor Mode for WiFi). In this mode, the hardware mathematically passes *every single packet* it sees up to the CPU for the sniffing software to record, regardless of who it was addressed to.
 
 </ConceptTemplate>

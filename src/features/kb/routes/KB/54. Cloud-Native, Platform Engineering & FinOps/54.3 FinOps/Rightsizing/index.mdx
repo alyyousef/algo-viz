@@ -1,8 +1,19 @@
+---
+title: Rightsizing
+description: The process of matching cloud instance types and sizes to the workload performance and capacity requirements at the lowest possible cost.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Rightsizing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Engineers are biologically prone to over-provisioning. If they are unsure how much RAM a Java application needs, they will simply request a massive `t3.2xlarge` instance (32GB RAM) "just to be safe." 
+
+If the application actually only uses 4GB of RAM, you are mathematically wasting 87% of the server's cost every single month.
+
+<Callout icon="success" title="The Optimization Phase">
+  **Rightsizing** is the core optimization phase of FinOps. 
+  
+  Automated tools (like AWS Compute Optimizer) mathematically analyze the historical CPU and RAM utilization of every server over a 30-day period. If the CPU rarely exceeds 15%, the tool biologically recommends downgrading the server to a `t3.large`. Rightsizing requires zero architectural changes and often results in immediate 40% mathematical cost reductions.
+</Callout>
 
 </ConceptTemplate>

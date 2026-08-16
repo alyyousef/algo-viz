@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Backstage
+description: An open platform for building developer portals.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Backstage">
+<TechnologyTemplate 
+  title="Backstage"
+  subtitle="The industry standard Developer Portal"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Backstage-logo.svg/512px-Backstage-logo.svg.png"
+  description="Created internally by Spotify to manage their massive microservice sprawl, Backstage was open-sourced and became the absolute mathematical standard for building Internal Developer Portals."
+  yearCreated={2020}
+  creator="Spotify"
+  isOpenSource={true}
+  websiteUrl="https://backstage.io/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Backstage is not a finished product; it is a mathematical *framework* (written in React and Node.js) for building your own portal.
 
-</ConceptTemplate>
+<Callout icon="info" title="The Plugin Ecosystem">
+  Backstage's true mathematical power is its Plugin architecture.
+  
+  It allows the Platform Team to embed third-party tools directly into the UI. A developer can open Backstage and simultaneously view their Kubernetes pod logs, their GitHub Pull Requests, their Datadog metrics, and their PagerDuty alerts, all in a single pane of glass without ever switching browser tabs.
+</Callout>
+
+</TechnologyTemplate>

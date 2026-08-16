@@ -1,8 +1,28 @@
+---
+title: ARM Cortex Architecture (M vs A)
+description: The dominant family of reduced instruction set computing (RISC) architectures for computer processors, configured for various environments.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ARM Cortex-M/A">
+<ConceptTemplate title="ARM Cortex Architecture (M vs A)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Today, the **ARM** architecture mathematically dominates 99% of the embedded and mobile world. Unlike Intel (which manufactures physical silicon), ARM only designs the mathematical blueprints for CPUs and licenses them to companies like Apple, Samsung, and STMicroelectronics.
+
+ARM split its processor designs into three distinct profiles (Cortex-A, Cortex-R, and Cortex-M).
+
+<Callout icon="success" title="Cortex-A (Application)">
+  The **"A"** stands for Application. These are massive, high-performance Microprocessors (MPUs) designed to run complex operating systems like Linux, Android, or iOS. They have a Memory Management Unit (MMU) to handle Virtual Memory. Your iPhone and the Raspberry Pi both use Cortex-A processors.
+</Callout>
+
+## Cortex-M (Microcontroller)
+
+The **"M"** stands for Microcontroller. These are deeply embedded, low-power, mathematically deterministic chips.
+
+They completely lack an MMU (meaning they cannot run standard Linux), and they execute code directly from raw physical memory. 
+- **Cortex-M0:** The absolute cheapest, weakest chip (often replacing 8-bit processors in toys).
+- **Cortex-M4:** Includes a floating-point mathematical unit (FPU) and Digital Signal Processing (DSP) instructions.
+- **Cortex-M7:** High-end microcontrollers used in drones and advanced robotics.
+
+*(Note: There is also Cortex-R for strictly Real-Time safety-critical systems like car brakes.)*
 
 </ConceptTemplate>

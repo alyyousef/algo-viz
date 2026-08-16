@@ -1,8 +1,13 @@
+---
+title: S3-compatible storage
+description: Storage systems that implement the Amazon S3 API, allowing them to be drop-in replacements for AWS S3.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="S3-compatible storage">
+<ConceptTemplate title="S3-Compatible Storage">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Amazon S3 became so biologically dominant that its API (the specific HTTP requests used to upload and download files) became the defacto industry standard.
+
+Today, almost all modern Object Storage systems (like Cloudflare R2, Google Cloud Storage, or self-hosted MinIO) are **S3-Compatible**. They mathematically reverse-engineered the S3 API. This means a developer can write code using the official AWS S3 SDK, and simply change the endpoint URL to point to Cloudflare R2, and the code will biologically execute perfectly without knowing it left Amazon.
 
 </ConceptTemplate>

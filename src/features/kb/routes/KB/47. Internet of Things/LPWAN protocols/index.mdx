@@ -1,8 +1,25 @@
+---
+title: LPWAN Protocols (LoRaWAN, Sigfox, NB-IoT)
+description: Low-power wide-area networks designed to allow long-range communications at a low bit rate among things (connected objects).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LPWAN protocols">
+<ConceptTemplate title="LPWAN Protocols">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Wi-Fi is incredibly fast, but its physical range is only about 50 meters, and it consumes massive amounts of battery power.
+
+If you need to track a shipping container across the ocean, or place a soil-moisture sensor in the middle of a 10,000-acre farm, Wi-Fi is mathematically useless. You need an **LPWAN (Low-Power Wide-Area Network)**.
+
+<Callout icon="tip" title="The Mathematical Trade-off">
+  In physics (specifically Shannon-Hartley theorem), you can only pick two: **Range, Speed, or Low Power**. 
+  
+  LPWAN mathematically sacrifices *Speed*. A LoRaWAN sensor can transmit data over **15 kilometers** (Range) while running on a coin battery for **10 years** (Low Power), but its maximum transmission speed is a microscopic **50 bytes per second** (Speed).
+</Callout>
+
+## The Major Players
+
+1. **LoRaWAN:** The industry standard open protocol. You can physically buy a $100 LoRa Gateway, put it on your roof, and instantly provide 10 kilometers of IoT coverage to your entire city without paying any cellular company a subscription fee.
+2. **Sigfox:** A proprietary, ultra-narrowband network run by a single French company. It requires a subscription but provides massive global coverage.
+3. **NB-IoT & LTE-M:** Cellular IoT. Operated by Verizon/AT&T. Devices connect to standard 4G/5G cell towers using specialized, low-power SIM cards.
 
 </ConceptTemplate>

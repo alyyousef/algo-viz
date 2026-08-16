@@ -1,8 +1,27 @@
+---
+title: Computability
+description: The branch of the theory of computation that studies which problems are computationally solvable using different models.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Computability">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Computability Theory** is the mathematical study of the absolute limits of software. It asks a profound question: *"Are there mathematical problems that computers simply cannot solve, even with infinite time and infinite RAM?"*
+
+The shocking mathematical answer is: **Yes. Most mathematical problems are uncomputable.**
+
+<Callout icon="error" title="The Cantor Diagonalization Reality">
+  Mathematically, the number of possible computer programs is Countably Infinite (like the set of integers: 1, 2, 3...). However, the number of possible mathematical problems is Uncountably Infinite (like the set of real numbers). Because Uncountable sets are mathematically vastly larger than Countable sets, there are simply not enough computer programs in existence to solve every problem.
+</Callout>
+
+## Computable vs. Uncomputable
+
+<ComparisonTable 
+  headers={['Classification', 'Definition', 'Example']}
+  rows={[
+    ['Computable', 'A Turing Machine can mathematically guarantee an answer in a finite amount of time.', 'Sorting a list of 1 billion numbers. It might take a long time, but it is mathematically guaranteed to finish.'],
+    ['Uncomputable', 'It is mathematically impossible to write a computer program that can solve the problem for all possible inputs.', 'Writing a script that analyzes other code to see if it has an infinite loop (The Halting Problem).']
+  ]}
+/>
 
 </ConceptTemplate>

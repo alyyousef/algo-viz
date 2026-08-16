@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: pgAdmin
+description: The most popular and feature rich Open Source administration and development platform for PostgreSQL.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="pgAdmin">
+<TechnologyTemplate 
+  title="pgAdmin"
+  subtitle="The official PostgreSQL manager"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/512px-Postgresql_elephant.svg.png"
+  description="pgAdmin is the de facto open-source GUI for managing PostgreSQL databases. It is a web-based application (often run locally) that provides deep access to Postgres-specific internals."
+  yearCreated={1998}
+  creator="The pgAdmin Development Team"
+  isOpenSource={true}
+  websiteUrl="https://www.pgadmin.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because PostgreSQL supports incredibly advanced mathematical features (like JSONB indexing, PostGIS geographic data, and complex materialized views), generic database clients often fail to display this data correctly.
 
-</ConceptTemplate>
+pgAdmin is built exclusively for Postgres. It allows DBAs to visually manage Users, Roles, Tablespaces, and execute visual query plans (EXPLAIN ANALYZE) to mathematically identify exactly which table scan is causing a slow query.
+
+</TechnologyTemplate>

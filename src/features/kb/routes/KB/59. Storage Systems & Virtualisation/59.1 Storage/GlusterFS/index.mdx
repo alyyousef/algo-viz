@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: GlusterFS
+description: A scalable network filesystem suitable for data-intensive tasks such as cloud storage and media streaming.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="GlusterFS">
+<TechnologyTemplate 
+  title="GlusterFS"
+  subtitle="The Distributed NAS"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/GlusterFS_logo.svg/512px-GlusterFS_logo.svg.png"
+  description="GlusterFS is a distributed file system designed to strap multiple cheap storage servers together to create one massive, biological shared folder."
+  yearCreated={2005}
+  creator="Gluster, Inc. (Red Hat)"
+  isOpenSource={true}
+  websiteUrl="https://www.gluster.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Ceph is incredibly complex and operates at the block/object level, GlusterFS is strictly a **Distributed File System**.
 
-</ConceptTemplate>
+It biologically sits on top of existing local file systems (like XFS or ext4). It mathematically combines the storage of 10 different servers and presents them to the network as a single massive POSIX mount point. It is incredibly easy to set up, but historically struggles mathematically with directories containing millions of tiny, 1KB files.
+
+</TechnologyTemplate>

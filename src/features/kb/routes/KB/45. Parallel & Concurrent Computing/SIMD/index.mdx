@@ -1,8 +1,26 @@
+---
+title: Single Instruction, Multiple Data (SIMD)
+description: A class of parallel computers in Flynn's taxonomy that describes computers with multiple processing elements that perform the same operation on multiple data points simultaneously.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SIMD">
+<ConceptTemplate title="Single Instruction, Multiple Data (SIMD)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When we think of Parallel Computing, we usually think of Threads (Multiple Instructions, Multiple Data). Thread 1 calculates AI, Thread 2 plays Audio.
+
+**SIMD** is a completely different, mathematically devastating form of parallelism baked directly into physical CPU hardware (e.g., Intel AVX-512, ARM Neon). 
+
+<Callout icon="tip" title="The Vector Processor">
+  Instead of spawning a software thread, a SIMD instruction mathematically forces the physical CPU ALU to grab a massive array of numbers (a Vector) and apply a single mathematical operation to ALL of them in a single clock cycle.
+</Callout>
+
+## The Mathematical Speedup
+
+Imagine you are rendering a video game, and you need to increase the brightness (add `10`) to 4 million pixels.
+
+- **Standard CPU (Scalar):** Loops 4,000,000 times. In each loop, it issues an `ADD` instruction to 1 pixel.
+- **SIMD CPU (Vector):** An Intel CPU with 512-bit SIMD registers can load 16 separate 32-bit integers into the CPU at the exact same time. It issues a single `VPADDD` instruction, which mathematically adds `10` to all 16 pixels simultaneously in a single clock cycle.
+
+The algorithm is mathematically accelerated by 16x without ever spawning a single background thread or dealing with Mutexes.
 
 </ConceptTemplate>

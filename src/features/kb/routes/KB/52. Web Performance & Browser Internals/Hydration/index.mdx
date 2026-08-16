@@ -1,8 +1,21 @@
+---
+title: Hydration
+description: The process of using client-side JavaScript to add application state and interactivity to server-rendered HTML.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Hydration">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you use Server-Side Rendering (SSR), the server sends a fully populated HTML document. The user sees the UI instantly. But there is a biological catch: **The UI is dead.**
+
+If the user clicks a React `<button>`, nothing mathematically happens, because the JavaScript Event Listeners haven't been attached yet.
+
+<Callout icon="warning" title="The Hydration Process">
+  After the browser renders the static HTML, it downloads the React JS bundle. React then executes on the client, mathematically maps its Virtual DOM against the physical HTML DOM already on the screen, and silently attaches all the `onClick` handlers. 
+  
+  This process of "bringing the dead HTML to life" is called **Hydration**.
+</Callout>
+
+Optimizing hydration (Partial Hydration, Resumability) is currently the absolute hardest mathematical problem in modern frontend framework design (solved by frameworks like Astro and Qwik).
 
 </ConceptTemplate>

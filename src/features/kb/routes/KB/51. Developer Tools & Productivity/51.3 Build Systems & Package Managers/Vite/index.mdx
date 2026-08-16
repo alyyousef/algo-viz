@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Vite
+description: A local development server written by Evan You and used by default by Vue and React project templates.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Vite">
+<TechnologyTemplate 
+  title="Vite"
+  subtitle="The Webpack killer"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/512px-Vitejs-logo.svg.png"
+  description="Vite (French for 'fast') mathematically solved Webpack's agonizingly slow startup times. By utilizing native Browser ES Modules and the Go-based esbuild compiler, Vite starts massive React projects in milliseconds."
+  yearCreated={2020}
+  creator="Evan You"
+  isOpenSource={true}
+  websiteUrl="https://vitejs.dev/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you run Webpack in development, it mathematically has to crawl your entire 5,000-file project and bundle it *before* the server starts. This can take 30+ seconds on large projects.
 
-</ConceptTemplate>
+<Callout icon="success" title="Native ES Modules (ESM)">
+  Vite mathematically reverses this process. 
+  
+  It instantly starts the server in 50 milliseconds. It does *not* bundle the code. Instead, it serves the raw ES Modules directly to the browser. When the browser hits a screen that needs a specific React component, Vite dynamically compiles *only that one component* on-demand using **esbuild** (which is written in Go and is 100x faster than Webpack's JS engine).
+</Callout>
+
+For production, Vite uses **Rollup** to mathematically bundle the final static assets, ensuring perfect optimization.
+
+</TechnologyTemplate>

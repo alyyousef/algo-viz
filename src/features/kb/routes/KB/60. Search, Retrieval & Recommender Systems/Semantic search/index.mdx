@@ -1,8 +1,13 @@
+---
+title: Semantic search
+description: Search techniques that seek to improve search accuracy by understanding the searcher's intent and the contextual meaning of terms.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Semantic search">
+<ConceptTemplate title="Semantic Search">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+BM25 is a "Lexical" search engine. It biologically looks for exact keyword matches. If a user searches for "funny dog", BM25 will mathematically ignore a document about a "hilarious puppy" because the exact characters do not match.
+
+**Semantic Search** abandons exact string matching. It mathematically attempts to understand the biological *meaning* of the query. By converting both the query and the documents into mathematical Vectors, the search engine realizes that "dog" and "puppy" occupy the exact same region of mathematical space, allowing it to return the "hilarious puppy" document.
 
 </ConceptTemplate>

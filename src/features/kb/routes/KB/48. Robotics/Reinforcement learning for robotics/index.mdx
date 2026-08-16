@@ -1,8 +1,29 @@
+---
+title: Reinforcement Learning for Robotics
+description: An area of machine learning concerned with how intelligent agents ought to take actions in an environment to maximize the notion of cumulative reward.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reinforcement learning for robotics">
+<ConceptTemplate title="Reinforcement Learning for Robotics">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For 50 years, engineers made robots walk by manually writing brutal mathematical physics equations (calculating exact Zero-Moment Point dynamics for bipedal balancing). 
+
+**Reinforcement Learning (RL)** mathematically throws all those equations in the trash.
+
+<Callout icon="success" title="The Reward Function">
+  Instead of programming the physics of walking, you program a **Reward Function**.
+  - If the robot moves forward, give it +10 points.
+  - If the robot falls over, give it -100 points.
+  
+  You place a digital twin of the robot inside a massive physics simulator (like Isaac Sim). The robot randomly twitches its legs for millions of iterations. Over time, the neural network mathematically discovers that a specific rhythmic oscillation of the knee and hip joints maximizes the score. The robot teaches itself how to walk.
+</Callout>
+
+## Sim-to-Real Transfer
+
+The biggest mathematical challenge in Robotic RL is the **Sim-to-Real Gap**. 
+
+A robot might learn to walk perfectly in a computer simulation, but when you flash that neural network into a physical robot, it instantly falls over because the simulation's mathematical approximation of friction or gravity was off by 1%. 
+
+To solve this, researchers use **Domain Randomization** — mathematically randomizing the gravity, friction, and motor strength in the simulation every 5 minutes, forcing the neural network to become hyper-robust before ever touching the physical world.
 
 </ConceptTemplate>

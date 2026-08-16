@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Google Cloud Functions
+description: A serverless execution environment for building and connecting cloud services.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Google Cloud Functions">
+<TechnologyTemplate 
+  title="Google Cloud Functions"
+  subtitle="GCP's Event-Driven FaaS"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Google_Cloud_logo.svg/512px-Google_Cloud_logo.svg.png"
+  description="Google's Serverless offering, designed for mathematical simplicity and massive horizontal scalability, primarily used for gluing together Google's advanced Data and ML services."
+  yearCreated={2017}
+  creator="Google"
+  isOpenSource={false}
+  websiteUrl="https://cloud.google.com/functions"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Google Cloud Functions (GCF) is mathematically optimized to respond to Firebase events (like a new user signing up on a mobile app) or Pub/Sub messages. 
 
-</ConceptTemplate>
+It is heavily utilized in Data Engineering pipelines: if 10,000 IoT devices upload telemetry data simultaneously, GCF will automatically scale from 0 to 10,000 parallel function executions in milliseconds, process the math, insert the data into BigQuery, and instantly scale back to 0.
+
+</TechnologyTemplate>

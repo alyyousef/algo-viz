@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: SpiderMonkey
+description: The first JavaScript engine, written by Brendan Eich at Netscape Communications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="SpiderMonkey">
+<TechnologyTemplate 
+  title="SpiderMonkey"
+  subtitle="The original JavaScript engine"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Firefox_logo%2C_2019.svg/512px-Firefox_logo%2C_2019.svg.png"
+  description="SpiderMonkey is the very first JavaScript engine ever created. Today, it serves as the highly advanced JIT-compiling engine inside Mozilla Firefox."
+  yearCreated={1995}
+  creator="Brendan Eich (Netscape)"
+  isOpenSource={true}
+  websiteUrl="https://spidermonkey.dev/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When Brendan Eich invented JavaScript in 10 days in 1995, he simultaneously wrote SpiderMonkey to physically execute it inside Netscape Navigator.
 
-</ConceptTemplate>
+Today, SpiderMonkey features a highly advanced mathematical architecture with multiple tiers of JIT compilers (the "Baseline" compiler for fast startup, and "IonMonkey" for deep, highly optimized machine-code generation).
+
+</TechnologyTemplate>

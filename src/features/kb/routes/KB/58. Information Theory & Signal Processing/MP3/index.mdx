@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: MP3
+description: An audio coding format for digital audio. Originally defined as the third audio format of the MPEG-1 standard.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="MP3">
+<TechnologyTemplate 
+  title="MP3"
+  subtitle="The Format that Broke the Music Industry"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/MP3_logo.svg/512px-MP3_logo.svg.png"
+  description="MP3 is the legendary Lossy audio codec that mathematically shrank uncompressed CD audio by 90%, enabling the era of Napster, iPods, and digital piracy."
+  yearCreated={1991}
+  creator="Fraunhofer IIS"
+  isOpenSource={false}
+  websiteUrl="https://en.wikipedia.org/wiki/MP3"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+MP3 achieves extreme compression by mathematically exploiting the biological flaws of the human ear via **Psychoacoustics**.
 
-</ConceptTemplate>
+If a loud bass drum hits at the exact same millisecond as a quiet violin note, the human ear biologically cannot hear the violin (Auditory Masking). The MP3 algorithm mathematically detects this using a Fourier Transform, and permanently deletes the data for the violin note. The file is mathematically ruined, but biologically sounds identical to the listener.
+
+</TechnologyTemplate>

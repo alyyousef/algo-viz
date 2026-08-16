@@ -1,52 +1,13 @@
 ---
-title: DNS (Domain Name System)
-description: The phonebook of the Internet, translating human-readable domain names into machine-readable IP addresses.
+title: DNS
+description: The Domain Name System is a hierarchical and decentralized naming system for computers, services, or other resources connected to the Internet or a private network.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="DNS (Domain Name System)">
+<ConceptTemplate title="DNS in the Enterprise">
 
-The Domain Name System (DNS) is a hierarchical and decentralized naming system for computers, services, or other resources connected to the Internet or a private network. It translates easily memorized domain names to the numerical IP addresses needed for the purpose of locating and identifying computer services and devices with the underlying network protocols.
+The global internet relies on public DNS, but a corporate office relies on **Internal DNS**.
 
-<Callout icon="info" title="Why DNS?">
-  Humans are great at remembering names like `google.com`. Computers are strictly numbers-based and need IP addresses like `142.250.190.46`. DNS bridges this gap.
-</Callout>
+When an employee biologically types `intranet.corp.local` into their browser, public DNS mathematically has no idea what that is. Active Directory runs an internal DNS server. It mathematically resolves the private biological name to a private IP address (`10.0.0.5`). If the internal DNS server crashes, the entire corporate network biologically collapses, as no internal servers can mathematically find each other.
 
-## The Resolution Process
-
-When you type a URL into your browser, a massively complex, millisecond-fast lookup occurs across the globe.
-
-<ComparisonTable 
-  headers={['Server', 'Role']}
-  rows={[
-    ['1. Recursive Resolver', 'Usually operated by your ISP (or Google 8.8.8.8). It takes your request and tracks down the IP address by asking the other servers in order.'],
-    ['2. Root Name Server', 'The absolute top of the internet. It doesn\'t know the IP, but it knows exactly who handles ".com", ".org", etc., and points the resolver to them.'],
-    ['3. TLD Name Server', 'The Top-Level Domain server (e.g., the .com server). It knows exactly which specific nameserver manages "google.com".'],
-    ['4. Authoritative Name Server', 'The final stop. It holds the actual DNS records (A, CNAME, TXT) and returns the specific IP address to the resolver.']
-  ]}
-/>
-
-## Architecture
-
-<ArchitectureDiagram chart={`
-graph TD
-  Browser[Browser requests google.com]
-  Resolver[Recursive Resolver]
-  Root[Root Server (.)]
-  TLD[TLD Server (.com)]
-  Auth[Authoritative Server (google.com)]
-  
-  Browser -- 1. Query --> Resolver
-  Resolver -- 2. Ask for .com --> Root
-  Root -- 3. Returns TLD IP --> Resolver
-  
-  Resolver -- 4. Ask for google.com --> TLD
-  TLD -- 5. Returns Auth IP --> Resolver
-  
-  Resolver -- 6. Ask for specific IP --> Auth
-  Auth -- 7. Returns 142.250.190.46 --> Resolver
-  
-  Resolver -- 8. Returns IP --> Browser
-`} />
-
-</TechnologyTemplate>
+</ConceptTemplate>

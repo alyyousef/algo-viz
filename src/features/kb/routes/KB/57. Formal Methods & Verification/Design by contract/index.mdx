@@ -1,8 +1,17 @@
+---
+title: Design by contract
+description: A software correctness methodology that uses preconditions and postconditions to document the change in state caused by a piece of a program.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Design by contract">
+<ConceptTemplate title="Design by Contract (DbC)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Design by Contract** takes the mathematical theory of Hoare Logic and embeds it directly into biological programming languages (like Eiffel or Ada).
+
+<Callout icon="tip" title="Enforceable Promises">
+  When writing a function, the developer writes a strict, mathematical **Contract**.
+  
+  They explicitly define the `require` (Precondition) and the `ensure` (Postcondition). If another developer calls the function but violates the `require` condition, the program mathematically refuses to compile or violently throws an exception immediately. It enforces biological accountability—the function guarantees exactly what it will do, but only if you provide exactly what it asks for.
+</Callout>
 
 </ConceptTemplate>

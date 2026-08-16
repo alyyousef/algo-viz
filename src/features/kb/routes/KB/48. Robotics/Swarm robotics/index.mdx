@@ -1,29 +1,27 @@
 ---
 title: Swarm Robotics
-description: "An approach to the coordination of multiple robots as a system which consists of large numbers of mostly simple physical robots."
+description: An approach to the coordination of multiple robots as a system which consist of large numbers of mostly simple physical robots.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Swarm Robotics">
 
-Nature provides one of the best blueprints for robotics: the ant colony. A single ant is weak, has minimal intelligence, and is highly expendable. But a colony of 10,000 ants can build bridges, find food, and defend territory with terrifying efficiency.
+If you want to map a massive 10-mile cave system, you can build one $500,000 highly advanced robot, but if a rock falls on it, the mission is over. 
 
-**Swarm Robotics** applies this biological concept to machines. Instead of building one massive, complex, $100,000 robot, you build 1,000 tiny, simple, $100 robots that work together.
+Alternatively, you can deploy **Swarm Robotics**: 1,000 cheap, mathematically simple $50 drones. If 200 of them crash into walls, the swarm mathematically survives and completes the mission.
 
-## Principles of a Swarm
-For a system to be considered a true "Swarm" (and not just a fleet of remote-controlled drones), it must exhibit specific characteristics:
-
-1. **Decentralized Control**: There is no "Master Robot" or central server issuing commands. If you destroy 50% of the robots in the swarm, the remaining 50% seamlessly adapt and finish the task.
-2. **Local Sensing and Communication**: Robots do not have a global map of the world. They only sense their immediate environment and communicate with neighbors directly next to them (using infrared or short-range RF).
-3. **Emergent Behavior**: The robots follow incredibly simple, primitive rules (e.g., "Follow the robot in front of you, don't crash into the robot next to you"). Yet, when 500 robots execute these simple rules simultaneously, complex, highly intelligent behaviors emerge (like flocking, foraging, or surrounding an enemy).
-
-## Real-World Applications
-- **Search and Rescue**: After an earthquake, sending one large robot into a collapsed building is dangerous and slow. Deploying a swarm of 500 micro-drones allows them to rapidly map every crevice of the rubble simultaneously.
-- **Agriculture**: Swarms of tiny robots can traverse a farm field, using computer vision to identify and pull individual weeds or spray micro-doses of pesticide, replacing massive, soil-compacting tractors.
-
-<Callout icon="warning" title="The Intel Drone Shows">
-Those massive drone light shows at the Olympics (often involving 2,000 drones) are **not** true Swarm Robotics. They are centrally orchestrated. A single ground computer calculates the exact GPS coordinate for every single drone and transmits the flight path. If the central computer crashes, the show stops.
+<Callout icon="info" title="Emergent Behavior">
+  Swarm robotics is heavily inspired by biological insects (ants, bees). 
+  
+  There is NO centralized leader drone giving orders. Instead, every single drone runs the exact same, incredibly simple mathematical rule set (e.g., "Fly forward. If you see another drone, stay exactly 2 meters away. If you find the exit, emit a radio ping.")
+  
+  Out of these microscopic local rules, incredibly complex **Emergent Behavior** mathematically materializes, allowing the swarm to perfectly navigate mazes or build bridges.
 </Callout>
+
+## Mathematical Applications
+
+- **Agriculture:** A swarm of 500 micro-drones mathematically sweeping a field to pollinate specific flowers.
+- **Search and Rescue:** Deploying tiny ground robots into a collapsed building that communicate via a mathematical mesh network to locate survivors.
+- **Space Exploration:** NASA deploying a swarm of autonomous rovers on Mars to map massive geological areas faster than a single monolithic rover like Curiosity.
 
 </ConceptTemplate>

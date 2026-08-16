@@ -1,8 +1,29 @@
+---
+title: HTTP Security Headers
+description: Mathematical directives sent by the server in the HTTP response to tell the user's browser how to behave securely.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Security headers">
+<ConceptTemplate title="HTTP Security Headers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Modern web browsers (Chrome, Firefox, Safari) contain massive amounts of built-in mathematical security features to protect users from XSS, Clickjacking, and MITM attacks. However, these features are often turned off by default to ensure backwards compatibility with older websites.
+
+**HTTP Security Headers** are the mechanism developers use to explicitly instruct the browser to turn these defensive features on.
+
+<Callout icon="success" title="The Easiest Security Win">
+  Implementing security headers requires zero changes to the application code. They are simply mathematical key-value pairs added to the Nginx config or the Express backend middleware (like the `helmet` package in Node.js), providing massive defense-in-depth for free.
+</Callout>
+
+## The Critical Headers
+
+<ComparisonTable 
+  headers={['Header', 'Purpose']}
+  rows={[
+    ['Strict-Transport-Security (HSTS)', 'Mathematically forces the browser to ONLY ever communicate with the domain over HTTPS, permanently preventing SSL-Stripping MITM attacks.'],
+    ['Content-Security-Policy (CSP)', 'The ultimate defense against XSS. Tells the browser exactly which domains are allowed to load JavaScript, preventing attackers from executing inline scripts.'],
+    ['X-Frame-Options', 'Defends against Clickjacking by mathematically telling the browser that this website is never allowed to be rendered inside an `<iframe>` on a malicious site.'],
+    ['X-Content-Type-Options', 'Set to `nosniff`. Prevents the browser from mathematically guessing the MIME type of a file, stopping attackers from disguising a malicious HTML file as an innocent image upload.']
+  ]}
+/>
 
 </ConceptTemplate>

@@ -1,0 +1,28 @@
+---
+title: Cross-Site Scripting (XSS)
+description: A highly prevalent vulnerability where an attacker injects malicious client-side JavaScript into a trusted website.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Cross-Site Scripting (XSS)">
+
+Normally, browsers rely on the **Same-Origin Policy (SOP)**: JavaScript loaded from `google.com` cannot mathematically access data on `bank.com`. 
+
+**Cross-Site Scripting (XSS)** bypasses this. The attacker tricks the vulnerable website into delivering the malicious JavaScript to the victim's browser. Because the browser mathematically believes the script came from the trusted website, the script is allowed to steal the victim's session cookies or log their keystrokes.
+
+<Callout icon="warning" title="The MySpace Samy Worm">
+  In 2005, a hacker named Samy exploited a Stored XSS vulnerability in MySpace. Anyone who viewed his profile mathematically executed his hidden JavaScript, which forced their account to add him as a friend and copy the virus to their own profile. It infected over 1 million users in 20 hours.
+</Callout>
+
+## The Three Types of XSS
+
+<ComparisonTable 
+  headers={['Type', 'Mechanism', 'Danger Level']}
+  rows={[
+    ['Stored (Persistent)', 'The attacker injects the malicious JS into a database (e.g., a forum comment). When *any* user loads that page, the server mathematically serves the malware from the database to their browser.', 'Extreme. Can infect millions of passive users without any interaction.'],
+    ['Reflected', 'The attacker mathematically embeds the JS into a malicious URL parameter. They must trick the victim into clicking the link. The server reads the URL and immediately reflects the JS back into the HTML response.', 'High. Requires social engineering to trick the victim into clicking the link.'],
+    ['DOM-based', 'The vulnerability exists entirely in the frontend client-side JavaScript. The malicious payload never even reaches the backend server. It mathematically exploits flawed logic in frameworks like jQuery or React.', 'High. Invisible to backend security systems and WAFs.']
+  ]}
+/>
+
+</ConceptTemplate>

@@ -1,8 +1,20 @@
+---
+title: Quantum circuits
+description: A model for quantum computation in which a computation is a sequence of quantum gates, measurements, and initializations of qubits.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantum circuits">
+<ConceptTemplate title="Quantum Circuits">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Quantum Circuit** is the mathematical equivalent of a classical computer program, but it looks like biological sheet music.
+
+<Callout icon="info" title="The Timeline of Execution">
+  In a quantum circuit diagram:
+  - Each horizontal line represents a single physical Qubit over time.
+  - The blocks placed on the lines are the **Quantum Gates** (the laser pulses).
+  - The program reads strictly from left to right.
+  
+  You initialize the Qubits to `0`, apply Hadamard gates to put them into Superposition, apply CNOT gates to Entangle them, execute the algorithmic logic, and finally apply a Measurement gate at the end of the line to collapse the result into classical bits.
+</Callout>
 
 </ConceptTemplate>

@@ -1,8 +1,25 @@
+---
+title: Message Passing Interface (MPI)
+description: A standardized and portable message-passing standard designed to function on parallel computing architectures.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MPI">
+<ConceptTemplate title="Message Passing Interface (MPI)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Everything discussed in Parallel Computing so far (Threads, Mutexes, CUDA) fundamentally relies on **Shared Memory**. The threads physically sit inside the same motherboard and share the same stick of RAM.
+
+But what happens when your mathematical simulation requires 50,000 CPU cores? You cannot fit 50,000 cores on one motherboard. You must link 1,000 separate computers together via Ethernet or InfiniBand. 
+
+This is where **MPI** rules the world.
+
+<Callout icon="tip" title="The Distributed Standard">
+  The **Message Passing Interface (MPI)** is the absolute industry standard for High-Performance Computing (HPC) clusters. It is an API specification that mathematically defines how completely independent servers (Nodes) can send binary data arrays directly to each other over a network with near-zero latency.
+</Callout>
+
+## Mathematical Mechanics
+
+In MPI, there is no Shared Memory. If Node 1 needs the result of Node 2's calculation, Node 2 must explicitly execute an \`MPI_Send\` instruction, and Node 1 must explicitly execute an \`MPI_Recv\` instruction.
+
+While it is mathematically identical to the Actor Model or CSP (Share-Nothing), MPI is implemented as brutally fast C/C++ libraries designed specifically to bypass the OS Network Stack and push raw electrons over InfiniBand hardware, achieving microsecond latency.
 
 </ConceptTemplate>

@@ -1,8 +1,23 @@
+---
+title: Kali Linux
+description: The specialized Debian-based Linux distribution explicitly designed for penetration testing and digital forensics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Kali Linux">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Maintained by Offensive Security, **Kali Linux** is the undisputed standard operating system for hackers, penetration testers, and security professionals. 
+
+It is not designed for daily use as a desktop OS. Instead, it is a highly customized environment pre-loaded with over 600 specific cybersecurity tools.
+
+<Callout icon="tip" title="Why use Kali?">
+  Compiling hacking tools from source code is notoriously difficult. A tool like Metasploit requires specific versions of Ruby, PostgreSQL, and dozens of obscure libraries. Kali Linux eliminates this nightmare by having every tool perfectly pre-compiled, mathematically configured, and ready to launch from a unified menu.
+</Callout>
+
+## Key Characteristics
+
+1. **Single User by Default:** Historically, Kali ran completely as the `root` user, because packet injection, network sniffing, and hardware manipulation require absolute mathematical control over the kernel.
+2. **Custom Kernel:** Kali uses a custom Linux kernel patched for wireless injection, allowing Wi-Fi adapters to easily spoof packets and crack WPA2 handshakes.
+3. **Forensic Mode:** Kali can be booted from a USB drive in "Forensic Mode." In this mode, it mathematically guarantees that it will never mount the host machine\'s hard drive or alter a single byte of data, preserving the chain of custody for police investigations.
 
 </ConceptTemplate>

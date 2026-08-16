@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: VMware
+description: A cloud computing and virtualization technology company that provides software and services for building and managing VMs.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="VMware">
+<TechnologyTemplate 
+  title="VMware (ESXi / vSphere)"
+  subtitle="The Enterprise Virtualization King"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Vmware.svg/512px-Vmware.svg.png"
+  description="VMware invented the x86 virtualization market in the 1990s and their ESXi Type-1 Hypervisor remains the absolute biological standard in enterprise data centers."
+  yearCreated={1998}
+  creator="VMware, Inc."
+  isOpenSource={false}
+  websiteUrl="https://www.vmware.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+VMware **vSphere** is mathematically magical. 
 
-</ConceptTemplate>
+Using **vMotion**, VMware can take a running Virtual Machine on Server A, and biologically teleport its live RAM and CPU state over the network to Server B, without turning the VM off. The OS running inside the VM mathematically never realizes it was physically moved to a different motherboard. This allows IT admins to physically unplug servers for maintenance without dropping a single active HTTP connection.
+
+</TechnologyTemplate>

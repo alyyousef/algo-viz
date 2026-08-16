@@ -1,8 +1,28 @@
+---
+title: Application Security (AppSec)
+description: The process of making apps more secure by finding, fixing, and enhancing the security of apps at the code level.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Application security">
+<ConceptTemplate title="Application Security (AppSec)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Firewalls cannot protect an application that is mathematically designed to be vulnerable. **Application Security (AppSec)** focuses on integrating security practices directly into the software development lifecycle (SDLC), ensuring that developers write secure code from day one.
+
+This philosophy is often referred to as "Shifting Left"—finding mathematical bugs early in the development process rather than waiting until the code is already in production.
+
+<Callout icon="info" title="The OWASP Top 10">
+  AppSec engineers rely heavily on the **OWASP Top 10**. This is a globally recognized document that mathematically ranks the ten most critical security risks to web applications (such as Broken Access Control, Injection, and Cryptographic Failures).
+</Callout>
+
+## The AppSec Toolchain
+
+<ComparisonTable 
+  headers={['Tool Type', 'Acronym', 'Description']}
+  rows={[
+    ['Static Application Security Testing', 'SAST', 'Mathematically scans the raw, uncompiled source code (e.g., scanning a GitHub repo) to find obvious vulnerabilities like hardcoded passwords or SQL injection flaws.'],
+    ['Dynamic Application Security Testing', 'DAST', 'Interacts with the running application from the outside, throwing mathematical payloads at the web forms to see if the application crashes or leaks data (e.g., OWASP ZAP).'],
+    ['Software Composition Analysis', 'SCA', 'Scans the `package.json` or `requirements.txt` to mathematically verify that the third-party open-source libraries the developers are using do not contain known vulnerabilities (CVEs).']
+  ]}
+/>
 
 </ConceptTemplate>

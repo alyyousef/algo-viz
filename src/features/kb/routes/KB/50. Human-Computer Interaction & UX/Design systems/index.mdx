@@ -1,8 +1,29 @@
+---
+title: Design Systems
+description: A collection of reusable components, guided by clear standards, that can be assembled together to build any number of applications.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Design systems">
+<ConceptTemplate title="Design Systems">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a massive company has 500 developers working on 20 different apps, how do you mathematically guarantee that every single 'Submit' button on every single app is the exact same shade of blue, with the exact same 4px border radius?
+
+You cannot rely on communication. You must engineer a **Design System**.
+
+<Callout icon="info" title="The Single Source of Truth">
+  A Design System is not just a UI Kit in Figma. It is a strictly version-controlled mathematical architecture that bridges Design and Code.
+  
+  1. **Design Tokens:** The raw math. (`color-primary: #0070f3`, `spacing-md: 16px`).
+  2. **Component Library:** The actual React/Vue code. A developer never writes `<button>`. They import `<PrimaryButton>` directly from the internal NPM package.
+  3. **Documentation:** The rules. (e.g., *"Never use the PrimaryButton twice on the same screen."*)
+</Callout>
+
+## Atomic Design
+
+Invented by Brad Frost, **Atomic Design** is the chemical mathematics of Design Systems:
+- **Atoms:** The smallest indivisible units (A raw text input, a single icon, a color hex code).
+- **Molecules:** Grouping Atoms together (A text input + a label + a search icon = A Search Bar).
+- **Organisms:** Grouping Molecules together (A Search Bar + a Navigation Menu + a Logo = A Header).
+- **Templates / Pages:** The final assembled layout.
 
 </ConceptTemplate>

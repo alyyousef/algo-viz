@@ -1,8 +1,28 @@
+---
+title: Incident Response (IR)
+description: The structured, rapid-response methodology used by organizations to handle a data breach or cyberattack.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Incident response">
+<ConceptTemplate title="Incident Response (IR)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Despite the best firewalls and encryption, a determined attacker will eventually breach the network. When the alarms go off, the organization cannot afford panic. 
+
+**Incident Response (IR)** is the highly structured, almost militaristic execution of predefined plans to minimize damage, mathematically contain the threat, and restore normal business operations as quickly as possible.
+
+<Callout icon="success" title="The Golden Rule of IR">
+  The primary goal of Incident Response is not to catch the hacker or perfectly preserve forensic evidence for the FBI. The primary goal is **Business Continuity**—getting the company\'s servers back online and generating revenue safely.
+</Callout>
+
+## The SANS Incident Response Lifecycle
+
+The SANS Institute defines a universally adopted 6-step lifecycle (PICERL):
+
+1. **Preparation:** Having the tools, policies, and communication plans ready before an attack happens.
+2. **Identification:** Mathematically determining whether an anomalous event is a false alarm or a true security incident.
+3. **Containment:** Stopping the bleeding. (e.g., Unplugging the infected server from the network so the ransomware cannot spread).
+4. **Eradication:** Removing the root cause of the incident. (e.g., Deleting the malware, patching the vulnerability, resetting all passwords).
+5. **Recovery:** Restoring systems to normal operation from clean backups, and mathematically verifying they are secure.
+6. **Lessons Learned:** A post-mortem meeting to update the defenses so the exact same attack never succeeds twice.
 
 </ConceptTemplate>

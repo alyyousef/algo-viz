@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Web3.js & Ethers.js
+description: JavaScript libraries that allow developers to interact with a local or remote Ethereum node using HTTP, IPC or WebSocket.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Web3.js/Ethers.js">
+<TechnologyTemplate 
+  title="Web3.js & Ethers.js"
+  subtitle="The Frontend bridges to the Blockchain"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Ethereum_logo_2014.svg/512px-Ethereum_logo_2014.svg.png"
+  description="These are the standard JavaScript SDKs mathematically required to connect a React web application (the Frontend) to an Ethereum Smart Contract (the Backend)."
+  yearCreated={2015}
+  creator="Ethereum Foundation / RicMoo"
+  isOpenSource={true}
+  websiteUrl="https://docs.ethers.org/v6/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a user visits your React website and wants to click a "Mint NFT" button, React mathematically cannot talk directly to the Ethereum blockchain.
 
-</ConceptTemplate>
+The user must install a browser extension (like MetaMask). **Ethers.js** mathematically detects MetaMask (via the `window.ethereum` object), constructs the exact hexadecimal payload required to call the `mint()` function on the Smart Contract, and prompts the user's wallet to mathematically sign the transaction.
+
+</TechnologyTemplate>

@@ -1,8 +1,31 @@
+---
+title: Byzantine Fault Tolerance (BFT)
+description: The dependability of a fault-tolerant computer system where components may fail and there is imperfect information on whether a component has failed.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Byzantine fault tolerance">
+<ConceptTemplate title="Byzantine Fault Tolerance (BFT)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional distributed systems (like databases using Raft or Paxos) are designed to survive **Fail-Stop** errors. They mathematically assume a server might explode or lose power, but they assume the server *is not actively trying to lie or sabotage the network*.
+
+**Byzantine Fault Tolerance (BFT)** is the infinitely more difficult mathematical discipline of achieving consensus when nodes might be actively malicious, sending fake data, or conspiring to destroy the system.
+
+<Callout icon="warning" title="The Byzantine Generals Problem">
+  The mathematical thought experiment: Several generals are surrounding a city. They must agree to attack simultaneously, or they will lose. They communicate via messengers. However, one or more generals are traitors actively sending forged messages to confuse the loyal generals. How do the loyal generals mathematically reach a consensus to attack?
+</Callout>
+
+## The BFT Threshold
+
+Mathematical proofs demonstrate that a network can only survive Byzantine failures if the number of malicious nodes (`f`) is strictly less than one-third of the total nodes (`n`).
+
+**Formula: `n >= 3f + 1`**
+
+If you have 4 nodes, you can survive 1 malicious node. If you have 2 malicious nodes, consensus is mathematically impossible.
+
+## Blockchain and Proof of Work
+
+For decades, BFT was mostly a theoretical curiosity used in aerospace (where radiation might cause a sensor to actively output malicious values). 
+
+In 2008, Satoshi Nakamoto invented **Bitcoin**, which utilized **Proof-of-Work (PoW)**. PoW is essentially a massive, global BFT consensus algorithm that allows thousands of mutually distrustful computers to mathematically agree on a financial ledger without a central bank.
 
 </ConceptTemplate>

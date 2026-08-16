@@ -1,8 +1,28 @@
+---
+title: QLoRA (Quantized Low-Rank Adaptation)
+description: The breakthrough technique that democratized LLM fine-tuning by allowing massive models to be trained on a single gaming GPU.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="QLoRA">
+<ConceptTemplate title="QLoRA (Quantized Low-Rank Adaptation)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Fine-tuning a massive LLM requires astronomically more memory than just running it, because you must store the optimizer states and gradients for every parameter. For a 65B model, standard fine-tuning requires 780GB of VRAM (10x A100 GPUs).
+
+**QLoRA** combined Quantization with Parameter-Efficient Fine-Tuning (LoRA) to mathematically smash this memory barrier, reducing the requirement from 780GB to just 48GB.
+
+<Callout icon="info" title="The Mathematical Magic">
+  QLoRA quantizes the massive base model down to a special 4-bit format (NormalFloat4). The base model is completely frozen. Then, a tiny set of 16-bit LoRA adapter weights are attached. During training, the 4-bit weights are mathematically "dequantized" on the fly to calculate gradients, but only the tiny 16-bit LoRA weights are actually updated.
+</Callout>
+
+## QLoRA Innovations
+
+<ComparisonTable 
+  headers={['Innovation', 'Description']}
+  rows={[
+    ['4-bit NormalFloat (NF4)', 'A mathematically optimal data type designed specifically for the normal distribution of neural network weights, retaining far more accuracy than standard 4-bit integers.'],
+    ['Double Quantization', 'Quantizing the quantization constants themselves, saving an additional 0.37 bits per parameter (which equals 3GB of VRAM on a 65B model).'],
+    ['Paged Optimizers', 'Using Nvidia Unified Memory to mathematically page optimizer states to CPU RAM if the GPU VRAM runs out, preventing catastrophic Out Of Memory (OOM) crashes.']
+  ]}
+/>
 
 </ConceptTemplate>

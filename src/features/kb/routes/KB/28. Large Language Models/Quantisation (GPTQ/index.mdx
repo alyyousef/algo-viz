@@ -1,8 +1,21 @@
+---
+title: Post-Training Quantization (GPTQ)
+description: A revolutionary mathematical compression technique to shrink LLMs so they fit on consumer GPUs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantisation (GPTQ">
+<ConceptTemplate title="Post-Training Quantization (GPTQ)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A 70-Billion parameter model stored in standard 16-bit precision requires over 140GB of VRAM just to load the weights. This requires a server with multiple $40,000 Nvidia H100 GPUs. 
+
+**Quantization** mathematically compresses the weights from 16-bit floating-point numbers down to 8-bit, 4-bit, or even 2-bit integers, drastically reducing memory usage with surprisingly little loss in "smartness".
+
+<Callout icon="success" title="The GPTQ Algorithm">
+  GPTQ is a specific, highly advanced quantization algorithm. It doesn\'t just blindly round numbers. It analyzes the model\'s activation patterns on a calibration dataset and uses second-order mathematical approximations (Hessian matrices) to intelligently adjust the remaining weights to compensate for the precision lost during rounding.
+</Callout>
+
+## Why Quantization Works
+
+Neural networks are incredibly robust to noise. A weight of `0.81234` (16-bit) might be rounded to `0.8` (4-bit). The exact precision rarely matters for the final output logic. The bottleneck in LLM inference is **memory bandwidth** (moving weights from VRAM to the processor), not compute. By shrinking the weights, you move them 4x faster, actually increasing text generation speed on consumer hardware.
 
 </ConceptTemplate>

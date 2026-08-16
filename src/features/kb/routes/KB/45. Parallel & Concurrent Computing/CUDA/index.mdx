@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: CUDA
+description: A parallel computing platform and application programming interface model created by Nvidia.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="CUDA">
+<TechnologyTemplate 
+  title="CUDA"
+  subtitle="The engine of the AI revolution"
+  logoUrl="https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Nvidia_CUDA_Logo.jpg/512px-Nvidia_CUDA_Logo.jpg"
+  description="Compute Unified Device Architecture (CUDA) is the proprietary software layer created by NVIDIA that allows developers to write standard C++ code and execute it directly on the thousands of physical cores inside an NVIDIA GPU."
+  yearCreated={2007}
+  creator="NVIDIA"
+  isOpenSource={false}
+  websiteUrl="https://developer.nvidia.com/cuda-zone"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before CUDA, if a scientist wanted to use a GPU to calculate physics, they mathematically had to trick the GPU. They had to encode their physics data into a fake "Texture" image, write a fake graphics "Shader" to process the pixels, and read the resulting colors back as math answers.
 
-</ConceptTemplate>
+CUDA changed the world by exposing the GPU as a general-purpose processor.
+
+<Callout icon="error" title="The Moat">
+  CUDA is completely proprietary and mathematically locked to NVIDIA silicon. It cannot run on AMD or Intel GPUs. Because CUDA was first, and is incredibly developer-friendly, 99% of all global AI research (PyTorch, TensorFlow) was written in CUDA. This software lock-in is the primary reason NVIDIA became a $3 Trillion company.
+</Callout>
+
+## How CUDA Works
+
+In CUDA, you write a C++ function called a **Kernel**. 
+
+When you launch the Kernel, you specify an execution grid (e.g., \`&lt;&lt;&lt;100, 256&gt;&gt;&gt;\`). The NVIDIA driver mathematically maps this grid directly to the physical silicon, instantly spawning 25,600 simultaneous threads on the GPU hardware to execute your function in parallel.
+
+</TechnologyTemplate>

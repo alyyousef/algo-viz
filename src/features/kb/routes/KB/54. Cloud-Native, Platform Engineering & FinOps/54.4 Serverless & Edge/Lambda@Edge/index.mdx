@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Lambda@Edge
+description: A feature of Amazon CloudFront that lets you run code closer to users of your application, which improves performance and reduces latency.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Lambda@Edge">
+<TechnologyTemplate 
+  title="Lambda@Edge"
+  subtitle="AWS's Edge Computing Solution"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Amazon_Lambda_architecture_logo.svg/512px-Amazon_Lambda_architecture_logo.svg.png"
+  description="Lambda@Edge allows developers to mathematically deploy AWS Lambda functions directly into the CloudFront CDN edge locations."
+  yearCreated={2017}
+  creator="Amazon Web Services"
+  isOpenSource={false}
+  websiteUrl="https://aws.amazon.com/lambda/edge/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a global application and you want to mathematically block users from specific countries from downloading a file, routing that request all the way back to a centralized `us-east-1` server just to say "No" is a massive waste of bandwidth.
 
-</ConceptTemplate>
+With **Lambda@Edge**, you intercept the HTTP request at the exact moment it hits the CloudFront server in the user's local city. The function executes, mathematically checks their IP address, and blocks them locally in 5 milliseconds.
+
+</TechnologyTemplate>

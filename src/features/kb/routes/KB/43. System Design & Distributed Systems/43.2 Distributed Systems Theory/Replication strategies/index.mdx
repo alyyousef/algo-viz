@@ -1,8 +1,28 @@
+---
+title: Replication Strategies
+description: The specific mathematical algorithms and architectural patterns used to keep multiple copies of data synchronized across a distributed cluster.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Replication strategies">
+<ConceptTemplate title="Replication Strategies">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+To achieve Fault Tolerance and low Latency, databases must mathematically maintain identical copies (replicas) of their data on different physical servers. 
+
+However, keeping distributed copies perfectly in sync over an unreliable network introduces profound mathematical challenges.
+
+<Callout icon="tip" title="Synchronous vs. Asynchronous">
+  In **Synchronous Replication**, the primary database mathematically waits for the replicas to acknowledge the write before returning success to the user (Safe, but slow). In **Asynchronous Replication**, the primary writes locally and returns success instantly, replicating in the background (Fast, but risks data loss if the primary explodes).
+</Callout>
+
+## Core Replication Topologies
+
+<ComparisonTable 
+  headers={['Strategy', 'How it Works', 'Use Case / Drawback']}
+  rows={[
+    ['Single-Leader (Master-Slave)', 'One node accepts all writes and mathematically streams them to Read-Only replicas.', 'Standard default for Postgres/MySQL. Easy to reason about, but the Leader is a Write bottleneck.'],
+    ['Multi-Leader (Master-Master)', 'Multiple nodes can accept writes simultaneously. They asynchronously sync with each other.', 'Useful for massive global apps (one leader in US, one in EU). Drawback: Extremely complex mathematical conflict resolution if two users edit the same row on different leaders.'],
+    ['Leaderless (Dynamo-style)', 'Any node can accept writes. The client mathematically broadcasts the write to multiple nodes simultaneously using a Quorum (e.g., waiting for 2 out of 3 nodes to ACK).', 'Amazon DynamoDB, Cassandra. Maximum availability, but heavily reliant on Vector Clocks to resolve eventual consistency issues.']
+  ]}
+/>
 
 </ConceptTemplate>

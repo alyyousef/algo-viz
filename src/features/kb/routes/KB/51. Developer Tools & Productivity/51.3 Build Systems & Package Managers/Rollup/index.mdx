@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Rollup
+description: A module bundler for JavaScript which compiles small pieces of code into something larger and more complex, such as a library or application.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Rollup">
+<TechnologyTemplate 
+  title="Rollup"
+  subtitle="The library builder"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Rollup_logo.svg/512px-Rollup_logo.svg.png"
+  description="While Webpack is used to build complex web applications, Rollup is strictly engineered to build highly optimized JavaScript Libraries (like React or Three.js)."
+  yearCreated={2015}
+  creator="Rich Harris"
+  isOpenSource={true}
+  websiteUrl="https://rollupjs.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Rollup's mathematical claim to fame is inventing **Tree-Shaking**.
 
-</ConceptTemplate>
+<Callout icon="tip" title="Tree-Shaking (Dead Code Elimination)">
+  If you install `lodash`, it contains 200 mathematical functions. If you only `import { merge } from 'lodash'`, Webpack historically bundled all 200 functions into your final app, wasting massive amounts of user bandwidth.
+  
+  Rollup mathematically analyzes the AST (Abstract Syntax Tree) and physically drops the 199 functions you didn't use. It "shakes the tree" to let dead code fall out, ensuring the final compiled bundle is biologically as small as possible.
+</Callout>
+
+Vite utilizes Rollup under the hood specifically for its incredible production bundling and tree-shaking capabilities.
+
+</TechnologyTemplate>

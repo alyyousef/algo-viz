@@ -1,8 +1,19 @@
+---
+title: Profilers
+description: Dynamic code analysis tools that measure the memory or time complexity of a program, the usage of particular instructions, or the frequency and duration of function calls.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Profilers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If your web application is slow, how do you know what to fix? Guessing is biologically inefficient.
+
+A **Profiler** mathematically records the exact performance of your application while it is running.
+
+<Callout icon="warning" title="Flame Graphs">
+  Profilers generate mathematical visual charts called **Flame Graphs**.
+  
+  The width of the flame represents the exact amount of CPU milliseconds a specific function consumed. If you profile your app and see that the `calculatePhysics()` function is consuming 85% of the total CPU width, you know exactly where to focus your mathematical optimization efforts, completely eliminating guesswork.
+</Callout>
 
 </ConceptTemplate>

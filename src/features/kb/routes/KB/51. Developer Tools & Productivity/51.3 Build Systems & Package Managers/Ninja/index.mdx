@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Ninja
+description: A small build system with a focus on speed.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Ninja">
+<TechnologyTemplate 
+  title="Ninja"
+  subtitle="The hyper-fast C++ compiler"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Ninja_build_logo.svg/512px-Ninja_build_logo.svg.png"
+  description="Ninja is a mathematical build system specifically engineered to be as biologically fast as possible. It is designed to replace 'Make' by removing all high-level features and focusing purely on parallel compilation."
+  yearCreated={2012}
+  creator="Evan Martin (Google)"
+  isOpenSource={true}
+  websiteUrl="https://ninja-build.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When Google was compiling the Chromium browser (a physically massive C++ codebase), they realized that `make` was taking 15 seconds mathematically just to figure out *which* files needed to be compiled, before it even started compiling them.
 
-</ConceptTemplate>
+<Callout icon="warning" title="The Low-Level Architecture">
+  Ninja is intentionally "dumb". You are not supposed to write Ninja files by hand. 
+  
+  Instead, you use **CMake** to generate the `build.ninja` file. Because Ninja strips away all variables, conditionals, and logic, it mathematically reads the dependency graph instantly, spawns a massive parallel CPU thread pool, and executes C++ compilers at the absolute physical limits of the hardware.
+</Callout>
+
+</TechnologyTemplate>

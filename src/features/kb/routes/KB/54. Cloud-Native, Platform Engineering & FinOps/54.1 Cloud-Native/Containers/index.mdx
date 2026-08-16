@@ -1,8 +1,19 @@
+---
+title: Containers
+description: Executable units of software in which application code is packaged, along with its libraries and dependencies, in common ways so that it can be run anywhere.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Containers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before 2013, deploying software was biologically painful. You had to physically SSH into a Linux server, install Python 2.7, install PostgreSQL, and hope the server's OS dependencies matched your laptop. Usually, they didn't, resulting in the infamous *"It works on my machine!"* crisis.
+
+**Containers** mathematically solved this by utilizing Linux Kernel features (cgroups and namespaces).
+
+<Callout icon="success" title="The Shipping Container Metaphor">
+  A Docker container is a mathematically isolated, sealed box. 
+  
+  It contains your exact Python code, the exact Python 3.9 interpreter, and the exact required Linux dependencies. Because the box contains the OS dependencies, you can take that box and mathematically guarantee it will run identically on an Ubuntu server, an AWS cloud instance, or a macOS laptop.
+</Callout>
 
 </ConceptTemplate>

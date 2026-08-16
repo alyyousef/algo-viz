@@ -1,8 +1,26 @@
+---
+title: Pretraining Objectives
+description: The self-supervised mathematical tasks used to train massive foundation models on raw internet text.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pretraining objectives">
+<ConceptTemplate title="Pretraining Objectives">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Pretraining is the first, most expensive, and most compute-heavy phase of creating an LLM. Because human-labeled data is too expensive, models are trained using **Self-Supervised Learning** on trillions of words scraped from the internet. The Pretraining Objective defines the exact mathematical game the model plays to learn language.
+
+<Callout icon="warning" title="Compute Cost">
+  Pretraining a state-of-the-art model like Llama 3 or GPT-4 requires tens of thousands of GPUs running for months, costing tens of millions of dollars in compute and electricity.
+</Callout>
+
+## Standard Objectives
+
+<ComparisonTable 
+  headers={['Objective', 'Model Type', 'Mechanism']}
+  rows={[
+    ['Causal Language Modeling (CLM)', 'Decoder-Only (GPT, Llama)', 'Given previous tokens, predict the exact next token. The model is penalized via Cross-Entropy Loss if it predicts wrong.'],
+    ['Masked Language Modeling (MLM)', 'Encoder-Only (BERT)', 'Randomly hide 15% of the tokens in a sequence. The model must predict the hidden tokens using bidirectional context.'],
+    ['Span Corruption', 'Encoder-Decoder (T5)', 'Randomly replace sequences of multiple tokens with a single sentinel token. The model must generate the missing sequences.']
+  ]}
+/>
 
 </ConceptTemplate>

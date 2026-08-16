@@ -1,8 +1,19 @@
+---
+title: Tokens (ERC-20)
+description: A standard for creating and issuing smart contracts on the Ethereum blockchain that can be used to implement tokens.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tokens (ERC-20">
+<ConceptTemplate title="ERC-20 Tokens">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to create your own cryptocurrency (like "BobCoin"), you biologically do not need to build your own blockchain like Bitcoin. 
+
+You can mathematically launch it as a **Token** on top of Ethereum using the **ERC-20** standard.
+
+<Callout icon="success" title="The Standardized API">
+  ERC-20 is mathematically nothing more than an interface standard. 
+  
+  It dictates that your Smart Contract must implement 6 specific mathematical functions (e.g., `totalSupply()`, `balanceOf()`, `transfer()`). Because all tokens mathematically share this exact same API, cryptocurrency exchanges (like Coinbase) can instantly list your token without writing any custom code. BobCoin mathematically lives inside a mapping of `{ Address: Balance }` within a single Ethereum smart contract.
+</Callout>
 
 </ConceptTemplate>

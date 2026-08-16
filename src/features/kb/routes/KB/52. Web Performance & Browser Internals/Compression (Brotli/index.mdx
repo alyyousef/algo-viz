@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Compression (Brotli)
+description: A generic-purpose lossless compression algorithm developed by Google.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Compression (Brotli">
+<TechnologyTemplate 
+  title="Brotli"
+  subtitle="Google's Mathematical Compression Engine"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Chromium_Logo.svg/512px-Chromium_Logo.svg.png"
+  description="Brotli is a modern data compression algorithm mathematically engineered by Google specifically for the web, replacing the legacy Gzip algorithm."
+  yearCreated={2013}
+  creator="Google (Jyrki Alakuijala and Zoltán Szabadka)"
+  isOpenSource={true}
+  websiteUrl="https://github.com/google/brotli"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before a server sends an HTML or JS file over the network, it mathematically compresses it to save bandwidth.
 
-</ConceptTemplate>
+<Callout icon="success" title="The Built-in Dictionary">
+  Brotli achieves significantly better compression ratios than Gzip because it has a biological "cheat code". 
+  
+  Google hard-coded a 120KB static dictionary of the most common web words (like `<script>`, `function`, `</body>`) directly into the Chromium and WebKit browser engines. When Brotli compresses the file on the server, it replaces those words with tiny mathematical pointers. The browser uses its built-in dictionary to instantly decompress them, reducing file sizes by up to 20% more than Gzip.
+</Callout>
+
+</TechnologyTemplate>

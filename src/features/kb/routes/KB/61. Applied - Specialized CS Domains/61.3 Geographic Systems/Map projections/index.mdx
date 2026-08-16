@@ -1,8 +1,17 @@
+---
+title: Map projections
+description: A systematic transformation of the latitudes and longitudes of locations from the surface of a sphere or an ellipsoid into locations on a plane.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Map projections">
+<ConceptTemplate title="Map Projections">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The biological Earth is a 3D sphere. A computer monitor is a 2D rectangle. 
+
+<Callout icon="warning" title="Mathematical Distortion">
+  It is mathematically impossible to flatten a 3D sphere into a 2D rectangle without distorting the data. This requires **Map Projections**.
+  
+  The famous Mercator Projection preserves exact navigational angles, but mathematically distorts size (making Greenland look as big as Africa). Software engineers building GIS applications must constantly use complex trigonometric math (like the PROJ library) to translate coordinates between different projections, or else their data will biologically appear hundreds of miles away from its true location.
+</Callout>
 
 </ConceptTemplate>

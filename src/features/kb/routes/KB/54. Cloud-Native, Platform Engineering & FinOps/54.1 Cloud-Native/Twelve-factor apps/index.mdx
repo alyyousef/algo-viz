@@ -1,8 +1,20 @@
+---
+title: Twelve-Factor Apps
+description: A methodology for building software-as-a-service applications.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Twelve-factor apps">
+<ConceptTemplate title="The Twelve-Factor App Methodology">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by the engineers at Heroku in 2011, the **Twelve-Factor App** is a mathematical manifesto detailing exactly how to build modern, cloud-native web applications.
+
+If an application violates these 12 architectural rules, it will biologically struggle to scale on modern container orchestration platforms like Kubernetes.
+
+<Callout icon="info" title="Key Architectural Rules">
+  Some of the most critical mathematical rules include:
+  1. **Config in Environment:** Never hardcode database passwords in the codebase. Always use Environment Variables (`.env`).
+  2. **Stateless Processes:** The application must mathematically assume that local memory and disk space are temporary. If a user uploads an image, it must be saved to a database or S3, never to the container's local hard drive (because K8s might destroy the container at any second).
+  3. **Disposability:** The app must start up instantly and shut down gracefully when receiving a `SIGTERM` signal.
+</Callout>
 
 </ConceptTemplate>

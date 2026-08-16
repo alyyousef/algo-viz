@@ -1,62 +1,32 @@
 ---
 title: WebGL
-description: A JavaScript API for rendering high-performance interactive 3D and 2D graphics within any compatible web browser.
+description: A JavaScript API for rendering interactive 2D and 3D graphics within any compatible web browser without the use of plug-ins.
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate title="WebGL">
+<TechnologyTemplate 
+  title="WebGL"
+  subtitle="Bringing hardware-accelerated 3D to the Browser"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/WebGL_Logo.svg/512px-WebGL_Logo.svg.png"
+  description="WebGL is a direct JavaScript binding to OpenGL ES (Embedded Systems). It mathematically allows a web browser to bypass the CPU's DOM rendering and talk directly to the user's physical GPU."
+  yearCreated={2011}
+  creator="Khronos Group & Mozilla"
+  isOpenSource={true}
+  websiteUrl="https://www.khronos.org/webgl/"
+>
 
-WebGL (Web Graphics Library) is a JavaScript API for rendering high-performance interactive 3D and 2D graphics within any compatible web browser without the use of plug-ins. WebGL is fully integrated with other web standards, allowing GPU-accelerated usage of physics and image processing and effects as part of the web page canvas.
+Before 2011, if you wanted 3D graphics in a web browser, the user had to install a massive, highly insecure C++ plugin like **Adobe Flash** or the **Unity Web Player**.
 
-<Callout icon="info" title="It's just OpenGL ES">
-  WebGL 1.0 is almost a direct port of **OpenGL ES 2.0** (the mobile version of OpenGL) into JavaScript. WebGL 2.0 brings it up to parity with OpenGL ES 3.0.
+**WebGL** mathematically integrated the GPU directly into the HTML5 `<canvas>` element.
+
+<Callout icon="warning" title="The Brutal Low-Level API">
+  WebGL is mathematically incredibly verbose. 
+  
+  Because it is a direct binding to OpenGL ES, drawing a simple rotating cube requires manually compiling GLSL Shaders from raw text strings, allocating Float32Arrays for vertex buffers, and executing massive matrix algebra equations in pure JavaScript. It takes about 200 lines of raw WebGL code just to draw a triangle.
 </Callout>
 
-## Three.js & Frameworks
+## The Shift to WebGPU
 
-Because raw WebGL requires hundreds of lines of boilerplate just to draw a single colored triangle, almost no one writes raw WebGL. Instead, developers use wrapper libraries.
-
-<ComparisonTable 
-  headers={['Library', 'Use Case']}
-  rows={[
-    ['Three.js', 'The absolute industry standard for 3D web graphics. Handles scene graphs, cameras, and lighting.'],
-    ['PixiJS', 'Highly optimized 2D WebGL renderer, often used for 2D browser games.'],
-    ['Babylon.js', 'A powerful 3D engine created by Microsoft, often used for complex games and enterprise simulations.']
-  ]}
-/>
-
-## Example: WebGL via Three.js
-
-A minimal example of spinning a green cube using Three.js.
-
-```javascript
-import * as THREE from 'three';
-
-// 1. Setup Scene, Camera, and WebGL Renderer
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer();
-document.body.appendChild(renderer.domElement);
-
-// 2. Create Geometry and Material
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-camera.position.z = 5;
-
-// 3. Render Loop
-function animate() {
-    requestAnimationFrame(animate);
-    
-    // Rotate cube every frame
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    
-    renderer.render(scene, camera);
-}
-animate();
-```
+While WebGL successfully brought 3D to the web, it is fundamentally tied to the architecture of OpenGL ES 2.0 (from 2007). It is single-threaded and struggles to handle massive AAA geometries. The entire industry is currently in a massive mathematical transition away from WebGL and toward its modern, explicit successor: **WebGPU**.
 
 </TechnologyTemplate>

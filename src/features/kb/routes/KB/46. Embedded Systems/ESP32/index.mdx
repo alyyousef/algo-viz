@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: ESP32
+description: A series of low-cost, low-power system on a chip microcontrollers with integrated Wi-Fi and dual-mode Bluetooth.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="ESP32">
+<TechnologyTemplate 
+  title="ESP32"
+  subtitle="The undisputed king of DIY IoT"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Espressif_Systems_logo.svg/512px-Espressif_Systems_logo.svg.png"
+  description="Created by Shanghai-based Espressif Systems, the ESP32 mathematically broke the embedded market by offering a powerful 32-bit dual-core processor with built-in Wi-Fi and Bluetooth for less than $3."
+  yearCreated={2016}
+  creator="Espressif Systems"
+  isOpenSource={false}
+  websiteUrl="https://www.espressif.com/en/products/socs/esp32"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before the ESP32 (and its predecessor, the ESP8266), adding Wi-Fi to an embedded project was a mathematical nightmare. You had to buy a $40 external Wi-Fi shield and write complex AT-commands over a UART serial connection.
 
-</ConceptTemplate>
+The ESP32 integrated a full 240 MHz dual-core CPU, RAM, Wi-Fi antenna, and Bluetooth radio onto a single piece of silicon. 
+
+<Callout icon="success" title="The RTOS Core">
+  Because the ESP32 must mathematically maintain a complex Wi-Fi connection while also running your custom code, it is almost impossible to program it Bare-Metal. Instead, the ESP32's official framework (ESP-IDF) is built entirely on top of **FreeRTOS**. One CPU core mathematically handles the Wi-Fi stack, while the other core executes your application code.
+</Callout>
+
+## The Ultimate Hobbyist Chip
+
+Because it is so cheap and mathematically powerful, the ESP32 has become the absolute backbone of the Maker and Smart Home movement (Home Assistant, ESPHome). It is fully compatible with the Arduino C++ Framework and MicroPython.
+
+</TechnologyTemplate>

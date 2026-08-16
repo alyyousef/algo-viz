@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: PostGIS
+description: An open source software program that adds support for geographic objects to the PostgreSQL object-relational database.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="PostGIS">
+<TechnologyTemplate 
+  title="PostGIS"
+  subtitle="The Geographic Engine of PostgreSQL"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/PostGIS_logo.png/512px-PostGIS_logo.png"
+  description="PostGIS is an extension that mathematically transforms PostgreSQL into the most powerful open-source Geospatial Database on Earth."
+  yearCreated={2001}
+  creator="Refractions Research"
+  isOpenSource={true}
+  websiteUrl="https://postgis.net/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+With PostGIS installed, a developer can biologically insert complex geographic shapes (Points, Lines, Polygons) directly into SQL columns.
 
-</ConceptTemplate>
+More importantly, it provides hundreds of mathematical geographic functions. You can write a single SQL query that mathematically calculates the total area of a polygon, checks if a point intersects a boundary, or calculates the shortest distance between two biological zip codes, all executed natively inside the C engine of the database.
+
+</TechnologyTemplate>

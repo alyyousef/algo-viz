@@ -1,26 +1,21 @@
 ---
-title: Serverless Architecture
-description: A cloud computing execution model in which the cloud provider dynamically manages the allocation and provisioning of servers.
+title: Serverless
+description: A cloud-computing execution model in which the cloud provider dynamically manages the allocation and provisioning of servers.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Serverless Architecture">
+<ConceptTemplate title="Serverless Computing">
 
-Serverless computing is a cloud computing execution model in which the cloud provider dynamically manages the allocation and provisioning of servers. A serverless application runs in stateless compute containers that are event-triggered, ephemeral (may last for one invocation), and fully managed by the cloud provider.
+In a standard Kubernetes cluster, you are paying AWS $500/month for the physical EC2 servers, even if your traffic drops to zero at 3:00 AM. 
 
-<Callout icon="warning" title="Cold Starts">
-  If no one has called your Serverless Function in 15 minutes, the Cloud Provider shuts it down to save money. The next user who calls it will experience a "Cold Start"—a 1 to 3 second delay while the provider boots up a fresh container just for them.
+**Serverless** (like AWS Lambda) mathematically eliminates idle server costs.
+
+<Callout icon="tip" title="Scale-to-Zero Architecture">
+  In a Serverless architecture, you do not provision a server. You upload a ZIP file containing a single JavaScript function to AWS.
+  
+  When a user hits your API, AWS mathematically spins up a micro-container in 50 milliseconds, executes your function, returns the HTTP response, and instantly destroys the container. 
+  
+  You are biologically billed *by the millisecond* of CPU execution. If you get 0 visitors, your AWS bill is mathematically $0.00.
 </Callout>
 
-## Key Characteristics
-
-<ComparisonTable 
-  headers={['Characteristic', 'Description']}
-  rows={[
-    ['No Server Management', 'You do not patch Linux, configure SSH, or worry about hard drive space. You just upload your code.'],
-    ['Pay-as-you-go', 'You are billed down to the millisecond of actual compute time used. If your app gets 0 traffic at 3 AM, you pay exactly $0.00.'],
-    ['Auto-scaling', 'If 10,000 people click a button at once, the cloud provider instantly spins up 10,000 isolated instances of your function.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>

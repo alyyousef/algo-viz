@@ -1,8 +1,25 @@
+---
+title: Rasterisation
+description: The task of taking an image described in a vector graphics format (shapes) and converting it into a raster image (a series of pixels).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Rasterisation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For the past 30 years, 99.9% of all video games have been rendered using a mathematical technique called **Rasterisation**.
+
+Rasterisation is incredibly fast, but mathematically "fake." It does not simulate the physics of light. Instead, it is a pure geometric projection trick.
+
+<Callout icon="success" title="How Rasterisation Works">
+  1. The GPU projects the 3D triangles onto the 2D screen.
+  2. For a specific triangle, the GPU mathematically checks exactly which 2D screen pixels are physically "inside" the borders of that triangle.
+  3. The GPU "rasters" (fills in) those specific pixels with a color, using mathematical interpolation (Barycentric coordinates) to blend the colors across the surface.
+</Callout>
+
+## The Depth Buffer (Z-Buffer)
+
+If there are two triangles (a tree and a house behind the tree), which one gets painted on the screen?
+
+Because Rasterisation just rapidly paints triangles in whatever order they appear in memory, the house might accidentally overwrite the tree. To solve this, the GPU maintains a **Z-Buffer**. For every pixel, it mathematically records the "Depth" (Distance from the camera). If the GPU tries to paint a house pixel, but the Z-Buffer says a tree pixel is already there and is closer, the GPU discards the house pixel.
 
 </ConceptTemplate>

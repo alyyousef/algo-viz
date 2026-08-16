@@ -1,0 +1,28 @@
+---
+title: Security Frameworks (NIST, ISO 27001, CIS)
+description: Documented processes that define policies and procedures around the implementation and ongoing management of information security controls.
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+<ConceptTemplate title="Security Frameworks">
+
+Building a cybersecurity program from scratch based purely on intuition is mathematically guaranteed to result in massive blind spots.
+
+**Security Frameworks** provide established, mathematically rigorous blueprints for how to secure an organization. They offer a comprehensive checklist of controls that have been battle-tested by governments and global enterprises.
+
+<Callout icon="tip" title="Compliance vs. Security">
+  Being "Compliant" with a framework does not mathematically mean you are 100% "Secure." Compliance is a baseline; it proves to auditors and customers that you are doing the bare minimum required by industry standards. Security is the actual ongoing operational battle.
+</Callout>
+
+## The "Big Three" Frameworks
+
+<ComparisonTable 
+  headers={['Framework', 'Origin', 'Focus & Characteristics']}
+  rows={[
+    ['NIST Cybersecurity Framework (CSF)', 'US Government', 'The gold standard for the US private sector. Divided into five core mathematical functions: Identify, Protect, Detect, Respond, Recover. Highly flexible and risk-based.'],
+    ['ISO/IEC 27001', 'International', 'The globally recognized standard for an Information Security Management System (ISMS). Focuses heavily on mathematical policies, governance, and continuous improvement. Organizations can actually get "Certified" in ISO 27001.'],
+    ['CIS Controls', 'Center for Internet Security', 'A highly prescriptive, prioritized list of 18 specific technical controls. It mathematically tells you *exactly* what to do first (e.g., Control #1: Maintain an inventory of enterprise assets).']
+  ]}
+/>
+
+</ConceptTemplate>

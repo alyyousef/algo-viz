@@ -1,8 +1,23 @@
+---
+title: Robotic Actuators
+description: The mechanical components responsible for moving and controlling a mechanism or system, requiring a control signal and a source of energy.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Actuators">
+<ConceptTemplate title="Robotic Actuators">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In general IoT, an actuator might just be a relay that turns on a lightbulb. In Robotics, **Actuators** are the high-performance physical muscles of the machine.
+
+<Callout icon="info" title="The BLDC Revolution">
+  Historically, robots used heavy, slow brushed DC motors with massive gearboxes. 
+  
+  Today, high-end robotics (like Boston Dynamics' Atlas or Tesla's Optimus) use **Brushless DC (BLDC) Motors**. BLDC motors have no physical brushes rubbing against the axle. They use massive, mathematically timed electromagnetic coils to pull permanent magnets. They are incredibly powerful, incredibly fast, and do not wear out mechanically.
+</Callout>
+
+## Types of Robotic Muscles
+
+1. **Servo Motors:** A small DC motor bundled with a tiny internal PID controller and a potentiometer. You send it a digital signal ("Go to 90 degrees") and it handles the physics automatically. Heavily used in robotic arms and steering.
+2. **Stepper Motors:** Motors that move in exact mathematical "steps" (e.g., 1.8 degrees per pulse). They do not need feedback sensors because you mathematically know exactly how many steps you commanded. Heavily used in 3D printers and CNC machines.
+3. **Pneumatics/Hydraulics:** Using compressed air or pressurized oil to move physical pistons. Capable of mathematically terrifying amounts of raw force (lifting cars), but they require massive, leaky air compressors.
 
 </ConceptTemplate>

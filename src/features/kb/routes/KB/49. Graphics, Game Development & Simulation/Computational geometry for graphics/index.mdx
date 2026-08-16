@@ -1,8 +1,25 @@
+---
+title: Computational Geometry for Graphics
+description: The study of algorithms which can be stated in terms of geometry, forming the mathematical backbone of rendering physics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Computational geometry for graphics">
+<ConceptTemplate title="Computational Geometry for Graphics">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you fire a digital gun in a video game, how does the game mathematically know if the bullet hit the enemy, hit the wall, or missed entirely?
+
+This is solved using **Computational Geometry** (specifically, Ray Casting and Intersection mathematics).
+
+<Callout icon="warning" title="The Bounding Box Optimization">
+  Checking if a straight line (a ray) intersects a highly detailed 3D enemy model composed of 50,000 triangles requires 50,000 complex mathematical intersection tests. Doing this for every bullet fired will instantly crash the CPU.
+  
+  Instead, the game mathematically wraps the complex enemy inside an invisible, simple shape: an **AABB (Axis-Aligned Bounding Box)** or a **Bounding Sphere**. The engine checks if the bullet intersects the simple box (1 calculation). If it misses, it skips the enemy entirely.
+</Callout>
+
+## Vectors and Dot Products
+
+The absolute backbone of all lighting and geometry in graphics is the **Dot Product** and the **Cross Product**.
+
+If you have a triangle representing the ground, its **Normal Vector** points straight up. If the sun's light ray is hitting the ground, the game mathematically calculates the Dot Product between the Light Vector and the Normal Vector. The result is a single number (Cosine) between 1 and 0, which perfectly calculates exactly how much light the pixel should receive.
 
 </ConceptTemplate>

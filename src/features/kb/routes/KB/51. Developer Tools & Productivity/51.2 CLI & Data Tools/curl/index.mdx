@@ -1,8 +1,21 @@
+---
+title: curl (Client URL)
+description: A command-line tool and library for transferring data with URLs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="curl">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to download a webpage, you use Google Chrome. If a *Linux server* needs to download a webpage, it uses **`curl`**.
+
+`curl` is the absolute universal standard for making HTTP requests directly from the terminal. It supports almost every protocol on Earth (HTTP, HTTPS, FTP, SCP, LDAP).
+
+<Callout icon="info" title="Testing APIs">
+  Developers primarily use `curl` to mathematically test REST APIs without writing any code.
+  
+  `curl -X POST https://api.example.com/users -H "Content-Type: application/json" -d '{"name": "Alice"}'`
+  
+  This command physically constructs an HTTP POST request, injects the JSON headers, attaches the JSON body payload, and mathematically executes the network request, printing the server's raw response to the terminal.
+</Callout>
 
 </ConceptTemplate>

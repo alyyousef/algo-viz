@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: NuGet
+description: The package manager for .NET.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="NuGet">
+<TechnologyTemplate 
+  title="NuGet"
+  subtitle="Microsoft's dependency engine"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/NuGet_project_logo.svg/512px-NuGet_project_logo.svg.png"
+  description="NuGet is the official package manager for the Microsoft .NET ecosystem, mathematically allowing C# and F# developers to seamlessly integrate third-party DLLs into their projects."
+  yearCreated={2010}
+  creator="Outercurve Foundation (Microsoft)"
+  isOpenSource={true}
+  websiteUrl="https://www.nuget.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before NuGet, Windows developers had to manually download `.dll` files from random forums, place them in a `lib/` folder, and mathematically right-click Visual Studio to "Add Reference". If the DLL updated, it was a manual nightmare.
 
-</ConceptTemplate>
+NuGet completely integrated into Visual Studio and MSBuild. Today, adding Entity Framework or Newtonsoft.Json is as simple as running `dotnet add package Newtonsoft.Json`, completely automating the complex XML modifications required in the `.csproj` file.
+
+</TechnologyTemplate>

@@ -1,8 +1,28 @@
+---
+title: Cloud Security
+description: The discipline of protecting data, applications, and infrastructure involved in cloud computing environments.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cloud security">
+<ConceptTemplate title="Cloud Security">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional on-premises security, you owned the servers, the network switches, and the building. In Cloud Computing (AWS, Azure, GCP), you are renting someone else\'s computers. This requires a fundamental shift in how security is architected.
+
+**Cloud Security** relies heavily on IAM (Identity and Access Management) and mathematical configuration management, rather than physical network boundaries.
+
+<Callout icon="warning" title="The Shared Responsibility Model">
+  The cloud provider (AWS) is responsible for the security **OF** the cloud (the physical datacenters, the hypervisor, the power grid). The customer is responsible for security **IN** the cloud (the operating system, the firewall rules, the application code, and the IAM permissions).
+</Callout>
+
+## Core Cloud Security Concepts
+
+<ComparisonTable 
+  headers={['Concept', 'Tooling', 'Description']}
+  rows={[
+    ['Cloud Security Posture Management (CSPM)', 'AWS Security Hub, Wiz', 'Continuously scans the cloud environment for mathematical misconfigurations (e.g., an S3 bucket accidentally left open to the public internet).'],
+    ['Cloud Workload Protection (CWPP)', 'CrowdStrike, Datadog', 'Secures the actual virtual machines and containers running the applications, similar to traditional EDR.'],
+    ['Infrastructure as Code (IaC) Security', 'Checkov, Terraform', 'Scanning the mathematical templates that define the cloud infrastructure for security flaws *before* the infrastructure is even built.']
+  ]}
+/>
 
 </ConceptTemplate>

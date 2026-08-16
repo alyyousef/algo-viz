@@ -1,8 +1,32 @@
+---
+title: Availability (The Nines)
+description: The probability that a system will work as required when required during the period of a mission.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Availability">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Availability** is the mathematical percentage of time a system is fully operational and able to serve legitimate user requests. 
+
+It is calculated simply as: `Uptime / (Uptime + Downtime)`. In the industry, availability is colloquially referred to by the "Number of Nines."
+
+<Callout icon="warning" title="The Exponential Cost of Nines">
+  Going from 99% to 99.9% availability might cost $10,000 in architectural upgrades. Going from 99.99% to 99.999% ("Five Nines") might cost $10,000,000. It requires globally distributed, mathematically perfect active-active multi-region failover systems.
+</Callout>
+
+## The "Nines" Cheat Sheet
+
+This is the mathematical translation of availability percentages into allowed downtime per year:
+
+<ComparisonTable 
+  headers={['Availability %', 'Colloquial Term', 'Downtime Allowed per Year', 'Typical Use Case']}
+  rows={[
+    ['99%', 'Two Nines', '3.65 Days', 'Internal batch processing tools, staging environments.'],
+    ['99.9%', 'Three Nines', '8.77 Hours', 'Standard B2B SaaS applications, basic e-commerce.'],
+    ['99.99%', 'Four Nines', '52.6 Minutes', 'Enterprise core services, major consumer apps (Netflix, Spotify).'],
+    ['99.999%', 'Five Nines', '5.26 Minutes', 'Telecommunications, core banking ledgers, cloud provider control planes.'],
+    ['99.9999%', 'Six Nines', '31.5 Seconds', 'Aviation control systems, military nuclear defense grids.']
+  ]}
+/>
 
 </ConceptTemplate>

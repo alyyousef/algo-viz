@@ -1,8 +1,13 @@
+---
+title: Ranking
+description: The second stage of a recommendation system, where a sophisticated machine learning model assigns a precise score to each candidate item to determine the final display order.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ranking">
+<ConceptTemplate title="Ranking (Scoring)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Once Candidate Generation has mathematically narrowed the pool down to 500 videos, the **Ranking** stage takes over.
+
+Because 500 is a biologically small number, the system can afford to run massive, mathematically expensive Deep Neural Networks. The Ranking model looks at thousands of features: your past watch history, the video's click-through rate, the time of day, and the thumbnail colors. It mathematically assigns an exact probability score (e.g., `0.92% chance to click`) to all 500 videos, and sorts them from highest to lowest.
 
 </ConceptTemplate>

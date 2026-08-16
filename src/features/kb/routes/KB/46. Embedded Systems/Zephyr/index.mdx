@@ -1,8 +1,34 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Zephyr RTOS
+description: A scalable real-time operating system supporting multiple hardware architectures, optimized for resource-constrained devices.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Zephyr">
+<TechnologyTemplate 
+  title="Zephyr"
+  subtitle="The modern, Linux-foundation backed RTOS"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Zephyr_Project_logo.svg/512px-Zephyr_Project_logo.svg.png"
+  description="Zephyr is a fast-growing, open-source RTOS hosted by the Linux Foundation. It aims to be the 'Linux of the IoT world,' providing a massive, standardized ecosystem of drivers and networking stacks out of the box."
+  yearCreated={2016}
+  creator="Linux Foundation (Intel, NXP, Nordic)"
+  isOpenSource={true}
+  websiteUrl="https://www.zephyrproject.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While FreeRTOS is the king of tiny, raw kernels, it fundamentally lacks standard drivers. If you want to use I2C on FreeRTOS, you must write the physical I2C registers yourself or use the specific silicon vendor's libraries.
 
-</ConceptTemplate>
+**Zephyr** takes a completely different architectural approach. It attempts to bring the unified, monolithic driver model of Linux to tiny microcontrollers.
+
+<Callout icon="tip" title="The Device Tree">
+  Borrowed directly from the Linux Kernel, Zephyr uses a **Device Tree** mathematically mapping every physical pin and sensor on the circuit board into a standardized text file. This means you can write your Zephyr application once, and seamlessly compile it for an STM32, an NXP chip, or a Nordic Bluetooth chip without changing a single line of C code.
+</Callout>
+
+## Features
+
+Zephyr is heavier than FreeRTOS, but it mathematically comes with "batteries included":
+- A complete, highly certified Bluetooth Low Energy (BLE) stack.
+- Native IPv4 / IPv6 network stacks.
+- A standardized File System API.
+- USB Device and Host stacks.
+
+</TechnologyTemplate>

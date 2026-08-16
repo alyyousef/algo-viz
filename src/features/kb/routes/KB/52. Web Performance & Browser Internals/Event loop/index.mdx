@@ -1,45 +1,24 @@
 ---
-title: The Event Loop
-description: The single-threaded execution model of JavaScript that manages asynchronous callbacks and promises without blocking the main thread.
+title: Event loop
+description: The secret behind JavaScript's asynchronous concurrency model.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="The Event Loop">
 
-JavaScript is fundamentally **Single-Threaded**. It has exactly one Call Stack and one Memory Heap. 
-If a function takes 5 seconds to execute (e.g., a massive `while` loop), the entire browser tab freezes for 5 seconds. Users cannot click buttons, and CSS animations stop. 
+JavaScript is mathematically **Single-Threaded**. It only has one physical Call Stack. It can only execute one line of code at a time.
 
-So how does JavaScript make network requests that take 2 seconds without freezing the browser? The answer is the **Event Loop** and **Web APIs**.
+So, if JS is single-threaded, how can it execute a `setTimeout` for 5 seconds, whilst simultaneously rendering a UI animation, without freezing the browser? 
 
-## 1. The Architecture
-When you execute `setTimeout(cb, 2000)`, the V8 JavaScript engine does *not* pause for 2 seconds. 
-1. V8 hands the timer off to the **Browser Web API** (a separate thread written in C++).
-2. V8 pops `setTimeout` off the Call Stack and continues running your other code immediately.
-3. After 2 seconds, the Web API pushes the `cb` (callback) into the **Callback Queue** (or Task Queue).
+The answer is the **Event Loop**.
 
-## 2. The Loop Mechanism
-The **Event Loop** is a continuously running process with one extremely simple job:
-1. Check the Call Stack. Is it empty?
-2. If empty, check the Queues. Are there any callbacks waiting?
-3. If yes, take the first callback and push it onto the Call Stack for execution.
-
-If the Call Stack is NOT empty, the Event Loop does absolutely nothing. This is why a massive `while(true)` loop permanently blocks callbacks from ever executing.
-
-## 3. Macrotasks vs Microtasks
-There is actually a strict priority system within the queues.
-
-<ComparisonTable 
-  headers={['Queue Type', 'Examples', 'Priority']} 
-  rows={[
-    ['Microtask Queue', 'Promises (`.then()`), `MutationObserver`, `queueMicrotask()`', 'Absolute Highest. The Event Loop will drain every single Microtask before moving on.'],
-    ['Macrotask Queue (Task Queue)', '`setTimeout`, `setInterval`, DOM Events (Clicks), Network Callbacks', 'Lowest. The Event Loop only processes ONE Macrotask, and then immediately checks the Microtask queue again.']
-  ]} 
-/>
-
-<Callout icon="warning" title="Microtask Starvation">
-If you write a Promise that continuously resolves and chains another Promise infinitely, you will flood the Microtask Queue. Because the Event Loop refuses to process Macrotasks (like UI rendering or clicks) until the Microtask Queue is completely empty, you will instantly freeze the browser tab, even though the code is fully asynchronous.
+<Callout icon="success" title="The Architecture">
+  1. **The Call Stack:** Executes your `console.log` statements.
+  2. **Web APIs:** When you call `fetch()`, the Call Stack mathematically hands the network request off to the Browser's C++ threads (Web APIs) and continues executing.
+  3. **The Callback Queue:** When the HTTP response returns 2 seconds later, the Web API pushes the `.then()` callback into the Queue.
+  4. **The Event Loop:** This is an infinite biological loop. It constantly asks: *"Is the Call Stack empty?"* If yes, it grabs the first item from the Callback Queue and pushes it onto the Call Stack.
 </Callout>
+
+Understanding the Event Loop is the most mathematically critical requirement for senior JavaScript engineering.
 
 </ConceptTemplate>

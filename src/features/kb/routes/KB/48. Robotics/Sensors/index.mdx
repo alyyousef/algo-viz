@@ -1,8 +1,26 @@
+---
+title: Robotic Sensors (Proprioception vs Exteroception)
+description: Devices that estimate a robot's condition and environment, allowing it to perceive its physical surroundings.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sensors">
+<ConceptTemplate title="Robotic Sensors">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A robot must mathematically understand two completely different physical realities: 
+1. Where is the world? 
+2. Where are my own legs?
+
+<Callout icon="tip" title="Proprioception (Self-Awareness)">
+  Humans mathematically know where their arms are, even with their eyes closed. Robots achieve this using **Proprioceptive Sensors**.
+  - **Encoders:** Optical discs attached to the motors that mathematically count exact degrees of rotation, allowing the robot to know its exact joint angles.
+  - **IMU (Inertial Measurement Unit):** Accelerometers and Gyroscopes that mathematically tell the robot if it is currently falling over, allowing it to balance.
+</Callout>
+
+## Exteroception (World-Awareness)
+
+To navigate the world without hitting a wall, robots use **Exteroceptive Sensors**.
+- **LiDAR (Light Detection and Ranging):** A spinning laser that shoots millions of light pulses per second, mathematically measuring the exact time-of-flight of the photons bouncing back to generate a perfect 3D point-cloud of the room.
+- **Ultrasonic / Sonar:** Shooting sound waves and measuring the echo. Cheap, but mathematically fuzzy.
+- **Stereo Cameras:** Using two cameras (like human eyes) to mathematically calculate depth perception based on pixel offset.
 
 </ConceptTemplate>

@@ -1,8 +1,26 @@
+---
+title: Raft Consensus Algorithm
+description: A consensus algorithm designed to be easy to understand. It is equivalent to Paxos in fault-tolerance and performance.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Raft">
+<ConceptTemplate title="Raft Consensus Algorithm">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For decades, the Paxos algorithm was the mathematical gold standard for distributed consensus, but it was so notoriously complicated that almost no one could implement it correctly in software.
+
+In 2013, Diego Ongaro and John Ousterhout published **Raft**, an algorithm explicitly designed to be mathematically equivalent to Paxos, but vastly easier to understand. Today, Raft is the engine that mathematically powers modern infrastructure like **etcd** (Kubernetes), **Consul**, and modern **MongoDB**.
+
+<Callout icon="success" title="The Dictator Model">
+  Raft simplifies consensus by relying entirely on strict **Leader Election**. In Raft, the Leader is an absolute dictator. All logs mathematically flow in one direction: from the Leader down to the Followers.
+</Callout>
+
+## The Raft Election Process
+
+Nodes in Raft exist in one of three mathematical states: Follower, Candidate, or Leader.
+
+1. **The Timer:** Every Follower has a randomized mathematical countdown timer (e.g., 150ms to 300ms).
+2. **The Heartbeat:** As long as the Leader is alive, it mathematically sends a "Heartbeat" ping every 50ms, resetting all Follower timers.
+3. **The Election:** If the Leader crashes, the Heartbeats stop. The Follower whose randomized timer hits zero first mathematically transitions to a Candidate. It votes for itself and requests votes from the cluster.
+4. **The Quorum:** If the Candidate receives a mathematical majority of votes, it instantly becomes the new dictator (Leader).
 
 </ConceptTemplate>

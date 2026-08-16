@@ -1,8 +1,30 @@
+---
+title: Port Scanning
+description: The mathematical process of probing a server or host for open ports to determine what services are running.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Port scanning">
+<ConceptTemplate title="Port Scanning">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Every computer on a network has an IP address (its street address) and 65,535 possible "Ports" (the doors to the house). To hack a server, you first have to find out which doors are unlocked and what software is listening behind them.
+
+**Port Scanning** is the mathematical technique of sending network packets to specific ports and analyzing the responses. The industry-standard tool for this is **Nmap**.
+
+<Callout icon="warning" title="Stealth is Difficult">
+  Scanning all 65,535 ports on a server is incredibly noisy. Modern Intrusion Detection Systems (IDS) will instantly flag the mathematical anomaly of thousands of connections from a single IP and block the scanner. Attackers use "stealth scans" (like a SYN scan) and heavily rate-limit their packets to evade detection.
+</Callout>
+
+## Types of Port States
+
+When a port is scanned, it mathematically responds in one of three ways:
+
+<ComparisonTable 
+  headers={['State', 'Meaning', 'Hacker Interpretation']}
+  rows={[
+    ['Open', 'The server responded with an ACK. An application is actively listening on this port.', 'This is the target. I must figure out if the application listening here has a vulnerability.'],
+    ['Closed', 'The server responded with an RST (Reset). No application is listening.', 'Move on, nothing to hack here.'],
+    ['Filtered', 'The server did not respond at all. The packet was dropped into a black hole.', 'There is a firewall blocking my scan. I cannot mathematically determine if the port is open or closed.']
+  ]}
+/>
 
 </ConceptTemplate>

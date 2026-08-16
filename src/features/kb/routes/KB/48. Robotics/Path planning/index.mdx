@@ -1,31 +1,28 @@
 ---
-title: Path Planning
-description: "The computational problem of finding a valid sequence of configurations that moves a robot from a start state to a goal state without colliding with obstacles."
+title: Path Planning (A* and RRT)
+description: A computational problem to find a sequence of valid configurations that moves the object from the source to destination.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 <ConceptTemplate title="Path Planning">
 
-Once a robot has a Map (created by SLAM) and knows where it is, it needs to figure out how to get to its destination. This is **Path Planning**.
+Once SLAM has successfully built a map of the room, and the robot knows it is at Coordinate A, how does it physically navigate to Coordinate B without hitting the couch?
 
-If you've played a video game, you've seen path planning. It's the algorithm that allows an NPC to walk around a wall to attack you. In robotics, the algorithms are very similar to standard graph search algorithms used in Computer Science.
+This is the mathematical domain of **Path Planning**.
 
-## Common Algorithms
+<Callout icon="success" title="Grid-Based Planning (A*)">
+  If the map is a 2D grid, the most famous algorithm is **A* (A-Star)**. 
+  It mathematically explores the grid by calculating two numbers for every tile:
+  1. `g(n)`: The exact cost to travel from the Start to this tile.
+  2. `h(n)`: A mathematical heuristic (guess) of the straight-line distance from this tile to the Goal.
+  
+  A* is guaranteed to find the absolute shortest path, but if the map is massive (e.g., a 10,000x10,000 grid), the math takes too long to compute.
+</Callout>
 
-<ComparisonTable 
-  headers={['Algorithm', 'How it Works', 'Pros / Cons']} 
-  rows={[
-    ['A* (A-Star)', 'Divides the map into a grid. Uses a heuristic (like straight-line distance to the goal) to prioritize exploring grid squares that get closer to the target.', 'Pros: Guarantees the shortest path. Cons: Too slow for massive maps or high-dimensional robot arms.'],
-    ['Dijkstra’s Algorithm', 'Explores the grid equally in all directions like a ripple in a pond until it hits the target.', 'Pros: Guarantees shortest path. Cons: Terrible performance compared to A* because it explores useless directions.'],
-    ['RRT (Rapidly-exploring Random Tree)', 'Shoots out random "branches" from the starting point into empty space. When a branch gets close to the goal, it traces the path back.', 'Pros: Extremely fast in complex, high-dimensional spaces (like a 7-jointed robotic arm). Cons: The path it finds is jagged and usually not the shortest.']
-  ]} 
-/>
+## Sampling-Based Planning (RRT)
 
-## Configuration Space (C-Space)
-A common mistake beginners make is treating the robot as a single point. If a robot is 2 meters wide, and you plan a path through a 1-meter doorway using A*, the robot will crash into the doorframe.
+If a robotic arm has 6 joints, its "Map" is a 6-Dimensional mathematical space. A* completely fails in 6D space because there are billions of tiles.
 
-To solve this, roboticists use **Configuration Space (C-Space)**. Before running A*, they artificially "inflate" all the walls and obstacles on the map by the radius of the robot. 
-Once the walls are artificially inflated, the robot can safely be treated as a single 1-pixel dot by the algorithm. If the dot avoids the inflated walls on the map, the physical robot will avoid the real walls in the real world.
+Instead, robots use **RRT (Rapidly-exploring Random Trees)**. The algorithm mathematically throws random darts into the 6D space. It connects the valid darts together like branches on a tree until one branch accidentally hits the Goal. It does not find the *perfect* path, but it finds a *valid* path incredibly fast.
 
 </ConceptTemplate>

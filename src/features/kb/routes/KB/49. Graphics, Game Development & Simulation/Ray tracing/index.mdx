@@ -1,8 +1,26 @@
+---
+title: Ray Tracing
+description: A rendering technique for generating an image by tracing the path of light as pixels in an image plane and simulating the effects of its encounters with virtual objects.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ray tracing">
+<ConceptTemplate title="Ray Tracing">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Rasterisation is a fast, fake geometric trick, **Ray Tracing** is the literal mathematical simulation of physics.
+
+In the real universe, a lightbulb shoots trillions of photons, they bounce off walls, and a tiny fraction of them eventually hit your eye. 
+
+<Callout icon="tip" title="Shooting Backwards">
+  Simulating trillions of photons from the lightbulb is mathematically impossible because 99% of them will never hit the camera lens; calculating them is a waste of GPU power.
+  
+  Therefore, Ray Tracing is mathematically executed **backwards**. 
+  The GPU shoots a mathematical ray *out* of the camera lens, through the specific pixel on the screen, and into the 3D world. It mathematically checks what triangle the ray hits first. It then shoots a secondary ray from that triangle directly to the sun to see if it is in shadow.
+</Callout>
+
+## The Mathematical Cost
+
+Because a 4K monitor has 8.2 million pixels, Ray Tracing requires the GPU to mathematically calculate 8.2 million geometric vector intersections every single frame. This was historically so slow that it was only used in pre-rendered Pixar movies (taking 10 hours per frame). 
+
+In 2018, NVIDIA released the **RTX** series GPUs, which contained dedicated, hardcoded silicon (RT Cores) specifically designed to solve the Ray-Triangle intersection math in hardware, making real-time Ray Tracing possible.
 
 </ConceptTemplate>

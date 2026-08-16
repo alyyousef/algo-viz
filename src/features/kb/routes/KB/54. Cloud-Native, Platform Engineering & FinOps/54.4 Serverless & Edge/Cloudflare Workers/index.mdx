@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Cloudflare Workers
+description: A serverless execution environment that allows you to create entirely new applications or augment existing ones without configuring or maintaining infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Cloudflare Workers">
+<TechnologyTemplate 
+  title="Cloudflare Workers"
+  subtitle="The V8 Isolate Revolution"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Cloudflare_Logo.svg/512px-Cloudflare_Logo.svg.png"
+  description="Cloudflare mathematically solved the Serverless 'Cold Start' problem by abandoning Docker containers entirely in favor of V8 Isolates."
+  yearCreated={2017}
+  creator="Cloudflare"
+  isOpenSource={false}
+  websiteUrl="https://workers.cloudflare.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+AWS Lambda biologically suffers from 300ms Cold Starts because it spins up a full Linux MicroVM for every function. 
 
-</ConceptTemplate>
+<Callout icon="success" title="0ms Cold Starts">
+  Cloudflare Workers run directly inside the Chrome **V8 JavaScript Engine**. 
+  
+  Instead of booting an OS, Cloudflare mathematically spawns a new V8 "Isolate" (a tiny, secure memory context) within an already-running process. This reduces the boot time from 300ms down to **under 5 milliseconds**, effectively creating 0ms Cold Starts at the Edge.
+</Callout>
+
+</TechnologyTemplate>

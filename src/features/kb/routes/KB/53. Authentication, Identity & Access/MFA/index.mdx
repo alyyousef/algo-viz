@@ -1,41 +1,22 @@
 ---
-title: Multi-Factor Authentication (MFA)
-description: A security mechanism requiring users to provide two or more distinct verification factors to gain access to a resource, drastically mitigating credential theft.
+title: MFA (Multi-Factor Authentication)
+description: An electronic authentication method in which a user is granted access to a website or application only after successfully presenting two or more pieces of evidence to an authentication mechanism.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Multi-Factor Authentication (MFA)">
 
-Passwords are fundamentally broken. They are reused across websites, leaked in massive data breaches, guessed via brute force, or stolen via phishing emails. 
+Because humans are biologically terrible at creating passwords (and often reuse `Password123!` across 50 websites), passwords alone are mathematically insufficient for security.
 
-**Multi-Factor Authentication (MFA)** solves this by forcing the attacker to compromise multiple independent dimensions of security simultaneously to breach an account.
+**MFA** requires the user to prove their identity using multiple, independent mathematical factors.
 
-## 1. The Three Factors
-True MFA must combine two or more of the following distinct categories. (Combining two passwords is just Two-Step Verification, not MFA).
-
-<ComparisonTable 
-  headers={['Factor Type', 'Definition', 'Examples']} 
-  rows={[
-    ['Knowledge (Something you know)', 'Information memorized by the user.', 'Passwords, PIN codes, Security Questions (deprecated).'],
-    ['Possession (Something you have)', 'A physical or cryptographic object held by the user.', 'Smartphones (Authenticator Apps), SMS Codes, YubiKey hardware tokens.'],
-    ['Inherence (Something you are)', 'A biological metric unique to the user.', 'Fingerprint scans (TouchID), Facial recognition (FaceID), Retina scans.']
-  ]} 
-/>
-
-## 2. The SMS Vulnerability (SIM Swapping)
-Historically, the most common MFA was sending a 6-digit code via SMS text message. 
-**This is now considered highly insecure.**
-Attackers perform "SIM Swapping" by calling the victim's telecom provider, pretending to be the victim, and tricking the customer service rep into porting the phone number to the attacker's SIM card. The attacker now receives all of the victim's MFA SMS codes directly.
-
-## 3. Time-Based One-Time Passwords (TOTP)
-The modern software standard for MFA is **TOTP** (e.g., Google Authenticator, Authy).
-When setting up TOTP, the server and your phone securely share a secret cryptographic seed (usually via a QR code). 
-Both the server and your phone independently run a hashing algorithm combining the secret seed with the *current Unix timestamp*. Every 30 seconds, a new 6-digit code is generated simultaneously on both devices. Because it relies purely on math and time, TOTP works entirely offline and is immune to SIM swapping.
-
-<Callout icon="warning" title="Phishing Susceptibility">
-While TOTP is immune to SIM swapping, it is still vulnerable to **Real-Time Phishing (AiTM - Adversary in the Middle)**. If a user is tricked into logging into a fake website (`g00gle.com`), the attacker simply asks for the 6-digit TOTP code, immediately forwards it to the real Google, and intercepts the session cookie. Only hardware security keys (FIDO2/WebAuthn) can defeat real-time phishing.
+<Callout icon="tip" title="The Three Factors">
+  To biologically prove who you are, you must provide two of the following:
+  1. **Knowledge:** Something you *know* (A password or PIN).
+  2. **Possession:** Something you *have* (A smartphone app, an SMS code, or a YubiKey).
+  3. **Inherence:** Something you *are* (A biometric fingerprint or FaceID scan).
+  
+  If a hacker sitting in Russia guesses your password (Knowledge), they mathematically cannot log in because they do not physically possess your iPhone in their hand (Possession).
 </Callout>
 
 </ConceptTemplate>

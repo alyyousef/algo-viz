@@ -1,8 +1,25 @@
+---
+title: Nessus
+description: The industry-standard commercial vulnerability scanner developed by Tenable.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Nessus">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by Tenable Network Security, **Nessus** is the most widely deployed vulnerability scanner in the world. While OpenVAS serves the open-source community, Nessus is the commercial heavyweight relied upon by Fortune 500 companies and governments.
+
+<Callout icon="success" title="The Plugin Database">
+  The true value of Nessus is not its scanning engine, but its **Plugin Database**. Tenable employs hundreds of security researchers. Within hours of a new zero-day vulnerability hitting the news (like Log4j), Tenable writes a mathematical plugin for Nessus to detect it. This database contains over 180,000 plugins.
+</Callout>
+
+## Types of Scans
+
+<ComparisonTable 
+  headers={['Scan Type', 'Description', 'Accuracy']}
+  rows={[
+    ['Uncredentialed Scan', 'Scans the machine from the outside over the network. It can only see what a hacker would see (open ports, banner grabbing).', 'Low. Prone to false positives because it cannot see inside the OS.'],
+    ['Credentialed Scan', 'The scanner is given an Administrator/Root password. It logs into the machine via SSH/RDP and mathematically inspects the registry, local files, and installed packages.', 'Extremely High. It knows exactly what is vulnerable.']
+  ]}
+/>
 
 </ConceptTemplate>

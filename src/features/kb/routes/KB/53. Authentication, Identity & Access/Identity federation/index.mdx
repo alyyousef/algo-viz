@@ -1,8 +1,19 @@
+---
+title: Identity federation
+description: An agreement that can be made between multiple enterprises to let subscribers use the same identification data to obtain access to the networks of all enterprises in the group.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Identity federation">
+<ConceptTemplate title="Identity Federation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Identity Federation** is the mathematical extension of SSO across entirely different organizations.
+
+If you work for Company A, and you need to access a portal hosted by Company B, you do not want to biologically create a new account in Company B's database.
+
+<Callout icon="tip" title="Establishing Mathematical Trust">
+  Company B mathematically "trusts" Company A's Identity Provider. 
+  
+  When you try to access Company B, they redirect you back to Company A's login server. You log in using your normal employee credentials. Company A generates a cryptographically signed SAML Assertion and sends it to Company B. Company B mathematically verifies the signature and grants you access, even though your identity physically does not exist in their database.
+</Callout>
 
 </ConceptTemplate>

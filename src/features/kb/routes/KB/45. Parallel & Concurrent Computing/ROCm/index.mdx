@@ -1,8 +1,30 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: ROCm
+description: AMD's open-source software development stack for highly parallel computing on GPUs.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="ROCm">
+<TechnologyTemplate 
+  title="ROCm"
+  subtitle="AMD's direct answer to CUDA"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/AMD_ROCm_logo.svg/512px-AMD_ROCm_logo.svg.png"
+  description="Radeon Open Compute (ROCm) is AMD's official, open-source software stack designed to break NVIDIA's CUDA monopoly in High-Performance Computing (HPC) and Artificial Intelligence."
+  yearCreated={2016}
+  creator="AMD"
+  isOpenSource={true}
+  websiteUrl="https://rocm.docs.amd.com/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For years, the AI industry begged for a viable competitor to NVIDIA. AMD hardware was incredibly fast mathematically, but scientists couldn't use it because PyTorch and TensorFlow were inextricably hardcoded to use CUDA.
 
-</ConceptTemplate>
+AMD responded by building **ROCm**. 
+
+<Callout icon="success" title="The HIPIllusion">
+  The true genius of the ROCm stack is a tool called **HIP (Heterogeneous-Compute Interface for Portability)**. HIP mathematically intercepts standard CUDA C++ code and compiles it on the fly to run perfectly on AMD GPUs. It allows developers to take a million lines of NVIDIA-locked code and port it to AMD silicon in a matter of hours.
+</Callout>
+
+## The Exascale Era
+
+ROCm is not just an underdog; it is mathematically powering some of the largest supercomputers on Earth. The **Frontier Supercomputer** (the first computer in human history to officially break the Exaflop barrier—one quintillion mathematical operations per second) is entirely powered by AMD Instinct GPUs running the ROCm software stack.
+
+</TechnologyTemplate>

@@ -1,30 +1,33 @@
 ---
-title: Promises (Async/Await)
-description: An object representing the eventual completion or failure of an asynchronous operation.
+title: Promises
+description: An object representing the eventual completion or failure of an asynchronous operation, closely related to Futures.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Promises (Async/Await)">
+<ConceptTemplate title="Promises">
 
-A Promise in JavaScript represents a value that may not be available yet, but will be resolved at some point in the future (or rejected with an error). It is the modern replacement for "Callback Hell".
+In Computer Science literature, the terms **Future** and **Promise** are often used interchangeably, but there is a strict mathematical distinction in advanced concurrent systems.
 
-<Callout icon="success" title="Async / Await">
-  Introduced in ES2017, `async/await` is syntactic sugar on top of Promises. It allows you to write asynchronous, non-blocking code that *looks* exactly like synchronous, top-to-bottom code.
+<Callout icon="info" title="The Mathematical Distinction">
+  A **Future** is a read-only mathematical placeholder. You can only look at it and ask, *"Are you done yet?"*
+  
+  A **Promise** is the writable mathematical controller. It is the entity that actually holds the power to say, *"I have successfully finished, here is the data."*
 </Callout>
 
-## The Three States of a Promise
+## The JavaScript Ecosystem
 
-<ComparisonTable 
-  headers={['State', 'Description', 'Action']}
-  rows={[
-    ['Pending', 'The initial state. The operation has not completed yet.', 'Waiting...'],
-    ['Fulfilled', 'The operation completed successfully.', 'Triggers the `.then()` block.'],
-    ['Rejected', 'The operation failed (e.g., Network Error).', 'Triggers the `.catch()` block.']
-  ]}
-/>
+In the context of Web Development (specifically JavaScript), the entire mathematical concept was unified under the `Promise` API (introduced in ES6).
 
-## Microtask Queue
+Instead of writing deeply nested "Callback Hell" to handle asynchronous network requests, the mathematical `Promise` object allows developers to chain operations sequentially using `.then()` and `.catch()`.
 
-Promises have higher priority than standard `setTimeout` callbacks. When a Promise resolves, its `.then()` callback is pushed to the **Microtask Queue**, which the Event Loop empties completely before looking at the standard Task Queue.
+```javascript
+// The mathematical beauty of Promise Chaining
+fetchUserData()
+  .then(user => fetchUserPosts(user.id))
+  .then(posts => renderUI(posts))
+  .catch(error => showErrorMessage(error));
+```
 
-</TechnologyTemplate>
+Every `.then()` mathematically returns a brand new Promise, allowing an infinite pipeline of asynchronous transformations.
+
+</ConceptTemplate>

@@ -1,8 +1,21 @@
+---
+title: Gas optimisation
+description: The practice of reducing the amount of computational effort (gas) required to execute smart contracts on the Ethereum network.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gas optimisation">
+<ConceptTemplate title="Gas Optimisation">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Because Ethereum is a global, shared computer, space is mathematically limited. If a developer wrote an infinite `while(true)` loop, it would crash the entire global network.
+
+To prevent this, Ethereum invented **Gas**.
+
+<Callout icon="warning" title="The Financial Cost of Math">
+  Every single mathematical operation in Solidity costs real biological money.
+  
+  Adding two numbers costs 3 Gas. Writing a string to the database costs 20,000 Gas. The user must mathematically pay this Gas fee in ETH to execute your contract.
+  
+  **Gas Optimisation** is the discipline of rewriting code to be mathematically cheaper. For example, storing an array of 50 integers in the EVM database might cost a user $400 in transaction fees. Moving that logic off-chain or packing the integers into a single `uint256` can reduce the fee to $5.
+</Callout>
 
 </ConceptTemplate>

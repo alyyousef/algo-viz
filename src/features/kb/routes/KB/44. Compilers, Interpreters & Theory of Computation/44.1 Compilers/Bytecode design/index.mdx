@@ -1,8 +1,42 @@
+---
+title: Bytecode Design
+description: The design of instruction sets for software interpreters and virtual machines.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bytecode design">
+<ConceptTemplate title="Bytecode Design">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Bytecode** is the mathematical Instruction Set Architecture (ISA) of a software Virtual Machine. It is called "bytecode" because each instruction opcode is typically mathematically encoded into a single 8-bit byte.
+
+Because it is an intermediate format, Bytecode must balance two mathematically opposing forces:
+1. It must be high-level enough that the Compiler can generate it quickly.
+2. It must be low-level enough that the Virtual Machine can execute it (or JIT compile it) at blazing speeds.
+
+<Callout icon="tip" title="Security and Sandboxing">
+  Bytecode provides a massive security advantage. You cannot safely download physical x86 Assembly from a website and run it; it could format your hard drive. But you can download WebAssembly Bytecode. The browser's VM mathematically analyzes the bytecode before execution, guaranteeing it cannot escape the secure sandbox.
+</Callout>
+
+## Anatomy of a Bytecode Instruction
+
+A typical bytecode instruction consists of an **Opcode** (the action) followed by **Operands** (the targets).
+
+For example, compiling `x = 5 + 5`:
+1. `PUSH_CONST 5`
+2. `PUSH_CONST 5`
+3. `ADD`
+4. `STORE_VAR x`
+
+Inside the Virtual Machine (usually written in C++), executing the bytecode is essentially a massive mathematical `while` loop wrapped around a giant `switch` statement:
+
+```cpp
+while (true) {
+  byte opcode = bytecode[ip++]; // increment instruction pointer
+  switch (opcode) {
+    case OP_ADD:
+      stack.push(stack.pop() + stack.pop());
+      break;
+  }
+}
+```
 
 </ConceptTemplate>

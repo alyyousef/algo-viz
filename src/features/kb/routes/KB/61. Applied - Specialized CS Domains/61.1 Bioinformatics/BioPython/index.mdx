@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: BioPython
+description: An open-source collection of non-commercial Python tools for computational biology and bioinformatics.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="BioPython">
+<TechnologyTemplate 
+  title="Biopython"
+  subtitle="The Python Library for DNA"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Biopython_logo.svg/512px-Biopython_logo.svg.png"
+  description="Biopython is the biological industry standard Python framework for writing scripts that interact with DNA sequences, proteins, and major biological databases."
+  yearCreated={1999}
+  creator="The Biopython Consortium"
+  isOpenSource={true}
+  websiteUrl="https://biopython.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a computational biologist wants to download a genome from the NCBI database, translate the DNA string into an RNA string, and then parse the results into a Pandas dataframe, they mathematically do not write this from scratch.
 
-</ConceptTemplate>
+Biopython provides robust, battle-tested objects like `SeqRecord`. It handles the terrifying biological edge cases of file formats (like parsing massive FASTA or GenBank files) so the scientist can focus on the actual biology.
+
+</TechnologyTemplate>

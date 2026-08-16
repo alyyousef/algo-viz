@@ -1,8 +1,28 @@
+---
+title: Adapters
+description: Small modular neural network blocks inserted into pre-trained LLMs to add specialized knowledge without retraining the base model.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Adapters">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Adapters are the foundational concept behind Parameter-Efficient Fine-Tuning (PEFT). Instead of mathematically updating the billions of weights in a massive foundation model to teach it a new task, you freeze the base model entirely. 
+
+You then insert tiny, trainable neural network modules—**Adapters**—between the existing layers of the Transformer.
+
+<Callout icon="success" title="Modular Intelligence">
+  Because the base model remains frozen, you can train 50 different adapters for 50 different tasks (e.g., Medical Adapter, Legal Adapter, Python Adapter). During inference, you just load the 70B base model into VRAM once, and hot-swap the tiny 50MB adapters in milliseconds depending on the user\'s question.
+</Callout>
+
+## Standard Adapter Architecture
+
+The original adapter design (proposed by Houlsby et al.) uses a mathematical "bottleneck" structure:
+
+1. **Down-projection:** A linear layer shrinks the massive incoming dimension (e.g., 4096) down to a tiny dimension (e.g., 64).
+2. **Non-linearity:** A standard activation function (like ReLU or GELU) processes the compressed data.
+3. **Up-projection:** A second linear layer scales the 64-dimension data back up to 4096.
+4. **Residual Connection:** The output is mathematically added back to the original input.
+
+This bottleneck forces the adapter to compress and learn only the most essential task-specific knowledge.
 
 </ConceptTemplate>

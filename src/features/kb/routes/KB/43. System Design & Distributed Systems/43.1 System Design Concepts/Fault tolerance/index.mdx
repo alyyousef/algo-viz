@@ -1,8 +1,29 @@
+---
+title: Fault Tolerance
+description: The property that enables a system to continue operating properly in the event of the failure of some of its components.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fault tolerance">
+<ConceptTemplate title="Fault Tolerance">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+At scale, hardware failure is not a possibility; it is a mathematical certainty. Hard drives will explode, fiber optic cables will be cut by construction backhoes, and datacenters will catch on fire.
+
+**Fault Tolerance** is the architectural design that mathematically guarantees the application will survive these specific, localized failures without the end-user ever noticing a drop in availability.
+
+<Callout icon="success" title="Redundancy is the Key">
+  The core mathematical mechanism for Fault Tolerance is Redundancy (N+1 architecture). If you mathematically require 3 web servers to handle the traffic load, you intentionally deploy 4. If one catches on fire, the remaining 3 can absorb the load without failing.
+</Callout>
+
+## Layers of Fault Tolerance
+
+<ComparisonTable 
+  headers={['Failure Layer', 'Fault Tolerant Design Pattern']}
+  rows={[
+    ['Hard Drive Failure', 'RAID (Redundant Array of Independent Disks). Data is mathematically striped or mirrored across multiple physical disks inside the same server.'],
+    ['Server Failure', 'Load Balancing. If the EC2 instance dies, the Load Balancer instantly detects the mathematical loss of heartbeat and routes traffic to healthy instances in the cluster.'],
+    ['Datacenter Failure', 'Multi-AZ (Availability Zone). Replicating the database synchronously across three physically separate buildings powered by different municipal power grids.'],
+    ['Regional Disaster (Earthquake)', 'Multi-Region Active-Passive or Active-Active deployment (e.g., US-East routing traffic to EU-West via global DNS failover).']
+  ]}
+/>
 
 </ConceptTemplate>

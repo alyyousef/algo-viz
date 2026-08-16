@@ -1,8 +1,35 @@
+---
+title: Atomics
+description: Mathematical operations that are executed completely or not at all, guaranteeing that no other thread can observe them in a partially complete state.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Atomics">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If `counter += 1` requires three distinct mathematical steps (Read, Add, Write), it is vulnerable to a Race Condition unless protected by an expensive OS-level Mutex.
+
+**Atomic Operations** bypass the OS entirely by utilizing specialized hardware instructions built directly into the physical CPU silicon.
+
+<Callout icon="tip" title="Uninterruptible Mathematics">
+  When you execute an Atomic Increment (`fetch_and_add` on x86 CPUs), the CPU mathematically guarantees that the Read, Add, and Write happen in a single, indivisible microscopic moment. It mathematically locks the physical RAM bus for a nanosecond, preventing any other CPU core from interfering.
+</Callout>
+
+## The Compare-And-Swap (CAS)
+
+The most important atomic operation in all of Computer Science is **Compare-And-Swap (CAS)**. 
+
+CAS mathematically takes three arguments: a memory location, an expected old value, and a new value.
+```c
+bool cas(int* address, int expected, int new_value) {
+   // This entire block happens inside the CPU silicon atomically!
+   if (*address == expected) {
+       *address = new_value;
+       return true;
+   }
+   return false;
+}
+```
+
+If CAS succeeds, your thread safely updated the variable. If CAS fails (returns false), it means another thread snuck in and changed the value first. Your thread simply loops (spins) and tries again. CAS is the foundational mathematical building block for all Lock-Free Data Structures.
 
 </ConceptTemplate>

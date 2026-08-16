@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Insomnia
+description: A collaborative open source API client.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Insomnia">
+<TechnologyTemplate 
+  title="Insomnia"
+  subtitle="The lightweight Postman alternative"
+  logoUrl="https://insomnia.rest/images/insomnia-logo.svg"
+  description="As Postman evolved into a massive, heavy enterprise cloud platform requiring user accounts and syncing, Insomnia emerged as the open-source, mathematically lightweight alternative."
+  yearCreated={2015}
+  creator="Gregory Schier"
+  isOpenSource={true}
+  websiteUrl="https://insomnia.rest/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Many developers mathematically despise cloud-syncing. They want an API client that is purely local, blazing fast, and doesn't require a login to test a `localhost:3000` endpoint.
 
-</ConceptTemplate>
+Insomnia fulfills this role. It provides the exact same core mathematical functionality as Postman (Collections, Environments, OAuth, GraphQL support) but is built strictly for developers who prioritize biological speed and local-first data privacy.
+
+*(Note: Insomnia recently introduced cloud syncing, leading to the rise of newer purely-local tools like Bruno).*
+
+</TechnologyTemplate>

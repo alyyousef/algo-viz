@@ -1,28 +1,28 @@
 ---
 title: Turing Machines
-description: "An abstract mathematical model of computation that defines the limits of what can be computed by a machine."
+description: A mathematical model of computation that defines an abstract machine which manipulates symbols on a strip of tape according to a table of rules.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { Callout } from '@/features/kb/components/mdx/Callout'
 
 <ConceptTemplate title="Turing Machines">
 
-Invented by Alan Turing in 1936 (years before physical computers existed), a **Turing Machine** is not a physical device, but a mathematical abstraction. It is the fundamental theoretical foundation of all modern computer science.
+Invented by Alan Turing in 1936, the **Turing Machine** is the absolute pinnacle of the theoretical computer. 
 
-## The Model
-A Turing Machine consists of:
-1. **An Infinite Tape**: Divided into cells, each containing a symbol (like `0`, `1`, or blank). This represents infinite memory.
-2. **A Read/Write Head**: A scanner that points to a single cell on the tape. It can read the symbol, write a new symbol, and move one step left or right.
-3. **A State Register**: The current "mood" or state of the machine (e.g., State A, State B).
-4. **A Table of Rules (The Program)**: A strict set of instructions based on the current state and the symbol being read. (e.g., *"If in State A and reading a 1: Write a 0, move Right, switch to State B"*).
+It mathematically consists of:
+1. A **State Machine** (the CPU).
+2. An **Infinite Tape** divided into discrete cells (the infinite RAM/Hard Drive).
+3. A **Read/Write Head** that can move left or right along the tape.
+
+<Callout icon="success" title="The Ultimate Limit">
+  A Turing Machine is mathematically capable of simulating the execution logic of ANY computer algorithm in the universe. If a mathematical problem cannot be solved by a Turing Machine, it cannot be solved by an Intel Core i9, an Apple M3, or a massive supercomputer cluster. 
+</Callout>
 
 ## Turing Completeness
-Despite its primitive simplicity, a Turing Machine can compute **anything that is computable in the universe**. 
 
-If a programming language can simulate a Turing Machine, it is called **Turing Complete**. C, Python, Java, and JavaScript are all Turing Complete. This means that, ignoring limitations of time and memory, any program written in Python can mathematically be written in C, and vice versa. They are fundamentally equal in computational power.
+A programming language or system is mathematically deemed **"Turing Complete"** if it is theoretically capable of simulating a Turing Machine.
 
-<Callout icon="warning" title="Accidental Turing Completeness">
-Many systems that were never meant to be programming languages accidentally became Turing Complete by adding too many features over the years. HTML and CSS (when combined), Microsoft Excel, and even the game Minecraft (via Redstone) are fully Turing Complete.
-</Callout>
+- **Turing Complete:** C++, Python, JavaScript, Java. (They can theoretically calculate anything, given infinite time and RAM).
+- **Accidentally Turing Complete:** Excel Spreadsheets, CSS3 (using complex animations), Magic: The Gathering (the card game).
+- **NOT Turing Complete:** Standard HTML, Standard Regular Expressions. (They are mathematically incapable of infinite arbitrary logic).
 
 </ConceptTemplate>

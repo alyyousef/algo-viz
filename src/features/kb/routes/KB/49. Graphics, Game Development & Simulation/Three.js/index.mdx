@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Three.js
+description: A cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Three.js">
+<TechnologyTemplate 
+  title="Three.js"
+  subtitle="The absolute king of Web 3D"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Three.js_Icon.svg/512px-Three.js_Icon.svg.png"
+  description="Because raw WebGL is mathematically brutal and terrifying to write, Three.js was created as a high-level wrapper. It handles all the matrix math, shaders, and GPU memory allocation automatically."
+  yearCreated={2010}
+  creator="Ricardo Cabello (Mr.doob)"
+  isOpenSource={true}
+  websiteUrl="https://threejs.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to render a 3D car on a website, writing 2,000 lines of raw WebGL matrix algebra is a massive waste of time. 
 
-</ConceptTemplate>
+**Three.js** provides a high-level Object-Oriented paradigm. You simply create a `Scene`, add a `PerspectiveCamera`, add a `Mesh` (geometry + material), and call `renderer.render()`. The library automatically calculates the projection matrices and dynamically compiles the exact GLSL shaders required for the GPU.
+
+<Callout icon="success" title="React Three Fiber (R3F)">
+  In the modern web ecosystem, **React Three Fiber (R3F)** is the absolute standard. 
+  
+  R3F mathematically maps Three.js objects directly into React Components. Instead of writing imperative `scene.add(cube)`, you write declarative JSX: `<mesh><boxGeometry /><meshStandardMaterial color="hotpink" /></mesh>`. This seamlessly integrates 3D rendering with React's state management.
+</Callout>
+
+## The Physics Problem
+
+Three.js is purely a **Renderer**. It has no physics engine. If you drop a ball, it will not fall. If it hits a wall, it will pass right through it. To build a game in Three.js, you must mathematically bind it to a separate JavaScript physics engine (like Rapier or Cannon.js).
+
+</TechnologyTemplate>

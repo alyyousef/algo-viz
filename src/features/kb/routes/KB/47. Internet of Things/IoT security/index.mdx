@@ -1,8 +1,26 @@
+---
+title: IoT Security
+description: The area of endeavor concerned with safeguarding connected devices and networks in the Internet of things.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IoT security">
+<ConceptTemplate title="IoT Security">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, the Internet of Things is a mathematical security nightmare. 
+
+In the 2010s, manufacturers built millions of cheap, Linux-based security cameras and smart fridges, hardcoded the default password as `admin`, and connected them directly to the public internet.
+
+<Callout icon="error" title="The Mirai Botnet">
+  In 2016, hackers wrote a simple script that scoured the internet for IoT devices, tried the default `admin` password, and instantly infected them. 
+  
+  This created the **Mirai Botnet** — a mathematically massive army of 600,000 hacked smart TVs and webcams. The hackers commanded the army to execute a massive DDoS attack against Dyn (a major DNS provider), mathematically taking down Twitter, Netflix, and Reddit across the entire East Coast of the United States.
+</Callout>
+
+## The Three Pillars of IoT Security
+
+Modern, professional IoT architecture mathematically demands three absolute requirements:
+1. **Secure Boot:** The microcontroller's Bootloader mathematically verifies the cryptographic signature of the firmware before executing it. If a hacker physically flashes modified firmware via JTAG, the CPU refuses to boot.
+2. **Mutual Authentication (mTLS):** The device does not just send a password to the Cloud. The Cloud mathematically verifies the physical X.509 certificate of the device, and the device mathematically verifies the certificate of the Cloud, ensuring neither is an imposter.
+3. **No Inbound Open Ports:** An IoT device should NEVER have an open listening port (like SSH or HTTP). The device must only make *outbound* connections to the MQTT Broker.
 
 </ConceptTemplate>

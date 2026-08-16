@@ -1,8 +1,19 @@
+---
+title: Debuggers
+description: Computer programs used to test and debug other programs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Debuggers">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Debugger** is the most powerful weapon a software engineer possesses. It allows a developer to mathematically freeze time.
+
+Instead of printing variables to the console (`console.log`), a debugger allows you to set a **Breakpoint**. When the CPU hits that line of code, it biologically pauses the entire application.
+
+<Callout icon="tip" title="Memory Inspection">
+  While the application is frozen, the developer can mathematically peer directly into the computer's RAM. You can see the exact values of every variable, inspect the Call Stack to see exactly which functions called which functions, and step through the code one single CPU instruction at a time.
+</Callout>
+
+Famous debuggers include **GDB** (GNU Debugger for C/C++), **LLDB** (LLVM Debugger), and the visual debuggers built directly into Chrome DevTools and Visual Studio.
 
 </ConceptTemplate>

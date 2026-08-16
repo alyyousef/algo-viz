@@ -1,8 +1,13 @@
+---
+title: LAPACK
+description: A standard software library for numerical linear algebra, providing routines for solving systems of simultaneous linear equations, least-squares solutions, eigenvalue problems, and singular value problems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LAPACK)">
+<ConceptTemplate title="LAPACK">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While BLAS handles the low-level, biological matrix multiplication, **LAPACK** (Linear Algebra PACKage) handles the high-level math.
+
+Written originally in Fortran, LAPACK mathematically provides the complex algorithms needed by scientists: solving massive systems of linear equations, finding eigenvalues, and performing Singular Value Decompositions (SVD). LAPACK biologically sits on top of BLAS; the LAPACK algorithm handles the mathematical strategy, but delegates the raw number-crunching down to the hardware-optimized BLAS.
 
 </ConceptTemplate>

@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Raspberry Pi
+description: A series of small single-board computers developed in the UK to promote teaching of basic computer science in schools and in developing countries.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Raspberry Pi">
+<TechnologyTemplate 
+  title="Raspberry Pi"
+  subtitle="The bridge between Embedded and Desktop"
+  logoUrl="https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/Raspberry_Pi_Logo.svg/512px-Raspberry_Pi_Logo.svg.png"
+  description="The Raspberry Pi is a Single-Board Computer (SBC). Unlike a microcontroller, it uses a powerful ARM Cortex-A Microprocessor (MPU) capable of running a full Linux Operating System."
+  yearCreated={2012}
+  creator="Raspberry Pi Foundation"
+  isOpenSource={false}
+  websiteUrl="https://www.raspberrypi.org/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Raspberry Pi mathematically blurred the line between the Desktop world and the Embedded world. 
 
-</ConceptTemplate>
+It is powerful enough to plug into a 4K monitor, run a graphical desktop, and browse the web (because it runs a full Linux OS like Debian). However, it also exposes a 40-pin **GPIO Header** directly on the board.
+
+<Callout icon="warning" title="Not Real-Time">
+  Because the Pi runs a standard Linux kernel, it is mathematically **NOT Deterministic**. You can easily write a Python script on the Pi to blink an LED, but if you try to control a high-speed CNC laser cutter, the Linux kernel might mathematically decide to pause your Python script for 10 milliseconds to download a background update, physically ruining the laser cut.
+</Callout>
+
+## Python First
+
+Because you have the full power of Linux, you don't have to write low-level C. 90% of all Raspberry Pi hardware projects are written in **Python**, utilizing massive libraries like OpenCV for AI computer vision, or NumPy for data processing.
+
+*(Note: In 2021, the Foundation released the Raspberry Pi Pico. Unlike the main Pi, the Pico is a true $4 Microcontroller (RP2040) designed for bare-metal determinism.)*
+
+</TechnologyTemplate>

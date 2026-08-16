@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: AWS Lambda
+description: An event-driven, serverless computing platform provided by Amazon as a part of Amazon Web Services.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="AWS Lambda">
+<TechnologyTemplate 
+  title="AWS Lambda"
+  subtitle="The pioneer of Serverless computing"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Amazon_Lambda_architecture_logo.svg/512px-Amazon_Lambda_architecture_logo.svg.png"
+  description="Launched in 2014, AWS Lambda mathematically revolutionized the cloud industry by introducing the FaaS model, proving that developers no longer needed to provision or manage EC2 instances."
+  yearCreated={2014}
+  creator="Amazon Web Services"
+  isOpenSource={false}
+  websiteUrl="https://aws.amazon.com/lambda/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+AWS Lambda is deeply integrated into the entire AWS ecosystem. 
 
-</ConceptTemplate>
+It mathematically relies on **Event-Driven Execution**. A Lambda function sits completely idle (costing $0.00) until a biological trigger occurs. If a user uploads an image to an S3 Bucket, that event mathematically triggers a Lambda function to compress the image and save it to DynamoDB, all occurring invisibly without a single dedicated server.
+
+</TechnologyTemplate>

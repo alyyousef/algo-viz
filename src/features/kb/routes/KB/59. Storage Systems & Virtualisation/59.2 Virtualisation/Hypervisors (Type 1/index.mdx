@@ -1,8 +1,17 @@
+---
+title: Type 1 Hypervisor
+description: Bare-metal hypervisors that run directly on the host's hardware to control the hardware and to manage guest operating systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hypervisors (Type 1">
+<ConceptTemplate title="Type 1 Hypervisor (Bare-Metal)">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Type 1 Hypervisor** (like VMware ESXi or Proxmox) completely replaces the Operating System.
+
+<Callout icon="success" title="Direct Hardware Access">
+  You do not biologically install Windows or Ubuntu on the server. You install the Hypervisor directly onto the bare metal motherboard.
+  
+  Because the Hypervisor is the OS, it has absolute, mathematically perfect control over the CPU and RAM. It can allocate resources to Virtual Machines with almost zero biological overhead. This is the enterprise standard used in every major data center (AWS, Azure, GCP).
+</Callout>
 
 </ConceptTemplate>

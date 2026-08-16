@@ -1,8 +1,26 @@
+---
+title: Suricata
+description: A high-performance, open-source network analysis and threat detection engine.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="Suricata">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Suricata is a robust, open-source Network Intrusion Detection System (NIDS), Intrusion Prevention System (IPS), and Network Security Monitoring (NSM) engine. Developed by the OISF (Open Information Security Foundation), it is highly regarded as the modern, multi-threaded successor to Snort.
+
+<Callout icon="success" title="The Multi-Threading Advantage">
+  Older engines like Snort were originally single-threaded, meaning they could only utilize one CPU core, creating massive bottlenecks on 10-Gigabit networks. Suricata was designed from the ground up to be fully multi-threaded, allowing it to seamlessly scale across massive 64-core enterprise servers.
+</Callout>
+
+## Core Capabilities
+
+<ComparisonTable 
+  headers={['Capability', 'Description']}
+  rows={[
+    ['Signature-Based Detection', 'Inspects live network traffic against thousands of known mathematical rules and malware signatures to instantly drop malicious packets.'],
+    ['Protocol Identification', 'Automatically identifies protocols (HTTP, DNS, TLS) on ANY port, defeating malware that tries to hide SSH traffic on port 80.'],
+    ['File Extraction', 'Can automatically extract files (like PDFs or EXEs) out of the raw network stream and save them to disk for isolated malware analysis.']
+  ]}
+/>
 
 </ConceptTemplate>

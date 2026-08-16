@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: LocalTunnel
+description: An open-source tool that exposes your localhost to the world for easy testing and sharing.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="LocalTunnel">
+<TechnologyTemplate 
+  title="LocalTunnel"
+  subtitle="The open-source ngrok alternative"
+  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Node.js_logo.svg/512px-Node.js_logo.svg.png"
+  description="As ngrok transitioned into a massive, heavily rate-limited, paid enterprise tool requiring user authentication, LocalTunnel emerged as the open-source, mathematically free alternative."
+  yearCreated={2013}
+  creator="Roman Shtylman"
+  isOpenSource={true}
+  websiteUrl="https://localtunnel.me/"
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+LocalTunnel provides the exact same mathematical reverse-proxy tunneling functionality as ngrok, but is distributed purely as a Node.js npm package.
 
-</ConceptTemplate>
+You run `npx localtunnel --port 3000`, and it instantly assigns a randomized `loca.lt` subdomain pointing directly to your local server. It is heavily utilized by developers who biologically refuse to create accounts or pay subscriptions for basic port-forwarding requirements.
+
+</TechnologyTemplate>

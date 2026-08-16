@@ -1,8 +1,27 @@
+---
+title: npm scripts
+description: Scripts defined in the package.json file to automate development tasks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 <ConceptTemplate title="npm scripts">
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before modern JS development, engineers used complex task runners like Gulp or Grunt to compile SCSS, minify JavaScript, and start servers. 
+
+Today, the industry mathematically relies entirely on **npm scripts** embedded directly in the `package.json`.
+
+<Callout icon="info" title="The Abstraction Layer">
+  ```json
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "jest"
+  }
+  ```
+  
+  Instead of telling a new developer to "Install Vite globally, run the TypeScript compiler, and then execute Vite's build command", you just tell them to run `npm run build`. 
+  
+  npm mathematically abstracts the underlying CLI tools, ensuring that the project uses the exact localized versions of Vite and TypeScript installed in `node_modules/.bin`, preventing global version conflicts.
+</Callout>
 
 </ConceptTemplate>

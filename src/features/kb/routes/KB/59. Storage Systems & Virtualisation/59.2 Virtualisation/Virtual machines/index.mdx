@@ -1,25 +1,17 @@
 ---
-title: Virtual Machines (VMs)
-description: The emulation of a computer system based on computer architectures and provide functionality of a physical computer.
+title: Virtual machines
+description: An emulation of a computer system that provides the functionality of a physical computer.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<TechnologyTemplate title="Virtual Machines (VMs)">
+<ConceptTemplate title="Virtual Machines (VMs)">
 
-A virtual machine (VM) is the virtualization/emulation of a computer system. Virtual machines are based on computer architectures and provide functionality of a physical computer. Their implementations may involve specialized hardware, software, or a combination.
+A **Virtual Machine** is a mathematical lie told to an Operating System.
 
-<Callout icon="info" title="The Hypervisor">
-  A Hypervisor (or Virtual Machine Monitor) is the software that sits between the physical hardware and the Virtual Machines. It slices up the physical RAM and CPU and tricks each VM into thinking it is running on a dedicated physical box.
+<Callout icon="info" title="Hardware Emulation">
+  The host computer mathematically creates a fake CPU, fake RAM, a fake Hard Drive, and a fake Network Card in software. 
+  
+  It then biologically installs a completely unmodified Guest Operating System (like Windows or Linux) onto this fake hardware. The Guest OS mathematically believes it is running on real silicon. This allows a single physical server to biologically run 50 different Windows and Linux servers simultaneously in complete isolation.
 </Callout>
 
-## Types of Hypervisors
-
-<ComparisonTable 
-  headers={['Type', 'Description', 'Examples']}
-  rows={[
-    ['Type 1 (Bare-Metal)', 'Runs directly on the physical hardware. Highly performant. This is what powers AWS, Azure, and Enterprise data centers.', 'VMware ESXi, Microsoft Hyper-V, KVM.'],
-    ['Type 2 (Hosted)', 'Runs as an application inside a host operating system (like Windows or macOS). Much slower, used mostly for desktop testing.', 'VirtualBox, VMware Workstation.']
-  ]}
-/>
-
-</TechnologyTemplate>
+</ConceptTemplate>
