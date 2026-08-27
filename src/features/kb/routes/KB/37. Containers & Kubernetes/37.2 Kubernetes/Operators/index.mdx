@@ -1,8 +1,29 @@
+---
+title: Operators
+description: A software extension to Kubernetes that combines Custom Resource Definitions (CRDs) with custom mathematical control loops to automate the complex lifecycle management of stateful applications.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Operators">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Operators"
+  subtitle="Automating Human Expertise"
+  tags={['Kubernetes', 'Architecture', 'Automation', 'Extensibility']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Kubernetes mathematically knows exactly how to keep a stateless web server running. But it has absolutely no idea how to safely backup, upgrade, or shard a complex stateful database like PostgreSQL.
 
-</ConceptTemplate>
+## 1. Encoding Human Knowledge
+An Operator is a piece of software (usually written in Go) that runs as a Pod inside the cluster. It mathematically encodes the operational knowledge of a human database administrator.
+When you install the PostgreSQL Operator, it watches the API Server. When you create a custom `PostgresCluster` object, the Operator's mathematical loop takes over. It doesn't just spin up Pods; it orchestrates the primary-replica replication, mathematically handles leader election if the primary dies, and automatically schedules encrypted backups to AWS S3.
+
+## 2. Day 2 Operations
+Operators excel at "Day 2" operations—the mathematically complex tasks required to keep software running long-term.
+If you need to upgrade an Elasticsearch cluster from version 7 to 8, a human might cause data loss. An Elasticsearch Operator knows the exact mathematical sequence required: drain the data from Node 1, upgrade Node 1, wait for the cluster state to turn "Green," and mathematically proceed to Node 2, ensuring zero downtime.
+

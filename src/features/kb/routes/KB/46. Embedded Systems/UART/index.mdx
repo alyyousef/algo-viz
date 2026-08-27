@@ -4,19 +4,32 @@ description: A computer hardware device for asynchronous serial communication in
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="UART (Universal Asynchronous Receiver-Transmitter)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="UART (Universal Asynchronous Receiver-Transmitter)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **UART** is the oldest, simplest, and most legendary serial communication protocol in embedded systems.
 
-It allows two microcontrollers to mathematically talk to each other using exactly two wires: 
-- **TX:** Transmit 
+It allows two microcontrollers to mathematically talk to each other using exactly two wires:
+- **TX:** Transmit
 - **RX:** Receive
 
+
 <Callout icon="warning" title="Asynchronous Mathematics">
-  Notice there is no Clock wire. It is mathematically **Asynchronous**. 
-  
+
+
+  Notice there is no Clock wire. It is mathematically **Asynchronous**.
+
   For UART to work, both the Sender and the Receiver must mathematically agree on the exact speed of transmission beforehand (the **Baud Rate**, usually 9600 or 115200 bits per second). If the Sender sends data at 9600 baud, but the Receiver expects 115200 baud, the Receiver mathematically reads complete gibberish.
+
+
 </Callout>
+
 
 ## The Data Frame
 
@@ -28,4 +41,3 @@ Because there is no clock wire, the Sender must mathematically frame the data so
 
 UART is famously used for debugging. Almost every embedded engineer connects a UART-to-USB cable to their microcontroller to print console logs to their laptop.
 
-</ConceptTemplate>

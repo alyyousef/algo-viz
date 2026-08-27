@@ -4,13 +4,26 @@ description: A graph data structure where the edges represent bidirectional rela
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Undirected Graphs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Undirected Graphs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Undirected Graph** is a set of vertices (nodes) connected by edges, where the edges have no specific direction. The relationship between the two connected nodes is entirely symmetric.
 
+
 <Callout icon="info" title="The Two-Way Street">
+
+
   Think of an undirected graph like a standard two-way road. If a road connects City A and City B, you can freely travel from A to B, and you can freely travel from B to A.
+
+
 </Callout>
+
 
 ## Representation
 
@@ -43,4 +56,3 @@ An array (or hash map) of lists. Each vertex has a list containing all its adjac
 - **Pros**: Optimal $O(V + E)$ memory usage for most real-world sparse graphs.
 - **Cons**: $O(E)$ worst-case to check if a specific edge exists.
 
-</ConceptTemplate>

@@ -1,8 +1,40 @@
+---
+title: k6
+description: "A modern, open-source load testing tool developed by Grafana, designed specifically for developers, allowing them to write mathematically complex performance tests using standard JavaScript (ES6)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="k6">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="k6"
+  subtitle="Developer-Centric Load Testing"
+  tags={['Testing', 'Performance', 'DevOps', 'JavaScript']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, load testing was done by isolated QA teams using clunky GUI tools like JMeter. k6 brings load testing mathematically back to the developers by making it pure code.
 
-</ConceptTemplate>
+## 1. JavaScript API, Go Engine
+The brilliant architectural trick of k6 is that you write the tests in familiar JavaScript, but the tests are executed by a highly optimized mathematical engine written in **Go (Golang)**.
+```javascript
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export let options = { vus: 1000, duration: '30s' };
+
+export default function () {
+  let res = http.get('https://api.example.com/data');
+  check(res, { 'status was 200': (r) => r.status == 200 });
+  sleep(1);
+}
+```
+Because Go uses lightweight "Goroutines" instead of heavy OS threads, a single laptop running k6 can mathematically generate tens of thousands of concurrent virtual users (VUs) without crashing, completely outperforming JMeter.
+
+## 2. Observability Integration
+Because k6 is owned by Grafana, it is mathematically designed for modern DevOps. Instead of generating static HTML reports, k6 streams its performance metrics (latency, throughput, error rates) in real-time directly into InfluxDB, Datadog, or Prometheus, allowing engineers to watch the system buckle live on their Grafana dashboards.
+

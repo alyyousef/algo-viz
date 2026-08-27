@@ -4,7 +4,14 @@ description: The dominant JavaScript backend frameworks, ranging from minimalist
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Node.js Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Node.js Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The raw Node.js `http` module is extremely low-level and mathematically painful to use for building complex web servers. To solve this, the community built powerful web frameworks.
 
@@ -19,10 +26,9 @@ As Node.js scaled into massive Fortune 500 companies, they needed the strict arc
 **NestJS** mathematically solved this. It is a massive, heavily-opinionated framework written strictly in **TypeScript**. It utilizes heavy Object-Oriented Programming (Classes, Decorators) and enforces strict architectural patterns like **Dependency Injection** and **Modules**. It is currently the undisputed king of enterprise Node.js development.
 
 ## 3. Fastify (The Speed Standard)
-Express is notoriously slow in raw benchmarking due to legacy architectural overhead. 
+Express is notoriously slow in raw benchmarking due to legacy architectural overhead.
 **Fastify** is a modern framework hyper-optimized for extreme performance. By mathematically optimizing how JSON is parsed and serialized, Fastify can process significantly more requests per second than Express. It is rapidly becoming the standard for modern microservices where maximum speed is required.
 
 ## 4. Deno / Bun (The New Runtimes)
 While the frameworks above run on Node.js, the modern runtimes (Deno and Bun) often provide their own optimized HTTP servers natively (like `Deno.serve` or `Bun.serve`), or utilize specialized frameworks like **Hono** which is mathematically designed to run blazing-fast on any Edge runtime (Cloudflare Workers, Bun, Deno).
 
-</ConceptTemplate>

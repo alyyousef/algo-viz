@@ -1,0 +1,24 @@
+---
+title: Microsoft Entra ID
+description: The mathematical evolution of Azure Active Directory, providing a massive, cloud-based Identity and Access Management (IAM) system that secures billions of authentications globally.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Microsoft Entra ID"
+  subtitle="Cloud Identity and Access Management"
+  tags={['Azure', 'Security', 'Identity', 'Authentication']}
+>
+
+Entra ID (formerly Azure AD) is not just for securing Azure virtual machines. It is the identity backbone for Office 365, GitHub, and millions of third-party SaaS applications via OAuth and SAML.
+
+## 1. Conditional Access Policies
+A simple username and password (or even MFA) is not mathematically secure enough for enterprise zero-trust architectures.
+Entra ID uses **Conditional Access**. This is a mathematical policy engine that evaluates the *context* of a login attempt in real-time.
+A policy might decree: *"If the user is logging in from an IP address in the Corporate Office, using a laptop mathematically enrolled in Intune (MDM), allow access. If the same user logs in from an unknown IP in a foreign country, mathematically require MFA. If they fail, instantly lock the account."*
+
+## 2. Managed Identities
+Hardcoding database passwords into application code is a massive security risk.
+Entra ID provides **Managed Identities** for Azure resources. You assign a Managed Identity to a Virtual Machine. The VM mathematically asks Entra ID for a temporary, cryptographically signed token. It uses this token to authenticate directly to Azure SQL or Key Vault. There are zero passwords, zero connection strings, and the credential rotation is mathematically handled by Azure invisible to the developer.
+
+</TechnologyTemplate>

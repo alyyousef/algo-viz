@@ -1,26 +1,26 @@
 ---
-title: Amazon EC2 (Elastic Compute Cloud)
-description: The foundational compute service of AWS, allowing users to rent and configure scalable virtual machines in the cloud.
+title: Amazon Elastic Compute Cloud (EC2)
+description: The foundational compute service of AWS, providing resizable, highly configurable virtual machines that grant developers absolute root access to underlying hardware architectures.
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Amazon EC2 (Elastic Compute Cloud)">
+<TechnologyTemplate
+  title="Amazon Elastic Compute Cloud (EC2)"
+  subtitle="Virtual Servers in the Cloud"
+  tags={['AWS', 'Compute', 'IaaS', 'Virtualization']}
+>
 
-**EC2** is the oldest and most fundamental service in AWS. It is pure Infrastructure as a Service (IaaS). It allows you to rent a Virtual Machine (called an "Instance"), install an Operating System on it, and run whatever code you want.
+EC2 is the original AWS service. It is pure Infrastructure as a Service (IaaS). You are renting a mathematical slice of a massive physical server sitting in an Amazon data center.
 
-## 1. Instance Types
+## 1. The Nitro Hypervisor
+Historically, Virtual Machines were slow because the Hypervisor (the software splitting the physical server into smaller virtual servers) consumed 30% of the CPU.
+AWS invented the **Nitro System**, which physically moved the mathematical routing of network packets and storage IO off the main CPU and onto dedicated hardware silicon cards. This means if you rent an EC2 instance with 64 vCPUs, you get exactly 64 vCPUs of raw compute power, with near-zero mathematical overhead from the virtualization layer.
 
-AWS does not just offer generic servers. They offer highly specialized hardware profiles (Instance Families) tailored to specific workloads:
-- **T-Series (General Purpose)**: Cheap, burstable CPU instances perfect for basic web servers and microservices (e.g., `t3.micro`).
-- **C-Series (Compute Optimized)**: Packed with high-frequency processors for intensive math, batch processing, and gaming servers.
-- **R-Series (Memory Optimized)**: Packed with massive amounts of RAM for running in-memory databases like Redis or high-performance relational databases.
-- **P/G-Series (Accelerated Computing)**: Instances attached to massive NVIDIA GPUs, used exclusively for training Machine Learning models and rendering 3D graphics.
+## 2. Instance Families and AMIs
+You do not just rent "a server." You rent a mathematically specialized architecture.
+- **Compute Optimized (C-Series)**: High CPU, low RAM. For batch processing and gaming.
+- **Memory Optimized (R-Series)**: High RAM, low CPU. For in-memory databases like Redis.
+- **Accelerated (P-Series)**: Packed with NVIDIA GPUs. For Machine Learning.
+You boot these instances using an **AMI (Amazon Machine Image)**, which is a mathematically exact snapshot of an operating system (Linux/Windows) and pre-installed software, allowing you to spin up 1,000 identical servers in 30 seconds.
 
-## 2. Pricing Models
-
-EC2 is famous for its complex billing structures that allow companies to optimize costs:
-1. **On-Demand**: You pay by the second, with no long-term commitment. The most expensive option, but completely flexible.
-2. **Reserved Instances**: You sign a 1-year or 3-year contract promising to use the instance, in exchange for up to a 72% discount.
-3. **Spot Instances**: AWS has thousands of unused servers sitting idle. They auction these off at a 90% discount. *The catch:* If someone else is willing to pay more, AWS gives you a 2-minute warning and abruptly terminates your server. Spot instances are only used for fault-tolerant batch jobs that can afford to be interrupted.
-
-</ConceptTemplate>
+</TechnologyTemplate>

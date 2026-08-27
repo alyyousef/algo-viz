@@ -1,8 +1,33 @@
+---
+title: Articulation Points & Bridges
+description: "Mathematical graph concepts representing critical nodes (Articulation Points) or edges (Bridges) whose removal would catastrophically disconnect a connected graph into multiple disjoint subgraphs."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Articulation points & bridges">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Articulation Points & Bridges"
+  subtitle="Finding Network Vulnerabilities"
+  tags={['Algorithms', 'Graphs', 'DFS', 'Networks']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a graph represents a country's highway system, an **Articulation Point** is a city, and a **Bridge** is a physical highway. If destroying one specific city or one specific highway physically splits the country into two disconnected halves, you have found a single point of failure.
 
-</ConceptTemplate>
+## 1. Tarjan's Bridge-Finding Algorithm
+A brute-force mathematical approach would be to delete an edge, run DFS (Depth-First Search) to check if the graph is still connected, put the edge back, and repeat for all E edges. This takes **O(E * (V+E))** time, which is too slow.
+Tarjan mathematically solved this using a single DFS pass in **O(V + E)** time.
+He introduced two concepts for every node:
+1. **Discovery Time (`disc`)**: The exact mathematical "tick" (1, 2, 3...) when the node was first visited.
+2. **Lowest Point (`low`)**: The lowest discovery time reachable from the current node *without* going backward through the direct parent.
+
+## 2. The Mathematical Condition
+If you are at Node U, looking down an edge to Node V:
+- **Bridge**: If `low[V] > disc[U]`, it mathematically proves that V has absolutely no "back-edges" connecting it to any ancestors of U. The edge U-V is the *only* way to reach V. Therefore, U-V is a Bridge.
+- **Articulation Point**: If `low[V] >= disc[U]` (and U is not the root), U is an Articulation Point.
+

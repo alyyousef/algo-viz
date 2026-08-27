@@ -1,8 +1,26 @@
+---
+title: Common Lisp
+description: The massive, standardized, multi-paradigm titan of the Lisp family, famous for its unmatched macro system and dynamic compilation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Common Lisp">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Common Lisp">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed in the 1980s to unify the fractured Lisp ecosystem, Common Lisp (CL) is an industrial-strength, multi-paradigm language. While modern languages like Python are praised for being dynamic, Common Lisp remains the undisputed king of runtime programmability.
 
-</ConceptTemplate>
+## 1. Homoiconicity and Macros
+In most languages, the code you write (`if (x > 5)`) and the data you manipulate (arrays) are mathematically distinct.
+In Lisp, **Code is Data**.
+A Lisp program is just a nested list of lists (Homoiconicity).
+Because of this, Common Lisp possesses the most powerful Macro system ever created. A Macro allows you to write functions that physically rewrite the compiler's Abstract Syntax Tree *before* the code is compiled. You can mathematically invent entirely new syntax and language features (like Object Orientation or pattern matching) without ever modifying the core compiler.
+
+## 2. The Interactive Image
+Common Lisp operates on an "Image" based architecture. You do not recompile and restart your server when you change code. You mathematically inject the new function into the live, running system. NASA famously used Common Lisp on the Deep Space 1 probe; when a software bug occurred in deep space, engineers mathematically hot-patched the live Lisp environment from Earth without rebooting the craft.
+

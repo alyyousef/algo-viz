@@ -4,9 +4,16 @@ description: The evolution of Javascript from a simple 10-day scripting language
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Core Languages (JS, ES6+, TS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Core Languages (JS, ES6+, TS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-JavaScript was famously created by Brendan Eich in just 10 days in 1995. It was originally intended to be a simple, lightweight scripting language to make buttons clickable in the Netscape Navigator browser. 
+JavaScript was famously created by Brendan Eich in just 10 days in 1995. It was originally intended to be a simple, lightweight scripting language to make buttons clickable in the Netscape Navigator browser.
 
 Today, it is the most widely used programming language on Earth, powering everything from enterprise cloud backends to mobile applications.
 
@@ -19,7 +26,7 @@ The language stagnated for years until the legendary **ES6 (ECMAScript 2015)** u
 4. **Destructuring & Spread Operators**: Allowing developers to extract object properties mathematically `const { name } = user;`.
 
 ## The TypeScript Paradigm Shift
-Despite ES6, JavaScript still had a fatal flaw: **Dynamic Typing**. 
+Despite ES6, JavaScript still had a fatal flaw: **Dynamic Typing**.
 In a 1-million line codebase, a developer might accidentally pass a String into a function that expects an Array, and the application wouldn't crash until a user actually clicked a button in Production.
 
 Microsoft solved this by creating **TypeScript**.
@@ -39,4 +46,3 @@ function greetUser(user: User) {
 
 TypeScript does not run in the browser. It mathematically verifies the entire codebase for errors, and then compiles (stripping away the types) down into pure JavaScript. Today, TypeScript is considered the absolute industry standard for all professional web development.
 
-</ConceptTemplate>

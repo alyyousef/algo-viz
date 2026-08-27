@@ -1,8 +1,27 @@
+---
+title: Denotational Semantics
+description: A highly formal approach to programming language theory that mathematically defines the meaning of a computer program by mapping it directly to rigorous mathematical objects.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Denotational semantics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Denotational Semantics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How do you formally describe what a computer program *means*? Operational Semantics describes the step-by-step state changes of a machine. Denotational Semantics ignores the machine entirely and defines meaning using pure mathematical functions.
 
-</ConceptTemplate>
+## 1. Mapping Syntax to Math
+In Denotational Semantics, every piece of syntax in a programming language is assigned a **Denotation** (a strict mathematical object).
+If your language has the syntax `x + y`, the semantic theory defines a mapping function (usually denoted by double brackets: $ [[ ]] $).
+$[[ x + y ]] = [[ x ]] +_{math} [[ y ]]$.
+This proves that the physical string `"x + y"` in the source code maps perfectly to the abstract platonic concept of mathematical addition.
+
+## 2. Analyzing Infinite Loops
+The hardest part of Denotational Semantics is dealing with `while` loops and recursion. How do you mathematically map an infinite loop?
+Scientists use Domain Theory and mathematical Fixed Points (specifically, the Least Fixed Point). They model the loop as an infinite sequence of mathematical approximations. By applying formal limits (like in Calculus), they can mathematically prove the behavior of recursive functions, ensuring the foundational theory of the programming language contains no logical paradoxes.
+

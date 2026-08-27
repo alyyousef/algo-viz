@@ -4,16 +4,28 @@ description: An authentication scheme that allows a user to log in with a single
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Single Sign-On (SSO)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Single Sign-On (SSO)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If an enterprise employee uses Salesforce, Slack, Jira, and GitHub, forcing them to biologically memorize 4 different passwords is a mathematical security nightmare. They will inevitably write them on a sticky note.
 
 **Single Sign-On (SSO)** mathematically unifies authentication.
 
+
 <Callout icon="success" title="The Hub and Spoke Model">
-  The corporation buys an **Identity Provider (IdP)** like Okta. 
-  
+
+
+  The corporation buys an **Identity Provider (IdP)** like Okta.
+
   The employee logs into Okta exactly once in the morning. When they navigate to Salesforce, Salesforce mathematically redirects them to Okta. Okta silently confirms they are already logged in, and instantly redirects them back to Salesforce with a valid token. The user never sees a login screen again for the rest of the day.
+
+
 </Callout>
 
-</ConceptTemplate>
+

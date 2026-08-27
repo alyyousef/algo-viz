@@ -1,8 +1,27 @@
+---
+title: AsciiDoc
+description: A mature, highly capable plain-text markup language used heavily for writing technical documentation, books, and articles.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AsciiDoc">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AsciiDoc">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+AsciiDoc is a lightweight markup language, similar to Markdown, but mathematically much stricter and vastly more feature-rich. While Markdown was designed for simple web formatting (bold, italics, links), AsciiDoc was designed for writing complete, structurally complex books and enterprise documentation.
 
-</ConceptTemplate>
+## 1. Markdown vs AsciiDoc
+Markdown has no formal standard (leading to dozens of conflicting flavors like CommonMark and GFM). It lacks native support for complex tables, document inclusions, or advanced cross-referencing.
+AsciiDoc solves this mathematically. It natively supports:
+- Multi-page documents with automatic Table of Contents generation.
+- Highly complex tables with merged cells and varying column widths.
+- Admonitions (Note, Warning, Tip) built directly into the syntax.
+
+## 2. The Toolchain (Asciidoctor)
+The modern processor for AsciiDoc is **Asciidoctor** (written in Ruby). It mathematically parses AsciiDoc files and can compile them directly into HTML5, DocBook, PDF, and EPUB formats perfectly, making it the industry standard for O'Reilly tech books and Spring Framework documentation.
+

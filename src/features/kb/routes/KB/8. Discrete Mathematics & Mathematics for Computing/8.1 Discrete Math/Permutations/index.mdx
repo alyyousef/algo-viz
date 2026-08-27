@@ -1,8 +1,40 @@
+---
+title: Permutations
+description: "The mathematical study of arranging a set of objects into a specific sequence, where the exact order of the arrangement is strictly and fundamentally important."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Permutations">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Permutations"
+  subtitle="Arrangements and Ordered Sets"
+  tags={['Mathematics', 'Discrete Math', 'Combinatorics', 'Probability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In combinatorics, a **Permutation** defines the number of ways a set of items can be arranged when the mathematical **Order Absolutely Matters**. (A password of "123" is mathematically different from "321").
 
-</ConceptTemplate>
+## 1. Full Permutations (Factorials)
+If you have $N$ distinct objects, and you want to arrange *all* of them in a line, the first slot has $N$ options, the second has $N-1$ options, etc.
+The mathematical formula is **$N!$ (N Factorial)**.
+- Example: How many ways can you shuffle a deck of 52 cards?
+- Answer: $52!$ (A number so astronomically massive, approximately $8 \times 10^{67}$, that every time you shuffle a deck of cards, you are almost certainly creating an arrangement that has mathematically never existed in the history of the universe).
+
+## 2. Partial Permutations (n Pick k)
+If you have $N$ objects, but you only want to arrange $K$ of them (e.g., picking a 1st, 2nd, and 3rd place winner from a race of 10 people), you use the Permutation formula (often denoted as $^nP_k$):
+$P(n, k) = \frac{n!}{(n-k)!}$
+
+- Example: $P(10, 3) = \frac{10!}{7!} = 10 \times 9 \times 8 = 720$ possible podium finishes.
+
+## 3. Permutations with Repetition
+If the items are not distinct (e.g., arranging the letters in the word "MISSISSIPPI"), standard factorials mathematically overcount the duplicates (swapping the first 'S' with the second 'S' does not create a new word).
+You must mathematically divide by the factorial of the counts of each repeated item:
+$\frac{N!}{n_1! n_2! ... n_k!}$
+For "MISSISSIPPI" (11 letters, 4 'S's, 4 'I's, 2 'P's):
+$\frac{11!}{4! 4! 2!} = 34,650$ unique permutations.
+

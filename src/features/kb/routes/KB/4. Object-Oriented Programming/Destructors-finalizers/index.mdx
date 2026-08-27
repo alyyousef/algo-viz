@@ -1,8 +1,29 @@
+---
+title: Destructors / Finalizers
+description: Mathematical methods invoked automatically when an object is being destroyed and removed from memory, used to safely release unmanaged resources like open file handles or network sockets.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Destructors/finalizers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Destructors & Finalizers"
+  subtitle="The Mathematical Cleanup Phase"
+  tags={['OOP', 'Memory Management', 'C++', 'Java']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When an object dies, the memory it occupied in RAM is freed. However, if the object had opened a physical file on the hard drive, freeing the RAM does *not* automatically close the file lock, mathematically resulting in a resource leak.
 
-</ConceptTemplate>
+## 1. Deterministic Destructors (C++)
+In languages without Garbage Collection (like C++ or Rust), the destruction of an object is mathematically **deterministic**.
+When an object goes out of scope, the compiler instantly and predictably executes a **Destructor** (denoted by a tilde: `~FileHandler()`). The developer writes code inside the destructor to mathematically close the file handle. Because the timing is exact, resource leaks are prevented.
+
+## 2. Non-Deterministic Finalizers (Java/C#)
+In Garbage Collected languages (like Java or C#), you do not control exactly when an object is destroyed from memory; the Garbage Collector (GC) decides.
+Therefore, these languages use **Finalizers** (or `finalize()`). Because the execution is mathematically non-deterministic (the GC might wait 5 minutes before destroying the object), Finalizers are widely considered dangerous. If you wait for the GC to close the file handle, the system might mathematically run out of available file handles before the GC ever runs. This is why modern C#/Java relies on `using` blocks or `try-with-resources` to force deterministic closure of resources.
+

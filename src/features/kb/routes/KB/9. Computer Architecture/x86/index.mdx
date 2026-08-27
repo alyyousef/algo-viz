@@ -4,13 +4,26 @@ description: The dominant CISC architecture powering the vast majority of the wo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="x86 Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="x86 Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **x86** architecture is the most successful and enduring Instruction Set Architecture (ISA) in the history of computing. Developed by Intel in 1978 with the release of the 16-bit 8086 processor, it has evolved into the absolute monopoly of the PC and Server markets, jointly controlled today by Intel and AMD.
 
+
 <Callout icon="warning" title="The Burden of Backwards Compatibility">
+
+
   The defining characteristic of x86 is its unwavering commitment to backwards compatibility. If you take a compiled \`.exe\` program from 1985 written for MS-DOS, it will run natively on a modern 24-core Intel i9 processor. The silicon physically retains all the legacy instructions, quirks, and memory addressing modes from the last 40 years.
+
+
 </Callout>
+
 
 ## The Evolution of x86
 
@@ -20,7 +33,7 @@ The **x86** architecture is the most successful and enduring Instruction Set Arc
 
 ## Under the Hood: CISC masking as RISC
 
-x86 is deeply rooted in the **CISC** (Complex Instruction Set) philosophy. It has thousands of massive, variable-length instructions ranging from 1 to 15 bytes long. 
+x86 is deeply rooted in the **CISC** (Complex Instruction Set) philosophy. It has thousands of massive, variable-length instructions ranging from 1 to 15 bytes long.
 
 However, complex instructions are impossible to run efficiently at high clock speeds. Therefore, modern x86 processors (since the Pentium Pro in 1995) perform a magic trick in hardware:
 When the CPU fetches a complex x86 instruction, a massive hardware decoder instantly breaks it apart into tiny, simple, RISC-like instructions called **Micro-Ops**. The internal execution engine of an Intel or AMD chip is actually a highly advanced RISC processor, hiding behind an incredibly complex x86 translator!
@@ -29,4 +42,3 @@ When the CPU fetches a complex x86 instruction, a massive hardware decoder insta
 
 Building a high-performance x86 processor is incredibly difficult due to the sheer complexity of the decoder, and legally impossible for most companies because Intel and AMD hold a cross-licensing duopoly on the patents. If a company like Google or Amazon wants to build their own custom cloud processors, they cannot build x86 chips—which is exactly why the industry is shifting rapidly toward ARM.
 
-</ConceptTemplate>

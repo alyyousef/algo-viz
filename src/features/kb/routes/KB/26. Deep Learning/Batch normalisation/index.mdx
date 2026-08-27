@@ -4,7 +4,14 @@ description: A transformative technique that stabilizes deep neural networks by 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Batch Normalisation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Batch Normalisation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a Deep Neural Network, Layer 5 relies on the outputs of Layer 4. But as the network trains, Layer 4 is constantly updating its weights, meaning the distribution of the data it passes to Layer 5 is constantly shifting. This is mathematically known as **Internal Covariate Shift**. It makes training deep networks painfully slow and unstable.
 
@@ -27,4 +34,3 @@ The network can mathematically learn to restore the original distribution if it 
 ## 3. The Flaw (Small Batches)
 Because BatchNorm relies on statistical averages, it mathematically collapses if the batch size is too small. If your batch size is 2, the mean and variance are statistically meaningless, and the network will rapidly destabilize. For tasks requiring tiny batches (like massive LLMs), **Layer Normalisation** is used instead.
 
-</ConceptTemplate>

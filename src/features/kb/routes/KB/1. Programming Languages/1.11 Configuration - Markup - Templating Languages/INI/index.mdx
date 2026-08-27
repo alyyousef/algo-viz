@@ -1,8 +1,29 @@
+---
+title: INI
+description: An incredibly simple, widely used configuration file format that uses sections and key-value pairs for basic application settings.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="INI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="INI (Initialization File)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The INI format was the standard mathematical way to configure applications in 16-bit and 32-bit Windows operating systems before the Windows Registry took over. Despite its age, its extreme simplicity keeps it heavily used today (e.g., `.gitconfig` files, Docker configs).
 
-</ConceptTemplate>
+## 1. Structure
+INI files have mathematically almost no syntax overhead.
+They consist of three elements:
+- **Sections**: Denoted by square brackets `[Network]`.
+- **Properties**: Simple key-value pairs `port = 8080`.
+- **Comments**: Lines starting with a semicolon `; This is a comment`.
+
+## 2. Limitations
+Because INI is so simple, it mathematically fails at complex data representations.
+It does not natively support arrays, nested objects, or boolean types (a boolean is just the string "true" or "1", which the application must manually parse).
+Because there is no formal, universal standard for INI, different parsers handle edge cases (like multiline strings) differently, which has largely driven the industry toward YAML and TOML for complex configuration.
+

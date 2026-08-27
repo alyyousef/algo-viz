@@ -4,7 +4,14 @@ description: A fundamental hierarchical data structure consisting of nodes conne
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Trees (General)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Trees (General)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If Arrays and Linked Lists represent flat, one-dimensional data, **Trees** represent hierarchical, multi-dimensional data. A Tree is a non-linear data structure that simulates a biological hierarchy, mathematically constructed of **Nodes** connected by **Edges**.
 
@@ -17,7 +24,7 @@ Every Tree is strictly governed by biological and architectural terminology:
 - **Height/Depth**: The maximum number of edges from the Root to the furthest Leaf.
 
 ## 2. Acyclicity
-Mathematically, a Tree is a specialized form of a **Graph**. However, Trees have a strict mathematical restriction: **They cannot contain cycles**. 
+Mathematically, a Tree is a specialized form of a **Graph**. However, Trees have a strict mathematical restriction: **They cannot contain cycles**.
 There must be exactly one unique path from the Root to any specific node. If a Leaf mathematically loops back and connects to the Root, the structure is instantly destroyed as a Tree and becomes a standard Graph.
 
 ## 3. Real-World Architecture
@@ -26,4 +33,3 @@ Trees are the absolute foundation of hierarchical computing.
 - **File Systems**: Linux and Windows organize all folders as a massive Tree.
 - **JSON**: Every JSON object mathematically forms a Tree.
 
-</ConceptTemplate>

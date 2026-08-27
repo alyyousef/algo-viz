@@ -1,0 +1,27 @@
+---
+title: Azure Service Bus
+description: An enterprise-grade, highly reliable cloud messaging broker designed to mathematically decouple complex microservices, ensuring guaranteed message delivery, ordering, and transaction safety.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Service Bus"
+  subtitle="Enterprise Message Broker"
+  tags={['Azure', 'Messaging', 'Queues', 'Enterprise']}
+>
+
+While Azure Event Grid handles lightweight, fire-and-forget events, Service Bus is designed for high-value transactional data (like processing a $10,000 wire transfer) where mathematical certainty of delivery is required.
+
+## 1. Queues and Dead-Lettering
+A Service Bus **Queue** provides strict First-In-First-Out (FIFO) mathematically ordered processing.
+When a Web API receives an order, it drops a JSON message into the Queue and returns. The backend worker pulls the message.
+If the worker crashes while processing the order 10 times in a row, Service Bus realizes the code is broken. To prevent the poison message from mathematically blocking the entire queue forever, it automatically moves the message to a **Dead-Letter Queue (DLQ)**. Engineers can safely inspect the DLQ later to figure out why the JSON payload crashed the backend, ensuring zero data loss.
+
+## 2. Topics and Subscriptions
+For Pub/Sub scenarios, Service Bus uses **Topics**.
+The Publisher sends one message to a Topic. The Topic mathematically duplicates the message into multiple **Subscriptions**.
+- The "Inventory Subscription" receives a copy.
+- The "Billing Subscription" receives a copy.
+Each Subscription acts as its own independent, isolated Queue. If the Billing service is down for 3 hours, its Subscription safely holds the messages. The Inventory service continues operating at full speed, completely decoupled from the mathematical failure of the Billing system.
+
+</TechnologyTemplate>

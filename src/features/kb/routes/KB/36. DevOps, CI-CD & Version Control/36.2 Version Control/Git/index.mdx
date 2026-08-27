@@ -8,21 +8,21 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Git is a distributed version control system that tracks changes in any set of computer files, usually used for coordinating work among programmers collaboratively developing source code during software development.
 
+
 <Callout icon="success" title="The Linus Torvalds Creation">
+
+
   Git was created by Linus Torvalds in 2005 for the development of the Linux kernel. He famously wrote the initial prototype in just two weeks because he was frustrated by existing proprietary version control systems.
+
+
 </Callout>
+
 
 ## The Three Trees Architecture
 
 Git operates by moving files between three distinct areas (or "trees"):
 
-<ComparisonTable 
-  headers={['Area', 'Description', 'Command to Move To']}
-  rows={[
-    ['Working Directory', 'The actual files you see and edit on your hard drive.', '(Default state)'],
-    ['Staging Area (Index)', 'A middle-ground where you prepare and group your modified files before committing them.', `git add <file>`],
-    ['Local Repository', 'The `.git` folder where Git permanently stores the frozen snapshots (commits) of your project.', `git commit`]
-  ]}
-/>
+
+<ComparisonTable headers={['Area', 'Description', 'Command to Move To']} rows={[ ['Working Directory', 'The actual files you see and edit on your hard drive.', '(Default state)'], ['Staging Area (Index)', 'A middle-ground where you prepare and group your modified files before committing them.', `git add <file> `], ['Local Repository', 'The `.git` folder where Git permanently stores the frozen snapshots (commits) of your project.', `git commit`] ]} />
 
 </TechnologyTemplate>

@@ -1,8 +1,28 @@
+---
+title: Multi-Hop Retrieval
+description: An advanced RAG paradigm designed to answer complex questions that mathematically require the AI to synthesize partial answers spread across entirely disconnected documents.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-hop retrieval">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Hop Retrieval">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you ask, *"Did the author of '1984' live in a country that fought in WWII?"*, a standard Vector Database will fail. There is no single document containing that exact sentence. The answer requires multiple logical "hops."
 
-</ConceptTemplate>
+## 1. The Breakdown of Single-Pass Retrieval
+A standard RAG pipeline will mathematically encode the entire question into one Vector. It will search for a document containing both "1984" and "WWII." It will fail to find it, and the LLM will hallucinate.
+The mathematical reality is that this question requires two distinct queries:
+1. Who is the author of '1984'? (Answer: George Orwell)
+2. Where did George Orwell live? (Answer: UK)
+3. Did the UK fight in WWII? (Answer: Yes)
+
+## 2. Agentic Routing and Decomposition
+To solve this, Multi-Hop architectures use an LLM not to answer the question, but to **Decompose** it.
+The LLM mathematically analyzes the syntax of the prompt and breaks it into an array of sub-queries. It executes Query 1, reads the retrieved context, extracts "George Orwell", and then dynamically writes Query 2. This creates a recursive mathematical loop of Information Retrieval $\rightarrow$ Synthesis $\rightarrow$ New Query generation, allowing RAG systems to autonomously research highly complex, deeply nested logic puzzles.
+

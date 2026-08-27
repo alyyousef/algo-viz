@@ -5,10 +5,17 @@ description: "A systems programming language with C-like syntax and static typin
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="D"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created by Walter Bright in 2001, **D** (often called Dlang) was envisioned as the true successor to C++. It aimed to maintain the high performance and low-level control of C++ while drastically improving compilation speeds and adding modern conveniences like garbage collection and modules.
 
@@ -31,15 +38,20 @@ auto multiply(T)(T a, T b) {
 void main() {
     // Standard high-level D
     writeln("Hello, D!");
-    
+
     // The template function works for both ints and floats
     writeln(multiply(5, 5));     // 25
     writeln(multiply(2.5, 2.0)); // 5.0
 }
 ```
 
+
 <Callout icon="warning" title="Adoption Challenges">
+
+
 Despite its excellent design, D struggled to gain massive industry adoption. It was caught between C++ (which companies were hesitant to abandon) and newer languages like Rust and Go, which had the backing of massive tech giants (Mozilla and Google, respectively).
+
+
 </Callout>
 
-</ConceptTemplate>
+

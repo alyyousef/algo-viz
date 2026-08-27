@@ -1,8 +1,26 @@
+---
+title: Operators
+description: Built-in mathematical symbols that instruct the compiler to perform specific logical or computational manipulations on data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Operators">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Operators">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Operators are the fundamental mathematical verbs of a programming language. They take one or more Operands (values) and mathematically compute a new result.
 
-</ConceptTemplate>
+## 1. Classifications
+- **Unary Operators**: Operate mathematically on a single value (e.g., `!true`, `-5`, `x++`).
+- **Binary Operators**: Operate mathematically on two values. These include Arithmetic (`+`, `-`, `*`), Logical (`&&`, `||`), and Relational (`==`, `>`).
+- **Ternary Operator**: Operates mathematically on three values (`condition ? true_val : false_val`), acting as a compact `if/else` expression.
+
+## 2. Short-Circuit Evaluation
+Logical operators (`&&`, `||`) utilize a mathematical optimization called **Short-Circuiting**.
+In the expression `if (A && B)`, if the CPU evaluates `A` and it is mathematically `false`, it is physically impossible for the entire expression to be true. The compiler mathematically aborts the evaluation instantly. It never even looks at `B`. This allows developers to write safe code like `if (obj != null && obj.value == 5)` without risking a Null Pointer Exception.
+

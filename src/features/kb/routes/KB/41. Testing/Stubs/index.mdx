@@ -1,8 +1,38 @@
+---
+title: Stubs
+description: "A simple type of Test Double used in Unit Testing that provides pre-programmed, hardcoded, mathematically fixed answers to calls made during a test, completely ignoring any input variables."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stubs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Test Stubs"
+  subtitle="Hardcoded Test Answers"
+  tags={['Testing', 'Unit Testing', 'Clean Code', 'Patterns']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When isolating a class for a Unit Test, you must mathematically sever its connection to external dependencies. A Stub is the simplest, "dumbest" way to do this.
 
-</ConceptTemplate>
+## 1. The Brainless Double
+A Stub contains absolutely no mathematical logic. It does not contain variables. It does not check arguments. It simply returns a fixed, hardcoded value.
+Imagine testing a `CheckoutService` that depends on an `IWeatherAPI`. You do not want the test to fail just because it's raining outside.
+```java
+class SunnyWeatherStub implements IWeatherAPI {
+    // Mathematically ignores the zipcode argument
+    public String getWeather(int zipcode) {
+        return "SUNNY";
+    }
+}
+```
+You inject the `SunnyWeatherStub` into the test. The test is now mathematically deterministic; it will always execute the "sunny day" logic.
+
+## 2. Stubs vs Mocks
+- A **Stub** provides data *to* the system under test (State Verification). You use a Stub to force the code down a specific mathematical `if/else` path.
+- A **Mock** verifies that the system under test called the dependency correctly (Behavior Verification). You use a Mock to assert that `emailService.send()` was mathematically executed exactly one time.
+

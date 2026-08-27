@@ -4,28 +4,36 @@ description: The process of identifying, analyzing, and evaluating risk in an or
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Risk Assessment">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Risk Assessment">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the business world, perfect security is mathematically impossible without going bankrupt. The goal of a CISO is not to eliminate risk, but to manage it.
 
 A **Risk Assessment** is the formal, mathematical process of identifying the assets your company owns, the threats against those assets, the vulnerabilities those assets possess, and the potential financial impact if a breach occurs.
 
+
 <Callout icon="success" title="Risk Treatment Options">
+
+
   Once a risk is mathematically quantified, the business has four choices:
   1. **Mitigate:** Implement security controls to reduce the risk (e.g., buying a firewall).
   2. **Transfer:** Buy cybersecurity insurance to shift the financial burden.
   3. **Avoid:** Shut down the vulnerable system entirely.
   4. **Accept:** Acknowledge the risk exists, but mathematically decide that the cost of fixing it is higher than the cost of a breach.
+
+
 </Callout>
+
 
 ## Quantitative vs. Qualitative Assessment
 
-<ComparisonTable 
-  headers={['Methodology', 'Description', 'Example']}
-  rows={[
-    ['Qualitative Risk Assessment', 'Subjective, scenario-based evaluation using a matrix (High/Medium/Low). Faster to perform but less precise.', 'Risk = Likelihood (Medium) × Impact (High) = High Risk.'],
-    ['Quantitative Risk Assessment', 'Purely mathematical evaluation using hard dollar amounts. Difficult to calculate accurately, but easier for the Board of Directors to understand.', 'SLE (Single Loss Expectancy: $10k) × ARO (Annual Rate of Occurrence: 5) = ALE (Annual Loss Expectancy: $50,000).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Methodology', 'Description', 'Example']} rows={[ ['Qualitative Risk Assessment', 'Subjective, scenario-based evaluation using a matrix (High/Medium/Low). Faster to perform but less precise.', 'Risk = Likelihood (Medium) × Impact (High) = High Risk.'], ['Quantitative Risk Assessment', 'Purely mathematical evaluation using hard dollar amounts. Difficult to calculate accurately, but easier for the Board of Directors to understand.', 'SLE (Single Loss Expectancy: $10k) × ARO (Annual Rate of Occurrence: 5) = ALE (Annual Loss Expectancy: $50,000).'] ]} />
+
+

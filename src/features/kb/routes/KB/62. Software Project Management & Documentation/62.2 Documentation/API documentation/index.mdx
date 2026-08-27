@@ -4,10 +4,16 @@ description: Technical content that delivers instructions about how to effective
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="API Documentation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="API Documentation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you build the most mathematically powerful REST API in the world, but biologically fail to document how to use it, it is mathematically worthless.
 
 **API Documentation** (like Stripe's legendary docs) provides developers with the exact HTTP methods, the required JSON payloads, the exact mathematical data types of the responses, and the specific HTTP error codes they might biologically encounter. The industry standard is to automatically generate this documentation directly from the code using OpenAPI.
 
-</ConceptTemplate>

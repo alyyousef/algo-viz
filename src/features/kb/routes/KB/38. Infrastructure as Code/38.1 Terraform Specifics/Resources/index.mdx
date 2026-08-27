@@ -5,12 +5,19 @@ description: "The fundamental building blocks of Terraform used to create infras
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Resources & Data Sources">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Resources & Data Sources">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Every object in Terraform is defined using blocks. The two most important block types are **Resources** (things you create) and **Data Sources** (things you query).
 
 ## 1. Resources
-A `resource` block instructs Terraform to create, update, or destroy a physical piece of infrastructure. 
+A `resource` block instructs Terraform to create, update, or destroy a physical piece of infrastructure.
 
 ```hcl
 resource "aws_instance" "web_server" {
@@ -36,7 +43,7 @@ For example, instead of hardcoding an AMI ID (which changes frequently), you can
 data "aws_ami" "latest_ubuntu" {
   most_recent = true
   owners      = ["099720109477"] # Canonical's AWS Account ID
-  
+
   filter {
     name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
@@ -50,12 +57,7 @@ resource "aws_instance" "web_server" {
 }
 ```
 
-<ComparisonTable 
-  headers={['Block Type', 'Action', 'Lifecycle Management']} 
-  rows={[
-    ['`resource`', 'Write / Create', 'Terraform completely manages the lifecycle (Create, Update, Delete).'],
-    ['`data`', 'Read / Query', 'Terraform only fetches the data; it cannot modify or delete the target.']
-  ]} 
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Block Type', 'Action', 'Lifecycle Management']} rows={[ ['`resource`', 'Write / Create', 'Terraform completely manages the lifecycle (Create, Update, Delete).'], ['`data`', 'Read / Query', 'Terraform only fetches the data; it cannot modify or delete the target.'] ]} />
+
+

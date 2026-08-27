@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Graph RAG
+description: A cutting-edge retrieval architecture that augments standard Vector Search by mathematically mapping the entities within the documents into a structured, interconnected Knowledge Graph.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Graph RAG">
+<TechnologyTemplate
+  title="Graph RAG"
+  subtitle="Knowledge Graph Augmented Retrieval"
+  tags={['RAG', 'Knowledge Graph', 'AI', 'Architecture']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard Vector RAG is excellent at answering direct questions ("What is the capital of France?"). However, it mathematically fails at multi-hop reasoning ("Which company was founded by the person who invested in OpenAI?"). Graph RAG solves this.
 
-</ConceptTemplate>
+## 1. The Entity Extraction Phase
+During the ingestion of documents, Graph RAG does not just blindly create Vectors. It uses an LLM to mathematically parse every sentence and extract **Entities** (People, Companies, Locations) and **Relationships** (Founded, Invested In, Located In).
+It stores this data in a Graph Database (like Neo4j), creating a massive, interconnected web of physical Nodes and Edges, running parallel to the standard Vector chunks.
+
+## 2. Multi-Hop Graph Traversal
+When the user asks a complex question, the system queries the Graph.
+It mathematically locates the Node for "OpenAI". It then physically traverses the mathematical Edge labeled "Invested By", arriving at the Node "Microsoft". It then traverses the Edge "Founded By", arriving at the Nodes "Bill Gates" and "Paul Allen".
+The system extracts these specific Nodes, converts their structured data back into text, and feeds it into the LLM as context. By mathematically tracing the exact relationships across thousands of documents, Graph RAG achieves a level of deep, deductive reasoning that pure Vector Similarity search cannot mathematically accomplish.
+
+</TechnologyTemplate>

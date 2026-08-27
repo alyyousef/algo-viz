@@ -4,9 +4,16 @@ description: Highly-specialized, subject-oriented subsets of a Data Warehouse de
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data Marts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Marts">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When an enterprise builds a massive, centralized Data Warehouse, it often contains thousands of tables spanning every aspect of the business (Finance, HR, Engineering, Marketing). 
+When an enterprise builds a massive, centralized Data Warehouse, it often contains thousands of tables spanning every aspect of the business (Finance, HR, Engineering, Marketing).
 
 If a Marketing Analyst simply wants to calculate the ROI of an ad campaign, querying the massive core warehouse is intimidating, mathematically complex (requiring 15 table JOINs), and dangerous (they might accidentally query sensitive HR salary data).
 
@@ -28,7 +35,6 @@ Bill Inmon theorized that the enterprise must first build a colossal, perfectly 
 Ralph Kimball theorized that building a perfect central warehouse is impossible. Instead, you instantly build specific, denormalized Data Marts for each department based on immediate business needs (using Star Schemas with standard "Conformed Dimensions"). The Enterprise Data Warehouse is simply the mathematical union of all these individual Data Marts. (Fast to build, but harder to keep globally consistent).
 
 ## 3. Modern Context
-In the modern era of Cloud Data Warehouses (Snowflake, BigQuery) and dbt (Data Build Tool), the physical separation of Data Marts is often unnecessary. 
+In the modern era of Cloud Data Warehouses (Snowflake, BigQuery) and dbt (Data Build Tool), the physical separation of Data Marts is often unnecessary.
 Instead of copying data to separate physical servers, modern engineers simply create highly-optimized **Materialized Views** or separate schema namespaces within the same Snowflake cluster, granting the Marketing team access only to the `marketing_mart` schema.
 
-</ConceptTemplate>

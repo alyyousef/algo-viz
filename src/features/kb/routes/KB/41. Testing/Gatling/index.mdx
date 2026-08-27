@@ -1,8 +1,39 @@
+---
+title: Gatling
+description: "A highly advanced, open-source load and performance testing tool written in Scala, designed to mathematically simulate thousands of concurrent users hammering an API to identify precise architectural bottlenecks."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gatling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Gatling"
+  subtitle="Mathematical Load Testing"
+  tags={['Testing', 'Performance', 'DevOps', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an API mathematically works perfectly for 1 user, it might completely crash when 5,000 users attempt to log in simultaneously on Black Friday. You cannot discover this with Unit Tests; you must perform Load Testing.
 
-</ConceptTemplate>
+## 1. Asynchronous Architecture
+Older load testing tools (like Apache JMeter) operate on a "one thread per user" mathematical model. If you want to simulate 10,000 users, JMeter must spawn 10,000 physical OS threads, which crashes the testing machine's CPU before it even touches the API.
+**Gatling** uses an advanced asynchronous, non-blocking architecture (built on Akka and Netty). A single Gatling instance can mathematically simulate tens of thousands of concurrent virtual users using only a handful of physical OS threads.
+
+## 2. Code as Configuration
+Unlike JMeter (which uses a clunky XML GUI), Gatling scenarios are written in pure Scala code.
+```scala
+val scn = scenario("Black Friday Surge")
+  .exec(http("Login").post("/login"))
+  .pause(2) // Simulate user reading the screen
+  .exec(http("Checkout").post("/cart/checkout"))
+
+setUp(
+  scn.inject(rampUsers(5000).during(60.seconds)) // Ramp up to 5k users in 1 minute
+).protocols(httpProtocol)
+```
+Gatling then generates massive, highly detailed mathematical HTML reports showing exactly when the API's P99 latency degraded from 50ms to 4000ms.
+

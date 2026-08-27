@@ -1,8 +1,29 @@
+---
+title: Bucket Sort
+description: "A mathematically optimized distribution sorting algorithm that divides elements into several distinct 'buckets', sorts each bucket individually, and then concatenates them back together."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bucket sort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bucket Sort"
+  subtitle="Divide, Sort, and Conquer"
+  tags={['Algorithms', 'Sorting', 'Performance', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When data is uniformly distributed across a known range (like sorting human ages from 1 to 100), Bucket Sort mathematically bypasses the O(N log N) limitation of standard comparison sorts (like Merge Sort).
 
-</ConceptTemplate>
+## 1. The Distribution Phase
+1. **Create Buckets**: The algorithm mathematically allocates an array of empty arrays (Buckets). For example, 10 buckets representing ranges (0-9, 10-19, 20-29...).
+2. **Scatter**: It iterates through the input data exactly once. If it sees the number `42`, it calculates the index `Math.floor(42 / 10) = 4`, and drops it into Bucket #4.
+
+## 2. The Sorting Phase
+Once the data is scattered, each individual bucket is sorted using a fast mathematical algorithm (usually Insertion Sort). Because the buckets are mathematically guaranteed to be in order relative to each other (everything in Bucket 4 is > everything in Bucket 3), the final step simply concatenates Bucket 1, 2, 3, etc., together.
+If the data is perfectly uniform, the Time Complexity approaches an incredible **O(N + K)** (where K is the number of buckets), though it mathematically requires **O(N + K)** extra memory to store the buckets.
+

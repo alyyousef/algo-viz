@@ -5,16 +5,23 @@ description: "A strongly-typed, purely functional programming language that comp
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="PureScript"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **PureScript** is a purely functional, strongly-typed programming language written in and heavily inspired by **Haskell**. Its primary goal is to bring the immense safety and mathematical rigor of Haskell's type system to the frontend web ecosystem by compiling directly to JavaScript.
 
 ## Why not just use TypeScript?
 
-TypeScript is a superset of JavaScript; it adds types, but it retains all of JavaScript's messy behaviors (mutability, side-effects, implicit type coercion). 
+TypeScript is a superset of JavaScript; it adds types, but it retains all of JavaScript's messy behaviors (mutability, side-effects, implicit type coercion).
 
 PureScript is a completely different language. It enforces:
 1. **Immutability**: Data cannot be changed once created.
@@ -43,8 +50,13 @@ main = do
   log ("The result is: " <> show result)
 ```
 
+
 <Callout icon="tip" title="Readable Output">
+
+
 Unlike many other languages that compile to JS (which output unreadable minified blobs), PureScript is famous for compiling into very clean, readable, standard JavaScript, making it easy to integrate with existing JS libraries.
+
+
 </Callout>
 
-</ConceptTemplate>
+

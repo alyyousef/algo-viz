@@ -4,21 +4,33 @@ description: The systematic study of target users and their requirements, to add
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="User Research (UXR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="User Research (UXR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The absolute golden rule of software engineering is: **You are not your user.**
 
 A developer mathematically understands how the database works; therefore, they are biologically incapable of evaluating if the UI is confusing to a normal human. To bridge this gap, companies must perform rigorous **User Research**.
 
+
 <Callout icon="info" title="Quantitative vs Qualitative">
+
+
   - **Quantitative (Math):** "What are people doing?" (Surveys, A/B Testing, Google Analytics). You can mathematically prove that 40% of users drop off at Page 3. But the math cannot tell you *why*.
   - **Qualitative (Emotion):** "Why are people doing it?" (User Interviews, Usability Studies). You sit down with 5 users and watch them use the app. You physically watch them get confused by a specific button label.
+
+
 </Callout>
+
 
 ## The Usability Study
 
-In a professional **Usability Study**, the researcher gives the user a specific task (e.g., "Try to reset your password"). 
+In a professional **Usability Study**, the researcher gives the user a specific task (e.g., "Try to reset your password").
 
 The researcher physically does not help them. The researcher asks the user to "Think Aloud" (narrate their internal monologue). The session is mathematically recorded (screen capture + eye tracking). The goal is to identify the exact friction points where the user's mental model mathematically conflicts with the software's Information Architecture.
 
-</ConceptTemplate>

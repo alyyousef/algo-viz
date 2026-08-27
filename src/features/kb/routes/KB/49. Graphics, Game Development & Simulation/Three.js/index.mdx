@@ -4,7 +4,7 @@ description: A cross-browser JavaScript library and application programming inte
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Three.js"
   subtitle="The absolute king of Web 3D"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Three.js_Icon.svg/512px-Three.js_Icon.svg.png"
@@ -15,15 +15,21 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://threejs.org/"
 >
 
-If you want to render a 3D car on a website, writing 2,000 lines of raw WebGL matrix algebra is a massive waste of time. 
+If you want to render a 3D car on a website, writing 2,000 lines of raw WebGL matrix algebra is a massive waste of time.
 
 **Three.js** provides a high-level Object-Oriented paradigm. You simply create a `Scene`, add a `PerspectiveCamera`, add a `Mesh` (geometry + material), and call `renderer.render()`. The library automatically calculates the projection matrices and dynamically compiles the exact GLSL shaders required for the GPU.
 
+
 <Callout icon="success" title="React Three Fiber (R3F)">
-  In the modern web ecosystem, **React Three Fiber (R3F)** is the absolute standard. 
-  
+
+
+  In the modern web ecosystem, **React Three Fiber (R3F)** is the absolute standard.
+
   R3F mathematically maps Three.js objects directly into React Components. Instead of writing imperative `scene.add(cube)`, you write declarative JSX: `<mesh><boxGeometry /><meshStandardMaterial color="hotpink" /></mesh>`. This seamlessly integrates 3D rendering with React's state management.
+
+
 </Callout>
+
 
 ## The Physics Problem
 

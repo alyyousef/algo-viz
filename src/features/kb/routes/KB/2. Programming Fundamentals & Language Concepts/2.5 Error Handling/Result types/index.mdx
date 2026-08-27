@@ -1,8 +1,28 @@
+---
+title: Result Types (Monadic Error Handling)
+description: The modern mathematical standard for Error Handling, using Algebraic Data Types to force the compiler to verify that errors are handled at compile-time.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Result types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Result Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Result Types (used in Rust, Haskell, Swift) are the modern mathematical antidote to the unpredictability of Exceptions. They treat Errors not as invisible explosions, but as standard, returned data.
 
-</ConceptTemplate>
+## 1. The Sum Type Enum
+A Result Type is mathematically an Enum with exactly two states:
+`enum Result<T, E> { Ok(T), Err(E) }`
+When you call `readFile()`, it does not mathematically return a String. It returns a `Result` object.
+If it succeeded, it returns `Ok(String)`. If it failed, it returns `Err(IOError)`.
+
+## 2. Forcing Exhaustiveness
+Because the return value is mathematically a `Result`, the developer is physically blocked from accessing the String directly.
+They MUST write a `match` statement to unpack the Box.
+The Compiler mathematically forces the developer to write code for the `Err` branch. If they forget, the code refuses to compile. This completely eliminates the problem of silent failures (Error Codes) and the problem of invisible control flow (Exceptions), resulting in incredibly robust, mathematically provable software.
+

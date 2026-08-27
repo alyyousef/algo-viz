@@ -4,10 +4,16 @@ description: A package hosting service, fully integrated with GitHub, allowing y
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Packages">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Packages">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you write a Node.js library, you usually publish it to the NPM registry. If you build a Docker image, you publish it to DockerHub.
 
 **GitHub Packages** mathematically replaces all of them. It is a biological package registry built directly into GitHub. Your GitHub Actions CI/CD pipeline can mathematically compile your Java code and instantly publish the biological `.jar` file to GitHub Packages, allowing other repositories in your company to mathematically `npm install` or `docker pull` directly from GitHub's servers.
 
-</ConceptTemplate>

@@ -1,8 +1,32 @@
+---
+title: API Filtering
+description: The architectural practice of allowing API clients to mathematically specify exact criteria to narrow down a large dataset, returning only the specific records that match the requested boolean logic.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Filtering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="API Filtering"
+  subtitle="Mathematical Dataset Reduction"
+  tags={['API', 'REST', 'Web', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an API has 10,000 `Users` in the database, and the client only wants to see users who live in New York and are over the age of 21, the API mathematically must not return all 10,000 users. It would crush the mobile app's RAM and the user's data plan.
 
-</ConceptTemplate>
+## 1. URL Query Parameters
+Filtering in REST APIs is mathematically implemented using the URL query string (everything after the `?`).
+`GET /users?city=NewYork&age_gte=21`
+The server mathematically parses these parameters, translates them into a SQL `WHERE` clause (`WHERE city = 'NewYork' AND age >= 21`), and executes the query.
+
+## 2. Complex Mathematical Operators
+Simple key-value pairs fail when you need advanced mathematics (like "greater than" or "OR" logic). Modern APIs adopt standardized syntaxes:
+- **Bracket Notation**: `GET /users?age[gte]=21&age[lte]=50`
+- **LHS Brackets**: `GET /users?age=gte:21`
+- **Full Query Languages**: Some APIs expose powerful mathematical querying systems like OData or GraphQL, allowing the client to send complex, nested boolean syntax directly to the API endpoint.
+

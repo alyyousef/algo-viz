@@ -4,15 +4,28 @@ description: A specific type of cryptographic checksum that mathematically prove
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hash-based Message Authentication Code (HMAC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hash-based Message Authentication Code (HMAC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standard hash (like SHA-256) proves that a message hasn\'t changed (Integrity). However, if an attacker intercepts your message "Pay Alice $10" and its hash, they can change the message to "Pay Bob $1000", generate a brand new SHA-256 hash, and forward it. The receiver won\'t know it was tampered with.
 
 **HMAC** solves this by mathematically combining a standard cryptographic hash function with a secret cryptographic key that only the sender and receiver know.
 
+
 <Callout icon="info" title="The HMAC Guarantee">
+
+
   An HMAC proves **Integrity** (the message wasn\'t altered) AND **Authenticity** (the message definitely came from someone holding the secret key). It is universally used in API authentication, including JSON Web Tokens (JWT) and AWS API requests.
+
+
 </Callout>
+
 
 ## The Mathematical Construction
 
@@ -28,4 +41,3 @@ $HMAC(K, m) = H((K \oplus opad) \parallel H((K \oplus ipad) \parallel m))$
 
 This mathematical sandwich completely immunizes HMAC against length extension vulnerabilities.
 
-</ConceptTemplate>

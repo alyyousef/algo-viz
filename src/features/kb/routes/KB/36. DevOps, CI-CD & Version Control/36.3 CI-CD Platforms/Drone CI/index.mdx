@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Drone CI
+description: A modern, container-native continuous delivery platform mathematically engineered to execute entire CI/CD pipelines as a series of isolated, ephemeral Docker containers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Drone CI">
+<TechnologyTemplate
+  title="Drone CI"
+  subtitle="Container-Native Orchestration"
+  tags={['DevOps', 'CI/CD', 'Docker', 'Containers']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional CI systems (like Jenkins) run scripts directly on the host server's operating system, leading to mathematical dependency hell if Project A requires Java 8 and Project B requires Java 17 on the exact same build agent.
 
-</ConceptTemplate>
+## 1. Everything is a Container
+Drone CI enforces a strict, elegant mathematical rule: **Every single step in your pipeline is a Docker container.**
+Your `.drone.yml` file does not define bash scripts; it defines an array of containers.
+1. Step 1 spins up a Node container to run tests.
+2. Step 2 spins up a custom AWS CLI container to deploy the code.
+Because every step executes inside its own mathematically isolated user-space, dependency conflicts are physically impossible.
+
+## 2. Self-Hosted Simplicity
+Drone (acquired by Harness) is incredibly popular for self-hosting due to its lightweight mathematical footprint.
+Unlike GitLab CI, which requires massive memory, Drone is written in Go and deploys as a single tiny Docker container. It natively integrates with GitHub, Gitea, and Bitbucket using Webhooks, providing enterprise-grade containerized pipelines for small startups without the cloud-hosting fees.
+
+</TechnologyTemplate>

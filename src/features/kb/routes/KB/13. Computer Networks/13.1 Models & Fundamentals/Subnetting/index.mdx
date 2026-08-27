@@ -4,7 +4,14 @@ description: The mathematical process of logically dividing a single large IP ne
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Subnetting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Subnetting">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a massive university puts all 50,000 of its computers on a single network, the network will instantly collapse. Every time a computer uses ARP or DHCP, it sends a broadcast message to all 50,000 computers. This "Broadcast Storm" will overwhelm the switches.
 
@@ -22,7 +29,7 @@ If a computer's IP is `192.168.1.50` with a mask of `255.255.255.0`, the compute
 ## 2. CIDR Notation (Classless Inter-Domain Routing)
 
 Writing out `255.255.255.0` is tedious. Modern networking uses **CIDR Notation**, which simply counts the number of "1" bits in the subnet mask.
-- A mask of `255.255.255.0` has exactly 24 ones in binary. 
+- A mask of `255.255.255.0` has exactly 24 ones in binary.
 - In CIDR notation, this is written as **`/24`**.
 
 ### Common CIDR Blocks:
@@ -35,8 +42,13 @@ Writing out `255.255.255.0` is tedious. Modern networking uses **CIDR Notation**
 1. **Performance**: Smaller subnets reduce broadcast traffic, keeping the network fast.
 2. **Security**: If the HR department and the Engineering department are on different subnets, you can put a firewall router between them and strictly control which databases they are allowed to access. (If they were on the same subnet, traffic flows directly through the switch, bypassing the firewall entirely).
 
+
 <Callout icon="error" title="The Subnet Math Trap">
+
+
   In any subnet, the very first IP address is ALWAYS reserved for the "Network Address" (used for routing tables), and the very last IP address is ALWAYS reserved for the "Broadcast Address". Therefore, a `/24` subnet gives you 256 addresses, but you can only assign 254 of them to actual computers.
+
+
 </Callout>
 
-</ConceptTemplate>
+

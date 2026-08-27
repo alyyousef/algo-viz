@@ -4,30 +4,42 @@ description: An API object that manages external access to the services in a clu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ingress">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ingress">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While a \`LoadBalancer\` Service can expose your application to the internet, it is highly inefficient. If you have 10 microservices, creating 10 \`LoadBalancer\` Services will force AWS to create 10 physical Load Balancers, billing you hundreds of dollars a month.
 
 An **Ingress** provides a single, smart entry point into your cluster. It acts as a Layer 7 HTTP router. You only pay for **one** cloud load balancer, and the Ingress intelligently routes the traffic to different internal K8s Services based on the URL path or domain name.
 
+
 <Callout icon="success" title="Path-Based Routing">
+
+
   With an Ingress, you can configure:
   - \`myapp.com/api\` $\rightarrow$ Routes to the \`backend-service\`
   - \`myapp.com/shop\` $\rightarrow$ Routes to the \`ecommerce-service\`
   - \`myapp.com/\` $\rightarrow$ Routes to the \`frontend-service\`
+
+
 </Callout>
+
 
 ## Ingress Controllers
 
-The \`Ingress\` API object is just a piece of configuration (a set of rules). By itself, it does absolutely nothing. 
+The \`Ingress\` API object is just a piece of configuration (a set of rules). By itself, it does absolutely nothing.
 To make it work, you must install an **Ingress Controller** into your cluster.
 
 An Ingress Controller is an actual application (usually an NGINX or HAProxy pod) that reads your Ingress rules and configures its own internal proxy routing. When internet traffic hits the single Cloud Load Balancer, it passes to the NGINX Ingress Controller pod, which inspects the HTTP headers and proxies the request to the correct internal Service.
 
 ## TLS Termination
 
-Ingress is the standard location to handle HTTPS and SSL certificates. 
-Instead of configuring SSL inside your Node.js or Java application containers, you attach the SSL certificate (often generated automatically by \`cert-manager\` and Let's Encrypt) directly to the Ingress. 
+Ingress is the standard location to handle HTTPS and SSL certificates.
+Instead of configuring SSL inside your Node.js or Java application containers, you attach the SSL certificate (often generated automatically by \`cert-manager\` and Let's Encrypt) directly to the Ingress.
 The Ingress Controller decrypts the HTTPS traffic at the edge of the cluster, and forwards standard, unencrypted HTTP traffic to your Pods (saving CPU cycles on your application).
 
-</ConceptTemplate>

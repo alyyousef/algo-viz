@@ -1,8 +1,29 @@
+---
+title: Playwright
+description: "A modern, extremely fast End-to-End testing framework developed by Microsoft that mathematically controls Chromium, Firefox, and WebKit via a single API, offering native auto-waiting and network interception."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Playwright">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Playwright"
+  subtitle="The Successor to Cypress and Selenium"
+  tags={['Testing', 'E2E', 'Tooling', 'Web']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Cypress dominated the 2010s by running inside the browser, it had a fatal mathematical flaw: it couldn't easily test multiple browser tabs, iframes, or Safari. Microsoft built Playwright to solve everything.
 
-</ConceptTemplate>
+## 1. Out-of-Process Architecture
+Playwright operates *outside* the browser, using modern WebSocket-based debugging protocols (like Chrome DevTools Protocol) instead of the old, slow WebDriver protocol used by Selenium.
+This allows Playwright to mathematically control the browser at a fundamental level. It can simulate mobile devices, geolocation, offline network states, and interact across multiple tabs and iframes simultaneously.
+
+## 2. Tracing and Debugging
+When a Playwright test fails in CI/CD, debugging is mathematically trivial.
+Playwright generates a **Trace Viewer**. This is a zip file that contains a mathematically perfect snapshot of the DOM, the network requests, and the console logs for every single millisecond of the test. A developer can literally scrub a timeline slider back and forth to see exactly what the web page looked like the exact millisecond the test clicked the button, completely eliminating the mystery of "flaky tests."
+

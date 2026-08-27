@@ -1,8 +1,30 @@
+---
+title: Clusters (Kubernetes)
+description: The fundamental macroscopic architecture of Kubernetes, consisting of a mathematical aggregate of master control nodes and worker compute nodes unified to operate as a single logical supercomputer.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Clusters">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Kubernetes Clusters"
+  subtitle="The Logical Supercomputer"
+  tags={['Kubernetes', 'Architecture', 'Infrastructure', 'Distributed Systems']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A developer does not deploy an application to "Server A" or "Server B." In Kubernetes, the physical hardware is mathematically abstracted away. A developer deploys to the **Cluster**, treating a warehouse of 1,000 servers as a single logical supercomputer.
 
-</ConceptTemplate>
+## 1. The Master-Worker Architecture
+A Kubernetes Cluster is mathematically divided into two distinct planes:
+- **The Control Plane (Master Nodes)**: The mathematical brain of the cluster. It does not run user applications. It runs the API server, the scheduler, and the etcd database. It makes global decisions (e.g., "We need 5 replicas of Nginx").
+- **The Data Plane (Worker Nodes)**: The physical muscle. These are the servers (EC2 instances, bare metal) that mathematically execute the containerized workloads (Pods). They take orders directly from the Control Plane.
+
+## 2. High Availability (HA)
+For a cluster to be mathematically resilient, it must be highly available.
+A production cluster never has a single Master Node; it typically has 3 or 5 Master Nodes spread across different physical data centers (Availability Zones). They use a mathematical consensus algorithm (Raft) to agree on the cluster state. If an entire data center catches fire and a Master Node is destroyed, the remaining nodes maintain mathematical quorum, and the cluster continues operating without a second of downtime.
+

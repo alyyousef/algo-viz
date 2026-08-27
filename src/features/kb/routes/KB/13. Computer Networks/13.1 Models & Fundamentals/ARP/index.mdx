@@ -4,9 +4,16 @@ description: The critical Layer 2 protocol that bridges the physical hardware of
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ARP (Address Resolution Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ARP (Address Resolution Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Imagine you know someone's mailing address (IP Address), but you don't know what their physical house looks like (MAC Address). You cannot deliver the mail without knowing the physical destination. 
+Imagine you know someone's mailing address (IP Address), but you don't know what their physical house looks like (MAC Address). You cannot deliver the mail without knowing the physical destination.
 **ARP** is the protocol that computers use to broadcast a question to the local network: *"Who has this IP address? Tell me your physical MAC address."*
 
 ## 1. How ARP Works (The Broadcast)
@@ -23,8 +30,13 @@ ARP was designed in the 1980s and has absolutely no authentication. It blindly t
 A hacker on a local network can continuously spam forged ARP replies to the victim's computer, falsely claiming: *"I am the Default Gateway (the Router), here is my MAC address."*
 The victim's computer overwrites its ARP cache and starts sending all of its internet traffic directly to the hacker's laptop instead of the router, executing a perfect **Man-in-the-Middle (MITM) attack**.
 
+
 <Callout icon="info" title="IPv6 and NDP">
+
+
   ARP only exists for IPv4. When IPv6 was introduced, ARP was entirely replaced by the **Neighbor Discovery Protocol (NDP)**, which uses ICMPv6 and multicast instead of inefficient network-wide broadcasts.
+
+
 </Callout>
 
-</ConceptTemplate>
+

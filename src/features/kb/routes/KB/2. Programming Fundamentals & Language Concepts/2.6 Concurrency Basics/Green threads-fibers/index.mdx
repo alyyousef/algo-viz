@@ -1,8 +1,25 @@
+---
+title: Green Threads / Fibers
+description: User-space threads managed entirely by the language's runtime engine, allowing developers to spawn millions of concurrent tasks without overwhelming the Operating System.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Green threads/fibers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Green Threads / Fibers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Green Threads (called Goroutines in Go, or Processes in Erlang) look and feel exactly like OS Threads to the developer, but mathematically, they are completely different.
 
-</ConceptTemplate>
+## 1. The Heavy Cost of OS Threads
+When you spawn a native OS Thread (e.g., `pthread` in C or Java), the Operating System gets involved. It mathematically allocates a massive 1-Megabyte physical Stack in RAM for the thread. If you try to spawn 100,000 OS Threads to handle 100,000 network connections, you instantly consume 100GB of RAM and crash the server.
+
+## 2. The M:N Scheduler
+Green Threads solve this by ignoring the OS.
+The Go Runtime Engine allocates maybe 4 native OS Threads (one for each physical CPU core). It then mathematically spawns 100,000 Goroutines (Green Threads) inside its own memory space. A Goroutine only uses 2-Kilobytes of RAM.
+The Go Runtime acts as a mini-Operating System (an M:N Scheduler). It mathematically multiplexes the 100,000 Goroutines onto the 4 physical OS threads. If one Goroutine blocks (waiting for a network packet), the Go Runtime instantly hot-swaps it off the OS thread and swaps a ready Goroutine in, allowing massive concurrency with near-zero mathematical overhead.
+

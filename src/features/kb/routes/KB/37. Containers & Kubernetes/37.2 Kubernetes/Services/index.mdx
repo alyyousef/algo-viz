@@ -4,17 +4,30 @@ description: An abstract way to expose an application running on a set of Pods a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Services">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Services">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Because Kubernetes Pods are mortal and frequently destroyed/recreated by Deployments, **their IP addresses are completely unpredictable**. 
+Because Kubernetes Pods are mortal and frequently destroyed/recreated by Deployments, **their IP addresses are completely unpredictable**.
 If your Frontend Pod needs to talk to your Backend API Pod, it cannot hardcode the API's IP address, because that IP address will change tomorrow.
 
 A **Service** solves this by providing a permanent, stable IP address and DNS name that acts as an internal load balancer in front of a fluctuating group of Pods.
 
+
 <Callout icon="info" title="Labels and Selectors">
-  A Service does not point to specific Pods. It uses a **Label Selector**. 
+
+
+  A Service does not point to specific Pods. It uses a **Label Selector**.
   You configure the Service to route traffic to any Pod that has the label \`app=backend\`. As Deployments create and destroy Pods with that label, the Service automatically updates its internal routing table in real-time.
+
+
 </Callout>
+
 
 ## Types of Services
 
@@ -26,7 +39,6 @@ Kubernetes offers different Service types depending on how you want to expose yo
 
 ## CoreDNS Integration
 
-When you create a Service named \`my-database\`, Kubernetes automatically registers a DNS record in the cluster's internal DNS server (CoreDNS). 
+When you create a Service named \`my-database\`, Kubernetes automatically registers a DNS record in the cluster's internal DNS server (CoreDNS).
 Other Pods in the same namespace can literally make HTTP requests to \`http://my-database:5432\`, and K8s will perfectly load-balance the request to one of the healthy database Pods.
 
-</ConceptTemplate>

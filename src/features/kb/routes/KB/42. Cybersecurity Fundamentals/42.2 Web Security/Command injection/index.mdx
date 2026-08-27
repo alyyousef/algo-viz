@@ -4,17 +4,30 @@ description: A critical vulnerability that allows an attacker to execute arbitra
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OS Command Injection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OS Command Injection">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Sometimes, web applications need to interact with the underlying server. For example, a network diagnostic tool might take an IP address from the user and mathematically pass it to the server's `ping` command.
 
-**Command Injection** occurs when the application takes unsanitized user input and blindly concatenates it into a shell command. 
+**Command Injection** occurs when the application takes unsanitized user input and blindly concatenates it into a shell command.
+
 
 <Callout icon="error" title="The Exploit">
-  If the underlying code is `system("ping -c 4 " + userInput)`, an attacker can input: `8.8.8.8; rm -rf /`. 
-  
+
+
+  If the underlying code is `system("ping -c 4 " + userInput)`, an attacker can input: `8.8.8.8; rm -rf /`.
+
   The shell mathematically interprets the semicolon (`;`) as the end of the first command, and instantly executes the second command, wiping the entire server.
+
+
 </Callout>
+
 
 ## Prevention Methods
 
@@ -22,4 +35,3 @@ Sometimes, web applications need to interact with the underlying server. For exa
 2. **Strict Whitelisting:** If you must use user input, validate it against a rigid mathematical regex. If the input is supposed to be an IP address, ensure it *only* contains numbers and periods.
 3. **Parameterization:** Use APIs that safely separate the command from the arguments. In Node.js, using `execFile('ping', ['-c', '4', userInput])` ensures the input is mathematically treated as a literal string argument, not an executable shell operator.
 
-</ConceptTemplate>

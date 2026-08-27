@@ -4,7 +4,7 @@ description: A general-purpose distributed memory-caching system, often used to 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Memcached"
   subtitle="The original distributed RAM cache"
   logoUrl="https://upload.wikimedia.org/wikipedia/en/2/27/Memcached.svg"
@@ -19,21 +19,22 @@ Before Redis existed, **Memcached** ruled the internet. It was designed to do ex
 
 Unlike Redis, which is single-threaded, Memcached is natively **Multi-Threaded**. A single Memcached server can mathematically utilize 64 CPU cores to handle millions of operations per second with ease.
 
+
 <Callout icon="warning" title="Purely Volatile">
+
+
   Memcached has absolutely zero mathematical capability to write data to a hard drive. If you restart a Memcached server, 100% of the data is instantly vaporized. It is a true cache, not a database.
+
+
 </Callout>
+
 
 ## Memcached vs. Redis
 
 While Redis has largely won the caching war due to its advanced features, Memcached is still mathematically relevant for specific use cases:
 
-<ComparisonTable 
-  headers={['Feature', 'Memcached', 'Redis']}
-  rows={[
-    ['Architecture', 'Multi-threaded (scales vertically on massive CPUs).', 'Single-threaded (requires clustering to scale).'],
-    ['Data Structures', 'Only simple Strings (Strings and Objects serialized to Strings).', 'Lists, Sets, Hashes, Sorted Sets, Bitmaps, Streams.'],
-    ['Disk Persistence', 'None. Purely volatile.', 'RDB Snapshots and AOF (Append Only File) logs.']
-  ]}
-/>
+
+<ComparisonTable headers={['Feature', 'Memcached', 'Redis']} rows={[ ['Architecture', 'Multi-threaded (scales vertically on massive CPUs).', 'Single-threaded (requires clustering to scale).'], ['Data Structures', 'Only simple Strings (Strings and Objects serialized to Strings).', 'Lists, Sets, Hashes, Sorted Sets, Bitmaps, Streams.'], ['Disk Persistence', 'None. Purely volatile.', 'RDB Snapshots and AOF (Append Only File) logs.'] ]} />
+
 
 </TechnologyTemplate>

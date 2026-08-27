@@ -4,16 +4,28 @@ description: The fundamental limit to data compression and communication, formul
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Shannon Entropy">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Shannon Entropy">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 1948, Claude Shannon published *"A Mathematical Theory of Communication"*, single-handedly inventing the entire digital age.
 
+
 <Callout icon="warning" title="The Absolute Limit of Compression">
+
+
   Shannon Entropy provides the absolute mathematical limit on how small you can compress a file.
-  
-  If you have a 10-Megabyte text file, and you mathematically calculate its Shannon Entropy to be 4 Megabytes, it means the file contains 6 Megabytes of biological redundancy (like repeating spaces, or the letter 'e' appearing frequently). You can safely compress the file down to 4 Megabytes. 
-  
+
+  If you have a 10-Megabyte text file, and you mathematically calculate its Shannon Entropy to be 4 Megabytes, it means the file contains 6 Megabytes of biological redundancy (like repeating spaces, or the letter 'e' appearing frequently). You can safely compress the file down to 4 Megabytes.
+
   However, it is a physical law of the universe that you mathematically *cannot* compress it to 3.9 Megabytes without permanently losing data. It is the speed of light for computer science.
+
+
 </Callout>
 
-</ConceptTemplate>
+

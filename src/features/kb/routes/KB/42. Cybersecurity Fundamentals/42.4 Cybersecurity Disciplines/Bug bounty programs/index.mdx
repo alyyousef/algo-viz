@@ -4,15 +4,28 @@ description: Crowdsourced security initiatives where organizations financially r
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bug Bounty Programs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bug Bounty Programs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A company can only hire a limited number of penetration testers. **Bug Bounty Programs** democratize security testing by inviting the entire global community of ethical hackers to mathematically attack the company\'s public assets in exchange for cash rewards.
 
 Platforms like HackerOne and Bugcrowd facilitate these programs, providing a safe legal framework for researchers to operate within.
 
+
 <Callout icon="success" title="The Economics of Bounties">
+
+
   Bug bounties are incredibly cost-effective. A company might pay $10,000 for a critical SQL Injection report. However, if a malicious hacker found that same vulnerability on the black market, it could cost the company $10 million in GDPR fines and lost customer trust.
+
+
 </Callout>
+
 
 ## How it Works
 
@@ -21,4 +34,3 @@ Platforms like HackerOne and Bugcrowd facilitate these programs, providing a saf
 3. **Triage:** The company\'s internal security team verifies the mathematical validity of the bug and ensures it is not a duplicate.
 4. **Reward:** Based on the severity (using CVSS scoring), the researcher is paid. (Minor bugs might pay $50; critical remote code execution bugs can pay over $100,000).
 
-</ConceptTemplate>

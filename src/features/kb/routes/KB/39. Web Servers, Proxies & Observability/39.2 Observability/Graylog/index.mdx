@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Graylog
+description: A powerful, centralized log management platform built on Java and Elasticsearch, mathematically engineered to quickly parse, search, and alert on massive volumes of structured machine data.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Graylog">
+<TechnologyTemplate
+  title="Graylog"
+  subtitle="Centralized Log Management"
+  tags={['Observability', 'Logging', 'Analytics', 'Security']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While the ELK stack (Elasticsearch, Logstash, Kibana) is a collection of three separate tools stitched together, Graylog was mathematically designed from day one to be a single, cohesive log management application.
 
-</ConceptTemplate>
+## 1. The Processing Engine
+Graylog relies on Elasticsearch (or OpenSearch) for raw mathematical storage, but Graylog itself handles the complex processing.
+When raw logs hit Graylog, they pass through **Pipelines**. Pipelines are defined using a mathematical rule-based language.
+An engineer can write a rule: *"If the log message contains the string 'Failed password', mathematically extract the source IP address using a Grok pattern, query an external Threat Intelligence API to see if the IP is malicious, and if so, append a `threat=high` flag to the log before saving it."*
+
+## 2. Stream Routing and Alerting
+Graylog mathematically organizes logs into **Streams** (e.g., the "Database Errors" stream, or the "Firewall Access" stream).
+Instead of forcing a human to search for errors, Graylog runs continuous mathematical queries against these Streams. If the "Firewall Access" stream registers more than 50 failed logins from a single IP within 60 seconds, Graylog mathematically triggers an alert (Slack, PagerDuty, or Email), enabling real-time security response.
+
+</TechnologyTemplate>

@@ -4,7 +4,14 @@ description: The classic, deeply integrated Linux firewall utility used to filte
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="iptables">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="iptables">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **`iptables`** is a user-space utility that configures the **Netfilter** module built directly into the Linux Kernel. It is the grandfather of all modern Linux firewalls.
 
@@ -19,11 +26,16 @@ Every single network packet that enters, leaves, or routes through a Linux machi
    - **FORWARD Chain**: Traffic passing through the server (used if the server is acting as a router).
 2. **The NAT Table**: Used to modify IP addresses (Network Address Translation), heavily used by Docker to map ports.
 
+
 <Callout icon="info" title="Modern Abstractions (UFW / Firewalld)">
+
+
   Because the raw `iptables` syntax is notoriously difficult to memorize and prone to catastrophic mistakes (like instantly locking yourself out of SSH), modern distributions use frontend abstractions. Ubuntu uses **UFW** (Uncomplicated Firewall) and RHEL uses **firewalld**. These tools provide simple human syntax (e.g., `ufw allow 80`) and translate it into raw `iptables` rules in the background.
+
+
 </Callout>
+
 
 ## The Shift to nftables
 While `iptables` dominated for 20 years, it suffers from performance issues when handling massive lists of rules. The Linux kernel has officially deprecated it in favor of a newer, faster subsystem called **nftables**. However, `iptables` syntax is so ingrained in enterprise scripts that almost all modern systems provide an `iptables` translation layer.
 
-</ConceptTemplate>

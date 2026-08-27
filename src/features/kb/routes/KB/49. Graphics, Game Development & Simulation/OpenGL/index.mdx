@@ -4,7 +4,7 @@ description: A cross-language, cross-platform application programming interface 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="OpenGL"
   subtitle="The legacy standard of 3D graphics"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/OpenGL_logo.svg/512px-OpenGL_logo.svg.png"
@@ -15,15 +15,21 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://www.opengl.org/"
 >
 
-Before OpenGL, every graphics card had its own proprietary programming language. If you wrote a game for an NVIDIA card, it physically would not boot on an ATI card. 
+Before OpenGL, every graphics card had its own proprietary programming language. If you wrote a game for an NVIDIA card, it physically would not boot on an ATI card.
 
 **OpenGL** created a mathematical abstraction layer. You write C++ OpenGL code, and the specific GPU Driver (written by NVIDIA or AMD) mathematically translates your OpenGL calls into the proprietary silicon instructions.
 
+
 <Callout icon="error" title="The State Machine Problem">
-  OpenGL is mathematically designed as a massive, global **State Machine**. 
-  
+
+
+  OpenGL is mathematically designed as a massive, global **State Machine**.
+
   To draw a red triangle, you cannot just call `Draw(triangle, red)`. You must mathematically bind the Triangle data to the global state, then bind the Red Shader to the global state, then call `glDrawArrays()`. Because it is a global state machine, it is incredibly difficult to multi-thread. You generally cannot have 4 CPU cores sending OpenGL commands simultaneously, making it a severe bottleneck for modern, massive video games.
+
+
 </Callout>
+
 
 While still widely used for education and older software, OpenGL is officially deprecated by Apple and has been largely superseded by Vulkan.
 

@@ -4,7 +4,14 @@ description: An identity layer on top of the OAuth 2.0 protocol.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OpenID Connect (OIDC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OpenID Connect (OIDC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 OAuth 2.0 was mathematically designed for *Authorization* (granting access to APIs), not *Authentication* (proving who a user actually is).
 
@@ -12,10 +19,15 @@ When developers biologically hijacked OAuth 2.0 to build "Log in with Google" bu
 
 **OpenID Connect (OIDC)** was mathematically invented to fix this.
 
+
 <Callout icon="success" title="The ID Token">
+
+
   OIDC is just OAuth 2.0 with one mathematical addition: **The ID Token**.
-  
+
   When you click "Log in with Google", OIDC executes a standard OAuth 2.0 flow, but alongside the Access Token, Google returns a mathematically signed **JWT** called an ID Token. This token contains the user's exact identity (`name`, `email`, `profile_picture`), completely standardizing "Social Login" across the entire internet.
+
+
 </Callout>
 
-</ConceptTemplate>
+

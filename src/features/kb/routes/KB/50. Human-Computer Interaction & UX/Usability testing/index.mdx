@@ -4,22 +4,34 @@ description: A technique used in user-centered interaction design to evaluate a 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Usability Testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Usability Testing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Usability Testing** is the brutal, objective reality check of the UX world. It is the mathematical process of placing a user in a room, handing them a prototype, and watching them fail.
 
+
 <Callout icon="error" title="The Observer Effect">
+
+
   If you ask a user, *"Do you like this app?"*, they will mathematically lie to you to avoid hurting your feelings.
-  
+
   Usability Testing is not a survey. It is observational. You do not ask if they like the app; you give them a task (*"Buy a pair of red shoes"*), and you physically measure:
   1. **Time on Task:** Did it take 30 seconds or 5 minutes?
   2. **Error Rate:** Did they click the wrong button?
   3. **Completion Rate:** Did they give up completely?
+
+
 </Callout>
+
 
 ## The "Think Aloud" Protocol
 
-The industry standard methodology is the **Think Aloud** protocol. 
+The industry standard methodology is the **Think Aloud** protocol.
 The researcher forces the user to narrate every single thought in their head as they use the app. *"I'm looking for a search bar. I don't see one. I assume it's in this hamburger menu. Oh, it's not here. Now I'm frustrated."* This provides a direct, unedited psychological transcript of the Information Architecture's failure points.
 
-</ConceptTemplate>

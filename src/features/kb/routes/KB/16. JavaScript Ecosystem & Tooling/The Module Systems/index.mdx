@@ -4,7 +4,14 @@ description: The historical nightmare of Javascript imports, leading to the ulti
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Module Systems (CJS, ESM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Module Systems (CJS, ESM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For the first 20 years of its existence, JavaScript had absolutely no native way to split code into multiple files. You simply loaded massive, global `<script>` tags in your HTML file and hoped they loaded in the correct order without colliding.
 
@@ -43,4 +50,3 @@ ESM is asynchronous, statically analyzable (which allows Bundlers to mathematica
 
 **The Transition Nightmare**: For the last decade, the Javascript ecosystem has suffered immensely trying to migrate the billions of existing CommonJS packages over to ESM.
 
-</ConceptTemplate>

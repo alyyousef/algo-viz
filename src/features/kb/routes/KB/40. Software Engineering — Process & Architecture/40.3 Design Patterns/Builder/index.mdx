@@ -1,8 +1,36 @@
+---
+title: Builder Pattern
+description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically separates the construction of a complex object from its representation, allowing the same construction process to create different representations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Builder">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Builder Pattern"
+  subtitle="Constructing Complex Objects"
+  tags={['Design Patterns', 'Creational', 'GoF', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Creating an object using the `new` keyword is easy, unless the object mathematically requires 15 different configuration parameters to be properly initialized.
 
-</ConceptTemplate>
+## 1. The Telescoping Constructor Anti-Pattern
+If a `House` class requires parameters for walls, doors, windows, roof, and pool, developers often mathematically create a massive constructor: `new House(4, 2, 8, true, false, null, null)`. This is mathematically unreadable. What does `true` mean?
+
+## 2. The Fluent Builder
+The Builder pattern solves this by extracting the object construction code out of its own class and into a separate `HouseBuilder` object.
+The Builder provides a mathematically "fluent" API (methods that return `this`) allowing for step-by-step configuration:
+```java
+House myHouse = new HouseBuilder()
+    .setWalls(4)
+    .setDoors(2)
+    .addPool()
+    .build();
+```
+This mathematically eliminates the telescoping constructor, makes the code perfectly readable, and allows the Builder to enforce strict validation logic before mathematically allocating the final `House` object via the `build()` method.
+

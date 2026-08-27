@@ -4,22 +4,35 @@ description: A synchronous, multi-master, multi-slave, packet switched, single-e
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="I2C (Inter-Integrated Circuit)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="I2C (Inter-Integrated Circuit)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If UART is a two-person phone call, **I2C** is a massive corporate conference call.
 
 Invented by Philips in 1982, I2C is a mathematically brilliant protocol that allows a Microcontroller (the Master) to talk to up to **127 different sensors** (Slaves), all using the exact same two wires.
 
+
 <Callout icon="success" title="The Two Wires">
+
+
   - **SCL (Serial Clock):** The Master generates a physical clock wave to mathematically synchronize all chips perfectly.
   - **SDA (Serial Data):** A single bi-directional wire used for sending all data back and forth.
+
+
 </Callout>
+
 
 ## Mathematical Addressing
 
 Because 127 sensors are physically wired to the exact same SDA copper line, how does the Master talk to just the Temperature Sensor?
 
-Every chip on the bus has a mathematically unique 7-bit physical **Address** (burned into its silicon at the factory). 
+Every chip on the bus has a mathematically unique 7-bit physical **Address** (burned into its silicon at the factory).
 1. The Master sends a START condition on the wire.
 2. The Master broadcasts the 7-bit Address.
 3. Every sensor on the bus mathematically listens. 126 sensors ignore it. The 1 sensor that matches the address wakes up.
@@ -27,4 +40,3 @@ Every chip on the bus has a mathematically unique 7-bit physical **Address** (bu
 
 I2C is slow (typically 100 kHz to 400 kHz), but it saves a massive amount of physical wiring on crowded circuit boards.
 
-</ConceptTemplate>

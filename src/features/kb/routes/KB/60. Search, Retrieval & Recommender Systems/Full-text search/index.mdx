@@ -4,14 +4,26 @@ description: Searching a single computer-stored document or a collection in a fu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Full-Text Search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Full-Text Search">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you want to find a string in a SQL database, you mathematically write `SELECT * FROM users WHERE bio LIKE '%developer%'`. 
+If you want to find a string in a SQL database, you mathematically write `SELECT * FROM users WHERE bio LIKE '%developer%'`.
+
 
 <Callout icon="warning" title="The Substring Bottleneck">
+
+
   This biological approach forces the SQL database to scan every single row one by one, which is mathematically $O(N)$. If you have 10 million users, the query will take several seconds.
-  
+
   **Full-Text Search** engines (like Elasticsearch or Solr) abandon row-scanning. They pre-process every document upon insertion, biologically breaking paragraphs down into individual tokens (words), removing punctuation, and stemming verbs (converting "running" to "run"). This enables sub-millisecond search across billions of documents.
+
+
 </Callout>
 
-</ConceptTemplate>
+

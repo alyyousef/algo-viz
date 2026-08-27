@@ -4,9 +4,16 @@ description: A simple, highly efficient tool used by embedded engineers to autom
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Buildroot">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Buildroot">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When an engineer builds a custom Smart Thermostat, they cannot just install Ubuntu on it. They need an Embedded Linux OS perfectly tailored to their specific, weird hardware. 
+When an engineer builds a custom Smart Thermostat, they cannot just install Ubuntu on it. They need an Embedded Linux OS perfectly tailored to their specific, weird hardware.
 
 **Buildroot** is an automation tool designed specifically to generate these microscopic, custom Linux operating systems from scratch.
 
@@ -20,8 +27,13 @@ When the engineer types `make`, Buildroot will:
 3. Compile everything from scratch.
 4. Output a single, tiny, 10-Megabyte binary Image file that can be flashed directly onto the thermostat's memory chip.
 
+
 <Callout icon="info" title="Buildroot vs Yocto">
+
+
   Buildroot is designed for **Simplicity**. It builds a single, static filesystem image. It does not support package managers (like `apt`). Once the OS is flashed to the device, it cannot be easily updated. For highly complex devices that require over-the-air package updates (like a Tesla car), engineers use the much heavier **Yocto Project**.
+
+
 </Callout>
 
-</ConceptTemplate>
+

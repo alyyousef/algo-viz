@@ -1,0 +1,23 @@
+---
+title: Cloudflare
+description: A global edge network mathematically designed to provide extreme DDoS protection, ultra-fast CDN caching, and serverless compute directly at the edge of the internet.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Cloudflare"
+  subtitle="The Global Edge Network"
+  tags={['Cloud', 'CDN', 'Security', 'Edge Compute']}
+>
+
+Cloudflare is not a traditional cloud like AWS. You do not rent Virtual Machines. Instead, Cloudflare sits mathematically *in front* of your cloud, acting as a massive global shield and caching layer.
+
+## 1. Reverse Proxy and DDoS Mitigation
+When you use Cloudflare, you change your domain's DNS to point to Cloudflare's Anycast IP addresses.
+If a massive botnet launches a 1 Terabit-per-second DDoS attack against your website, the mathematical attack never reaches your origin AWS server. The attack hits Cloudflare's edge nodes (spread across 300+ cities globally). Cloudflare's mathematical scrubbing algorithms instantly detect the malicious packets and drop them at the edge, while allowing legitimate user traffic to pass through seamlessly.
+
+## 2. Cloudflare Workers (V8 Isolates)
+Historically, to run serverless code, you used AWS Lambda (which spins up a Docker container and takes ~200ms to cold start).
+Cloudflare revolutionized this with **Cloudflare Workers**. Workers do not use Docker containers. They use **V8 Isolates** (the exact same mathematical engine that runs JavaScript in Google Chrome). When a user in Tokyo hits your API, a Worker script runs physically on a router in Tokyo. The "cold start" time is mathematically 0 milliseconds, making Workers the fastest serverless compute platform on Earth for edge routing and API aggregation.
+
+</TechnologyTemplate>

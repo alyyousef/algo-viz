@@ -4,21 +4,33 @@ description: The structural design of shared information environments; the art a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Information Architecture (IA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Information Architecture (IA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a software application has 10,000 distinct features, how do you organize them so a brand-new user can mathematically find the exact feature they need in less than 3 clicks?
 
 This is the discipline of **Information Architecture (IA)**. It is the structural skeleton of the software.
 
+
 <Callout icon="warning" title="Mental Models">
-  IA is entirely based on the user's **Mental Model**. 
-  
+
+
+  IA is entirely based on the user's **Mental Model**.
+
   If you are building an online grocery store, do you put "Tomatoes" in the "Vegetables" category or the "Fruits" category? Biologically, a tomato is a fruit. But the human *Mental Model* mathematically associates tomatoes with salads (Vegetables). If you put tomatoes under "Fruits", the user's cognitive load spikes, and the Information Architecture has failed.
+
+
 </Callout>
+
 
 ## IA Methodologies
 
 - **Card Sorting:** You write down 50 features on 50 physical index cards. You hand them to a user and say, "Group these cards into piles that make sense to you." If 90% of users group "Billing" and "Change Password" together, you mathematically know to create an "Account Settings" dropdown.
 - **Tree Testing:** You mathematically strip away all UI graphics and present the user with a pure text-based tree of your menus. You ask them to find a specific item. If they click down the wrong branch, your IA is mathematically broken.
 
-</ConceptTemplate>

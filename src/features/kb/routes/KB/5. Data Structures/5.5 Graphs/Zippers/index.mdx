@@ -4,21 +4,27 @@ description: A brilliant functional programming technique that mathematically re
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zippers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zippers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In pure Functional Programming languages (like Haskell), all data structures are strictly **Immutable**. If you want to traverse down a massive Tree, edit a single Leaf node, and traverse back up, you cannot simply use a pointer and overwrite the memory. You must mathematically reconstruct every node you touch. The **Zipper** is a mind-bending mathematical abstraction that makes navigating and editing immutable structures highly efficient.
 
 ## 1. The Inside-Out Architecture
-A Zipper mathematically represents a "Focus" (a cursor) pointing at a specific node in a Tree. But instead of just holding the node, a Zipper holds the Node *and its exact context*. 
+A Zipper mathematically represents a "Focus" (a cursor) pointing at a specific node in a Tree. But instead of just holding the node, a Zipper holds the Node *and its exact context*.
 It mathematically splits the Tree into two pieces:
 1. The currently focused Subtree.
 2. The **"Context"** (the rest of the entire tree, mathematically turned inside-out, pointing back up to the Root).
 
 ## 2. O(1) Local Movement
-Because the Zipper holds the inside-out path to the Root, you can mathematically "zip" up (move to the parent) or "zip" down (move to a child) in perfect $O(1)$ time. 
-As you move focus, the Zipper mathematically wraps the old focus into the Context, exactly like pulling a physical zipper up or down a jacket. 
+Because the Zipper holds the inside-out path to the Root, you can mathematically "zip" up (move to the parent) or "zip" down (move to a child) in perfect $O(1)$ time.
+As you move focus, the Zipper mathematically wraps the old focus into the Context, exactly like pulling a physical zipper up or down a jacket.
 
 ## 3. Editing the Immutable
 When you edit the focused node, the Zipper does not need to rebuild the entire tree instantly. It simply creates a new node in the local Focus. When you finally "Zip Up" all the way back to the Root, the Zipper seamlessly mathematically weaves your new node back into the Context, returning a brand new Immutable Tree. It localizes the heavy lifting, providing an elegant cursor-like experience in a strictly immutable universe.
 
-</ConceptTemplate>

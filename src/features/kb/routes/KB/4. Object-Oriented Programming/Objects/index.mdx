@@ -1,8 +1,32 @@
+---
+title: Objects
+description: The fundamental runtime entities in Object-Oriented Programming; distinct, mathematically allocated blocks of memory that encapsulate specific state (data) and behavior (methods) defined by their parent Class blueprint.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Objects">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Objects"
+  subtitle="The Instantiated Reality"
+  tags={['OOP', 'Memory Management', 'Fundamentals', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Class is just a theoretical blueprint in a text file. An Object is the physical, mathematical realization of that blueprint loaded into the physical RAM of the computer during runtime.
 
-</ConceptTemplate>
+## 1. Memory Allocation and the Heap
+When a CPU executes the instruction `Car myCar = new Car();`, a specific mathematical sequence occurs:
+1. The CPU mathematically calculates the exact number of bytes required to hold all the state variables defined in the `Car` class (e.g., 4 bytes for an integer `speed`, 8 bytes for a `color` reference).
+2. It asks the Operating System to allocate that contiguous block of bytes on the **Heap** (the dynamic memory space).
+3. It executes the Constructor to initialize the bytes.
+4. It mathematically returns a physical memory address (a pointer/reference) and stores it in the `myCar` variable on the **Stack**.
+
+## 2. Independent State
+The defining mathematical characteristic of Objects is absolute state isolation.
+If you instantiate two objects: `Car a = new Car(); Car b = new Car();`, they represent two completely distinct, mathematically segregated blocks of RAM. If you execute `a.speed = 100;`, it has absolutely zero mathematical effect on the `speed` variable inside object `b`.
+

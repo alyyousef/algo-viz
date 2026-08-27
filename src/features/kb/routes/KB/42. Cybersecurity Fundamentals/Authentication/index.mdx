@@ -4,28 +4,35 @@ description: The process of verifying the identity of a user, process, or device
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Authentication">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Authentication">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the physical world, authentication is showing your passport at the border. In cybersecurity, **Authentication** is the mathematical process of proving that an entity (a human or a machine) is exactly who they claim to be.
 
 It is the very first step in Identity and Access Management (IAM), occurring *before* Authorization.
 
+
 <Callout icon="info" title="The Three Authentication Factors">
+
+
   Mathematical proof of identity relies on one or more of these three fundamental factors:
   1. **Knowledge:** Something you know (e.g., a Password, a PIN).
   2. **Possession:** Something you have (e.g., a Smartphone, a YubiKey hardware token).
   3. **Inherence:** Something you are (e.g., a Fingerprint, FaceID biometrics).
+
+
 </Callout>
+
 
 ## Modern Authentication Paradigms
 
-<ComparisonTable 
-  headers={['Paradigm', 'Mechanism']}
-  rows={[
-    ['Single Sign-On (SSO)', 'The user authenticates once against a central mathematical Identity Provider (IdP) like Okta. The IdP then issues trusted cryptographic tokens (SAML/OIDC) to automatically log the user into all other corporate apps.'],
-    ['Passwordless Authentication', 'Replacing passwords entirely with cryptographic possession. The user relies on their device\'s secure enclave (like Apple FaceID or Windows Hello) to mathematically sign challenges from the server (WebAuthn/FIDO2).'],
-    ['Machine-to-Machine (M2M)', 'Servers talking to servers. Uses mathematical mechanisms like Mutual TLS (mTLS) or API Keys rather than human passwords.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Paradigm', 'Mechanism']} rows={[ ['Single Sign-On (SSO)', 'The user authenticates once against a central mathematical Identity Provider (IdP) like Okta. The IdP then issues trusted cryptographic tokens (SAML/OIDC) to automatically log the user into all other corporate apps.'], ['Passwordless Authentication', 'Replacing passwords entirely with cryptographic possession. The user relies on their device\'s secure enclave (like Apple FaceID or Windows Hello) to mathematically sign challenges from the server (WebAuthn/FIDO2).'], ['Machine-to-Machine (M2M)', 'Servers talking to servers. Uses mathematical mechanisms like Mutual TLS (mTLS) or API Keys rather than human passwords.'] ]} />
+
+

@@ -1,0 +1,24 @@
+---
+title: Neon Database
+description: A mathematically revolutionary, fully managed serverless PostgreSQL platform that separates storage from compute, allowing for instant branching and zero-downtime scaling.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Neon Database"
+  subtitle="Serverless PostgreSQL"
+  tags={['Cloud', 'Database', 'PostgreSQL', 'Serverless']}
+>
+
+Traditional PostgreSQL databases run on a single Virtual Machine, meaning the compute (CPU/RAM) and the storage (hard drive) are mathematically fused. Neon radically alters this architecture to create a truly serverless relational database.
+
+## 1. Storage and Compute Separation
+Neon mathematically divorces the PostgreSQL compute engine from the storage layer.
+The compute nodes are stateless micro-VMs. The storage layer is a custom, distributed system written in Rust that speaks the native Postgres WAL (Write-Ahead Log) protocol.
+If your database goes idle (0 connections), Neon mathematically shuts down the compute node entirely (scaling to zero), saving you money. The moment a new query arrives, Neon boots a fresh compute node in milliseconds, attaches it to the distributed storage, and executes the query seamlessly.
+
+## 2. Instant Database Branching
+Because the storage layer is a custom log-structured system, Neon supports **Database Branching**.
+Just like Git branching for code, you can click a button to branch your production database. Neon does not mathematically copy the 500GB of data. It utilizes **Copy-on-Write (CoW)**. The branch is created instantly, pointing to the same immutable storage blocks. If you run a destructive `DROP TABLE` on the branch, it only writes the *changes* to a new block, leaving production completely mathematically untouched. This revolutionizes CI/CD, allowing developers to run integration tests against a perfect clone of production in seconds.
+
+</TechnologyTemplate>

@@ -1,8 +1,25 @@
+---
+title: PL/I
+description: Programming Language One, an immensely massive language designed by IBM to replace both Fortran and COBOL by combining all their features.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PL/I">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PL/I">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by IBM in the 1960s, PL/I (Programming Language One) was mathematically intended to be the ultimate programming language. IBM realized their customers were split: Scientists used Fortran (for math), and Businesses used COBOL (for record keeping). IBM attempted to build one massive language that could do both.
 
-</ConceptTemplate>
+## 1. The Kitchen Sink Language
+PL/I is mathematically enormous. It took the scientific features of Fortran, the record-handling features of COBOL, and the block-structured logic of ALGOL, and jammed them all into a single compiler.
+It had hundreds of built-in keywords, complex exception handling (`ON ERROR` conditions), multi-threading capabilities (`TASKS`), and incredibly complex pointer arithmetic.
+
+## 2. The Collapse of Complexity
+Because the mathematical specification was so massive, the PL/I compiler was notoriously slow and required massive amounts of physical RAM, which was exorbitantly expensive in the 1960s.
+Furthermore, because it had so many features, it was almost impossible for a single programmer to master the entire language. Different teams would use completely different mathematical subsets of PL/I, leading to unmaintainable codebases. While it is still used today in some deeply legacy banking systems, its massive complexity prevented it from successfully replacing COBOL and Fortran.
+

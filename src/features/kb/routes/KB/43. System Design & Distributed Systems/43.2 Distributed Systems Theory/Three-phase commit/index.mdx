@@ -4,15 +4,28 @@ description: A distributed algorithm that extends the two-phase commit protocol 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Three-Phase Commit (3PC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Three-Phase Commit (3PC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The mathematical flaw of the Two-Phase Commit (2PC) is that it is a **Blocking Protocol**. If the Coordinator node mathematically crashes *after* sending the "Prepare" message but *before* sending the "Commit" message, all the participating databases sit there indefinitely with their rows locked, completely freezing the system.
 
 The **Three-Phase Commit (3PC)** was mathematically designed to solve this by adding a timeout mechanism and an extra phase.
 
+
 <Callout icon="info" title="Theoretical, but rarely used">
+
+
   While 3PC mathematically solves the blocking problem of 2PC, it requires even more network round-trips, making it far too slow for modern high-throughput systems. Most engineers simply accept the risks of 2PC or move entirely to asynchronous patterns like the Saga Pattern.
+
+
 </Callout>
+
 
 ## The Three Phases
 
@@ -22,4 +35,3 @@ The **Three-Phase Commit (3PC)** was mathematically designed to solve this by ad
 
 *The Magic:* Because of the extra phase, if the Coordinator crashes during Phase 2, the nodes can mathematically time-out and safely Abort, knowing that Phase 3 (the actual commit) never started anywhere in the cluster.
 
-</ConceptTemplate>

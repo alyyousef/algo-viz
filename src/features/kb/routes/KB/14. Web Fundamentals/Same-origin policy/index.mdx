@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Same-Origin Policy (SOP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Same-Origin Policy (SOP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Same-Origin Policy (SOP)** is the foundational security boundary of the modern web. Without it, the internet would be a lawless wasteland where any website could steal data from any other open tab.
 
@@ -14,15 +21,9 @@ The **Same-Origin Policy (SOP)** is the foundational security boundary of the mo
 An Origin is strictly defined as the mathematical combination of three things:
 **Scheme + Hostname + Port**.
 
-<ComparisonTable 
-  headers={['URL being compared to: http://store.company.com/dir/page.html', 'Outcome', 'Reason']} 
-  rows={[
-    ['`http://store.company.com/dir2/other.html`', '✅ Same Origin', 'Only the path differs.'],
-    ['`https://store.company.com/dir/page.html`', '❌ Different Origin', 'Different Scheme (HTTPS vs HTTP).'],
-    ['`http://news.company.com/dir/page.html`', '❌ Different Origin', 'Different Hostname (news vs store).'],
-    ['`http://store.company.com:81/dir/page.html`', '❌ Different Origin', 'Different Port (81 vs 80).']
-  ]} 
-/>
+
+<ComparisonTable headers={['URL being compared to: http://store.company.com/dir/page.html', 'Outcome', 'Reason']} rows={[ ['`http://store.company.com/dir2/other.html`', '✅ Same Origin', 'Only the path differs.'], ['`https://store.company.com/dir/page.html`', '❌ Different Origin', 'Different Scheme (HTTPS vs HTTP).'], ['`http://news.company.com/dir/page.html`', '❌ Different Origin', 'Different Hostname (news vs store).'], ['`http://store.company.com:81/dir/page.html`', '❌ Different Origin', 'Different Port (81 vs 80).'] ]} />
+
 
 ## 2. What does SOP restrict?
 SOP places ironclad walls between different origins within the browser:
@@ -32,11 +33,16 @@ SOP places ironclad walls between different origins within the browser:
 
 ## 3. Exceptions to SOP
 SOP intentionally allows certain cross-origin interactions because the web would be unusable without them:
-- **Linking**: You can freely embed `<img src="different-origin.com/image.jpg">`. 
+- **Linking**: You can freely embed `<img src="different-origin.com/image.jpg">`.
 - **Scripts**: You can load `<script src="cdn.com/react.js">`. (However, the script executes entirely within the context and permissions of the *hosting* page).
 
+
 <Callout icon="tip" title="PostMessage">
+
+
 If you legitimately need two different origins to communicate (e.g., a secure payment iframe communicating with the parent e-commerce site), you must use the strict `window.postMessage()` API. This allows controlled, explicitly verified message passing across the SOP boundary.
+
+
 </Callout>
 
-</ConceptTemplate>
+

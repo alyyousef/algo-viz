@@ -5,10 +5,17 @@ description: "The practice of building web pages that detect the visitor's scree
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Responsive Design"
   icon="smartphone"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the early days of smartphones, developers built entirely separate websites for mobile devices (e.g., `m.facebook.com`). **Responsive Web Design (RWD)**, coined by Ethan Marcotte in 2010, changed the industry paradigm: build one HTML document, but use CSS to make it fluidly adapt to any screen.
 
@@ -44,8 +51,13 @@ Responsive design relies heavily on avoiding fixed `px` values in favor of:
 - **`vw` / `vh`**: Viewport Width / Viewport Height (1vw is 1% of the screen width).
 - **`rem`**: Root em. Relative to the default font size of the HTML document (great for accessibility scaling).
 
+
 <Callout icon="info" title="Container Queries">
+
+
 A massive recent addition to CSS is **Container Queries** (`@container`). Instead of altering a component based on the *entire screen size*, you can alter it based on the *size of its parent container*. This is a game-changer for building reusable React/Vue components that look good anywhere on the page.
+
+
 </Callout>
 
-</ConceptTemplate>
+

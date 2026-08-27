@@ -1,0 +1,24 @@
+---
+title: OCI Fault Domains
+description: A critical mathematical sub-division of physical infrastructure within an OCI Availability Domain, guaranteeing that cloud resources are spread across different physical server racks to prevent localized hardware failures.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Fault Domains"
+  subtitle="Anti-Affinity Hardware Placement"
+  tags={['OCI', 'Architecture', 'Infrastructure', 'Reliability']}
+>
+
+Deploying two Virtual Machines into a single data center (Availability Domain) is dangerous. If they accidentally land on the exact same physical server rack, a single power supply failure will take down both VMs simultaneously. Fault Domains mathematically prevent this.
+
+## 1. The Rule of Three
+Every Availability Domain in Oracle Cloud is mathematically divided into exactly **Three Fault Domains**.
+A Fault Domain represents a grouping of physical hardware that shares a single point of failure (e.g., a shared Top-of-Rack network switch, or a shared power distribution unit).
+When you provision a new Virtual Machine, you can explicitly tell OCI: *"Place this VM in Fault Domain 1."* When you provision your backup VM, you dictate: *"Place this VM in Fault Domain 2."* OCI's hypervisor mathematically guarantees that those two VMs will never physically touch the same hardware rack.
+
+## 2. Automated Anti-Affinity
+If you use OCI Instance Pools (Auto Scaling), you do not have to manually specify Fault Domains.
+The mathematical engine handles it automatically. If the auto-scaler decides to boot 3 new web servers to handle a traffic spike, the OCI Control Plane will mathematically distribute them evenly: one in Fault Domain 1, one in Fault Domain 2, and one in Fault Domain 3. This guarantees maximum physical high availability without requiring the cloud architect to manually manage server placement.
+
+</TechnologyTemplate>

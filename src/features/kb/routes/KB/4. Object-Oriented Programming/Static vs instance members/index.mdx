@@ -1,8 +1,29 @@
+---
+title: Static vs Instance Members
+description: The mathematical distinction between variables and methods that belong to the global Class blueprint itself (Static) versus those that belong strictly to uniquely instantiated Objects (Instance).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Static vs instance members">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Static vs Instance Members"
+  subtitle="Class Memory vs Object Memory"
+  tags={['OOP', 'Memory Management', 'Architecture', 'Java']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a Class defines a variable, that variable must be mathematically assigned to a specific domain of memory. It either belongs to the singular Class, or it belongs to the infinite possible Instances.
 
-</ConceptTemplate>
+## 1. Instance Members
+By default, variables are **Instance Members**.
+If a `Car` class defines `int speed;`, every time you type `new Car()`, the CPU allocates a brand new, physically distinct integer in RAM. If you create 100 cars, you mathematically possess 100 distinct `speed` variables. Changing the speed of Car A has absolutely zero effect on Car B.
+
+## 2. Static Members
+If a variable is declared with the `static` keyword (e.g., `static int totalCarsBuilt;`), it mathematically belongs to the Class blueprint itself, not the objects.
+The CPU allocates memory for a `static` variable exactly **once**, usually in a special memory area (like the Metaspace in Java). If you create 100 cars, there is still only **one** `totalCarsBuilt` variable in existence. If Car A increments the variable to 101, Car B mathematically sees the value 101 immediately, because they are both pointing to the exact same physical memory address.
+

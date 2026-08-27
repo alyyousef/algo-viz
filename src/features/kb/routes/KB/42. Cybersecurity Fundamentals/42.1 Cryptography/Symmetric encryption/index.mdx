@@ -5,24 +5,26 @@ description: The foundation of fast data confidentiality, utilizing a single sha
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Symmetric Encryption">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-<ConceptTemplate title="Symmetric Encryption">
-
-Symmetric Encryption is a mathematical process where the **exact same secret key** is used to both encrypt the plaintext into ciphertext, and decrypt the ciphertext back into plaintext. 
+Symmetric Encryption is a mathematical process where the **exact same secret key** is used to both encrypt the plaintext into ciphertext, and decrypt the ciphertext back into plaintext.
 
 ## 1. How It Works
-Alice and Bob mathematically agree on a secret key (e.g., a 256-bit random string). 
+Alice and Bob mathematically agree on a secret key (e.g., a 256-bit random string).
 When Alice sends a message, her computer runs a symmetric algorithm (like AES) using the secret key to scramble the data. When Bob receives it, his computer uses the identical key to reverse the math.
 
 ## 2. Block Ciphers vs Stream Ciphers
 
-<ComparisonTable 
-  headers={['Cipher Type', 'Mechanism', 'Primary Use Case']} 
-  rows={[
-    ['Block Cipher', 'Mathematically chunks data into fixed-size blocks (e.g., 128 bits) and encrypts each block sequentially using complex substitution and permutation networks.', 'Database encryption, file encryption, TLS (AES-GCM).'],
-    ['Stream Cipher', 'Mathematically generates an infinite pseudo-random keystream based on the secret key. It then applies a bitwise XOR (`^`) between the plaintext and the keystream.', 'Real-time hardware encryption, ultra-low latency protocols (ChaCha20).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Cipher Type', 'Mechanism', 'Primary Use Case']} rows={[ ['Block Cipher', 'Mathematically chunks data into fixed-size blocks (e.g., 128 bits) and encrypts each block sequentially using complex substitution and permutation networks.', 'Database encryption, file encryption, TLS (AES-GCM).'], ['Stream Cipher', 'Mathematically generates an infinite pseudo-random keystream based on the secret key. It then applies a bitwise XOR (`^`) between the plaintext and the keystream.', 'Real-time hardware encryption, ultra-low latency protocols (ChaCha20).'] ]} />
+
 
 ## 3. The Fatal Flaw: The Key Distribution Problem
 Symmetric encryption is mathematically unbreakable (assuming a strong key length like 256-bit and a modern algorithm like AES). It is phenomenally fast and computationally cheap.
@@ -30,8 +32,13 @@ Symmetric encryption is mathematically unbreakable (assuming a strong key length
 However, it suffers from a catastrophic logical flaw known as the **Key Distribution Problem**.
 If Alice wants to securely talk to Bob over the internet, they must use the same key. But how does Alice securely send Bob the key in the first place? If she sends it over the internet, a hacker can intercept it. If a hacker intercepts the symmetric key, the entire encryption system is permanently compromised.
 
+
 <Callout icon="tip" title="The Solution">
+
+
 Symmetric encryption is almost never used alone over the internet. It is mathematically paired with **Asymmetric Encryption** (like RSA or Diffie-Hellman), which is used *exclusively* to securely establish the symmetric key over an insecure channel.
+
+
 </Callout>
 
-</ConceptTemplate>
+

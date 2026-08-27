@@ -4,7 +4,14 @@ description: A primitive, violent form of IPC used to send abrupt software inter
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Signals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Signals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Not all Inter-Process Communication is used for sending data. Sometimes, the OS (or another program) just needs to violently poke a process to get its attention. This is done using **Signals**.
 
@@ -17,13 +24,18 @@ There are standard signals defined by the POSIX specification:
 - `SIGTERM` (Signal Terminate): The standard signal sent by the `kill` command. A polite request to exit.
 - `SIGSEGV` (Segmentation Fault): Sent by the OS hardware when a program tries to read illegal memory. Causes instant death.
 
+
 <Callout icon="warning" title="SIGKILL (The Unstoppable Assassin)">
+
+
   A process is allowed to write custom code to "catch" or ignore almost any signal. For example, a web server can catch `SIGTERM` and delay its shutdown until it finishes serving its current users.
   However, `SIGKILL` (Kill -9) cannot be caught or ignored. If the OS sends a `SIGKILL`, the Kernel bypasses the program entirely and instantly destroys it without mercy.
+
+
 </Callout>
+
 
 ## The Limitations
 
 Signals are incredibly fast, but they carry exactly zero data. You cannot send a string or a JSON payload through a Signal; you can only send the signal ID number (e.g., Signal 15). They are strictly used for control flow, not data transfer.
 
-</ConceptTemplate>

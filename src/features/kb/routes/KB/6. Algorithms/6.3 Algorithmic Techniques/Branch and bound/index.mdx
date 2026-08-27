@@ -1,8 +1,31 @@
+---
+title: Branch and Bound
+description: "A mathematical algorithm design paradigm for discrete and combinatorial optimization problems, similar to backtracking but optimized by continuously calculating upper and lower bounds to massively prune the search tree."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Branch and bound">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Branch and Bound"
+  subtitle="Mathematically Pruning the Tree"
+  tags={['Algorithms', 'Techniques', 'Optimization', 'Trees']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Backtracking just blindly explores a decision tree until a rule is violated. **Branch and Bound** is mathematically smarter: it explores a decision tree while constantly keeping track of the "Best Score So Far," using it to mathematically prove that certain branches are not worth exploring.
 
-</ConceptTemplate>
+## 1. The Bounding Function
+Imagine you are solving the Traveling Salesperson Problem (finding the shortest path).
+You have currently found a complete path that takes **500 miles** (the Upper Bound).
+You are exploring a new branch. After just 3 cities, you calculate a mathematical "Lower Bound" for the *rest* of the trip. If the math proves that the absolute minimum possible distance to finish the trip is 200 miles, and you have already traveled 350 miles, the total will be at least 550 miles.
+Because 550 > 500, you mathematically know this branch can NEVER beat the current record. You immediately abort (prune) the entire branch.
+
+## 2. BFS vs DFS (Branching)
+Backtracking strictly uses DFS. Branch and Bound can mathematically use a Priority Queue (Best-First Search).
+Instead of diving deep into the tree, it calculates the Lower Bound for all child nodes, puts them in a Heap, and explores the most mathematically promising node first. This increases the chances of finding an extremely low Upper Bound early on, which in turn drastically increases the pruning power for the rest of the algorithm.
+

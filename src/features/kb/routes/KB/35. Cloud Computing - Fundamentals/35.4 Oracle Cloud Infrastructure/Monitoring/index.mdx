@@ -1,0 +1,25 @@
+---
+title: OCI Monitoring
+description: A comprehensive metrics and alerting engine that mathematically analyzes the real-time health, performance, and capacity of the entire Oracle Cloud infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Monitoring"
+  subtitle="Real-Time Metrics and Alerting"
+  tags={['OCI', 'Observability', 'Metrics', 'Automation']}
+>
+
+While OCI Logging handles text-based events, OCI Monitoring handles raw, mathematical time-series data (Metrics).
+
+## 1. Metrics and Dimensions
+Every resource in OCI automatically emits metrics.
+A Virtual Machine emits `CpuUtilization`. An Autonomous Database emits `StorageSpaceUsed`.
+These metrics are tagged with **Dimensions**. A dimension is a mathematical filter. You do not just view "CPU Utilization"; you view *"CPU Utilization WHERE Region = Ashburn AND Compartment = Production AND InstanceType = WebServer"*. This dimensional filtering allows DevOps engineers to mathematically isolate performance bottlenecks across a massive, globally distributed fleet of servers.
+
+## 2. Alarms and Auto-Scaling
+Metrics are useless without mathematical reaction.
+You configure an **Alarm** using MQL (Monitoring Query Language): *"IF the 5-minute rolling average of CPU Utilization for the WebServer pool strictly exceeds 80%, trigger an Alert."*
+The Alert mathematically triggers an OCI Notification, which sends an SMS to the on-call engineer. More importantly, the Alert can trigger an OCI Auto-Scaling action, mathematically instructing the cloud to boot 3 brand-new Web Servers and attach them to the Load Balancer before human intervention is even required.
+
+</TechnologyTemplate>

@@ -1,8 +1,32 @@
+---
+title: AWS SQS (Simple Queue Service)
+description: "A fully managed message queuing service by Amazon Web Services that mathematically decouples microservices and distributed systems, allowing them to communicate asynchronously via a highly reliable polling mechanism."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AWS SQS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="AWS SQS (Simple Queue Service)"
+  subtitle="Cloud-Native Message Queuing"
+  tags={['System Design', 'AWS', 'Messaging', 'Cloud']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+AWS SQS is the oldest AWS service (launched in 2004, before EC2 or S3). It solves a fundamental mathematical problem in distributed systems: temporary load spikes.
 
-</ConceptTemplate>
+## 1. The Polling Mechanism
+Unlike SNS (which pushes messages), SQS is a "Pull" mechanism.
+If a video processing API suddenly receives 10,000 video uploads in one second, the backend servers will crash.
+Instead, the API gateway simply drops all 10,000 requests into an SQS Queue as JSON messages. SQS can mathematically absorb infinite throughput.
+Behind the queue, a cluster of 5 backend worker servers actively **polls** the SQS queue, pulling 1 message at a time, processing the video, and deleting the message. The system mathematically levels out the massive load spike into a manageable, steady stream of work.
+
+## 2. Visibility Timeout
+When Worker A pulls a message from SQS, the message is not immediately deleted. SQS mathematically initiates a **Visibility Timeout** (e.g., 30 seconds). During this time, the message becomes "invisible" to Worker B and Worker C.
+If Worker A successfully processes the video, it sends a DELETE API call to SQS.
+If Worker A crashes mid-processing, it never sends the DELETE call. The 30-second timer mathematically expires, and the message suddenly becomes visible in the queue again, allowing Worker B to safely retry the job, mathematically guaranteeing no data is lost.
+

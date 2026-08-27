@@ -1,8 +1,30 @@
+---
+title: Client-Server Architecture
+description: The foundational distributed computing model where mathematical workloads are strictly partitioned between a centralized resource provider (the Server) and a distributed service requester (the Client).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Client-server">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Client-Server Architecture"
+  subtitle="The Foundation of the Web"
+  tags={['Architecture', 'Networking', 'Distributed Systems', 'Fundamentals']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Client-Server, systems used a Mainframe architecture, where dumb terminals merely displayed pixels while the central mainframe performed 100% of the mathematical processing.
 
-</ConceptTemplate>
+## 1. The Separation of Concerns
+Client-Server architecture mathematically divides the labor:
+- **The Client (e.g., a Web Browser, an iOS App)**: Responsible for the UI, accepting user input, and performing lightweight presentation mathematics (like rendering CSS or validating that an email has an '@' symbol).
+- **The Server (e.g., an AWS EC2 instance)**: Responsible for heavy mathematical computation, accessing the central database, and enforcing strict security authorization rules.
+
+## 2. The Stateless Contract
+In modern web architecture (REST), the communication between Client and Server is mathematically **stateless**.
+When a Client makes an HTTP request, the Server mathematically forgets the Client exists the moment it sends the response. This statelessness allows the Server to handle requests from 10,000 different Clients simultaneously without mathematically blowing up its RAM trying to remember who is who. If the Client needs the Server to remember them, the Client must mathematically send a Token (like a JWT or Session Cookie) with every single request.
+

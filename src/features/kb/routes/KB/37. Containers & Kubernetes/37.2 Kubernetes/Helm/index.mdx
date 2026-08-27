@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Helm
+description: The industry-standard package manager for Kubernetes, enabling developers to mathematically template, version, and share complex multi-resource applications as reusable "Charts".
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Helm">
+<TechnologyTemplate
+  title="Helm"
+  subtitle="The Package Manager for Kubernetes"
+  tags={['Kubernetes', 'Tooling', 'Package Management', 'DevOps']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Deploying a complex application to Kubernetes (like a Redis cluster) might require 15 separate YAML files (StatefulSets, Services, ConfigMaps, Secrets). Managing 15 raw YAML files manually for every environment (Dev, Staging, Prod) is mathematically impossible.
 
-</ConceptTemplate>
+## 1. Templating the YAML
+Helm solves this by introducing mathematical templating (using the Go template engine).
+Instead of hardcoding `replicas: 3` in your `deployment.yaml`, you write `replicas: {{ .Values.replicaCount }}`. You bundle all 15 templated files into a **Helm Chart**.
+When you deploy to Production, you provide a `values-prod.yaml` file. Helm mathematically injects those values into the templates, renders the final pure Kubernetes YAML, and applies it to the cluster in a single atomic operation.
+
+## 2. Release Management
+Helm does not just apply YAML; it mathematically tracks the state of the installation.
+When you run `helm install redis bitnami/redis`, Helm creates a "Release" object inside the cluster. If you later upgrade the chart and it breaks production, you can simply run `helm rollback redis 1`. Helm mathematically calculates the exact diff between the current broken release and the previous stable release, and orchestrates the downgrade automatically.
+
+</TechnologyTemplate>

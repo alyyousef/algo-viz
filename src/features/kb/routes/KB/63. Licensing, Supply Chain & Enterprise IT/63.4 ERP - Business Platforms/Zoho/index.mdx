@@ -4,10 +4,16 @@ description: An Indian multinational technology company that makes computer soft
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zoho">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zoho">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a small startup mathematically cannot afford Salesforce's astronomical enterprise licensing fees, they biologically use **Zoho**.
 
 Zoho CRM provides a mathematically massive suite of tools (Email, CRM, Accounting, Helpdesk) at a fraction of the biological cost. While it lacks the infinite mathematical customization depth of Salesforce's Apex engine, it biologically provides everything a 50-person company needs to mathematically track their entire sales funnel without going bankrupt.
 
-</ConceptTemplate>

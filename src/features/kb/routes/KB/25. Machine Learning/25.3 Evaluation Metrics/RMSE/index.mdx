@@ -4,9 +4,16 @@ description: The industry standard metric for evaluating Regression models, appl
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RMSE (Root Mean Squared Error)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RMSE (Root Mean Squared Error)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Mean Squared Error (MSE) is the perfect mathematical Loss Function for *training* a Neural Network, but it is a terrible metric for a human to interpret. 
+Mean Squared Error (MSE) is the perfect mathematical Loss Function for *training* a Neural Network, but it is a terrible metric for a human to interpret.
 
 If you are predicting house prices, and the model is off by $$10,000$, the MSE mathematically squares that error, outputting a value of $100,000,000 \text{ Dollars}^2$. "Squared Dollars" is mathematically meaningless to a human.
 **RMSE** solves this by applying a final square root.
@@ -19,7 +26,7 @@ By taking the square root of the MSE, the final number is mathematically returne
 ## 2. RMSE vs MAE (The Penalty for Outliers)
 If RMSE and MAE (Mean Absolute Error) both output errors in standard units, why use RMSE?
 
-Because RMSE mathematically squared the errors *before* averaging them, it is intensely sensitive to massive outliers. 
+Because RMSE mathematically squared the errors *before* averaging them, it is intensely sensitive to massive outliers.
 Assume a model makes 3 predictions. The errors are: $0$, $0$, and $30$.
 - **MAE** calculates: $(0 + 0 + 30) / 3 = 10$.
 - **RMSE** calculates: $\sqrt{(0^2 + 0^2 + 30^2) / 3} = \sqrt{900 / 3} = \sqrt{300} \approx 17.3$.
@@ -29,4 +36,3 @@ Even though the average error is technically 10, RMSE mathematically inflates th
 ## 3. Production Usage
 RMSE is the absolute standard in almost all Regression competitions (like Kaggle). It perfectly balances the mathematical stability of calculus (being smooth and differentiable for Gradient Descent) while providing a human-readable final evaluation metric that heavily punishes models for erratic, dangerous outlier predictions.
 
-</ConceptTemplate>

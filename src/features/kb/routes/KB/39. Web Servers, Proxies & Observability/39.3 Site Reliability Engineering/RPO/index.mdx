@@ -1,8 +1,29 @@
+---
+title: RPO (Recovery Point Objective)
+description: A strict mathematical metric defining the maximum acceptable amount of data loss (measured in time) a business can endure during a catastrophic failure before severe financial or operational damage occurs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RPO">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="RPO (Recovery Point Objective)"
+  subtitle="Mathematical Data Loss Tolerance"
+  tags={['SRE', 'Disaster Recovery', 'Databases', 'Metrics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a datacenter is destroyed by an earthquake, how much data are you allowed to lose? The Recovery Point Objective (RPO) is the mathematical answer to this business question, dictating the entire database backup architecture.
 
-</ConceptTemplate>
+## 1. High RPO (24 Hours)
+If a blog has an RPO of 24 hours, the engineering architecture is mathematically cheap and simple.
+An engineer configures a daily CRON job to dump the MySQL database to an AWS S3 bucket at 2:00 AM. If the server explodes at 1:00 AM the next day, they lose 23 hours of blog posts. The business mathematically accepts this loss, and the infrastructure cost remains incredibly low.
+
+## 2. Zero RPO (Zero Data Loss)
+If a financial banking application has an RPO of zero (no data loss is mathematically acceptable), daily backups are useless.
+The architecture becomes exponentially more complex and expensive. The engineers must implement **Synchronous Cross-Region Replication**. When a user deposits $100, the primary database in New York writes the transaction, transmits it over fiber optic cables to the replica database in London, waits for London to mathematically acknowledge the write, and *then* tells the user the deposit was successful. If New York explodes a millisecond later, London has the exact mathematical data, achieving an RPO of zero at the cost of high latency and massive network expenses.
+

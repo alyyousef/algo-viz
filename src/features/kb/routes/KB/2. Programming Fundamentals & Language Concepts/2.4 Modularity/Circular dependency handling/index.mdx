@@ -1,8 +1,26 @@
+---
+title: Circular Dependency Handling
+description: The mathematical strategies compilers use to resolve architectures where Module A requires Module B, but Module B simultaneously requires Module A.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Circular dependency handling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Circular Dependencies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Circular Dependency is an architectural paradox. If File A mathematically imports File B, the compiler must parse B first. But if File B imports File A, the compiler enters an infinite loop, resulting in a mathematical contradiction and a compilation failure.
 
-</ConceptTemplate>
+## 1. Forward Declarations (C/C++)
+In C++, circular dependencies between Header files are common and deadly.
+The mathematical solution is a **Forward Declaration** (`class B;`). You mathematically promise the compiler, "Class B exists somewhere, I promise. Just give me a Pointer to it for now."
+Because all pointers are mathematically the exact same size (8 bytes on a 64-bit system), the compiler can calculate the memory layout of Class A without needing to parse the massive details of Class B, breaking the infinite cycle.
+
+## 2. Interface Segregation and Dependency Inversion
+In modern high-level languages (Java, C#), circular dependencies usually indicate a mathematical flaw in the software architecture.
+The solution is **Dependency Inversion** (The 'D' in SOLID). Instead of Class A depending directly on Class B, you create an abstract Interface `I`. Both Class A and Class B depend on `I`. Because neither depends directly on the other, the mathematical cycle is broken, and the compiler can parse them completely independently.
+

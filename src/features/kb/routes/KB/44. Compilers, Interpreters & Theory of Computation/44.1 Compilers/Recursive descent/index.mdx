@@ -4,17 +4,30 @@ description: A kind of top-down parser built from a set of mutually recursive pr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Recursive Descent Parsing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Recursive Descent Parsing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 There are many mathematical algorithms used to parse a flat list of tokens into an AST (LL, LR, LALR). However, the most universally loved and widely used technique in handwritten compilers (like V8, GCC, and Clang) is **Recursive Descent**.
 
+
 <Callout icon="tip" title="Why is it so popular?">
+
+
   Unlike automated parser generators (like Yacc or Bison) that produce mathematically unreadable C code, a Recursive Descent parser is just normal, clean code. It is incredibly easy to debug, and it provides world-class error messages (e.g., "Expected semicolon on line 45").
+
+
 </Callout>
+
 
 ## How it mathematically works
 
-A Recursive Descent parser is just a collection of standard functions that mathematically map 1-to-1 with the rules of the language grammar. 
+A Recursive Descent parser is just a collection of standard functions that mathematically map 1-to-1 with the rules of the language grammar.
 
 Because expressions can contain other expressions, these functions naturally call each other mathematically in a recursive loop.
 
@@ -23,4 +36,3 @@ Because expressions can contain other expressions, these functions naturally cal
 3. Inside the block, it sees a variable, so it calls `parseExpression()` again.
 4. As the recursive functions mathematically `return` their nodes, the AST tree naturally builds itself from the bottom up, mirroring the Call Stack.
 
-</ConceptTemplate>

@@ -4,12 +4,19 @@ description: The rigorous architectural discipline of designing questionnaires a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Survey Methodology">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Survey Methodology">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Data Science is useless if the underlying data is mathematically corrupted by human bias. **Survey Methodology** is the discipline of designing data collection protocols to minimize psychological bias and maximize statistical validity.
 
 ## 1. Sampling Architectures
-You cannot survey 300 million Americans. You must extract a Sample. 
+You cannot survey 300 million Americans. You must extract a Sample.
 
 - **Simple Random Sampling**: The mathematical gold standard. Every single person has an exactly equal probability of being selected (like pulling names from a hat).
 - **Stratified Sampling**: If the population is 60% Female and 40% Male, random sampling might accidentally pick 80% Females. Stratified sampling mathematically forces the sample to exactly match the demographic ratios of the true population.
@@ -23,8 +30,7 @@ The physical wording of a question mathematically alters the statistical outcome
 - **Acquiescence Bias**: Human psychology dictates that people generally want to be agreeable. If you ask Yes/No questions, you will artificially inflate the "Yes" count. Good survey architecture forces users to choose between two opposing statements.
 
 ## 3. Non-Response Bias
-If you send out 10,000 surveys to a company, and only the 500 angriest employees respond, your dataset is mathematically destroyed by **Non-Response Bias**. 
+If you send out 10,000 surveys to a company, and only the 500 angriest employees respond, your dataset is mathematically destroyed by **Non-Response Bias**.
 
 Data Scientists must mathematically account for this by attempting to contact non-responders to ensure their data (which is usually moderate) is included, or by mathematically weighting the responses to correct the demographic imbalances.
 
-</ConceptTemplate>

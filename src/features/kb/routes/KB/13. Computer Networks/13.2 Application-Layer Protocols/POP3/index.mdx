@@ -4,9 +4,16 @@ description: The legacy, one-way email retrieval protocol designed for the 1990s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="POP3 (Post Office Protocol version 3)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="POP3 (Post Office Protocol version 3)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Before IMAP became the standard, the world used **POP3** (TCP Port 110, or Port 995 for encrypted POP3S). 
+Before IMAP became the standard, the world used **POP3** (TCP Port 110, or Port 995 for encrypted POP3S).
 
 In the 1990s, server hard drive space was incredibly expensive. Email providers could not afford to store 10,000 emails for you. Furthermore, users paid for internet access by the minute (Dial-up), meaning they could not stay online to read emails.
 
@@ -19,8 +26,13 @@ POP3 was designed to solve these 90s hardware limitations:
 4. **The client sends a command to the server to permanently delete the emails from the server.**
 5. You disconnect from the internet and read your emails offline.
 
+
 <Callout icon="warning" title="The Multi-Device Nightmare">
+
+
   POP3 is an absolute nightmare if you own multiple devices. If you use POP3 on your laptop, the laptop downloads the emails and deletes them from the server. When you check your phone an hour later, your inbox is completely empty because the server has nothing left. **Always use IMAP on modern devices.**
+
+
 </Callout>
 
-</ConceptTemplate>
+

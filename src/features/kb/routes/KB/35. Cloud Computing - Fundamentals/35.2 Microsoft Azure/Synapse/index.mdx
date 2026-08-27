@@ -1,0 +1,24 @@
+---
+title: Azure Synapse Analytics
+description: A massive, unified enterprise analytics service that mathematically combines Big Data processing (Apache Spark) with enterprise data warehousing (SQL) into a single, cohesive workspace.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Synapse Analytics"
+  subtitle="Unified Big Data & Data Warehousing"
+  tags={['Azure', 'Data', 'Analytics', 'Big Data']}
+>
+
+Historically, data engineers had to stitch together Azure Data Factory (for moving data), Azure Databricks (for cleaning data with Spark), and Azure SQL Data Warehouse (for querying data). Synapse mathematically merges these chaotic pipelines into one unified Studio.
+
+## 1. Dedicated vs. Serverless SQL Pools
+Synapse provides two entirely different mathematical architectures for analyzing data:
+- **Dedicated SQL Pools**: (Formerly SQL Data Warehouse). You provision a massive, always-on cluster of compute nodes. The data is physically stored in columnar format across the cluster. It is extremely fast and extremely expensive, designed for predictable, massive daily reports.
+- **Serverless SQL Pools**: There is no cluster. The data sits cheaply in Azure Blob Storage (Data Lake) as Parquet or CSV files. You run a standard SQL query. Synapse instantly spins up thousands of hidden compute nodes, executes the SQL against the raw files, returns the answer, and disappears. You pay precisely per Terabyte of data scanned, mathematically optimizing costs for ad-hoc exploration.
+
+## 2. Apache Spark Integration
+Not all data can be cleaned with SQL. Synapse includes a fully managed **Apache Spark** engine.
+A Data Scientist can open a Jupyter Notebook directly inside Synapse, write Python/PyTorch code, and mathematically execute it against the exact same data lake the SQL engineers are using. The Spark engine and the SQL engine mathematically share the same metadata catalog, allowing seamless interoperability between Big Data and traditional Data Warehousing.
+
+</TechnologyTemplate>

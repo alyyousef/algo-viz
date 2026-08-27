@@ -1,8 +1,27 @@
+---
+title: Operational Semantics
+description: A method of formalizing the meaning of a programming language by mathematically modeling exactly how a theoretical machine physically executes the code, step by step.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Operational semantics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Operational Semantics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Denotational Semantics translates code into abstract math, Operational Semantics translates code into the physical state transitions of a theoretical computer.
 
-</ConceptTemplate>
+## 1. Structural Operational Semantics (SOS)
+Invented by Gordon Plotkin, SOS defines the meaning of code by defining a transition relation: $\langle C, \sigma \rangle \rightarrow \langle C', \sigma' \rangle$.
+- $C$ is the code currently executing.
+- $\sigma$ is the current State of the machine (e.g., RAM, registers).
+The mathematical rule states: "If the machine executes Command $C$ in State $\sigma$, it will physically transition to a new State $\sigma'$, with the remaining code $C'$ left to execute."
+
+## 2. Small-Step vs. Big-Step
+- **Small-Step**: Describes the execution mathematically at the lowest possible level. It defines exactly how an expression like `(2 + 3) * 4` reduces to `5 * 4` and then to `20`, one atomic mathematical operation at a time.
+- **Big-Step (Natural Semantics)**: Skips the intermediate steps. It provides a mathematical proof that the entire complex expression `(2 + 3) * 4` will ultimately evaluate directly to the final state `20`. Small-step is essential for proving the thread safety of concurrent programs, while Big-step is used to mathematically prove the final correctness of a compiler.
+

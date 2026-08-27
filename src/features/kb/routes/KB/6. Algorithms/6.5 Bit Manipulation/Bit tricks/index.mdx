@@ -1,8 +1,36 @@
+---
+title: Bit Tricks
+description: "A collection of clever mathematical operations that exploit the low-level binary representation of integers to perform tasks like checking parity, swapping variables, or isolating bits in a single CPU cycle."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bit tricks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bit Tricks"
+  subtitle="Hardware-Level Optimization"
+  tags={['Algorithms', 'Bit Manipulation', 'Performance', 'Low Level']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Bit tricks bypass standard algebraic arithmetic (like `+`, `-`, `*`, `%`) and mathematically manipulate the raw 1s and 0s inside the CPU registers using bitwise operators (`&`, `|`, `^`, `<<`, `>>`), executing in a single clock cycle.
 
-</ConceptTemplate>
+## 1. The Most Famous Mathematical Tricks
+- **Check if a number is Even/Odd**: `(x & 1)`. If 1, it's Odd. If 0, it's Even. (Blisteringly faster than `x % 2 == 0`).
+- **Multiply/Divide by 2**: `(x <&lt; 1)` multiplies by 2. `(x >> 1)` divides by 2.
+- **Swap two variables without a temporary variable**:
+  ```cpp
+  x = x ^ y;
+  y = x ^ y;
+  x = x ^ y;
+  ```
+- **Check if a number is an exact Power of 2**: `(x & (x - 1)) == 0`. (Because powers of 2 in binary are a single 1 followed by zeroes, e.g., `1000`. Subtracting 1 flips the bits to `0111`. The bitwise AND of `1000 & 0111` is mathematically exactly 0).
+
+## 2. Isolating and Clearing Bits
+- **Turn OFF the rightmost 1-bit**: `x = x & (x - 1)` (Used in Brian Kernighan's algorithm to count set bits).
+- **Isolate the rightmost 1-bit**: `x = x & (-x)` (Mathematically relies on Two's Complement representation; heavily used in Fenwick Trees).
+

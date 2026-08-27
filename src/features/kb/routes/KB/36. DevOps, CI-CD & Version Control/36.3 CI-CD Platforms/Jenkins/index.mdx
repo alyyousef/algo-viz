@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Jenkins
+description: An open-source, Java-based automation server that historically dominated the CI/CD landscape, relying on a massive ecosystem of plugins to mathematically orchestrate complex build processes.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Jenkins">
+<TechnologyTemplate
+  title="Jenkins"
+  subtitle="The Grandfather of Automation"
+  tags={['DevOps', 'CI/CD', 'Java', 'Legacy']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 2004 (originally named Hudson), Jenkins is the single most mathematically influential automation tool in software history. It taught the industry how to automate software delivery.
 
-</ConceptTemplate>
+## 1. The Plugin Ecosystem
+Jenkins is fundamentally a blank mathematical engine. Its power comes from its **Plugin Ecosystem**.
+There are over 1,800 community-built plugins. If you need to mathematically connect a 20-year-old SVN repository to a modern AWS Kubernetes cluster, there is a Jenkins plugin for it. This immense flexibility made it the default choice for massive enterprises with complex, heterogenous legacy systems.
+
+## 2. The Groovy Nightmare
+Jenkins' greatest strength became its mathematical downfall.
+Modern CI/CD uses declarative YAML (like GitHub Actions). Jenkins relies on **Jenkinsfiles**, written in a Turing-complete programming language called Groovy.
+Developers ended up writing thousands of lines of complex Groovy code just to deploy a website. Furthermore, Jenkins servers mathematically suffer from "Plugin Hell"—updating one plugin often breaks three others, turning the Jenkins server itself into a fragile, legacy application that requires dedicated teams just to keep it alive. The industry is currently in a massive mathematical migration away from Jenkins toward cloud-native solutions.
+
+</TechnologyTemplate>

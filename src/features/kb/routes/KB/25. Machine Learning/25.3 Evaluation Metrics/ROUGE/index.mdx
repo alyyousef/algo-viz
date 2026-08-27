@@ -4,12 +4,19 @@ description: The mathematical standard for evaluating AI Text Summarization, hea
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ROUGE Score">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ROUGE Score">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While BLEU is the standard for Machine Translation (prioritizing Precision), **ROUGE (Recall-Oriented Understudy for Gisting Evaluation)** is the absolute mathematical standard for evaluating AI **Text Summarization**.
 
 ## 1. The Mathematical Shift to Recall
-If an AI summarizes a 10-page legal document, Precision (BLEU) asks: *"Were the words the AI generated correct?"* 
+If an AI summarizes a 10-page legal document, Precision (BLEU) asks: *"Were the words the AI generated correct?"*
 An AI could achieve 100% Precision by simply generating one single, safe sentence.
 
 ROUGE relies on **Recall**. It mathematically asks: *"Out of all the critical facts in the human reference summary, how many did the AI successfully manage to extract and include?"* This brutally punishes models that generate short, safe summaries that miss the point of the document.
@@ -20,8 +27,7 @@ ROUGE calculates overlapping n-grams, but categorizes them specifically:
 - **ROUGE-L**: Measures the **Longest Common Subsequence (LCS)**. It mathematically ignores random word insertions and focuses on the underlying sentence structure. If the AI outputs *"The angry client sued the company"*, and the reference is *"The client sued the company"*, ROUGE-L identifies the sequence [The, client, sued, the, company] and gives it a massive score, even though the exact n-grams were interrupted by the word "angry".
 
 ## 3. Semantic Flaws (The LLM Era)
-Exactly like BLEU, ROUGE is a rigid mathematical string-matching algorithm. 
-If the human reference summary says *"The CEO resigned"*, and the LLM summarizes it as *"The executive stepped down"*, the summary is flawlessly accurate, but ROUGE mathematically gives it a score of exactly $0.0$ because the raw ASCII characters do not match. 
+Exactly like BLEU, ROUGE is a rigid mathematical string-matching algorithm.
+If the human reference summary says *"The CEO resigned"*, and the LLM summarizes it as *"The executive stepped down"*, the summary is flawlessly accurate, but ROUGE mathematically gives it a score of exactly $0.0$ because the raw ASCII characters do not match.
 Modern Evaluation (like RAGAS or LLM-as-a-Judge) bypasses ROUGE by using a second LLM (like GPT-4) to mathematically evaluate the semantic meaning of the summary, rather than counting strings.
 
-</ConceptTemplate>

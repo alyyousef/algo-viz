@@ -4,7 +4,14 @@ description: "A fundamental computer science theorem proving that distributed da
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CAP Theorem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CAP Theorem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **CAP Theorem** (formulated by Eric Brewer in 2000) is the absolute foundation of modern distributed system design. It states that any distributed database can only provide two of the following three guarantees simultaneously:
 
@@ -16,15 +23,14 @@ The **CAP Theorem** (formulated by Eric Brewer in 2000) is the absolute foundati
 
 ## 2. The Illusion of Choice
 
-The CAP theorem is often misunderstood as choosing any two (CA, CP, or AP). This is false. 
+The CAP theorem is often misunderstood as choosing any two (CA, CP, or AP). This is false.
 
 In the physical world, networks are unreliable. Cables get cut, routers crash, and packets drop. Therefore, **Partition Tolerance (P) is not a choice; it is a physical requirement.** Because network partitions will inevitably happen, a distributed system must fundamentally choose between **CP** and **AP**.
 
 ### Scenario: The Network Breaks
-Node A and Node B are separated by a broken network cable. They cannot talk to each other. A user writes a new password to Node A. 
+Node A and Node B are separated by a broken network cable. They cannot talk to each other. A user writes a new password to Node A.
 Another user requests the password from Node B. What does Node B do?
 
 1. **AP (Availability over Consistency)**: Node B returns the *old* password. It remains Available, but sacrifices Consistency. (Examples: Cassandra, DynamoDB).
 2. **CP (Consistency over Availability)**: Node B realizes it cannot contact Node A to verify the latest password. To prevent returning stale data, Node B throws a 500 Error. It remains Consistent, but sacrifices Availability. (Examples: MongoDB, HBase).
 
-</ConceptTemplate>

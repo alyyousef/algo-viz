@@ -5,10 +5,17 @@ description: "A dynamic, agile language for the Java Virtual Machine, widely use
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Groovy"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Apache Groovy** is an optionally-typed, dynamic language that runs on the Java Virtual Machine (JVM). It was created to bring the flexibility and conciseness of languages like Ruby and Python into the rigid Java ecosystem.
 
@@ -33,13 +40,18 @@ println "Hello $groovyName" // String interpolation
 
 // Closures (similar to Lambdas)
 def numbers = [1, 2, 3, 4]
-numbers.each { num -> 
-    println num * 2 
+numbers.each { num ->
+    println num * 2
 }
 ```
 
+
 <Callout icon="tip" title="The Language of DevOps">
+
+
 While Groovy is rarely used to build primary backend applications anymore (Kotlin largely won that battle), it remains universally relevant because it is the primary scripting language for **Jenkins pipelines (Jenkinsfile)** and **Gradle build scripts**.
+
+
 </Callout>
 
-</ConceptTemplate>
+

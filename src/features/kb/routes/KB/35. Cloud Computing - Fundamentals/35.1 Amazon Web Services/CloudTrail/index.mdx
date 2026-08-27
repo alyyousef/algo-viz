@@ -1,0 +1,28 @@
+---
+title: AWS CloudTrail
+description: The absolute foundational security and compliance service in AWS that continuously and immutably logs every single API call made across the entire account for forensic auditing.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS CloudTrail"
+  subtitle="The Immutable API Ledger"
+  tags={['AWS', 'Security', 'Auditing', 'Governance']}
+>
+
+In AWS, everything is an API call. Clicking a button in the console is just a visual wrapper for an API call. CloudTrail is the un-deletable security camera that mathematically records who made that call, when, and from what IP address.
+
+## 1. The Anatomy of an Event
+If a database is suddenly deleted, you check CloudTrail.
+CloudTrail will output a JSON mathematical proof containing:
+- **Identity**: The exact IAM User, Role, or temporary credential that authorized the action.
+- **Event Name**: `DeleteDBInstance`.
+- **Source IP**: 192.168.1.45.
+- **Time and Region**: The exact UTC microsecond the API was hit.
+This data is the absolute bedrock of cloud forensics.
+
+## 2. Immutability and Log Validation
+Hackers know about CloudTrail. If they breach an account, their first action is often trying to delete the CloudTrail logs to cover their tracks.
+To prevent this, architects configure CloudTrail to push logs into a central S3 bucket in a completely separate, highly restricted AWS Account. Furthermore, CloudTrail uses **Log File Integrity Validation**. It mathematically calculates a SHA-256 cryptographic hash of every log file and signs it with a digital certificate. If a hacker manages to open a log file and delete a single line of text, the mathematical hash instantly breaks, alerting security teams to the forensic tampering.
+
+</TechnologyTemplate>

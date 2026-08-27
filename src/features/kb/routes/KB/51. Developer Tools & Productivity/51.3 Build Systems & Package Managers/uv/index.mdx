@@ -4,7 +4,7 @@ description: An extremely fast Python package installer and resolver, written in
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="uv"
   subtitle="The Rust-powered pip killer"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Python's `pip` is written in Python. When installing a massive machine learning project with hundreds of dependencies, `pip` spends minutes mathematically resolving version conflicts.
 
+
 <Callout icon="success" title="The Rust Revolution">
-  `uv` mathematically replaces the Python resolution engine with a highly concurrent Rust architecture. 
-  
+
+
+  `uv` mathematically replaces the Python resolution engine with a highly concurrent Rust architecture.
+
   It uses a global cache and parallelized network requests. A complex `pip install` that takes 2 minutes in standard Python will mathematically resolve and install in less than 500 milliseconds using `uv`. It is rapidly becoming the standard for modern Python CI/CD pipelines.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

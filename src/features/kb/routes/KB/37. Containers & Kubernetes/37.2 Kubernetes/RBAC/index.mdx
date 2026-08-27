@@ -1,8 +1,32 @@
+---
+title: RBAC (Kubernetes)
+description: Role-Based Access Control, the mathematical security framework in Kubernetes that dictates exactly which users or service accounts are authorized to perform specific API operations on specific resources.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RBAC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Role-Based Access Control (RBAC)"
+  subtitle="Mathematical Cluster Security"
+  tags={['Kubernetes', 'Security', 'Architecture', 'Authentication']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Authentication verifies *who* you are. RBAC (Authorization) is the mathematical engine that determines *what you are allowed to do*.
 
-</ConceptTemplate>
+## 1. The Three Pillars
+RBAC is constructed from three distinct mathematical objects:
+1. **The Subject**: The entity trying to act (a human User, a Group, or a machine `ServiceAccount`).
+2. **The Role**: A mathematical list of permissions (e.g., "Allowed to `get` and `delete` only `Pods` and `Deployments`").
+3. **The RoleBinding**: The mathematical glue. It binds a specific Subject to a specific Role.
+
+## 2. Namespaced vs. Global
+RBAC is mathematically partitioned based on scope.
+- **Role / RoleBinding**: These are confined to a single Namespace. If Alice has a `RoleBinding` granting her Admin rights in the `dev` namespace, she mathematically has zero privileges in the `prod` namespace.
+- **ClusterRole / ClusterRoleBinding**: These are global. A `ClusterRoleBinding` granting read access means the Subject can mathematically read every single Pod in the entire cluster, across all namespaces. This is heavily utilized for infrastructure tools like Promtail or Fluentd that must scan the entire system.
+

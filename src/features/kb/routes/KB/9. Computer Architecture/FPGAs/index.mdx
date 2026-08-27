@@ -4,16 +4,29 @@ description: The ultimate chameleon chip—a blank slate of silicon logic gates 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Field-Programmable Gate Arrays (FPGAs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Field-Programmable Gate Arrays (FPGAs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-An **ASIC** offers perfect performance but costs $50 million to design and cannot be changed once manufactured. 
-A **CPU** offers perfect flexibility (just write new software) but is slow and power-hungry. 
+An **ASIC** offers perfect performance but costs $50 million to design and cannot be changed once manufactured.
+A **CPU** offers perfect flexibility (just write new software) but is slow and power-hungry.
 
-The **FPGA (Field-Programmable Gate Array)** is the miraculous middle ground. It is a piece of hardware that acts like software. You can buy a blank FPGA off the shelf for $100, write hardware code (Verilog), and download it to the chip. The chip physically rearranges its internal wiring to become the custom circuit you designed. 
+The **FPGA (Field-Programmable Gate Array)** is the miraculous middle ground. It is a piece of hardware that acts like software. You can buy a blank FPGA off the shelf for $100, write hardware code (Verilog), and download it to the chip. The chip physically rearranges its internal wiring to become the custom circuit you designed.
+
 
 <Callout icon="success" title="Hardware on Demand">
+
+
   With an FPGA, you can download a file from the internet, and your chip instantly becomes a custom audio synthesizer. Tomorrow, you can download a new file, and the exact same physical chip reconfigures itself into a Bitcoin miner. You are altering the *hardware*, not the software!
+
+
 </Callout>
+
 
 ## How FPGAs Work
 
@@ -22,7 +35,7 @@ Under the microscope, an FPGA does not contain ALUs or CPU caches. Instead, it c
 2. **Programmable Interconnects**: A massive matrix of microscopic electrical switches connecting all the CLBs together.
 3. **I/O Blocks**: Pins to interact with the outside world.
 
-When you "program" an FPGA, you upload a **Bitstream**. This file sets the state of millions of microscopic SRAM switches, routing the electrical pathways between the Logic Blocks to physically manifest your custom circuit. 
+When you "program" an FPGA, you upload a **Bitstream**. This file sets the state of millions of microscopic SRAM switches, routing the electrical pathways between the Logic Blocks to physically manifest your custom circuit.
 
 ## Advantages vs. ASICs
 
@@ -34,4 +47,3 @@ When you "program" an FPGA, you upload a **Bitstream**. This file sets the state
 
 Historically used in aerospace and telecommunications, FPGAs have recently invaded the cloud. Microsoft famously deployed Intel Altera FPGAs across their Azure data centers (Project Catapult). When Bing search needs to accelerate its ranking algorithm, the data center dynamically reprograms the FPGAs to act as custom search accelerators, resulting in massive speedups over standard CPUs.
 
-</ConceptTemplate>

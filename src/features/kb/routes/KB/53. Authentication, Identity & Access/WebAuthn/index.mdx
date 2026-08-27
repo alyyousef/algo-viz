@@ -4,18 +4,30 @@ description: A web standard published by the World Wide Web Consortium (W3C) for
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="WebAuthn">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="WebAuthn">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **WebAuthn** is the mathematical standard designed to completely eradicate passwords from the internet forever.
 
 Instead of typing a password, WebAuthn allows a website to communicate directly with your device's biological hardware (e.g., Apple TouchID, Windows Hello, or a physical YubiKey).
 
+
 <Callout icon="info" title="Public Key Cryptography">
-  When you register on a website using WebAuthn, your device's secure hardware chip mathematically generates a Public/Private key pair. 
-  
-  It sends the Public Key to the server and permanently locks the Private Key inside your laptop's hardware. When you log in, the server sends a mathematical "challenge." Your laptop prompts you for a fingerprint. The fingerprint unlocks the hardware chip, which signs the challenge with the Private Key. 
-  
+
+
+  When you register on a website using WebAuthn, your device's secure hardware chip mathematically generates a Public/Private key pair.
+
+  It sends the Public Key to the server and permanently locks the Private Key inside your laptop's hardware. When you log in, the server sends a mathematical "challenge." Your laptop prompts you for a fingerprint. The fingerprint unlocks the hardware chip, which signs the challenge with the Private Key.
+
   Because the Private Key physically cannot leave the laptop, WebAuthn is biologically **100% immune to Phishing attacks**. Even if a user is tricked into a fake website, the hardware chip will refuse to sign the challenge for the wrong domain.
+
+
 </Callout>
 
-</ConceptTemplate>
+

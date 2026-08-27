@@ -4,25 +4,32 @@ description: A commercial threat emulation software used by Red Teams to simulat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cobalt Strike">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cobalt Strike">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Cobalt Strike** is the industry standard for high-end Red Teaming. While tools like Metasploit are designed for finding and exploiting mathematical vulnerabilities, Cobalt Strike focuses purely on "Post-Exploitation"—what happens *after* the attacker has already breached the first machine.
 
 It is designed to mathematically emulate the stealth, lateral movement, and data exfiltration techniques used by elite nation-state hackers (APTs).
 
+
 <Callout icon="warning" title="The Double-Edged Sword">
+
+
   Because Cobalt Strike is so effective at evading detection, cracked versions of it are heavily utilized by real-world ransomware gangs (like Conti and REvil). It is arguably the most common Command and Control (C2) framework used by modern threat actors.
+
+
 </Callout>
+
 
 ## Core Features
 
-<ComparisonTable 
-  headers={['Feature', 'Description']}
-  rows={[
-    ['Beacons', 'The payload deployed to a compromised machine. Instead of maintaining a loud, permanent connection, Beacons mathematically "sleep" for hours, waking up briefly to ask the C2 server for new commands.'],
-    ['Malleable C2', 'A feature that allows the Red Team to mathematically alter the network signature of the Beacons. They can make the malware traffic look exactly like harmless Amazon AWS API calls or Spotify streaming data to bypass the IPS.'],
-    ['Lateral Movement', 'Built-in tools to quietly pivot from the initial compromised laptop into the Domain Controller without triggering EDR alerts.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Feature', 'Description']} rows={[ ['Beacons', 'The payload deployed to a compromised machine. Instead of maintaining a loud, permanent connection, Beacons mathematically "sleep" for hours, waking up briefly to ask the C2 server for new commands.'], ['Malleable C2', 'A feature that allows the Red Team to mathematically alter the network signature of the Beacons. They can make the malware traffic look exactly like harmless Amazon AWS API calls or Spotify streaming data to bypass the IPS.'], ['Lateral Movement', 'Built-in tools to quietly pivot from the initial compromised laptop into the Domain Controller without triggering EDR alerts.'] ]} />
+
+

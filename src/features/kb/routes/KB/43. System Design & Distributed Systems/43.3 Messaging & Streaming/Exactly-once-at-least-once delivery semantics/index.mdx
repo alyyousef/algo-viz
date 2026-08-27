@@ -1,8 +1,35 @@
+---
+title: Delivery Semantics
+description: "The three mathematical guarantees (At-Most-Once, At-Least-Once, Exactly-Once) that govern how messaging systems handle network failures, dictating the ultimate architectural reliability of distributed communications."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Exactly-once/at-least-once delivery semantics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Delivery Semantics"
+  subtitle="The Math of Network Reliability"
+  tags={['System Design', 'Messaging', 'Distributed Systems', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When Server A sends a message to Server B over a TCP network, the network might drop the message, or it might drop the ACK (acknowledgement) returning to Server A. Messaging systems must mathematically choose how to handle this uncertainty.
 
-</ConceptTemplate>
+## 1. At-Most-Once (Fire and Forget)
+The publisher sends the message exactly once and mathematically never retries.
+- **Result**: Some messages will be permanently lost due to network blips.
+- **Use Case**: Telemetry data, video frame streaming. (If you lose 1 frame of a 60fps video, nobody cares).
+
+## 2. At-Least-Once (The Standard)
+The publisher sends the message. If it doesn't receive an ACK within 5 seconds, it mathematically assumes the message was lost and sends it again.
+- **Result**: No messages are lost, but consumers will mathematically receive **Duplicates** (if the original message arrived, but only the ACK was lost).
+- **Use Case**: 99% of all message queues (AWS SQS, RabbitMQ). To survive this, the Consumer *must* be mathematically Idempotent (able to process the same message twice safely).
+
+## 3. Exactly-Once (The Holy Grail)
+The system guarantees the message is delivered and processed mathematically exactly one time, with zero data loss and zero duplicates.
+- **Reality**: In distributed systems, true network-level Exactly-Once delivery is mathematically impossible (the Two Generals' Problem). However, systems like Kafka achieve *effective* Exactly-Once semantics by combining At-Least-Once delivery with strict Transactional IDs, mathematically deduplicating the data on the server side.
+

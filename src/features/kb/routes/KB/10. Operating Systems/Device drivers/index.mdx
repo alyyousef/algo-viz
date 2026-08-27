@@ -4,15 +4,28 @@ description: Specialized software modules that translate generic OS commands int
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Device Drivers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Device Drivers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you plug a brand new, RGB-lit mechanical gaming keyboard into your computer, the Operating System Kernel has absolutely no idea what it is. The Kernel only knows how to speak "Generic OS". It doesn't know the proprietary electrical language required to talk to this specific piece of plastic and silicon.
 
 A **Device Driver** is the translator. It is a piece of software provided by the hardware manufacturer (e.g., Razer, Nvidia) that acts as an adapter between the OS Kernel and the physical device.
 
+
 <Callout icon="warning" title="The Weakest Link">
+
+
   In monolithic kernels (like Windows and Linux), Device Drivers run directly in Ring 0 (Kernel Space) for maximum performance. This means a bug in a 3rd-party graphics or network driver can (and frequently does) crash the entire Operating System via a Blue Screen of Death.
+
+
 </Callout>
+
 
 ## How Drivers Work
 
@@ -25,8 +38,7 @@ The OS defines a generic API. For example, it demands that every storage device 
 
 ## Plug and Play (PnP)
 
-In the MS-DOS era, installing hardware was a nightmare. The user had to manually type in the physical memory addresses and IRQ (Interrupt Request) numbers for every sound card. 
+In the MS-DOS era, installing hardware was a nightmare. The user had to manually type in the physical memory addresses and IRQ (Interrupt Request) numbers for every sound card.
 
 Modern systems use **Plug and Play**. When you plug in a USB device, the motherboard hardware detects the electrical connection and asks the device for its **Hardware ID** (Vendor ID & Product ID). The OS takes this ID, searches its driver store (or Windows Update) for a matching driver, dynamically loads the driver into Kernel memory on the fly, and the device instantly starts working without a reboot.
 
-</ConceptTemplate>

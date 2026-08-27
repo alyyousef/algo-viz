@@ -5,7 +5,14 @@ description: A groundbreaking mathematical protocol allowing two parties to esta
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="Diffie-Hellman Key Exchange">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Diffie-Hellman Key Exchange">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before 1976, if Alice and Bob wanted to encrypt their communications using a symmetric key (like AES), they had to physically meet in a dark alley to hand off a briefcase containing the key. If they sent it over the wire, a spy could intercept it.
 
@@ -18,7 +25,7 @@ The easiest way to understand the math is through mixing paint:
 2. Alice picks a **Secret Color** (Red). Bob picks a **Secret Color** (Blue). They never reveal these.
 3. Alice mixes her Red with the public Yellow, creating **Orange**.
 4. Bob mixes his Blue with the public Yellow, creating **Green**.
-5. Alice and Bob exchange their mixed colors in plain sight. The Spy intercepts Orange and Green. 
+5. Alice and Bob exchange their mixed colors in plain sight. The Spy intercepts Orange and Green.
 6. Alice takes Bob's Green and adds her secret Red. (Result: **Brown**).
 7. Bob takes Alice's Orange and adds his secret Blue. (Result: **Brown**).
 
@@ -37,8 +44,13 @@ It relies on the mathematical fact that $ (g^a)^b \pmod p = (g^b)^a \pmod p $.
 
 Both Alice and Bob now possess the exact same shared secret $S$. The Spy saw $p$, $g$, $A$, and $B$, but without knowing $a$ or $b$, calculating $S$ requires solving the discrete logarithm, which takes modern supercomputers billions of years.
 
+
 <Callout icon="warning" title="The Man-in-the-Middle Flaw">
+
+
   Diffie-Hellman provides perfect secrecy against eavesdroppers, but it provides **zero authentication**. A hacker can intercept Alice's message, pretend to be Bob, and establish a shared key with Alice, while simultaneously establishing a second key with Bob. This is why modern TLS pairs Diffie-Hellman with **RSA or ECDSA Digital Signatures** to cryptographically prove the identities of the parties before exchanging keys.
+
+
 </Callout>
 
-</ConceptTemplate>
+

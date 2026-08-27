@@ -1,8 +1,31 @@
+---
+title: OCI Image Spec
+description: The Open Container Initiative (OCI) mathematical standard that strictly defines the format and structure of container images, ensuring universal interoperability across diverse container runtimes and registries.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OCI image spec">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="OCI Image Specification"
+  subtitle="The Universal Container Standard"
+  tags={['Containers', 'Standards', 'Architecture', 'OCI']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the early days, Docker owned the proprietary mathematical format for container images. If a competitor built a faster container runtime, they couldn't run Docker images. To prevent monopoly, Docker donated their image format to the Linux Foundation, creating the **Open Container Initiative (OCI)**.
 
-</ConceptTemplate>
+## 1. The Mathematical Structure
+The OCI Image Spec dictates that a container image is not a single executable file, but a mathematical collection of three specific components:
+1. **The Manifest**: A JSON document that mathematically maps the layers of the image and their exact SHA-256 hashes.
+2. **The Layers**: Compressed tarballs (`.tar.gz`) containing the actual files and directories. Each layer represents a modification (e.g., a `RUN` command in a Dockerfile).
+3. **The Configuration**: A JSON document defining runtime parameters, such as environment variables, the default working directory, and the `ENTRYPOINT` command.
+
+## 2. Universal Interoperability
+Because the OCI Image Spec is an open mathematical standard, the industry exploded with innovation.
+You can use Red Hat's **Buildah** to mathematically construct an OCI image. You can push that image to a **Harbor** registry. You can pull that image to a server running the **containerd** runtime, and it will execute flawlessly. The OCI Spec ensures that the entire container ecosystem is completely decoupled from the Docker corporation.
+

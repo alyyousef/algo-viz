@@ -4,10 +4,16 @@ description: A large body of work that can be broken down into a number of small
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Epics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Epics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 You cannot biologically complete "Build a new Payment System" in 2 weeks.
 
 In Agile, a massive project is mathematically defined as an **Epic**. The Product Manager biologically writes the high-level business goal of the Epic. The engineering team then mathematically slices the Epic down into 50 tiny, independent **User Stories** (e.g., "Add Stripe API", "Build UI Button"). These individual stories are then scheduled into 2-week Sprints, allowing the team to gradually build the massive Epic piece by piece.
 
-</ConceptTemplate>

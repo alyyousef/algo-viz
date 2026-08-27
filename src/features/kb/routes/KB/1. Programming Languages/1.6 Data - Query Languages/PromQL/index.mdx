@@ -1,8 +1,29 @@
+---
+title: PromQL
+description: The deeply mathematical querying language for Prometheus, designed to extract insights from multi-dimensional time-series metrics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PromQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PromQL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+PromQL (Prometheus Query Language) is a functional mathematical language used to query the Prometheus time-series database. It is the absolute standard for monitoring modern Kubernetes and microservice architectures.
 
-</ConceptTemplate>
+## 1. Time-Series Mathematics
+In Prometheus, data is not stored in tables; it is stored as mathematically continuous streams of numbers over time (e.g., CPU usage).
+PromQL is designed to perform mathematical aggregations over these time vectors.
+```promql
+rate(http_requests_total{status="500"}[5m])
+```
+This mathematically reads as: "Take the total number of HTTP 500 errors, look at a rolling 5-minute window, and calculate the mathematical per-second rate of increase." This allows DevOps teams to instantly visualize the speed at which a system is failing.
+
+## 2. Multi-Dimensional Labels
+Instead of using relational JOINs, PromQL uses a multi-dimensional mathematical data model based on Labels (key-value pairs).
+If you want to divide the total memory used by the total memory available across 500 different servers, you just mathematically divide the two metric names. PromQL automatically aligns the mathematical vectors based on their matching labels (e.g., instance IP), instantly calculating the percentage for all 500 servers simultaneously without complex grouping logic.
+

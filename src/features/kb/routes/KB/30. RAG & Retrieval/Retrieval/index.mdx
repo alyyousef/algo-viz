@@ -1,8 +1,27 @@
+---
+title: Retrieval Algorithms
+description: The mathematical algorithms underlying search engines and AI pipelines that physically locate the most relevant data within massive, unstructured datasets.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Retrieval">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Retrieval Algorithms">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Retrieval is fundamentally a mathematical ranking problem. Given a Query $Q$ and a Database of millions of Documents $D$, what algorithm accurately assigns a Relevance Score to every document?
 
-</ConceptTemplate>
+## 1. Lexical (Sparse) Retrieval
+The foundation of traditional search (like Elasticsearch) is **TF-IDF** (Term Frequency - Inverse Document Frequency) and its successor, **BM25**.
+- **TF**: If the query word appears 50 times in a document, the score goes up.
+- **IDF**: If the query word is "the", it appears in every document, so its mathematical weight is heavily penalized. If the word is "Kubernetes", it is rare, so its mathematical weight skyrockets.
+Lexical retrieval maps documents to Sparse Vectors (arrays with millions of zeros, and a few numbers representing exact word frequencies). It is unmatched for exact keyword lookups but completely fails if synonyms are used.
+
+## 2. Semantic (Dense) Retrieval
+Modern AI uses Dense Retrieval. Documents are mapped to dense, high-dimensional arrays of floats (Embeddings) representing conceptual meaning.
+The retrieval algorithm is **Cosine Similarity** or **Dot Product**. The database mathematically calculates the geometric angle between the Query Vector and the Document Vectors. Small angle = high semantic relevance. Dense retrieval understands that "puppy" and "young dog" are mathematically identical, but fails if the user requires an exact, non-semantic string match (like an API key).
+

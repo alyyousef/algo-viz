@@ -1,8 +1,28 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Caddy
+description: A modern, highly extensible open-source web server written in Go, mathematically distinguished by its automatic, zero-configuration acquisition and renewal of TLS certificates.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Caddy">
+<TechnologyTemplate
+  title="Caddy"
+  subtitle="The Auto-HTTPS Web Server"
+  tags={['Web Servers', 'TLS', 'Go', 'Security']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Configuring Nginx to serve HTTPS requires writing complex mathematical cryptographic blocks and setting up cron jobs to manually renew Let's Encrypt certificates before they expire. Caddy eliminates this mathematical overhead entirely.
 
-</ConceptTemplate>
+## 1. Automatic HTTPS
+Caddy is mathematically engineered for absolute security by default.
+To serve a secure website, a developer writes a two-line `Caddyfile`:
+```text
+example.com
+reverse_proxy localhost:8080
+```
+When Caddy starts, it mathematically analyzes the configuration. It automatically contacts Let's Encrypt, performs the cryptographic ACME challenge, provisions the TLS certificate, securely stores the private key, configures the cipher suites to mathematically reject legacy protocols (like SSLv3), and begins serving HTTPS traffic. It mathematically tracks the expiration date and automatically renews the certificate in the background, achieving zero-touch cryptographic security.
+
+## 2. The Go Architecture
+Because Caddy is written in **Go**, it compiles down to a single, mathematically independent binary.
+It has zero dependencies (no libc, no Python, no PHP required). You can drop the single `caddy` executable onto a naked Alpine Linux container and it will run flawlessly. Furthermore, Go's mathematical memory safety prevents the buffer overflow attacks that historically plagued C/C++ web servers like Apache and Nginx.
+
+</TechnologyTemplate>

@@ -4,14 +4,26 @@ description: A continuous integration and continuous delivery (CI/CD) platform t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Actions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Actions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **GitHub Actions** is the mathematical automation engine of GitHub.
 
+
 <Callout icon="warning" title="Executing Code on GitHub's Servers">
+
+
   Instead of biologically running your tests on your laptop, you write a `.github/workflows/test.yml` file.
-  
+
   Whenever you mathematically push a commit to GitHub, GitHub automatically spins up a virtual Linux server in the cloud, clones your code, runs `npm test`, and mathematically blocks the Pull Request if any tests fail. It biologically automates Continuous Integration (CI) and Deployment (CD) for free.
+
+
 </Callout>
 
-</ConceptTemplate>
+

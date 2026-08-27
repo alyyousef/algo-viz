@@ -1,8 +1,30 @@
+---
+title: On-Call Practices
+description: The operational and psychological methodologies used to manage engineering rotations for responding to out-of-hours production incidents, prioritizing human well-being to prevent burnout while ensuring rapid system recovery.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="On-call practices">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="On-Call Practices"
+  subtitle="Sustainable Incident Response"
+  tags={['SRE', 'Operations', 'Culture', 'Management']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an engineer is woken up by a PagerDuty alert at 3:00 AM every night for a week, they will mathematically burn out and resign. On-call practices are the SRE guidelines designed to prevent this attrition.
 
-</ConceptTemplate>
+## 1. Alert Fatigue and Actionability
+The most critical rule of on-call is: **Never page a human for something that does not require immediate human intervention.**
+If CPU spikes to 95% but user latency remains unaffected, it is an anti-pattern to trigger a page. The system should page based strictly on **SLO violations** (e.g., "The user error rate has crossed 5%"). By ruthlessly deleting unactionable alerts, SREs eliminate "Alert Fatigue," ensuring that when a pager does go off, the engineer knows it is a legitimate mathematical emergency.
+
+## 2. Compensation and Follow-the-Sun
+Being on-call is a massive psychological burden. Modern SRE practices address this structurally:
+- **Compensation**: Engineers must be financially compensated for the hours they carry the pager, regardless of whether it rings.
+- **Follow-the-Sun**: Global companies eliminate 3:00 AM pages entirely by rotating the pager mathematically across time zones. When it is 3:00 AM in New York, the pager is held by the engineering team in Sydney, where it is 5:00 PM, guaranteeing that engineers only handle incidents during their normal biological waking hours.
+

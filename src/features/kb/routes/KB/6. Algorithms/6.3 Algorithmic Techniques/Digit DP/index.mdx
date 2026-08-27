@@ -1,8 +1,33 @@
+---
+title: Digit DP
+description: "A highly specialized form of Dynamic Programming used to count the mathematical number of integers within a massive range [L, R] that satisfy a specific digit-based property."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Digit DP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Digit DP"
+  subtitle="Counting Numbers by their Digits"
+  tags={['Algorithms', 'Techniques', 'Dynamic Programming', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Problem: *"How many numbers between 1 and 10^18 contain the digit '7' exactly three times?"*
+A brute force O(N) approach is mathematically impossible, as counting to 10^18 takes a modern CPU over 30 years to finish.
 
-</ConceptTemplate>
+## 1. The Mathematical Digits
+Digit DP solves this by mathematically constructing the number digit by digit, from left to right, rather than iterating through the actual numbers.
+Because 10^18 only has 18 digits, the algorithm mathematically only needs to make 18 decisions (O(log N)).
+The DP State usually tracks three things:
+1. **Index**: Which digit position are we currently placing? (0 to 18).
+2. **Tight Bound**: Are we currently matching the maximum limit exactly? (If the limit is 500, and we place a '4', we are no longer "tight" and can place any digit 0-9 next. If we place a '5', we are "tight" and the next digit cannot exceed '0').
+3. **Property State**: (e.g., How many 7s have we placed so far?)
+
+## 2. Time Complexity
+By memoizing these states, Digit DP collapses the 30-year 10^18 brute force into a calculation taking roughly `18 * 2 * 18 * 10` operations. The result returns mathematically instantly, achieving an astonishing Time Complexity of **O(log N)** relative to the upper bound.
+

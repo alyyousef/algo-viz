@@ -4,7 +4,7 @@ description: A set of compiler and toolchain technologies, which can be used to 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="LLVM"
   subtitle="The modular heart of modern compilation"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/LLVM_Logo.svg/512px-LLVM_Logo.svg.png"
@@ -21,9 +21,15 @@ LLVM brought mathematical sanity to compiler development by strictly enforcing t
 2. **The Optimizer:** LLVM takes your IR and runs it through decades of world-class mathematical optimization passes, completely independent of the source language.
 3. **Back-Ends:** LLVM translates the optimized IR into physical Machine Code for x86, ARM, WebAssembly, or GPUs.
 
+
 <Callout icon="success" title="The Cambrian Explosion of Languages">
+
+
   Before LLVM, creating a new compiled language like Rust would require an army of engineers 10 years to write optimizations and target different CPUs. Because of LLVM, the Rust team only had to write the Front-End. They mathematically inherited 20 years of Apple and Google's optimization logic and hardware support for free.
+
+
 </Callout>
+
 
 ## Major LLVM Projects
 

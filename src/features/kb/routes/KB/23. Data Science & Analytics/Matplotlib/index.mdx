@@ -8,21 +8,23 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Matplotlib is a comprehensive library for creating static, animated, and interactive visualizations in Python. It was originally designed to emulate the plotting capabilities of MATLAB.
 
+
 <Callout icon="info" title="The Foundation">
+
+
   Matplotlib is the foundational plotting library in Python. Many higher-level visualization libraries, such as **Seaborn** and Pandas own df.plot(), are actually wrappers built directly on top of Matplotlib.
+
+
 </Callout>
+
 
 ## The Two Interfaces
 
 Matplotlib provides two different ways to create plots:
 
-<ComparisonTable 
-  headers={['Interface', 'Style', 'Best For']}
-  rows={[
-    ['Pyplot (State-based)', 'MATLAB-like, implicit state tracking.', 'Quick scripts, simple interactive plots.'],
-    ['Object-Oriented (OO)', 'Explicitly creating Figure and Axes objects.', 'Complex plots, embedding in applications, multiple subplots.']
-  ]}
-/>
+
+<ComparisonTable headers={['Interface', 'Style', 'Best For']} rows={[ ['Pyplot (State-based)', 'MATLAB-like, implicit state tracking.', 'Quick scripts, simple interactive plots.'], ['Object-Oriented (OO)', 'Explicitly creating Figure and Axes objects.', 'Complex plots, embedding in applications, multiple subplots.'] ]} />
+
 
 ## Object-Oriented Example
 

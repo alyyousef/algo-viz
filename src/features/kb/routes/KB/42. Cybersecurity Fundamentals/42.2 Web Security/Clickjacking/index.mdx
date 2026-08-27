@@ -4,19 +4,31 @@ description: A UI redressing attack where an attacker tricks a user into clickin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Clickjacking (UI Redressing)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Clickjacking (UI Redressing)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Clickjacking** is an attack that mathematically tricks the victim's visual perception. 
+**Clickjacking** is an attack that mathematically tricks the victim's visual perception.
 
 The attacker creates a malicious website (e.g., `free-ipads.com`) that contains a large, enticing "Click Here to Win" button. However, the attacker mathematically embeds a transparent `<iframe>` of the victim's bank account directly *on top* of the "Win" button. When the user clicks to win, their mouse physically clicks the invisible "Transfer Funds" button inside the banking iframe.
 
+
 <Callout icon="warning" title="Invisible Exploitation">
+
+
   Because the victim is already authenticated to their bank, the bank mathematically registers the click as a perfectly legitimate, authenticated action. The browser attaches the session cookies, and the transaction succeeds.
+
+
 </Callout>
+
 
 ## The Mitigation: Frame Busting
 
 1. **X-Frame-Options:** The legacy, but highly effective, mathematical HTTP header. A server can return `X-Frame-Options: DENY`, which tells the browser "Never allow this webpage to be rendered inside an iframe anywhere on the internet."
 2. **Content Security Policy (CSP):** The modern approach. The server returns `Content-Security-Policy: frame-ancestors 'self'`, which mathematically instructs the browser that this page can only be framed by other pages on the exact same domain.
 
-</ConceptTemplate>

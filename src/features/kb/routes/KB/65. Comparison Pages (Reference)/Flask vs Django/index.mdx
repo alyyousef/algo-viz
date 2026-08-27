@@ -1,8 +1,31 @@
+---
+title: Flask vs Django
+description: "A comparison of Python's legacy web frameworks, contrasting the unopinionated, minimalist architecture of Flask with the 'batteries-included', highly structured monolith of Django."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Flask vs Django">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Flask vs Django"
+  subtitle="Minimalism vs The Monolith"
+  tags={['Comparison', 'Python', 'Backend', 'Web Development']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before FastAPI disrupted the ecosystem, Python web development was a strict binary choice between Flask (the micro-framework) and Django (the monolithic framework).
 
-</ConceptTemplate>
+## 1. Flask: The Micro-Framework
+- **Philosophy**: "Do one thing well." Flask provides routing (via Werkzeug) and templating (via Jinja2), and absolutely nothing else.
+- **Architecture**: Unopinionated. You must choose and integrate your own database ORM (SQLAlchemy), your own authentication system (Flask-Login), and your own directory structure.
+- **Use Case**: Simple APIs, microservices, or highly customized applications where you need complete control over every single component.
+
+## 2. Django: Batteries Included
+- **Philosophy**: "Don't Repeat Yourself (DRY)." Django provides a massive, pre-built ecosystem. It assumes that most web apps need a database, user authentication, an admin panel, and CSRF protection, so it builds them all in natively.
+- **Architecture**: Highly Opinionated (MVT - Model View Template). You must use the Django ORM. You must structure your folders exactly how Django wants them.
+- **Use Case**: Massive content-management systems, e-commerce sites, or MVPs where you need a fully functioning backend with an admin dashboard in 24 hours. (Instagram and Pinterest were built on Django).
+

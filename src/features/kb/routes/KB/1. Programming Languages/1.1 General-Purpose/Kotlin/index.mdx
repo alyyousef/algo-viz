@@ -5,10 +5,17 @@ description: "A modern, concise, and safe programming language by JetBrains, now
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Kotlin"
   icon="code"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Developed by JetBrains (the creators of IntelliJ IDEA), **Kotlin** is a statically-typed language that runs on the Java Virtual Machine (JVM). In 2019, Google announced Kotlin as the preferred language for Android app development, largely replacing Java.
 
@@ -28,19 +35,24 @@ data class User(val name: String, val age: Int)
 fun main() {
     // Type inference (no need to specify 'User')
     val alice = User("Alice", 28)
-    
+
     // Null safety (won't compile if you assign null to a non-nullable String)
     var city: String = "New York"
     // city = null // ERROR
-    
+
     // Safe calls
     var nickname: String? = null
     println(nickname?.length ?: 0) // Prints 0 if nickname is null
 }
 ```
 
+
 <Callout icon="tip" title="Beyond Android">
+
+
 While famous for Android, Kotlin is heavily used in backend development using frameworks like Spring Boot or Ktor, providing a modern alternative to Java for enterprise microservices.
+
+
 </Callout>
 
-</ConceptTemplate>
+

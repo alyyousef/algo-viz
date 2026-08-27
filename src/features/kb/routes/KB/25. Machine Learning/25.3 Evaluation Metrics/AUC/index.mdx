@@ -4,14 +4,21 @@ description: A powerful aggregate mathematical metric that collapses the 2D ROC 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AUC (Area Under the Curve)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AUC (Area Under the Curve)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When evaluating a binary classifier (e.g., Cancer vs No Cancer), plotting the ROC Curve is highly informative, but you cannot easily mathematically compare two curves. 
+When evaluating a binary classifier (e.g., Cancer vs No Cancer), plotting the ROC Curve is highly informative, but you cannot easily mathematically compare two curves.
 **AUC (Area Under the Receiver Operating Characteristic Curve)** solves this by calculating the literal 2D mathematical area beneath the ROC curve.
 
 ## 1. The Mathematical Interpretation
 AUC provides a single scalar value between 0.0 and 1.0.
-- **AUC = 1.0**: The model is mathematically flawless. It perfectly separates the classes. 
+- **AUC = 1.0**: The model is mathematically flawless. It perfectly separates the classes.
 - **AUC = 0.5**: The model is mathematically worthless. It is a random coin flip. The ROC curve is a straight diagonal line ($y=x$), and the area under that triangle is exactly 0.5.
 - **AUC = 0.0**: The model is perfectly inverted. Every time it says Cancer, it means Healthy. (You can just flip the outputs to achieve 1.0).
 
@@ -24,4 +31,3 @@ AUC mathematically evaluates the model across *every single possible threshold* 
 Beyond area, AUC has a fascinating statistical property related to the Mann-Whitney U test.
 If you mathematically select one random positive patient (Cancer) and one random negative patient (Healthy) from the dataset, the AUC represents the exact **probability** that the model will mathematically assign a higher risk score to the Cancer patient than to the Healthy patient.
 
-</ConceptTemplate>

@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: LangGraph
+description: A stateful, highly cyclical orchestrator built on top of LangChain, designed specifically to model Multi-Agent systems and complex logic loops as strictly defined mathematical Directed Graphs.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="LangGraph">
+<TechnologyTemplate
+  title="LangGraph"
+  subtitle="Stateful Multi-Agent Orchestration"
+  tags={['AI', 'LangGraph', 'Graphs', 'Agents']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard LangChain Chains are Directed Acyclic Graphs (DAGs)—they mathematically go from Start to Finish and cannot loop backwards. Autonomous Agents *must* loop (Thought $\rightarrow$ Action $\rightarrow$ Observation $\rightarrow$ Thought). LangGraph mathematically enables cycles.
 
-</ConceptTemplate>
+## 1. Nodes, Edges, and State
+LangGraph models an Agent application as a State Machine.
+- **State**: A mathematical object (like a Python Dictionary) that holds the memory of the current logic flow (e.g., "Current Error", "Current Code").
+- **Nodes**: Standard Python functions that receive the State, mathematically modify it, and return the new State.
+- **Edges**: Conditional mathematical logic that determines which Node to run next.
+
+## 2. Cyclical Execution
+If Node A (Coder) generates code, the State is passed to Node B (Tester).
+The Edge after Node B contains mathematical logic: *If tests pass, go to Node C (End). If tests fail, loop backward to Node A.*
+This creates a persistent, fault-tolerant mathematical loop. Because the State is explicitly defined and managed outside the LLM, developers can pause execution, manually edit the State, or resume a failed loop from a specific Node, which is mathematically impossible in standard LangChain.
+
+</TechnologyTemplate>

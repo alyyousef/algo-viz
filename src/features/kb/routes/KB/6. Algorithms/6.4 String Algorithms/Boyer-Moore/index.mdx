@@ -1,8 +1,31 @@
+---
+title: Boyer-Moore Algorithm
+description: "An incredibly fast string-searching algorithm that mathematically skips large sections of the text by comparing the search pattern from right-to-left and utilizing a bad-character shift table."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Boyer-Moore">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Boyer-Moore Algorithm"
+  subtitle="The Speed of Skipping"
+  tags={['Algorithms', 'Strings', 'Performance', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Boyer-Moore is the standard mathematical string-search algorithm used in modern text editors (like the `Ctrl+F` function). It is mathematically famous because the *longer* the word you are searching for, the *faster* the algorithm runs.
 
-</ConceptTemplate>
+## 1. Right-to-Left Comparison
+Unlike standard algorithms that check strings from left-to-right (`[H][E][L][L][O]`), Boyer-Moore aligns the pattern with the text but starts checking at the mathematically **right-most** character.
+If you are searching for "HELLO" (length 5), you align it at index 0 of the text, but you mathematically check index 4 first.
+
+## 2. The Bad Character Rule
+If the character at index 4 in the text is 'Z', Boyer-Moore mathematically realizes something profound: The letter 'Z' does not exist *anywhere* in the word "HELLO".
+Therefore, it is mathematically impossible for the word "HELLO" to start at index 0, 1, 2, 3, or 4.
+The algorithm instantly **skips** the pattern a full 5 spaces forward.
+By utilizing two precomputed mathematical tables (the Bad Character rule and the Good Suffix rule), the best-case Time Complexity is an astonishing **O(N / M)**, meaning it mathematically skips over the vast majority of the text without ever reading it.
+

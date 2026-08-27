@@ -1,8 +1,25 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: HAProxy
+description: The industry standard open-source software for mathematical TCP/HTTP load balancing, renowned for its extreme reliability, low latency, and ability to handle millions of concurrent connections.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="HAProxy">
+<TechnologyTemplate
+  title="HAProxy (High Availability Proxy)"
+  subtitle="The Load Balancing Engine"
+  tags={['Load Balancing', 'Networking', 'Performance', 'Architecture']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Nginx is primarily a Web Server that *can* load balance, HAProxy is a pure, hyper-optimized Load Balancer. It is the mathematical engine powering some of the highest-traffic websites on Earth (like Reddit and GitHub).
 
-</ConceptTemplate>
+## 1. Extreme Mathematical Efficiency
+HAProxy is written in C and uses an event-driven, non-blocking mathematical architecture.
+Its primary objective is to move packets from a client to a backend server as fast as the physical CPU allows. It is so mathematically optimized that a single HAProxy server running on standard modern hardware can effortlessly sustain over 2 million concurrent TCP connections and route over 100,000 HTTP requests per second with less than 1 millisecond of added latency.
+
+## 2. Advanced Routing Algorithms
+HAProxy provides deep mathematical control over how traffic is distributed across backend servers:
+- **Round Robin**: Distribute requests evenly (1, 2, 3, 1, 2, 3).
+- **Least Connections**: Mathematically route the new request to the specific server that currently has the lowest number of active connections.
+- **Source IP Hashing**: Mathematically hash the client's IP address. This guarantees that a specific user will *always* be routed to the exact same backend server, maintaining "sticky sessions" for stateful applications.
+
+</TechnologyTemplate>

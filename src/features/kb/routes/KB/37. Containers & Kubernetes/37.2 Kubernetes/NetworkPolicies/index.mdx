@@ -1,8 +1,31 @@
+---
+title: NetworkPolicies
+description: A Kubernetes resource that mathematically dictates how groups of Pods are allowed to communicate with each other and external network endpoints, effectively acting as an internal software-defined firewall.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NetworkPolicies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="NetworkPolicies"
+  subtitle="Internal Cluster Firewalls"
+  tags={['Kubernetes', 'Networking', 'Security', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+By default, Kubernetes enforces a mathematically terrifying rule: **All Pods can communicate with all other Pods in the cluster.** If a hacker compromises a vulnerable frontend web server, they can freely ping the internal database Pod.
 
-</ConceptTemplate>
+## 1. Zero Trust Architecture
+A `NetworkPolicy` allows you to mathematically revoke this default open access and implement a Zero Trust architecture.
+You apply a YAML file that states: *"The `database` Pods are mathematically forbidden from receiving any network traffic, EXCEPT from Pods that possess the label `app=backend`."*
+If the compromised frontend Pod attempts to open a TCP connection to the database, the network plugin (like Calico or Cilium) intercepts the packet at the kernel level and mathematically drops it.
+
+## 2. Ingress and Egress
+NetworkPolicies evaluate traffic in two mathematical directions:
+- **Ingress**: Traffic coming *into* a Pod (e.g., stopping unauthorized services from querying your API).
+- **Egress**: Traffic leaving *out* of a Pod (e.g., stopping a compromised Pod from mathematically establishing a reverse shell to a hacker's external server). Egress policies can strictly limit a Pod to only communicate with specific external IP ranges.
+

@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Puppet
+description: A pioneering configuration management tool that mathematically enforces the declarative state of massive server fleets using its own specialized Domain-Specific Language (DSL) and a master-agent architecture.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Puppet">
+<TechnologyTemplate
+  title="Puppet"
+  subtitle="Declarative Fleet Management"
+  tags={['Configuration Management', 'Infrastructure', 'Legacy', 'DevOps']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Alongside Chef, Puppet defined the mathematical discipline of Configuration Management in the 2010s. While Chef leaned heavily into imperative Ruby coding, Puppet took a strict, mathematically declarative approach.
 
-</ConceptTemplate>
+## 1. The Declarative DSL
+Puppet uses its own proprietary Domain-Specific Language (DSL).
+Instead of writing a script that says *"Execute apt-get install nginx"*, a Puppet developer writes mathematical declarations: *"Ensure that the Package 'nginx' is in the state 'installed'."*
+The Puppet Agent on the server reads this declaration. It mathematically queries the local operating system to see if Nginx exists. If it does, Puppet does absolutely nothing. If it does not, Puppet determines the exact shell commands required (abstracting away whether the server is Ubuntu or CentOS) and installs it. This mathematical idempotency was revolutionary.
+
+## 2. The Master-Agent Architecture
+Like Chef, Puppet utilizes a Pull architecture.
+A central **Puppet Master** server mathematically compiles the "Catalogs" (the final JSON representation of exactly what a specific server should look like). The **Puppet Agents** run as background daemons on thousands of Linux/Windows servers, polling the Master every 30 minutes. If a server's mathematical state drifts (e.g., someone deletes a required user account), the Agent automatically reconstructs the user, providing relentless, mathematical configuration enforcement.
+
+</TechnologyTemplate>

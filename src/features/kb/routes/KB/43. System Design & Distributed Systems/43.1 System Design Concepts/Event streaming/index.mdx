@@ -4,25 +4,32 @@ description: The practice of capturing data in real-time from event sources and 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Event Streaming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Event Streaming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A traditional Message Queue is like a mathematical to-do list: once a worker processes a message, the message is **permanently deleted**.
 
 **Event Streaming** (championed by Apache Kafka) fundamentally alters this paradigm. An Event Stream is an **Append-Only, Immutable Log**. Messages are mathematically written to a physical hard drive in strict chronological order and are *never* deleted when read.
 
+
 <Callout icon="success" title="The Power of Replay">
+
+
   Because the events are never deleted, a brand new microservice spun up today can mathematically "Rewind the Tape" to the beginning of the year, replaying every single business event that ever happened to perfectly reconstruct its database state.
+
+
 </Callout>
+
 
 ## Kafka vs. Traditional Queues (RabbitMQ)
 
-<ComparisonTable 
-  headers={['Feature', 'Message Queue (RabbitMQ)', 'Event Stream (Kafka)']}
-  rows={[
-    ['Data Retention', 'Messages are mathematically deleted instantly after successful processing (ACK).', 'Messages are retained on disk for a configured mathematical duration (e.g., 7 days, or forever).'],
-    ['Processing Model', 'Dumb Pipe, Smart Consumers. The queue pushes data to workers.', 'Smart Pipe, Dumb Consumers. Consumers mathematically "pull" data and track their own cursor (offset) in the log.'],
-    ['Primary Use Case', 'Task distribution, asynchronous background jobs (e.g., sending emails).', 'Real-time data pipelines, Event Sourcing, massive log aggregation.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Feature', 'Message Queue (RabbitMQ)', 'Event Stream (Kafka)']} rows={[ ['Data Retention', 'Messages are mathematically deleted instantly after successful processing (ACK).', 'Messages are retained on disk for a configured mathematical duration (e.g., 7 days, or forever).'], ['Processing Model', 'Dumb Pipe, Smart Consumers. The queue pushes data to workers.', 'Smart Pipe, Dumb Consumers. Consumers mathematically "pull" data and track their own cursor (offset) in the log.'], ['Primary Use Case', 'Task distribution, asynchronous background jobs (e.g., sending emails).', 'Real-time data pipelines, Event Sourcing, massive log aggregation.'] ]} />
+
+

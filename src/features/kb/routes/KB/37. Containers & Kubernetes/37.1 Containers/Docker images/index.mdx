@@ -5,12 +5,19 @@ description: "Read-only templates containing the instructions for creating a Doc
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Docker Images & Layers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Docker Images & Layers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Docker Image** is an immutable, read-only snapshot of an application and its dependencies. When you run an image, it becomes a **Container**. You can think of an Image as a Class, and a Container as an Instance of that Class.
 
 ## 1. The Union File System (Layers)
-Images are not single monolithic files; they are built from a stack of independent **Layers**. 
+Images are not single monolithic files; they are built from a stack of independent **Layers**.
 Every time a `RUN`, `COPY`, or `ADD` command is executed in a Dockerfile, Docker creates a new layer on top of the previous ones.
 
 These layers use a **Union File System**. If Layer 1 contains `file.txt`, and Layer 2 modifies `file.txt`, Layer 2 doesn't overwrite Layer 1. It simply places the modified file on top, hiding the old version.
@@ -24,11 +31,16 @@ If you rebuild an image, Docker checks each instruction. If the instruction and 
 This is why you always copy `package.json` and run `npm install` *before* copying your application source code. Your source code changes constantly (invalidating the cache), but your dependencies rarely change.
 
 ## 3. Containers: The Writable Layer
-Because images are read-only, how does a container write a log file? 
+Because images are read-only, how does a container write a log file?
 When a container starts, Docker slaps a very thin, ephemeral **Writable Layer** on top of the read-only image stack. Any file modifications happen in this writable layer. When the container is deleted, the writable layer is instantly destroyed, and all data inside it is lost.
 
+
 <Callout icon="warning" title="Bloated Images">
+
+
 If you download a 100MB file in a `RUN` command, and then delete it in a subsequent `RUN` command, your final image is still 100MB larger! The file was permanently baked into the first layer. You must download and delete temporary files within the *same* `RUN` command using `&&`.
+
+
 </Callout>
 
-</ConceptTemplate>
+

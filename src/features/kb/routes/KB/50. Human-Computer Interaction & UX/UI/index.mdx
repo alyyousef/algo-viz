@@ -4,21 +4,33 @@ description: The design of user interfaces for machines and software, such as co
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="User Interface (UI) Design">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="User Interface (UI) Design">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If UX is the architectural blueprint of a house, **User Interface (UI) Design** is the physical drywall, the paint, the doorknobs, and the light switches.
 
 It is the physical or digital layer where the biological human actually mathematically intersects with the computer's logic.
 
+
 <Callout icon="tip" title="Affordance and Signifiers">
+
+
   The core of UI is rooted in the psychology of **Affordance**.
   - **Affordance:** The physical property of an object that tells you how to use it. A physical button "affords" pushing. A slider "affords" dragging.
   - **Signifier:** Because digital screens are perfectly flat glass, there are no true physical affordances. UI Designers must use mathematical **Signifiers** (drop shadows, gradients, hover states) to visually fake depth, tricking the human brain into understanding that a specific clump of pixels can be clicked.
+
+
 </Callout>
+
 
 ## Skeuomorphism vs Flat Design
 
 - **Skeuomorphism (2007-2013):** UI that mathematically mimics physical reality (e.g., Apple's old Notes app looked like a physical yellow legal pad with ripped paper). This was required to teach humans how to use touchscreens.
 - **Flat Design / Material Design (2014-Present):** Once humans mathematically understood touchscreens, UI stripped away the fake leather textures, focusing entirely on pure geometric typography, bold colors, and spatial elevation (shadows) to convey hierarchy.
 
-</ConceptTemplate>

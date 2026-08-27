@@ -1,0 +1,26 @@
+---
+title: Oracle Virtual Cloud Network (VCN)
+description: The foundational software-defined networking construct in OCI, mathematically providing a customizable, isolated private network for deploying cloud infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Oracle Virtual Cloud Network (VCN)"
+  subtitle="The Foundational Cloud Network"
+  tags={['OCI', 'Networking', 'VCN', 'Infrastructure']}
+>
+
+A VCN is the exact OCI equivalent of an AWS VPC. Before you can provision a single Virtual Machine, you must mathematically define the networking physics of the environment by creating a VCN.
+
+## 1. The Regional CIDR Block
+When you create a VCN, you assign it a contiguous block of IP addresses using Classless Inter-Domain Routing (CIDR) notation (e.g., `10.0.0.0/16`).
+This VCN mathematically spans all Availability Domains within a specific Region. It is a completely isolated logical entity. If you deploy a database inside this VCN, it is physically impossible for the public internet to reach it unless you explicitly attach an Internet Gateway and modify the mathematical Route Tables.
+
+## 2. Default Components
+By default, when a VCN is created, OCI provisions three mathematical constructs attached to it:
+- A **Default Route Table** (empty by default for security).
+- A **Default Security List** (allowing internal SSH and blocking external access).
+- A **Default DHCP Options** set (handling internal DNS resolution).
+While these defaults exist, enterprise security best practices dictate that cloud architects should mathematically abandon the default constructs and create strict, custom Route Tables and Security Lists uniquely tailored for every individual Subnet.
+
+</TechnologyTemplate>

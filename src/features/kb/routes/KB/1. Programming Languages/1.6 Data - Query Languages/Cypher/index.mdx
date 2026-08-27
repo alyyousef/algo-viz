@@ -1,8 +1,32 @@
+---
+title: Cypher
+description: A declarative graph query language designed specifically for Neo4j, allowing developers to mathematically query complex relationships via ASCII-art syntax.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cypher">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cypher">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Neo4j in 2011 (and later open-sourced), Cypher is to Graph Databases what SQL is to Relational Databases. It is mathematically designed to traverse incredibly complex webs of connected data (like social networks or fraud rings) in milliseconds.
 
-</ConceptTemplate>
+## 1. ASCII Art Syntax
+In a SQL database, finding "friends of friends" requires mathematically writing multiple expensive `JOIN` statements.
+Cypher uses an intuitive, mathematical "ASCII Art" syntax to physically draw the graph relationships in the code.
+- **Nodes** (Entities) are wrapped in parentheses: `(p:Person)`
+- **Relationships** are drawn as arrows in brackets: `-[:KNOWS]->`
+
+```cypher
+MATCH (john:Person {name: 'John'})-[:KNOWS]->(friend)-[:KNOWS]->(fof)
+RETURN fof.name
+```
+This one line mathematically instructs the Neo4j engine to find John, instantly jump to his friends, instantly jump to their friends, and return the names.
+
+## 2. Graph Traversal Algorithms
+Because the underlying data is mathematically stored as physical memory pointers (Index-Free Adjacency), Cypher can execute complex traversal algorithms—like finding the Shortest Path (Dijkstra) between two users, or running PageRank on a billion nodes—at speeds that would cause a traditional SQL database to mathematically freeze.
+

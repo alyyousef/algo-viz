@@ -4,10 +4,16 @@ description: The use of computer vision algorithms to extract meaningful data fr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Satellite Imagery Analysis">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Satellite Imagery Analysis">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Satellites biologically photograph the entire Earth every single day, generating Petabytes of raw visual data.
 
-Computer scientists mathematically feed these images into massive Convolutional Neural Networks (CNNs). The AI mathematically counts the number of biological cars in Walmart parking lots to predict retail stock prices, measures the health of agricultural crops using Infrared frequencies, and biologically detects illegal deforestation in the Amazon rainforest in real-time. 
+Computer scientists mathematically feed these images into massive Convolutional Neural Networks (CNNs). The AI mathematically counts the number of biological cars in Walmart parking lots to predict retail stock prices, measures the health of agricultural crops using Infrared frequencies, and biologically detects illegal deforestation in the Amazon rainforest in real-time.
 
-</ConceptTemplate>

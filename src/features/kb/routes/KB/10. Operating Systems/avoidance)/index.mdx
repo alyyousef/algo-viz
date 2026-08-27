@@ -4,9 +4,16 @@ description: A dynamic, real-time algorithm that simulates the future state of t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Deadlock Avoidance">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Deadlock Avoidance">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Instead of blindly granting locks until a deadlock occurs (*Detection*), or enforcing massive system-wide architectural restrictions (*Prevention*), **Deadlock Avoidance** uses an algorithm to dynamically analyze every single lock request in real-time. 
+Instead of blindly granting locks until a deadlock occurs (*Detection*), or enforcing massive system-wide architectural restrictions (*Prevention*), **Deadlock Avoidance** uses an algorithm to dynamically analyze every single lock request in real-time.
 
 Before granting a lock, the OS simulates the future. If giving the lock to Thread A could *potentially* lead to a deadlock later, the OS denies the request and forces Thread A to wait.
 
@@ -14,9 +21,15 @@ Before granting a lock, the OS simulates the future. If giving the lock to Threa
 
 The most famous deadlock avoidance algorithm is Dijkstra's **Banker's Algorithm** (named because it mimics how a small-town bank manages cash reserves to ensure it can always fulfill withdrawal requests).
 
+
 <Callout icon="info" title="The Prerequisite">
+
+
   For the Banker's Algorithm to work, every Thread must declare its **Maximum Potential Need** up front. When the program launches, it must tell the OS: *"At my absolute peak, I might need 4 locks simultaneously."*
+
+
 </Callout>
+
 
 When a thread requests a lock, the OS simulates granting it. It then checks if the resulting state is **Safe**.
 - A **Safe State** means there exists at least one specific execution sequence where every single thread can reach its Maximum Potential Need, finish its work, and release all its locks without getting stuck.
@@ -24,7 +37,6 @@ When a thread requests a lock, the OS simulates granting it. It then checks if t
 - If the simulation cannot find a guaranteed path to completion (an Unsafe State), the OS denies the lock and forces the requesting thread to sleep until more locks become available.
 
 ## Why isn't it used?
-While mathematically beautiful, the Banker's Algorithm is almost entirely theoretical. 
+While mathematically beautiful, the Banker's Algorithm is almost entirely theoretical.
 In modern operating systems (like Windows or Linux), it is impossible for a web browser or a video game to know its "Maximum Potential Need" for resources at the time it launches. Because the prerequisite cannot be met, modern OSs do not use Deadlock Avoidance, and instead rely on Deadlock Detection or ignore the problem entirely (the Ostrich Algorithm).
 
-</ConceptTemplate>

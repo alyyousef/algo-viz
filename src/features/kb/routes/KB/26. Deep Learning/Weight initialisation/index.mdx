@@ -4,17 +4,23 @@ description: The critical mathematical step of assigning starting values to neur
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Weight Initialization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Weight Initialization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you mathematically initialize all weights in a Neural Network to absolute $0$, every single neuron will compute the exact same gradient during Backpropagation. The network will mathematically never learn anything. 
+If you mathematically initialize all weights in a Neural Network to absolute $0$, every single neuron will compute the exact same gradient during Backpropagation. The network will mathematically never learn anything.
 If you initialize them with numbers that are slightly too large, the mathematical signals will instantly explode to infinity. **Weight Initialization** algorithms are strictly required to ensure the network is mathematically stable at Epoch 1.
 
 ## 1. Xavier / Glorot Initialization
-Designed specifically for networks using Sigmoid or Tanh activation functions, **Xavier Initialization** draws weights from a mathematical distribution (like a Normal distribution) with a specific variance. 
+Designed specifically for networks using Sigmoid or Tanh activation functions, **Xavier Initialization** draws weights from a mathematical distribution (like a Normal distribution) with a specific variance.
 It mathematically guarantees that the variance of the outputs of a layer is exactly equal to the variance of its inputs. This perfect balance prevents the signal from dying or exploding as it passes through 100 layers.
 
 ## 2. He (Kaiming) Initialization
-Xavier Initialization mathematically assumes the activation function is linear. When the industry switched to ReLU, Xavier failed catastrophically because ReLU mathematically deletes 50% of the signal (all negative numbers). 
+Xavier Initialization mathematically assumes the activation function is linear. When the industry switched to ReLU, Xavier failed catastrophically because ReLU mathematically deletes 50% of the signal (all negative numbers).
 **He Initialization** solves this by mathematically doubling the variance of the initialization. This perfectly offsets the massive loss of signal caused by ReLU, allowing incredibly deep convolutional networks (like ResNet) to train successfully.
 
-</ConceptTemplate>

@@ -4,13 +4,20 @@ description: A high-level Python visualization library built on top of Matplotli
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Seaborn">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Seaborn">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Matplotlib is incredibly powerful, generating a beautiful, complex statistical chart requires writing 30 lines of highly verbose code. **Seaborn** was engineered to mathematically abstract Matplotlib, providing a high-level API that allows Data Scientists to generate stunning statistical visualizations with a single line of code.
 
 ## 1. Deep Integration with Pandas
 Matplotlib mathematically plots arrays of numbers. It does not understand the concept of a "Table".
-Seaborn is mathematically deeply integrated with **Pandas**. It natively understands the structure of a DataFrame. 
+Seaborn is mathematically deeply integrated with **Pandas**. It natively understands the structure of a DataFrame.
 
 You do not need to manually slice the DataFrame into arrays. You simply pass the entire DataFrame to Seaborn, tell it which column is X and which is Y, and Seaborn handles all the mathematical mapping, axis labeling, and color legends automatically.
 
@@ -24,7 +31,7 @@ sns.scatterplot(data=iris_df, x="sepal_length", y="sepal_width", hue="species")
 ## 2. Statistical Aggregation
 Seaborn natively performs complex mathematics *during* the rendering process.
 
-If you create a `sns.lineplot()` and your dataset has 5 different measurements for a single day, Matplotlib would draw a chaotic, scribbled line. 
+If you create a `sns.lineplot()` and your dataset has 5 different measurements for a single day, Matplotlib would draw a chaotic, scribbled line.
 Seaborn automatically recognizes the duplicates. It mathematically calculates the Mean of those 5 measurements, draws a smooth line, and then mathematically calculates the **95% Confidence Interval** (via bootstrapping) and draws a beautiful shaded uncertainty band around the line—all entirely automatically.
 
 ## 3. High-Level Statistical Charts
@@ -32,4 +39,3 @@ Seaborn provides out-of-the-box functions for complex mathematical EDA (Explorat
 - **sns.pairplot()**: Automatically renders a massive grid of scatter plots, comparing every single numeric column against every other column to instantly visualize correlations.
 - **sns.violinplot()**: A mathematically advanced version of a box plot. It renders a KDE (Kernel Density Estimate) to show the exact probability distribution curve of the data, instantly revealing if the data is bimodal.
 
-</ConceptTemplate>

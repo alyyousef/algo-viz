@@ -5,13 +5,20 @@ description: The intense OS mechanism that rapidly pauses one process and resume
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Context Switching">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Context Switching">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If your CPU only has 4 physical cores, it can mathematically only execute 4 instructions at the exact same time. Yet, you can have Spotify, Chrome, Slack, and Discord all running smoothly. 
+If your CPU only has 4 physical cores, it can mathematically only execute 4 instructions at the exact same time. Yet, you can have Spotify, Chrome, Slack, and Discord all running smoothly.
 The OS achieves this using **Time Slicing** and **Context Switching**.
 
 ## 1. The Illusion of Concurrency
-The OS gives Process A control of the CPU for a tiny fraction of a second (e.g., 10 milliseconds). When the timer expires, a physical hardware interrupt fires. The CPU instantly halts Process A and gives control back to the OS Kernel. 
+The OS gives Process A control of the CPU for a tiny fraction of a second (e.g., 10 milliseconds). When the timer expires, a physical hardware interrupt fires. The CPU instantly halts Process A and gives control back to the OS Kernel.
 
 The OS must now pause Process A and resume Process B.
 
@@ -26,8 +33,13 @@ A Context Switch is computationally expensive because the OS must physically sav
 ## 3. The Performance Cost
 A Context Switch takes roughly 1 to 5 microseconds. This sounds fast, but if a CPU is doing 100,000 context switches per second, the OS is spending 50% of its total processing power just swapping things in and out, rather than actually running your code (a phenomenon called **Thrashing**).
 
+
 <Callout icon="tip" title="Thread vs Process Switching">
+
+
 Context switching between two Threads in the *same* process is blazingly fast. Because they share the same memory space, the OS does **not** need to flush the TLB or swap out the massive memory page tables. It only needs to swap the registers.
+
+
 </Callout>
 
-</ConceptTemplate>
+

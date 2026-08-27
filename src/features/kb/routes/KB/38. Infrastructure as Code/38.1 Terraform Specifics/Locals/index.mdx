@@ -1,8 +1,39 @@
+---
+title: Locals
+description: A Terraform mechanism for declaring mathematical constants and complex computed expressions within a module, preventing code repetition and ensuring the DRY (Don't Repeat Yourself) principle.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Locals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Locals"
+  subtitle="Mathematical Computed Constants"
+  tags={['Terraform', 'Configuration', 'Variables', 'Code Quality']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Terraform, an input `variable` is a value provided by the user at runtime. A `local` is a value mathematically computed and strictly locked *inside* the module, inaccessible from the outside.
 
-</ConceptTemplate>
+## 1. The DRY Principle
+If your company standardizes that every single cloud resource must be tagged with a specific string (e.g., `Company-Project-Environment`), you do not want to manually type `AcmeCorp-Billing-Prod` fifty times across your codebase.
+You define a Local block:
+```hcl
+locals {
+  common_tags = {
+    Owner       = "AcmeCorp"
+    Project     = var.project_name
+    Environment = var.environment
+  }
+}
+```
+You then apply `tags = local.common_tags` to every resource. If the company changes the tagging standard, you mathematically only have to update the code in one single location.
+
+## 2. Complex Mathematical Transformations
+Locals are not just static strings; they can execute complex mathematical and string manipulations.
+You can use a local to read a list of 10 IP addresses from an input variable, use the `cidrsubnet()` mathematical function to calculate new subnets, use `merge()` to combine dictionaries, and output a clean, formatted list that the rest of the Terraform module consumes effortlessly.
+

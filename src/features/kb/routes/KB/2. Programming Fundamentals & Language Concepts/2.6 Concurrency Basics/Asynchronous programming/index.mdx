@@ -1,8 +1,25 @@
+---
+title: Asynchronous Programming
+description: A mathematical execution model where the CPU initiates long-running tasks and immediately moves on to other work, returning to the tasks only when they complete.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Asynchronous programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Asynchronous Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Synchronous programming, if you ask the CPU to read a 5GB file from the hard drive, the CPU mathematically halts. It sits completely idle for 3 seconds, unable to process user clicks or network requests until the file is loaded (Blocking I/O).
 
-</ConceptTemplate>
+## 1. Non-Blocking I/O
+Asynchronous programming solves this mathematical inefficiency.
+When the program requests the 5GB file, the CPU fires off a command to the Hard Drive Controller (a separate piece of hardware). Because the hard drive handles the actual read, the CPU mathematically returns immediately to the main program, free to process millions of other instructions.
+
+## 2. Interrupts and Context Switching
+How does the CPU know when the file is ready?
+When the Hard Drive Controller finishes reading the 5GB into RAM, it sends a physical electrical **Hardware Interrupt** to the CPU. The CPU instantly drops what it is doing, saves its current mathematical state (Context Switch), and executes an Interrupt Handler routine (or pushes an Event into the Event Loop), allowing the program to safely resume processing the file data. This mathematical decoupling allows Node.js to handle 10,000 concurrent network connections on a single CPU thread.
+

@@ -1,8 +1,26 @@
+---
+title: Experiment Design
+description: The strict mathematical blueprint governing how an A/B test or scientific study is constructed to ensure statistically valid, unbiased results.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Experiment design">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Experiment Design">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you run an A/B test without strict mathematical Experiment Design, the results will be statistically meaningless (Noise). You must define the mathematical parameters before the experiment even begins.
 
-</ConceptTemplate>
+## 1. Statistical Power and Sample Size
+Before launching an experiment, a Data Scientist must mathematically calculate the required **Sample Size**.
+If you only show the new red button to 10 users, and 5 click it, the sample size is mathematically too small to prove anything.
+Using a Power Calculation, the Data Scientist determines: "To mathematically detect a 1% increase in conversion, with 95% confidence, we must expose exactly 142,500 users to the red button." If you stop the experiment before reaching this mathematical threshold (called "Peeking"), you will generate a False Positive.
+
+## 2. Defining the Primary Metric (OEC)
+An experiment must have a single Overall Evaluation Criterion (OEC).
+If you track 50 different metrics during an A/B test (Clicks, Time on Site, Scroll Depth, etc.), the mathematical laws of probability guarantee that at least one of them will randomly spike (the Multiple Comparisons Problem). By defining a single, mathematically rigorous OEC *before* the experiment, you prevent engineers from "cherry-picking" random metrics that happened to look good just to claim the experiment was a success.
+

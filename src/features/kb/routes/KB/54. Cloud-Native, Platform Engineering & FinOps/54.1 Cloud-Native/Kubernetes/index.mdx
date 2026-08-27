@@ -4,7 +4,7 @@ description: An open-source container orchestration system for automating softwa
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Kubernetes (K8s)"
   subtitle="The Cloud Operating System"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kubernetes_logo_without_workmark.svg/512px-Kubernetes_logo_without_workmark.svg.png"
@@ -17,12 +17,18 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Running 1 container on your laptop is easy. Running 10,000 containers across 500 physical AWS servers, handling load-balancing, auto-restarting crashed containers, and doing zero-downtime rolling updates is biologically impossible for a human.
 
+
 <Callout icon="tip" title="The Control Plane">
-  Kubernetes solves this using a **Declarative Architecture**. 
-  
-  You mathematically tell the K8s API: *"I want exactly 5 copies of the Node.js container running."* 
-  
+
+
+  Kubernetes solves this using a **Declarative Architecture**.
+
+  You mathematically tell the K8s API: *"I want exactly 5 copies of the Node.js container running."*
+
   The K8s Control Plane monitors the cluster. If Server #3 physically catches on fire and dies, K8s detects that only 4 containers are running. It biologically calculates the state divergence, automatically spins up a new container on Server #4, and rewires the network routing in milliseconds to maintain the desired mathematical state of 5.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

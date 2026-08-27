@@ -4,16 +4,28 @@ description: A Core Web Vital metric that reports the render time of the largest
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Largest Contentful Paint (LCP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Largest Contentful Paint (LCP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 How long does it mathematically take for the "main" content of a webpage to load?
 
 Google introduced **LCP** to measure exactly this. Instead of tracking when the entire DOM is finished loading (which is misleading), the browser's Rendering Engine mathematically calculates the exact millisecond that the *physically largest* element (usually a Hero Image or an `<h1>` tag) appears on the screen.
 
+
 <Callout icon="warning" title="The 2.5 Second Rule">
+
+
   To pass Google's SEO requirements, your LCP must occur in **under 2.5 seconds** for 75% of your users.
-  
+
   If your Hero Image is a massive 5MB uncompressed PNG, or if your React app requires downloading 2MB of JavaScript before it even starts rendering the `<h1>`, your LCP will biologically fail, and your Google Search ranking will plummet.
+
+
 </Callout>
 
-</ConceptTemplate>
+

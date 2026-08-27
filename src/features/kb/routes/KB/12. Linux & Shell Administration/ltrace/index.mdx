@@ -4,7 +4,14 @@ description: An advanced debugging tool that intercepts and logs the dynamic lib
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ltrace (Library Trace)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ltrace (Library Trace)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a compiled C program runs, it rarely executes entirely on its own code. It constantly relies on shared System Libraries (like `glibc`) to perform basic tasks like copying memory strings or calculating math.
 
@@ -16,11 +23,16 @@ It is critical to understand the difference between `strace` and `ltrace`:
 - **`strace`** traces System Calls (the program talking directly to the Linux Kernel, like "open file" or "send network packet").
 - **`ltrace`** traces Library Calls (the program talking to user-space C libraries, like `strlen()` or `malloc()`).
 
+
 <Callout icon="success" title="Reverse Engineering and Hacking">
+
+
   `ltrace` is heavily used in cybersecurity Capture The Flag (CTF) events. If you are given a compiled, undocumented binary that asks for a secret password, you can run `ltrace ./binary`. When you type a fake password, `ltrace` will intercept the `strcmp(input, "SUPER_SECRET_123")` library call, instantly revealing the hardcoded password in plain text on your screen.
+
+
 </Callout>
+
 
 ## Basic Usage
 `ltrace ./my_program` will launch the program and flood your terminal with every C library function it executes, providing a massive window into how the black-box binary was programmed.
 
-</ConceptTemplate>

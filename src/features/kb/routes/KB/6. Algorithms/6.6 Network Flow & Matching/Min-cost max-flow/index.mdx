@@ -1,8 +1,31 @@
+---
+title: Min-Cost Max-Flow
+description: "An advanced network flow algorithm that finds the mathematically cheapest way to push the maximum possible flow through a network where edges have both a capacity limit and a monetary cost per unit of flow."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Min-cost max-flow">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Min-Cost Max-Flow"
+  subtitle="Optimizing Logistics"
+  tags={['Algorithms', 'Graph Theory', 'Network Flow', 'Optimization']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard Max-Flow problem, you only care about pushing as much flow as possible.
+In a **Min-Cost Max-Flow** problem, pushing 1 unit of flow through an edge incurs a specific financial Cost. Your goal is still to push the maximum possible flow, but if there are multiple ways to route the flow, you must mathematically guarantee the absolute cheapest route.
 
-</ConceptTemplate>
+## 1. The Successive Shortest Path Algorithm
+The standard Ford-Fulkerson algorithm pushes flow through any arbitrary "augmenting path".
+To solve Min-Cost Max-Flow, you mathematically modify Ford-Fulkerson to always push flow along the **Shortest Path** (where "Shortest" is defined by the Edge Costs).
+Because edge capacities can cause "backwards" residual edges with negative costs, you cannot use Dijkstra's algorithm natively. You must use the **Bellman-Ford Algorithm** (which handles negative weights), or use mathematical **Potentials** (Johnson's trick) to re-weight the graph so you can safely use Dijkstra's for maximum performance.
+
+## 2. Real-World Logistics
+This algorithm is the mathematical backbone of global supply chain management.
+You have 5 factories (Sources) and 50 retail stores (Sinks). Edges are shipping routes. Edges have capacities (Max trucks per day) and Costs ($ per mile). Min-Cost Max-Flow mathematically dictates exactly how many products to put on which trucks to fully stock the stores while minimizing the fuel budget.
+

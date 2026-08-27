@@ -1,8 +1,32 @@
+---
+title: Longest Common Subsequence (LCS)
+description: "A classic mathematical computer science problem used to find the longest sequence that can be derived from two strings by deleting some characters without changing the mathematical order of the remaining characters."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Longest common subsequence">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Longest Common Subsequence (LCS)"
+  subtitle="The Foundation of Git Diff"
+  tags={['Algorithms', 'Strings', 'Dynamic Programming', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A "Subsequence" is mathematically different from a "Substring". A substring must be perfectly contiguous (no gaps). A subsequence allows gaps, as long as the mathematical order remains intact.
+For `"ABCDEF"` and `"ACEG"`, the Longest Common Subsequence is `"ACE"`.
 
-</ConceptTemplate>
+## 1. The DNA Sequence Problem
+LCS is heavily utilized in bioinformatics to mathematically compare two strands of DNA to find evolutionary similarities, and in software engineering to generate the `git diff` between two versions of a text file.
+
+## 2. Dynamic Programming Solution
+Finding the LCS via brute-force recursion results in an exponential O(2^N) time complexity.
+It is standardly solved using a 2D Dynamic Programming matrix.
+- If the characters at `A[i]` and `B[j]` match, the mathematical sequence length increases by 1: `DP[i][j] = 1 + DP[i-1][j-1]`.
+- If they do not match, the algorithm mathematically inherits the best sequence found so far by checking the cell above it and the cell to its left: `DP[i][j] = Math.max(DP[i-1][j], DP[i][j-1])`.
+This elegantly collapses the exponential problem into a polynomial **O(N * M)** time complexity, making it trivial to process files with thousands of lines.
+

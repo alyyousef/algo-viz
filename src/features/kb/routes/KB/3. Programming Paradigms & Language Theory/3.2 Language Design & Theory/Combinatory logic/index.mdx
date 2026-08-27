@@ -1,8 +1,28 @@
+---
+title: Combinatory Logic
+description: A foundational mathematical notation designed to eliminate the need for quantified variables in mathematical logic, heavily influencing the design of functional programming languages.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Combinatory logic">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Combinatory Logic">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Introduced by Moses Schönfinkel and Haskell Curry, Combinatory Logic was designed to strip mathematics down to its absolute barest, variable-free essence.
 
-</ConceptTemplate>
+## 1. Eliminating Variables
+In standard Lambda Calculus, you define a function using variables: $f(x) = x$.
+Combinatory Logic proves that variables are mathematically unnecessary. It replaces them with a small set of primitive, hardcoded functions called **Combinators**.
+The most famous are $S$, $K$, and $I$.
+- The $I$ combinator is the Identity function: $I x = x$.
+Instead of writing a function that explicitly references the variable $x$, you just mathematically compose standard Combinators together to achieve the exact same computational result.
+
+## 2. SKI Combinator Calculus
+Turing proved that the $S$ and $K$ combinators alone are Turing Complete.
+This means that literally any computer program in existence—from a web browser to an operating system—can be mathematically compiled down into an unimaginably massive string containing nothing but the letters $S$ and $K$ and parentheses. While no human writes code in SKI calculus, it provides the mathematical proof that complex variable management in compilers can be systematically eliminated and optimized into pure function application.
+

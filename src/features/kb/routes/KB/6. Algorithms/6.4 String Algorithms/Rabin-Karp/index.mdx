@@ -1,8 +1,30 @@
+---
+title: Rabin-Karp Algorithm
+description: "A string-searching algorithm that mathematically uses a Rolling Hash function to find one or more pattern strings in a massive text, primarily famous for its ability to search for multiple patterns simultaneously."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rabin-Karp">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Rabin-Karp Algorithm"
+  subtitle="Searching Strings with Hashes"
+  tags={['Algorithms', 'Strings', 'Hashing', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard string search (like looking for "APPLE" inside a massive book), the algorithm compares characters one by one. The **Rabin-Karp algorithm** compares *Hashes* instead.
 
-</ConceptTemplate>
+## 1. The Rolling Hash
+Rabin-Karp converts the search pattern "APPLE" into a single mathematical integer (e.g., Hash = 4920).
+It then creates a "Sliding Window" of length 5 at the beginning of the book, and calculates its Hash.
+If the hashes don't match, the algorithm mathematically "rolls" the window one character to the right. The genius of the Rolling Hash (specifically the Rabin-Fingerprint) is that it does not recalculate the hash from scratch. It mathematically subtracts the integer value of the character leaving the window, multiplies by the base, and adds the integer value of the new character entering the window. This takes strictly **O(1)** time per shift.
+
+## 2. Plagiarism Detection
+Because the algorithm compares integers instead of strings, you can use a Hash Set to search for 1,000 different words simultaneously!
+Rabin-Karp is the mathematical foundation of Plagiarism Detection software. It chops a student's essay into thousands of 5-word chunks, calculates their rolling hashes, and instantly compares them against a database of 10 billion known internet hashes in O(1) time per chunk.
+

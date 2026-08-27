@@ -1,8 +1,32 @@
+---
+title: Scrum
+description: The most widely adopted framework within Agile methodology, providing a strict, time-boxed mathematical structure of roles, events, and artifacts to help teams deliver complex software iteratively.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scrum">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Scrum"
+  subtitle="The Agile Timebox Framework"
+  tags={['Process', 'Agile', 'Project Management', 'Frameworks']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Agile is a philosophy (the Agile Manifesto). Scrum is a specific, rigid mathematical framework used to physically implement that philosophy.
 
-</ConceptTemplate>
+## 1. The Mathematical Roles
+Scrum defines exactly three roles, preventing corporate hierarchy from destroying engineering velocity:
+- **Product Owner (PO)**: The single mathematical authority on *what* gets built. They maintain the Product Backlog and prioritize features based on business value.
+- **Scrum Master**: The mathematical enforcer of the Scrum process. Their job is not to manage the engineers, but to remove physical blockers (like a broken CI/CD pipeline) so the engineers can code.
+- **Development Team**: A self-organizing group of 3 to 9 engineers who determine *how* to build the software.
+
+## 2. The Sprint
+Scrum revolves around the **Sprint** (a strict timebox, usually exactly 2 weeks).
+At the start of the Sprint, the team mathematically commits to pulling X amount of "Story Points" from the Backlog.
+Crucially, once the Sprint begins, the Sprint Backlog is mathematically **locked**. The CEO cannot walk in on Wednesday and demand a new feature be added to the current Sprint. This mathematical boundary protects the engineers' cognitive focus, ensuring they can actually finish the work they started.
+

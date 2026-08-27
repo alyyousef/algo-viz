@@ -4,7 +4,14 @@ description: A unidirectional byte stream used to pass the standard output of on
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pipes (Anonymous Pipes)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pipes (Anonymous Pipes)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Pipe** is one of the oldest and most fundamental IPC mechanisms, originating in Unix in 1973. It provides a simple, unidirectional (one-way) byte stream between two processes.
 
@@ -23,11 +30,16 @@ When you execute this command:
 2. The OS creates an Anonymous Pipe between `cat` and `grep`. The output of `cat` is wired directly into the input of `grep`.
 3. The OS creates a second Anonymous Pipe between `grep` and `wc`.
 
+
 <Callout icon="info" title="The Buffer Limit">
-  Pipes are managed entirely by the OS Kernel in RAM. They usually have a strict buffer size limit (e.g., 64 Kilobytes). If Process A writes data too fast and the buffer fills up, the OS will automatically pause Process A until Process B reads some data and clears space. 
+
+
+  Pipes are managed entirely by the OS Kernel in RAM. They usually have a strict buffer size limit (e.g., 64 Kilobytes). If Process A writes data too fast and the buffer fills up, the OS will automatically pause Process A until Process B reads some data and clears space.
+
+
 </Callout>
+
 
 ## Anonymous vs Named
 Standard Pipes are "Anonymous", meaning they have no name and no file on the hard drive. Because of this, they can *only* be used to connect processes that are directly related to each other (e.g., a Parent process spawning a Child process). You cannot use an Anonymous Pipe to connect two completely unrelated programs.
 
-</ConceptTemplate>

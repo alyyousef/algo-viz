@@ -4,23 +4,30 @@ description: The standardized tests used to mathematically evaluate and compare 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model Evaluation Benchmarks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Evaluation Benchmarks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 As hundreds of new LLMs are released monthly, the industry requires standardized, mathematical benchmarks to compare their capabilities. However, evaluating an LLM is notoriously difficult because language is highly subjective, and models often "cheat" by having the benchmark data accidentally included in their training sets (Data Contamination).
 
+
 <Callout icon="tip" title="The LMSYS Chatbot Arena">
+
+
   Because static benchmarks are often "gamed" by models, the community largely relies on the **LMSYS Chatbot Arena**. It is a blind, crowdsourced A/B testing platform where a human provides a prompt, two anonymous models generate answers, and the human votes on the winner. The models are then ranked using the mathematical Elo rating system (like in Chess).
+
+
 </Callout>
+
 
 ## Standard Static Benchmarks
 
-<ComparisonTable 
-  headers={['Benchmark', 'Domain', 'Description']}
-  rows={[
-    ['MMLU (Massive Multitask Language Understanding)', 'General Knowledge', 'The gold standard. 57 subjects across STEM, humanities, and others. Evaluates if the model possesses world knowledge and problem-solving ability.'],
-    ['HumanEval', 'Coding', 'A set of 164 hand-written programming problems. The model must write a Python function, which is then executed against hidden unit tests. Measures actual logic, not just syntax.'],
-    ['GSM8K', 'Mathematics', 'Grade School Math word problems. Tests the model\'s ability to perform multi-step mathematical reasoning.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Benchmark', 'Domain', 'Description']} rows={[ ['MMLU (Massive Multitask Language Understanding)', 'General Knowledge', 'The gold standard. 57 subjects across STEM, humanities, and others. Evaluates if the model possesses world knowledge and problem-solving ability.'], ['HumanEval', 'Coding', 'A set of 164 hand-written programming problems. The model must write a Python function, which is then executed against hidden unit tests. Measures actual logic, not just syntax.'], ['GSM8K', 'Mathematics', 'Grade School Math word problems. Tests the model\'s ability to perform multi-step mathematical reasoning.'] ]} />
+
+

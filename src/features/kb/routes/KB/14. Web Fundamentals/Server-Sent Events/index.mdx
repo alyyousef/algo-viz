@@ -4,16 +4,23 @@ description: A lightweight, unidirectional protocol built into HTTP that allows 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Server-Sent Events (SSE)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Server-Sent Events (SSE)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you are building a real-time stock ticker, you need the server to push updates to the browser. 
+If you are building a real-time stock ticker, you need the server to push updates to the browser.
 While WebSockets provide bi-directional communication, they require a complex, stateful TCP tunnel and heavy backend infrastructure.
 
 If the browser only needs to *receive* data (unidirectional), the modern standard is **Server-Sent Events (SSE)**.
 
 ## How SSE Works
 
-SSE is not a new protocol; it is 100% standard HTTP. 
+SSE is not a new protocol; it is 100% standard HTTP.
 1. The browser opens a standard HTTP GET request to the server.
 2. The server responds with the header `Content-Type: text/event-stream`.
 3. The server leaves the HTTP connection open indefinitely.
@@ -23,4 +30,3 @@ SSE is not a new protocol; it is 100% standard HTTP.
 - **Native Reconnection**: If the user drives through a tunnel and drops cellular service, the browser's native `EventSource` API will automatically attempt to reconnect to the server, track the last received ID, and request the missing data. WebSockets force you to write this complex reconnection logic manually.
 - **Firewall Friendly**: Because SSE is just standard HTTP over Port 443, enterprise firewalls and load balancers pass it through effortlessly. WebSockets frequently get blocked or mangled by aggressive corporate proxies.
 
-</ConceptTemplate>

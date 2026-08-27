@@ -1,8 +1,28 @@
+---
+title: Datalog
+description: A purely declarative logic programming language derived from Prolog, heavily used in modern database theory and static code analysis.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Datalog">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Datalog">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Datalog is a declarative logic language mathematically derived from Prolog. While Prolog is a general-purpose programming language (that can mathematically get stuck in infinite loops), Datalog is strictly constrained. It is mathematically guaranteed that any Datalog query will terminate and return an answer.
 
-</ConceptTemplate>
+## 1. Facts and Rules
+Like Prolog, you do not write commands in Datalog. You mathematically declare a database of Facts, and a set of logical Rules.
+- Fact: `parent(john, mary).`
+- Rule: `ancestor(X, Y) :- parent(X, Y).` (X is the ancestor of Y IF X is the parent of Y).
+- Recursive Rule: `ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).` (X is the ancestor of Y IF X is the parent of Z, AND Z is the ancestor of Y).
+
+The Datalog engine mathematically processes these rules and dynamically generates a virtual database of all possible ancestors.
+
+## 2. Modern Resurgence
+For decades, Datalog was just an academic mathematical curiosity. Today, it powers some of the most advanced systems in the world. **Datomic** (a revolutionary immutable database created by the author of Clojure) uses Datalog as its primary query language. Furthermore, AWS uses Datalog mathematically under the hood to analyze and verify complex IAM security policies.
+

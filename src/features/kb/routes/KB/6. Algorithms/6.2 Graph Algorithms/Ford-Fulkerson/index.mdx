@@ -1,8 +1,34 @@
+---
+title: Ford-Fulkerson Method
+description: "A foundational mathematical method for computing the maximum flow in a flow network, relying on the continuous discovery of augmenting paths and the concept of residual graphs to push flow from a source to a sink."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ford-Fulkerson">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Ford-Fulkerson Method"
+  subtitle="The Foundation of Max Flow"
+  tags={['Algorithms', 'Graphs', 'Network Flow', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine a network of water pipes of varying widths connecting a water treatment plant (Source) to a city (Sink). What is the absolute mathematical maximum gallons of water per minute you can push through the network? This is the Max-Flow problem.
 
-</ConceptTemplate>
+## 1. The Residual Graph
+Ford-Fulkerson mathematically relies on "undoing" bad decisions.
+If the algorithm pushes 10 gallons of water through Pipe A->B, it mathematically creates a **Residual Edge** of 10 gallons going backward from B->A.
+Later in the execution, if the algorithm finds a better use for Pipe A->B, it is allowed to push water backward along the B->A residual edge, mathematically "canceling out" the original flow and redirecting the water elsewhere.
+
+## 2. The Augmenting Path
+The algorithm is mathematically simple:
+1. Find *any* path from Source to Sink in the Residual Graph where the bottleneck capacity is > 0. (An Augmenting Path).
+2. Push the bottleneck capacity through that path.
+3. Update the forward capacities and backward residual edges.
+4. Repeat until no more augmenting paths exist.
+(Note: It is called a "Method" rather than an "Algorithm" because it does not specify *how* to find the path. If BFS is used, it becomes the Edmonds-Karp algorithm).
+

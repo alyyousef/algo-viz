@@ -1,8 +1,43 @@
+---
+title: Mathematical Induction
+description: "The foundational proof technique in discrete mathematics, used to rigorously prove that a theorem is true for an infinite sequence of numbers by proving a base case and a cascading logical step."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mathematical induction">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Mathematical Induction"
+  subtitle="The Infinite Domino Effect"
+  tags={['Mathematics', 'Discrete Math', 'Proof Techniques', 'Logic']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a computer scientist writes a recursive algorithm and wants to formally prove to a bank that it will *always* produce the correct answer for *any* input size $N$, they use **Mathematical Induction**.
 
-</ConceptTemplate>
+## 1. The Analogy (Dominoes)
+If you have an infinite line of dominoes, how do you mathematically prove that *every single domino* will fall over? You cannot test them all individually (infinity).
+Instead, you only need to prove two things:
+1. **The Base Case**: You prove that you can knock over the very first domino.
+2. **The Inductive Step**: You prove a rule: *"If domino $k$ falls, it is mathematically guaranteed to knock over domino $k+1$."*
+If both are true, logic dictates that domino 1 knocks over 2, which knocks over 3, cascading to infinity.
+
+## 2. The Formal Structure
+Let $P(n)$ be a mathematical statement (e.g., "The sum of the first $n$ integers is $\frac{n(n+1)}{2}$").
+1. **Base Case**: Prove $P(1)$ is true.
+   - For $n=1$, the sum is $1$. The formula gives $\frac{1(2)}{2} = 1$. The base case holds.
+2. **Inductive Hypothesis**: Assume $P(k)$ is true for some arbitrary integer $k$.
+   - Assume: $1 + 2 + ... + k = \frac{k(k+1)}{2}$
+3. **Inductive Step**: Using that assumption, algebraically prove $P(k+1)$ is true.
+   - We must prove: $1 + ... + k + (k+1) = \frac{(k+1)(k+2)}{2}$
+   - Substituting our assumption: $\frac{k(k+1)}{2} + (k+1)$
+   - Finding a common denominator: $\frac{k(k+1) + 2(k+1)}{2}$
+   - Factoring: $\frac{(k+1)(k+2)}{2}$. The proof is complete.
+
+## 3. Application in Computer Science
+Every time you write a Recursive function, you are mathematically implementing Induction. The Base Case of induction is the Base Case of the recursion. The Inductive Step is the recursive call. If the math holds, the algorithm is proven correct.
+

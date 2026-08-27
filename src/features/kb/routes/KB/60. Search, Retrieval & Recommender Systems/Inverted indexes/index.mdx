@@ -4,15 +4,27 @@ description: A database index storing a mapping from content, such as words or n
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Inverted Indexes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Inverted Indexes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Inverted Index** is the mathematical data structure that makes Full-Text Search possible. It is exactly like the biological index at the back of a textbook.
 
+
 <Callout icon="success" title="Reversing the Map">
+
+
   A normal database maps a `Document_ID` to a list of words.
   An Inverted Index maps a `Word` to a list of `Document_IDs`.
-  
+
   If the word "apple" appears in Document 4, 9, and 20, the Inverted Index stores: `"apple" -> [4, 9, 20]`. When a user searches for "apple", the engine biologically skips searching; it just mathematically looks up the word in a Hash Map in $O(1)$ time, instantly returning the three Document IDs.
+
+
 </Callout>
 
-</ConceptTemplate>
+

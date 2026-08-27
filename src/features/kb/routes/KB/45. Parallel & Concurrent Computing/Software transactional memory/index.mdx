@@ -4,25 +4,37 @@ description: A concurrency control mechanism analogous to database transactions 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Software Transactional Memory (STM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Software Transactional Memory (STM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Managing Mutexes is mathematically prone to Deadlocks. Writing Lock-Free Data Structures is mathematically too difficult for mere mortals. 
+Managing Mutexes is mathematically prone to Deadlocks. Writing Lock-Free Data Structures is mathematically too difficult for mere mortals.
 
 **Software Transactional Memory (STM)** (championed by the Clojure and Haskell languages) asks: *"Why can't we just treat our computer's RAM exactly like a SQL Database?"*
 
+
 <Callout icon="success" title="The ACID Promise in RAM">
+
+
   In a SQL database, if you want to update two rows safely, you wrap them in a `BEGIN TRANSACTION` and `COMMIT`. If anything fails, it mathematically rolls back. STM brings this exact paradigm to variables in RAM.
+
+
 </Callout>
+
 
 ## How STM Mathematically Works
 
-Instead of locking a variable, a thread enters an STM block. 
+Instead of locking a variable, a thread enters an STM block.
 1. The thread takes a mathematical "snapshot" of the variables it wants to modify.
 2. It performs all its complex math and logic entirely on its private snapshot (Optimistic Concurrency).
 3. When it is finished, it attempts to `COMMIT` the snapshot back to main RAM.
 
-If another thread happened to modify those variables while the first thread was working, the STM engine mathematically detects the collision, instantly discards the snapshot, and automatically forces the first thread to retry the entire block from the beginning. 
+If another thread happened to modify those variables while the first thread was working, the STM engine mathematically detects the collision, instantly discards the snapshot, and automatically forces the first thread to retry the entire block from the beginning.
 
 It is completely Deadlock-free by mathematical design.
 
-</ConceptTemplate>

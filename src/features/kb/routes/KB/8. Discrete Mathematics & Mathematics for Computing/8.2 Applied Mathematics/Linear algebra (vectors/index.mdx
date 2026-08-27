@@ -1,8 +1,49 @@
+---
+title: Linear Algebra (Vectors)
+description: "The mathematics of arrays of numbers, vectors, and spaces, acting as the fundamental language of computer graphics, physics simulations, and machine learning."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Linear algebra (vectors">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Vectors"
+  subtitle="The Language of Space and Data"
+  tags={['Mathematics', 'Linear Algebra', 'Machine Learning', 'Graphics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In programming, a **Vector** is a 1-Dimensional Array of numbers (e.g., `[1.5, -2.0, 3.1]`). In mathematics, Linear Algebra defines a vector as an abstract object possessing both Magnitude (length) and Direction in space.
 
-</ConceptTemplate>
+## 1. Vectors as Coordinates
+A vector like $\vec{v} = \begin{bmatrix} 3 \\ 4 \end{bmatrix}$ can be mathematically viewed in two ways:
+1. **Computer Science**: A list of two pieces of data.
+2. **Geometry**: An arrow pointing from the origin $(0,0)$ to the coordinate $(3,4)$.
+
+## 2. Vector Operations
+Vectors have strict mathematical rules for interaction:
+- **Addition**: Adding two vectors physically chains them together tail-to-head. Mathematically, you just add the matching array indices: $[1, 2] + [3, 4] = [4, 6]$.
+- **Scalar Multiplication**: Multiplying a vector by a single number scales its length. $2 \times [3, 4] = [6, 8]$.
+
+
+<Callout type="info" title="The Dot Product">
+
+
+  The **Dot Product** takes two vectors and mathematically crushes them down into a single scalar number. It measures how much two vectors "align" with each other. In Machine Learning, the dot product is heavily used in Attention Mechanisms (Transformers) to calculate how strongly two different words in a sentence relate to each other mathematically.
+
+
+</Callout>
+
+
+## 3. Vector Embeddings (AI)
+In modern AI, neural networks cannot read English words. Instead, they mathematically translate every word into a dense Vector with hundreds of dimensions (a **Word Embedding**).
+For example, the word "King" might become a 300-dimension array. Because they are mathematical vectors, you can do algebra on concepts! The most famous proof of this is:
+$\vec{King} - \vec{Man} + \vec{Woman} \approx \vec{Queen}$.
+The AI learns that the mathematical vector distance representing gender is universally applicable across royalty.
+
+\n

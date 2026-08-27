@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Linkerd
+description: An ultra-lightweight, security-focused Service Mesh for Kubernetes that utilizes a specialized Rust-based micro-proxy to mathematically secure and observe cluster communications with minimal resource overhead.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Linkerd">
+<TechnologyTemplate
+  title="Linkerd"
+  subtitle="The Lightweight Service Mesh"
+  tags={['Kubernetes', 'Service Mesh', 'Networking', 'Rust']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Istio is the dominant enterprise Service Mesh, it is notoriously massive, complex, and consumes significant mathematical compute resources. Linkerd (a CNCF graduated project) was built as the minimalist, zero-configuration alternative.
 
-</ConceptTemplate>
+## 1. The Rust Micro-Proxy
+Istio utilizes the Envoy proxy (written in C++). Linkerd completely rewrote its sidecar proxy from scratch in **Rust** (called the `linkerd2-proxy`).
+Rust provides absolute mathematical memory safety (preventing buffer overflows) while delivering extreme performance. The Linkerd proxy is so small and mathematically efficient that it adds less than 1 millisecond of latency and consumes less than 10MB of RAM per Pod, making it feasible to inject into clusters with thousands of tiny microservices without bankrupting the cloud bill.
+
+## 2. Zero-Config mTLS
+Linkerd's primary mathematical philosophy is simplicity.
+To install Istio requires weeks of mathematical configuration. To install Linkerd, a developer simply runs `linkerd install | kubectl apply -f -`. Instantly, all communication between Pods is automatically encrypted via mutually authenticated TLS (mTLS). Linkerd mathematically acts as its own Certificate Authority, automatically rotating cryptographic certificates every 24 hours with absolutely zero human configuration required.
+
+</TechnologyTemplate>

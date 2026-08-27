@@ -4,23 +4,30 @@ description: Vulnerabilities in how a web application identifies and verifies it
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Authentication Flaws">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Authentication Flaws">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Authentication is the front door to an application. If the mathematical implementation of the login system is flawed, attackers can simply walk through the front door disguised as legitimate users, bypassing all internal firewalls and IDS sensors.
 
+
 <Callout icon="warning" title="Credential Stuffing">
+
+
   The most common authentication attack today is Credential Stuffing. Hackers take billions of leaked username/password combinations from previous breaches (like the Yahoo breach) and mathematically automate scripts to try those exact combinations on *your* website, hoping users reused their passwords.
+
+
 </Callout>
+
 
 ## Common Authentication Vulnerabilities
 
-<ComparisonTable 
-  headers={['Vulnerability', 'Description', 'Mitigation']}
-  rows={[
-    ['Weak Password Policies', 'Allowing users to set passwords like `password123`, which can be mathematically cracked in milliseconds.', 'Enforce length requirements (min 12 chars), and block known breached passwords using services like HaveIBeenPwned.'],
-    ['Lack of Rate Limiting', 'Allowing an attacker to attempt 50,000 different passwords on the login screen in a single minute (Brute Force).', 'Implement CAPTCHAs, temporary account lockouts after 5 failed attempts, and mathematical IP-based rate limiting.'],
-    ['Improper Session Invalidation', 'When a user clicks "Log Out," the frontend deletes the cookie, but the backend doesn\'t actually destroy the mathematical session token in the database.', 'Ensure the backend strictly invalidates tokens on logout or timeout.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Vulnerability', 'Description', 'Mitigation']} rows={[ ['Weak Password Policies', 'Allowing users to set passwords like `password123`, which can be mathematically cracked in milliseconds.', 'Enforce length requirements (min 12 chars), and block known breached passwords using services like HaveIBeenPwned.'], ['Lack of Rate Limiting', 'Allowing an attacker to attempt 50,000 different passwords on the login screen in a single minute (Brute Force).', 'Implement CAPTCHAs, temporary account lockouts after 5 failed attempts, and mathematical IP-based rate limiting.'], ['Improper Session Invalidation', 'When a user clicks "Log Out," the frontend deletes the cookie, but the backend doesn\'t actually destroy the mathematical session token in the database.', 'Ensure the backend strictly invalidates tokens on logout or timeout.'] ]} />
+
+

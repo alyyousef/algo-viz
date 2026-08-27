@@ -5,12 +5,19 @@ description: "A modern, open-source programming language designed specifically f
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Ballerina"
   icon="globe"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Developed by WSO2 and released in 2017, **Ballerina** is a general-purpose, statically typed, concurrent programming language with a very specific focus: **Cloud-Native Integration**. 
+Developed by WSO2 and released in 2017, **Ballerina** is a general-purpose, statically typed, concurrent programming language with a very specific focus: **Cloud-Native Integration**.
 
 ## The Network is Native
 
@@ -35,8 +42,13 @@ service /hello on new http:Listener(8080) {
 }
 ```
 
+
 <Callout icon="tip" title="Graphical Programming">
+
+
 Because of its strict syntax rules regarding network interactions, any Ballerina code can be automatically rendered into a highly accurate Sequence Diagram, allowing architects to visualize microservice communications instantly.
+
+
 </Callout>
 
-</ConceptTemplate>
+

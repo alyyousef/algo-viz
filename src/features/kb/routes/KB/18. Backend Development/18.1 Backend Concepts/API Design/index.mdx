@@ -4,7 +4,14 @@ description: The evolution of how systems communicate, transitioning from URL-ba
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="API Design (REST, GraphQL, gRPC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="API Design (REST, GraphQL, gRPC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **API (Application Programming Interface)** is the contract that allows the frontend to request data from the backend.
 
@@ -22,7 +29,7 @@ The absolute industry standard since the 2000s. REST treats everything as a **Re
 2. **Under-fetching (The N+1 Problem)**: If you need a user and their recent posts, you often have to make one request to `/users/123`, wait for the response, and then make a second request to `/users/123/posts`, causing slow waterfall network latency.
 
 ## 2. GraphQL
-Invented by Facebook to solve REST's flaws. GraphQL has exactly ONE endpoint (`POST /graphql`). 
+Invented by Facebook to solve REST's flaws. GraphQL has exactly ONE endpoint (`POST /graphql`).
 Instead of hitting different URLs, the client sends a mathematical query string explicitly asking for exactly what it needs, and the server returns exactly that—nothing more, nothing less.
 
 ```graphql
@@ -40,7 +47,6 @@ GraphQL mathematically solved Over-fetching and Under-fetching, but it shifts im
 
 ## 3. gRPC (Remote Procedure Call)
 Created by Google. While REST and GraphQL send JSON strings over HTTP/1.1, JSON parsing is computationally expensive.
-**gRPC** uses **Protocol Buffers (Protobufs)** to serialize data into pure, ultra-fast **Binary**. It operates over HTTP/2, allowing for bidirectional streaming. 
+**gRPC** uses **Protocol Buffers (Protobufs)** to serialize data into pure, ultra-fast **Binary**. It operates over HTTP/2, allowing for bidirectional streaming.
 gRPC is generally not used for Frontend-to-Backend communication (because browsers struggle with raw binary), but it is the absolute industry standard for internal **Microservice-to-Microservice** communication where maximum performance is required.
 
-</ConceptTemplate>

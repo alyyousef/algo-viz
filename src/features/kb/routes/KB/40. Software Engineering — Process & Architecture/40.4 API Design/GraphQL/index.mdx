@@ -1,8 +1,39 @@
+---
+title: GraphQL
+description: A powerful query language for APIs developed by Facebook that mathematically allows clients to request exactly the data they need—no more, no less—solving the over-fetching and under-fetching problems of REST.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GraphQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="GraphQL"
+  subtitle="Client-Driven Mathematical Querying"
+  tags={['API', 'GraphQL', 'Architecture', 'Web']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard REST API, the *Server* mathematically dictates the shape of the data. If `GET /users/1` returns 50 fields, the mobile app receives 50 fields, even if it only needed the user's `firstName`. This is **Over-fetching**.
 
-</ConceptTemplate>
+## 1. The Client Dictates the Shape
+GraphQL mathematically inverts this architecture. The Server publishes a strict mathematical Schema of what is *possible*, but the *Client* sends a query specifying exactly the shape it wants in response.
+Client requests:
+```graphql
+query {
+  user(id: 1) {
+    firstName
+    company {
+      name
+    }
+  }
+}
+```
+
+## 2. Solving Under-fetching
+In REST, if you need a user's details and their recent posts, you must make two separate HTTP network calls: `GET /users/1` and `GET /users/1/posts`. This is **Under-fetching** (the N+1 problem).
+With GraphQL, the mathematical graph traversal happens on the server. The client sends one single HTTP POST request, and the server's Resolvers mathematically query the User database and the Post database simultaneously, returning the exact, nested JSON shape requested in exactly one network round-trip.
+

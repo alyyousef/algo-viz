@@ -5,16 +5,23 @@ description: "A fast, lightweight, embeddable scripting language heavily used in
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Lua"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Lua** (Portuguese for "Moon") was created in Brazil in 1993. It was explicitly designed to be a lightweight, embeddable scripting language. The entire Lua interpreter is written in clean C and is astonishingly small (under 300KB).
 
 ## The King of Game Scripting
 
-Because Lua is so fast, lightweight, and easy to bind to C/C++, it became the absolute standard for scripting logic inside game engines. 
+Because Lua is so fast, lightweight, and easy to bind to C/C++, it became the absolute standard for scripting logic inside game engines.
 - **World of Warcraft**: The entire UI and addon system is written in Lua.
 - **Roblox**: The sole programming language used to build Roblox games (Luau, a specialized fork).
 - **Angry Birds**: Built entirely using the Lua-based framework LÖVE.
@@ -48,4 +55,3 @@ end
 print("Equipped: " .. inventory[1]) -- Prints "Sword"
 ```
 
-</ConceptTemplate>

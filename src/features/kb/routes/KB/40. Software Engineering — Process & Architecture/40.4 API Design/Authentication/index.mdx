@@ -1,8 +1,30 @@
+---
+title: Authentication vs Authorization
+description: "The two fundamental mathematical pillars of API security: Authentication cryptographically proves *who* the client is, while Authorization mathematically dictates *what* that client is allowed to do."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Authentication">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Authentication & Authorization"
+  subtitle="The Mathematical Pillars of Identity"
+  tags={['API', 'Security', 'Web', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a stateless REST API, the server mathematically forgets the client exists after every HTTP request. If a client requests a bank balance, the server must cryptographically verify their identity from scratch every single time.
 
-</ConceptTemplate>
+## 1. Authentication (Who are you?)
+Authentication is the mathematical proof of identity.
+When a user logs in with a password, the server verifies the hash. Because REST is stateless, the server mathematically signs a JSON Web Token (JWT) using a secret cryptographic key (e.g., HMAC-SHA256) and hands it to the client.
+The client sends this token in the `Authorization: Bearer <token>` header with every subsequent request. The server verifies the signature to mathematically guarantee the client is who they claim to be, without needing to query the database.
+
+## 2. Authorization (What can you do?)
+Once the server knows the client is "Alice" (Authentication), it must check **Authorization**.
+Alice requests `DELETE /users/bob`. The API mathematically checks Alice's Role-Based Access Control (RBAC). Is Alice an Admin? No. The API rejects the request with a `403 Forbidden` status code. Authentication proved it was Alice; Authorization proved Alice didn't have the mathematical permissions.
+

@@ -1,8 +1,35 @@
+---
+title: SLIs (Service Level Indicators)
+description: The specific, quantitative mathematical metrics chosen by engineers to accurately measure the actual performance and reliability of a service from the perspective of the end user.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SLIs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="SLIs (Service Level Indicators)"
+  subtitle="Mathematical Performance Measurement"
+  tags={['SRE', 'Metrics', 'Monitoring', 'Observability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You cannot manage what you cannot mathematically measure. A Service Level Indicator (SLI) is the absolute foundational metric upon which all SRE practices (SLOs, SLAs, and Error Budgets) are built.
 
-</ConceptTemplate>
+## 1. The Mathematical Ratio
+An SLI is almost always expressed as a mathematical ratio representing a percentage of success:
+`(Number of Successful Events / Total Number of Events) * 100`
+
+If an API receives 1,000 HTTP requests in a minute, and 999 return a 200 OK, the Availability SLI is mathematically **99.9%**.
+
+## 2. Choosing the Right SLI
+The hardest part of SRE is choosing an SLI that mathematically represents the *user's* pain.
+If you use "Server CPU usage &lt; 80%" as an SLI, it is a mathematical failure. The user does not care about your CPU. They care if the page loads.
+Therefore, Google SRE defines standard SLIs:
+- **Availability SLI**: The proportion of HTTP requests that do not return a 5xx error.
+- **Latency SLI**: The proportion of HTTP requests that successfully complete in under 200 milliseconds.
+If these specific mathematical indicators drop, you know for a fact the user is suffering.
+

@@ -5,12 +5,19 @@ description: A powerful unsupervised technique for dimensionality reduction, fea
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Principal Component Analysis (PCA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Principal Component Analysis (PCA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Principal Component Analysis (PCA)** is an unsupervised mathematical technique used for **Dimensionality Reduction**. It crushes a dataset with 1,000 features down to 10 features while retaining 95% of the original variance (information).
 
 ## 1. The Curse of Dimensionality
-In Machine Learning, adding more features usually helps—until it doesn't. 
+In Machine Learning, adding more features usually helps—until it doesn't.
 As the number of dimensions approaches the hundreds or thousands, the mathematical volume of the space explodes exponentially. Data points become so isolated that algorithms can no longer find patterns, and distance metrics (like Euclidean distance in KNN) become mathematically meaningless.
 
 ## 2. The Mathematics of PCA
@@ -28,8 +35,13 @@ PCA does not simply delete columns. It executes a strict linear transformation t
 - **Data Compression**: Storing a 1000-dimension dataset in 50 dimensions saves massive amounts of RAM and speeds up downstream algorithms like SVMs.
 - **Visualization**: Human brains cannot perceive 50-dimensional space. By mathematically crushing a complex dataset down to exactly PC1 and PC2, engineers can plot a 2D scatter graph and visually observe distinct clusters.
 
+
 <Callout icon="warning" title="Loss of Interpretability">
+
+
 When you apply PCA, your features are no longer "Square Footage" and "Bedrooms". PC1 might be a mathematical amalgamation of `0.45 * SqFt - 0.21 * Bedrooms + 0.12 * ZipCode`. The resulting model becomes a total black-box to business stakeholders.
+
+
 </Callout>
 
-</ConceptTemplate>
+

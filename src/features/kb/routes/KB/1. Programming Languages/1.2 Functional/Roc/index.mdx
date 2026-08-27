@@ -1,8 +1,25 @@
+---
+title: Roc
+description: A fast, friendly, purely functional language designed by the creator of Elm, aimed at backend and systems programming.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Roc">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Roc">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Richard Feldman, Roc is a purely functional, statically typed language. It mathematically takes the brilliant, human-friendly concepts of **Elm** (no runtime exceptions, clear error messages, pure functions) and applies them to general-purpose backend programming.
 
-</ConceptTemplate>
+## 1. The Platform Architecture
+Most languages compile an application and execute it.
+Roc uses a mathematically unique "Platform" architecture. When you write a Roc app, you do not have direct access to the Operating System (you cannot write to a file). Instead, you write pure functions that mathematically interact with a **Platform** (written in Rust, C, or Zig).
+The Platform handles all the messy, stateful I/O (like reading a database or listening to an HTTP port), and passes the data into your pure Roc code. This mathematically isolates business logic from infrastructure, making Roc incredibly safe and testable.
+
+## 2. Extreme Performance
+Unlike Elm (which targets JavaScript), Roc targets native machine code via LLVM. It is mathematically designed to compete with Rust and Go in execution speed. Through advanced compiler optimizations (like automatic reference counting and morphic memory allocation), Roc achieves C-level performance while remaining a purely functional, garbage-collected language.
+

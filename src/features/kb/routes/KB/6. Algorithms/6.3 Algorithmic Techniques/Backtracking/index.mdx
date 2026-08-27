@@ -1,8 +1,31 @@
+---
+title: Backtracking
+description: "A general algorithmic technique that considers searching every possible combination in order to solve an optimization problem, mathematically abandoning partial candidates (backtracking) as soon as it determines they cannot possibly succeed."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Backtracking">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Backtracking"
+  subtitle="Intelligent Brute Force"
+  tags={['Algorithms', 'Techniques', 'DFS', 'Recursion']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Backtracking is mathematically a refined form of brute-force search. It is most famously used to solve constraint satisfaction problems like Sudoku, the N-Queens problem, and generating permutations.
 
-</ConceptTemplate>
+## 1. The Recursive Decision Tree
+At its core, Backtracking is a Depth-First Search (DFS) applied to a mathematical "Decision Tree."
+In a Sudoku solver, the algorithm looks at the first empty square and makes a choice: *Try placing the number 1.*
+It then recursively calls itself and moves to the next square: *Try placing the number 1.*
+If the rules of Sudoku are mathematically violated, the algorithm immediately stops exploring this branch. It **backtracks**, un-does the placement, and tries the number 2.
+
+## 2. Pruning the Search Space
+If you brute-force an empty 9x9 Sudoku board blindly, there are 9^81 possible combinations, which would take millions of years to compute.
+Backtracking is mathematically viable solely because of **Pruning**. By checking the constraints (e.g., "Is this number already in the row?") *before* going deeper into the recursion, it mathematically chops off massive sections of the decision tree, reducing the 9^81 combinations down to a manageable few thousand, solving the puzzle in milliseconds.
+

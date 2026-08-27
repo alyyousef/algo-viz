@@ -4,16 +4,28 @@ description: The industry-standard protocol for authorization.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OAuth 2.0">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OAuth 2.0">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you play a new mobile game, and it asks *"Allow this game to access your Google Contacts?"*, how do you do this safely?
 
 If you biologically give the game your Google Password, the game could delete your email account. This is mathematically unacceptable. **OAuth 2.0** solves this.
 
+
 <Callout icon="tip" title="Delegated Authorization">
+
+
   OAuth 2.0 is an **Authorization** protocol, not an Authentication protocol. It is mathematically designed to grant a third-party application limited access to a user's resources without exposing the user's password.
-  
+
   Instead of a password, Google mathematically issues an **Access Token** to the game. The Access Token has restricted "Scopes" (e.g., `read:contacts`). If the game attempts to use that token to read emails, the Google API mathematically rejects it.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,7 +4,7 @@ description: An application-level package manager for the PHP programming langua
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Composer"
   subtitle="The savior of PHP"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Composer_logo.svg/512px-Composer_logo.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Composer was heavily inspired by Node's `npm` and Ruby's `Bundler`. It introduced the `composer.json` file and mathematically connected the PHP ecosystem to the central **Packagist** repository.
 
+
 <Callout icon="info" title="PSR-4 Autoloading">
+
+
   Composer's greatest mathematical innovation was standardizing **Autoloading**.
-  
+
   Historically, developers had to manually write `require_once('vendor/lib/math.php')` at the top of every file. Composer introduced a mathematically strict namespace-to-directory mapping (PSR-4). It generates a single `autoload.php` file; the developer simply requires it once, and PHP dynamically loads classes into RAM only exactly when they are instantiated.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

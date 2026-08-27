@@ -1,8 +1,29 @@
+---
+title: RISC-V Assembly
+description: The open-source, royalty-free Instruction Set Architecture that is rapidly disrupting the global semiconductor industry.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RISC-V Assembly">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RISC-V Assembly">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Unlike x86 (owned by Intel/AMD) or ARM (owned by ARM Holdings, requiring massive licensing fees), RISC-V (pronounced "Risk-Five") is an **open standard** Instruction Set Architecture (ISA). Any company or university can mathematically design and manufacture a RISC-V CPU without paying a cent in royalties.
 
-</ConceptTemplate>
+## 1. The Modular Architecture
+RISC-V is mathematically designed to be modular.
+The base integer instruction set (RV32I) is incredibly tiny, containing less than 50 mathematical instructions (like `add`, `sub`, `lw`, `sw`). This base set is enough to build a fully functional, Turing-complete CPU for a microwave or a smartwatch.
+If you need more power, you mathematically bolt on extensions:
+- **M**: Integer Multiplication and Division.
+- **A**: Atomic instructions for concurrency.
+- **F**: Single-precision floating-point math.
+A full Linux-capable desktop CPU is just the base set plus specific mathematical extensions (often abbreviated as RV64GC).
+
+## 2. The Assembly Syntax
+RISC-V assembly is arguably the cleanest and most mathematically logical assembly language currently in use, heavily influenced by MIPS. It uses 32 standard registers (x0 to x31), where x0 is mathematically hardwired to the constant 0 (a brilliant architectural decision that removes the need for specific "Clear" or "Move Zero" instructions).
+

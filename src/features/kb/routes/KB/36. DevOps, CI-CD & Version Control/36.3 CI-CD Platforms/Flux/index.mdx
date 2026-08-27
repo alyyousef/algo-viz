@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Flux
+description: An open-source, extensible GitOps toolkit specifically designed to mathematically reconcile Kubernetes cluster state with configuration files stored in external Git repositories.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Flux">
+<TechnologyTemplate
+  title="Flux"
+  subtitle="The GitOps Brain for Kubernetes"
+  tags={['DevOps', 'Kubernetes', 'GitOps', 'Automation']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Flux (alongside Argo CD) is the mathematical engine powering the GitOps revolution. Developed by Weaveworks, it eliminates the need to grant CI systems direct administrative access to Kubernetes clusters.
 
-</ConceptTemplate>
+## 1. The Pull Mechanism
+Traditional deployments use a "Push" model: Jenkins runs `kubectl apply` to push changes into the cluster. This mathematically requires giving Jenkins the cluster's root admin token, a massive security vulnerability.
+Flux uses a "Pull" model. You install the Flux agent *inside* the cluster. Flux reaches out to GitHub. It mathematically calculates the diff between the Git repo (Desired State) and the cluster (Live State). If they diverge, Flux automatically pulls the changes and applies them internally. The cluster is mathematically sealed; no external system can push to it.
+
+## 2. Kustomize and Helm Integration
+Flux does not just blindly apply raw YAML.
+It mathematically natively integrates with **Kustomize** and **Helm**. If a developer commits an update to a Helm Chart's `values.yaml` file, Flux detects the change, mathematically re-renders the entire Helm chart into raw Kubernetes resources, and applies the update gracefully without human intervention.
+
+</TechnologyTemplate>

@@ -4,9 +4,16 @@ description: The mathematical search process required to find the absolute optim
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hyperparameter Optimisation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hyperparameter Optimisation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In Machine Learning, a **Parameter** is a mathematical weight the algorithm learns internally during training (e.g., the slope of the line). 
+In Machine Learning, a **Parameter** is a mathematical weight the algorithm learns internally during training (e.g., the slope of the line).
 A **Hyperparameter** is an architectural configuration that the human must set *before* training begins (e.g., the depth of a Decision Tree, or the Learning Rate of a Neural Network).
 
 Because the human has no idea what the perfect Learning Rate is, Data Scientists must execute **Hyperparameter Optimisation**—a massive mathematical search algorithm to find the best settings.
@@ -28,7 +35,6 @@ Mathematically, Random Search is vastly superior to Grid Search. In a Grid Searc
 Grid and Random Search are mathematically blind. When Random Search tests Model #5 and it fails, it does not use that failure to inform Model #6.
 
 **Bayesian Optimisation** uses AI to tune the AI.
-It treats the hyperparameter search as a mathematical function to be solved. It trains a surrogate probability model (usually a Gaussian Process) to predict how well a combination will perform before it actually trains the massive AI. 
+It treats the hyperparameter search as a mathematical function to be solved. It trains a surrogate probability model (usually a Gaussian Process) to predict how well a combination will perform before it actually trains the massive AI.
 If it tests a Learning Rate of 0.1 and gets 80% accuracy, and 0.05 gets 90% accuracy, the Bayesian math updates its posterior distribution and realizes: "I should mathematically concentrate my next search around 0.04", drastically reducing the total number of models that need to be trained.
 
-</ConceptTemplate>

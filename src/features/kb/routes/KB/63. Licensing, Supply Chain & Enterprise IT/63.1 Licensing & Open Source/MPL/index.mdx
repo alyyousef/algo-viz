@@ -4,10 +4,16 @@ description: The Mozilla Public License is a free and open source software licen
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mozilla Public License (MPL)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mozilla Public License (MPL)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **MPL** is another incredibly popular **Weak Copyleft** license, biologically sitting perfectly between Apache 2.0 and the GPL.
 
 Unlike the LGPL (which cares about mathematical "linking"), the MPL is entirely **file-based**. If a Proprietary codebase contains 100 files, and 1 file is licensed under MPL, the viral effect is mathematically trapped inside that single file. You can keep the other 99 files Proprietary, but if you biologically edit the 1 MPL file, you must publish the source code for that specific file.
 
-</ConceptTemplate>

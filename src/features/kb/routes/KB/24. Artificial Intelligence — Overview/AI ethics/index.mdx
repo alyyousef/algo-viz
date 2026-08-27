@@ -4,7 +4,14 @@ description: The socio-technical discipline of ensuring AI systems are fair, unb
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AI Ethics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AI Ethics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While AI Alignment focuses on the existential threat of superintelligence, **AI Ethics** focuses on the immediate, tangible harms caused by AI systems currently deployed in the real world (e.g., biased hiring algorithms, racist facial recognition, and automated prison sentencing).
 
@@ -24,4 +31,3 @@ Mathematical proofs (like the Chouldechova impossibility theorem) show that if t
 The deployment of Computer Vision has created an AI Ethics crisis regarding mass surveillance.
 Authoritarian governments utilize AI-powered facial recognition across millions of CCTV cameras to track citizens in real-time, completely obliterating the concept of anonymity in public spaces. Ethical frameworks argue for strict limitations on biometric AI to prevent dystopian surveillance states.
 
-</ConceptTemplate>

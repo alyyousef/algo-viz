@@ -4,10 +4,16 @@ description: A policy-based approach to network security that requires endpoint 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Endpoint Management">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Endpoint Management">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Endpoint** is any biological device (Laptop, Phone, Server) that mathematically connects to the corporate network.
 
-**Endpoint Management** is the mathematical discipline of securing them. If an employee biologically loses their corporate iPhone on a train, the IT department must mathematically have the ability to remotely wipe the phone over the internet within seconds. 
+**Endpoint Management** is the mathematical discipline of securing them. If an employee biologically loses their corporate iPhone on a train, the IT department must mathematically have the ability to remotely wipe the phone over the internet within seconds.
 
-</ConceptTemplate>

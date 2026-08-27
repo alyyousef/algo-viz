@@ -4,19 +4,32 @@ description: The complete software architecture required to allow a robot to mov
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Autonomous Navigation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Autonomous Navigation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Autonomous Navigation** is not a single algorithm. It is the massive mathematical orchestration of everything discussed in this domain. 
+**Autonomous Navigation** is not a single algorithm. It is the massive mathematical orchestration of everything discussed in this domain.
 
 To build a self-driving car or a warehouse delivery robot, engineers do not write one massive C++ file. They build a **Navigation Stack**.
 
+
 <Callout icon="info" title="The Mathematical Pipeline">
+
+
   1. **Perception:** LiDAR and Cameras read the physical universe (Hardware).
   2. **Localization (SLAM/AMCL):** Matches the LiDAR to the Map to find the robot's XYZ coordinate.
   3. **Global Path Planner (A*):** Draws the 10-mile line from Start to Destination.
   4. **Local Trajectory Planner (DWA):** Calculates the exact steering angles for the next 2 seconds to dodge pedestrians.
   5. **Controller (PID):** Mathematically commands the physical voltage to the steering motors.
+
+
 </Callout>
+
 
 ## Sensor Fusion
 
@@ -24,4 +37,3 @@ Because no sensor is perfect (LiDAR fails in fog, Cameras fail in darkness, Odom
 
 Using an advanced mathematical algorithm called a **Kalman Filter**, the robot takes 5 different noisy, conflicting sensor inputs and mathematically calculates the statistical probability of its true state, resulting in a single, highly accurate truth.
 
-</ConceptTemplate>

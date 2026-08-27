@@ -4,7 +4,7 @@ description: An open-source optimizing compiler produced by the GNU Project supp
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="GNU Compiler Collection (GCC)"
   subtitle="The compiler that built the open-source world"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/GNU_Compiler_Collection_logo.svg/512px-GNU_Compiler_Collection_logo.svg.png"
@@ -17,13 +17,19 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 GCC is a behemoth. It is mathematically capable of compiling C, C++, Objective-C, Fortran, Ada, Go, and D, and generating highly optimized machine code for almost every CPU architecture on Earth.
 
+
 <Callout icon="info" title="The Monolithic Architecture">
+
+
   For decades, GCC was intentionally designed as a mathematically monolithic block of code. Richard Stallman did this on purpose to prevent proprietary tech companies from using GCC's internal parsers in closed-source software. While politically successful, it made the GCC codebase notoriously difficult to maintain or use as a library.
+
+
 </Callout>
+
 
 ## The Challenge from LLVM
 
-Because GCC was mathematically monolithic, it was impossible for companies like Apple to extract just the C++ Parser to build IDE tools (like code completion or syntax highlighting). 
+Because GCC was mathematically monolithic, it was impossible for companies like Apple to extract just the C++ Parser to build IDE tools (like code completion or syntax highlighting).
 
 This architectural decision is what ultimately caused Apple and Google to heavily fund **LLVM and Clang**, a highly modular modern compiler infrastructure, which has since overtaken GCC in many modern toolchains.
 

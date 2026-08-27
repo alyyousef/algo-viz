@@ -4,25 +4,32 @@ description: The complex discipline of securing container orchestration platform
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kubernetes Security">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kubernetes Security">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Kubernetes (K8s) is the industry standard for deploying and managing containerized applications. However, its massive flexibility makes it notoriously difficult to secure. A single misconfigured mathematical permission can allow an attacker to escape a web container and take over the entire server cluster.
 
 **Kubernetes Security** requires securing the 4 C\'s of Cloud Native: Cloud, Cluster, Container, and Code.
 
+
 <Callout icon="tip" title="Role-Based Access Control (RBAC)">
+
+
   The most common Kubernetes vulnerability is overly permissive RBAC. If a frontend web container is mathematically granted the `cluster-admin` role, an attacker who compromises that web container instantly gains God-mode access over every database and application in the cluster.
+
+
 </Callout>
+
 
 ## Core K8s Security Concepts
 
-<ComparisonTable 
-  headers={['Concept', 'Description']}
-  rows={[
-    ['Network Policies', 'By default, any pod in a K8s cluster can talk to any other pod. Network Policies act as internal firewalls, mathematically restricting communication (e.g., the Frontend pod can talk to the Backend pod, but NOT directly to the Database pod).'],
-    ['Pod Security Standards', 'Policies that prevent developers from deploying containers that run as `root`, mount sensitive host file systems, or request elevated Linux kernel privileges.'],
-    ['Secrets Management', 'Never storing API keys or passwords in plaintext inside the container image or deployment YAML. K8s Secrets or external vaults (like HashiCorp Vault) must be used to mathematically inject credentials at runtime.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Concept', 'Description']} rows={[ ['Network Policies', 'By default, any pod in a K8s cluster can talk to any other pod. Network Policies act as internal firewalls, mathematically restricting communication (e.g., the Frontend pod can talk to the Backend pod, but NOT directly to the Database pod).'], ['Pod Security Standards', 'Policies that prevent developers from deploying containers that run as `root`, mount sensitive host file systems, or request elevated Linux kernel privileges.'], ['Secrets Management', 'Never storing API keys or passwords in plaintext inside the container image or deployment YAML. K8s Secrets or external vaults (like HashiCorp Vault) must be used to mathematically inject credentials at runtime.'] ]} />
+
+

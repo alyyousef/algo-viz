@@ -4,25 +4,32 @@ description: Using a massive AI model as the judge to align a smaller AI model, 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reinforcement Learning from AI Feedback (RLAIF)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reinforcement Learning from AI Feedback (RLAIF)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Reinforcement Learning from Human Feedback (RLHF) was the secret sauce that created ChatGPT. However, hiring thousands of humans to rate AI outputs is slow, expensive, and scales poorly as models become smarter than average humans.
 
 **RLAIF** replaces the human rater with a state-of-the-art AI model (like GPT-4).
 
+
 <Callout icon="info" title="The Alignment Pipeline">
+
+
   In RLAIF, you give a prompt to the model you are training, and it generates Response A and Response B. You then send the prompt and both responses to an "AI Judge" (e.g., Claude 3.5 Sonnet) along with a strict rubric. The Judge evaluates which response is better, and that AI-generated preference data is used to train the Reward Model.
+
+
 </Callout>
+
 
 ## Advantages over Humans
 
-<ComparisonTable 
-  headers={['Factor', 'Human Feedback', 'AI Feedback (RLAIF)']}
-  rows={[
-    ['Cost and Speed', 'High cost, weeks or months to collect.', 'Pennies via API, collected in hours.'],
-    ['Consistency', 'Humans naturally disagree, get tired, and have personal biases.', 'An AI judge strictly adheres to the mathematical prompt and rubric, producing highly consistent ratings.'],
-    ['Complex Domains', 'Humans struggle to evaluate complex code or deep scientific research.', 'A frontier AI model can verify code syntax and logical proofs much faster than a human grader.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Factor', 'Human Feedback', 'AI Feedback (RLAIF)']} rows={[ ['Cost and Speed', 'High cost, weeks or months to collect.', 'Pennies via API, collected in hours.'], ['Consistency', 'Humans naturally disagree, get tired, and have personal biases.', 'An AI judge strictly adheres to the mathematical prompt and rubric, producing highly consistent ratings.'], ['Complex Domains', 'Humans struggle to evaluate complex code or deep scientific research.', 'A frontier AI model can verify code syntax and logical proofs much faster than a human grader.'] ]} />
+
+

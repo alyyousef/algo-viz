@@ -1,8 +1,29 @@
+---
+title: AWK
+description: The legendary Unix command-line tool and programming language explicitly designed for mathematical text processing and data extraction.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AWK">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AWK">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1977 at Bell Labs by Alfred **A**ho, Peter **W**einberger, and Brian **K**ernighan, AWK is a data-driven scripting language. It is a standard feature of every Unix and Linux operating system in existence.
 
-</ConceptTemplate>
+## 1. Pattern-Action Architecture
+AWK is not a general-purpose language like Python; it is designed specifically for processing tabular text (like CSV files or server logs).
+The language mathematically operates on a **Pattern { Action }** loop.
+AWK automatically reads the input file line-by-line, mathematically splits the line into columns (accessed via `$1`, `$2`), and applies your logic.
+```awk
+/ERROR/ { print $3 }
+```
+This one line of code means: "If the line contains the text 'ERROR', mathematically print the third column." What would take 15 lines of boilerplate in Java takes 10 characters in AWK.
+
+## 2. The Precursor to Perl
+AWK introduced associative arrays (hash maps) and regular expressions into standard scripting. Because it was so mathematically efficient at data extraction, it heavily inspired Larry Wall to create **Perl**, which eventually gave rise to the entire modern scripting ecosystem (Python, Ruby, PHP).
+

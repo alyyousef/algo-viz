@@ -8,22 +8,22 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 When building mobile applications for both iOS and Android without writing two completely separate codebases (Swift and Kotlin), the industry has settled on two massive frameworks: React Native (by Meta) and Flutter (by Google).
 
+
 <Callout icon="info" title="The Rendering Difference">
+
+
   **React Native** translates your JavaScript code into actual, native iOS and Android buttons. It feels 100% native.
-  
+
   **Flutter** draws every single pixel on the screen itself using the Skia graphics engine (like a video game). It bypasses the native OS UI entirely.
+
+
 </Callout>
+
 
 ## Detailed Comparison
 
-<ComparisonTable 
-  headers={['Aspect', 'React Native', 'Flutter']}
-  rows={[
-    ['Language', 'JavaScript / TypeScript', 'Dart'],
-    ['Creator', 'Meta (Facebook)', 'Google'],
-    ['Performance', 'Great, but heavily relies on the "JS Bridge" communicating with the Native thread, which can bottleneck complex animations.', 'Incredible. Because it draws its own pixels in C++, it consistently hits 60/120 FPS easily.'],
-    ['Ecosystem', 'Massive. Access to almost the entire NPM ecosystem.', 'Growing rapidly, but Dart is still much smaller than JS.']
-  ]}
-/>
+
+<ComparisonTable headers={['Aspect', 'React Native', 'Flutter']} rows={[ ['Language', 'JavaScript / TypeScript', 'Dart'], ['Creator', 'Meta (Facebook)', 'Google'], ['Performance', 'Great, but heavily relies on the "JS Bridge" communicating with the Native thread, which can bottleneck complex animations.', 'Incredible. Because it draws its own pixels in C++, it consistently hits 60/120 FPS easily.'], ['Ecosystem', 'Massive. Access to almost the entire NPM ecosystem.', 'Growing rapidly, but Dart is still much smaller than JS.'] ]} />
+
 
 </TechnologyTemplate>

@@ -4,7 +4,14 @@ description: How React Native bridges Javascript to native UI components, and ho
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cross-Platform (React Native & Flutter)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cross-Platform (React Native & Flutter)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For companies that cannot afford two separate engineering teams, Cross-Platform frameworks mathematically allow one team to write one codebase that deploys to both iOS and Android.
 
@@ -29,4 +36,3 @@ Flutter uses the **Dart** programming language. Instead of telling iOS to render
 - **Pros**: The UI looks mathematically identical on every single device because Flutter controls the pixels. Unbelievable performance and incredibly smooth animations.
 - **Cons**: Doesn't always "feel" perfectly native (e.g., native iOS scrolling physics). Dart is a niche language outside of Flutter.
 
-</ConceptTemplate>

@@ -1,8 +1,30 @@
+---
+title: Las Vegas Algorithms
+description: "A class of randomized algorithms that are mathematically guaranteed to always produce the correct result, but their execution time is a random variable that depends on the roll of the dice."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Las Vegas algorithms">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Las Vegas Algorithms"
+  subtitle="Gambling with Time, not Accuracy"
+  tags={['Algorithms', 'Techniques', 'Randomization', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In computer science, randomized algorithms are mathematically classified into two cities: Monte Carlo (gambles with accuracy) and Las Vegas (gambles with time).
 
-</ConceptTemplate>
+## 1. The Mathematical Guarantee
+A Las Vegas algorithm NEVER returns a wrong answer.
+The most famous example is **Randomized Quicksort**.
+To sort an array, the algorithm randomly picks a pivot. If it mathematically accidentally picks the absolute worst pivot every single time (the largest number), the algorithm will still correctly sort the array, but it will catastrophically degrade to O(N²) time.
+However, mathematical probability dictates that picking the worst pivot consistently is virtually impossible. On average, it picks decent pivots, guaranteeing the correct answer in **O(N log N)** time.
+
+## 2. The Infinite Loop Risk
+Because the time is random, a Las Vegas algorithm mathematically carries the risk of running infinitely long (if the dice roll terribly forever). However, the mathematical *Expected Time Complexity* is usually drastically faster than deterministic algorithms, making them the backbone of modern cryptography and data structure balancing (like Treaps).
+

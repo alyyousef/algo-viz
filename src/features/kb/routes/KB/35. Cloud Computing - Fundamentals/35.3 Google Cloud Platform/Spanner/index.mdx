@@ -1,0 +1,24 @@
+---
+title: Google Cloud Spanner
+description: "A revolutionary, globally distributed relational database that achieves the mathematically impossible: providing strict ACID transactional consistency across continents at massive scale."
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Spanner"
+  subtitle="Global ACID Relational Database"
+  tags={['GCP', 'Database', 'SQL', 'Global']}
+>
+
+The CAP Theorem mathematically states that a distributed database must trade off between Consistency and Availability. Traditional relational databases (like PostgreSQL) choose Consistency but cannot scale globally. NoSQL databases (like Cassandra) scale globally but sacrifice strict Consistency. Spanner breaks the rules.
+
+## 1. TrueTime API (Atomic Clocks)
+Spanner achieves global ACID consistency using **TrueTime**.
+Every physical Google server rack running Spanner is equipped with GPS receivers and Atomic Clocks.
+When a transaction occurs in New York, Spanner uses TrueTime to mathematically assign an absolute, globally indisputable microsecond timestamp to the transaction. If a conflicting transaction occurs in Tokyo a millisecond later, the Atomic Clocks guarantee that the Tokyo server mathematically knows it happened second. This allows Spanner to serialize global transactions perfectly without the massive network latency required by traditional distributed locking mechanisms.
+
+## 2. Horizontal SQL Scaling
+Standard SQL databases (like Cloud SQL/MySQL) scale *vertically* (you must buy a bigger, more expensive CPU).
+Spanner scales *horizontally*. You can write standard SQL queries (with JOINs and Foreign Keys). If your database hits 50 Terabytes, you simply add more Spanner nodes. Spanner mathematically chops the relational tables into "Splits" and distributes them across the new servers. It provides the limitless scale of NoSQL with the mathematical safety and query power of traditional SQL.
+
+</TechnologyTemplate>

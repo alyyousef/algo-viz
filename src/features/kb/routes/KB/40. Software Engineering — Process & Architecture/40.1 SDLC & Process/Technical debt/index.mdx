@@ -1,8 +1,32 @@
+---
+title: Technical Debt
+description: A powerful mathematical metaphor describing the implied cost of future refactoring required when a development team chooses a fast, hacky implementation over a rigorous, architecturally sound approach to meet an immediate deadline.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Technical debt">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Technical Debt"
+  subtitle="The Financial Metaphor of Code"
+  tags={['Process', 'Architecture', 'Clean Code', 'Management']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Coined by Ward Cunningham (inventor of the Wiki), Technical Debt borrows a concept from finance to explain a mathematical reality of software engineering to non-technical executives.
 
-</ConceptTemplate>
+## 1. Taking on Debt
+If the marketing team needs a feature launched by Friday, the engineering team has two choices:
+1. Spend 2 weeks building a mathematically perfect, highly scalable microservice. (Miss the deadline).
+2. Spend 2 days writing a hacky, unscalable script directly inside the legacy monolith. (Hit the deadline).
+Option 2 is taking on **Technical Debt**. You gained immediate speed, but you borrowed mathematical stability from the future.
+
+## 2. The Mathematical Interest Rate
+Just like financial debt, Technical Debt accrues **Interest**.
+Because the hacky script is fragile and lacks tests, every time an engineer has to modify that code in the future, it takes them 3 days instead of 3 hours. That lost time is the mathematical interest payment.
+If a company continuously takes on Technical Debt without ever pausing to refactor (pay down the principal), the interest payments mathematically overwhelm the engineering team. Eventually, 100% of the team's capacity is spent fixing bugs and dealing with fragile architecture, reducing feature velocity to zero (Technical Bankruptcy).
+

@@ -1,8 +1,36 @@
+---
+title: Prime Numbers
+description: "The mathematical 'atoms' of the integer system, numbers divisible only by 1 and themselves, whose unpredictable distribution acts as the entire security layer for the modern internet."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prime numbers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Prime Numbers"
+  subtitle="The Atoms of Mathematics"
+  tags={['Mathematics', 'Discrete Math', 'Number Theory', 'Cryptography']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Prime Number** is a natural number strictly greater than 1 that has exactly two distinct positive divisors: 1 and itself. (e.g., 2, 3, 5, 7, 11). Numbers that are not prime are called **Composite**.
 
-</ConceptTemplate>
+## 1. The Mathematical Foundation
+The **Fundamental Theorem of Arithmetic** proves that every single integer can be mathematically broken down into a unique multiplication of prime numbers.
+For example: $100 = 2 \times 2 \times 5 \times 5$.
+Because you can build any number by multiplying primes, they are mathematically considered the building blocks (atoms) of the number system.
+
+## 2. The Great Mystery: The Prime Number Theorem
+There is no mathematical formula that can instantly generate the $N$th prime number. Their exact distribution along the number line appears completely chaotic.
+However, in 1896, mathematicians proved the **Prime Number Theorem**, which states that as numbers get larger, the mathematical density of primes asymptotically approaches $\frac{1}{\ln(N)}$.
+This guarantees to cryptographers that even when dealing with insanely massive 2048-bit numbers, primes are still mathematically common enough to find quickly using randomized algorithms.
+
+## 3. Cryptographic Security
+The entire modern economy (Banking, HTTPS, Bitcoin) relies on a single mathematical asymmetry regarding primes:
+- **Multiplication is easy**: If I give a computer two massive 1024-bit prime numbers, it can multiply them together to create a 2048-bit composite number in nanoseconds.
+- **Factoring is impossible**: If I give a computer the resulting 2048-bit composite number, there is no known classical mathematical algorithm that can figure out which two primes created it. Brute-forcing it would take longer than the lifespan of the universe. This mathematical "trapdoor" is the bedrock of **RSA Public-Key Encryption**.
+

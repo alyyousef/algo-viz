@@ -1,8 +1,42 @@
+---
+title: Virtual Hosts
+description: A fundamental web server technique that mathematically enables a single physical server with a single IP address to host and route traffic for hundreds of completely different domain names.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Virtual hosts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Virtual Hosts (Server Blocks)"
+  subtitle="Mathematical Domain Routing"
+  tags={['Web Servers', 'Networking', 'HTTP', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the early internet, hosting 10 different websites required 10 physical servers and 10 expensive, mathematically distinct public IP addresses. Virtual Hosting (known as `VirtualHost` in Apache and `server` blocks in Nginx) solved this limitation.
 
-</ConceptTemplate>
+## 1. The HTTP Host Header
+Virtual Hosting relies on a specific mathematical feature of the HTTP/1.1 protocol: the **Host header**.
+When a user types `cats.com` into their browser, the DNS mathematically resolves to IP `203.0.113.5`. The user types `dogs.com`, and DNS resolves to the exact same IP `203.0.113.5`.
+The TCP connection hits the web server. How does the server know which website to return? The browser mathematically injects a header into the request: `Host: cats.com`.
+
+## 2. Server-Side Evaluation
+The web server (e.g., Nginx) reads the HTTP request. It mathematically evaluates the `Host` header against its internal configuration.
+```nginx
+server {
+    listen 80;
+    server_name cats.com;
+    root /var/www/cats;
+}
+server {
+    listen 80;
+    server_name dogs.com;
+    root /var/www/dogs;
+}
+```
+If the header matches `cats.com`, Nginx mathematically routes the request to the `/var/www/cats` directory. This simple mathematical string-matching algorithm allows massive shared-hosting providers to host thousands of websites on a single physical machine.
+

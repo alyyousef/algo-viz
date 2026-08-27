@@ -1,8 +1,32 @@
+---
+title: Code Smells
+description: "Mathematical and structural indicators in a codebase that suggest a deeper architectural flaw, serving as warning signs that refactoring is necessary before the system becomes unmaintainable."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Code smells">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Code Smells"
+  subtitle="Detecting Architectural Decay"
+  tags={['Process', 'Clean Code', 'Architecture', 'Refactoring']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A "Code Smell" is not a bug; the code mathematically compiles and works perfectly. However, the *structure* of the code emits a "smell" that indicates it is highly susceptible to future bugs.
 
-</ConceptTemplate>
+## 1. Bloaters
+These are smells representing code that has mathematically grown so large it cannot be effectively managed.
+- **Long Method**: A function that spans 500 lines. The mathematical probability of introducing a regression when modifying it approaches 100%.
+- **Large Class (God Class)**: A single file containing 5,000 lines and 50 methods, violating the Single Responsibility Principle.
+- **Primitive Obsession**: Using raw mathematical primitives (`String`, `int`) instead of small Objects for domain concepts (e.g., using a `String` for a Zip Code instead of a `ZipCode` class that guarantees 5 digits).
+
+## 2. Object-Orientation Abusers
+These smells indicate that the developer did not understand mathematical polymorphism.
+- **Switch Statements**: Having massive `switch` or `if/else` chains scattered across the codebase based on an object's "type". This violates the Open-Closed Principle (solved by the State or Strategy pattern).
+- **Refused Bequest**: A child class inherits from a parent, but mathematically only uses 10% of the parent's methods, throwing `NotImplementedException` for the rest. This indicates inheritance was the wrong mathematical choice (favor Composition).
+

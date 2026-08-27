@@ -4,7 +4,14 @@ description: The problem of determining, from a description of an arbitrary comp
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Halting Problem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Halting Problem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Halting Problem**, proved by Alan Turing in 1936, is the most famous uncomputable problem in Computer Science.
 
@@ -12,9 +19,12 @@ It asks: *"Can you write a compiler tool (let's call it `doesItHalt(code)`) that
 
 Turing mathematically proved that such a tool is **impossible to build**.
 
+
 <Callout icon="warning" title="The Paradox Proof">
-  Turing proved it using a paradox. Imagine you successfully built `doesItHalt()`. 
-  
+
+
+  Turing proved it using a paradox. Imagine you successfully built `doesItHalt()`.
+
   I write a malicious program called `Paradox`:
   ```javascript
   function Paradox() {
@@ -26,10 +36,12 @@ Turing mathematically proved that such a tool is **impossible to build**.
   }
   ```
   If your tool says my code *will* halt, my code intentionally loops forever. If your tool says my code *will loop forever*, my code intentionally halts. Your tool is mathematically forced to be wrong 100% of the time.
+
+
 </Callout>
+
 
 ## Engineering Impact
 
 Because of the Halting Problem, it is mathematically impossible to write a perfect Static Analyzer (like ESLint). We cannot mathematically prove if a piece of code is perfectly safe, free of deadlocks, or free of infinite loops without actually running it.
 
-</ConceptTemplate>

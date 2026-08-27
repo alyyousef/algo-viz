@@ -1,8 +1,26 @@
+---
+title: Interpretation
+description: The mathematical process of executing source code line-by-line in real-time, without pre-compiling it into native machine code.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Interpretation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Interpretation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In an Interpreted language (like standard Python or Ruby), the source code is not mathematically transformed into a binary executable beforehand. The Interpreter is a massive C program that mathematically reads the script while the program is running and executes the corresponding hardware instructions on the fly.
 
-</ConceptTemplate>
+## 1. The Mathematical Execution Loop
+The Interpreter runs a massive infinite `while` loop:
+1. **Read**: It reads the next line of text from the source file.
+2. **Lex/Parse**: It mathematically converts that line of text into a mini Abstract Syntax Tree.
+3. **Execute**: It evaluates the AST, performs the mathematical operations, updates its own internal memory dictionaries (simulating the program's variables), and then moves to the next line.
+
+## 2. The Performance Penalty
+Because the Interpreter must perform Lexing, Parsing, and Type Checking inside the main execution loop for *every single line of code, every single time it runs*, Interpreted languages are mathematically exponentially slower than Compiled languages. If a `for` loop runs 10,000 times, a compiler parses the code once. An Interpreter mathematically parses the exact same line of text 10,000 times in a row, wasting billions of CPU cycles.
+

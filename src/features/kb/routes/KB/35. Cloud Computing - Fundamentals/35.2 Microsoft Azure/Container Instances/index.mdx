@@ -1,0 +1,23 @@
+---
+title: Azure Container Instances (ACI)
+description: The fastest and simplest way to run a single, isolated Docker container in Azure, providing raw, un-orchestrated serverless compute charged strictly by the second.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Container Instances (ACI)"
+  subtitle="Raw Serverless Containers"
+  tags={['Azure', 'Containers', 'Serverless', 'Compute']}
+>
+
+If you just need to run a single Python script inside a Docker container that takes 5 minutes to execute, setting up a Kubernetes cluster or a Container App environment is massive overkill. ACI is the mathematical equivalent of AWS Fargate, stripped down to its barest essentials.
+
+## 1. The Raw Execution Engine
+With ACI, there is absolutely no orchestration. No load balancing, no complex networking, no auto-scaling.
+You simply provide an image (`my-python-script:latest`) and a mathematical requirement (`2 CPUs, 4GB RAM`). Azure instantly provisions a hypervisor-isolated micro-VM, boots the container, runs the script, and destroys the VM. You pay precisely for the exact seconds the container was running.
+
+## 2. Burst Compute for AKS
+While ACI is un-orchestrated on its own, it can be mathematically attached to Azure Kubernetes Service (AKS) as **Virtual Nodes**.
+If your AKS cluster experiences a massive, unexpected spike in traffic, and all the physical Virtual Machines are at 100% CPU, the cluster cannot boot new containers. Using Virtual Nodes, AKS can mathematically command ACI to instantly boot the overflow containers in the serverless ether. This provides infinite, instantaneous scale without having to wait 5 minutes for a new physical EC2/VM to boot up.
+
+</TechnologyTemplate>

@@ -1,0 +1,23 @@
+---
+title: Azure Log Analytics
+description: The massive, centralized mathematical data engine powering Azure Monitor, capable of ingesting terabytes of unstructured log data and executing blazing-fast columnar queries.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Log Analytics"
+  subtitle="The Big Data Log Engine"
+  tags={['Azure', 'Monitoring', 'Logs', 'KQL']}
+>
+
+If you have 100 Virtual Machines, they generate massive text files containing Windows Event Logs or Linux Syslogs. SSHing into 100 machines to grep for an error is impossible. Log Analytics provides a single, mathematically unified database for all logs.
+
+## 1. The Log Analytics Workspace
+A Workspace is the physical boundary of your log data.
+You install a tiny agent on your Virtual Machines (or configure diagnostic settings on your PaaS services like SQL Database). These resources continuously stream their JSON and text logs directly into the central Workspace. The Workspace mathematically indexes the text fields, transforming unstructured chaos into a highly organized, queryable schema.
+
+## 2. Machine Learning and Anomaly Detection
+Because Log Analytics uses the Kusto Query Language (KQL), it can do more than just search text; it can execute complex math.
+Using the `series_decompose_anomalies()` KQL function, you can mathematically analyze 30 days of API response times. The query engine instantly applies machine learning algorithms to the dataset, identifying baseline patterns, and returns a visual chart highlighting the exact 5-minute window where response times mathematically deviated from the historical norm, allowing for proactive, AI-driven troubleshooting.
+
+</TechnologyTemplate>

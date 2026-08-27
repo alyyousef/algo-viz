@@ -4,7 +4,14 @@ description: The next-generation architecture that abandons heavy bundling durin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Modern Build Tools">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Modern Build Tools">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The Webpack era created a catastrophic developer experience problem. In a large app, if a developer changed a single CSS color, they would have to wait 30 seconds for Webpack to re-bundle the entire application before the browser would update.
 
@@ -22,7 +29,6 @@ When you start a Vite dev server:
 The result: A Vite dev server starts in 100 milliseconds, regardless of whether your app has 10 files or 10,000 files. (Note: For Production, Vite still heavily bundles the code using Rollup for optimal network performance).
 
 ## Turbopack
-Created by Tobias Koppers (the original creator of Webpack) at Vercel. 
+Created by Tobias Koppers (the original creator of Webpack) at Vercel.
 Turbopack is billed as the "Rust-based successor to Webpack". Instead of abandoning bundling like Vite, it relies on incredibly complex, heavily-cached incremental Rust compilation to achieve extreme speed, specifically optimized for massive Next.js architectures.
 
-</ConceptTemplate>

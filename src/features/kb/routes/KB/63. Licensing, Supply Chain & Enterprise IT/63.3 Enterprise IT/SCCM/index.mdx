@@ -4,10 +4,16 @@ description: Microsoft Endpoint Configuration Manager is a systems management so
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SCCM (Configuration Manager)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SCCM (Configuration Manager)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Intune manages modern cloud devices, **SCCM** (System Center Configuration Manager) is the biological heavyweight champion of on-premise Enterprise IT.
 
 If a hospital needs to biologically install a massive 5GB medical software update on 4,000 Windows desktop computers, Intune downloading 5GB from the cloud 4,000 times would mathematically destroy the hospital's internet connection. SCCM mathematically downloads the update once to a local Distribution Point server, and then biologically pushes the update over the ultra-fast local LAN to all 4,000 PCs while the employees are asleep.
 
-</ConceptTemplate>

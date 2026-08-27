@@ -6,33 +6,39 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Event-Driven Architecture (EDA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Event-Driven Architecture (EDA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In traditional request-response architectures (like REST APIs), Service A actively calls Service B and waits for an answer. This creates **tight coupling**. 
+In traditional request-response architectures (like REST APIs), Service A actively calls Service B and waits for an answer. This creates **tight coupling**.
 
 In an **Event-Driven Architecture**, services communicate by emitting and listening to **Events** via a central message broker (like Apache Kafka, RabbitMQ, or AWS EventBridge).
 
 ## 1. How It Works
 1. **The Producer**: A user completes a checkout. The Checkout Service emits an event: `{"event": "OrderPlaced", "orderId": 123}` into the message broker. It does not know or care who is listening.
 2. **The Broker**: The message broker durably stores the event.
-3. **The Consumers**: 
+3. **The Consumers**:
    - The Inventory Service listens for `OrderPlaced` and deducts stock.
    - The Email Service listens for `OrderPlaced` and sends a receipt.
    - The Analytics Service listens for `OrderPlaced` to update the daily dashboard.
 
 ## 2. Request-Driven vs Event-Driven
 
-<ComparisonTable 
-  headers={['Feature', 'Request-Driven (REST)', 'Event-Driven (Pub/Sub)']} 
-  rows={[
-    ['Coupling', 'High. The caller must know the IP address and API schema of the receiver.', 'Low. Producers and Consumers are completely decoupled.'],
-    ['Failure Handling', 'If the receiver is down, the HTTP request fails immediately (Cascading Failure).', 'If the receiver is down, the broker holds the message. When the receiver boots back up, it processes the backlog.'],
-    ['Extensibility', 'Adding a new feature requires modifying the Producer to make a new HTTP call.', 'Adding a new feature is zero-touch. You just spin up a new Consumer listening to the existing event stream.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Feature', 'Request-Driven (REST)', 'Event-Driven (Pub/Sub)']} rows={[ ['Coupling', 'High. The caller must know the IP address and API schema of the receiver.', 'Low. Producers and Consumers are completely decoupled.'], ['Failure Handling', 'If the receiver is down, the HTTP request fails immediately (Cascading Failure).', 'If the receiver is down, the broker holds the message. When the receiver boots back up, it processes the backlog.'], ['Extensibility', 'Adding a new feature requires modifying the Producer to make a new HTTP call.', 'Adding a new feature is zero-touch. You just spin up a new Consumer listening to the existing event stream.'] ]} />
+
 
 <Callout icon="info" title="Event Sourcing">
+
+
 A more extreme pattern of EDA is **Event Sourcing**. Instead of storing the *current state* of an entity in a database (e.g., `balance: $50`), you store the *entire history of events* that led to that state (`Deposited $100`, `Withdrew $50`). The current state is calculated by replaying the events.
+
+
 </Callout>
 
-</ConceptTemplate>
+

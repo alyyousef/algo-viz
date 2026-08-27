@@ -4,16 +4,28 @@ description: Tools that apply model checking techniques directly to software sou
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Software Model Checkers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Software Model Checkers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, Model Checking required you to mathematically translate your software into a weird, abstract mathematical language first.
 
 **Software Model Checkers** (like CBMC or Java Pathfinder) changed the industry.
 
+
 <Callout icon="tip" title="Direct Code Verification">
-  They directly ingest raw, biological C++ or Java source code. 
-  
+
+
+  They directly ingest raw, biological C++ or Java source code.
+
   They mathematically unravel the `while` loops and `if` statements, translating them directly into SAT/SMT formulas. NASA uses these tools extensively. Before the Mars Rover is launched, the exact C code running the landing sequence is fed into a Software Model Checker to mathematically guarantee it will not crash due to a null pointer.
+
+
 </Callout>
 
-</ConceptTemplate>
+

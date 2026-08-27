@@ -1,8 +1,28 @@
+---
+title: Sed
+description: The Stream Editor, a legendary Unix utility designed to mathematically parse and transform text on the fly.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sed">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sed (Stream Editor)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Lee E. McMahon at Bell Labs in 1974, Sed is one of the most powerful and heavily used text-processing tools in the Unix ecosystem. While AWK is designed for tabular columns, Sed is designed for mathematical string replacement.
 
-</ConceptTemplate>
+## 1. Stream Processing
+Sed is a non-interactive text editor. You do not open a file, move a cursor, and type.
+You mathematically provide Sed with a script (a set of commands), and Sed streams the file through those commands line-by-line in a single pass. Because it only ever holds one line of text in memory at a time (the "Pattern Space"), Sed can mathematically search and replace text inside a 500-Gigabyte log file using almost zero RAM.
+
+## 2. The Substitution Command
+The most universally used Sed command is mathematical substitution: `s/old/new/g`.
+```bash
+echo "Hello World" | sed 's/World/Universe/'
+```
+This mathematically replaces the first instance of "World" with "Universe". Sed supports highly complex Regular Expressions (Regex), allowing it to extract IP addresses, reformat dates, or delete specific XML tags across millions of files in seconds.
+

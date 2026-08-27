@@ -1,0 +1,24 @@
+---
+title: Amazon Aurora
+description: A cloud-native, highly advanced relational database built by AWS, mathematically engineered to be fully compatible with MySQL and PostgreSQL while delivering 5x the physical throughput of traditional systems.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Aurora"
+  subtitle="Cloud-Native Relational Database"
+  tags={['AWS', 'Database', 'SQL', 'Storage']}
+>
+
+Traditional databases (like standard MySQL) tightly couple the Compute (CPU) and the Storage (Hard Drive). If the hard drive fills up, the entire database crashes. AWS mathematically decoupled them to create Aurora.
+
+## 1. The Distributed Storage Volume
+In Aurora, the Compute Node (the server processing the SQL queries) has no local storage.
+When a transaction is committed, the Compute Node mathematically pushes the log record down into a massive, distributed, multi-tenant Storage Fleet.
+This Storage Fleet automatically replicates every single piece of data **6 times across 3 Availability Zones** (physical data centers). If a meteor destroys two data centers, the Aurora math guarantees zero data loss and seamlessly continues operating using the surviving copies.
+
+## 2. Mathematical IO Optimization
+Writing data in standard MySQL requires immense Disk IO (updating table files, index files, and transaction logs simultaneously). This physical limitation bottlenecks throughput.
+Aurora physically pushes all of this mathematical processing down into the Storage Fleet. The Compute Node only sends the raw transaction log over the network. The Storage nodes handle the complex math of generating the data blocks asynchronously. By reducing the physical network IO by orders of magnitude, Aurora mathematically achieves 5x the throughput of standard MySQL running on the exact same hardware.
+
+</TechnologyTemplate>

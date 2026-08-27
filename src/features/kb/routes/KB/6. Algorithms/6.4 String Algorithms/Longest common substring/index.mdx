@@ -1,8 +1,33 @@
+---
+title: Longest Common Substring
+description: "A string-processing algorithm that finds the longest mathematically contiguous string of characters that is present in two or more input strings."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Longest common substring">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Longest Common Substring"
+  subtitle="Finding Contiguous Matches"
+  tags={['Algorithms', 'Strings', 'Dynamic Programming', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Longest Common Subsequence (LCS) allows mathematical gaps, **Longest Common Substring** demands absolute contiguous perfection.
+For `"ABABC"` and `"BABCA"`, the longest common substring is `"BABC"` (length 4).
 
-</ConceptTemplate>
+## 1. The Dynamic Programming Approach
+The DP solution is mathematically almost identical to the Subsequence (LCS) matrix, but with one critical change.
+If `A[i]` and `B[j]` do NOT match, a Subsequence matrix copies the max from adjacent cells (inheriting the score).
+A Substring matrix mathematically forces the score to **0**.
+Because the match must be contiguous, any mismatch mathematically breaks the chain instantly. The algorithm simply scans the entire 2D matrix at the end and finds the absolute highest number. Time Complexity: **O(N * M)**.
+
+## 2. Generalized Suffix Trees
+For two strings, O(N * M) DP is fine. But what if you need to find the longest common substring across 1,000 massive documents?
+Engineers mathematically concatenate all 1,000 documents together (separated by unique sentinel characters like `$` or `#`) and build a **Generalized Suffix Tree**.
+Once the tree is built (which can mathematically be done in O(N) time using Ukkonen's Algorithm), you simply find the deepest internal node in the tree that contains leaves from every single document. This achieves a mind-blowing mathematical Time Complexity of **O(N)** for the entire process.
+

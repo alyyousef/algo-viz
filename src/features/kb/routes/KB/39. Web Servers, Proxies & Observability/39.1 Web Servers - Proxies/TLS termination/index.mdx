@@ -1,8 +1,29 @@
+---
+title: TLS Termination
+description: An architectural pattern where a proxy or load balancer mathematically decrypts incoming secure HTTPS traffic, passing the unencrypted HTTP traffic to the internal backend servers to save compute resources.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TLS termination">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="TLS Termination"
+  subtitle="Cryptographic Offloading"
+  tags={['Security', 'Cryptography', 'Networking', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Transport Layer Security (TLS, formerly SSL) involves highly complex mathematical calculations (RSA/ECC asymmetric handshakes and AES symmetric encryption). If you have 50 backend Node.js microservices, forcing each Node process to mathematically encrypt and decrypt traffic wastes massive amounts of CPU power.
 
-</ConceptTemplate>
+## 1. The Proxy Offload
+TLS Termination solves this by delegating the mathematical burden to a dedicated Load Balancer (like Nginx, HAProxy, or AWS ALB).
+The client establishes a secure HTTPS connection with the Load Balancer. The Load Balancer holds the private key, performs the mathematical handshake, and **terminates** the TLS connection. It decrypts the packet. The Load Balancer then mathematically forwards the raw, unencrypted HTTP traffic over the internal private network to the backend Node.js server.
+
+## 2. Security Trade-offs
+TLS Termination is mathematically brilliant for performance, but it introduces a strict security requirement: **The internal network must be absolutely trusted.**
+Because traffic flows unencrypted between the Load Balancer and the backend server, if a hacker penetrates the internal VPC (Virtual Private Cloud), they can use a packet sniffer to read all passwords and data in plain text. In Zero-Trust architectures (like banking), engineers use **TLS Passthrough** or **mTLS**, mathematically forcing the encryption to remain intact until it reaches the final destination container.
+

@@ -1,0 +1,25 @@
+---
+title: AWS Security Groups
+description: The fundamental, stateful virtual firewall assigned directly to an EC2 instance or ENI, mathematically dictating which specific IP addresses and ports are allowed to communicate with the resource.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Security Groups"
+  subtitle="The Instance-Level Firewall"
+  tags={['AWS', 'Security', 'Networking', 'Firewall']}
+>
+
+NACLs protect the neighborhood (the Subnet). Security Groups protect the house (the specific EC2 Instance). Even if a packet makes it past the NACL, the Security Group must explicitly allow it.
+
+## 1. Stateful Filtering
+The most important mathematical property of a Security Group is that it is **Stateful**.
+If your EC2 web server initiates an outbound connection to download a file from GitHub, the Security Group mathematically registers the "state" of that connection. When the file packet returns from GitHub, the Security Group automatically allows it back in, completely ignoring the Inbound Rules.
+This means you can strictly set your Inbound Rules to only allow Port 443 (HTTPS) from the internet, while still allowing the server to safely browse the web outward.
+
+## 2. Group Chaining
+Security Groups do not just accept IP addresses; they mathematically accept *other Security Groups*.
+If you have an Auto Scaling Group of 50 Web Servers and 1 Database Server, you do not want to hardcode 50 IP addresses into the Database firewall (because the IPs constantly change).
+Instead, you create a rule on the Database Security Group: *"Allow Port 5432 from any instance currently assigned the 'Web-Server-SG'."* AWS mathematically evaluates this at the network hypervisor level. When a new Web Server boots up, it instantly gains access to the database, creating a highly elastic, unbreakable security chain.
+
+</TechnologyTemplate>

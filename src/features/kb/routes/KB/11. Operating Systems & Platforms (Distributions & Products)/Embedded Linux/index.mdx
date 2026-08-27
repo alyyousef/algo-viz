@@ -4,21 +4,33 @@ description: Highly customized, stripped-down variants of the Linux kernel desig
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Embedded Linux">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Embedded Linux">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Embedded Linux** is not a specific distribution you can download. It is a category encompassing the use of the Linux kernel in highly specialized, resource-constrained devices like Wi-Fi routers, Smart TVs, automotive infotainment systems, and IoT refrigerators.
 
 ## The Constraints
 
-A desktop Linux OS expects gigabytes of RAM and a fast SSD. An Embedded Linux device might only have **16 Megabytes of RAM** and a tiny 8MB Flash storage chip. 
+A desktop Linux OS expects gigabytes of RAM and a fast SSD. An Embedded Linux device might only have **16 Megabytes of RAM** and a tiny 8MB Flash storage chip.
 
 To make Linux fit into these constraints, embedded engineers must brutally strip the OS down to its absolute bare minimum:
 - **Custom Kernels**: The kernel is recompiled to strip out support for 99% of hardware (if the device doesn't have a screen, all graphics drivers are deleted).
 - **BusyBox**: Heavy GNU utilities are replaced with the microscopic BusyBox binary.
 - **musl libc**: The heavy standard C library is replaced with an ultra-lightweight alternative.
 
+
 <Callout icon="success" title="Real-Time Requirements">
+
+
   Many embedded systems (like robotic arms or anti-lock brakes) require **Real-Time Operating System (RTOS)** capabilities, meaning the OS must mathematically guarantee it will respond to a hardware sensor within 2 milliseconds. Standard Linux cannot do this. Embedded engineers often apply the `PREEMPT_RT` patch to the Linux kernel to give it strict, deterministic real-time capabilities.
+
+
 </Callout>
 
-</ConceptTemplate>
+

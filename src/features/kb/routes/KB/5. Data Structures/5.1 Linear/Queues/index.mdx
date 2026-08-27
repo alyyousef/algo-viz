@@ -4,9 +4,16 @@ description: A strict FIFO (First-In-First-Out) data structure used to process i
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Queues (FIFO)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Queues (FIFO)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A **Queue** is an abstract data structure that perfectly mimics a line of people waiting at a grocery store checkout. It operates on a strict **First-In-First-Out (FIFO)** principle. 
+A **Queue** is an abstract data structure that perfectly mimics a line of people waiting at a grocery store checkout. It operates on a strict **First-In-First-Out (FIFO)** principle.
 
 The first item added to the queue will absolutely be the first item removed. You cannot skip the line.
 
@@ -24,8 +31,13 @@ Queues are heavily used in operating systems and distributed architectures whene
 2. **Breadth-First Search (BFS)**: The BFS graph algorithm relies on a queue to explore neighboring nodes level-by-level before moving deeper.
 3. **Message Brokers**: Enterprise systems like Apache Kafka or RabbitMQ are essentially massive, distributed queues that ensure millions of API events are processed in chronological order.
 
+
 <Callout icon="error" title="The Array Dequeue Problem">
+
+
   Do not implement a Queue using a standard Array! If you `Dequeue` the item at index 0, you must physically shift every other item in the array to the left, resulting in an incredibly slow $O(N)$ operation. Queues should always be implemented using a Linked List, or a specialized **Circular Buffer**, to ensure $O(1)$ dequeues.
+
+
 </Callout>
 
-</ConceptTemplate>
+

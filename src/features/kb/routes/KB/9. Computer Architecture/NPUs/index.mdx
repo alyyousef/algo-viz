@@ -4,28 +4,40 @@ description: Highly specialized hardware blocks embedded directly into consumer 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Neural Processing Units (NPUs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Neural Processing Units (NPUs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While **TPUs** (Tensor Processing Units) are massive, power-hungry supercomputer ASICs locked inside Google's data centers for *training* AI models, **NPUs (Neural Processing Units)** are their consumer-facing cousins. 
+While **TPUs** (Tensor Processing Units) are massive, power-hungry supercomputer ASICs locked inside Google's data centers for *training* AI models, **NPUs (Neural Processing Units)** are their consumer-facing cousins.
 
 NPUs are small, highly efficient silicon accelerators integrated directly into the System-on-a-Chip (SoC) of your smartphone, laptop, or desktop CPU, designed specifically for **AI Inference** (running a model that has already been trained).
 
+
 <Callout icon="success" title="The AI PC Era">
+
+
   If you blur your background on a Zoom call, that task requires running a complex computer vision neural network at 60 FPS. If the standard CPU runs it, your laptop battery dies in 30 minutes and the fans spin at max speed. The NPU can run that exact same neural network in total silence while drawing almost zero power.
+
+
 </Callout>
+
 
 ## Architectural Design
 
-An NPU is fundamentally an ASIC designed for low-power matrix multiplication. 
-Like a TPU, it abandons the traditional CPU pipeline (no complex branch predictors, no massive L3 caches). It consists almost entirely of MAC (Multiply-Accumulate) circuits. 
+An NPU is fundamentally an ASIC designed for low-power matrix multiplication.
+Like a TPU, it abandons the traditional CPU pipeline (no complex branch predictors, no massive L3 caches). It consists almost entirely of MAC (Multiply-Accumulate) circuits.
 
-However, unlike a massive server GPU, an NPU prioritizes **power efficiency** over raw speed. 
+However, unlike a massive server GPU, an NPU prioritizes **power efficiency** over raw speed.
 - **INT8 Precision**: While CPUs calculate math using highly precise 64-bit Floating Point numbers (FP64), AI inference does not require extreme precision. NPUs are heavily optimized to perform math using 8-bit Integers (INT8). Calculating INT8 math requires microscopically small logic gates, massively reducing the physical silicon area and power draw of the NPU.
 
 ## The Future of Consumer Hardware
 
-The integration of NPUs marks the beginning of the "AI PC" era. 
+The integration of NPUs marks the beginning of the "AI PC" era.
 - Apple pioneered this space by integrating the **Neural Engine** into all of their Apple Silicon (M1/M2/M3) chips.
 - Intel and AMD have recently followed suit, integrating NPUs directly into their consumer x86 processors (Core Ultra and Ryzen AI) to meet Microsoft's requirements for local AI features like Windows Studio Effects and local LLM execution.
 
-</ConceptTemplate>

@@ -1,8 +1,31 @@
+---
+title: Eulerian Path & Circuit
+description: "A mathematical trail in a finite graph that visits every single edge exactly once (Path), and optionally starts and ends on the exact same vertex (Circuit), famously solving the Seven Bridges of Königsberg problem."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Eulerian path/circuit">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Eulerian Path & Circuit"
+  subtitle="The Seven Bridges of Königsberg"
+  tags={['Algorithms', 'Graphs', 'Mathematics', 'History']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 1736, Leonhard Euler invented Graph Theory to solve a mathematical puzzle: *"Can you walk through the city of Königsberg, crossing all seven bridges exactly once?"*
 
-</ConceptTemplate>
+## 1. The Mathematical Conditions
+Euler didn't write an algorithm to simulate walking; he looked at the math of the nodes (Vertices) and the bridges (Edges).
+The **Degree** of a vertex is the number of edges connected to it.
+- **Eulerian Circuit** (Starts and ends at the same node): Mathematically possible *if and only if* every single vertex in the graph has an **Even** degree. (If you enter a city via one bridge, you must have a second bridge to exit it).
+- **Eulerian Path** (Starts at Node A, ends at Node B): Mathematically possible *if and only if* exactly **Two** vertices have an Odd degree, and all others are Even. (The two odd vertices must be the Start and the End).
+
+## 2. Hierholzer's Algorithm
+If the mathematical conditions are met, you can physically find the circuit using Hierholzer's Algorithm (O(V+E) time).
+You start at any node and randomly walk across unused edges until you get stuck (which mathematically must be back at the starting node, completing a sub-circuit). You then pick a node on that sub-circuit that still has unused edges, walk a new sub-circuit, and splice them together.
+

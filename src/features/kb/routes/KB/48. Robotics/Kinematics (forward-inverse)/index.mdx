@@ -4,26 +4,38 @@ description: The branch of classical mechanics that describes the motion of poin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kinematics (Forward & Inverse)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kinematics (Forward & Inverse)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Robotics, **Kinematics** is the pure geometry of motion. It answers the question: *"If I bend the robot's elbow by 30 degrees, exactly where is the robot's hand in 3D space?"*
 
 Kinematics completely ignores gravity, weight, and force. It is strictly mathematical trigonometry and matrix algebra.
 
+
 <Callout icon="info" title="Forward Kinematics">
-  **Input:** Joint Angles ($	heta_1, 	heta_2, 	heta_3$)  
+
+
+  **Input:** Joint Angles ($	heta_1, 	heta_2, 	heta_3$)
   **Output:** XYZ Coordinate of the Hand (End Effector)
-  
+
   Forward Kinematics is mathematically trivial. If you know the length of the bicep, the length of the forearm, and the exact angles of the shoulder and elbow motors, you can easily use basic Trigonometry (Sine and Cosine) to calculate exactly where the hand is in 3D space.
+
+
 </Callout>
+
 
 ## Inverse Kinematics (IK)
 
-**Input:** XYZ Coordinate of the Hand  
+**Input:** XYZ Coordinate of the Hand
 **Output:** Joint Angles ($	heta_1, 	heta_2, 	heta_3$)
 
 Inverse Kinematics is mathematically brutally difficult. If you tell a robotic arm, *"Move your hand to XYZ coordinate (10, 5, 2)"*, the robot must mathematically calculate exactly what angles to set its shoulder, elbow, and wrist to reach that point.
 
 Often, there are **infinite mathematical solutions** (e.g., your human hand can stay in the exact same XYZ position in space while your elbow flaps up and down). IK is usually solved using complex Jacobian matrices or iterative gradient descent algorithms.
 
-</ConceptTemplate>

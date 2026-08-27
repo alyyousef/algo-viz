@@ -5,12 +5,19 @@ description: The programming interface for HTML and XML documents, representing 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The Document Object Model (DOM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Document Object Model (DOM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a browser downloads an HTML file, the raw text bytes are fundamentally useless to JavaScript. The browser's Rendering Engine parses that HTML and mathematically converts it into a massive, live, in-memory data structure: the **Document Object Model (DOM)**.
 
 ## 1. The Tree Architecture
-The DOM is a classic Tree data structure. 
+The DOM is a classic Tree data structure.
 - The root node is the `Document` object.
 - Every HTML tag (like `<body>` or `<p>`) becomes an **Element Node**.
 - The text inside those tags becomes a **Text Node**.
@@ -19,15 +26,20 @@ The DOM is a classic Tree data structure.
 Because it is a Tree, it inherits standard tree traversal properties: `parentNode`, `childNodes`, `nextSibling`.
 
 ## 2. The JavaScript Bridge
-The DOM is *not* JavaScript. It is a Web API (usually written in C++ within the browser). 
+The DOM is *not* JavaScript. It is a Web API (usually written in C++ within the browser).
 JavaScript simply provides a bridge to interact with it. When you type `document.getElementById('app')`, the JS engine pauses, reaches across the bridge into the C++ DOM structure, finds the specific node, and returns a JavaScript object wrapper that allows you to manipulate it.
 
 ## 3. DOM Manipulation Costs
 Traversing the bridge between JavaScript and the C++ DOM is computationally expensive.
-If you run a `for` loop 10,000 times, and inside that loop you update `element.innerHTML`, the browser will likely freeze. 
+If you run a `for` loop 10,000 times, and inside that loop you update `element.innerHTML`, the browser will likely freeze.
+
 
 <Callout icon="tip" title="The Virtual DOM">
+
+
 Modern frameworks like React solved this performance nightmare by inventing the **Virtual DOM**. React creates a lightweight JavaScript copy of the C++ DOM. When data changes, React updates the fast JS copy, mathematically calculates the exact differences (diffing), and then reaches across the bridge to update the real C++ DOM exactly *once*.
+
+
 </Callout>
 
-</ConceptTemplate>
+

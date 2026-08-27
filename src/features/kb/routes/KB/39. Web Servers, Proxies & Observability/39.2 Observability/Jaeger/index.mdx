@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Jaeger
+description: An open-source, end-to-end distributed tracing platform originally created by Uber, mathematically designed to monitor and troubleshoot transactions in complex microservices environments.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Jaeger">
+<TechnologyTemplate
+  title="Jaeger"
+  subtitle="Distributed Tracing at Uber Scale"
+  tags={['Observability', 'Tracing', 'Microservices', 'CNCF']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Uber's architecture consisted of thousands of microservices. When a user requested a ride and the app hung for 10 seconds, it was mathematically impossible to use standard logs to find which of the thousands of services was the bottleneck. Uber built Jaeger to solve this.
 
-</ConceptTemplate>
+## 1. The OpenTracing Standard
+Jaeger (now a CNCF graduated project) mathematically tracks requests across service boundaries using standardized Trace IDs.
+When a developer instruments their Go or Java code with the Jaeger client (or OpenTelemetry), every HTTP request, database query, and gRPC call is mathematically wrapped in a "Span." These Spans are asynchronously flushed over UDP to the Jaeger Collector, ensuring that the mathematical overhead of tracing does not slow down the actual user application.
+
+## 2. Root Cause Analysis
+The Jaeger UI mathematically reconstructs these spans into a visual timeline.
+An engineer does not have to guess. They look at the Jaeger UI and mathematically observe: *"Service A called Service B. Service B made 50 sequential SQL queries to the database instead of 1 batched query (the N+1 mathematical query problem). The 50 sequential queries caused the 10-second delay."* Jaeger provides undeniable mathematical proof of where latency exists in a distributed system.
+
+</TechnologyTemplate>

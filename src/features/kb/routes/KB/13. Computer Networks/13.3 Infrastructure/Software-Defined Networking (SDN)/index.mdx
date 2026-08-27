@@ -4,7 +4,14 @@ description: The paradigm shift that separates the network's intelligent control
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SDN (Software-Defined Networking)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SDN (Software-Defined Networking)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, if a datacenter had 500 physical Cisco switches, the "brains" (the routing logic and ACL rules) were permanently locked inside the silicon of each individual switch. If an architect wanted to deploy a new VLAN, a network engineer had to manually SSH into 500 different switches and type commands into the CLI. This took weeks and was prone to human error.
 
@@ -17,9 +24,8 @@ SDN forcibly separates the router into two distinct planes:
 2. **The Control Plane (The Brains)**: The intelligence is ripped out of the switches and centralized into a single, massive **SDN Controller** (a software application running on a central server).
 
 ## Programmable Infrastructure
-Because the brains are centralized in software, the network can now be programmed. 
-If an AWS customer clicks "Create VPC" in the web dashboard, the AWS SDN Controller instantly compiles the rules and pushes them down to the physical switches across the datacenter via an API (like OpenFlow) in milliseconds. 
+Because the brains are centralized in software, the network can now be programmed.
+If an AWS customer clicks "Create VPC" in the web dashboard, the AWS SDN Controller instantly compiles the rules and pushes them down to the physical switches across the datacenter via an API (like OpenFlow) in milliseconds.
 
 The entire physical network infrastructure becomes agile, programmable, and capable of instantly reconfiguring itself based on software triggers.
 
-</ConceptTemplate>

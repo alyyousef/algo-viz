@@ -1,8 +1,32 @@
+---
+title: Site Reliability Engineering (SRE)
+description: A specialized engineering discipline pioneered by Google that applies mathematical software engineering principles to operations and infrastructure to ensure massive-scale systems remain highly available.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SRE">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Site Reliability Engineering (SRE)"
+  subtitle="Operations as Software Engineering"
+  tags={['DevOps', 'SRE', 'Architecture', 'Reliability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+According to Google, *"SRE is what happens when you ask a software engineer to design an operations team."* SREs use code and mathematical algorithms to manage infrastructure, replacing manual SysAdmin labor with automation.
 
-</ConceptTemplate>
+## 1. SLIs, SLAs, and SLOs
+SRE relies on strict mathematical definitions of reliability:
+- **SLI (Service Level Indicator)**: A measurable metric (e.g., "99% of HTTP requests complete in under 200ms").
+- **SLO (Service Level Objective)**: The internal mathematical goal (e.g., "We aim for 99.9% uptime this month").
+- **SLA (Service Level Agreement)**: The legal contract with the customer (e.g., "If uptime drops below 99.5%, we will refund you $10,000"). SREs focus purely on the SLIs and SLOs.
+
+## 2. Error Budgets
+SREs use a mathematical concept called the **Error Budget** to balance feature velocity with system stability.
+If your SLO is 99.9% uptime, you mathematically have 0.1% downtime permitted (about 43 minutes per month). This 43 minutes is your "Error Budget."
+Developers can deploy features as fast as they want, *as long as they have Error Budget remaining*. If a buggy deployment burns through the 43 minutes in week one, all feature deployments are mathematically frozen. The Dev team must spend the rest of the month writing automated tests and fixing technical debt to restore system stability.
+

@@ -4,7 +4,14 @@ description: The HTML architecture for embedding raster images, resolution-indep
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Media & Graphics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Media & Graphics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Embedding media is a core component of web performance. Serving a 5MB unoptimized image to a mobile user on a 3G connection will destroy your UX and your Google rankings.
 
@@ -12,20 +19,19 @@ Embedding media is a core component of web performance. Serving a 5MB unoptimize
 To fix the performance problem, HTML introduced the `srcset` attribute. It allows you to provide 3 different sizes of the exact same image, and the browser's rendering engine will mathematically choose the smallest file that fits the user's screen.
 
 ```html
-<img 
-  src="hero-fallback.jpg" 
-  srcset="hero-small.jpg 400w, hero-medium.jpg 800w, hero-large.jpg 1200w" 
-  alt="A scenic mountain" 
-  loading="lazy" 
+<img
+  src="hero-fallback.jpg"
+  srcset="hero-small.jpg 400w, hero-medium.jpg 800w, hero-large.jpg 1200w"
+  alt="A scenic mountain"
+  loading="lazy"
 />
 ```
 *Note: The `loading="lazy"` attribute tells the browser to NOT download the image until the user actually scrolls down to it.*
 
 ## SVG (Scalable Vector Graphics)
-Raster images (JPEG, PNG, WebP) are grids of colored pixels; if you zoom in, they become blurry. 
+Raster images (JPEG, PNG, WebP) are grids of colored pixels; if you zoom in, they become blurry.
 **SVG** is a mathematical, XML-based markup language that defines shapes, paths, and curves. It is resolution-independent—an SVG logo will look flawlessly crisp on a 1080p monitor and an 8K retina display. Furthermore, because SVG is written in XML, you can animate the shapes directly using CSS or Javascript.
 
 ## Video and Audio
 HTML5 introduced native `<video>` and `<audio>` tags, supporting multiple source formats (like MP4 and WebM) to ensure cross-browser compatibility without relying on third-party plugins.
 
-</ConceptTemplate>

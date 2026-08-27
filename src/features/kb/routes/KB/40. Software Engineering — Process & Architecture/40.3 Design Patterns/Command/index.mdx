@@ -1,8 +1,30 @@
+---
+title: Command Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically encapsulates a request as a stand-alone object containing all information about the request, allowing for parameterization, queueing, and undo operations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Command">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Command Pattern"
+  subtitle="Objectifying Actions"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a text editor, a user can copy text by clicking a button in the UI, pressing CTRL+C on the keyboard, or selecting it from a context menu. If you write the "Copy" logic directly inside the UI Button's onClick event, the Keyboard listener mathematically cannot reuse it.
 
-</ConceptTemplate>
+## 1. The Command Object
+The Command pattern mathematically extracts the action itself into a standalone object.
+You create an `ICommand` interface with an `execute()` method. You then create a `CopyCommand` class that implements it.
+Now, the UI Button, the Keyboard shortcut, and the Context Menu all simply hold a reference to the `CopyCommand` object. When triggered, they blindly call `command.execute()`.
+
+## 2. Queues and Undos
+Because the action is now a physical, mathematical Object in RAM, you can do things you mathematically cannot do with a standard method call.
+You can place the Command objects into an Array (a Queue) and execute them later. More importantly, if you add an `undo()` method to the interface, you can maintain a Stack of executed Command objects. If the user presses CTRL+Z, you simply pop the last Command object off the Stack and execute its mathematical `undo()` logic, effortlessly building a robust History system.
+

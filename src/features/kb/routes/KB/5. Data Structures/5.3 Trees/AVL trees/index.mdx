@@ -5,7 +5,14 @@ description: The first self-balancing Binary Search Tree, mathematically guarant
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="AVL Trees">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AVL Trees">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Invented in 1962 by Adelson-Velsky and Landis, the **AVL Tree** mathematically solves the primary flaw of a standard Binary Search Tree (degeneration into a Linked List).
 
@@ -29,8 +36,13 @@ Because the AVL tree mathematically guarantees that the tree is strictly balance
 
 However, this strictness comes at a computational cost during writes. Every single insertion or deletion might trigger multiple cascading rotations all the way up to the root, burning CPU cycles.
 
+
 <Callout icon="info" title="When to use AVL Trees?">
+
+
 AVL Trees are heavily optimized for **Read-Heavy** workloads. If your application searches a database a billion times a second but only inserts data once an hour (like an in-memory language dictionary), AVL trees mathematically outperform Red-Black trees because their strict balancing creates slightly shorter trees.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,25 @@
+---
+title: Value vs. Reference Semantics
+description: The fundamental mathematical rules governing whether a variable assignment physically copies data, or simply points to existing data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Value vs reference semantics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Value vs. Reference Semantics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you assign one variable to another (`let a = b`), the compiler must make a mathematical decision: does it copy the bits, or does it copy the address?
 
-</ConceptTemplate>
+## 1. Value Semantics (Deep Copy)
+Value semantics mathematically dictate that every variable is a completely independent island of memory.
+If `b` is an Integer (Primitive), and you write `let a = b`, the CPU physically clones the 4 bytes of `b` and writes them into a brand new memory slot for `a`. If you mathematically change `a = 10`, `b` is completely unaffected. In C++, even massive Structs follow Value Semantics by default. If you assign a 1-Megabyte Struct to a new variable, the CPU physically halts and copies 1,000,000 bytes in RAM.
+
+## 2. Reference Semantics (Pointer Copy)
+Reference semantics mathematically dictate that variables share the underlying data.
+In Java or JavaScript, if `b` is an Object (Composite Type), `b` is mathematically just a 64-bit Pointer to the Heap. When you write `let a = b`, the CPU does *not* copy the massive Object. It only copies the 64-bit Pointer. Now, `a` and `b` mathematically point to the exact same physical bytes in the Heap. If you mutate `a.name = "John"`, `b.name` instantly changes to "John" as well, because there is only one actual Object in memory.
+

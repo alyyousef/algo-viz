@@ -4,10 +4,16 @@ description: The large-scale study of proteins.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Proteomics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Proteomics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-DNA is just the static instruction manual. Proteins are the biological nanomachines that actually do the work in a cell. 
+DNA is just the static instruction manual. Proteins are the biological nanomachines that actually do the work in a cell.
 
 **Proteomics** is the study of these proteins. While DNA is a simple 1D text string, a protein is a complex 3D shape that folds in on itself. The biological function of a protein is dictated entirely by its 3D physical shape. Mathematically predicting exactly how a 1D string of amino acids will physically fold into a 3D structure is one of the hardest problems in physics, recently revolutionized by DeepMind's AlphaFold.
 
-</ConceptTemplate>

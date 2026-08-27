@@ -1,8 +1,30 @@
+---
+title: Classes
+description: The fundamental building blocks of Object-Oriented Programming; mathematical templates or blueprints that define the initial state (data) and behavior (methods) for creating instantiated objects.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Classes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Classes"
+  subtitle="The Mathematical Blueprint"
+  tags={['OOP', 'Programming', 'Architecture', 'Fundamentals']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an **Object** is a physical house you can walk into, the **Class** is the architectural blueprint drawn on paper. You cannot walk into a blueprint, but the blueprint mathematically defines exactly how the house must be built.
 
-</ConceptTemplate>
+## 1. State and Behavior
+A Class is a mathematical structure that binds two things together into a single cohesive unit:
+- **State (Attributes/Fields)**: The data the object holds. (e.g., a `Car` class has state variables for `color` and `currentSpeed`).
+- **Behavior (Methods/Functions)**: The mathematical operations that can mutate that state. (e.g., the `Car` class has a `accelerate()` method that increases the `currentSpeed`).
+
+## 2. Instantiation
+The Class itself consumes virtually no memory. It is just a definition.
+When a developer uses the `new` keyword (e.g., `Car myHonda = new Car();`), the runtime environment reads the Class blueprint and allocates physical RAM to create an **Instance** (an Object). You can use the single `Car` class blueprint to mathematically instantiate 1,000 completely independent `Car` objects, each possessing its own unique memory space and its own unique `color`.
+

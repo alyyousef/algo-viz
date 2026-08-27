@@ -4,14 +4,26 @@ description: A method for finding similar items by representing them as dense ve
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Vector Search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vector Search">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Vector Search** is the mathematical engine that powers Semantic Search and modern AI RAG pipelines.
 
+
 <Callout icon="tip" title="High-Dimensional Geometry">
+
+
   An LLM converts a paragraph of text into an array of floating-point numbers (e.g., `[0.24, -0.81, 0.99...]`). This array represents a single coordinate point in a 1,536-dimensional mathematical universe.
-  
+
   When a user searches, their query is also converted into a point in that universe. The database (like Pinecone or Milvus) mathematically calculates the **Cosine Similarity** between the query point and all document points. The points physically closest to the query point are the most biologically relevant results.
+
+
 </Callout>
 
-</ConceptTemplate>
+

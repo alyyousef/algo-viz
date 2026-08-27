@@ -1,8 +1,29 @@
+---
+title: Text Generation
+description: The mathematical process of Autoregressive Language Modeling, where an AI synthesizes human-like text by iteratively calculating the probability distribution of the next word.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Text generation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Text Generation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An LLM like ChatGPT does not "think." It executes a massive mathematical loop called Autoregressive Generation, predicting exactly one Token at a time until it reaches a special `<STOP>` token.
 
-</ConceptTemplate>
+## 1. The Softmax Probability Distribution
+When the AI is given the prompt "The sky is", it processes those vectors through billions of parameters.
+The final layer of the network is a massive **Softmax Layer** containing every single word in the English vocabulary. The network mathematically outputs a probability for every word:
+- "blue" (95.0%)
+- "dark" (4.0%)
+- "falling" (0.9%)
+- "apple" (0.0001%)
+
+## 2. Temperature and Sampling
+If the AI always picks the 95% word (Greedy Decoding), it sounds extremely robotic and repetitive.
+To make it sound human, engineers use **Temperature Sampling**. If you increase the Temperature variable in the math equation, it mathematically flattens the probability curve. "Blue" might drop to 60%, and "falling" might rise to 15%. The AI then rolls a mathematical dice and randomly selects a word based on these new probabilities. This controlled mathematical randomness is what gives Generative AI its "creativity."
+

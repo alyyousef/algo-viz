@@ -4,20 +4,32 @@ description: Ten broad rules of thumb for interaction design developed by Jakob 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Nielsen's 10 Usability Heuristics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Nielsen's 10 Usability Heuristics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 1994, Jakob Nielsen published 10 mathematical "Rules of Thumb" for Interface Design. Decades later, they remain the absolute gold standard for identifying UI/UX flaws.
 
+
 <Callout icon="info" title="The Core Heuristics">
+
+
   Here are 4 of the most critical heuristics:
   1. **Visibility of System Status:** The system must always tell the user what is happening. If a file is uploading, mathematically show a progress bar. Do not leave the user guessing if the app crashed.
   2. **Match Between System and Real World:** Use words, phrases, and concepts familiar to the user. Do not use internal database error codes (`Error 0x80040154`). Use human language (*"We couldn't connect to the internet"*).
   3. **User Control and Freedom:** Humans make mistakes constantly. Every single action must have a mathematical "Emergency Exit" (e.g., an "Undo" button).
   4. **Consistency and Standards:** Users spend 99% of their time on *other* websites. Your website should mathematically work exactly like those other websites. Do not invent a new shape for a checkbox.
+
+
 </Callout>
+
 
 ## Heuristic Evaluation
 
 When a company hires a UX Consultant, the consultant does not randomly click around. They perform a **Heuristic Evaluation**. They systematically mathematically grade every single screen in the app against Nielsen's 10 rules, generating an objective, quantifiable report of the software's usability failures.
 
-</ConceptTemplate>

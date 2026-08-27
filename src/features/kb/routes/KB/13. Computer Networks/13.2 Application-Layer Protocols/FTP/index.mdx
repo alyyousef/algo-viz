@@ -5,10 +5,17 @@ description: "File Transfer Protocol, a standard network protocol used for the t
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="FTP"
   icon="folder"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **FTP (File Transfer Protocol)** is an ancient protocol (originally defined in 1971, pre-dating TCP/IP itself) used for uploading and downloading files. For decades, it was the primary way web developers uploaded HTML files to their shared hosting providers.
 
@@ -23,10 +30,15 @@ This two-port architecture makes FTP a nightmare for modern NATs (Network Addres
 ## Security Flaws
 FTP sends everything—including your username and password—in **plain text**. If you log into an FTP server over public Wi-Fi, anyone sniffing the network can steal your credentials instantly.
 
+
 <Callout icon="danger" title="FTP vs SFTP vs FTPS">
+
+
 - **FTP**: Unencrypted, insecure, obsolete.
 - **FTPS**: FTP wrapped in TLS encryption. Still suffers from firewall issues due to the two-port architecture.
 - **SFTP (SSH File Transfer Protocol)**: Not FTP at all! It is an entirely different, highly secure protocol that runs over standard SSH (Port 22). **SFTP is the modern standard for secure file transfers.**
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,7 +4,14 @@ description: The foundational Layer 7 application protocol that dictates how web
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HTTP (Hypertext Transfer Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HTTP (Hypertext Transfer Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created by Tim Berners-Lee in 1989, **HTTP** is the foundation of data communication on the World Wide Web. It is a Layer 7 protocol that rides on top of TCP (Layer 4) via Port 80.
 
@@ -34,8 +41,13 @@ Content-Length: 138
 <html><body>Hello World!</body></html>
 ```
 
+
 <Callout icon="warning" title="Statelessness">
+
+
   By definition, HTTP is a **Stateless** protocol. The server has no memory. If you log into Amazon (Request 1), and then click "View Cart" (Request 2), the server has completely forgotten who you are. To solve this massive flaw, engineers invented **Cookies**. The server sends a random Session ID cookie to your browser, and your browser automatically attaches that cookie to every future HTTP Request, allowing the server to remember you.
+
+
 </Callout>
 
-</ConceptTemplate>
+

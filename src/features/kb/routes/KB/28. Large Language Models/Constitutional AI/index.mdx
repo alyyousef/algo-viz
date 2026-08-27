@@ -4,24 +4,32 @@ description: An alignment technique pioneered by Anthropic to train helpful and 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Constitutional AI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Constitutional AI">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Scaling RLHF is difficult because human labelers are expensive, slow, and often disagree on what constitutes a "good" response to a complex or controversial prompt. 
+Scaling RLHF is difficult because human labelers are expensive, slow, and often disagree on what constitutes a "good" response to a complex or controversial prompt.
 
-Constitutional AI, developed by Anthropic for their Claude models, solves this by replacing human feedback with **AI Feedback**. 
+Constitutional AI, developed by Anthropic for their Claude models, solves this by replacing human feedback with **AI Feedback**.
+
 
 <Callout icon="tip" title="The Constitution">
+
+
   Instead of thousands of pages of guidelines for human labelers, developers write a short "Constitution"—a list of high-level principles (e.g., "Choose the response that is least racist or sexist", "Choose the response that is most helpful without being harmful").
+
+
 </Callout>
+
 
 ## The Two-Phase Process
 
-<ComparisonTable 
-  headers={['Phase', 'Description']}
-  rows={[
-    ['Supervised Phase', 'The model generates a harmful response to a toxic prompt. It is then asked to critique its own response based on the Constitution, and revise it. The model is then fine-tuned on its own revised, harmless responses.'],
-    ['Reinforcement Learning Phase (RLAIF)', 'The model generates two responses. Another instance of the model acts as the "judge", using the Constitution to score which response is better. The primary model is then trained using this AI-generated preference data.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Phase', 'Description']} rows={[ ['Supervised Phase', 'The model generates a harmful response to a toxic prompt. It is then asked to critique its own response based on the Constitution, and revise it. The model is then fine-tuned on its own revised, harmless responses.'], ['Reinforcement Learning Phase (RLAIF)', 'The model generates two responses. Another instance of the model acts as the "judge", using the Constitution to score which response is better. The primary model is then trained using this AI-generated preference data.'] ]} />
+
+

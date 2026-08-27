@@ -4,11 +4,18 @@ description: The next evolution of Responsive Design, allowing elements to adapt
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Container Queries">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Container Queries">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For a decade, Media Queries (`@media`) were the only way to build responsive layouts. However, Media Queries have a massive architectural flaw: they can only check the width of the **entire screen (the viewport)**.
 
-In modern Component-Based Architecture (React/Vue), you build reusable widgets (like a `ProductCard`). 
+In modern Component-Based Architecture (React/Vue), you build reusable widgets (like a `ProductCard`).
 If you put the `ProductCard` in a wide main section, it should look horizontal. If you put that exact same `ProductCard` into a narrow sidebar, it should look vertical. A Media Query cannot solve this, because the global screen size hasn't changed!
 
 ## The Solution: @container
@@ -38,4 +45,3 @@ Released in 2022, **Container Queries** solve this massive problem. They allow a
 
 This revolutionizes component reusability. The `ProductCard` is now 100% context-aware and will perfectly adapt its layout regardless of where you place it in the DOM.
 
-</ConceptTemplate>

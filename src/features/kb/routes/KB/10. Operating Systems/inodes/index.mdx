@@ -4,7 +4,14 @@ description: The hidden metadata database entries that actually define a file, c
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Inodes (Index Nodes)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Inodes (Index Nodes)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Unix-based filesystems (like EXT4 on Linux), a file is not defined by its name. A file is defined by its **Inode** (Index Node).
 
@@ -17,10 +24,16 @@ The Inode stores all the Metadata about the file, including:
 - **Timestamps**: Creation time, Last Modified time.
 - **Data Pointers**: The exact physical block numbers on the hard drive where the file's actual data is stored.
 
+
 <Callout icon="warning" title="The Missing Piece">
-  Notice what is *not* in the Inode: **The File Name**. 
+
+
+  Notice what is *not* in the Inode: **The File Name**.
   Inodes do not know the name of the file. The human-readable name (like `resume.pdf`) is stored in the Directory (Folder) file, which simply points to the Inode number.
+
+
 </Callout>
+
 
 ## Hard Links
 
@@ -28,4 +41,3 @@ Because the name is decoupled from the Inode, you can have multiple different Fi
 
 You can have `/documents/resume.pdf` and `/desktop/work.pdf` both pointing to Inode #555. They are not copies of the file; they are literally the exact same file on the hard drive. If you edit one, the other instantly changes. The file is only physically deleted from the hard drive when *all* names pointing to the Inode are deleted, dropping the Inode's reference count to zero.
 
-</ConceptTemplate>

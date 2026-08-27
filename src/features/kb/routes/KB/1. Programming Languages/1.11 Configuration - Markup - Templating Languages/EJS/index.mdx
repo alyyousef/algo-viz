@@ -1,8 +1,26 @@
+---
+title: EJS
+description: Embedded JavaScript templating, a simple templating language that lets you generate HTML markup with plain JavaScript.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="EJS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="EJS (Embedded JavaScript)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+EJS is one of the most popular and straightforward templating engines for Node.js and Express applications. It allows developers to dynamically mathematically inject JavaScript variables directly into HTML files.
 
-</ConceptTemplate>
+## 1. Syntax and Execution
+Unlike strict templating languages (like Handlebars) that heavily restrict what logic you can write, EJS allows raw, mathematically complete JavaScript loops and conditionals directly inside the template.
+- `<% %>` : Executes JavaScript logic (e.g., `for` loops, `if` statements) without outputting anything to the HTML.
+- `<%= %>` : Evaluates the JavaScript and mathematically outputs the escaped result into the HTML (preventing XSS attacks).
+- `<%- %>` : Evaluates and outputs the raw, unescaped HTML (dangerous if used with user input).
+
+## 2. The Tradeoff
+Because EJS allows raw JavaScript, it is incredibly powerful. However, it violates the architectural principle of separating Logic from View. A poorly written EJS template can quickly degenerate into a tangled mess of complex database queries mathematically mixed directly into HTML tables.
+

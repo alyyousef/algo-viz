@@ -1,8 +1,42 @@
+---
+title: Access Modifiers
+description: Keywords in Object-Oriented Programming (such as public, private, and protected) that mathematically enforce encapsulation by restricting the visibility and mutability of a class's internal state.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Access modifiers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Access Modifiers"
+  subtitle="Mathematical State Protection"
+  tags={['OOP', 'Encapsulation', 'Java', 'C#']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a `BankAccount` class has a variable called `balance`, and that variable is universally accessible, any other part of the codebase can mathematically execute `account.balance = 1000000`, instantly destroying the integrity of the financial system.
 
-</ConceptTemplate>
+## 1. The Principle of Least Privilege
+Access modifiers prevent this by mathematically locking down the state:
+- **`private`**: The strictest modifier. The variable or method is mathematically invisible to the outside world. It can only be accessed by code written *inside* the exact same class.
+- **`protected`**: The variable is invisible to the outside world, but it *is* visible to any child class that inherits from this class.
+- **`public`**: The variable or method is completely open and accessible from anywhere in the application.
+
+## 2. Enforcing Encapsulation
+By making the `balance` variable `private`, the developer mathematically forces the outside world to use a `public` method to interact with it.
+```java
+public class BankAccount {
+    private double balance; // Hidden
+
+    public void deposit(double amount) {
+        if (amount > 0) { // Mathematical validation
+            this.balance += amount;
+        }
+    }
+}
+```
+The external code cannot modify the balance directly. It must call the `deposit()` method, which mathematically guarantees that negative money cannot be deposited.
+

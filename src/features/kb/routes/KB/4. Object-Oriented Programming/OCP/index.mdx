@@ -1,8 +1,29 @@
+---
+title: Open-Closed Principle (OCP)
+description: The "O" in the SOLID principles, mathematically dictating that software entities (classes, modules, functions) should be open for extension, but strictly closed for modification, preventing the breakage of existing systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OCP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Open-Closed Principle (OCP)"
+  subtitle="Extending Without Modifying"
+  tags={['OOP', 'SOLID', 'Architecture', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an application works flawlessly in production, opening up the core classes and modifying the mathematical logic to add a new feature guarantees that you will eventually inject a bug that breaks the existing functionality.
 
-</ConceptTemplate>
+## 1. The Closed Modification
+A class is "Closed for Modification." Once it is written, tested, and deployed, you mathematically refuse to touch the source code inside that file ever again, unless fixing an explicit bug.
+
+## 2. The Open Extension
+How do you add a new feature if you cannot modify the file? The class must be "Open for Extension" via mathematical polymorphism (Interfaces or Abstract Classes).
+Imagine a `PaymentProcessor` class that has an `if (type == "credit")` and `else if (type == "paypal")` block. If you want to add Bitcoin, violating OCP means modifying the file to add another `else if`.
+To honor OCP, you mathematically abstract the payment logic into an interface: `public interface PaymentStrategy { void pay(); }`. The processor blindly executes `strategy.pay()`. To add Bitcoin, you simply write a brand new `BitcoinStrategy` file. The new code extends the system's capability without mathematically touching the core processor file, achieving absolute architectural safety.
+

@@ -1,8 +1,45 @@
+---
+title: Hypothesis Testing
+description: "The formal statistical methodology for evaluating whether an observed result in data is statistically significant, or if it simply occurred due to random chance."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Statistics (hypothesis testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Hypothesis Testing"
+  subtitle="The Science of Statistical Proof"
+  tags={['Mathematics', 'Statistics', 'Data Science', 'A/B Testing']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In data science, if you run an A/B test on a website and Version B gets 2% more clicks, how do you mathematically prove that Version B is actually better, and it wasn't just a random fluke of traffic? You use **Hypothesis Testing**.
 
-</ConceptTemplate>
+## 1. The Null and Alternative Hypotheses
+- **Null Hypothesis ($H_0$)**: The assumption of the status quo, stating there is absolutely no difference, and any observed change is purely random noise. (e.g., "Version B is exactly equal to Version A").
+- **Alternative Hypothesis ($H_A$)**: The theory you are attempting to prove. (e.g., "Version B is better than Version A").
+
+## 2. The P-Value
+You run your data through a statistical test (like a T-Test). The test outputs a **P-Value**.
+The P-Value answers one specific question: *If the Null Hypothesis was mathematically 100% true, how likely is it that we would see this extreme result purely by random chance?*
+
+
+<Callout type="warning" title="The 0.05 Threshold">
+
+
+  By scientific convention, if the P-Value is less than 0.05 (5%), the result is considered "Statistically Significant". You mathematically reject the Null Hypothesis, concluding that the 2% increase in clicks is a real, structural improvement, not a fluke.
+
+
+</Callout>
+
+
+## 3. Type I and Type II Errors
+- **Type I Error (False Positive)**: Rejecting the Null Hypothesis when it was actually true. (You pushed Version B to production, but it was actually a fluke).
+- **Type II Error (False Negative)**: Failing to reject the Null Hypothesis when it was actually false. (You threw away Version B, even though it was genuinely better).
+
+\n

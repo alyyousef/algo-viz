@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="GraphQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GraphQL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created by Facebook in 2012 to optimize data fetching for their mobile apps, **GraphQL** is an alternative to REST. While REST forces the server to define the structure of the response, GraphQL empowers the *client* to dictate exactly what data it wants.
 
@@ -36,17 +43,16 @@ The server responds with a JSON object that exactly matches the shape of the que
 
 ## 3. Operations
 
-<ComparisonTable 
-  headers={['GraphQL Operation', 'REST Equivalent', 'Purpose']} 
-  rows={[
-    ['Query', 'GET', 'Fetching data without modifying it.'],
-    ['Mutation', 'POST, PUT, DELETE', 'Modifying data on the server and returning the updated result.'],
-    ['Subscription', 'WebSockets / SSE', 'Opening a real-time connection to receive live updates when data changes.']
-  ]} 
-/>
+
+<ComparisonTable headers={['GraphQL Operation', 'REST Equivalent', 'Purpose']} rows={[ ['Query', 'GET', 'Fetching data without modifying it.'], ['Mutation', 'POST, PUT, DELETE', 'Modifying data on the server and returning the updated result.'], ['Subscription', 'WebSockets / SSE', 'Opening a real-time connection to receive live updates when data changes.'] ]} />
+
 
 <Callout icon="warning" title="The Trade-off">
+
+
 GraphQL shifts the complexity from the network to the server. Writing efficient "Resolvers" on the backend to fulfill complex nested GraphQL queries without crushing your SQL database requires advanced techniques like DataLoader to batch database queries.
+
+
 </Callout>
 
-</ConceptTemplate>
+

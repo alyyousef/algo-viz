@@ -1,8 +1,34 @@
+---
+title: Stable Matching (Gale-Shapley)
+description: "A Nobel Prize-winning algorithmic system that mathematically guarantees a stable assignment between two equally sized sets (like medical students and hospitals) where no two pairs would rather swap with each other."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stable matching (Gale-Shapley)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Stable Matching (Gale-Shapley)"
+  subtitle="The Medical Residency Algorithm"
+  tags={['Algorithms', 'Game Theory', 'Optimization', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The **Stable Marriage Problem** involves two sets of size N (e.g., N Proposers, N Acceptors). Every person has a strict, ranked preference list of the other set.
+A matching is **Unstable** if Proposer A and Acceptor B are not matched to each other, but they mathematically prefer each other over their current partners. (They will abandon their partners and elope, breaking the system).
 
-</ConceptTemplate>
+## 1. The Gale-Shapley Algorithm (1962)
+David Gale and Lloyd Shapley proved mathematically that a Stable Matching is *always* possible, and created a strict O(N²) algorithm to find it:
+1. Every unmatched Proposer proposes to their top remaining choice.
+2. The Acceptor looks at the proposal. If they are unmatched, they say "Maybe" (Engaged).
+3. If the Acceptor is already engaged, they compare the new proposal to their current partner. They mathematically dump the lesser preferred, and get engaged to the higher preferred.
+4. The dumped Proposer crosses that Acceptor off their list, and proposes to their next choice in the next round.
+5. The algorithm stops when everyone is engaged.
+
+## 2. Mathematical Properties
+The algorithm is **Proposer-Optimal**. It mathematically guarantees that every single Proposer receives the absolute best possible partner they can get in any stable matching, while the Acceptors receive their absolute worst possible valid partner.
+In the real world, Gale-Shapley is used by the **National Resident Matching Program** to mathematically assign thousands of medical school graduates to hospital residency programs. (It was modified in the 1990s to be Student-Proposing, ensuring students get the mathematical advantage).
+

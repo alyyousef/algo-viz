@@ -4,15 +4,22 @@ description: The strategic and mathematical process of choosing the optimal algo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model Selection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Selection">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-There is no single "best" Machine Learning algorithm. **The No Free Lunch Theorem** mathematically proves that averaged over all possible problems, every single optimization algorithm performs exactly as well as random chance. 
+There is no single "best" Machine Learning algorithm. **The No Free Lunch Theorem** mathematically proves that averaged over all possible problems, every single optimization algorithm performs exactly as well as random chance.
 Therefore, **Model Selection** is the process of matching the mathematical assumptions of a specific algorithm to the mathematical shape of a specific dataset.
 
 ## 1. The Decision Matrix
 
 ### Data Size and Shape
-- **Tiny Datasets (< 10,000 rows)**: Deep Neural Networks will mathematically overfit immediately and fail. You must select algorithms that enforce strong mathematical assumptions (High Bias algorithms), like **Linear Regression** or **Naive Bayes**.
+- **Tiny Datasets (&lt; 10,000 rows)**: Deep Neural Networks will mathematically overfit immediately and fail. You must select algorithms that enforce strong mathematical assumptions (High Bias algorithms), like **Linear Regression** or **Naive Bayes**.
 - **Massive Tabular Datasets**: The absolute undisputed king of relational CSV/SQL data is the ensemble tree family (**XGBoost, Random Forest, LightGBM**). They mathematically handle missing values, non-linear relationships, and lack of scaling flawlessly.
 - **Unstructured Data (Images, Text, Audio)**: Tree algorithms completely fail to process 2D pixel arrays. You mathematically *must* select **Deep Learning (CNNs, Transformers)**.
 
@@ -23,7 +30,6 @@ If you are a bank denying someone a loan, it is legally required that you explai
 
 ## 2. Empirical Selection (The Bake-Off)
 Because humans cannot magically intuit the perfect model, the industry standard is to automate the selection mathematically.
-Data Scientists use libraries (like Scikit-Learn or AutoML frameworks) to instantiate a "Bake-Off". 
+Data Scientists use libraries (like Scikit-Learn or AutoML frameworks) to instantiate a "Bake-Off".
 The code mathematically loops over 10 different algorithms (SVM, KNN, Random Forest, Logistic Regression), trains them all on the exact same Cross-Validation folds, and mathematically compares their AUC or RMSE scores side-by-side to declare a winner before engaging in deep Hyperparameter Optimisation.
 
-</ConceptTemplate>

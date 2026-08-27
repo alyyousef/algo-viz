@@ -4,14 +4,26 @@ description: The automated process of identifying known security vulnerabilities
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dependency Scanning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dependency Scanning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Dependency Scanning** is the overarching mathematical workflow that executes SCA tools in CI/CD pipelines.
 
+
 <Callout icon="warning" title="The False Positive Nightmare">
-  While Dependency Scanning is biologically critical, it suffers from severe mathematical noise. 
-  
+
+
+  While Dependency Scanning is biologically critical, it suffers from severe mathematical noise.
+
   A scanner might flag an NPM package as "Critical" because of a RegEx vulnerability. However, if the biological codebase never actually calls that specific RegEx function, the vulnerability is mathematically impossible to exploit. Engineers often biologically suffer from "Alert Fatigue," ignoring massive lists of false-positive Dependency Scan warnings.
+
+
 </Callout>
 
-</ConceptTemplate>
+

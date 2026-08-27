@@ -4,7 +4,14 @@ description: The supreme command used to change the User and Group ownership of 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="chown">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="chown">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **`chown`** (Change Owner) command allows administrators to transfer ownership of a file from one user to another. Because giving files away can bypass disk quotas and security mechanisms, `chown` usually requires Root (`sudo`) privileges.
 
@@ -17,11 +24,16 @@ You can use `chown` to change just the user, or both the user and the group simu
 - **Change the User and the Group simultaneously**:
   `sudo chown alice:developers database.sql`
 
+
 <Callout icon="info" title="The Shorthand Group Trick">
+
+
   If you type a colon but leave the group blank (e.g., `sudo chown alice: database.sql`), Linux will automatically look up Alice's Primary Group and change the file's group ownership to match it.
+
+
 </Callout>
+
 
 ## The Danger of Recursive Chown
 Like `chmod`, `chown` supports the `-R` flag. Be extremely careful when using `sudo chown -R user:group /*`. A misplaced asterisk or slash will instantly destroy the operating system by reassigning ownership of core kernel binaries away from Root, permanently breaking the server.
 
-</ConceptTemplate>

@@ -4,14 +4,21 @@ description: The classical AI subfield dedicated to mathematically structuring i
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Knowledge Representation & Reasoning (KRR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Knowledge Representation & Reasoning (KRR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Deep Learning, AI systems could not "read" text. If you wanted an AI to understand that a "Dog is a Mammal", you had to mathematically encode that fact into a strict, machine-readable format. This is the domain of **Knowledge Representation & Reasoning (KRR)**.
 
 ## 1. Propositional and First-Order Logic
 The mathematical foundation of KRR is strict formal logic.
 
-- **Propositional Logic**: Using Boolean symbols to represent facts. 
+- **Propositional Logic**: Using Boolean symbols to represent facts.
   - $P ightarrow Q$ (If it rains, the grass is wet).
 - **First-Order Logic (Predicate Calculus)**: A vastly more powerful mathematical framework that introduces objects and quantifiers ($\forall$ For All, $\exists$ Exists).
   - $\forall x (Dog(x) ightarrow Mammal(x))$ (For all objects x, if x is a Dog, it mathematically implies x is a Mammal).
@@ -29,7 +36,6 @@ When Google processes a search for "Who is the CEO of Apple", it doesn't just sc
 ## 3. Automated Reasoning (Inference)
 Once the knowledge is mathematically represented, the AI must *Reason* to discover new facts that were never explicitly programmed.
 
-If the system knows $\forall x (Dog(x) ightarrow Mammal(x))$ and it knows $Dog(Fido)$, it uses the mathematical rule of **Modus Ponens** to instantly deduce $Mammal(Fido)$. 
+If the system knows $\forall x (Dog(x) ightarrow Mammal(x))$ and it knows $Dog(Fido)$, it uses the mathematical rule of **Modus Ponens** to instantly deduce $Mammal(Fido)$.
 This mathematical deduction powered the Expert Systems of the 1980s, allowing them to diagnose diseases by chaining together thousands of logical facts. While Deep Learning is vastly superior for perception (vision/audio), KRR is still the undisputed king of rigid, mathematical fact-checking.
 
-</ConceptTemplate>

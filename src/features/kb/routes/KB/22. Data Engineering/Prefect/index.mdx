@@ -4,7 +4,14 @@ description: A modern Python orchestrator focused on dynamic, data-aware executi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prefect">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Prefect">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Apache Airflow is the legacy standard for orchestration, it was designed in an era where pipelines were static. Airflow requires you to mathematically define the exact DAG structure *before* the pipeline runs. If you need to dynamically spin up 50 tasks based on an API response, Airflow struggles.
 
@@ -29,7 +36,7 @@ def process_data(data):
 def my_dynamic_pipeline(endpoints):
     results = []
     # Dynamic iteration: Airflow cannot easily do this natively
-    for endpoint in endpoints: 
+    for endpoint in endpoints:
         raw = fetch_data(endpoint)
         clean = process_data(raw)
         results.append(clean)
@@ -47,4 +54,3 @@ In Airflow, the central server must have access to all your secrets, API keys, a
 
 In Prefect, the central UI (Prefect Cloud) only handles the **Metadata** (scheduling, state tracking). The actual physical execution happens on **your** infrastructure (e.g., your private AWS Kubernetes cluster) via a Prefect Agent. The Agent polls the cloud for work, executes the Python code locally using your secure VPC secrets, and only sends the mathematical *Status* (Success/Fail) back to the UI. Your proprietary data never touches Prefect's servers.
 
-</ConceptTemplate>

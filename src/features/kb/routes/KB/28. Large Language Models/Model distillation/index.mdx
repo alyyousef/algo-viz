@@ -4,23 +4,30 @@ description: The process of transferring the knowledge of a massive "Teacher" mo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model Distillation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Distillation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Running a 1-Trillion parameter model (like GPT-4) in production is incredibly expensive and slow. Model Distillation (or Knowledge Distillation) is a technique used to train a much smaller, faster, and cheaper "Student" model to mimic the behavior of the massive "Teacher" model.
 
+
 <Callout icon="success" title="Why it works">
+
+
   A massive model discovers complex mathematical relationships in the training data that a small model could never find on its own. However, once the big model has found those relationships, it can guide the small model directly to the correct conclusions.
+
+
 </Callout>
+
 
 ## Distillation Techniques
 
-<ComparisonTable 
-  headers={['Technique', 'Mechanism']}
-  rows={[
-    ['Logit Matching', 'The Student is trained to perfectly match the raw output probabilities (logits) of the Teacher, rather than just matching the final chosen word.'],
-    ['Synthetic Data Generation', 'The most common modern approach. You use the expensive GPT-4 (Teacher) to generate millions of high-quality examples, and then train an open-source 8B model (Student) on that synthetic dataset.'],
-    ['Step-by-Step Distillation', 'The Student is trained not just on the final answer, but on the Teacher\'s internal "Chain of Thought" reasoning steps.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Technique', 'Mechanism']} rows={[ ['Logit Matching', 'The Student is trained to perfectly match the raw output probabilities (logits) of the Teacher, rather than just matching the final chosen word.'], ['Synthetic Data Generation', 'The most common modern approach. You use the expensive GPT-4 (Teacher) to generate millions of high-quality examples, and then train an open-source 8B model (Student) on that synthetic dataset.'], ['Step-by-Step Distillation', 'The Student is trained not just on the final answer, but on the Teacher\'s internal "Chain of Thought" reasoning steps.'] ]} />
+
+

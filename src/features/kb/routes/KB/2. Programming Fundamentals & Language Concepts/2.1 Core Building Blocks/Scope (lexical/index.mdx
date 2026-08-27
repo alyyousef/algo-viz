@@ -1,8 +1,27 @@
+---
+title: Lexical Scope
+description: The mathematical rules defining the visibility of variables based on where they are physically typed in the source code.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scope (lexical">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lexical Scope (Static Scope)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Lexical Scope (also called Static Scope) means that the mathematical visibility of a variable is determined by its physical location in the source code during compilation, not by the execution path during runtime.
 
-</ConceptTemplate>
+## 1. The Scope Chain
+When a compiler sees a variable being used (e.g., `console.log(x)`), it must mathematically resolve what `x` is.
+It performs a lexical lookup:
+1. It mathematically checks the immediate Local Scope (the current function or block).
+2. If it is not there, it mathematically steps out to the Parent Scope (the block that physically surrounds the current block in the text file).
+3. It repeats this mathematical climb until it reaches the Global Scope. If it still cannot find `x`, it throws a Reference Error.
+
+## 2. Shadowing
+Because of the Scope Chain, mathematical **Shadowing** occurs. If you declare a global variable `let x = 10;`, and then inside a function you declare `let x = 5;`, the inner `x` mathematically shadows the outer `x`. When the function looks for `x`, it finds the local one instantly and stops climbing the chain, mathematically preventing the function from ever seeing the global `10`.
+

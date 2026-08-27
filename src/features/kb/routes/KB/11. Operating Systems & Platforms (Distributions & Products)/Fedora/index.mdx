@@ -4,9 +4,16 @@ description: A bleeding-edge Linux distribution sponsored by Red Hat, serving as
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fedora">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Fedora">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Fedora** is a highly popular, fast-moving Linux distribution sponsored by Red Hat (IBM). 
+**Fedora** is a highly popular, fast-moving Linux distribution sponsored by Red Hat (IBM).
 
 Unlike Debian, which values ancient stability, Fedora is a **Bleeding-Edge** distribution. It is usually the very first major distribution to adopt radical new Linux technologies (like the Wayland display server, Systemd, or the PipeWire audio system).
 
@@ -18,8 +25,13 @@ Fedora serves a very specific purpose in the enterprise ecosystem: it is the ups
 2. Every few years, Red Hat takes a snapshot of Fedora, stabilizes it, freezes the features, and releases it as RHEL.
 3. RHEL is then sold to Fortune 500 companies with 10-year paid support contracts.
 
+
 <Callout icon="success" title="The Developer's Choice">
+
+
   Because Fedora always has the newest compilers, programming languages, and kernel features, while still remaining relatively stable and backed by a major corporation, it is widely considered one of the best Linux distributions for software developers. Linus Torvalds famously uses Fedora on his personal workstations.
+
+
 </Callout>
 
-</ConceptTemplate>
+

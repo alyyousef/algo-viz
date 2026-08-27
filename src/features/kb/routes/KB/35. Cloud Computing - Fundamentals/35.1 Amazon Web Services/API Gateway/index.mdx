@@ -1,0 +1,24 @@
+---
+title: Amazon API Gateway
+description: A fully managed AWS service that acts as the physical "front door" for applications, providing secure, mathematically scalable HTTP routing, throttling, and authentication for backend microservices.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon API Gateway"
+  subtitle="The Front Door of AWS"
+  tags={['AWS', 'Networking', 'Serverless', 'API']}
+>
+
+If you write an AWS Lambda function, it exists in the cloud, but the internet cannot talk to it. API Gateway provides the physical URL and handles the complex mathematical traffic routing required to securely expose that function to the public.
+
+## 1. Request Routing and Transformation
+API Gateway intercepts every incoming HTTP request.
+It mathematically inspects the URL path (e.g., `/users/123`) and the HTTP Method (`GET`, `POST`). Based on the rules you define, it routes the request to the correct backend (a Lambda function, an EC2 server, or another AWS service).
+Crucially, it can perform **Mapping Templates**. If an old mobile app sends data in XML, API Gateway can mathematically transform the XML payload into JSON before handing it to your modern backend, entirely decoupling the client from the server architecture.
+
+## 2. Throttling and Protection
+If a hacker hits your Lambda function 100,000 times a second, AWS will happily auto-scale, and you will receive a $50,000 bill.
+API Gateway prevents this using **Throttling**. You set a mathematical limit (e.g., 1,000 requests per second). If traffic exceeds this, the Gateway mathematically rejects the request, instantly returning a `429 Too Many Requests` error. It acts as an absolute mathematical shield, protecting your expensive backend compute from DDoS attacks and traffic spikes.
+
+</TechnologyTemplate>

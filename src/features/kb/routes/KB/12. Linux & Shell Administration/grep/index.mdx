@@ -5,10 +5,17 @@ description: "A command-line utility for searching plain-text data sets for line
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="grep"
   icon="search"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **grep (Global Regular Expression Print)** is one of the most powerful and frequently used tools in a sysadmin's arsenal. It is used to search through files (or the output of other commands) for specific text patterns.
 
@@ -38,8 +45,13 @@ netstat -tulpn | grep :80
 - `-r` : Recursive search. Look through all files in a directory and its subdirectories.
 - `-E` : Extended Regular Expressions. Allows complex regex searches like `grep -E "(ERROR|WARNING)"`.
 
+
 <Callout icon="info" title="Modern Alternatives">
+
+
 While `grep` is installed everywhere, modern developers often use alternatives like **ripgrep (rg)** or **ack**, which are written in Rust/Perl and are significantly faster for searching massive codebases because they ignore `.git` folders and use multithreading.
+
+
 </Callout>
 
-</ConceptTemplate>
+

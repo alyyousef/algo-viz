@@ -1,8 +1,27 @@
+---
+title: Gremlin
+description: The graph traversal language of Apache TinkerPop, designed to mathematically describe complex paths through graph databases.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gremlin">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Gremlin">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 2009 by Marko Rodriguez, Gremlin is a functional, data-flow language that serves as the query language for the Apache TinkerPop graph computing framework. While Cypher uses ASCII-art to match patterns, Gremlin uses mathematical functional steps to traverse the graph.
 
-</ConceptTemplate>
+## 1. The Functional Pipeline
+A Gremlin query is a chain of mathematical operations, heavily inspired by functional programming (like map, filter, and reduce).
+```groovy
+g.V().has('name', 'John').out('knows').out('knows').values('name')
+```
+This mathematically reads as: "Get the graph (`g`), find all Vertices (`V()`), filter for the name 'John', step out to his friends, step out to their friends, and map the output to their names."
+
+## 2. Turing Completeness
+Unlike Cypher or SQL, which are strictly declarative, Gremlin is Turing-complete. You can mathematically write loops, variables, and complex conditional branching logic directly inside the traversal pipeline. Because Gremlin can be embedded in almost any host language (Java, Python, Javascript), the traversal steps compile directly into native objects, allowing seamless integration between application code and database queries.
+

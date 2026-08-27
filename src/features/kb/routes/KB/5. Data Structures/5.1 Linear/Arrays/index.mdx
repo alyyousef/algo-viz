@@ -4,7 +4,14 @@ description: The most fundamental contiguous memory data structure, providing $O
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Arrays">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Arrays">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Array** is the most basic and hardware-friendly data structure in computer science. It is a collection of elements (usually of the same data type) stored in **contiguous memory locations**.
 
@@ -29,8 +36,13 @@ The greatest strength of an array is also its greatest weakness. Because it must
 - **Insertion/Deletion**: If you have an array of 1,000 elements, and you want to insert a new element at index 0, you must physically move all 1,000 existing elements one slot to the right to make room. This takes $O(N)$ time.
 - **Fixed Size**: If you create an array of size 10, and you want to add an 11th element, you cannot just append it to the end (the memory block right next to the array might already be owned by a different program). You must create a brand new, larger array and copy all the old elements over.
 
+
 <Callout icon="tip" title="CPU Cache Locality">
+
+
   Arrays are significantly faster than Linked Lists in the real world, even when time complexity suggests they are equal. Because arrays are contiguous, modern CPUs can load entire chunks of the array into the ultra-fast L1 Cache in a single fetch (Spatial Locality). Linked Lists are scattered randomly across RAM, causing constant, slow cache misses.
+
+
 </Callout>
 
-</ConceptTemplate>
+

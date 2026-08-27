@@ -1,8 +1,35 @@
+---
+title: Class Diagrams (UML)
+description: The standard mathematical visual language (Unified Modeling Language) used by software architects to map out the structure of an Object-Oriented system, detailing classes, attributes, operations, and their precise relationships.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Class diagrams / UML">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Class Diagrams (UML)"
+  subtitle="The Blueprints of Object-Oriented Design"
+  tags={['OOP', 'UML', 'Architecture', 'Design']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before writing 50,000 lines of Java code, software architects use UML (Unified Modeling Language) Class Diagrams to mathematically map the system, just as an architect draws a blueprint before pouring concrete.
 
-</ConceptTemplate>
+## 1. The Class Box
+In UML, a class is mathematically represented as a box divided into three horizontal compartments:
+1. **Top**: The Class Name (e.g., `BankAccount`).
+2. **Middle**: The Attributes (State). Visibility is mathematically denoted using symbols: `-` for private (`- balance: double`), `+` for public.
+3. **Bottom**: The Operations (Methods). E.g., `+ deposit(amount: double): void`.
+
+## 2. Mathematical Relationship Connectors
+The true power of a Class Diagram is how it models the relationships between boxes using specific lines and arrows:
+- **Inheritance**: A solid line with a hollow, unfilled arrow pointing to the parent class.
+- **Implementation (Interfaces)**: A dashed line with a hollow arrow.
+- **Association**: A simple solid line connecting two classes.
+- **Aggregation**: A solid line with a hollow diamond touching the "container" class.
+- **Composition**: A solid line with a solid, filled-in black diamond touching the "owner" class.
+

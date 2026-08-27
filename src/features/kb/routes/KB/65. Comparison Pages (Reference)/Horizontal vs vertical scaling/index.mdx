@@ -1,8 +1,31 @@
+---
+title: Horizontal vs Vertical Scaling
+description: "The fundamental infrastructure decision of how to handle increased server load: upgrading the mathematical power of a single machine (Vertical) versus adding more identical machines to a cluster (Horizontal)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Horizontal vs vertical scaling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Horizontal vs Vertical Scaling"
+  subtitle="Scaling Out vs Scaling Up"
+  tags={['Comparison', 'System Design', 'Architecture', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a web application goes viral, the server will mathematically collapse under the load. There are only two ways to scale a system.
 
-</ConceptTemplate>
+## 1. Vertical Scaling (Scaling Up)
+- **Mechanism**: Buying a bigger server. If your 16GB RAM server is dying, you shut it down, migrate to a 128GB RAM server with a 64-core CPU, and turn it back on.
+- **Pros**: Mathematically trivial. It requires exactly zero changes to your codebase.
+- **Cons**: A Single Point of Failure. If that one massive server loses power, the entire application dies. Furthermore, there is a hard mathematical limit; you cannot physically buy a server with 10,000 Terabytes of RAM.
+
+## 2. Horizontal Scaling (Scaling Out)
+- **Mechanism**: Buying more servers. You keep your 16GB RAM server, but you buy 99 more identical ones, placing a **Load Balancer** in front of them to distribute the traffic evenly.
+- **Pros**: Infinite mathematical scalability (Google uses millions of servers). High Availability (if 10 servers explode, the other 90 keep the site online seamlessly).
+- **Cons**: Architecturally catastrophic. Your codebase must become "Stateless". If User A logs into Server 1, and their next request hits Server 2, Server 2 doesn't know who they are. You must introduce centralized caching (Redis), distributed databases, and complex container orchestration (Kubernetes).
+

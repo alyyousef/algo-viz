@@ -4,7 +4,14 @@ description: A massive, highly complex enterprise framework used to build custom
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Yocto Project">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Yocto Project">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While *Buildroot* is a simple tool for generating a single, static embedded OS, the **Yocto Project** is a massive, enterprise-grade framework for generating highly complex, updateable Embedded Linux distributions.
 
@@ -12,23 +19,28 @@ If you are building a cheap smart thermostat, you use Buildroot. If you are buil
 
 ## The Recipe System (BitBake)
 
-Yocto does not provide an operating system; it provides the *tools* to build one. The core engine of Yocto is a build tool called **BitBake**. 
+Yocto does not provide an operating system; it provides the *tools* to build one. The core engine of Yocto is a build tool called **BitBake**.
 
 BitBake reads thousands of "Recipes". A Recipe is a text file that tells Yocto:
 1. Where to download a specific piece of software (like Python or an Audio driver).
 2. Exactly how to compile it for a specific hardware architecture (like an ARM Cortex-A53).
 3. Where to place the resulting binary in the final OS image.
 
+
 <Callout icon="warning" title="The Compilation Nightmare">
+
+
   Because Yocto builds an entire OS (including the cross-compiler toolchain, the kernel, and thousands of user-space packages) entirely from raw C/C++ source code, the build process is brutally slow. A fresh Yocto build for a Smart Car might take 12 hours and consume 100 Gigabytes of SSD space just for the temporary compilation files.
+
+
 </Callout>
+
 
 ## Layers
 
-Yocto's superpower is **Layers**. You can stack recipes on top of each other. 
+Yocto's superpower is **Layers**. You can stack recipes on top of each other.
 - Intel provides a "Hardware Layer" (BSP) containing drivers for their CPU.
 - Qt provides a "UI Layer" containing graphical libraries.
 - Your company provides the "Application Layer" containing your proprietary car software.
 Yocto mathematically merges these layers together to spit out the final, highly customized Linux Operating System.
 
-</ConceptTemplate>

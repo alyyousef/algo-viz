@@ -4,24 +4,30 @@ description: A probabilistic alternative to balanced trees, using multiple layer
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Skip Lists">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Skip Lists">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A standard sorted Linked List is brutally slow. Searching for a number takes $O(N)$ time because you must check every node one by one. 
+A standard sorted Linked List is brutally slow. Searching for a number takes $O(N)$ time because you must check every node one by one.
 A **Skip List** mathematically fixes this by stacking multiple "Express Lanes" on top of the base Linked List, achieving the exact same $O(log N)$ blazing-fast search speed as a Red-Black Tree, but using completely randomized probability instead of complex tree rotations.
 
 ## 1. The Express Lanes
-Imagine a subway system. The base level stops at every single station ($1, 2, 3, 4, 5, 6$). 
-The Skip List builds a Level 2 Express Lane that skips every other node ($1, 3, 5$). 
-It builds a Level 3 Express Lane that skips even more ($1, 5$). 
+Imagine a subway system. The base level stops at every single station ($1, 2, 3, 4, 5, 6$).
+The Skip List builds a Level 2 Express Lane that skips every other node ($1, 3, 5$).
+It builds a Level 3 Express Lane that skips even more ($1, 5$).
 
 To search for $4$, you start at the highest Express Lane. You ride it to $1$. The next stop is $5$ (which is too far). So you mathematically drop down to Level 2. You ride it to $3$. You drop down to the base level and ride it to $4$. By skipping massive chunks of the list, the search mathematically finishes in $O(log N)$ time.
 
 ## 2. Probabilistic Coin Flipping
-How does the Skip List know which nodes get an Express Lane? It mathematically relies on absolute randomness. 
-When you insert a new node, the algorithm literally flips a virtual coin. If Heads, it builds a Level 2 Express Lane for that node. It flips again; if Heads, it builds Level 3. It stops on the first Tails. 
+How does the Skip List know which nodes get an Express Lane? It mathematically relies on absolute randomness.
+When you insert a new node, the algorithm literally flips a virtual coin. If Heads, it builds a Level 2 Express Lane for that node. It flips again; if Heads, it builds Level 3. It stops on the first Tails.
 Because of the mathematical laws of probability, $50\%$ of nodes will be Level 1, $25\%$ Level 2, $12.5\%$ Level 3, perfectly mimicking the mathematical structure of a balanced binary tree without any rebalancing logic.
 
 ## 3. Database Caching (Redis)
 Because they are significantly easier to implement than Red-Black trees and support highly efficient concurrent locking, Skip Lists are heavily used in production. The massively popular in-memory database **Redis** strictly uses Skip Lists to implement its Sorted Sets data type.
 
-</ConceptTemplate>

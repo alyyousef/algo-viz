@@ -1,8 +1,30 @@
+---
+title: Resilience Engineering
+description: The proactive architectural discipline of designing distributed systems that mathematically anticipate, absorb, and automatically recover from underlying hardware or software failures without impacting the end user.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Resilience engineering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Resilience Engineering"
+  subtitle="Designing for Inevitable Failure"
+  tags={['SRE', 'Architecture', 'Design Patterns', 'Cloud']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Reliability is the *outcome* (the system stays up). Resilience Engineering is the *mathematical method* used to achieve that outcome in a chaotic cloud environment where network cables are constantly cut and hard drives constantly fail.
 
-</ConceptTemplate>
+## 1. Architectural Bulkheads
+Resilience relies on the mathematical concept of **Bulkheads** (borrowed from ship design).
+If a microservice handles both "User Logins" and "Generating PDF Invoices," and the PDF generator mathematically consumes 100% of the CPU and crashes, the entire service dies, preventing users from logging in.
+Resilience Engineering dictates separating these into distinct microservices (Bulkheads). If the PDF generator crashes, the Login service remains mathematically isolated and perfectly functional, degrading the user experience gracefully rather than catastrophically.
+
+## 2. Circuit Breakers and Retries
+When a microservice calls a slow database, if it blindly waits, it will mathematically exhaust its own connection pool and crash.
+Resilience engineers implement **Circuit Breakers**. If the database fails 5 times in a row, the circuit breaker mathematically "trips" (opens). The microservice stops calling the database entirely and instantly returns a cached response or an error, saving its own CPU threads. Every 30 seconds, it sends a single test ping. When the database recovers, the circuit mathematically closes, and traffic resumes safely.
+

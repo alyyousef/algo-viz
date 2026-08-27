@@ -4,7 +4,14 @@ description: A highly scalable deep learning framework originally championed by 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache MXNet">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache MXNet">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before PyTorch completely dominated the AI landscape, the industry was fragmented. **Apache MXNet** was a major contender, famously selected by Amazon (AWS) as their official, premier deep learning framework due to its unparalleled mathematical efficiency at massive scale.
 
@@ -21,4 +28,3 @@ MXNet's true superpower was its mathematical scaling efficiency. It was engineer
 ## 3. The Decline
 Despite its incredible mathematical architecture and AWS backing, MXNet lost the usability war. PyTorch's native Pythonic feel and TensorFlow's massive ecosystem mathematically starved MXNet of open-source researchers. Today, it is largely considered a legacy framework, with AWS pivoting fully toward PyTorch.
 
-</ConceptTemplate>

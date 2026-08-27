@@ -4,21 +4,33 @@ description: Hardware devices that detect and measure physical properties from t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IoT Sensors">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IoT Sensors">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A microcontroller without a **Sensor** is mathematically blind and deaf. Sensors are the physical eyes and ears of the Internet of Things. 
+A microcontroller without a **Sensor** is mathematically blind and deaf. Sensors are the physical eyes and ears of the Internet of Things.
 
 They physically convert real-world analog phenomena (heat, light, pressure, motion) into digital electrical signals (1s and 0s) that the CPU can mathematically analyze.
 
+
 <Callout icon="success" title="Types of Sensors">
+
+
   - **Environmental:** Thermistors (Temperature), Hygrometers (Humidity), Photoresistors (Light), Barometers (Air Pressure).
   - **Kinematic/Motion:** Accelerometers (G-force), Gyroscopes (Rotation), Magnetometers (Compass direction). Together, these form an IMU (Inertial Measurement Unit).
   - **Proximity:** Ultrasonic (Sound bouncing), LiDAR (Laser bouncing), PIR (Passive Infrared heat detection).
+
+
 </Callout>
+
 
 ## Digital vs Analog Sensors
 
 - **Analog Sensors:** The sensor simply outputs a raw voltage (e.g., 2.1 Volts). The microcontroller must use its internal **ADC (Analog-to-Digital Converter)** to mathematically translate that voltage into a number.
 - **Digital Sensors:** The sensor contains its own microscopic CPU. It calculates the temperature internally and sends the final, mathematically perfect digital number (e.g., `22.5`) directly to the main microcontroller over an **I2C or SPI** digital bus.
 
-</ConceptTemplate>

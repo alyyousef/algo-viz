@@ -1,8 +1,28 @@
+---
+title: SARSA (State-Action-Reward-State-Action)
+description: An On-Policy Reinforcement Learning algorithm that mathematically updates its Q-Values based strictly on the actual actions the Agent takes, prioritizing safety over absolute theoretical optimality.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SARSA">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SARSA (State-Action-Reward-State-Action)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Q-Learning and SARSA are nearly mathematically identical, except for one critical difference: Q-Learning is Off-Policy, while SARSA is On-Policy. This small mathematical change drastically alters the Agent's behavior.
 
-</ConceptTemplate>
+## 1. The On-Policy Equation
+SARSA stands for the exact sequence of the MDP loop: State, Action, Reward, (next) State, (next) Action.
+The SARSA update equation is:
+$Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma Q(S', A') - Q(S, A)]$
+Notice the difference from Q-Learning. Q-Learning uses $\max Q(S', a)$ (it assumes the Agent will take the perfect action next). SARSA uses $Q(S', A')$ (it uses the mathematical value of the action the Agent *actually* took, even if it was a random, terrible exploratory action).
+
+## 2. The Cliff Walking Problem
+Because SARSA factors its own exploratory mistakes into the math, it learns a "Safe" policy.
+Imagine an Agent walking near a cliff. A Q-Learning Agent will mathematically learn to walk perfectly on the very edge of the cliff, because it assumes it will never make a mistake (Off-Policy). During testing, if it makes a 1% random error, it falls and dies.
+A SARSA Agent (On-Policy) mathematically realizes, *"I occasionally make random mistakes. Walking on the edge is mathematically terrifying."* It will intentionally learn a suboptimal, longer path far away from the cliff, guaranteeing survival.
+

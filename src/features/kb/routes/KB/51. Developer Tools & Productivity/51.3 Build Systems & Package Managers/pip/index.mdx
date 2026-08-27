@@ -4,7 +4,7 @@ description: The standard package manager for Python.
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="pip"
   subtitle="The Python standard"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Unlike `npm` (which safely hides dependencies in a local `node_modules` folder), `pip` historically installs Python packages **globally** into the operating system.
 
+
 <Callout icon="error" title="The Global Conflict Nightmare">
+
+
   If Project A needs `Django v2` and Project B needs `Django v4`, running `pip install` will mathematically overwrite the global Django installation, instantly breaking one of the projects.
-  
+
   To solve this, developers are biologically forced to use **Virtual Environments (`venv`)**. A `venv` mathematically isolates a local Python interpreter and `pip` binary per-project, preventing catastrophic dependency collisions.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

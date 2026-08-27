@@ -5,12 +5,19 @@ description: "A language that aims to be as fast as C, but as elegant and expres
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Crystal"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Crystal** is a compiled, statically typed language that was explicitly designed to mimic the syntax of **Ruby**. 
+**Crystal** is a compiled, statically typed language that was explicitly designed to mimic the syntax of **Ruby**.
 
 Ruby is famous for its developer happiness and beautiful syntax, but infamous for being slow (as an interpreted language). Crystal solves this by using LLVM to compile Ruby-like syntax down to highly optimized, blazing-fast native machine code.
 
@@ -42,4 +49,3 @@ john = Person.new("John", 30)
 john.celebrate_birthday
 ```
 
-</ConceptTemplate>

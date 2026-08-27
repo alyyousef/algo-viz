@@ -1,8 +1,25 @@
+---
+title: Racket
+description: A multi-paradigm Lisp dialect designed specifically as a platform for language creation and educational programming.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Racket">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Racket">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Originally named PLT Scheme (created in 1995), Racket is a general-purpose, multi-paradigm programming language in the Lisp-Scheme family. While it is highly capable of building web servers and GUIs, its primary mission is **Language-Oriented Programming**.
 
-</ConceptTemplate>
+## 1. Language-Oriented Programming
+Racket's macro system is mathematically one of the most advanced in the world.
+In Racket, you do not just write programs; you mathematically write *languages* to write your programs.
+Every Racket file begins with a `#lang` declaration (e.g., `#lang racket` or `#lang typed/racket`). You can use Racket's macro system to mathematically define an entirely new syntax, grammar, and compiler in just a few dozen lines of code, and the Racket IDE (DrRacket) will automatically provide syntax highlighting and debugging for your custom language.
+
+## 2. Educational Impact
+Because Racket makes it trivial to define safe, restricted mini-languages, it is the foundation of the widely acclaimed textbook *How to Design Programs*. Universities use Racket to mathematically teach students the fundamentals of recursion and functional design before exposing them to the complexities of C or Java.
+

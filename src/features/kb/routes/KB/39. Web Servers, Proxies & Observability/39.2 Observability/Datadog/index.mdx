@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Datadog
+description: A massive, cloud-based, enterprise-grade observability and security platform that mathematically aggregates metrics, traces, and logs from across the entire technology stack into a unified, AI-driven dashboard.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Datadog">
+<TechnologyTemplate
+  title="Datadog"
+  subtitle="The Enterprise Observability Behemoth"
+  tags={['Observability', 'Monitoring', 'Enterprise', 'SaaS']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, a company used Nagios for server metrics, Splunk for logs, and New Relic for application tracing. Datadog mathematically synthesized all three pillars of observability into a single, aggressively unified SaaS platform.
 
-</ConceptTemplate>
+## 1. The Unified Agent
+The core of Datadog is the **Datadog Agent** (written in Go), deployed as a DaemonSet on Kubernetes or a service on Linux/Windows.
+This single agent mathematically scrapes host CPU metrics, intercepts distributed APM (Application Performance Monitoring) traces, and tails container logs. Because all this data is transmitted to Datadog's cloud under a unified mathematical tagging structure, an engineer can look at a spike in CPU, click a button, and instantly see the exact database query and the exact error log that caused the spike at that exact millisecond.
+
+## 2. AI and Mathematical Anomaly Detection
+Datadog is designed for systems too complex for static mathematical alerts (e.g., "Alert if CPU > 90%").
+It uses **Machine Learning Anomaly Detection**. Datadog's AI mathematically analyzes the application's traffic over 6 months to establish a seasonal baseline (e.g., traffic is always high on Tuesday mornings, but low on Saturday nights). If traffic suddenly spikes on a Saturday night, the AI mathematically detects the deviation from the baseline and triggers an incident, catching edge cases that humans cannot manually codify.
+
+</TechnologyTemplate>

@@ -1,8 +1,29 @@
+---
+title: Logo
+description: An educational programming language famously known for its "Turtle Graphics", used to teach children computational thinking.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Logo">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Logo">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1967 by Wally Feurzeig, Seymour Papert, and Cynthia Solomon, Logo is a dialect of Lisp specifically adapted for educational use. It is profoundly influential in the history of computer science education.
 
-</ConceptTemplate>
+## 1. Turtle Graphics
+Logo is universally associated with the **Turtle**.
+Instead of printing text to a screen, children control a virtual cursor (the turtle) on a canvas. They write simple commands:
+```logo
+FORWARD 100
+RIGHT 90
+```
+By mathematically looping these commands (e.g., `REPEAT 4 [FORWARD 100 RIGHT 90]`), a child can visually draw a square. This provides immediate, visual gratification and a tangible understanding of geometric mathematics and state management.
+
+## 2. Lisp Lineage
+Despite its reputation as a toy for drawing shapes, Logo is mathematically a fully functional language derived from Lisp. It supports first-class functions, lexical scoping, and advanced list processing, making it capable of complex AI research.
+

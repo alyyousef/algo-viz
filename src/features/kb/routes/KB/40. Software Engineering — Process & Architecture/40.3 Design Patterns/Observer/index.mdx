@@ -1,8 +1,30 @@
+---
+title: Observer Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically establishes a one-to-many subscription mechanism to notify multiple objects automatically about any state changes in the object they are observing.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Observer">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Observer Pattern"
+  subtitle="Mathematical Event Subscription"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Reactive']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In an e-commerce app, when a `Customer` changes their address, the `ShippingService`, the `BillingService`, and the `MarketingService` all need to know.
 
-</ConceptTemplate>
+## 1. The Polling Anti-Pattern
+If the BillingService mathematically polls the Customer object every 5 seconds (`if (addressChanged())`), it burns massive amounts of CPU cycles for no reason.
+
+## 2. The Publish-Subscribe Mechanism
+The Observer pattern perfectly solves this.
+The `Customer` (the Subject) maintains an internal array of `IObserver` interface pointers.
+The three services mathematically "subscribe" by passing their pointer to the Customer: `customer.subscribe(billingService)`.
+When the address is updated, the `Customer` iterates over its internal array and mathematically executes `observer.notify(newAddress)` on every object in the list. The services instantly receive the data without polling, and the `Customer` remains decoupled because it only knows it is talking to a generic `IObserver`, not a specific Billing Service. (This is the mathematical foundation of RxJS and Event Listeners in JavaScript).
+

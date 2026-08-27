@@ -1,8 +1,29 @@
+---
+title: Subtype Polymorphism
+description: The most common form of mathematical polymorphism in Object-Oriented Programming, allowing code written to operate on a parent type to seamlessly and safely operate on any inherited child type.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="subtype)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Subtype Polymorphism"
+  subtitle="The Power of the Parent Interface"
+  tags={['OOP', 'Polymorphism', 'Type Theory', 'Design Patterns']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Subtype polymorphism (often simply called "Polymorphism" in Java/C#) is the mathematical mechanism that makes the Dependency Inversion Principle (DIP) and the Open-Closed Principle (OCP) physically possible.
 
-</ConceptTemplate>
+## 1. The Mathematical Guarantee
+If you write a function `public void drawShape(Shape s)`, the compiler mathematically guarantees that whatever object is passed in will possess the methods defined in the `Shape` interface.
+Because a `Circle` is a mathematical subtype of `Shape`, you can pass a `Circle` into this function. The function is completely ignorant of the fact that it is interacting with a Circle. It only knows it is holding a Shape.
+
+## 2. Late Binding (Dynamic Dispatch)
+When the function executes `s.draw()`, the CPU performs **Late Binding**.
+It mathematically pauses, looks at the actual object sitting in RAM (the Circle), looks up the Circle's specific `draw()` method in the virtual method table (vtable), and executes it. This allows the architect to write rigid, type-safe code (`drawShape(Shape s)`) while allowing the program to exhibit highly dynamic, flexible behavior at runtime.
+

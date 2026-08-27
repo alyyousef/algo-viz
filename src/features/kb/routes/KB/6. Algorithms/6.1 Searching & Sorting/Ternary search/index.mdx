@@ -1,8 +1,34 @@
+---
+title: Ternary Search
+description: "A mathematical divide-and-conquer algorithm that finds the position of a target value within a sorted array, or finds the maximum/minimum of a unimodal function, by dividing the search space into three parts."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ternary search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Ternary Search"
+  subtitle="Dividing by Three"
+  tags={['Algorithms', 'Searching', 'Divide and Conquer', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Binary Search mathematically divides the array into two halves. Ternary Search mathematically divides the array into three thirds.
 
-</ConceptTemplate>
+## 1. The Mechanism
+Given a sorted array and a target value:
+1. The algorithm calculates two mathematical midpoints: `mid1` (at 33%) and `mid2` (at 66%).
+2. It compares the target to `mid1` and `mid2`.
+3. Based on the comparisons, it mathematically discards two-thirds of the array, recursively focusing only on the one-third that might contain the target.
+
+## 2. Why is Binary Search More Popular?
+Intuitively, eliminating 66% of the array seems mathematically superior to eliminating 50%.
+However, to split the array into three parts, Ternary Search requires **more comparisons** per step than Binary Search.
+- Binary Search: O(log₂ N) steps, 1 comparison per step.
+- Ternary Search: O(log₃ N) steps, 2 comparisons per step.
+Mathematically, the extra comparisons in Ternary Search make it slightly slower than Binary Search on modern CPUs. However, Ternary Search is heavily used in advanced calculus and machine learning to find the absolute peak of a **Unimodal Function** (a curve that goes up, hits a peak, and goes down) without needing derivatives.
+

@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: DALL-E
+description: OpenAI's flagship Generative Image model, renowned for mathematically linking massive Large Language Models with Diffusion architecture to generate highly accurate, photorealistic images from text.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="DALL-E">
+<TechnologyTemplate
+  title="DALL-E"
+  subtitle="Text-to-Image Generation"
+  tags={['AI', 'OpenAI', 'Diffusion', 'Multimodal']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+DALL-E 3 solved the biggest flaw of early AI image generators: Prompt Adherence. If you asked older models for "a red cube on a blue sphere," the math often broke, and you got a blue cube. DALL-E fixed this using LLM integration.
 
-</ConceptTemplate>
+## 1. The CLIP Paradigm
+DALL-E's foundational mathematics rely on **CLIP (Contrastive Language-Image Pre-training)**.
+During training, OpenAI mathematically projected both Text (captions) and Images into the exact same high-dimensional Latent Space. The Neural Network was trained to mathematically pull the vector for the image of a dog and the vector for the text "a dog" as physically close together as possible. This forced the mathematical architecture to deeply understand the visual reality of human words.
+
+## 2. LLM Prompt Rewriting
+DALL-E 3's secret weapon is that humans do not actually prompt the Image Generator directly.
+When you type a prompt, it first goes to ChatGPT (the LLM). ChatGPT mathematically expands and highly details your prompt, enforcing strict spatial reasoning and descriptive constraints. That mathematically superior, highly verbose prompt is then fed into the underlying Diffusion model, resulting in generation accuracy that vastly outstrips models that rely on raw human inputs.
+
+</TechnologyTemplate>

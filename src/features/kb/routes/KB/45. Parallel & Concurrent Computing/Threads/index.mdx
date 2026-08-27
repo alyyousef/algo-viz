@@ -4,19 +4,32 @@ description: The smallest sequence of programmed instructions that can be manage
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Threads">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Threads">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a Process is a heavy, secure fortress, a **Thread** is the mathematically lightweight worker inside that fortress.
 
 Every Process mathematically starts with exactly ONE Thread (the Main Thread). However, the program can ask the OS to spawn additional Threads inside the exact same Process.
 
+
 <Callout icon="success" title="The Power of Shared Memory">
+
+
   Unlike Processes, which are mathematically isolated from each other, all Threads within a Process share the EXACT SAME Virtual Memory (The Heap). Thread 1 can allocate a massive 1GB array, and Thread 2 can instantly read from that exact same array without any data copying.
+
+
 </Callout>
+
 
 ## Anatomy of a Thread
 
-Because all Threads share the Process's overarching resources (Heap, File Descriptors, Code), a Thread is mathematically incredibly lightweight. 
+Because all Threads share the Process's overarching resources (Heap, File Descriptors, Code), a Thread is mathematically incredibly lightweight.
 
 A Thread only contains:
 1. **A Program Counter (PC):** A mathematical pointer to the exact line of code this specific Thread is currently executing.
@@ -25,4 +38,3 @@ A Thread only contains:
 
 Because they are lightweight, **Context Switching** between two Threads in the same Process is mathematically an order of magnitude faster than switching between two entirely different Processes.
 
-</ConceptTemplate>

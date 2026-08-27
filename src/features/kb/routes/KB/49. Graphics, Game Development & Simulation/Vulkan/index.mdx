@@ -4,7 +4,7 @@ description: A low-overhead, cross-platform 3D graphics and computing API intend
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Vulkan"
   subtitle="The brutal, low-level successor to OpenGL"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Vulkan_Logo.svg/512px-Vulkan_Logo.svg.png"
@@ -17,13 +17,19 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Because OpenGL was a global state machine with a massive driver hiding all the physics, the CPU wasted an immense amount of time just managing the OpenGL driver.
 
-**Vulkan** destroyed the abstraction. 
+**Vulkan** destroyed the abstraction.
+
 
 <Callout icon="warning" title="The Explicit API">
+
+
   In OpenGL, drawing a triangle takes 50 lines of C++ code. The Driver handles memory allocation automatically.
-  
-  In Vulkan, drawing a triangle takes **1,000 lines of C++ code**. You must mathematically allocate the specific megabytes of VRAM yourself. You must manually orchestrate the synchronization barriers between the GPU and CPU. 
+
+  In Vulkan, drawing a triangle takes **1,000 lines of C++ code**. You must mathematically allocate the specific megabytes of VRAM yourself. You must manually orchestrate the synchronization barriers between the GPU and CPU.
+
+
 </Callout>
+
 
 ## Multi-Threading Mastery
 

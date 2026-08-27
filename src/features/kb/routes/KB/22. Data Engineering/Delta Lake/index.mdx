@@ -4,7 +4,14 @@ description: An open-source Table Format created by Databricks that brings ACID 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Delta Lake">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Delta Lake">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Table Formats, Data Lakes were unreliable. If a Spark job crashed while writing 10,000 Parquet files to S3, your Data Lake was mathematically corrupted with partial data, destroying downstream analytics.
 
@@ -29,4 +36,3 @@ SELECT count(*) FROM events TIMESTAMP AS OF '2026-01-01'
 
 - **Unified Batch & Streaming**: Because Delta Lake handles transactions perfectly, a Delta Table can mathematically act as a streaming source (like Kafka). A downstream pipeline can explicitly query "Give me only the new rows appended since I last checked", enabling blazing-fast incremental ETL pipelines.
 
-</ConceptTemplate>

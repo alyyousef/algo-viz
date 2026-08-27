@@ -1,8 +1,28 @@
+---
+title: Agent Reflection
+description: A recursive mathematical process where an AI Agent intentionally reviews its own previous actions or outputs, critiques them for errors, and autonomously generates a corrected version.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reflection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Agent Reflection">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Humans rarely write perfect code on the first try; we write, we read it, we see a bug, and we fix it. Agent Reflection forces an LLM to mathematically execute this exact self-correction loop.
 
-</ConceptTemplate>
+## 1. The Critic Pattern
+Reflection relies on a mathematical duality within the prompt or the Agent architecture.
+- **Generator**: The LLM writes a Python script.
+- **Critic**: The exact same LLM is mathematically re-prompted: *"You are a senior engineer. Review the script above. Find any logic errors or syntax bugs and output a list of required fixes."*
+Because the Critic prompt shifts the mathematical weights of the neural network toward "bug-finding" rather than "creating," the LLM will reliably find errors in its own work.
+
+## 2. Self-Correction Loop
+Once the Critic generates the list of errors, the data is mathematically piped back into the Generator.
+*"Here is your previous code. Here are the errors found. Rewrite the code perfectly."*
+This loop (Generate $\rightarrow$ Reflect $\rightarrow$ Correct) mathematically continues until the Critic outputs `No errors found`. Reflection drastically increases the mathematical accuracy of an Agent, completely eliminating the need for the human to point out obvious mistakes.
+

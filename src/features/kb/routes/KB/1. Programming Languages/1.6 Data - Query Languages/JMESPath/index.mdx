@@ -1,8 +1,28 @@
+---
+title: JMESPath
+description: A deeply mathematical query language for extracting and transforming elements from massive JSON documents.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JMESPath">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JMESPath">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+JMESPath (JSON Matching Expression Paths) is a mathematical query language specifically designed for JSON. It is the underlying technology that powers the AWS Command Line Interface (CLI) `--query` parameter.
 
-</ConceptTemplate>
+## 1. Declarative Extraction
+When hitting an API that returns 5,000 lines of deeply nested JSON, writing a Python script with nested `for` loops and `try/except` blocks to extract specific values is mathematically fragile.
+JMESPath solves this by providing a declarative query string.
+```jmespath
+locations[?state == 'WA'].name | sort(@)
+```
+This mathematically instructs the parser to: "Go into the `locations` array, filter (`?`) only the objects where the state is 'WA', extract only the `name` field, and pipe (`|`) the resulting array into a sorting function."
+
+## 2. Cross-Language Consistency
+JMESPath is mathematically rigorously defined by a formal specification. Unlike regex or custom JSON parsers, a JMESPath query is mathematically guaranteed to return the exact same result whether you run it in Python, Go, Rust, or Javascript, making it an incredibly reliable standard for microservice communication.
+

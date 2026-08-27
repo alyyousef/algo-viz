@@ -4,10 +4,16 @@ description: The practice of ensuring that the software components, libraries, a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Software Supply Chain Integrity">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Software Supply Chain Integrity">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Modern software is not biologically written; it is mathematically assembled. A simple React app imports 2,000 Open Source libraries from NPM.
 
 **Supply Chain Integrity** is the terrifying realization that you mathematically trust 2,000 random strangers on the internet. If a malicious hacker compromises the laptop of just one maintainer in Iowa, they can mathematically inject malware into a tiny NPM library. When your Enterprise CI/CD pipeline biologically runs `npm install`, that malware is mathematically pulled directly into your Fortune 500 servers.
 
-</ConceptTemplate>

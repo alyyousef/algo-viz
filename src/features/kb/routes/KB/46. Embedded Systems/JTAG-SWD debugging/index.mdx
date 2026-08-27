@@ -4,21 +4,33 @@ description: Hardware interfaces used for testing printed circuit boards and dee
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JTAG & SWD Debugging">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JTAG & SWD Debugging">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When a Node.js server crashes, you read the stack trace in the terminal. When a Bare-Metal microcontroller crashes, it just physically sits there in silence. There is no terminal. 
+When a Node.js server crashes, you read the stack trace in the terminal. When a Bare-Metal microcontroller crashes, it just physically sits there in silence. There is no terminal.
 
 To debug a microcontroller, engineers use **Hardware Debugging Interfaces** like **JTAG** (Joint Test Action Group) or **SWD** (Serial Wire Debug).
 
+
 <Callout icon="success" title="The Omniscient View">
-  JTAG/SWD is a physical, hardware-level backdoor built directly into the silicon of the CPU. By connecting a Debugger tool (like a Segger J-Link) via USB to the JTAG pins on the circuit board, an engineer can mathematically pause the physical CPU clock. 
-  
+
+
+  JTAG/SWD is a physical, hardware-level backdoor built directly into the silicon of the CPU. By connecting a Debugger tool (like a Segger J-Link) via USB to the JTAG pins on the circuit board, an engineer can mathematically pause the physical CPU clock.
+
   While the clock is paused, the engineer can inspect the exact hexadecimal values of every single RAM address and CPU register in real-time.
+
+
 </Callout>
+
 
 ## JTAG vs SWD
 
 - **JTAG:** The older, universal standard. It requires exactly 4 physical wires (TDI, TDO, TCK, TMS). It is mathematically capable of chaining multiple chips together (daisy-chaining) so you can debug the MPU, the FPGA, and the Wi-Fi chip all over the same 4 wires.
 - **SWD (Serial Wire Debug):** An ARM-specific protocol that is mathematically vastly superior for small microcontrollers. It accomplishes the exact same deep-silicon debugging using only **2 wires** (SWDIO and SWCLK), freeing up precious physical pins on the microcontroller for other sensors.
 
-</ConceptTemplate>

@@ -1,8 +1,30 @@
+---
+title: Proxy Pattern
+description: A Structural Design Pattern from the Gang of Four (GoF) that mathematically provides a surrogate or placeholder for another object to control access to it, enabling lazy initialization, logging, or access control.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Proxy">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Proxy Pattern"
+  subtitle="The Mathematical Interceptor"
+  tags={['Design Patterns', 'Structural', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a massive `HighResImage` object that takes 5 seconds to load from the hard drive, and a user scrolls through a gallery of 1,000 images, instantiating all 1,000 objects will mathematically freeze the application.
 
-</ConceptTemplate>
+## 1. The Surrogate Object
+The Proxy pattern solves this by putting a fake "bodyguard" object in front of the real object.
+Both the `HighResImage` and the `ImageProxy` mathematically implement the exact same `IImage` interface (which has a `display()` method).
+When the gallery loads, it instantiates 1,000 `ImageProxy` objects. This takes 1 millisecond, because the Proxy mathematically contains no image data; it just contains the file path.
+
+## 2. Lazy Initialization
+When the user actually scrolls to Image #42, the gallery calls `proxy.display()`.
+The Proxy mathematically intercepts the call. It checks if the real `HighResImage` exists in RAM. It doesn't. So, the Proxy pauses, instantiates the heavy real object, loads the 5MB file from disk, and then mathematically forwards the `display()` call to the real object. The client code is completely ignorant that it was talking to a surrogate.
+

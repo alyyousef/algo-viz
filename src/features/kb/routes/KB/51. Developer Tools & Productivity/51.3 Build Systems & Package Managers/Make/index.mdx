@@ -4,7 +4,7 @@ description: A build automation tool that automatically builds executable progra
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Make"
   subtitle="The grandfather of build automation"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Tux.svg/512px-Tux.svg.png"
@@ -15,13 +15,19 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://www.gnu.org/software/make/"
 >
 
-If you have a C program with 500 `.c` files, running `gcc` 500 times manually is mathematically impossible. 
+If you have a C program with 500 `.c` files, running `gcc` 500 times manually is mathematically impossible.
 
-You write a **Makefile** that maps which files depend on each other. 
+You write a **Makefile** that maps which files depend on each other.
 When you type `make`, it reads the graph. If you only edited exactly 1 file (`main.c`), `make` is mathematically smart enough to recompile *only* `main.c` and link the other 499 cached binaries. It turns a 2-hour compile time into a 5-second compile time.
 
+
 <Callout icon="warning" title="The Tab Character Trap">
+
+
   Makefiles are notoriously hated for their syntax. The commands mathematically MUST be indented with a physical `Tab` character. If a developer uses 4 spaces instead of a Tab, `make` will instantly crash with a cryptic "missing separator" error.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

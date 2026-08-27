@@ -1,8 +1,25 @@
+---
+title: Manual Memory Management
+description: An execution model where the developer is mathematically responsible for explicitly requesting RAM from the OS and explicitly returning it.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Memory management (manual">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Manual Memory Management">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In languages like C and C++, there is no Garbage Collector. The developer must manually interact with the Operating System's memory allocator using functions like `malloc()` and `free()`.
 
-</ConceptTemplate>
+## 1. The Mathematics of malloc
+When you call `int* ptr = (int*)malloc(400);`, you are mathematically instructing the OS: "Find a contiguous block of exactly 400 bytes in the Heap that is not currently being used, mark it as Used, and return the physical memory address to me."
+Because Heap memory gets fragmented as objects are created and destroyed, `malloc()` is a mathematically complex O(N) operation. It must scan a Linked List of free memory blocks to find one that fits the requested size perfectly.
+
+## 2. Memory Leaks
+Because the developer is solely responsible for memory, human error causes mathematical disasters.
+If a developer allocates 400 bytes, but forgets to call `free(ptr)` before the function ends, the pointer variable on the Stack is destroyed, but the 400 bytes on the Heap remain marked as "Used" by the OS forever. The program mathematically loses the ability to ever interact with those 400 bytes again. If this happens inside a `while` loop, the program will slowly consume all available RAM on the server until the OS mathematically kills it (OOM Killer).
+

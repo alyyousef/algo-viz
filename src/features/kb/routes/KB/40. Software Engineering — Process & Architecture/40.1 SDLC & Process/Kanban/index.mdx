@@ -1,8 +1,30 @@
+---
+title: Kanban
+description: A visual, pull-based workflow management framework originating from Toyota manufacturing, mathematically designed to maximize engineering throughput by strictly limiting the amount of Work In Progress (WIP).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kanban">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Kanban"
+  subtitle="Mathematical Flow Optimization"
+  tags={['Process', 'Agile', 'Project Management', 'Workflow']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Scrum uses rigid 2-week timeboxes (Sprints), Kanban is a continuous, fluid mathematical flow. It is heavily utilized by SRE and DevOps teams where unpredictable incidents make rigid 2-week planning mathematically impossible.
 
-</ConceptTemplate>
+## 1. Limiting Work In Progress (WIP)
+The core mathematical principle of Kanban is Little's Law, which proves that the more things you work on simultaneously, the longer everything takes to finish.
+Kanban enforces strict **WIP Limits**. A Kanban board has columns (e.g., Todo, In Progress, Review, Done). The team places a mathematical limit on the "In Progress" column (e.g., a maximum of 3 tickets).
+If there are 3 tickets in progress, a developer is mathematically forbidden from pulling a 4th ticket from Todo. They *must* swarm with the team to finish one of the active tickets and move it to "Review" before the system can accept new work. This prevents context-switching and mathematically forces the completion of tasks.
+
+## 2. Pull-Based Architecture
+Kanban is a **Pull** system, not a Push system.
+A Project Manager cannot "push" a ticket onto a developer's desk. The developer mathematically "pulls" the ticket from the backlog only when their personal WIP limit allows it. This ensures the engineering team is never mathematically overloaded beyond their physical capacity, ensuring a sustainable, continuous flow of high-quality code.
+

@@ -4,30 +4,42 @@ description: A paradigm-shifting CPU architecture where instructions are execute
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Out-of-Order Execution (OoOE)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Out-of-Order Execution (OoOE)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a strict, sequential pipeline (In-Order Execution), if Instruction 1 needs to wait 100 cycles to fetch a variable from RAM, the entire CPU stops. Instructions 2, 3, and 4 are completely blocked, even if they have absolutely nothing to do with Instruction 1.
 
 **Out-of-Order Execution (OoOE)** solves this by treating the CPU not as an assembly line, but as a dynamic dispatch center.
 
+
 <Callout icon="info" title="The Restaurant Analogy">
+
+
   - **In-Order**: The chef cooks orders strictly in the order they were received. If Table 1 orders a Souffle (takes 40 mins), Table 2's Salad (takes 2 mins) is blocked until the Souffle is finished.
   - **Out-of-Order**: The chef looks at all pending orders. If the Souffle is in the oven, the chef immediately makes Table 2's Salad and serves it. The final result is the same, but overall throughput is massively increased.
+
+
 </Callout>
+
 
 ## How OoOE Works (Tomasulo's Algorithm)
 
 First introduced to PCs in 1995 with the Intel Pentium Pro, OoOE is incredibly complex, requiring millions of dedicated transistors:
 
 1. **Instruction Fetch & Decode (In-Order)**: The CPU fetches instructions in the exact order the programmer wrote them.
-2. **Issue to Reservation Stations**: The CPU places the decoded instructions into "waiting rooms" called Reservation Stations attached to the ALUs. 
+2. **Issue to Reservation Stations**: The CPU places the decoded instructions into "waiting rooms" called Reservation Stations attached to the ALUs.
 3. **Execution (Out-of-Order)**: An instruction simply sits in the waiting room monitoring the data bus. The exact microsecond its required variables become available, it fires into the ALU. If Instruction 5 is ready before Instruction 1, Instruction 5 executes first.
 4. **Reorder Buffer (ROB)**: This is the critical component. Because instructions executed out of order, the CPU cannot permanently save their results to the main registers immediately (otherwise, the program state would be corrupted). The results are held in the Reorder Buffer.
 5. **Retirement (In-Order)**: The ROB sorts the finished instructions back into their original programmatic order, and officially "retires" them by committing their results to the architectural registers, presenting a perfect illusion of sequential execution to the software.
 
 ## Register Renaming
 
-To make OoOE work, the hardware performs a magic trick called **Register Renaming**. 
+To make OoOE work, the hardware performs a magic trick called **Register Renaming**.
 Because x86 only has 16 architectural registers, programmers constantly reuse them (creating False Dependencies / WAW hazards). The CPU secretly maintains hundreds of internal physical registers. When the code says "Write to RAX", the CPU maps RAX to "Secret Physical Register 42", allowing subsequent instructions to use RAX without actually overwriting the data the first instruction is still using.
 
-</ConceptTemplate>

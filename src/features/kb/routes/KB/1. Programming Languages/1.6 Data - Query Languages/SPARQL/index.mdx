@@ -1,8 +1,32 @@
+---
+title: SPARQL
+description: The mathematical query language of the Semantic Web, designed to query massive, decentralized RDF knowledge graphs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SPARQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SPARQL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standardized by the W3C in 2008, SPARQL (SPARQL Protocol and RDF Query Language) is the SQL of the Semantic Web. It is mathematically designed to query RDF (Resource Description Framework) data—graphs where every piece of data is defined by a Subject-Predicate-Object triple.
 
-</ConceptTemplate>
+## 1. Pattern Matching on the Global Graph
+Unlike SQL, which queries a local, closed database, SPARQL is mathematically designed to query decentralized data across the entire internet.
+A SPARQL query looks like a mathematical graph pattern with variables (denoted by `?`).
+```sparql
+SELECT ?authorName
+WHERE {
+  ?book <http://schema.org/author> ?author .
+  ?author <http://schema.org/name> ?authorName .
+}
+```
+The engine mathematically traverses the graph, substituting the variables to find every matching subgraph that satisfies the pattern.
+
+## 2. Federation
+The most powerful mathematical feature of SPARQL is **Federation**. A single SPARQL query can mathematically instruct the engine to query a database in London for a list of authors, take those results, dynamically query Wikidata for their birthplaces, and merge the final result, treating the entire internet as a single, mathematically interconnected database.
+

@@ -4,14 +4,26 @@ description: The deployment of artificial intelligence applications in devices t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Edge AI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Edge AI">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a self-driving car biologically detects a pedestrian, it mathematically cannot send the video feed to an AWS server in Virginia, wait for the ML model to process the image, and wait for the "Brake" command to return over a 5G network. The 200ms latency will result in a fatal collision.
 
+
 <Callout icon="warning" title="Local Inferencing">
-  **Edge AI** mathematically mandates that the Machine Learning inference runs *locally* on the device's physical hardware. 
-  
+
+
+  **Edge AI** mathematically mandates that the Machine Learning inference runs *locally* on the device's physical hardware.
+
   The AI model is trained on massive GPUs in the cloud, but the final, compressed mathematical weights are downloaded to the car. The car uses an embedded Neural Processing Unit (NPU) to execute the math locally in 2 milliseconds, requiring zero internet connection.
+
+
 </Callout>
 
-</ConceptTemplate>
+

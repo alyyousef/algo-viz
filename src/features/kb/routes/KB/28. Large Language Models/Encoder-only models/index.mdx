@@ -4,23 +4,30 @@ description: Transformer architectures designed to understand text context bidir
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Encoder-Only Models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Encoder-Only Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Encoder-only models use just the encoder stack of the original Transformer architecture. They are designed to build a deep, bidirectional mathematical understanding of an entire input sequence simultaneously. They are terrible at generating text, but incredible at understanding it.
 
+
 <Callout icon="success" title="The BERT Revolution">
+
+
   In 2018, Google released **BERT** (Bidirectional Encoder Representations from Transformers). It achieved state-of-the-art results on 11 different NLP tasks simultaneously and revolutionized how Google Search understood complex human queries.
+
+
 </Callout>
+
 
 ## Core Characteristics
 
-<ComparisonTable 
-  headers={['Characteristic', 'Description']}
-  rows={[
-    ['Attention Mechanism', 'Unmasked Self-Attention. Every token in the sequence is allowed to mathematically "look at" every other token, both before and after it.'],
-    ['Pretraining Objective', 'Masked Language Modeling (MLM). 15% of the words are hidden (e.g., "The cat sat on the [MASK]"). The model must predict the hidden word based on the surrounding context.'],
-    ['Primary Use Cases', 'Sentiment analysis, text classification, named entity recognition (NER), and semantic search embeddings.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Characteristic', 'Description']} rows={[ ['Attention Mechanism', 'Unmasked Self-Attention. Every token in the sequence is allowed to mathematically "look at" every other token, both before and after it.'], ['Pretraining Objective', 'Masked Language Modeling (MLM). 15% of the words are hidden (e.g., "The cat sat on the [MASK]"). The model must predict the hidden word based on the surrounding context.'], ['Primary Use Cases', 'Sentiment analysis, text classification, named entity recognition (NER), and semantic search embeddings.'] ]} />
+
+

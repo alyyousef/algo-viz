@@ -1,8 +1,38 @@
+---
+title: Numerical Methods (Root Finding)
+description: "Algorithmic strategies for approximating the mathematical roots (where a function equals zero) when exact algebraic solutions are impossible."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Numerical methods (root finding">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Root Finding Algorithms"
+  subtitle="Approximating the Impossible"
+  tags={['Mathematics', 'Algorithms', 'Calculus']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In algebra, finding the "Root" of a function means finding the exact $x$ where $f(x) = 0$. For a quadratic equation ($ax^2 + bx + c$), you use the quadratic formula. But for something like $x^5 - 3x^2 + \sin(x) = 0$, there is mathematically no algebraic formula in existence. Computer scientists must use **Numerical Methods** to approximate the answer iteratively.
 
-</ConceptTemplate>
+## 1. The Bisection Method
+The most reliable, foolproof algorithm. It is essentially Binary Search for math.
+1. Find an $a$ where $f(a)$ is negative, and a $b$ where $f(b)$ is positive. (Because the function crosses zero between them).
+2. Calculate the midpoint $c = (a+b)/2$.
+3. If $f(c)$ is negative, the root must be between $c$ and $b$. Replace $a$ with $c$.
+4. Repeat endlessly. Every step cuts the search space exactly in half, mathematically guaranteeing convergence.
+
+## 2. Newton's Method (Newton-Raphson)
+A significantly faster, more aggressive algorithm that uses Calculus (Derivatives).
+Instead of blindly searching, it picks a random starting point, calculates the exact mathematical slope (tangent line) at that point, and follows that straight line down to the x-axis to guess the next point.
+The formula: $x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}$
+Because it follows the curve's actual geometry, it converges incredibly fast (quadratically), but can mathematically explode and fail if the derivative hits zero (a flat spot).
+
+## 3. The Trade-off
+This represents the classic computer science trade-off: The Bisection method is slow ($O(\log N)$ precision) but mathematically guaranteed to work safely. Newton's method is blisteringly fast, but mathematically dangerous and requires the function to be differentiable.
+
+\n

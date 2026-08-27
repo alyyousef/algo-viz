@@ -1,8 +1,29 @@
+---
+title: kube-proxy
+description: A network proxy daemon running on every Worker Node in a Kubernetes cluster, mathematically responsible for maintaining network rules and enabling communication to ClusterIP Services.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="kube-proxy">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="kube-proxy"
+  subtitle="The Internal Network Router"
+  tags={['Kubernetes', 'Networking', 'Architecture', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Pods in Kubernetes are ephemeral. Their IP addresses mathematically change every time they restart. If the Frontend needs to talk to the Backend, it cannot rely on hardcoded Pod IPs. It relies on a Kubernetes `Service` (a stable, virtual IP). **kube-proxy** is the daemon that makes this virtual IP actually work.
 
-</ConceptTemplate>
+## 1. The IPTables Mathematics
+kube-proxy runs on every single Worker Node. It mathematically listens to the kube-apiserver for the creation of new `Services` and their corresponding `Endpoints` (the actual live Pod IPs).
+By default, kube-proxy does not act as a literal proxy server; it acts as a kernel configuration engine. When a Service is created, kube-proxy mathematically writes complex **iptables** rules directly into the host Linux kernel. These rules state: *"If any process on this server tries to send a packet to the virtual Service IP 10.96.0.1, mathematically intercept the packet in the kernel and redirect it to the live Pod IP 172.16.2.4."*
+
+## 2. IPVS Mode
+In massive clusters (over 5,000 Services), the mathematical list of iptables rules becomes so long that the Linux kernel slows down trying to evaluate them sequentially for every packet.
+For immense scale, kube-proxy can be configured to use **IPVS (IP Virtual Server)** mode. IPVS is a mathematically advanced load balancing technology built into the Linux kernel that uses hash tables (O(1) complexity) instead of sequential lists, allowing Kubernetes to route traffic across 10,000 microservices with zero network degradation.
+

@@ -1,8 +1,25 @@
+---
+title: Variational Autoencoders (VAEs)
+description: A probabilistic neural network architecture that mathematically compresses data into a smooth, continuous Latent Space, allowing for the interpolation and generation of new data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="VAEs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Variational Autoencoders (VAEs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An Autoencoder compresses data (Encoder) and decompresses it (Decoder). However, standard Autoencoders create a mathematically disjointed Latent Space that cannot generate *new* things. VAEs solve this using statistics.
 
-</ConceptTemplate>
+## 1. The Probabilistic Latent Space
+Instead of mathematically compressing an image of a cat into a single, exact, hardcoded Vector (e.g., `[2.5, -1.0]`), a VAE forces the Encoder to output a **Probability Distribution**.
+It outputs a Mean and a Variance. The model mathematically says, "The cat is located somewhere inside this blurry circle in the Latent Space."
+
+## 2. Interpolation and Generation
+Because the VAE forces these "blurry circles" to overlap smoothly across the entire Latent Space, the space becomes mathematically continuous.
+This allows for **Interpolation**. You can mathematically plot a point halfway between the Latent Vector for "Cat" and the Latent Vector for "Dog." Because the space is continuous, when you pass that halfway point to the Decoder, it will physically generate an image of a hybrid creature that looks exactly 50% cat and 50% dog. This smooth mathematical generation is impossible with standard compression algorithms.
+

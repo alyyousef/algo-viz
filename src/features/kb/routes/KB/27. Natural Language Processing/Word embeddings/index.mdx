@@ -1,8 +1,26 @@
+---
+title: Word Embeddings
+description: The revolutionary mathematical paradigm where words are transformed into dense, continuous vectors in a high-dimensional space, capturing their deepest semantic and syntactic meanings.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Word embeddings">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Word Embeddings">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Embeddings, NLP used "One-Hot Encoding", where every word was a massive vector of zeros with a single 1. Mathematically, the distance between "Dog" and "Cat" was exactly the same as the distance between "Dog" and "Car." Embeddings fixed this catastrophic flaw.
 
-</ConceptTemplate>
+## 1. The High-Dimensional Latent Space
+In a Word Embedding model, every word is mathematically projected into a dense vector space (e.g., 300 dimensions).
+These dimensions are not human-readable (e.g., Dimension 4 isn't explicitly "Fluffiness"), but they mathematically represent abstract semantic concepts learned from reading billions of sentences.
+
+## 2. Mathematical Semantics
+Because words are just points in a 300-dimensional coordinate system, you can use standard Geometry (Cosine Similarity) to measure their meaning.
+The mathematical distance (angle) between the vector for "Dog" and "Cat" is incredibly small (they appear in similar contexts). The distance between "Dog" and "Car" is massive.
+Furthermore, the mathematical *relationships* are preserved. If you calculate the vector path from "Man" to "King", and apply that exact same mathematical trajectory starting from "Woman", you land precisely on the vector for "Queen". The Neural Network has mathematically codified human logic.
+

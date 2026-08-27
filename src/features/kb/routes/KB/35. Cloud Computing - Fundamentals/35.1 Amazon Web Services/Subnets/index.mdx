@@ -1,0 +1,25 @@
+---
+title: AWS Subnets
+description: The logical, mathematical subdivision of a Virtual Private Cloud (VPC) network, physically anchoring a block of IP addresses to a specific AWS Availability Zone for high availability architectural design.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Subnets"
+  subtitle="Network Subdivisions"
+  tags={['AWS', 'Networking', 'VPC', 'Architecture']}
+>
+
+A VPC is a massive conceptual block of IP addresses (e.g., 65,000 IPs). You cannot just throw servers into a VPC randomly. You must mathematically slice the VPC into smaller chunks called Subnets to control security and physical placement.
+
+## 1. CIDR Math and Slicing
+If your VPC has the CIDR block `10.0.0.0/16`, you mathematically divide it.
+You might create Subnet A with `10.0.1.0/24` (256 IPs) for your Web Servers, and Subnet B with `10.0.2.0/24` for your Databases.
+AWS mathematically reserves the first 4 and the last 1 IP addresses in every subnet for internal routing and DNS purposes. If you try to provision an EC2 instance in a /28 subnet (16 total IPs), you only actually have 11 usable IPs for your servers.
+
+## 2. The Availability Zone Anchor
+A VPC spans an entire AWS Region (e.g., N. Virginia). A Subnet does not.
+A Subnet is mathematically anchored to **one specific Availability Zone (AZ)** (e.g., `us-east-1a`). If that specific physical data center loses power, that Subnet drops offline.
+Therefore, proper AWS architecture mandates mathematical redundancy: You create Web Subnet A in `us-east-1a`, and Web Subnet B in `us-east-1b`. You place an Elastic Load Balancer across both. If an entire data center is destroyed, the Load Balancer instantly detects the mathematical failure and routes 100% of the traffic to the surviving Subnet in the other AZ.
+
+</TechnologyTemplate>

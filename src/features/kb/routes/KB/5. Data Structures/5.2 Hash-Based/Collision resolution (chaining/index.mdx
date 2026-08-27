@@ -4,21 +4,27 @@ description: A Hash Table conflict strategy where colliding elements are mathema
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Collision Resolution (Chaining)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Collision Resolution (Chaining)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When two completely different pieces of data are mathematically hashed into the exact same memory index of a Hash Table, a **Collision** occurs. **Separate Chaining** is the most robust and widely used architectural solution to this mathematical inevitability.
 
 ## 1. The Linked List Strategy
-Instead of forcing the colliding element to search for a new empty slot in the array (Open Addressing), Chaining mathematically changes the architecture of the Array itself. 
-Every single slot in the Array does not store the data directly; it stores a pointer to the **Head of a Linked List**. 
-If `"Apple"` and `"Banana"` both mathematically hash to Index $5$, they are simply both appended to the Linked List living at Index $5$. 
+Instead of forcing the colliding element to search for a new empty slot in the array (Open Addressing), Chaining mathematically changes the architecture of the Array itself.
+Every single slot in the Array does not store the data directly; it stores a pointer to the **Head of a Linked List**.
+If `"Apple"` and `"Banana"` both mathematically hash to Index $5$, they are simply both appended to the Linked List living at Index $5$.
 
 ## 2. Graceful Degradation
-The massive advantage of Chaining is that the Hash Table can mathematically never become "full." You can insert 10,000 elements into an Array of size 10. The table will not crash; it will simply grow 10 massive Linked Lists. 
+The massive advantage of Chaining is that the Hash Table can mathematically never become "full." You can insert 10,000 elements into an Array of size 10. The table will not crash; it will simply grow 10 massive Linked Lists.
 However, if a specific Linked List becomes 1,000 elements long, searching it mathematically degrades from blazing-fast $O(1)$ to brutally slow $O(N)$ time.
 
 ## 3. The Java 8 Tree Optimization
-To protect against catastrophic performance degradation (and malicious DDoS attacks designed to intentionally cause hash collisions), modern languages upgraded their Chaining architecture. 
+To protect against catastrophic performance degradation (and malicious DDoS attacks designed to intentionally cause hash collisions), modern languages upgraded their Chaining architecture.
 In Java 8, if a specific bucket's Linked List mathematically exceeds 8 elements, the Hash Table instantly dynamically destroys the Linked List and replaces it with a **Red-Black Tree**. This guarantees that even in the absolute worst-case scenario of massive mathematical collisions, the lookup time is bounded to a highly efficient $O(log N)$.
 
-</ConceptTemplate>

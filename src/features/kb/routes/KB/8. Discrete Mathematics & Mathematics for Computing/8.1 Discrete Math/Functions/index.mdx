@@ -1,8 +1,38 @@
+---
+title: Functions (Discrete Math)
+description: "The formal mathematical definition of mappings between sets, categorizing relations into Injective (one-to-one), Surjective (onto), and Bijective, underpinning cryptography and hashing."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Functions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Functions"
+  subtitle="Mathematical Mappings"
+  tags={['Mathematics', 'Discrete Math', 'Theory', 'Set Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In programming, a function is a block of code. In Discrete Mathematics, a **Function** (or mapping) is a strict relation between two sets that assigns exactly one output (from the Codomain) to every valid input (from the Domain).
 
-</ConceptTemplate>
+## 1. The Strict Definition
+For a relation $f: A \to B$ to be a valid mathematical function, **every single element** in set $A$ must map to **exactly one** element in set $B$. An input cannot mathematically yield two different outputs.
+
+## 2. Injective (One-to-One)
+A function is Injective if no two different inputs ever map to the exact same output.
+- Mathematically: If $f(x) = f(y)$, then it must be strictly true that $x = y$.
+- **Computer Science**: A perfect **Cryptographic Hash Function** must be Injective. If the password "admin" and the password "password" both hashed to the exact same database string, the security architecture would mathematically collapse.
+
+## 3. Surjective (Onto)
+A function is Surjective if every single element in the output set (Codomain) is mapped to by at least one input.
+- Mathematically: The Range is exactly equal to the Codomain.
+- **Computer Science**: A **Load Balancer** distributing traffic across 5 servers should ideally be Surjective, mathematically ensuring no server sits completely idle.
+
+## 4. Bijective (Perfect Mapping)
+A function is Bijective if it is both Injective AND Surjective. It represents a mathematically perfect, 1-to-1 pairing between two sets.
+- **Computer Science**: Every single form of reversible **Encryption** (like AES or RSA) must mathematically be Bijective. If it isn't Injective, you couldn't decrypt the message (two different messages would decrypt to the same text). If it isn't Surjective, parts of the algorithm would be mathematically useless.
+

@@ -4,7 +4,7 @@ description: A graphical, interactive, in-browser GraphQL IDE, created by Prisma
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="GraphQL Playground"
   subtitle="The IDE for GraphQL APIs"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/GraphQL_Logo.svg/512px-GraphQL_Logo.svg.png"
@@ -15,12 +15,18 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://github.com/graphql/graphql-playground"
 >
 
-GraphQL APIs are mathematically self-documenting via **Introspection**. 
+GraphQL APIs are mathematically self-documenting via **Introspection**.
 
-When you open GraphQL Playground in your browser, it silently sends an Introspection query to the server, downloading the entire mathematical AST of the database schema. 
+When you open GraphQL Playground in your browser, it silently sends an Introspection query to the server, downloading the entire mathematical AST of the database schema.
+
 
 <Callout icon="success" title="Real-Time Auto-Completion">
+
+
   Because the Playground knows the exact schema, it provides IDE-level auto-completion inside the browser window. If you start typing `query { us... }`, it mathematically auto-completes to `users` and underlines incorrect fields in red before you even send the HTTP request.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

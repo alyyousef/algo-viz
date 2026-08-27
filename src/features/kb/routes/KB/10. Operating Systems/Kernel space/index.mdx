@@ -4,23 +4,35 @@ description: The highly privileged, hardware-enforced memory boundary where the 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kernel Space">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kernel Space">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Modern x86 processors implement hardware security called **Protection Rings**. 
+Modern x86 processors implement hardware security called **Protection Rings**.
 - **Ring 0** is the most privileged state.
 - **Ring 3** is the least privileged state.
 
-**Kernel Space** is the chunk of physical RAM where the Kernel code and data are stored. When the CPU is executing code located in Kernel Space, it physically switches its internal hardware state to **Ring 0**. 
+**Kernel Space** is the chunk of physical RAM where the Kernel code and data are stored. When the CPU is executing code located in Kernel Space, it physically switches its internal hardware state to **Ring 0**.
+
 
 <Callout icon="warning" title="God Mode">
+
+
   When the CPU is in Ring 0, it is in "God Mode". It is allowed to execute *any* machine instruction, including highly dangerous commands like halting the processor, rewriting the Page Tables, or writing raw bytes directly to a hard drive controller.
+
+
 </Callout>
+
 
 ## Hardware Enforcement
 
-The division between Kernel Space and User Space is not a software suggestion; it is a physical hardware wall. 
-If a user program running in Ring 3 tries to read a memory address that belongs to Kernel Space, the CPU hardware instantly blocks the read and throws a **Segmentation Fault**, forcing the OS to terminate the offending program. 
+The division between Kernel Space and User Space is not a software suggestion; it is a physical hardware wall.
+If a user program running in Ring 3 tries to read a memory address that belongs to Kernel Space, the CPU hardware instantly blocks the read and throws a **Segmentation Fault**, forcing the OS to terminate the offending program.
 
 This strict separation is what makes modern operating systems stable. In the MS-DOS and Windows 95 era, there was no true hardware enforcement. A badly written video game could accidentally overwrite the OS's memory in Kernel Space, instantly crashing the entire computer. Today, a crashing game only crashes itself.
 
-</ConceptTemplate>

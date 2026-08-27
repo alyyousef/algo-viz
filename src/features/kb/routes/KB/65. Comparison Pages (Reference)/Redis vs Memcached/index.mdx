@@ -1,8 +1,31 @@
+---
+title: Redis vs Memcached
+description: "A comparison of In-Memory data stores, detailing how Redis mathematically obsoleted Memcached by introducing complex data structures, disk persistence, and single-threaded event loop architecture."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Redis vs Memcached">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Redis vs Memcached"
+  subtitle="The In-Memory Cache War"
+  tags={['Comparison', 'Databases', 'Architecture', 'System Design']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a standard database (PostgreSQL) is too slow for 100,000 requests per second, engineers place an In-Memory Cache in front of it. Both Memcached and Redis store data entirely in RAM, but Redis has mathematically conquered the industry.
 
-</ConceptTemplate>
+## 1. Memcached (The Legacy Pioneer)
+- **Architecture**: A pure, mathematically simple Key-Value store. It only understands Strings.
+- **Superpower**: True multi-threading. It can mathematically utilize every single core on a CPU to serve requests simultaneously.
+- **Limitation**: If the server loses power, all data in RAM is instantly and permanently destroyed.
+
+## 2. Redis (The Modern Standard)
+- **Architecture**: A Data Structure Server. Unlike Memcached, Redis mathematically understands complex structures: Lists, Sets, Hashes, Geospatial coordinates, and HyperLogLogs. (e.g., You can mathematically push an item to the end of a Redis List in O(1) time without downloading the entire list to your backend).
+- **Persistence**: Redis can optionally save snapshots of RAM to the Hard Drive. If the server explodes, Redis can mathematically restore the cache on reboot.
+- **Concurrency**: Redis is famously **Single-Threaded**. It handles 100,000+ requests per second on a *single core* using an ultra-efficient event loop (epoll), mathematically bypassing all thread synchronization overhead and race conditions.
+

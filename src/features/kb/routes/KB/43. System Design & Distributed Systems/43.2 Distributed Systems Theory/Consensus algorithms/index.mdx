@@ -4,7 +4,14 @@ description: The complex mathematical protocols used by distributed systems to a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Consensus Algorithms">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Consensus Algorithms">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you have a database cluster with 5 nodes, and User A sends a command to Node 1 to set `x=10`, while User B sends a command to Node 2 to set `x=20` at the exact same millisecond, what is the final value of `x`?
 
@@ -22,4 +29,3 @@ In traditional database consensus, we assume nodes might crash, but they don't a
 2. **Raft**: Invented in 2013 specifically to be understandable. It relies on strict Leader Election. Only one node (the Leader) is allowed to accept writes. If the Leader crashes, the remaining nodes start a randomized timer; the first one to wake up requests votes to become the new Leader. Raft is the engine behind modern systems like **etcd** and **Consul**.
 3. **Proof of Work / Proof of Stake**: The Byzantine fault-tolerant consensus algorithms used by blockchains like Bitcoin and Ethereum to agree on ledgers when nodes are actively malicious.
 
-</ConceptTemplate>

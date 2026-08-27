@@ -5,9 +5,16 @@ description: The elegant Dynamic Programming algorithm that mathematically compu
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Floyd-Warshall Algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Floyd-Warshall Algorithm">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Dijkstra and Bellman-Ford are **Single-Source** Shortest Path algorithms (they find paths from exactly one starting node). 
+Dijkstra and Bellman-Ford are **Single-Source** Shortest Path algorithms (they find paths from exactly one starting node).
 The **Floyd-Warshall Algorithm** is an **All-Pairs** Shortest Path algorithm. In a single execution, it mathematically calculates the absolute shortest path between *every single possible pair of nodes* in the entire graph.
 
 ## 1. The Dynamic Programming Core
@@ -20,10 +27,10 @@ The algorithm relies on a brilliant Dynamic Programming sub-problem:
 The entire mathematical algorithm can be written in four lines of code using three nested loops:
 
 ```javascript
-for (let k = 0; k < V; k++) {
-  for (let i = 0; i < V; i++) {
-    for (let j = 0; j < V; j++) {
-      if (D[i][k] + D[k][j] < D[i][j]) {
+for (let k = 0; k &lt; V; k++) {
+  for (let i = 0; i &lt; V; i++) {
+    for (let j = 0; j &lt; V; j++) {
+      if (D[i][k] + D[k][j] &lt; D[i][j]) {
         D[i][j] = D[i][k] + D[k][j]; // Update the matrix!
       }
     }
@@ -33,8 +40,13 @@ for (let k = 0; k < V; k++) {
 
 The outermost loop (`k`) represents the "intermediate" node. As `k` increases from 0 to V, the matrix is mathematically refined, considering more and more complex detour routes, until it perfectly stabilizes.
 
+
 <Callout icon="tip" title="Time and Space Complexity">
-Because it requires three nested loops iterating over every vertex, the Time Complexity is strictly and mathematically **`O(V^3)`**. Because it requires a 2D matrix, the Space Complexity is **`O(V^2)`**. This makes Floyd-Warshall absolutely magnificent for small, dense graphs (V < 500), but completely impossible to run on large graphs (like a social network with 1 million users).
+
+
+Because it requires three nested loops iterating over every vertex, the Time Complexity is strictly and mathematically **`O(V^3)`**. Because it requires a 2D matrix, the Space Complexity is **`O(V^2)`**. This makes Floyd-Warshall absolutely magnificent for small, dense graphs (V &lt; 500), but completely impossible to run on large graphs (like a social network with 1 million users).
+
+
 </Callout>
 
-</ConceptTemplate>
+

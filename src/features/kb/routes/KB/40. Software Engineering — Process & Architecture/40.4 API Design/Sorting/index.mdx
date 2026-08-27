@@ -1,8 +1,31 @@
+---
+title: API Sorting
+description: "The architectural practice of allowing clients to dynamically dictate the mathematical order in which a dataset is returned by the API, usually implemented via URL query parameters in RESTful systems."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sorting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="API Sorting"
+  subtitle="Ordering the Result Set"
+  tags={['API', 'REST', 'Architecture', 'Web']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an API endpoint `GET /products` returns a list of laptops, the default order is usually just the order they were inserted into the SQL database (by Primary Key). This is mathematically useless to a user who wants to see the cheapest laptops first.
 
-</ConceptTemplate>
+## 1. URL Parameter Standards
+To support dynamic sorting, APIs use query parameters. There are several mathematical standards:
+- **Simple**: `GET /products?sort=price_asc`
+- **Prefix (Stripe/JSON:API)**: `GET /products?sort=-price` (The minus sign mathematically indicates descending order).
+- **Multiple Fields**: `GET /products?sort=-price,rating` (Mathematically sorts by price descending, and if two prices are identical, it sorts by rating ascending).
+
+## 2. Database Indexes and Performance
+When the API receives `sort=-price`, it translates this into the SQL clause: `ORDER BY price DESC`.
+If the database table has 10 million rows, and the `price` column does not have a mathematical B-Tree Index, the database must perform a "Full Table Scan" and execute an O(N log N) sorting algorithm in RAM, completely crashing the database. API designers must mathematically ensure that any column exposed via the `sort` API parameter is strictly backed by a physical database index.
+

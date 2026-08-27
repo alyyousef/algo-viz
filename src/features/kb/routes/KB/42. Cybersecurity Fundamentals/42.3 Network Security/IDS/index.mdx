@@ -4,19 +4,31 @@ description: A passive network security technology that monitors network traffic
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Intrusion Detection Systems (IDS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Intrusion Detection Systems (IDS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Intrusion Detection System (IDS)** is the digital equivalent of a security camera. It watches everything that happens, but it cannot physically stop a burglar.
 
 Unlike an IPS, which sits directly in the path of the traffic, an IDS is deployed "out-of-band." A copy of the network traffic is mathematically mirrored to the IDS. The IDS analyzes the copy, and if it detects malware, it sends an alert to the SIEM.
 
+
 <Callout icon="success" title="Zero Network Impact">
+
+
   Because the IDS only receives a copy of the traffic, it is mathematically impossible for the IDS to accidentally block legitimate business traffic or slow down the network. This makes them incredibly safe to deploy in sensitive enterprise environments where uptime is critical.
+
+
 </Callout>
+
 
 ## NIDS vs HIDS
 
 1. **Network-Based (NIDS):** (e.g., Snort, Suricata). Placed at strategic choke points in the network infrastructure. It analyzes the raw packets flying across the wire.
 2. **Host-Based (HIDS):** (e.g., OSSEC). Installed as a software agent directly on a specific server (the host). It analyzes the internal mathematical state of the machine—monitoring the system logs, file integrity, and running processes, which a NIDS cannot see.
 
-</ConceptTemplate>

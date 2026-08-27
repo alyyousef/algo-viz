@@ -1,0 +1,24 @@
+---
+title: AWS Fargate
+description: A groundbreaking serverless compute engine for containers that completely eliminates the need to provision, manage, or mathematically scale the underlying EC2 virtual machines.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Fargate"
+  subtitle="Serverless Containers"
+  tags={['AWS', 'Containers', 'Serverless', 'Compute']}
+>
+
+With standard ECS or EKS, you still have to physically provision the EC2 servers that your Docker containers run on. If your servers have 10GB of RAM, and you try to boot a container needing 12GB, the math fails, and the container crashes. Fargate eliminates the server entirely.
+
+## 1. The Serverless Container Abstraction
+With Fargate, you do not manage EC2 instances. There is no cluster to scale.
+You simply tell AWS: *"Here is my Docker image. It mathematically requires exactly 2.0 vCPUs and 4GB of RAM. Run it."*
+AWS reaches into a massive, hidden fleet of compute power, instantly carves out a micro-VM that exactly matches your mathematical specifications, injects your container, and boots it. You are billed purely by the exact second for the exact CPU/RAM requested.
+
+## 2. Security and Isolation
+In a standard EC2 cluster, if you run 10 Docker containers on one server, they technically share the same physical Linux kernel. If a hacker escapes one container, they can theoretically attack the other 9.
+Fargate enforces absolute mathematical isolation. Every single Fargate Task runs inside its own dedicated hardware-isolated micro-VM (powered by Firecracker). They do not share a kernel, memory, or CPU with any other task. This provides military-grade security isolation by default, making Fargate the industry standard for running highly sensitive, multi-tenant SaaS workloads.
+
+</TechnologyTemplate>

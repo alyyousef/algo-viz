@@ -1,8 +1,30 @@
+---
+title: Refactoring Techniques
+description: "Specific, mathematically proven code transformations that improve the internal structure of a codebase without altering its external behavior, used to eliminate code smells and pay down technical debt."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Refactoring techniques">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Refactoring Techniques"
+  subtitle="Mathematical Code Transformations"
+  tags={['Process', 'Clean Code', 'Architecture', 'Refactoring']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Martin Fowler codified dozens of exact mathematical maneuvers that allow engineers to safely dismantle and rebuild complex "Spaghetti Code."
 
-</ConceptTemplate>
+## 1. Extract Method
+The most heavily used refactoring technique.
+If a function is 100 lines long and contains an inline mathematical algorithm for calculating standard deviation, the developer highlights those 15 lines, cuts them, and pastes them into a new private method named `calculateStandardDeviation()`. The original function is mathematically replaced by a single, highly readable function call.
+
+## 2. Other Core Techniques
+- **Extract Class**: If a `User` class contains 15 variables related to an address (street, city, zip), mathematically extract them into a separate `Address` class, improving Cohesion.
+- **Replace Magic Number with Symbolic Constant**: If the code says `if (weight > 9.81)`, mathematically replace `9.81` with `GRAVITY_CONSTANT` to provide human context.
+- **Replace Conditional with Polymorphism**: If a massive `switch` statement checks object types, mathematically replace it using the Strategy or State pattern, enforcing the Open-Closed Principle.
+

@@ -1,8 +1,25 @@
+---
+title: Inpainting & Outpainting
+description: The targeted mathematical alteration of an image, allowing AI to seamlessly erase and replace objects inside an image (Inpainting) or expand the canvas beyond its original borders (Outpainting).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Inpainting/outpainting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Inpainting & Outpainting">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Unlike generating an image from scratch, Inpainting and Outpainting force the Generative AI to mathematically respect existing pixel boundaries, making them powerful tools for photo editing.
 
-</ConceptTemplate>
+## 1. Inpainting (Masking)
+If a tourist ruins your photograph, you want to remove them.
+You draw a physical Mask (a binary mathematical matrix where 1 = tourist, 0 = background) over the person. The Diffusion model is fed the original image and the mask. The mathematical rules of the model explicitly freeze the unmasked pixels; they cannot be altered. The AI is only allowed to run the Diffusion denoising process on the masked pixels, forcing it to hallucinate a background that mathematically blends perfectly with the frozen edges.
+
+## 2. Outpainting
+Outpainting is the exact same mathematics, but reversed.
+You provide an image, and you expand the canvas, leaving the new outer edges completely blank (or filled with static noise). The original image is mathematically frozen. The Diffusion model denoises the outer borders, seamlessly expanding the environment (e.g., taking the Mona Lisa and mathematically generating the rest of the room she is sitting in) while maintaining perfect lighting and perspective.
+

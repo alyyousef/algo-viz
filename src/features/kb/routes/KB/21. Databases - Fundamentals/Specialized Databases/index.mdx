@@ -4,7 +4,14 @@ description: Purpose-built database architectures engineered to solve highly spe
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Specialized Databases">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Specialized Databases">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When data reaches a certain scale or complexity, attempting to force it into a standard PostgreSQL or MongoDB cluster becomes mathematically inefficient. Engineers reach for **Specialized Databases** designed exclusively for one exact workload.
 
@@ -24,9 +31,8 @@ A **Time-Series Database (TSDB)** is heavily optimized to store streams of data 
 
 ## 3. Vector Databases (Pinecone, Milvus)
 
-The backbone of modern AI and Large Language Models. 
-Neural networks don't understand English; they convert sentences into 1,536-dimensional arrays of floating-point numbers (Vectors). 
+The backbone of modern AI and Large Language Models.
+Neural networks don't understand English; they convert sentences into 1,536-dimensional arrays of floating-point numbers (Vectors).
 
 A **Vector Database** does not query data by looking for exact string matches. It uses specialized algorithms (like HNSW) to plot these massive vectors in multi-dimensional space and rapidly calculate the spatial distance between them. This allows an application to instantly find the "most semantically similar" text to a user's query, even if they share zero keywords.
 
-</ConceptTemplate>

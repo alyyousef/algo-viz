@@ -4,13 +4,20 @@ description: The foundational layer of cloud computing that provides raw, virtua
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Infrastructure as a Service (IaaS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Infrastructure as a Service (IaaS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Cloud computing is divided into three primary "Service Models" based on how much control you want versus how much management you want the cloud provider to do. The lowest level is **IaaS (Infrastructure as a Service)**.
 
 ## 1. The Raw Hardware
 
-In an IaaS model, the cloud provider (like AWS) only manages the physical data center, the physical servers, and the virtualization hypervisor. 
+In an IaaS model, the cloud provider (like AWS) only manages the physical data center, the physical servers, and the virtualization hypervisor.
 They give you an empty **Virtual Machine (VM)** and a virtual hard drive.
 
 - **You control**: The Operating System (Linux/Windows), all the installed software, the database, the security patches, and the application code.
@@ -24,7 +31,6 @@ They give you an empty **Virtual Machine (VM)** and a virtual hard drive.
 
 ## 3. The Trade-off
 
-IaaS gives you maximum control. If you want to install a highly experimental, custom-compiled Linux kernel from 2004, you can. 
+IaaS gives you maximum control. If you want to install a highly experimental, custom-compiled Linux kernel from 2004, you can.
 However, it also gives you maximum responsibility. If a critical security vulnerability is discovered in Linux, AWS will not fix it for you. If you don't log into your VM and run `apt-get upgrade`, your server will be hacked.
 
-</ConceptTemplate>

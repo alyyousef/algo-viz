@@ -4,7 +4,14 @@ description: The absolute standard optimization algorithm in Deep Learning, dyna
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Adam (Adaptive Moment Estimation)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Adam (Adaptive Moment Estimation)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Standard Stochastic Gradient Descent (SGD) applies one single, global Learning Rate to every weight in the network. **Adam** (Adaptive Moment Estimation) mathematically tracks the history of each individual weight and dynamically adjusts its specific learning rate, leading to significantly faster convergence.
 
@@ -15,10 +22,9 @@ Adam mathematically combines the best features of two older optimization algorit
 2. **RMSProp (Second Moment)**: Adam tracks the *squared* gradients to measure variance. If a specific parameter (like a rare vocabulary word) updates very infrequently, Adam mathematically increases its individual learning rate to ensure it doesn't get ignored. If a parameter updates wildly, Adam mathematically throttles its learning rate down to prevent explosions.
 
 ## 2. Bias Correction
-Because Adam initializes its momentum trackers at absolute zero, the first few training steps are mathematically biased towards zero (making the algorithm sluggish at the very beginning). 
+Because Adam initializes its momentum trackers at absolute zero, the first few training steps are mathematically biased towards zero (making the algorithm sluggish at the very beginning).
 Adam applies an algebraic **Bias Correction** formula to artificially inflate the momentum during the first few epochs, ensuring rapid initial learning before naturally decaying back to the raw averages.
 
 ## 3. The Tradeoff vs SGD
 While Adam converges vastly faster than standard SGD during training, it is mathematically prone to settling into slightly inferior, sharper local minima. In massive computer vision competitions (like ImageNet), researchers sometimes train with Adam for the first 80%, and then manually switch to standard SGD with Momentum to mathematically guarantee the absolute optimal convergence.
 
-</ConceptTemplate>

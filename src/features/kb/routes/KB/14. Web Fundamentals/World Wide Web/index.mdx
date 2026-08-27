@@ -4,7 +4,14 @@ description: An application-layer information system running on top of the Inter
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The World Wide Web">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The World Wide Web">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If the Internet is the physical system of highways, the **World Wide Web (The Web)** is just one specific type of delivery truck driving on those highways.
 
@@ -19,4 +26,3 @@ The Web is defined by three fundamental technologies:
 
 The genius of the Web was the invention of **Hyperlinks**. Before the Web, if you wanted to read a different document, you had to manually type in a new FTP address. Hyperlinks allowed documents to physically link to each other across different servers, creating a "Web" of interconnected human knowledge.
 
-</ConceptTemplate>

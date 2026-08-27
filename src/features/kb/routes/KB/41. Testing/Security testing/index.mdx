@@ -1,8 +1,29 @@
+---
+title: Security Testing
+description: "A specialized branch of software testing designed to mathematically uncover vulnerabilities, threats, and architectural risks in a system, ensuring data confidentiality, integrity, and availability."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Security testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Security Testing"
+  subtitle="Mathematical Exploitation"
+  tags={['Testing', 'Security', 'Process', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard Unit Test verifies that the system works when the user types a valid name. Security Testing mathematically verifies that the system survives when a hacker types `' OR '1'='1`.
 
-</ConceptTemplate>
+## 1. DAST (Dynamic Application Security Testing)
+While SAST tools read the source code statically, DAST tools mathematically attack the running application from the outside, acting like a hacker.
+Tools like OWASP ZAP or Burp Suite intercept HTTP traffic and mathematically fuzz every single input field, cookie, and header with thousands of known exploit payloads (XSS, SQLi, CSRF, Path Traversal). If the application returns a raw database error or executes a malicious script, the DAST tool flags the vulnerability.
+
+## 2. Penetration Testing (Pentesting)
+Automated tools can only find mathematically known vulnerabilities. **Pentesting** involves hiring human ethical hackers to attack the system.
+Humans chain vulnerabilities together. For example, a DAST tool might find a low-risk Info-Disclosure bug. A human pentester will combine that Info-Disclosure bug with a complex business-logic flaw to mathematically bypass the 2FA system and gain Administrator access—something automated scanners cannot comprehend.
+

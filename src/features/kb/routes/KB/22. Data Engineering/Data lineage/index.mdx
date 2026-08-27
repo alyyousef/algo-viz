@@ -4,7 +4,14 @@ description: The mathematical mapping of data's journey across an organization, 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data Lineage">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Lineage">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a modern enterprise, data does not exist in isolation. A single metric on a CEO's dashboard (e.g., "Total Revenue") is the mathematical output of a massive chain of software dependencies.
 
@@ -29,4 +36,3 @@ Capturing lineage across disparate tools is mathematically complex.
 
 Data Lineage is visually surfaced to the organization via **Data Catalogs** (like DataHub or Alation), bringing strict mathematical observability to the data pipeline.
 
-</ConceptTemplate>

@@ -1,8 +1,32 @@
+---
+title: Pagination
+description: The mathematical and architectural strategy of dividing a massive dataset into smaller, discrete chunks (pages) for API transmission, preventing server memory exhaustion and optimizing client rendering speed.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pagination">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="API Pagination"
+  subtitle="Transmitting Data in Chunks"
+  tags={['API', 'REST', 'Architecture', 'Databases']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an e-commerce API has 10 million products, and the client executes `GET /products`, returning 10 million JSON records in a single HTTP response will mathematically crash the database, the network, and the client's mobile device.
 
-</ConceptTemplate>
+## 1. Offset Pagination
+The most common mathematical approach is **Offset Pagination** using URL parameters: `GET /products?limit=50&offset=100`.
+The database executes `SELECT * FROM products LIMIT 50 OFFSET 100`.
+**The Flaw**: As the offset gets huge (e.g., `OFFSET 500000`), SQL databases must mathematically scan and discard the first 500,000 rows to find the next 50, resulting in catastrophic O(N) performance degradation.
+
+## 2. Keyset (Cursor) Pagination
+High-scale APIs (like Twitter or Stripe) use **Cursor Pagination**.
+Instead of using an offset, the client sends a mathematically unique pointer (a Cursor) to the last item they saw: `GET /products?limit=50&after=id_9876`.
+The database executes `SELECT * FROM products WHERE id > 9876 LIMIT 50`.
+Because the `id` is indexed, the database mathematically jumps instantly to the correct row in O(1) or O(log N) time, regardless of whether the user is on page 1 or page 10,000.
+

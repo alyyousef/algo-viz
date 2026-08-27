@@ -5,9 +5,16 @@ description: The industry-standard, deliberately slow cryptographic hashing algo
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="bcrypt">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="bcrypt">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Standard hashing algorithms like **MD5**, **SHA-1**, and **SHA-256** were designed for speed. They can hash gigabytes of data per second. 
+Standard hashing algorithms like **MD5**, **SHA-1**, and **SHA-256** were designed for speed. They can hash gigabytes of data per second.
 When storing user passwords in a database, speed is a catastrophic vulnerability. A hacker who steals a database of SHA-256 password hashes can rent an array of GPUs and brute-force (guess) billions of passwords per second until they find the matches.
 
 **bcrypt** is a cryptographic hashing algorithm designed in 1999 specifically for password storage. Its primary defining feature is that it is **deliberately, computationally slow**.
@@ -16,13 +23,19 @@ When storing user passwords in a database, speed is a catastrophic vulnerability
 
 bcrypt relies on the Blowfish cipher and introduces a mathematical parameter called the **Cost Factor** (often denoted as a two-digit number, like `10` or `12`).
 
-The Cost Factor dictates how many iterations of the internal hashing loop are executed, scaling logarithmically ($2^{\text{cost}}$ iterations). 
+The Cost Factor dictates how many iterations of the internal hashing loop are executed, scaling logarithmically ($2^{\text{cost}}$ iterations).
 - A cost of 10 requires $2^{10}$ (1,024) iterations.
 - A cost of 12 requires $2^{12}$ (4,096) iterations, taking 4 times longer.
 
+
 <Callout icon="tip" title="Future-Proofing">
+
+
   As hardware gets faster (Moore's Law), bcrypt remains secure because developers can simply increment the Cost Factor in their code. If GPUs become twice as fast next year, you increase the cost factor by 1, doubling the mathematical work required, perfectly neutralizing the hardware upgrade.
+
+
 </Callout>
+
 
 ## 2. Built-in Salting
 
@@ -42,4 +55,3 @@ A standard bcrypt hash looks like this:
 
 Because the algorithm version, cost, and salt are all stored in plain text inside the string, the authentication server has all the information it needs to re-hash the user's login attempt and compare the results, without needing a separate database column for the salt.
 
-</ConceptTemplate>

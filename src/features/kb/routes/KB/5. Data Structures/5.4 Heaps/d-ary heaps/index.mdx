@@ -4,22 +4,28 @@ description: A generalized binary heap where each node mathematically has D chil
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="D-ary Heaps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="D-ary Heaps">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standard **Binary Heap** limits every node to exactly $2$ children. A **D-ary Heap** mathematically generalizes this concept, allowing every node to have exactly $D$ children. (A $3$-ary heap has $3$ children per node, a $4$-ary heap has $4$).
 
 ## 1. Mathematical Array Mapping
-Like a Binary Heap, a D-ary Heap does not use Node pointers; it physically lives inside a perfectly flat, contiguous Array. 
-For a Binary Heap, the children of index $i$ are mathematically located at $2i + 1$ and $2i + 2$. 
+Like a Binary Heap, a D-ary Heap does not use Node pointers; it physically lives inside a perfectly flat, contiguous Array.
+For a Binary Heap, the children of index $i$ are mathematically located at $2i + 1$ and $2i + 2$.
 For a D-ary heap, the children are located at $D \times i + 1, D \times i + 2, \dots, D \times i + D$. The parent is mathematically found at `floor((i - 1) / D)`.
 
 ## 2. The Depth vs Breadth Tradeoff
-By increasing $D$ (e.g., to $4$), the tree becomes mathematically much wider and significantly shallower. 
-- **The Advantage**: Because the tree is extremely shallow, operations that move data *up* the tree (like `Insert` or `Decrease-Key`) require exponentially fewer mathematical comparisons. 
+By increasing $D$ (e.g., to $4$), the tree becomes mathematically much wider and significantly shallower.
+- **The Advantage**: Because the tree is extremely shallow, operations that move data *up* the tree (like `Insert` or `Decrease-Key`) require exponentially fewer mathematical comparisons.
 - **The Disadvantage**: Operations that move data *down* the tree (like `Extract-Min`) require the algorithm to mathematically compare the node against *all* $D$ of its children to find the minimum, which slows it down.
 
 ## 3. CPU Cache Dominance
-If a standard Binary Heap is theoretically faster for `Extract-Min`, why do D-ary heaps exist? **Cache Locality**. 
+If a standard Binary Heap is theoretically faster for `Extract-Min`, why do D-ary heaps exist? **Cache Locality**.
 Modern CPUs fetch memory in 64-byte chunks. A 4-ary Heap perfectly aligns all 4 children into a single cache line. When the CPU needs to compare the children, it fetches all of them in a single nanosecond, mathematically destroying the performance of a Binary Heap which suffers from massive cache misses.
 
-</ConceptTemplate>

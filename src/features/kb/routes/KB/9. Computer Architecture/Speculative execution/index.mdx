@@ -4,22 +4,35 @@ description: The risky, high-performance technique where a CPU executes code tha
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Speculative Execution">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Speculative Execution">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Speculative Execution** is the umbrella term for a CPU doing work before it is absolutely certain that the work is actually required. It is the logical combination of **Branch Prediction** and **Out-of-Order Execution**, and it is the primary reason modern processors are so incredibly fast.
 
+
 <Callout icon="success" title="Better to act and apologize than to wait and do nothing">
+
+
   If the CPU hits an unresolved conditional branch, it has two choices:
   1. Sit idle for 15 cycles doing nothing (100% waste).
   2. Guess the outcome and execute the code anyway. If right, you save 15 cycles. If wrong, you throw the work away and are no worse off than if you had sat idle.
+
+
 </Callout>
+
 
 ## The Mechanism of Speculation
 
-When the Branch Predictor guesses the outcome of an `if` statement, the CPU begins fetching and executing those instructions speculatively. 
-Crucially, these speculative instructions are allowed to do math in the ALU, but **they are strictly forbidden from permanently modifying the architectural state** (Registers or RAM). 
+When the Branch Predictor guesses the outcome of an `if` statement, the CPU begins fetching and executing those instructions speculatively.
+Crucially, these speculative instructions are allowed to do math in the ALU, but **they are strictly forbidden from permanently modifying the architectural state** (Registers or RAM).
 
-Their results are kept quarantined inside the **Reorder Buffer (ROB)**. 
+Their results are kept quarantined inside the **Reorder Buffer (ROB)**.
 
 ### Resolution
 - **Guess Correct**: The original branch condition is finally calculated by the ALU. The CPU realizes it guessed correctly. The quarantined results in the ROB are instantly "committed" to the real registers.
@@ -27,11 +40,10 @@ Their results are kept quarantined inside the **Reorder Buffer (ROB)**.
 
 ## The Security Disaster: Meltdown & Spectre (2018)
 
-For 20 years, computer scientists believed Speculative Execution was perfectly secure because incorrectly guessed data was completely deleted. 
+For 20 years, computer scientists believed Speculative Execution was perfectly secure because incorrectly guessed data was completely deleted.
 
-In 2018, researchers discovered the **Spectre** and **Meltdown** vulnerabilities, shattering this assumption. 
-The flaw was in the **Cache**. While speculative execution reverts the CPU Registers, *it does not revert the L1 Cache*. 
+In 2018, researchers discovered the **Spectre** and **Meltdown** vulnerabilities, shattering this assumption.
+The flaw was in the **Cache**. While speculative execution reverts the CPU Registers, *it does not revert the L1 Cache*.
 
 A malicious program can trick the CPU's branch predictor into speculatively executing an illegal memory read (e.g., reading a password from the kernel). The CPU eventually realizes it made an illegal read and throws the data away... but that password was pulled into the L1 Cache. The attacker can then use highly precise timing attacks to measure cache latency and extract the secret password bit-by-bit. This flaw forced fundamental redesigns in OS kernels and CPU hardware worldwide.
 
-</ConceptTemplate>

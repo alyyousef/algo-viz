@@ -8,21 +8,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 GitFlow is a branching model for Git, created by Vincent Driessen. It has attracted a lot of attention because it is very well suited to collaboration and scaling the development team.
 
+
 <Callout icon="warning" title="Is it too complex?">
+
+
   GitFlow is excellent for software with scheduled, explicit version releases (like iOS apps or boxed software). However, for modern web apps deployed 10 times a day (Continuous Deployment), GitFlow is often considered too heavy, and teams prefer **GitHub Flow** (just `main` and feature branches).
+
+
 </Callout>
+
 
 ## The Branch Types
 
-<ComparisonTable 
-  headers={['Branch', 'Purpose', 'Lifetime']}
-  rows={[
-    ['main (master)', 'Stores the official release history. Every commit here is a production release.', 'Infinite'],
-    ['develop', 'Serves as an integration branch for features. This is where active development happens.', 'Infinite'],
-    ['feature/*', 'Created from `develop` to build a new feature. Merged back into `develop` when done.', 'Short-lived'],
-    ['release/*', 'Created from `develop` when a release is imminent. Used for bug fixes and version bumps before merging into `main`.', 'Short-lived'],
-    ['hotfix/*', 'Created directly from `main` to fix a critical production bug immediately.', 'Short-lived']
-  ]}
-/>
+
+<ComparisonTable headers={['Branch', 'Purpose', 'Lifetime']} rows={[ ['main (master)', 'Stores the official release history. Every commit here is a production release.', 'Infinite'], ['develop', 'Serves as an integration branch for features. This is where active development happens.', 'Infinite'], ['feature/*', 'Created from `develop` to build a new feature. Merged back into `develop` when done.', 'Short-lived'], ['release/*', 'Created from `develop` when a release is imminent. Used for bug fixes and version bumps before merging into `main`.', 'Short-lived'], ['hotfix/*', 'Created directly from `main` to fix a critical production bug immediately.', 'Short-lived'] ]} />
+
 
 </TechnologyTemplate>

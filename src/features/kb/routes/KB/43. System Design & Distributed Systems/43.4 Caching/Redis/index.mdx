@@ -4,7 +4,14 @@ description: The world's fastest in-memory key-value data store, used universall
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Redis (Remote Dictionary Server)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Redis (Remote Dictionary Server)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Redis is an open-source, in-memory, NoSQL key-value store. Because it bypasses the hard drive and stores everything exclusively in RAM, it is capable of performing millions of read and write operations per second with sub-millisecond latency.
 
@@ -20,13 +27,18 @@ While Memcached can only store simple strings, Redis is famous for supporting ad
 
 ## 2. Single-Threaded Event Loop
 
-Redis is notoriously **single-threaded**. It processes every single command sequentially, one at a time. 
-While this sounds slow, because RAM access is so incredibly fast, a single thread can process 100,000+ commands per second. 
+Redis is notoriously **single-threaded**. It processes every single command sequentially, one at a time.
+While this sounds slow, because RAM access is so incredibly fast, a single thread can process 100,000+ commands per second.
 
 The massive advantage of being single-threaded is that Redis commands are **Atomic**. If two web servers simultaneously send an `INCR` command to increase a view counter, Redis guarantees they will not overwrite each other (no race conditions). This makes Redis the perfect engine for distributed locks and rate limiters.
 
+
 <Callout icon="warning" title="Data Persistence">
+
+
   Because Redis lives in RAM, if the server loses power, all data is instantly annihilated. While Redis offers persistence features (RDB snapshots to disk, or AOF append-only logs), they degrade performance. Redis is primarily used as an ephemeral cache, not a primary source of truth.
+
+
 </Callout>
 
-</ConceptTemplate>
+

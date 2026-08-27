@@ -4,17 +4,30 @@ description: A computer program that directly executes instructions written in a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Interpreters">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Interpreters">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A **Compiler** translates your entire source code into mathematical CPU instructions (a binary `.exe`) *before* the user ever runs it. 
+A **Compiler** translates your entire source code into mathematical CPU instructions (a binary `.exe`) *before* the user ever runs it.
 
 An **Interpreter** translates and executes the source code mathematically *line-by-line, while the program is actually running*.
 
 Languages like Python, Ruby, and JavaScript are historically Interpreted. Languages like C, C++, and Rust are Compiled.
 
+
 <Callout icon="warning" title="The Performance Penalty">
+
+
   Because an Interpreter must physically run the Lexer, Parser, and execution logic *while* the user is waiting, interpreted languages are mathematically 10x to 100x slower than compiled languages.
+
+
 </Callout>
+
 
 ## The Evolution of Execution
 
@@ -22,4 +35,3 @@ Languages like Python, Ruby, and JavaScript are historically Interpreted. Langua
 2. **Bytecode Interpreters:** Python uses this. It compiles the code into an intermediate mathematical bytecode (e.g., `.pyc` files) and then runs a virtual machine (a massive `switch` statement) to execute the bytecode. It is faster than Tree-Walking.
 3. **Just-In-Time (JIT) Compilers:** The modern miracle behind JavaScript (V8 Engine). It starts by interpreting the bytecode. But if it mathematically detects a `for` loop running 10,000 times, it pauses, instantly compiles that specific loop into ultra-fast physical Machine Code, and swaps it out. JIT achieves near-native C++ speeds in interpreted languages.
 
-</ConceptTemplate>

@@ -4,7 +4,14 @@ description: The hyperbolic tangent function, a mathematical improvement over Si
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tanh (Hyperbolic Tangent)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tanh (Hyperbolic Tangent)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Tanh** (Hyperbolic Tangent) activation function looks mathematically identical to Sigmoid (an S-shaped curve), but with one massive architectural improvement: it is **Zero-Centered**.
 
@@ -16,11 +23,10 @@ The **Tanh** (Hyperbolic Tangent) activation function looks mathematically ident
   - $	anh(-10) approx -1$
 
 ## 2. Why Zero-Centered Matters
-In a Deep Neural Network, if you use Sigmoid, every single activation passing to the next layer is mathematically guaranteed to be a positive number. 
-During Backpropagation, if all inputs to a neuron are positive, the mathematical gradients passed backward will always be *entirely positive* or *entirely negative*. This forces the weights to update in a highly erratic, zig-zagging trajectory. 
+In a Deep Neural Network, if you use Sigmoid, every single activation passing to the next layer is mathematically guaranteed to be a positive number.
+During Backpropagation, if all inputs to a neuron are positive, the mathematical gradients passed backward will always be *entirely positive* or *entirely negative*. This forces the weights to update in a highly erratic, zig-zagging trajectory.
 Because Tanh outputs a healthy mix of positive and negative numbers (centered at 0), the gradients can flow freely in any direction, meaning Tanh mathematically converges significantly faster than Sigmoid.
 
 ## 3. The Shared Flaw
 Despite being superior to Sigmoid, Tanh still suffers from the exact same fatal mathematical flaw: the **Vanishing Gradient Problem**. At the edges of the curve (near $+1$ or $-1$), the mathematical derivative is extremely flat ($0$). This instantly kills the gradient, which is why Tanh was ultimately replaced by ReLU in modern hidden layers.
 
-</ConceptTemplate>

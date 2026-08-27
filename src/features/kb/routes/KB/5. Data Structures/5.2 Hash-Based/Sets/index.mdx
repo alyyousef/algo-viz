@@ -4,7 +4,14 @@ description: A collection data structure that mathematically guarantees all stor
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sets">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In mathematics, a **Set** is a collection of distinct objects. In Computer Science, a Set is a highly optimized data structure designed strictly to enforce uniqueness and provide blazing-fast membership testing.
 
@@ -23,7 +30,6 @@ Sets excel at relational algebra. If you have a Set of "Registered Users" and a 
 - **Difference**: Find users who exist in the first Set, but *not* the second.
 
 ## 3. The Implementation Trick
-Under the hood, most programming languages (like Python or Java) implement a Set simply by creating a standard Hash Map, but mathematically throwing away the "Values." 
+Under the hood, most programming languages (like Python or Java) implement a Set simply by creating a standard Hash Map, but mathematically throwing away the "Values."
 When you add `"Alice"` to a Set, it hashes the string and stores it in the underlying Hash Map as `{"Alice": NULL}`, leveraging the Map's inherent key uniqueness to build the Set.
 
-</ConceptTemplate>

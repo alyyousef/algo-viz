@@ -1,8 +1,29 @@
+---
+title: Liquid
+description: An open-source, logic-less template language created by Shopify, used extensively in e-commerce and static site generators.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Liquid">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Liquid">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Shopify in 2006 (written in Ruby), Liquid is a safe, customer-facing template language. It is designed so that non-programmers can build beautiful storefronts without the ability to mathematically execute malicious code or crash the Shopify servers.
 
-</ConceptTemplate>
+## 1. Safety First
+Because Shopify allows millions of merchants to upload custom code to their servers, the templating language *must* be sandboxed.
+Liquid mathematically prohibits server-side execution, database queries, or infinite loops. A user can only access the specific data objects (like `product.price`) that the server explicitly provides.
+
+## 2. Syntax: Tags, Objects, and Filters
+Liquid uses three mathematical constructs:
+- **Objects**: `{{ product.title }}` outputs data.
+- **Tags**: `{% if user.logged_in %}` executes logic.
+- **Filters**: `{{ "hello" | upcase }}` mathematically modifies the output (converting to "HELLO").
+
+Beyond Shopify, Liquid powers Jekyll, the static site generator that drove the initial explosion of GitHub Pages.
+

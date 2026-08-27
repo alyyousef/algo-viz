@@ -4,15 +4,28 @@ description: The mathematical engine that allows neural networks to learn by cal
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Backpropagation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Backpropagation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Backpropagation (short for "backward propagation of errors") is the fundamental mathematical algorithm used to train neural networks. It is an efficient method for computing the gradient of the loss function with respect to every single weight in the network, using the **Chain Rule of Calculus**.
 
+
 <Callout icon="tip" title="The Forward and Backward Pass">
+
+
   Training involves two phases:
   1. **Forward Pass:** The data flows through the network to generate a prediction. The prediction is compared to the ground truth to calculate the Error (Loss).
   2. **Backward Pass:** Backpropagation calculates exactly how much each weight contributed to that Error by taking partial derivatives.
+
+
 </Callout>
+
 
 ## The Mathematics
 
@@ -21,4 +34,3 @@ Backpropagation (short for "backward propagation of errors") is the fundamental 
 3. "Propagate" these error gradients backward to the previous layer.
 4. Repeat until you have the gradient for every single weight in the entire network. Once you have the gradients, you use an optimizer (like Gradient Descent) to slightly adjust the weights in the opposite direction of the gradient.
 
-</ConceptTemplate>

@@ -4,7 +4,7 @@ description: A lightweight, publish-subscribe network protocol that transports m
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="MQTT"
   subtitle="The absolute standard protocol of IoT"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/MQTT_logo.svg/512px-MQTT_logo.svg.png"
@@ -17,14 +17,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 If an ESP32 tries to send a standard HTTP REST API request (`POST /api/temperature`), the HTTP headers alone are mathematically massive (often 500+ bytes). For a battery-powered device on a weak cellular network, this is completely unacceptable.
 
-**MQTT** solves this. The mathematical overhead of an MQTT message can be as small as **2 bytes**. 
+**MQTT** solves this. The mathematical overhead of an MQTT message can be as small as **2 bytes**.
+
 
 <Callout icon="success" title="The Publish/Subscribe Architecture">
+
+
   Unlike HTTP (where the client constantly polls the server), MQTT uses a **Pub/Sub Broker**.
   1. The IoT Thermostat (Publisher) connects to the Broker and publishes a message to a specific string **Topic** (e.g., `house/livingroom/temp`).
   2. A Mobile App (Subscriber) connects to the Broker and subscribes to that exact Topic.
   3. The Broker mathematically routes the message instantly. The Thermostat never knows the Mobile App exists.
+
+
 </Callout>
+
 
 ## Quality of Service (QoS)
 

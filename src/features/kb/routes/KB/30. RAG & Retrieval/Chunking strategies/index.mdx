@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Chunking Strategies (RAG)
+description: The algorithmic process of mathematically dividing massive text documents into optimized, semantic fragments to maximize the accuracy of Vector Database retrieval.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Chunking strategies">
+<TechnologyTemplate
+  title="Chunking Strategies (RAG)"
+  subtitle="Optimizing Semantic Retrieval"
+  tags={['RAG', 'Vector Database', 'NLP', 'Data Processing']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you embed an entire 500-page book into a single Vector, the math becomes "muddy"; the resulting vector points to everything and nothing. If you embed a single word, there is no context. Chunking is the mathematical art of finding the perfect balance.
 
-</ConceptTemplate>
+## 1. Fixed-Size vs. Semantic Chunking
+- **Fixed-Size Chunking**: The simplest algorithm. You mathematically split the text every 500 tokens. However, this risks slicing a crucial paragraph in half, destroying the semantic meaning. To mitigate this, developers use **Overlap** (e.g., 500 tokens, with a 50-token overlap), ensuring the mathematical context bleeds across the cuts.
+- **Semantic Chunking**: A more advanced algorithm. It uses a smaller NLP model to mathematically detect sentence or paragraph boundaries. It refuses to cut a chunk until it reaches a logical breakpoint (like a double newline or a specific markdown header).
+
+## 2. Parent-Child (Hierarchical) Chunking
+A major problem in RAG: Small chunks retrieve highly accurate answers, but lack broad context. Large chunks have context, but are hard for the vector math to locate precisely.
+**Parent-Child Chunking** solves this. You mathematically chunk a document into large 1,000-token blocks (Parents), and then subdivide those into 200-token blocks (Children).
+When the user asks a question, the Vector Database mathematically searches *only* the Children (ensuring hyper-accurate retrieval). However, when a Child is found, the system actually returns the *Parent* chunk to the LLM, providing the exact answer surrounded by massive, perfect context.
+
+</TechnologyTemplate>

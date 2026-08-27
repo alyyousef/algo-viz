@@ -4,10 +4,16 @@ description: An automated tool that checks your dependency files for outdated re
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Dependabot">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Dependabot">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If your project mathematically relies on an old version of the `React` library, and a massive biological security vulnerability is discovered in that version, you are in danger.
 
 **Dependabot** is an automated mathematical robot that constantly scans your `package.json`. If a security flaw is detected in one of your dependencies, Dependabot biologically writes the code fix itself, mathematically opens a Pull Request on your repository, and politely asks you to click "Merge" to instantly patch the security hole.
 
-</ConceptTemplate>

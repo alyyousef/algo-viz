@@ -1,8 +1,30 @@
+---
+title: Lambda Calculus
+description: The absolute mathematical bedrock of computer science, invented by Alonzo Church in the 1930s, proving that all computation can be expressed purely through anonymous functions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lambda calculus">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lambda Calculus">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 1936, Alan Turing invented the Turing Machine (an imaginary physical tape drive) to define what computation is. Simultaneously, Alonzo Church invented Lambda Calculus (a pure mathematical equation) to define the exact same thing. They are mathematically identical.
 
-</ConceptTemplate>
+## 1. The Three Rules
+Lambda Calculus is shockingly simple, consisting of only three mathematical rules:
+1. **Variables**: $x, y, z$
+2. **Abstraction (Function Definition)**: $\lambda x. M$ (A function that takes an argument $x$, and returns the expression $M$).
+3. **Application (Function Call)**: $M N$ (Apply function $M$ to argument $N$).
+There are no numbers, no booleans, no `if` statements, and no loops. Everything must be built out of pure functions.
+
+## 2. Church Encoding
+How do you write `if(true)` without booleans? You use **Church Encoding**.
+Church mathematically defined `True` as a function that takes two arguments and always returns the first: $\lambda x. \lambda y. x$.
+He defined `False` as a function that returns the second: $\lambda x. \lambda y. y$.
+By passing different functions into each other (Higher-Order Functions), Church mathematically proved you can build full arithmetic and branching logic using absolutely nothing but pure, anonymous functions. This is the origin of all Functional Programming (Lisp, Haskell).
+

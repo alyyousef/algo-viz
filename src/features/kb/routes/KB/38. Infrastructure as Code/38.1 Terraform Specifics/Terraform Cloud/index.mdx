@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Terraform Cloud
+description: A managed, cloud-hosted service provided by HashiCorp designed to mathematically orchestrate Terraform runs, securely manage state files, and enforce Policy-as-Code across large enterprise teams.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Terraform Cloud">
+<TechnologyTemplate
+  title="Terraform Cloud"
+  subtitle="Enterprise Terraform Orchestration"
+  tags={['Terraform', 'Cloud', 'DevOps', 'HashiCorp']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Running `terraform apply` from a developer's laptop is mathematically dangerous. The developer's laptop must contain the highly sensitive AWS Root Credentials, and if their Wi-Fi drops halfway through the execution, the state file can corrupt.
 
-</ConceptTemplate>
+## 1. Remote Execution Engine
+Terraform Cloud shifts the execution context from the laptop to the cloud.
+When a developer runs `terraform apply`, their local CLI mathematically calculates nothing. It simply zips up their HCL code and transmits it to Terraform Cloud. HashiCorp's secure, ephemeral Linux containers actually execute the API calls against AWS. The AWS credentials mathematically never leave Terraform Cloud, and the developer's laptop never sees them.
+
+## 2. The Private Module Registry
+Large organizations require standardized infrastructure.
+Terraform Cloud hosts a Private Module Registry. The Security team can write a module for a highly secure AWS S3 bucket, mathematically guaranteeing it blocks public access and encrypts data at rest. They publish this to the internal Registry. When developers write their own code, they mathematically import the module from the Registry, ensuring the entire corporation adheres to the Security team's baseline architecture.
+
+</TechnologyTemplate>

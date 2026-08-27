@@ -1,0 +1,24 @@
+---
+title: Amazon Elastic Kubernetes Service (EKS)
+description: A managed service that mathematically abstracts away the immense complexity of running the Kubernetes Control Plane, allowing enterprises to run standard Kubernetes workloads natively on AWS.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Elastic Kubernetes Service (EKS)"
+  subtitle="Managed Kubernetes on AWS"
+  tags={['AWS', 'Kubernetes', 'Containers', 'Compute']}
+>
+
+Kubernetes is the industry standard for container orchestration, but running the "Master Nodes" (the Control Plane that stores the etcd database and handles the API) is a DevOps nightmare. If the Control Plane goes down, the entire cluster is lost.
+
+## 1. The Managed Control Plane
+EKS physically removes the Control Plane from your responsibility.
+AWS provisions, scales, and mathematically patches the Kubernetes Master Nodes across three Availability Zones in a hidden AWS account. You do not manage them, and you cannot SSH into them. You simply receive a mathematically perfect, highly available Kubernetes API endpoint. You use standard `kubectl` commands to talk to it, and you only manage the "Worker Nodes" (the EC2 instances that actually run your Docker containers).
+
+## 2. Cloud-Agnostic vs. AWS Native
+Why use EKS instead of ECS? **Portability**.
+ECS is proprietary to AWS. If you write ECS YAML, you are locked into Amazon forever.
+EKS runs 100% upstream, open-source Kubernetes. The exact same `deployment.yaml` file that runs on EKS can be mathematically deployed to Google Cloud (GKE), Azure (AKS), or an on-premise physical data center without changing a single line of code. EKS is chosen by massive enterprises that mandate a multi-cloud or cloud-agnostic architectural strategy.
+
+</TechnologyTemplate>

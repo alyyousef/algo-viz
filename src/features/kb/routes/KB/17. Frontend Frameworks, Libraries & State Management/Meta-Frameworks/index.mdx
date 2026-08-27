@@ -4,10 +4,17 @@ description: The architectural shift from client-side Single Page Applications t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Meta-Frameworks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Meta-Frameworks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When you build a standard React app (Vite/Create-React-App), it generates an entirely blank HTML file containing only `<div id="root"></div>`. 
-The browser must download massive Megabytes of Javascript before it can mathematically construct the UI. 
+When you build a standard React app (Vite/Create-React-App), it generates an entirely blank HTML file containing only `<div id="root"></div>`.
+The browser must download massive Megabytes of Javascript before it can mathematically construct the UI.
 
 This causes two catastrophic problems:
 1. **Terrible SEO**: When Googlebot crawls the page, it sees a blank white screen and penalizes your ranking.
@@ -30,7 +37,6 @@ Created by the authors of React Router (now acquired by Shopify). Remix violentl
 The Vue equivalent to Next.js. It provides the exact same architectural benefits (SSR, File-System Routing, API routes) but is tailored perfectly for the Vue ecosystem.
 
 ### 4. Astro (The Island Architecture)
-A modern framework that fundamentally altered the paradigm. Astro generates 100% pure, static HTML with zero Javascript shipped to the browser by default. 
+A modern framework that fundamentally altered the paradigm. Astro generates 100% pure, static HTML with zero Javascript shipped to the browser by default.
 If you need an interactive component (like a React Carousel), Astro utilizes **Island Architecture**—it mathematically hydrates *only* that specific carousel with Javascript, leaving the rest of the page as pure, blazing-fast HTML.
 
-</ConceptTemplate>

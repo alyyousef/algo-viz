@@ -4,10 +4,16 @@ description: The construction of mathematical models and quantitative analysis t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scientific Computing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Scientific Computing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Scientific Computing** is the mathematical discipline of translating pure physics into C++ and Fortran.
 
 It abandons standard enterprise software architectures (like HTTP servers and JSON) because they are biologically too slow. Scientific Computing relies on solving massive, continuous differential equations. Because computers mathematically cannot understand continuous curves, the math must be "discretized" into a massive grid of billions of tiny biological points, which the supercomputer then calculates step-by-step.
 
-</ConceptTemplate>

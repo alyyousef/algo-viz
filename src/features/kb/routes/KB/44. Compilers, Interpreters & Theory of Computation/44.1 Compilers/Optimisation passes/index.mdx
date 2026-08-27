@@ -4,25 +4,32 @@ description: The compiler phase that transforms the intermediate representation 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Optimization Passes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Optimization Passes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A human programmer writes code to be readable. The CPU needs code to be fast. 
+A human programmer writes code to be readable. The CPU needs code to be fast.
 
 The **Optimizer** is the mathematical heart of a modern compiler (like GCC or LLVM). It takes the Abstract Syntax Tree (or an Intermediate Representation) and mathematically mutates it over dozens of "passes" to reduce execution time and memory footprint, without altering the program's output.
 
+
 <Callout icon="success" title="The Golden Rule of Optimization">
+
+
   An optimization pass is mathematically invalid if it changes the observable behavior of the program. If `x` was supposed to output `5`, the optimized code must mathematically output exactly `5`.
+
+
 </Callout>
+
 
 ## Common Mathematical Optimizations
 
-<ComparisonTable 
-  headers={['Optimization', 'Mechanism', 'Example']}
-  rows={[
-    ['Constant Folding', 'If the compiler sees `x = 1000 * 60 * 60`, it mathematically calculates the result at compile-time.', 'The CPU receives `x = 3600000`, saving three math operations at runtime.'],
-    ['Dead Code Elimination', 'Mathematically proves that a block of code can never be reached (e.g., `if (false) { ... }`).', 'The code is completely deleted from the final binary, saving disk space and RAM.'],
-    ['Loop Unrolling', 'If a loop runs exactly 4 times, the compiler mathematically copies the loop body 4 times and removes the jumping logic.', 'Increases binary size, but drastically improves CPU pipeline speed by removing branching.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Optimization', 'Mechanism', 'Example']} rows={[ ['Constant Folding', 'If the compiler sees `x = 1000 * 60 * 60`, it mathematically calculates the result at compile-time.', 'The CPU receives `x = 3600000`, saving three math operations at runtime.'], ['Dead Code Elimination', 'Mathematically proves that a block of code can never be reached (e.g., `if (false) { ... }`).', 'The code is completely deleted from the final binary, saving disk space and RAM.'], ['Loop Unrolling', 'If a loop runs exactly 4 times, the compiler mathematically copies the loop body 4 times and removes the jumping logic.', 'Increases binary size, but drastically improves CPU pipeline speed by removing branching.'] ]} />
+
+

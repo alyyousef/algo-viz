@@ -5,7 +5,14 @@ description: "A cybersecurity strategy that uses multiple, independent layers of
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Defence in Depth">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Defence in Depth">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Also known as the "Castle Approach," **Defence in Depth** is the principle that no single security control is perfect. Every firewall has a zero-day vulnerability; every encryption protocol eventually breaks; every employee can be phished.
 
@@ -29,8 +36,13 @@ A robust enterprise architecture implements controls at every layer of the OSI m
 ## 3. The Swiss Cheese Model
 In risk management, this is known as the "Swiss Cheese Model." Every layer of security has holes (vulnerabilities). However, if you stack enough slices of cheese together, the holes do not align, and a threat cannot pass all the way through.
 
+
 <Callout icon="tip" title="Zero-Day Mitigation">
+
+
 Defence in Depth is the primary mitigation against zero-day exploits. If a critical vulnerability is discovered in your Web Server software (allowing arbitrary code execution), the attacker still cannot steal the database if the database is in a completely isolated, firewalled private subnet that the web server is physically forbidden from accessing.
+
+
 </Callout>
 
-</ConceptTemplate>
+

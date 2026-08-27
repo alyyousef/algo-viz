@@ -1,0 +1,25 @@
+---
+title: AWS CloudFormation
+description: The foundational Infrastructure as Code (IaC) engine in AWS that mathematically parses declarative YAML/JSON templates to automatically provision, configure, and safely orchestrate cloud resources.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS CloudFormation"
+  subtitle="The IaC Engine of AWS"
+  tags={['AWS', 'IaC', 'YAML', 'Orchestration']}
+>
+
+If you manually click through the AWS Console to create a server, you cannot version control your clicks. CloudFormation turns your entire physical datacenter architecture into a single, version-controlled text file.
+
+## 1. Declarative State Machine
+CloudFormation is strictly **Declarative**. You do not tell AWS *how* to build the server; you mathematically define what the final State should look like.
+You write a YAML file declaring: *"I need an S3 Bucket and an EC2 Instance."*
+CloudFormation mathematically calculates the **Dependency Graph**. If the EC2 instance needs to read from the S3 bucket, CloudFormation knows it must physically provision the Bucket *first*, generate its physical ARN, and then inject that ARN into the EC2 instance's configuration. It handles all mathematical orchestration and timing automatically.
+
+## 2. Drift Detection and Rollbacks
+CloudFormation acts as the absolute source of truth.
+If a rogue developer logs into the console and manually deletes a database index, the physical reality diverges from the YAML file. CloudFormation's **Drift Detection** mathematically compares the live API state to the YAML template and flags the exact line of configuration that was tampered with.
+Furthermore, if you deploy a broken YAML file, CloudFormation uses transactional math. If step 45 of 50 fails, it mathematically executes an automated **Rollback**, deleting the first 44 resources in reverse order to ensure your AWS account never gets stuck in a broken, half-deployed state.
+
+</TechnologyTemplate>

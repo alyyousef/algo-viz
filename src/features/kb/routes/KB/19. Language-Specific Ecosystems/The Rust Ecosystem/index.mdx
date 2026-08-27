@@ -4,7 +4,14 @@ description: The most loved language in the world, featuring the revolutionary B
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Rust Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Rust Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Rust is a systems programming language that guarantees memory safety and thread safety without utilizing a Garbage Collector. It achieves C++ levels of raw execution speed, making it the modern language of choice for game engines, operating systems, and ultra-fast web servers.
 
@@ -24,7 +31,6 @@ Unlike C++ (which has a notoriously horrific dependency management system), Rust
 When you run `cargo build`, Cargo automatically downloads all dependencies, resolves the version graph, and mathematically compiles the entire tree into a single, massive, statically-linked binary executable.
 
 ## 3. Asynchronous Rust (Tokio)
-Rust does not have a built-in asynchronous runtime in its standard library. Instead, the community relies on external crates. 
+Rust does not have a built-in asynchronous runtime in its standard library. Instead, the community relies on external crates.
 **Tokio** is the absolute standard async runtime for Rust. It provides the event loop, thread pools, and async I/O primitives required to build web servers (like Axum or Actix) that can process millions of concurrent network connections using negligible RAM.
 
-</ConceptTemplate>

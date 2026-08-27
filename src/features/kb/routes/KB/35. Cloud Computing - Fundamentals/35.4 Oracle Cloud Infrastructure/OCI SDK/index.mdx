@@ -1,0 +1,24 @@
+---
+title: OCI Software Development Kits (SDKs)
+description: A suite of language-specific libraries mathematically engineered to allow custom applications to securely authenticate and programmatically control Oracle Cloud infrastructure natively in code.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Software Development Kits (SDKs)"
+  subtitle="Programmatic Cloud Integration"
+  tags={['OCI', 'Development', 'SDK', 'Automation']}
+>
+
+The OCI CLI is excellent for DevOps Bash scripts, but if a developer is writing a custom Java web application that needs to upload user avatars to OCI Object Storage, they cannot rely on terminal commands. They need the OCI SDK.
+
+## 1. Native Language Integration
+Oracle provides mathematically optimized SDKs for Java, Python, Go, TypeScript, and .NET.
+These libraries handle the grueling mathematical complexity of cloud authentication. The OCI REST API strictly requires every single HTTP request to be cryptographically signed using an RSA-256 algorithm based on the HTTP headers.
+If a developer had to write this mathematical signature logic manually, it would take weeks. The SDK handles it entirely. The developer simply imports the SDK, writes `client.putObject(file)`, and the SDK mathematically handles the cryptographic signing, the network retries, and the JSON parsing automatically.
+
+## 2. Waiters and Pagination
+Cloud provisioning is asynchronous. If your Python code asks OCI to boot a Database, the API instantly returns a `202 Accepted` status, but the database will take 10 minutes to physically build.
+The SDK provides **Waiters**. The developer writes `waiters.forDatabaseAvailable(dbId)`. The SDK automatically and mathematically implements a backoff polling algorithm, pausing the Python thread and checking the OCI API every few seconds until the database state mathematically transitions to `AVAILABLE`, preventing the developer from having to write complex, infinite polling loops.
+
+</TechnologyTemplate>

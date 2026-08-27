@@ -1,8 +1,40 @@
+---
+title: Random Variables
+description: "A mathematical formalization of a random process, converting outcomes into quantifiable numbers that can be algebraically analyzed."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="random variables">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Random Variables"
+  subtitle="Quantifying Randomness"
+  tags={['Mathematics', 'Probability', 'Statistics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In mathematics, a **Random Variable** (usually denoted by $X$) is not a variable like $x$ in algebra. It is a mathematical *function* that maps the outcomes of a random process to measurable numbers.
 
-</ConceptTemplate>
+## 1. The Abstraction
+If you flip a coin, the outcome is "Heads" or "Tails". You cannot do calculus on the word "Heads".
+A Random Variable $X$ assigns numbers to these events:
+- Let $X = 1$ if Heads.
+- Let $X = 0$ if Tails.
+Now, $X$ is a quantifiable variable, and we can state $P(X=1) = 0.5$.
+
+## 2. Expected Value ($E[X]$)
+Once randomness is converted into a Random Variable, we can mathematically calculate its **Expected Value** (the long-term average).
+For a discrete variable, $E[X]$ is the sum of every possible value multiplied by its probability.
+If you play a game where a coin flip pays $10 for Heads and $0 for Tails:
+$E[X] = (10 \times 0.5) + (0 \times 0.5) = $5.00.
+
+## 3. Stochastic Processes
+In computer science, algorithms that rely heavily on random variables are called **Randomized Algorithms** or Stochastic processes. Examples include:
+- **Monte Carlo Simulations**: Using millions of random variable generations to estimate complex outcomes (like pricing financial derivatives).
+- **Simulated Annealing**: An optimization algorithm that uses randomness to avoid getting stuck in local minimums.
+
+\n

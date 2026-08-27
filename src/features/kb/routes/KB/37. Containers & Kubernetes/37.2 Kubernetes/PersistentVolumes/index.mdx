@@ -1,8 +1,30 @@
+---
+title: PersistentVolumes (PVs)
+description: A piece of actual, physical storage infrastructure provisioned within a Kubernetes cluster that has a lifecycle mathematically independent of any individual Pod that consumes it.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PersistentVolumes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="PersistentVolumes (PVs)"
+  subtitle="The Physical Storage Abstraction"
+  tags={['Kubernetes', 'Storage', 'Infrastructure', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+By default, the filesystem inside a Docker container is mathematically ephemeral. If a database Pod crashes and restarts, every single row of data is permanently annihilated. To preserve data, Kubernetes uses **PersistentVolumes (PVs)**.
 
-</ConceptTemplate>
+## 1. The Infrastructure Object
+A PersistentVolume (PV) represents the actual physical storage (an AWS EBS volume, a Google Persistent Disk, or an NFS share in an on-premises data center).
+While a PersistentVolumeClaim (PVC) is the *developer's request*, the PV is the *administrator's hardware*. The PV exists as a global cluster resource. Its mathematical lifecycle is completely decoupled from any Pod. If a Pod writes data to a PV and the Pod is violently deleted, the PV mathematically remains intact, safely holding the data.
+
+## 2. Reclaim Policies
+When a developer finishes using a PV and deletes their PVC claim, the PV's mathematical **Reclaim Policy** dictates what happens to the physical data.
+- **Retain**: The volume is mathematically orphaned. The data is kept safe, but the volume cannot be claimed by another Pod until an administrator manually cleans it.
+- **Delete**: The Kubernetes Controller reaches out to the cloud provider and mathematically obliterates the underlying storage drive (e.g., deleting the AWS EBS volume), permanently destroying the data.
+

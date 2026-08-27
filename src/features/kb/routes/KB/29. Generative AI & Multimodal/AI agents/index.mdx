@@ -1,8 +1,27 @@
+---
+title: AI Agents
+description: Autonomous software entities driven by Large Language Models, equipped with physical tools, memory, and the mathematical capacity to execute complex, multi-step goals.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AI agents">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AI Agents">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An AI Agent transforms a static Neural Network into a dynamic, acting entity. It bridges the gap between mathematically predicting the next word, and physically interacting with the real world.
 
-</ConceptTemplate>
+## 1. The Core Components
+An AI Agent mathematically consists of three architectural pillars:
+- **The Brain (LLM)**: The central processing unit that provides reasoning, planning, and mathematical breakdown of user intents.
+- **Memory**: Short-term memory (the Context Window for the current task) and Long-term memory (Vector Databases mathematically storing past experiences and user preferences for future retrieval).
+- **Tools (Function Calling)**: The APIs the Agent is mathematically authorized to invoke (e.g., executing Python code, reading files, sending emails, browsing the web).
+
+## 2. Autonomous Planning
+Unlike a script that executes hardcoded `if/else` logic, an Agent mathematically generates its own plan.
+Given the prompt "Plan a trip to Tokyo," the Agent mathematically decomposes the root node into a Directed Acyclic Graph (DAG) of sub-tasks: 1) Search flights, 2) Search hotels, 3) Check weather. It then autonomously traverses the graph, invoking the Web Search Tool for each node, synthesizing the results, and taking physical action (like booking the ticket) without human intervention.
+

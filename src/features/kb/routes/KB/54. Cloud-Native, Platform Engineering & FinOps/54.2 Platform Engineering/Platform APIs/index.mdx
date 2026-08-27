@@ -4,16 +4,28 @@ description: Interfaces that abstract underlying infrastructure and provide deve
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Platform APIs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Platform APIs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a developer portal (like Backstage) is the graphical UI of the Internal Developer Platform (IDP), the **Platform API** is the underlying mathematical engine.
 
 A true platform must be mathematically programmable.
 
+
 <Callout icon="warning" title="Automation over UI">
+
+
   While a junior developer might click a button in Backstage to provision a new microservice, a senior engineer will want to automate it.
-  
+
   A Platform API exposes endpoints like `POST /api/v1/provision-service`. This allows the senior engineer to mathematically write a Python script that automatically scaffolds 10 new microservices simultaneously, registers them in the Software Catalog, and configures their CI/CD pipelines, proving that the Platform acts as a true Infrastructure-as-Software layer.
+
+
 </Callout>
 
-</ConceptTemplate>
+

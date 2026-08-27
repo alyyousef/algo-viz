@@ -4,9 +4,16 @@ description: The universally recognized, cross-platform archive format, primaril
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="zip & unzip">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="zip & unzip">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While Linux systems overwhelmingly prefer `.tar.gz` files, the rest of the computing world (Windows, macOS) uses **ZIP** files. 
+While Linux systems overwhelmingly prefer `.tar.gz` files, the rest of the computing world (Windows, macOS) uses **ZIP** files.
 
 Because of this, the `zip` and `unzip` utilities are almost always installed on Linux servers to handle files uploaded by standard users.
 
@@ -22,8 +29,13 @@ Because of this, the `zip` and `unzip` utilities are almost always installed on 
 - **Extracting a ZIP file**:
   `unzip website_backup.zip -d /home/user/extracted/`
 
+
 <Callout icon="warning" title="Linux Metadata Loss">
+
+
   Sysadmins never use ZIP files for internal Linux system backups. The ZIP format was originally designed for MS-DOS. It fundamentally does not understand advanced Linux filesystem metadata. If you ZIP a directory, it strips away File Ownership (UID/GID), advanced ACL permissions, and often breaks Symbolic Links, permanently destroying that metadata.
+
+
 </Callout>
 
-</ConceptTemplate>
+

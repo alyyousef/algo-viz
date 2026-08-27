@@ -4,7 +4,14 @@ description: The continuous, real-time ingestion and analysis of data the exact 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stream Processing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Stream Processing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Batch Processing waits until midnight to process data, **Stream Processing** acts immediately. It treats data not as a static file, but as an infinite, never-ending river of events.
 
@@ -26,8 +33,13 @@ A user buys a shirt at 12:01 PM on their phone, but they instantly drive into a 
 - Should the stream processor retroactively recalculate the 12:01 PM window?
 - Stream processors handle this using **Watermarks** and **Windowing**, complex mechanisms that allow the engine to hold a time window open slightly longer to wait for delayed packets before finalizing the calculation.
 
+
 <Callout icon="tip" title="The Lambda Architecture">
+
+
   Because Stream Processing is complex and prone to edge-case errors, companies historically used the **Lambda Architecture**. They run a Stream Processor to get "good enough" real-time estimates for live dashboards, but they *also* run a perfectly accurate Batch Job at midnight to overwrite and correct any mistakes the stream processor made during the day.
+
+
 </Callout>
 
-</ConceptTemplate>
+

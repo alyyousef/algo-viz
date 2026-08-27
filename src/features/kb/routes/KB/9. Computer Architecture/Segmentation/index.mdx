@@ -4,25 +4,38 @@ description: An older memory management technique that divided memory into varia
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Memory Segmentation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Memory Segmentation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While modern 64-bit operating systems use **Paging** (dividing memory into fixed 4KB blocks) to manage Virtual Memory, historically, the x86 architecture relied on a completely different technique called **Memory Segmentation**.
 
+
 <Callout icon="info" title="Logical vs Physical Division">
+
+
   - **Paging** is a physical division. The hardware chops memory into arbitrary 4KB blocks, completely ignoring what the data actually is.
   - **Segmentation** is a logical division. The memory is divided into variable-sized blocks based on the *meaning* of the data (e.g., a "Code Segment", a "Data Segment", a "Stack Segment").
+
+
 </Callout>
+
 
 ## The 16-Bit Real Mode Problem (The 8086 CPU)
 
-Segmentation was invented as a hack to solve a physical hardware limitation of the original 1978 Intel 8086 processor. 
-The 8086 had a 20-bit address bus (meaning it could access up to 1 Megabyte of RAM). However, its internal CPU registers were only 16-bit. A 16-bit register can only count up to 64 Kilobytes. 
+Segmentation was invented as a hack to solve a physical hardware limitation of the original 1978 Intel 8086 processor.
+The 8086 had a 20-bit address bus (meaning it could access up to 1 Megabyte of RAM). However, its internal CPU registers were only 16-bit. A 16-bit register can only count up to 64 Kilobytes.
 
-How does a CPU with 16-bit registers generate a 20-bit memory address? 
+How does a CPU with 16-bit registers generate a 20-bit memory address?
 **Segment Registers**.
 
-Intel added specialized Segment Registers (\`CS\` for Code, \`DS\` for Data). To generate a 20-bit physical address, the hardware took the 16-bit Segment Register, shifted it left by 4 bits, and added a 16-bit Offset Register to it. 
-This forced programmers writing DOS software to constantly manage which 64KB "segment" of memory they were currently operating in, leading to incredibly complex and frustrating "near" and "far" pointer arithmetic. 
+Intel added specialized Segment Registers (\`CS\` for Code, \`DS\` for Data). To generate a 20-bit physical address, the hardware took the 16-bit Segment Register, shifted it left by 4 bits, and added a 16-bit Offset Register to it.
+This forced programmers writing DOS software to constantly manage which 64KB "segment" of memory they were currently operating in, leading to incredibly complex and frustrating "near" and "far" pointer arithmetic.
 
 ## Segmentation vs. Paging
 
@@ -30,4 +43,3 @@ Segmentation caused massive **External Fragmentation**. Because segments were va
 
 With the release of the 80386 (which introduced 32-bit registers and hardware Paging support), Segmentation became obsolete. Modern 64-bit operating systems (Windows, Linux, macOS) run the x86 processor in a "Flat Memory Model," effectively disabling Segmentation entirely and relying 100% on Paging for memory isolation and management.
 
-</ConceptTemplate>

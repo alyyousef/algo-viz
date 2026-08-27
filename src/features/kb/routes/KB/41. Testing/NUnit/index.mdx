@@ -1,8 +1,49 @@
+---
+title: NUnit
+description: "An open-source unit testing framework for Microsoft .NET, originally ported from JUnit, utilizing C# attributes to mathematically define, organize, and execute automated tests."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NUnit">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="NUnit"
+  subtitle="The Standard for C# and .NET"
+  tags={['Testing', 'Unit Testing', '.NET', 'C#']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Microsoft provides its own testing framework (MSTest), NUnit (and increasingly xUnit.net) is the mathematical standard for the open-source C# ecosystem.
 
-</ConceptTemplate>
+## 1. Attributes and Assertions
+Like JUnit, NUnit relies on mathematical Attributes applied to classes and methods.
+```csharp
+[TestFixture]
+public class CalculatorTests
+{
+    [Test]
+    public void Addition_Should_Work()
+    {
+        Assert.That(2 + 2, Is.EqualTo(4));
+    }
+}
+```
+The `Assert.That()` syntax is NUnit's "Constraint Model," allowing developers to write mathematically readable assertions (e.g., `Assert.That(array, Has.Exactly(1).EqualTo("Apple"))`).
+
+## 2. Parameterized Tests
+NUnit mathematically excels at Data-Driven Testing.
+Instead of writing 5 separate tests to check 5 different passwords, a developer uses the `[TestCase]` attribute.
+```csharp
+[TestCase("password123", false)]
+[TestCase("Secure!99", true)]
+public void Test_Password_Strength(string pass, bool expected)
+{
+    Assert.That(Validator.Check(pass), Is.EqualTo(expected));
+}
+```
+The NUnit runner will mathematically execute the exact same test method twice, injecting the different parameters, drastically reducing code duplication and adhering to DRY principles.
+

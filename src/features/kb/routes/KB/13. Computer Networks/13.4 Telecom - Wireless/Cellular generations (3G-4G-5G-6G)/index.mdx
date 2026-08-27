@@ -4,7 +4,14 @@ description: The evolution of global, macro-scale wireless networks moving from 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cellular Generations (3G, 4G, 5G, 6G)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cellular Generations (3G, 4G, 5G, 6G)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Cellular networks are divided into geographic "Cells." Each cell has a massive central tower (a Base Station). As you drive down the highway, your phone's connection is seamlessly handed off from one tower to the next without dropping the call.
 
@@ -17,4 +24,3 @@ The technology powering these towers has evolved in distinct 10-year generations
 - **5G (NR - New Radio)**: The current standard. While it offers higher speeds, its true purpose is **Massive IoT and Ultra-Low Latency**. 5G introduced **mmWave** (Millimeter Wave) using extremely high 30 GHz frequencies. mmWave can deliver 3 Gbps to a smartphone, but the waves are so fragile they cannot penetrate a tree leaf, requiring telecoms to install thousands of micro-antennas on every street corner.
 - **6G (In Development)**: Expected in the 2030s. Research is focusing on Terahertz (THz) frequencies to integrate AI natively into the radio access network and provide hyper-accurate spatial positioning (radar-like capabilities) built directly into the data signal.
 
-</ConceptTemplate>

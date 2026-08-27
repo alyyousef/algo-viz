@@ -4,16 +4,28 @@ description: Security Assertion Markup Language is an open standard for exchangi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SAML (Security Assertion Markup Language)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SAML (Security Assertion Markup Language)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While consumer websites use OAuth and OIDC to log in with Google, massive enterprise corporations use **SAML**.
 
 Invented in 2002, SAML is a mathematically rigid, XML-based protocol used almost exclusively for Enterprise Single Sign-On (SSO).
 
+
 <Callout icon="warning" title="The XML Architecture">
+
+
   In a SAML flow, a user visits an application (the **Service Provider** or SP). The SP biologically redirects the user to the company's internal login server (the **Identity Provider** or IdP).
-  
+
   After the user logs in, the IdP generates a massive, cryptographically signed XML document called an **Assertion**, which mathematically proves the user's identity, and POSTs it back to the SP. It is notoriously difficult to configure, but remains the absolute backbone of enterprise security.
+
+
 </Callout>
 
-</ConceptTemplate>
+

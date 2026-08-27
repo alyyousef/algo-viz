@@ -4,17 +4,29 @@ description: The field of computer science that focuses on replicating parts of 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Computer Vision for Robotics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Computer Vision for Robotics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A camera is just a massive 2D array of RGB numbers. **Computer Vision (CV)** is the mathematical process of turning that array of numbers into physical meaning (e.g., "That is a coffee cup at XYZ coordinate (2, 4, 1)").
 
+
 <Callout icon="warning" title="The Real-Time Constraint">
+
+
   If you are tagging photos on Facebook, the CV algorithm can take 3 seconds to run. In robotics, if a drone is flying at 60 mph through a forest, the CV algorithm must mathematically process 60 frames per second. If it takes longer than 16 milliseconds to find the tree, the drone crashes.
+
+
 </Callout>
+
 
 ## Classical CV vs Deep Learning
 
 - **Classical CV (OpenCV):** Uses raw mathematical matrix operations. For example, a Canny Edge Detector mathematically looks for sudden, massive differences in pixel brightness to draw lines. Fast, but fragile if the lighting changes.
 - **Deep Learning (YOLO / CNNs):** Uses Convolutional Neural Networks to identify objects. You feed the network 100,000 pictures of a coffee cup. The robot mathematically learns what a cup looks like regardless of lighting or angle. Much more robust, but requires massive GPU computing power on the robot (Edge AI).
 
-</ConceptTemplate>

@@ -4,19 +4,32 @@ description: An approach to the coordination of multiple robots as a system whic
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Swarm Robotics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Swarm Robotics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you want to map a massive 10-mile cave system, you can build one $500,000 highly advanced robot, but if a rock falls on it, the mission is over. 
+If you want to map a massive 10-mile cave system, you can build one $500,000 highly advanced robot, but if a rock falls on it, the mission is over.
 
 Alternatively, you can deploy **Swarm Robotics**: 1,000 cheap, mathematically simple $50 drones. If 200 of them crash into walls, the swarm mathematically survives and completes the mission.
 
+
 <Callout icon="info" title="Emergent Behavior">
-  Swarm robotics is heavily inspired by biological insects (ants, bees). 
-  
+
+
+  Swarm robotics is heavily inspired by biological insects (ants, bees).
+
   There is NO centralized leader drone giving orders. Instead, every single drone runs the exact same, incredibly simple mathematical rule set (e.g., "Fly forward. If you see another drone, stay exactly 2 meters away. If you find the exit, emit a radio ping.")
-  
+
   Out of these microscopic local rules, incredibly complex **Emergent Behavior** mathematically materializes, allowing the swarm to perfectly navigate mazes or build bridges.
+
+
 </Callout>
+
 
 ## Mathematical Applications
 
@@ -24,4 +37,3 @@ Alternatively, you can deploy **Swarm Robotics**: 1,000 cheap, mathematically si
 - **Search and Rescue:** Deploying tiny ground robots into a collapsed building that communicate via a mathematical mesh network to locate survivors.
 - **Space Exploration:** NASA deploying a swarm of autonomous rovers on Mars to map massive geological areas faster than a single monolithic rover like Curiosity.
 
-</ConceptTemplate>

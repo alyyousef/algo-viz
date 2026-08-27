@@ -4,14 +4,21 @@ description: A Python package built by Spotify for orchestrating complex batch j
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Luigi">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Luigi">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Apache Airflow became the absolute dominant industry standard, Spotify engineered **Luigi** to mathematically orchestrate their massive Hadoop data pipelines.
 
 ## 1. The Target-Based Architecture
 Unlike Airflow, which is fundamentally a **Task-based** orchestrator (Task A triggers Task B), Luigi is a **Target-based** orchestrator.
 
-In Luigi, you do not write a DAG that says "Run script 1, then run script 2". 
+In Luigi, you do not write a DAG that says "Run script 1, then run script 2".
 Instead, you mathematically define the end-goal: *"I want the file `final_report.parquet` to exist."*
 
 Luigi's engine mathematically calculates the dependency chain backwards:
@@ -26,10 +33,10 @@ import luigi
 class CleanDataTask(luigi.Task):
     def requires(self):
         return RawDataTask()
-        
+
     def output(self):
         return luigi.LocalTarget("cleaned_data.parquet")
-        
+
     def run(self):
         # Read the raw data and create the cleaned data
         pass
@@ -44,4 +51,3 @@ Luigi was revolutionary for its time, but it had mathematical limitations that c
 
 Today, Luigi is largely considered legacy, superseded by Airflow, Dagster, and Prefect.
 
-</ConceptTemplate>

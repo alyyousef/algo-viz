@@ -1,8 +1,32 @@
+---
+title: Debugging
+description: The rigorous, empirical, and mathematical process of identifying, isolating, and resolving defects (bugs) within a software system, transforming unexpected behavior back into predictable mathematical logic.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Debugging">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Debugging"
+  subtitle="The Empirical Resolution of Failure"
+  tags={['Process', 'Development', 'Troubleshooting', 'Logic']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Brian Kernighan famously said: *"Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it."*
 
-</ConceptTemplate>
+## 1. The Scientific Method
+Debugging is not random guessing; it is the strict application of the scientific method.
+1. **Observe**: The application crashes with a `NullPointerException` on line 42.
+2. **Hypothesize**: The `User` object returned from the database on line 40 must mathematically be null.
+3. **Experiment**: The developer attaches a step-through debugger to the runtime, sets a **Breakpoint** on line 40, and intentionally triggers the crash.
+4. **Analyze**: The debugger pauses the CPU. The developer mathematically inspects the memory state. They see the database query returned null because the SQL variable was malformed.
+
+## 2. The Binary Search (Git Bisect)
+When a bug exists in production but the developer has no idea which code commit caused it, they use mathematical reduction via **Git Bisect**.
+If commit v1.0 is mathematically known to be good, and commit v2.0 is known to be bad, there might be 1,000 commits between them. Git Bisect uses a Binary Search algorithm (O(log N)) to jump to commit 500. The developer tests it. If it's bad, the bug is between 1 and 500. It jumps to 250. This mathematically locates the exact line of code that caused the bug in exactly 10 steps, saving days of manual searching.
+

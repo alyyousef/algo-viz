@@ -1,8 +1,39 @@
+---
+title: Combinations
+description: "The mathematical study of selecting subsets from a larger set where the order of selection is strictly irrelevant, forming the foundation of probability and binomial expansion."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Combinations">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Combinations"
+  subtitle="Selection Without Order"
+  tags={['Mathematics', 'Discrete Math', 'Combinatorics', 'Probability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In combinatorics, a **Combination** answers a specific mathematical question: "How many ways can I choose a subset of items from a larger pool, if I mathematically do not care about the order?"
 
-</ConceptTemplate>
+## 1. The Mathematical Difference: Permutation vs Combination
+- If you are electing a President, Vice President, and Treasurer from a group of 10 people, the order absolutely matters. (Alice as President is different from Alice as Treasurer). This is a **Permutation**.
+- If you are simply selecting a 3-person committee from a group of 10 people, the order does not matter. (Alice, Bob, Charlie is the exact same committee as Bob, Charlie, Alice). This is a **Combination**.
+
+## 2. The Formula (n Choose k)
+The number of ways to choose $k$ items from a set of $n$ items is mathematically denoted as $\binom{n}{k}$ or $^nC_k$.
+The formula is:
+$\binom{n}{k} = \frac{n!}{k!(n-k)!}$
+
+**Example**: You have a standard deck of 52 cards. How many possible 5-card poker hands exist?
+Order doesn't matter (a Royal Flush is a Royal Flush, regardless of how you hold the cards).
+$\binom{52}{5} = \frac{52!}{5!(47)!} = 2,598,960$ possible hands.
+
+## 3. Pascal's Triangle and Binomials
+Combinations are mathematically identical to the coefficients in Pascal's Triangle.
+If you expand the algebraic binomial $(x+y)^4$, the coefficients are $1, 4, 6, 4, 1$.
+These are mathematically exactly $\binom{4}{0}, \binom{4}{1}, \binom{4}{2}, \binom{4}{3}, \binom{4}{4}$. This deep connection is called the **Binomial Theorem**, heavily used in Algorithm Analysis and Probability Theory.
+

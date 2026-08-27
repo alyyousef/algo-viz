@@ -1,8 +1,25 @@
+---
+title: Erlang
+description: The grandfather of massive concurrency, developed by Ericsson in the 1980s to run global telecommunications networks without downtime.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Erlang">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Erlang">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Joe Armstrong, Robert Virding, and Mike Williams at Ericsson in 1986, Erlang was designed for a single, mathematically unforgiving domain: Telephone Switches. It had to route millions of concurrent phone calls without ever dropping a connection or going offline for maintenance.
 
-</ConceptTemplate>
+## 1. The BEAM Virtual Machine
+Erlang is intrinsically tied to the BEAM Virtual Machine.
+Unlike the JVM, which relies on the Operating System for threading, the BEAM operates as its own mathematically isolated mini-operating system. It completely controls process scheduling. If one process is doing heavy math, the BEAM forcefully pauses it (Preemptive Scheduling) to allow a smaller process to answer a network request, guaranteeing incredibly low latency.
+
+## 2. Distributed by Default
+Erlang is mathematically designed to cross physical boundaries.
+Sending a message to a process on the same CPU core uses the exact same mathematical syntax as sending a message to a process on a server in Tokyo. This makes clustering and horizontal scaling trivial. WhatsApp famously used Erlang to route billions of messages daily using only a handful of engineers, largely because the language handled the distributed systems mathematics natively.
+

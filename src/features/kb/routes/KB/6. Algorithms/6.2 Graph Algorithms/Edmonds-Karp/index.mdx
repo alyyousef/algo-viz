@@ -1,8 +1,29 @@
+---
+title: Edmonds-Karp Algorithm
+description: "A specific mathematical implementation of the Ford-Fulkerson method for computing the maximum flow in a network, explicitly utilizing Breadth-First Search (BFS) to guarantee a polynomial time complexity."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Edmonds-Karp">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Edmonds-Karp Algorithm"
+  subtitle="Ford-Fulkerson with BFS"
+  tags={['Algorithms', 'Graphs', 'Network Flow', 'BFS']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The original Ford-Fulkerson method is mathematically dangerous because it does not specify *how* to find an augmenting path. If you use DFS (Depth-First Search) and the edge capacities are irrational numbers, Ford-Fulkerson can mathematically run forever (an infinite loop).
 
-</ConceptTemplate>
+## 1. The BFS Guarantee
+In 1972, Edmonds and Karp mathematically proved that if you simply force Ford-Fulkerson to use **Breadth-First Search (BFS)** instead of DFS to find the augmenting path, the algorithm is guaranteed to terminate.
+By using BFS, the algorithm mathematically always chooses the path with the *fewest number of edges*, regardless of the capacities.
+
+## 2. Mathematical Complexity
+Because every augmenting path increases the length of the shortest path, Edmonds and Karp mathematically proved that the total number of augmenting paths can never exceed **O(V * E)**.
+Since BFS takes O(E) time, the absolute worst-case Time Complexity of the Edmonds-Karp algorithm is **O(V * E²)**. While slower than Dinic's algorithm (O(V²E)), Edmonds-Karp is much easier to implement and is the mathematical baseline for solving Max-Flow problems in computer science education.
+

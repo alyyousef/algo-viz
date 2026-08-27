@@ -1,8 +1,30 @@
+---
+title: etcd
+description: A strongly consistent, distributed key-value store that acts as the absolute mathematical source of truth for all cluster data, state, and metadata within a Kubernetes Control Plane.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="etcd">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="etcd"
+  subtitle="The Central Nervous System"
+  tags={['Kubernetes', 'Storage', 'Distributed Systems', 'Databases']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If the kube-apiserver is the front door of Kubernetes, etcd is the vault. Every single object (Pods, Secrets, Deployments) you create in Kubernetes is mathematically serialized into JSON/Protobuf and saved in etcd.
 
-</ConceptTemplate>
+## 1. The Raft Consensus Algorithm
+Because etcd holds the critical state of the entire cluster, it cannot be a single point of failure.
+It is typically deployed as a highly available cluster of 3 or 5 nodes. To ensure the nodes don't mathematically disagree on the state of the cluster (e.g., Node A thinks there are 3 Pods, Node B thinks there are 4), etcd utilizes the **Raft consensus algorithm**.
+Raft guarantees strict mathematical consistency. If you request to create a Pod, etcd will not acknowledge the write until a strict majority (quorum) of the etcd nodes have mathematically committed the data to their physical hard drives.
+
+## 2. The Single Point of Truth
+No component in Kubernetes (other than the kube-apiserver) is mathematically allowed to communicate directly with etcd.
+The kubelet, the scheduler, and the controller-manager all ask the API server, which in turn queries etcd. If you lose your etcd database and have no backups, your Kubernetes cluster mathematically ceases to exist. The running containers will keep running, but you will completely lose the ability to manage, scale, or update them.
+

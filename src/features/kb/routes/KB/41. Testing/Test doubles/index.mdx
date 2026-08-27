@@ -1,8 +1,31 @@
+---
+title: Test Doubles
+description: "A generic mathematical term (analogous to a movie stunt double) encompassing any object used to replace a real dependency in a system for the purposes of isolated unit testing."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Test doubles">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Test Doubles"
+  subtitle="The Stunt Doubles of Software"
+  tags={['Testing', 'Unit Testing', 'Clean Code', 'Terminology']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Gerard Meszaros coined the term "Test Double" to mathematically categorize the different ways engineers fake dependencies in Unit Tests. Many developers incorrectly call all of these "Mocks."
 
-</ConceptTemplate>
+## 1. The 5 Types of Test Doubles
+1. **Dummy**: Objects passed around just to satisfy the compiler (e.g., passing `null` or an empty string into a required parameter that the test mathematically doesn't care about).
+2. **Stub**: Provides hardcoded answers to method calls (e.g., always returns `true`).
+3. **Spy**: A Stub that also secretly records mathematical data about how it was called (e.g., recording how many times `sendEmail()` was executed so the test can assert it later).
+4. **Mock**: An advanced object pre-programmed with mathematical *expectations*. If the Mock expects to be called twice, and the code only calls it once, the Mock itself throws an exception and fails the test.
+5. **Fake**: A lightweight, mathematically functioning implementation of a dependency (e.g., an In-Memory Database that actually saves data to a RAM array).
+
+## 2. The Danger of Over-Mocking
+Using too many Test Doubles mathematically couples your Unit Tests to the *implementation details* of the code, rather than the output. If a test is 90% Mocks and 10% real code, the test will mathematically break every time you refactor a private method, creating massive technical debt.
+

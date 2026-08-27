@@ -1,8 +1,24 @@
+---
+title: TOML
+description: Tom's Obvious, Minimal Language, a highly readable configuration format designed to map flawlessly to a hash table.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TOML">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="TOML">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Tom Preston-Werner (co-founder of GitHub), TOML was designed to be a mathematically unambiguous, easily readable alternative to YAML and JSON for configuration files. It is the official configuration format for Rust (Cargo), Python (pyproject.toml), and Go.
 
-</ConceptTemplate>
+## 1. Fixing INI and YAML
+- **INI** is too simple. It lacks data types and arrays.
+- **YAML** is mathematically too complex. Its reliance on strict indentation and implicit typing (where the string "no" might accidentally be parsed as a Boolean `false`) causes catastrophic deployment errors.
+
+TOML looks like INI, but is mathematically strict.
+Strings must be quoted. Booleans are strictly `true` or `false`. It natively supports arrays `ports = [8000, 8001]` and inline tables. It mathematically guarantees that any TOML file will parse predictably into a standard Dictionary/Hash Table in any programming language.
+

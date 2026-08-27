@@ -4,7 +4,14 @@ description: The original pioneer of real-time stream processing, utilizing a to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Storm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Storm">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Apache Flink and Kafka Streams dominated the market, **Apache Storm** (open-sourced by Twitter in 2011) was the undisputed king of real-time stream processing. It was one of the first frameworks to mathematically prove that unbounded data streams could be processed at scale with sub-millisecond latency.
 
@@ -28,4 +35,3 @@ While revolutionary, Storm possessed fatal architectural limitations:
 
 Today, Apache Storm is largely considered legacy, heavily replaced by Flink and Kafka Streams.
 
-</ConceptTemplate>

@@ -1,8 +1,32 @@
+---
+title: Association
+description: The broadest category of relationship in Object-Oriented Programming, mathematically defining any scenario where objects of one class interact with, use, or know about objects of another class.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Association">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Association"
+  subtitle="Mathematical Object Interaction"
+  tags={['OOP', 'UML', 'Design Patterns', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a complex software system, objects rarely exist in isolation. They must mathematically interact to achieve a goal. Association is the generic term for this interaction.
 
-</ConceptTemplate>
+## 1. Multiplicity and Direction
+An Association is mathematically defined by two properties:
+- **Multiplicity**: How many objects are involved? (One-to-One, One-to-Many, Many-to-Many). A `Patient` can be associated with many `Doctor`s.
+- **Direction (Navigability)**: Who knows about whom? If a `Customer` has a reference to an `Order`, but the `Order` has no reference back to the `Customer`, it is a Unidirectional Association. If they both have references to each other, it is Bidirectional.
+
+## 2. The Umbrella Term
+Association is the parent mathematical concept. **Aggregation** and **Composition** are simply specific, stricter subsets of Association.
+- If a `Doctor` uses a `Stethoscope` during a checkup, that is a pure **Association** (the Doctor uses it temporarily, neither owns the other).
+- If a `Department` contains a `Professor`, that is **Aggregation** (a weak ownership association).
+- If a `House` contains a `Room`, that is **Composition** (a strict, life-and-death ownership association).
+

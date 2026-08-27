@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: SaltStack
+description: A Python-based configuration management and orchestration platform renowned for its extreme mathematical execution speed, utilizing a high-speed message bus to control thousands of servers simultaneously.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="SaltStack">
+<TechnologyTemplate
+  title="SaltStack (Salt)"
+  subtitle="High-Speed Infrastructure Orchestration"
+  tags={['Configuration Management', 'Python', 'Infrastructure', 'Automation']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Puppet and Chef operate on a slow, 30-minute mathematical pull cycle, SaltStack (now owned by VMware/Broadcom) was mathematically engineered for real-time speed.
 
-</ConceptTemplate>
+## 1. The ZeroMQ Message Bus
+SaltStack's architecture relies on a **Salt Master** and **Salt Minions** (the agents).
+Instead of polling the Master via standard HTTP, the Minions mathematically maintain a persistent, encrypted TCP connection to the Master via a high-speed message bus called **ZeroMQ**.
+Because the connection is always open, if a zero-day vulnerability is discovered, an administrator can execute a mathematical command on the Master to patch 10,000 servers simultaneously. The command traverses the ZeroMQ bus and executes on all 10,000 Minions in less than 5 seconds.
+
+## 2. States and Pillars
+Like its competitors, SaltStack is mathematically declarative.
+You write configuration files called **States** (using YAML and Jinja templating, making it much more readable than Chef's Ruby). To prevent hardcoding sensitive data, Salt uses **Pillars**. Pillars are encrypted, mathematically isolated data structures (like database passwords) that the Master securely distributes *only* to the specific Minions that require them, ensuring absolute cryptographic segregation of secrets.
+
+</TechnologyTemplate>

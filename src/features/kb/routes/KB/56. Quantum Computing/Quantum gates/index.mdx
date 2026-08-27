@@ -4,16 +4,28 @@ description: A basic quantum circuit operating on a small number of qubits, anal
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantum Gates">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Quantum Gates">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In classical computing, we manipulate bits using biological silicon Logic Gates (AND, OR, NOT).
 
 In quantum computing, we mathematically manipulate Qubits using **Quantum Gates**.
 
+
 <Callout icon="success" title="Microwave Manipulation">
+
+
   Because Qubits are subatomic particles, a Quantum Gate is not a physical silicon wire. It is often a precisely timed pulse of **Microwave Radiation** or a **Laser**.
-  
+
   For example, the **Hadamard Gate (H)** fires a laser at a Qubit, physically forcing it into a perfect 50/50 mathematical Superposition. The **CNOT Gate** uses microwaves to Entangle two Qubits together. Unlike classical gates, all quantum gates must mathematically be *reversible*.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,0 +1,25 @@
+---
+title: Azure DevOps
+description: A comprehensive, enterprise-grade suite of software development tools providing Git repositories, Agile boards, and massive CI/CD pipelines to mathematically orchestrate the software release lifecycle.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure DevOps"
+  subtitle="The Enterprise SDLC Platform"
+  tags={['Azure', 'DevOps', 'CI/CD', 'Git']}
+>
+
+While GitHub is focused heavily on open-source code hosting, Azure DevOps (formerly TFS/VSTS) is a massive, highly structured platform designed to mathematically manage the entire Software Development Life Cycle (SDLC) for strict enterprises.
+
+## 1. Azure Boards and Repos
+Azure DevOps tightly couples project management with code.
+- **Azure Boards**: An Agile/Scrum tracking system.
+- **Azure Repos**: Enterprise Git hosting.
+The true mathematical power is traceability. When a developer commits code, they tag the Git commit with `#1234`. The system mathematically links the code change directly to the Bug Ticket (#1234). Auditors can look at a production deployment and mathematically trace it backward through the CI pipeline, to the exact Git commit, to the exact Jira/Board ticket, proving exactly *why* a line of code was changed.
+
+## 2. Azure Pipelines
+Azure Pipelines is one of the most powerful CI/CD engines on the market.
+You define your build and release processes using declarative YAML. Pipelines can mathematically compile code on Windows, Linux, and macOS agents simultaneously. It includes incredibly robust **Release Gates**. You can mathematically define a rule: *"Before deploying to Production, query the Azure Monitor API. If CPU usage on the Staging server was above 50%, mathematically reject the deployment."* This allows for entirely automated, zero-touch, mathematically safe continuous delivery.
+
+</TechnologyTemplate>

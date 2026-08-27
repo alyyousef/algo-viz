@@ -4,23 +4,30 @@ description: Autoregressive transformer architectures designed for generative AI
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Decoder-Only Models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Decoder-Only Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Decoder-only models use just the decoder stack of the Transformer architecture. They are autoregressive, meaning they predict the very next token in a sequence based only on the preceding tokens. This is the architecture that powers the modern Generative AI revolution.
 
+
 <Callout icon="info" title="The GPT Paradigm">
+
+
   OpenAI bet heavily on the Decoder-only architecture with the Generative Pre-trained Transformer (GPT) series. They discovered that if you make a decoder-only model massive enough and feed it enough text, it develops emergent abilities like reasoning, coding, and translation without specific fine-tuning.
+
+
 </Callout>
+
 
 ## Core Characteristics
 
-<ComparisonTable 
-  headers={['Characteristic', 'Description']}
-  rows={[
-    ['Attention Mechanism', 'Masked Self-Attention. A token is mathematically blocked from "looking at" any token that comes after it, ensuring it only uses past context to predict the future.'],
-    ['Pretraining Objective', 'Next-Token Prediction (Causal Language Modeling). Given a sequence "The cat sat on the", predict the highest probability for the next word (e.g., "mat").'],
-    ['Primary Use Cases', 'Chatbots, code generation, creative writing, and any generative AI application.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Characteristic', 'Description']} rows={[ ['Attention Mechanism', 'Masked Self-Attention. A token is mathematically blocked from "looking at" any token that comes after it, ensuring it only uses past context to predict the future.'], ['Pretraining Objective', 'Next-Token Prediction (Causal Language Modeling). Given a sequence "The cat sat on the", predict the highest probability for the next word (e.g., "mat").'], ['Primary Use Cases', 'Chatbots, code generation, creative writing, and any generative AI application.'] ]} />
+
+

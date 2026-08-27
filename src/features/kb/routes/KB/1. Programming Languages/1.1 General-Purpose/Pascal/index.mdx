@@ -5,10 +5,17 @@ description: "The highly influential procedural programming language that taught
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Pascal"
   icon="file-text"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created by Niklaus Wirth in 1970, **Pascal** was designed specifically as a teaching language to encourage good programming practices using structured programming and data structuring.
 
@@ -32,9 +39,9 @@ var
 begin
   Write('Enter your name: ');
   ReadLn(Name);
-  
+
   Age := 25; { Assignment uses := instead of = }
-  
+
   if Age >= 18 then
   begin
     WriteLn('Hello ', Name, ', you are an adult.');
@@ -46,8 +53,13 @@ begin
 end.
 ```
 
+
 <Callout icon="info" title="The Successor">
+
+
 While classic Pascal is purely procedural, it evolved into **Object Pascal** (and the Delphi framework), which brought object-oriented features and dominated Windows development in the late 1990s.
+
+
 </Callout>
 
-</ConceptTemplate>
+

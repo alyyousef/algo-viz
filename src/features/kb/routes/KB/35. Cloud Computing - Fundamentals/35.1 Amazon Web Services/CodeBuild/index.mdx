@@ -1,0 +1,28 @@
+---
+title: AWS CodeBuild
+description: A fully managed, serverless Continuous Integration (CI) service that compiles source code, runs automated mathematical testing suites, and produces deployment-ready software packages.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS CodeBuild"
+  subtitle="Serverless CI Compilation"
+  tags={['AWS', 'CI/CD', 'DevOps', 'Docker']}
+>
+
+When a developer pushes code, it must be compiled, tested, and packaged into a Docker container. Running a dedicated Jenkins server to do this is expensive and requires constant maintenance. CodeBuild is the serverless solution.
+
+## 1. The Buildspec Abstraction
+CodeBuild is driven by a mathematical instruction manual called the `buildspec.yml` file, which lives directly inside the source code repository.
+It divides the build into strict logical phases:
+- **Install**: Run `npm install` or `pip install`.
+- **Pre-build**: Run the mathematical unit tests and code linters.
+- **Build**: Compile the code and run `docker build`.
+- **Post-build**: Push the final Docker image to a registry (like ECR).
+Because the instructions are version-controlled alongside the code, the build process is mathematically reproducible for any Git commit in history.
+
+## 2. Serverless Ephemerality
+CodeBuild charges by the minute.
+When a build is triggered, AWS dynamically provisions an isolated compute container, clones the code, executes the `buildspec`, outputs the artifacts, and immediately destroys the container. There is no idle server sitting around wasting money. If 50 developers push code at the exact same second, CodeBuild mathematically scales horizontally, spinning up 50 parallel isolated containers so no one has to wait in a queue.
+
+</TechnologyTemplate>

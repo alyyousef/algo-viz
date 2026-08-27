@@ -1,0 +1,23 @@
+---
+title: Google Cloud Dataproc
+description: A highly optimized, fully managed Hadoop and Spark cluster service designed to run massive Big Data workloads on GCP with sub-90-second cluster provisioning times.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Dataproc"
+  subtitle="Managed Hadoop and Spark"
+  tags={['GCP', 'Big Data', 'Spark', 'Hadoop']}
+>
+
+Dataproc is GCP's direct answer to AWS EMR. It provides a managed environment for open-source Big Data frameworks (Hadoop, Spark, Hive), allowing enterprises to lift-and-shift existing on-premise analytics workloads to the cloud.
+
+## 1. Ephemeral Clusters
+In an on-premise data center, a Hadoop cluster sits running 24/7, costing millions of dollars even when nobody is querying it.
+Dataproc is designed to be mathematically **Ephemeral**. Because Google can provision a 50-node Dataproc cluster in less than 90 seconds, you do not leave it running. You write an automation script that boots the cluster, runs the Spark job, saves the results to Cloud Storage, and instantly deletes the cluster. You pay for exactly 5 minutes of compute instead of 24 hours.
+
+## 2. Preemptible VMs for Cost Reduction
+Spark is mathematically designed to handle node failures gracefully. If a worker node dies mid-calculation, the Master node simply mathematically re-assigns that chunk of work to a surviving node.
+Because of this fault tolerance, you can build Dataproc clusters using **Preemptible VMs** (Spot Instances). These are excess Google servers sold at an 80% discount, with the caveat that Google can terminate them at any time with a 30-second warning. By mixing standard VMs for the Master nodes and Preemptible VMs for the Worker nodes, you can execute massive mathematical workloads for pennies on the dollar.
+
+</TechnologyTemplate>

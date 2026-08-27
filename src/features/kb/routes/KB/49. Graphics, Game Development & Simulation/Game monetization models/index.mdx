@@ -4,15 +4,28 @@ description: The methods and strategies by which video game developers and publi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Game Monetization Models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Game Monetization Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Building a video game is a massive software engineering feat, but it is ultimately a business. **Monetization** is the economic mathematics of how a game sustains its server costs and development team.
 
+
 <Callout icon="warning" title="The Shift to F2P">
-  Historically, games used a **Premium (Buy-to-Play)** model. You paid $60 once, and owned the game forever. 
-  
+
+
+  Historically, games used a **Premium (Buy-to-Play)** model. You paid $60 once, and owned the game forever.
+
   Today, the industry is overwhelmingly dominated by the **Free-to-Play (F2P)** model. The game is given away mathematically for free to maximize the total addressable market (playerbase), and revenue is extracted surgically via microtransactions.
+
+
 </Callout>
+
 
 ## Primary Economic Models
 
@@ -20,4 +33,3 @@ Building a video game is a massive software engineering feat, but it is ultimate
 2. **Battle Pass:** The psychological genius of modern retention (popularized by *Fortnite*). Players pay $10 to unlock a progression track. They do not get the items immediately; they must mathematically grind the game for 50 hours to unlock the items they already paid for, guaranteeing massive Daily Active User (DAU) retention.
 3. **Cosmetic Microtransactions:** Players pay for visual changes (Skins) that offer zero mathematical advantage to the gameplay physics, ensuring the game is not "Pay-to-Win."
 
-</ConceptTemplate>

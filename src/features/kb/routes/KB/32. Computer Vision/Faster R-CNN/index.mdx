@@ -1,8 +1,25 @@
+---
+title: Faster R-CNN
+description: The industry-standard architecture for high-accuracy Object Detection that introduced the Region Proposal Network (RPN), drastically speeding up the mathematical process of finding objects in an image.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Faster R-CNN">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Faster R-CNN">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+YOLO is incredibly fast but struggles with tiny objects. Faster R-CNN is slower but achieves absolute mathematical precision, making it the dominant architecture for medical imaging and satellite analysis.
 
-</ConceptTemplate>
+## 1. The Region Proposal Network (RPN)
+Early R-CNN models were mathematically glacial because they used a slow, manual algorithm (Selective Search) to guess where objects *might* be before analyzing them.
+Faster R-CNN mathematically integrated the guessing directly into the neural network. As the image passes through the Convolutional layers, a specialized **Region Proposal Network (RPN)** slides across the feature map. At every location, it mathematically predicts multiple "Anchors" (boxes of varying sizes). It outputs a mathematical probability: "Is there *any* object inside this box?"
+
+## 2. ROI Pooling and Classification
+If the RPN predicts a high probability that an object exists in a specific bounding box, it mathematically extracts that specific Region of Interest (ROI) from the feature map using **ROI Pooling** (cropping and resizing it to a fixed square).
+This square is then passed to the final Classification head, which mathematically determines exactly *what* the object is (e.g., "Malignant Tumor" - 98%). By mathematically unifying the Proposal phase and the Classification phase into a single, end-to-end differentiable network, Faster R-CNN achieved massive speedups without sacrificing its legendary accuracy.
+

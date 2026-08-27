@@ -4,24 +4,36 @@ description: A variable or abstract data type used to control access to a common
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Semaphores">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Semaphores">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Invented by legendary computer scientist Edsger Dijkstra in 1962, a **Semaphore** is a mathematical integer used to synchronize threads.
 
 If a Mutex is a "Talking Stick" that only 1 person can hold, a Semaphore is a "Bouncer at a Nightclub" that mathematically allows exactly `N` people into the club.
 
+
 <Callout icon="success" title="The Counting Semaphore">
+
+
   If you have a Thread Pool of 1000 workers, but your database can mathematically only handle 50 concurrent connections, you initialize a Semaphore with the number `50`.
   Every time a thread wants to query the DB, it calls `wait()`, decreasing the Semaphore to 49. If the Semaphore hits `0`, the 51st thread is put to sleep until another thread finishes and calls `signal()` (increasing it back to 1).
+
+
 </Callout>
+
 
 ## Binary Semaphores vs Mutexes
 
-A Semaphore initialized with a maximum value of `1` is mathematically called a **Binary Semaphore**. 
+A Semaphore initialized with a maximum value of `1` is mathematically called a **Binary Semaphore**.
 
 While a Binary Semaphore acts identically to a Mutex (only allowing 1 thread in at a time), there is a crucial mathematical difference in Ownership:
 
 - **Mutex:** Only the thread that physically *acquired* the Mutex is mathematically allowed to *release* it.
 - **Semaphore:** A Semaphore has no concept of ownership. Thread A can call `wait()` (decreasing it to 0), and Thread B can completely independently call `signal()` (increasing it to 1). This mathematical quirk makes Semaphores incredibly powerful for complex inter-thread signaling.
 
-</ConceptTemplate>

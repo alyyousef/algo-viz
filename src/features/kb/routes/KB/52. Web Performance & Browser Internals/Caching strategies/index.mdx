@@ -4,18 +4,30 @@ description: Techniques used to store copies of files in a cache, or temporary s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Caching Strategies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Caching Strategies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The fastest mathematical network request is the one that never happens.
 
 **Caching** is the biological science of storing files locally on the user's hard drive so the browser doesn't have to download them again.
 
+
 <Callout icon="warning" title="Cache-Control Headers">
-  Caching is mathematically controlled by HTTP Headers. 
-  
+
+
+  Caching is mathematically controlled by HTTP Headers.
+
   If your server sends `Cache-Control: max-age=31536000`, the browser mathematically locks that file on the user's hard drive for exactly one year. If the user refreshes the page, the browser instantly loads the file from the local SSD (0ms) instead of the internet (150ms).
-  
+
   *However*, if you deploy a bugfix to that JS file, the user's browser will stubbornly ignore it and load the broken cached version. To fix this, bundlers mathematically inject a hash into the filename (`main.a8f2c.js`), forcing the browser to download the new file.
+
+
 </Callout>
 
-</ConceptTemplate>
+

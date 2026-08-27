@@ -1,8 +1,27 @@
+---
+title: Generative Adversarial Networks (GANs)
+description: A brilliant mathematical architecture where two Neural Networks are pitted against each other in a zero-sum game to generate highly realistic synthetic data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GANs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Generative Adversarial Networks (GANs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Ian Goodfellow in 2014, GANs were the first AI models capable of generating truly photorealistic faces of people who never existed.
 
-</ConceptTemplate>
+## 1. The Generator and the Discriminator
+A GAN is composed of two distinct Neural Networks locked in a mathematical war.
+- **The Generator**: A network that takes random mathematical noise and tries to synthesize an image of a face.
+- **The Discriminator**: A network that acts as a detective. It is fed real faces from a dataset and fake faces from the Generator, and must mathematically predict which is real.
+
+## 2. The Zero-Sum Mathematical Game
+The networks are trained simultaneously.
+If the Discriminator correctly flags a fake face, the Generator receives a massive mathematical penalty during Backpropagation, forcing it to generate a better fake. If the Generator successfully fools the Discriminator, the Discriminator receives the penalty, forcing it to become a better detective.
+This adversarial mathematical loop continues until the Generator becomes so flawlessly perfect that the Discriminator is mathematically forced to guess with exactly 50/50 probability. At this point, the Generator is outputting indistinguishable-from-reality data.
+

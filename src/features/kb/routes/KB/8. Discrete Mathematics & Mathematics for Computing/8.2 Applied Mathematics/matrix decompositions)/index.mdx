@@ -1,8 +1,38 @@
+---
+title: Matrix Decompositions
+description: "The mathematical process of breaking a complex matrix down into a multiplication of simpler, structurally pure matrices to radically speed up computational algorithms."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="matrix decompositions)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Matrix Decompositions"
+  subtitle="Factoring the Grid"
+  tags={['Mathematics', 'Linear Algebra', 'Algorithms', 'Data Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In normal algebra, factoring the number 60 into $(2 \times 2 \times 3 \times 5)$ makes it easier to work with. In linear algebra, **Matrix Decomposition** (or Factorization) breaks a massive, chaotic matrix into a multiplication of simpler matrices, which is the secret behind almost all fast computer graphics and AI.
 
-</ConceptTemplate>
+## 1. LU Decomposition
+Any square matrix $A$ can be decomposed into $L \times U$:
+- **$L$ (Lower Triangular)**: A matrix where all numbers above the diagonal are mathematically zero.
+- **$U$ (Upper Triangular)**: A matrix where all numbers below the diagonal are zero.
+
+**Why?** Solving a system of 1,000 equations (like $Ax = b$) takes a massive amount of CPU time. But if the matrix is Triangular, a computer can instantly solve it using "Forward Substitution" (like a zipper). LU Decomposition is the standard algorithmic way computers solve massive equation systems.
+
+## 2. QR Decomposition
+Decomposes a matrix into $Q \times R$:
+- **$Q$**: An Orthogonal matrix (all vectors are perfectly perpendicular and length 1. Rotating space without stretching it).
+- **$R$**: An Upper Triangular matrix.
+QR Decomposition is the algorithmic bedrock used by computers to calculate Eigenvalues, and for solving Least Squares regressions.
+
+## 3. Eigendecomposition and SVD
+As discussed in their own sections, breaking a matrix down into its Eigenvectors (or Singular Values for non-square matrices) isolates the fundamental axes of transformation, making it possible to compress data, invert matrices instantly, or calculate $A^{1000}$ in nanoseconds.
+
+\n

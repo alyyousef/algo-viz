@@ -1,8 +1,26 @@
+---
+title: Expressions
+description: A mathematical combination of values, variables, and operators that the compiler explicitly evaluates to produce a single new value.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Expressions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Expressions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In programming theory, there is a strict mathematical difference between a **Statement** and an **Expression**.
+- A **Statement** is an instruction that *does* something (e.g., `if (x > 5)`). It does not mathematically return a value.
+- An **Expression** is a mathematical phrase that can be *evaluated* to produce a value (e.g., `x + 5`).
 
-</ConceptTemplate>
+## 1. Expression Evaluation
+When the compiler encounters an expression like `(A + B) * C`, it mathematically parses it into an **Abstract Syntax Tree (AST)**. The CPU must evaluate the mathematical leaves of the tree first. It loads `A` into a register, loads `B` into a register, uses the ALU to add them, and replaces that sub-tree with the new value, recursively continuing until the entire expression collapses into a single mathematical value.
+
+## 2. Expression-Oriented Languages
+In imperative languages (C, Java), `if` is a Statement. You cannot write `let x = if (true) { 1 } else { 2 }`.
+In functional and modern systems languages (Rust, Scala, Kotlin), almost everything is an **Expression**. An `if` block mathematically evaluates and returns the value of its last line. This prevents developers from having to declare uninitialized variables (`let x;`) and mutating them inside `if` blocks, enforcing safer, mathematically pure code.
+

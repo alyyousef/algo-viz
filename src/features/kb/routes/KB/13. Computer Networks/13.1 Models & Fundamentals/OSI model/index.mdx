@@ -5,26 +5,24 @@ description: The foundational 7-layer conceptual framework used to understand, s
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="The OSI Model (Open Systems Interconnection)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The OSI Model (Open Systems Interconnection)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When you send an email, a massive, wildly complex orchestration of hardware and software occurs. To make sense of it, the ISO created a 7-layer conceptual model. 
+When you send an email, a massive, wildly complex orchestration of hardware and software occurs. To make sense of it, the ISO created a 7-layer conceptual model.
 
 The **OSI Model** breaks networking down into isolated, independent layers. The beauty of the model is abstraction: the engineers writing the HTTP web browser (Layer 7) don't need to know if the user is connected via Wi-Fi or a copper Ethernet cable (Layer 1).
 
 ## The 7 Layers (Top to Bottom)
 
-<ComparisonTable 
-  headers={['Layer', 'Name', 'Description', 'Protocols / Hardware']} 
-  rows={[
-    ['7', 'Application', 'The interface the human uses. Where network-aware applications operate.', 'HTTP, HTTPS, SMTP, FTP, DNS'],
-    ['6', 'Presentation', 'Data formatting, encryption (SSL/TLS), and compression.', 'JPEG, ASCII, TLS/SSL'],
-    ['5', 'Session', 'Establishes, maintains, and terminates communication sessions.', 'Sockets, NetBIOS, RPC'],
-    ['4', 'Transport', 'End-to-end data delivery, reliability (TCP), or speed (UDP). Segments data.', 'TCP, UDP, Port Numbers'],
-    ['3', 'Network', 'Logical addressing and routing across the internet. Packets.', 'IP (IPv4/IPv6), ICMP, Routers'],
-    ['2', 'Data Link', 'Physical addressing on the local network. MAC addresses. Frames.', 'Ethernet, Wi-Fi (802.11), Switches'],
-    ['1', 'Physical', 'The actual raw bits (1s and 0s) transmitted over physical mediums.', 'Cables, Radio Waves, Fiber Optics, Hubs']
-  ]} 
-/>
+
+<ComparisonTable headers={['Layer', 'Name', 'Description', 'Protocols / Hardware']} rows={[ ['7', 'Application', 'The interface the human uses. Where network-aware applications operate.', 'HTTP, HTTPS, SMTP, FTP, DNS'], ['6', 'Presentation', 'Data formatting, encryption (SSL/TLS), and compression.', 'JPEG, ASCII, TLS/SSL'], ['5', 'Session', 'Establishes, maintains, and terminates communication sessions.', 'Sockets, NetBIOS, RPC'], ['4', 'Transport', 'End-to-end data delivery, reliability (TCP), or speed (UDP). Segments data.', 'TCP, UDP, Port Numbers'], ['3', 'Network', 'Logical addressing and routing across the internet. Packets.', 'IP (IPv4/IPv6), ICMP, Routers'], ['2', 'Data Link', 'Physical addressing on the local network. MAC addresses. Frames.', 'Ethernet, Wi-Fi (802.11), Switches'], ['1', 'Physical', 'The actual raw bits (1s and 0s) transmitted over physical mediums.', 'Cables, Radio Waves, Fiber Optics, Hubs'] ]} />
+
 
 ## Encapsulation (How Data Moves)
 
@@ -33,8 +31,13 @@ As the data passes through each layer, the layer adds its own specific "Header" 
 
 When the email reaches the destination server, the data moves **Bottom-Up** (Layer 1 up to 7). Each layer rips off its specific header, reads the instructions, and passes the payload up to the next layer (**Decapsulation**), until the pure email appears on the screen.
 
+
 <Callout icon="warning" title="OSI vs TCP/IP Model">
+
+
   The OSI Model is a theoretical, conceptual framework taught in universities. It is not exactly how the modern internet actually works. The real internet is based on the 4-layer **TCP/IP Model** (Application, Transport, Internet, Network Access). However, network engineers still universally use OSI terminology (e.g., calling a router a "Layer 3 device" and a switch a "Layer 2 device").
+
+
 </Callout>
 
-</ConceptTemplate>
+

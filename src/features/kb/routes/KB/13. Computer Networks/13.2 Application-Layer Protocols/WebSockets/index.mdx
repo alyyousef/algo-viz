@@ -5,10 +5,17 @@ description: "A computer communications protocol providing full-duplex communica
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="WebSockets"
   icon="plug"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **WebSockets** were created to solve a fundamental limitation of HTTP: HTTP is strictly half-duplex and client-driven. In HTTP, a server can never send data to a browser unless the browser asks for it first.
 
@@ -30,8 +37,13 @@ This makes WebSockets the de facto standard for:
 - Live stock tickers and crypto trading dashboards
 - Collaborative editing (Google Docs)
 
+
 <Callout icon="info" title="Socket.IO vs WebSockets">
+
+
 Developers often confuse the two. WebSockets are the underlying raw protocol. **Socket.IO** is a JavaScript library that wraps WebSockets, providing automatic reconnections, broadcasting to "rooms," and gracefully falling back to HTTP Long-Polling if the user's corporate firewall blocks the WebSocket protocol.
+
+
 </Callout>
 
-</ConceptTemplate>
+

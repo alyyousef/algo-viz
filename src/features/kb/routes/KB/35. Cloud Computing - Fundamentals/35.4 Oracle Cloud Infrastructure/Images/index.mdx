@@ -1,0 +1,24 @@
+---
+title: OCI Custom Images
+description: A mathematically exact snapshot of a Virtual Machine's boot disk, used as a golden template to rapidly and consistently provision thousands of identical servers in Oracle Cloud.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Custom Images"
+  subtitle="Virtual Machine Golden Templates"
+  tags={['OCI', 'Compute', 'Infrastructure', 'Virtualization']}
+>
+
+If you need 50 web servers, manually installing Linux, Nginx, and your corporate security software 50 times is mathematically absurd. Custom Images automate this process perfectly.
+
+## 1. The Golden Image Workflow
+You boot a single, vanilla Oracle Linux Virtual Machine.
+You manually install all your necessary software, update the OS patches, and configure the firewalls exactly to your corporate specifications.
+You then instruct OCI to "Create Image." OCI mathematically pauses the VM and takes a bit-for-bit snapshot of the underlying Block Volume. This snapshot becomes a **Custom Image** stored permanently in OCI Object Storage. You can now use this exact mathematical template to boot 50 identical VMs in under 2 minutes.
+
+## 2. Bring Your Own Image (BYOI)
+Enterprises often have complex, legacy virtual machines running in on-premise VMWare data centers.
+OCI supports **Bring Your Own Image (BYOI)**. You can take a mathematical export of a VMWare VM (e.g., a `.vmdk` or `.qcow2` file), upload it to an OCI Object Storage bucket, and instruct OCI to mathematically convert it into a native Custom Image. This allows enterprises to lift-and-shift legacy 10-year-old operating systems directly into the cloud without rewriting their underlying architecture.
+
+</TechnologyTemplate>

@@ -1,8 +1,41 @@
+---
+title: Multi-Stage Builds
+description: An advanced Dockerfile optimization technique that uses multiple sequential mathematical build environments to compile code, copying only the final binary into a microscopic, highly secure production image.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-stage builds">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Multi-Stage Builds"
+  subtitle="Microscopic Production Images"
+  tags={['Containers', 'Docker', 'Optimization', 'Security']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+To compile a Go application, you need the Go compiler, the standard library, and Git. This creates a massive 800MB Docker image. However, the final compiled Go binary is only 15MB and requires absolutely zero dependencies to execute. Shipping the 800MB compiler to production is mathematically inefficient and a massive security vulnerability.
 
-</ConceptTemplate>
+## 1. The Builder Stage
+A Multi-Stage Dockerfile solves this by defining multiple `FROM` statements.
+The first stage is mathematically labeled the **Builder**.
+```dockerfile
+FROM golang:1.20 AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o myapp main.go
+```
+This creates the heavy, 800MB environment, downloads all dependencies, and computationally links the final `myapp` binary.
+
+## 2. The Distroless Production Stage
+The second `FROM` statement starts a completely fresh, mathematically empty image (often Alpine or Scratch).
+```dockerfile
+FROM alpine:latest
+COPY --from=builder /app/myapp /myapp
+CMD ["/myapp"]
+```
+The Docker Engine mathematically reaches back into the heavy Builder stage, plucks out *only* the 15MB binary, and copies it into the fresh Alpine image. The massive 800MB Builder stage is mathematically discarded. The final production image is microscopic, mathematically reducing the network transfer time, memory footprint, and security attack surface.
+

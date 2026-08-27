@@ -4,10 +4,16 @@ description: The distribution of health-related services and information via ele
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Telemedicine Platforms">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Telemedicine Platforms">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Telemedicine** is the mathematical bridge between biological healthcare and distributed web systems.
 
 It combines WebRTC video streaming with strict biological regulatory compliance (like HIPAA in the US). These platforms must mathematically guarantee end-to-end encryption, ensuring that a patient's biological video feed and medical history cannot be intercepted by hackers or even mathematically read by the platform's own database administrators.
 
-</ConceptTemplate>

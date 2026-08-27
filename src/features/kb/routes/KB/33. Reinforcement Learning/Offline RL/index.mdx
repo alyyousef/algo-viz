@@ -1,8 +1,26 @@
+---
+title: Offline Reinforcement Learning
+description: A paradigm where the Agent is mathematically strictly forbidden from interacting with the environment, forced to learn an optimal policy purely from a static, historical dataset of past actions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Offline RL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Offline Reinforcement Learning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to train an RL Agent to control the dosage of insulin for a hospital patient, it cannot use Trial and Error. If it "explores" by injecting 500mg, the patient dies. It must learn Offline.
 
-</ConceptTemplate>
+## 1. Learning from Static Datasets
+In Offline RL, the Agent is handed a massive database of past logs (e.g., 10 years of doctor's notes, detailing Patient State, Doctor's Action, Patient Survival Reward).
+The algorithm must mathematically deduce the optimal Policy solely by analyzing these static transitions. It is essentially turning Reinforcement Learning into a Supervised Learning problem.
+
+## 2. The Distributional Shift Problem
+Offline RL suffers from a fatal mathematical flaw: **Out-of-Distribution (OOD) Actions**.
+During training, the Agent's neural network might mathematically calculate that injecting 10,000mg of insulin will yield a massive reward. Because the Agent cannot physically test this in a simulator, the network's Q-Values wildly hallucinate toward infinity.
+To fix this, algorithms like **CQL (Conservative Q-Learning)** mathematically penalize the network's Loss Function anytime it predicts a high reward for an Action that does not exist in the historical dataset. The Agent is mathematically chained to reality, strictly forbidden from hallucinating policies that deviate too far from the known historical data.
+

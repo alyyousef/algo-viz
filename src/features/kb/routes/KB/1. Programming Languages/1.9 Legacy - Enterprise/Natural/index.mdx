@@ -1,8 +1,25 @@
+---
+title: Natural
+description: A 4GL (Fourth-Generation Language) developed by Software AG, heavily used in conjunction with the Adabas database for enterprise legacy systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Natural">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Natural">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Released in 1979 by Software AG, Natural is a 4th Generation Language (4GL). It was mathematically designed to be a significantly more productive alternative to COBOL for building enterprise applications, specifically on IBM Mainframes.
 
-</ConceptTemplate>
+## 1. The Adabas Connection
+Natural is almost always used in conjunction with **Adabas**, a highly specialized, insanely fast NoSQL (pre-relational) database.
+Unlike COBOL, which required massive amounts of boilerplate code to read and write database records, Natural was mathematically integrated with Adabas. A developer could write a single `FIND` or `READ` loop in Natural, and the compiler would automatically handle the complex mathematical memory buffering and I/O required to interact with the Adabas data structures.
+
+## 2. 4GL Abstraction
+A 3rd Generation Language (like C or Java) requires you to mathematically describe *how* to do something (imperative). A 4th Generation Language attempts to let you describe *what* you want.
+Natural mathematically abstracted away the complexities of mainframe screen design (CICS/BMS maps). A developer could write a `INPUT` statement, and Natural would mathematically generate the physical green-screen terminal interface, process the user's keystrokes, and map the data directly back into the variables, allowing massive banking applications to be built in a fraction of the time it took in COBOL.
+

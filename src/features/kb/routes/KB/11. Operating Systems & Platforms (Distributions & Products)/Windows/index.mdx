@@ -5,7 +5,7 @@ description: "A group of several proprietary graphical operating system families
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   name="Windows"
   icon="windows"
   creator="Microsoft"
@@ -17,18 +17,24 @@ import { Callout } from '@/features/kb/components/mdx/Callout'
 
 ## The Blessing and Curse of Backwards Compatibility
 
-Apple is famous for ruthlessly deleting legacy technologies. If an API is old, Apple removes it, breaking old apps but keeping macOS clean. 
+Apple is famous for ruthlessly deleting legacy technologies. If an API is old, Apple removes it, breaking old apps but keeping macOS clean.
 
 Microsoft takes the exact opposite approach: **Absolute Backwards Compatibility**.
-A program compiled for Windows 95 can, in many cases, still run perfectly on Windows 11 today. This is why enterprise businesses and hospitals love Windows; they know their expensive custom software won't break when they update the OS. 
+A program compiled for Windows 95 can, in many cases, still run perfectly on Windows 11 today. This is why enterprise businesses and hospitals love Windows; they know their expensive custom software won't break when they update the OS.
 
 However, this is also why Windows is massive and occasionally fragile: the operating system must ship with decades of legacy code, old registry structures, and deprecated APIs just to ensure a 25-year-old accounting program still works.
 
 ## DirectX and PC Gaming
 Windows dominates the PC gaming industry thanks to **DirectX**, Microsoft's proprietary API for handling tasks related to multimedia and game programming. Because Microsoft deeply integrated DirectX into the OS and constantly courted game developers, almost all major PC games are built specifically for Windows.
 
+
 <Callout icon="info" title="WSL (Windows Subsystem for Linux)">
+
+
 Recognizing that web developers were fleeing to Mac and Linux, Microsoft introduced WSL. WSL embeds a literal Linux kernel directly inside Windows, allowing developers to run native Ubuntu terminal commands, Docker, and bash scripts seamlessly alongside their Windows GUI apps.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

@@ -5,7 +5,7 @@ description: "One of the oldest and most stable Linux distributions, famous for 
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   name="Debian"
   icon="debian"
   creator="Ian Murdock"
@@ -21,13 +21,19 @@ The Debian philosophy is built entirely around stability. When a new software pa
 
 Because of this intense vetting process:
 1. **Debian Servers Never Crash**: It is arguably the most stable OS on the planet.
-2. **Debian Software is Old**: If you install Debian Stable today, the version of Python or Node.js it ships with might be 2 or 3 years old. 
+2. **Debian Software is Old**: If you install Debian Stable today, the version of Python or Node.js it ships with might be 2 or 3 years old.
 
 ## The APT Package Manager
 Debian introduced `apt` (Advanced Package Tool) and the `.deb` file format. Before APT, installing software on Linux meant resolving dependencies manually (if App A needs Library B, and Library B needs Library C, you had to download and compile all three manually). APT automated this entirely, revolutionizing OS package management.
 
+
 <Callout icon="info" title="Strictly Free Software">
+
+
 The core Debian team refuses to include proprietary (closed-source) software in the main operating system. By default, Debian will not install closed-source Nvidia graphics drivers or proprietary Wi-Fi firmware. You have to explicitly opt-in to the "non-free" repositories to get them.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

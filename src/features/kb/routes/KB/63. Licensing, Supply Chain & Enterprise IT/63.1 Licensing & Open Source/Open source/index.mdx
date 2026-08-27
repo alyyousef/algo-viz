@@ -4,10 +4,16 @@ description: Software with source code that anyone can inspect, modify, and enha
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Open Source Software">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Open Source Software">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the 1990s, Microsoft famously called Open Source a "cancer". Today, the entire biological internet runs on it.
 
 **Open Source** is a mathematical paradigm shift. Instead of compiling code into unreadable binary `.exe` files and selling them, developers publish the raw biological source code online for free. It relies on the biological "Wisdom of Crowds": if 10,000 developers can read the code, bugs are mathematically found and fixed instantly. Massive corporations (like Google and Meta) heavily fund Open Source because it commoditizes their competitors and standardizes the industry.
 
-</ConceptTemplate>

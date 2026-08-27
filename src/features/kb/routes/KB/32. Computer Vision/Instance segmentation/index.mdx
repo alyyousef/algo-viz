@@ -1,8 +1,29 @@
+---
+title: Instance Segmentation
+description: The pinnacle of object detection, requiring the AI to not only draw a bounding box, but to mathematically classify every single physical pixel belonging to an exact, unique object.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Instance segmentation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Instance Segmentation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+- **Object Detection**: Draws a box around a car. (Misses the exact shape).
+- **Semantic Segmentation**: Colors all "Car" pixels red. (If two cars overlap, they become one giant red blob).
+- **Instance Segmentation**: Colors Car 1 red, and Car 2 blue, perfectly isolating their overlapping physical geometries pixel by pixel.
 
-</ConceptTemplate>
+## 1. The Mask Branch
+The dominant architecture is **Mask R-CNN**. It starts with a standard Faster R-CNN architecture (which detects bounding boxes and classifies objects).
+However, Mask R-CNN mathematically splits the network at the very end. Alongside the bounding box output, it adds a brand new **Mask Branch** (a Fully Convolutional Network).
+Once the bounding box is found, the Mask Branch mathematically zooms in on that specific box and performs binary classification on *every single pixel inside the box*: "Is this pixel part of the Car, or is it part of the Background?"
+
+## 2. RoIAlign
+To achieve pixel-perfect accuracy, the math must be flawless.
+Older architectures used ROI Pooling, which mathematically rounded coordinates to the nearest integer when cropping the bounding box. Rounding by 1 pixel at the feature map level causes a massive spatial misalignment when upscaled to the final image.
+Mask R-CNN introduced **RoIAlign**, which uses mathematical Bilinear Interpolation to extract features at exact floating-point coordinates (e.g., pixel 14.7), preventing any spatial quantization errors and allowing the network to output razor-sharp, pixel-perfect segmentation masks.
+

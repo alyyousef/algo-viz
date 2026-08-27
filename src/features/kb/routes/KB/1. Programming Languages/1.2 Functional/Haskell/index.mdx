@@ -1,8 +1,26 @@
+---
+title: Haskell
+description: The absolute gold standard of purely functional programming, famous for its mathematical rigor, lazy evaluation, and Monads.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Haskell">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Haskell">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1990 by a committee of researchers to standardize functional programming, Haskell is a statically typed, purely functional, and lazily evaluated language. It is widely considered one of the most mathematically profound languages ever designed.
 
-</ConceptTemplate>
+## 1. Pure Functions and Side Effects
+In C++ or Python, any function can secretly modify a global variable, write to a file, or launch missiles.
+In Haskell, a function is mathematically pure. If a function takes an integer and returns a string (`Int -> String`), it mathematically *cannot* write to a database or print to the screen.
+To perform "Side Effects" (like reading a file), Haskell forces you to mathematically encode the effect into the Type System using **Monads** (specifically the `IO` Monad). This allows the compiler to mathematically separate the pure, perfectly testable logic from the messy, stateful real-world interactions.
+
+## 2. Lazy Evaluation
+Haskell evaluates code **lazily**. It does not mathematically compute a value until it absolutely has to.
+You can define an infinite array (e.g., all Fibonacci numbers to infinity). In Java, this would instantly crash the memory. In Haskell, it is mathematically safe. If you ask Haskell for the 5th item in the infinite array, it only executes the exact amount of math required to calculate the first 5 numbers, and stops.
+

@@ -1,0 +1,25 @@
+---
+title: AWS Secrets Manager
+description: A highly secure, encrypted vault designed to safely store, mathematically rotate, and precisely control access to database passwords, API keys, and sensitive cryptographic credentials.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Secrets Manager"
+  subtitle="Automated Credential Vault"
+  tags={['AWS', 'Security', 'Encryption', 'Database']}
+>
+
+Hardcoding a database password in your Python code or a GitHub repository is a fatal security flaw. Secrets Manager mathematically decouples the code from the credentials.
+
+## 1. Centralized Retrieval
+Instead of a password, your code contains the ARN (Amazon Resource Name) of the Secret.
+When your Lambda function boots up, it makes an API call to Secrets Manager: *"Give me the database password."*
+Secrets Manager intercepts the request, mathematically checks the IAM Policy attached to the Lambda function, and if Authorized, uses KMS to decrypt the string and return it in memory. If a developer accidentally leaks the source code, the code only contains a harmless ARN; the password remains mathematically locked in AWS.
+
+## 2. Automated Rotation
+Database passwords should not last forever. Passwords should rotate every 30 days.
+Secrets Manager handles this mathematically and automatically.
+On day 30, it triggers an invisible Lambda function. This function logs into the live RDS database, generates a complex new mathematical password, updates the database, and updates Secrets Manager. The next time your application requests the password, it receives the new one. This ensures zero-downtime credential rotation without any human intervention.
+
+</TechnologyTemplate>

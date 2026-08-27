@@ -1,8 +1,30 @@
+---
+title: Canary Deployment
+description: A highly mathematical risk-mitigation strategy where new code is deployed to a tiny subset of real users to measure error rates before rolling out to the entire infrastructure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Canary deployment">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Canary Deployment"
+  subtitle="Statistical Release Verification"
+  tags={['DevOps', 'Deployment', 'Monitoring', 'Safety']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Blue-Green deployments shift 100% of traffic instantly. If there is a bug that QA missed, 100% of your users experience a crash. Canary deployments mathematically limit the blast radius of undetected bugs.
 
-</ConceptTemplate>
+## 1. Statistical Traffic Shaping
+When version 2.0 is ready, you deploy it alongside version 1.0.
+You instruct the Load Balancer to route exactly **5% of traffic** to version 2.0 (the Canary), while 95% remains on version 1.0.
+This is not A/B testing for marketing; this is a strict mathematical test of system stability. The monitoring system (like Prometheus) continuously analyzes the telemetry from the 5% bucket.
+
+## 2. Automated Rollback (The Circuit Breaker)
+The DevOps team defines mathematical baselines: *"If the Canary HTTP 500 error rate exceeds 1%, or if CPU usage spikes above 80%, mathematically destroy the Canary."*
+If the new code is flawed, the monitoring system instantly trips a circuit breaker, routing all traffic back to 1.0. Only 5% of users experienced a temporary glitch. If the mathematical telemetry remains stable for 10 minutes, the automated system gradually scales the Canary to 20%, then 50%, and finally 100%, completing a mathematically verified, zero-downtime release.
+

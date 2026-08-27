@@ -4,15 +4,28 @@ description: The structured, rapid-response methodology used by organizations to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Incident Response (IR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Incident Response (IR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Despite the best firewalls and encryption, a determined attacker will eventually breach the network. When the alarms go off, the organization cannot afford panic. 
+Despite the best firewalls and encryption, a determined attacker will eventually breach the network. When the alarms go off, the organization cannot afford panic.
 
 **Incident Response (IR)** is the highly structured, almost militaristic execution of predefined plans to minimize damage, mathematically contain the threat, and restore normal business operations as quickly as possible.
 
+
 <Callout icon="success" title="The Golden Rule of IR">
+
+
   The primary goal of Incident Response is not to catch the hacker or perfectly preserve forensic evidence for the FBI. The primary goal is **Business Continuity**—getting the company\'s servers back online and generating revenue safely.
+
+
 </Callout>
+
 
 ## The SANS Incident Response Lifecycle
 
@@ -25,4 +38,3 @@ The SANS Institute defines a universally adopted 6-step lifecycle (PICERL):
 5. **Recovery:** Restoring systems to normal operation from clean backups, and mathematically verifying they are secure.
 6. **Lessons Learned:** A post-mortem meeting to update the defenses so the exact same attack never succeeds twice.
 
-</ConceptTemplate>

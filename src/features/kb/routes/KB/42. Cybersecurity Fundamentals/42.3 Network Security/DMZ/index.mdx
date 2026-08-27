@@ -4,22 +4,34 @@ description: A physical or logical subnetwork that contains and exposes an organ
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DMZ (Demilitarized Zone)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DMZ (Demilitarized Zone)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In military terms, a demilitarized zone is a neutral area between two hostile nations. In cybersecurity, the **DMZ** is a highly controlled network subnet sitting between the dangerous public internet and the highly secure internal corporate network.
 
-Any server that *must* be accessible to the public (like a company's web server or email server) is placed in the DMZ. 
+Any server that *must* be accessible to the public (like a company's web server or email server) is placed in the DMZ.
+
 
 <Callout icon="success" title="The Dual-Firewall Architecture">
+
+
   The most secure DMZ design uses two firewalls. The External Firewall allows traffic from the internet into the DMZ. The Internal Firewall completely blocks traffic originating from the DMZ from entering the internal corporate network.
+
+
 </Callout>
+
 
 ## Mathematical Containment
 
-The entire purpose of a DMZ is mathematical containment. 
+The entire purpose of a DMZ is mathematical containment.
 
-Web servers are inherently risky because they accept input from strangers. If a hacker exploits a vulnerability in the web server, they take control of the server. Because the server is trapped in the DMZ, the Internal Firewall mathematically prevents the hacker from pivoting deeper into the network to steal the HR database. 
+Web servers are inherently risky because they accept input from strangers. If a hacker exploits a vulnerability in the web server, they take control of the server. Because the server is trapped in the DMZ, the Internal Firewall mathematically prevents the hacker from pivoting deeper into the network to steal the HR database.
 
 The compromised web server is a loss, but the crown jewels remain safe.
 
-</ConceptTemplate>

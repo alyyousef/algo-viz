@@ -1,29 +1,23 @@
 ---
-title: Amazon VPC (Virtual Private Cloud)
-description: The foundational networking layer of AWS that allows users to carve out a logically isolated section of the cloud and launch resources in a virtual network.
+title: Amazon Virtual Private Cloud (VPC)
+description: The foundational networking layer of AWS, providing a mathematically isolated, logically dedicated slice of the public cloud where customers define absolute control over IP addresses, subnets, and routing.
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Amazon VPC (Virtual Private Cloud)">
+<TechnologyTemplate
+  title="Amazon Virtual Private Cloud (VPC)"
+  subtitle="Your Private Cloud Network"
+  tags={['AWS', 'Networking', 'Security', 'Infrastructure']}
+>
 
-When you launch an EC2 instance, it doesn't just float in the void. It must be connected to a network. 
-A **VPC (Virtual Private Cloud)** is a logically isolated, private network that you completely control. It is exactly like the physical networking router in your office building, but entirely virtualized.
+Without a VPC, your EC2 servers would sit completely exposed on the public internet. A VPC is a cryptographic and mathematical boundary that isolates your resources from every other customer in the AWS ecosystem.
 
-## 1. Subnets (Public vs Private)
+## 1. The CIDR Block
+When you create a VPC, you mathematically define its size using **Classless Inter-Domain Routing (CIDR)**.
+You assign a block of Private IPv4 addresses (e.g., `10.0.0.0/16`). This mathematical equation allocates exactly 65,536 IP addresses to your cloud environment. This is your isolated universe. A server in your `10.0.0.0/16` VPC cannot communicate with a server in another customer's `10.0.0.0/16` VPC because the AWS Nitro hypervisor enforces absolute mathematical packet dropping between VPC boundaries.
 
-You divide your VPC's IP address range into smaller chunks called **Subnets**. The most critical architectural decision in AWS is isolating these subnets for security.
+## 2. Peering and Transit Gateways
+If you have two different VPCs (e.g., a "Development" VPC and a "Production" VPC) and they need to share a database, they cannot route traffic natively.
+You must establish a **VPC Peering Connection**. This mathematically fuses the Route Tables of both VPCs, allowing them to communicate via Private IPs without the data ever touching the public internet. If you have 500 VPCs, creating a web of Peering Connections becomes a mathematical nightmare, so you use a **Transit Gateway**, a massive central router that acts as the hub for all internal corporate AWS networking.
 
-- **Public Subnets**: Connected to an "Internet Gateway". Any EC2 instance (like a web server) placed here can talk to the internet, and the internet can talk back.
-- **Private Subnets**: Completely isolated from the internet. You must place your Databases and internal microservices here. Even if a hacker knows the IP address of your database, they cannot reach it from the outside world.
-
-## 2. Security Groups and NACLs
-
-VPCs enforce strict firewall rules at two different levels:
-1. **Network Access Control Lists (NACLs)**: The outermost firewall. It operates at the Subnet level. If you detect an attack from a specific IP address in Russia, you create a NACL rule to explicitly block that IP from entering the subnet.
-2. **Security Groups**: The innermost firewall. It operates at the individual EC2 instance level. You attach a Security Group to your Web Server that says *"Only allow incoming traffic on Port 443 (HTTPS), and block absolutely everything else."* 
-
-<Callout icon="tip" title="NAT Gateways">
-  If a Database in a Private Subnet needs to download a security patch from the internet, it can't, because it has no internet access. You solve this by placing a **NAT Gateway** in the Public Subnet. The database routes its request to the NAT Gateway, which fetches the patch from the internet and passes it back down to the database, ensuring the database remains hidden from inbound attacks.
-</Callout>
-
-</ConceptTemplate>
+</TechnologyTemplate>

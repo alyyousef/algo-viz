@@ -4,22 +4,28 @@ description: A probabilistic data structure that uses multiple hash functions to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Count-Min Sketch">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Count-Min Sketch">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you want to track the exact view count of every single video on YouTube, using a standard Hash Map (Multiset) would require terrifying amounts of RAM (billions of keys). 
+If you want to track the exact view count of every single video on YouTube, using a standard Hash Map (Multiset) would require terrifying amounts of RAM (billions of keys).
 The **Count-Min Sketch** is a probabilistic data structure that mathematically estimates the frequencies of everything in a massive, infinite data stream using a tiny, strictly fixed amount of memory.
 
 ## 1. The Mathematical Grid
-A Count-Min Sketch physically consists of a 2D Array of integers (e.g., 4 rows and 1000 columns). 
-Each of the 4 rows is mathematically paired with a completely different Hash Function. 
+A Count-Min Sketch physically consists of a 2D Array of integers (e.g., 4 rows and 1000 columns).
+Each of the 4 rows is mathematically paired with a completely different Hash Function.
 When a user watches a video (e.g., `"Video_A"`), the algorithm hashes the string 4 different times. It uses the resulting hashes to find 4 specific columns, and mathematically adds $+1$ to all four cells.
 
 ## 2. The Overestimation Problem
-Because there are billions of videos and only 1000 columns, massive mathematical collisions will occur. `"Video_B"` might accidentally hash into the exact same cell as `"Video_A"`. 
+Because there are billions of videos and only 1000 columns, massive mathematical collisions will occur. `"Video_B"` might accidentally hash into the exact same cell as `"Video_A"`.
 This means the cells will accidentally count views from *multiple* different videos. Therefore, the number in any given cell is mathematically guaranteed to be an **Overestimation** of the true frequency. It can never be an underestimation.
 
 ## 3. The Minimum Trick
-To query the view count of `"Video_A"`, the algorithm hashes it 4 times and checks the 4 specific cells. 
+To query the view count of `"Video_A"`, the algorithm hashes it 4 times and checks the 4 specific cells.
 Because every cell suffers from random collision noise, the algorithm mathematically selects the **Absolute Minimum** value among the 4 cells. The minimum value mathematically contains the *least amount of collision noise*, providing a highly accurate estimate of the true frequency using virtually zero memory.
 
-</ConceptTemplate>

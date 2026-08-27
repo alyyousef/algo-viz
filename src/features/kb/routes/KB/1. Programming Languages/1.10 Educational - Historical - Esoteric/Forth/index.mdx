@@ -1,8 +1,33 @@
+---
+title: Forth
+description: A uniquely powerful, stack-based language created in the 1970s, famous for its extreme minimalism and hardware proximity.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Forth">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Forth">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Charles Moore in 1970, Forth is an interactive, extensible, stack-based programming language. It is incredibly minimalist, historically used in embedded systems, astronomy (telescope control), and spacecraft.
 
-</ConceptTemplate>
+## 1. Stack-Oriented Architecture
+In languages like C, mathematical operations are written as `1 + 2`.
+Forth uses **Reverse Polish Notation (RPN)**. Operations are performed by pushing numbers onto a Last-In-First-Out (LIFO) stack, and commands pull from that stack.
+To add 1 and 2, you write: `1 2 +`.
+1. Push 1 to stack.
+2. Push 2 to stack.
+3. `+` command pops the top two values, adds them, and pushes the result (3) back onto the stack.
+
+## 2. Extensibility (The Dictionary)
+Forth does not have a traditional syntax tree. It has a "Dictionary" of words (commands).
+You define new words by combining old words.
+```forth
+: SQUARE dup * ;
+```
+This mathematically defines a new word `SQUARE`. It takes the top number on the stack, duplicates it (`dup`), and multiplies them (`*`). You have just extended the compiler itself. Because of this, Forth programs are incredibly small and fast.
+

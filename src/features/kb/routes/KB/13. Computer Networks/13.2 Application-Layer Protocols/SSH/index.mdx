@@ -4,7 +4,14 @@ description: The absolute standard protocol for securely logging into and admini
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SSH (Secure Shell)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SSH (Secure Shell)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the early days of Unix, administrators used a protocol called `Telnet` to remotely manage servers. Telnet was unencrypted; anyone on the network could read the administrator's root password in plain text.
 
@@ -16,11 +23,16 @@ While you can log into SSH using a password, it is highly discouraged due to bru
 
 1. You generate a mathematical Keypair on your laptop: A **Public Key** and a highly guarded **Private Key**.
 2. You upload the Public Key to the remote server (into the `~/.ssh/authorized_keys` file).
-3. When you attempt to log in, the server sends a complex mathematical puzzle that can *only* be solved if you possess the Private Key. 
+3. When you attempt to log in, the server sends a complex mathematical puzzle that can *only* be solved if you possess the Private Key.
 4. Your laptop solves the puzzle automatically in milliseconds and you are granted access without ever typing a password.
 
+
 <Callout icon="warning" title="Port Forwarding (Tunneling)">
+
+
   SSH is not just for terminal access. It is a fully encrypted tunnel. You can use **SSH Local Port Forwarding** to securely access an internal database. (e.g., `ssh -L 5432:localhost:5432 user@server`). This binds a port on your local laptop, tunnels the traffic through the encrypted SSH connection, and injects it directly into the remote server's database, bypassing the server's firewall completely.
+
+
 </Callout>
 
-</ConceptTemplate>
+

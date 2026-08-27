@@ -1,8 +1,31 @@
+---
+title: Bridge Pattern
+description: A Structural Design Pattern from the Gang of Four (GoF) that mathematically decouples an abstraction from its implementation so that the two can vary and evolve independently.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bridge">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bridge Pattern"
+  subtitle="Decoupling Abstraction from Implementation"
+  tags={['Design Patterns', 'Structural', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Bridge pattern solves the mathematical explosion of subclassing that occurs when a class has two orthogonal dimensions of variance.
 
-</ConceptTemplate>
+## 1. The Cartesian Explosion
+Imagine a `Shape` class. You want to add dimensions for "Shape Type" (Circle, Square) and "Color" (Red, Blue).
+If you use standard inheritance, you mathematically must create a `RedCircle`, `BlueCircle`, `RedSquare`, and `BlueSquare`. If you add a "Triangle" and the color "Green", you now have 9 classes. This is a mathematical Cartesian product explosion (N x M).
+
+## 2. The Bridge Solution
+The Bridge pattern mathematically severs the inheritance tree into two separate hierarchies.
+You create a `Shape` hierarchy (Circle, Square) and a completely separate `IColor` hierarchy (Red, Blue).
+The `Shape` base class is given a mathematical reference (a bridge pointer) to an `IColor` object.
+Now, if you want a Blue Circle, you simply instantiate a `Circle` and inject the `Blue` object into its bridge pointer. Adding "Triangle" and "Green" now only requires creating exactly 2 new classes instead of 5, mathematically converting N x M into N + M.
+

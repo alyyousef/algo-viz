@@ -1,8 +1,37 @@
+---
+title: Complexity Classes Hierarchy
+description: "The grand architectural map of theoretical computer science, categorizing all mathematical problems by the fundamental limits of time and space required to solve them."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Complexity classes hierarchy">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Complexity Classes Hierarchy"
+  subtitle="The Architecture of the Impossible"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Complexity Theory mathematically groups computational problems into nested classes based on the absolute limits of Time (CPU cycles) and Space (RAM) required to solve them as the input size scales to infinity.
 
-</ConceptTemplate>
+## 1. The Core Hierarchy
+1. **P (Polynomial Time)**: Problems a computer can *solve* quickly (e.g., Sorting, Shortest Path). The bedrock of modern software.
+2. **NP (Nondeterministic Polynomial Time)**: Problems a computer can *verify* quickly if given the correct answer (e.g., Sudoku, Traveling Salesperson). Note: $P \subseteq NP$.
+3. **NP-Complete**: The mathematically hardest problems inside NP. If you find a fast algorithm for *one* NP-Complete problem, you have mathematically solved *all* of them, proving P = NP.
+4. **NP-Hard**: Problems that are at least as hard as the hardest problems in NP, but they don't even have to be verifiable in polynomial time (e.g., The Halting Problem).
+
+## 2. Space Complexity Classes
+Time is not the only limit; RAM is finite.
+- **PSPACE (Polynomial Space)**: Problems that can be solved using a reasonable (polynomial) amount of memory, even if they take billions of years to compute.
+- **NPSPACE**: Nondeterministic Polynomial Space. (By Savitch's Theorem, it is mathematically proven that PSPACE = NPSPACE).
+- **The Hierarchy**: $P \subseteq NP \subseteq PSPACE \subseteq EXPTIME$.
+
+## 3. The P vs NP Problem
+The million-dollar mathematical question: Does $P = NP$?
+If every problem whose solution can be quickly verified (NP) can also be quickly solved from scratch (P), it means human creativity, mathematical proofs, and encryption are fundamentally trivial to automate. The entire cryptography architecture of the global banking system relies entirely on the assumption that $P \neq NP$.
+

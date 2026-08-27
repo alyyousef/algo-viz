@@ -1,8 +1,39 @@
+---
+title: Remote State Data Source
+description: A specialized Terraform data source that mathematically allows one isolated Terraform configuration to read the outputs (state) of a completely different, separately managed Terraform configuration.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Remote state">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Remote State"
+  subtitle="Cross-Workspace Mathematical Links"
+  tags={['Terraform', 'Architecture', 'State Management', 'Integration']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a massive enterprise, it is mathematically dangerous to have one single Terraform state file for the entire company. It takes 45 minutes to run a `terraform plan`, and a single syntax error breaks the whole company. State must be mathematically split into isolated workspaces.
 
-</ConceptTemplate>
+## 1. The Dependency Problem
+Assume the Platform Team manages the "Networking" workspace (VPCs, Firewalls), and the Product Team manages the "Application" workspace (EC2 servers).
+The Application workspace mathematically needs the ID of the VPC created by the Networking workspace in order to launch its servers. But because the state files are physically isolated in different S3 buckets, they cannot directly communicate.
+
+## 2. terraform_remote_state
+The Product Team solves this by using the `terraform_remote_state` data source.
+Their code mathematically reaches into the Platform Team's S3 bucket, decrypts the Networking state file, and reads its exported Outputs (in a strictly read-only manner).
+```hcl
+data "terraform_remote_state" "network" {
+  backend = "s3"
+  config = {
+    bucket = "platform-team-state-bucket"
+    key    = "networking/terraform.tfstate"
+  }
+}
+```
+The Product Team can now launch their servers using `vpc_id = data.terraform_remote_state.network.outputs.vpc_id`. This provides extreme mathematical decoupling while maintaining necessary architectural links.
+

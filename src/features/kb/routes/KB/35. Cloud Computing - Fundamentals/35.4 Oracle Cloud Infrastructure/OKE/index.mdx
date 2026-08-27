@@ -1,0 +1,23 @@
+---
+title: Oracle Kubernetes Engine (OKE)
+description: Oracle's fully managed, highly available Kubernetes container orchestration service mathematically designed to run enterprise-grade microservices on OCI's high-performance compute infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Oracle Kubernetes Engine (OKE)"
+  subtitle="Managed Kubernetes on OCI"
+  tags={['OCI', 'Kubernetes', 'Containers', 'Compute']}
+>
+
+Managing a Kubernetes Control Plane (the API server, etcd database, and scheduler) is mathematically complex and failure-prone. OKE abstracts this entirely, providing a production-ready Kubernetes cluster in minutes.
+
+## 1. The Free Control Plane
+Unlike AWS EKS (which historically charged an hourly fee just for the Control Plane), OCI provides the OKE Control Plane mathematically **for free**.
+Oracle manages the high-availability Master Nodes completely invisibly. You are only billed for the raw OCI Compute instances (the Worker Nodes) that physically run your Docker containers. This makes OKE highly cost-effective for enterprises running dozens of small, isolated Kubernetes clusters.
+
+## 2. Virtual Nodes (Serverless Kubernetes)
+Historically, you had to manually provision OCI Virtual Machines to act as Worker Nodes. If you provisioned too many, you wasted money.
+OKE now supports **Virtual Nodes**. This mathematically eliminates the underlying Virtual Machines. You simply submit a standard Kubernetes Pod definition to the OKE API. The OCI Control Plane mathematically intercepts it and spins up a hyper-isolated, serverless micro-VM for that exact Pod. The Pod receives a native IP address from the VCN, but there are no physical servers for you to SSH into, patch, or manage, drastically reducing operational overhead.
+
+</TechnologyTemplate>

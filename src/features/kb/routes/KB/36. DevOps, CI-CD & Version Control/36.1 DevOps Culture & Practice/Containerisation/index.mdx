@@ -1,8 +1,30 @@
+---
+title: Containerisation
+description: An OS-level virtualization methodology that packages an application and its exact mathematical dependencies into an isolated, lightweight executable unit that runs identically on any environment.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Containerisation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Containerisation"
+  subtitle="The Portable Executable Unit"
+  tags={['DevOps', 'Docker', 'Virtualization', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, deploying Python code required the DevOps team to carefully manually install the correct version of Python and system libraries directly onto the Linux host OS, leading to massive mathematical dependency conflicts if two apps required different versions of the same library.
 
-</ConceptTemplate>
+## 1. OS-Level Isolation (cgroups and namespaces)
+Containerisation (popularized by Docker) solves this using Linux kernel features: **namespaces** (for isolation) and **cgroups** (for resource limits).
+Unlike a Virtual Machine (which boots an entire heavy, mathematical copy of an operating system kernel), a Container shares the host OS kernel but runs in a perfectly isolated user space. A container thinks it is the only program running on the machine. It has its own isolated file system, its own isolated network interface, and its own isolated process tree.
+
+## 2. The Immutable Image
+A container is built from a **Dockerfile**.
+The Dockerfile mathematically describes the exact environment: *"Start with Ubuntu 22.04, install Python 3.9, copy my code, and run it."*
+This builds an **Immutable Image**. Because the application and its entire OS-level dependency tree are mathematically fused into a single binary, you can test the image on a developer's laptop, and then deploy that exact same image to an AWS server. It is mathematically guaranteed to execute identically, completely eliminating the "It works on my machine" paradigm.
+

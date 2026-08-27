@@ -1,8 +1,28 @@
+---
+title: A/B Testing for Models
+description: The rigorous statistical practice of deploying multiple Machine Learning models simultaneously to live production traffic to mathematically prove which one generates better real-world outcomes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="A/B testing for models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="A/B Testing for Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An ML model might have a 99% accuracy rate on the validation dataset (F1 Score) but absolutely destroy user engagement in production. You cannot trust offline metrics. You must test models in the wild.
 
-</ConceptTemplate>
+## 1. The Statistical Setup
+In a Model A/B Test:
+- **Model A (Control)**: The existing legacy model currently running in production.
+- **Model B (Treatment)**: The newly trained model.
+You configure your API Gateway to randomly route 50% of user traffic to A, and 50% to B.
+Crucially, you are no longer measuring ML metrics (like Loss or Accuracy). You are measuring **Business Metrics** (e.g., Click-Through Rate, Conversion Rate, Time-on-Site).
+
+## 2. Statistical Significance and p-values
+You cannot just run the test for a day, see that Model B got 2% more clicks, and deploy it. That 2% could be pure mathematical variance.
+You must calculate the **p-value**. If $p < 0.05$, there is less than a 5% probability that Model B's superiority is due to random chance. You have achieved Statistical Significance, mathematically proving that Model B's neural weights genuinely produce better human behavioral outcomes than Model A.
+

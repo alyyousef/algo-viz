@@ -1,0 +1,26 @@
+---
+title: Amazon SNS (Simple Notification Service)
+description: A highly scalable, fully managed Pub/Sub (Publish/Subscribe) messaging service used to mathematically broadcast a single event simultaneously to millions of subscribers or microservices.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon SNS"
+  subtitle="The Pub/Sub Broadcaster"
+  tags={['AWS', 'Messaging', 'PubSub', 'Events']}
+>
+
+If an EC2 server crashes, you want to email the admin, trigger an auto-scaling Lambda function, and send a Slack message. Writing a Python script to do all three sequentially is slow and error-prone. SNS mathematically executes them in parallel.
+
+## 1. The Pub/Sub Architecture
+SNS relies on a mathematical concept called a **Topic**.
+A microservice (the Publisher) does not know who is listening. It simply publishes a single JSON message to the `ServerCrash` Topic.
+Multiple entities (the Subscribers) mathematically attach themselves to the Topic. A Subscriber can be an SQS Queue, a Lambda Function, an HTTP endpoint, or an SMS phone number.
+When the message hits the Topic, SNS mathematically duplicates the bytes and executes a massive "Fan-Out", pushing the message concurrently to all subscribers in milliseconds.
+
+## 2. Message Filtering
+A subscriber might not want *every* message on a Topic.
+If the Billing Service subscribes to the `AllPurchases` Topic, it might only care about purchases over $1,000.
+Instead of receiving the message, reading it, and throwing it away (wasting compute), the subscriber sets a mathematical **Filter Policy** on the subscription (e.g., `{"amount": [{"numeric": [">=", 1000]}]}`). SNS mathematically evaluates the JSON payload at the network level and only forwards the message if it strictly matches the logic, drastically reducing downstream compute costs.
+
+</TechnologyTemplate>

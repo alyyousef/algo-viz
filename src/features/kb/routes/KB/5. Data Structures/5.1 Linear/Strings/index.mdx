@@ -1,8 +1,30 @@
+---
+title: Strings
+description: "A fundamental linear data structure representing a mathematical sequence of characters, almost universally implemented as an immutable array of bytes or Unicode code points under the hood."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Strings">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Strings"
+  subtitle="The Sequence of Characters"
+  tags={['Data Structures', 'Linear', 'Fundamentals', 'Memory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While a String appears to be a primitive type in many languages (like Python or JavaScript), it is mathematically a complex Data Structure—specifically, a one-dimensional array of characters.
 
-</ConceptTemplate>
+## 1. Immutability
+In most modern languages (Java, C#, Python, JS), Strings are mathematically **Immutable**.
+Once the string `"HELLO"` is created in RAM, it cannot be physically altered.
+If you execute `str = str + " WORLD"`, the CPU does not append " WORLD" to the existing memory block. It mathematically allocates a completely new, larger block of RAM, copies "HELLO" into it, copies " WORLD" into it, and abandons the original string to the Garbage Collector.
+
+## 2. The String Builder (Mutable Strings)
+Because concatenation in a loop (`for (int i=0; i<1000; i++) str += i;`) mathematically generates O(N^2) memory allocation overhead, developers must use a Mutable String data structure (like `StringBuilder` in Java/C#).
+A `StringBuilder` is backed by a dynamic array. It pre-allocates extra RAM (capacity). When you append text, it writes directly into the empty RAM slots, keeping the mathematical complexity at a blisteringly fast amortized O(1).
+

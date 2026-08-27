@@ -4,15 +4,28 @@ description: A CPU design that implements Instruction-Level Parallelism by dispa
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Superscalar Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Superscalar Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a standard pipelined processor, the theoretical maximum speed is an IPC (Instructions Per Clock) of **1.0**. Even if the pipeline is perfectly full, the CPU can only retire one instruction at the end of the pipeline per cycle.
 
 By the 1990s, engineers hit the limits of clock speed (due to heat and physics). To make processors faster without increasing the clock speed, they needed an IPC greater than 1.0. This led to **Superscalar Execution**, a form of Instruction-Level Parallelism (ILP) within a single CPU core.
 
+
 <Callout icon="info" title="The Multi-Lane Highway">
+
+
   If Pipelining is turning a sequential manufacturing process into an assembly line, Superscalar Architecture is **building multiple parallel assembly lines next to each other**. Instead of pushing 1 car down the line every minute, you push 4 cars down 4 lines simultaneously.
+
+
 </Callout>
+
 
 ## Physical Duplication
 
@@ -24,16 +37,15 @@ To execute multiple instructions per cycle, a superscalar processor must physica
 
 ## The Dispatch Bottleneck
 
-The hardest part of a superscalar architecture is the Dispatch Unit (often integrated with the Out-of-Order Execution scheduler). 
+The hardest part of a superscalar architecture is the Dispatch Unit (often integrated with the Out-of-Order Execution scheduler).
 
-If the CPU wants to dispatch 4 instructions simultaneously into the 4 ALUs, it must mathematically prove, in a fraction of a nanosecond, that **none of those 4 instructions depend on each other** (no Data Hazards). 
+If the CPU wants to dispatch 4 instructions simultaneously into the 4 ALUs, it must mathematically prove, in a fraction of a nanosecond, that **none of those 4 instructions depend on each other** (no Data Hazards).
 
 - If `Instruction 1` calculates a variable used by `Instruction 2`, they *cannot* be executed in the same cycle on different ALUs. `Instruction 2` must wait.
 - If `Instruction 3` and `Instruction 4` calculate entirely independent variables, they are dispatched simultaneously.
 
-Because human-written code contains so many dependencies, it is incredibly difficult to actually achieve the theoretical maximum IPC. A CPU that can technically execute 6 instructions per cycle might average an actual IPC of 1.5 to 2.5 on real-world code. 
+Because human-written code contains so many dependencies, it is incredibly difficult to actually achieve the theoretical maximum IPC. A CPU that can technically execute 6 instructions per cycle might average an actual IPC of 1.5 to 2.5 on real-world code.
 
 ### VLIW (Very Long Instruction Word)
 An alternative to Superscalar is **VLIW** (used by early DSPs and Intel's failed Itanium). Instead of the *hardware* figuring out which instructions can run in parallel on the fly, the *compiler* figures it out ahead of time, bundling 4 independent instructions into one massive "Long Word" instruction. While brilliant in theory, it proved too rigid for general-purpose computing.
 
-</ConceptTemplate>

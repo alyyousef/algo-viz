@@ -4,15 +4,28 @@ description: The dominant RISC architecture powering all smartphones, IoT device
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ARM Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ARM Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While x86 dominates the desktop, **ARM (Advanced RISC Machines)** is the most widely manufactured CPU architecture in human history. 
+While x86 dominates the desktop, **ARM (Advanced RISC Machines)** is the most widely manufactured CPU architecture in human history.
 
 Rooted in the **RISC** (Reduced Instruction Set Computer) philosophy, ARM was designed from day one to execute simple instructions efficiently. Because it lacks the massive, complex decoding hardware required by x86, ARM processors require significantly fewer transistors. This results in chips that draw a fraction of the electricity and produce minimal heat, making them the undisputed kings of battery-powered devices.
 
+
 <Callout icon="info" title="A Business Model, Not a Chip Maker">
+
+
   Unlike Intel or AMD, the company ARM Holdings does not manufacture physical silicon chips. Instead, they design the architecture (the blueprints) and **license** the Intellectual Property (IP) to other companies. Apple, Qualcomm, Samsung, and Amazon pay ARM a fee to use the instruction set, and then manufacture their own highly customized physical chips.
+
+
 </Callout>
+
 
 ## Why ARM Conquered the World
 
@@ -22,10 +35,9 @@ Rooted in the **RISC** (Reduced Instruction Set Computer) philosophy, ARM was de
 
 ## The ARM Invasion of Desktop and Server
 
-For 20 years, the tech industry believed ARM was only for low-power mobile phones, while x86 was required for "real" high-performance computing. 
+For 20 years, the tech industry believed ARM was only for low-power mobile phones, while x86 was required for "real" high-performance computing.
 
 **Apple Silicon (M1/M2/M3)** shattered this myth in 2020. By transitioning MacBooks from Intel x86 to custom ARM chips, Apple proved that a properly designed, heavily cached ARM processor could completely destroy x86 processors in raw speed while preserving 18+ hours of battery life.
 
 Simultaneously, **AWS (Amazon)** introduced their custom ARM-based Graviton server chips, offering cloud customers the same compute performance as Intel servers but at a 40% lower electricity/cooling cost, sparking a massive shift in backend infrastructure toward ARM.
 
-</ConceptTemplate>

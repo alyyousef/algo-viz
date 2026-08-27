@@ -1,0 +1,23 @@
+---
+title: Azure Machine Learning (Azure ML)
+description: An enterprise-grade, comprehensive MLOps platform that mathematically orchestrates the entire AI lifecycle, providing drag-and-drop designers, automated ML, and distributed GPU training clusters.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Machine Learning"
+  subtitle="The Enterprise MLOps Suite"
+  tags={['Azure', 'MLOps', 'AI', 'Training']}
+>
+
+Training a neural network requires GPUs. Deploying it requires Kubernetes. Tracking its metrics requires databases. Azure ML unifies these chaotic, disparate mathematical processes into a single, cohesive governance platform.
+
+## 1. Automated Machine Learning (AutoML)
+For tabular data, manually guessing the correct mathematical algorithm (Random Forest vs. XGBoost vs. SVM) is incredibly inefficient.
+Azure provides **AutoML**. You simply upload a dataset and define the target column. AutoML spins up a massive compute cluster, automatically tests dozens of different mathematical algorithms in parallel, optimizes their hyperparameters using Bayesian math, and hands you the absolute best performing model, complete with a deployment-ready REST API.
+
+## 2. Compute Clusters and MLOps Pipelines
+For custom Deep Learning (PyTorch/TensorFlow), Azure ML provides managed **Compute Clusters**.
+A Data Scientist can write code on a tiny, cheap VM. When they hit "Train," Azure ML automatically packages the code into a Docker container, mathematically provisions a cluster of 8 NVIDIA A100 GPUs, runs the training script, logs the Loss curves to the central MLflow-compatible tracking server, saves the `.pt` weights to the Model Registry, and destroys the GPUs to save money.
+
+</TechnologyTemplate>

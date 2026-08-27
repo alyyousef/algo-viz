@@ -4,7 +4,7 @@ description: A local development server written by Evan You and used by default 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Vite"
   subtitle="The Webpack killer"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Vitejs-logo.svg/512px-Vitejs-logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 When you run Webpack in development, it mathematically has to crawl your entire 5,000-file project and bundle it *before* the server starts. This can take 30+ seconds on large projects.
 
+
 <Callout icon="success" title="Native ES Modules (ESM)">
-  Vite mathematically reverses this process. 
-  
+
+
+  Vite mathematically reverses this process.
+
   It instantly starts the server in 50 milliseconds. It does *not* bundle the code. Instead, it serves the raw ES Modules directly to the browser. When the browser hits a screen that needs a specific React component, Vite dynamically compiles *only that one component* on-demand using **esbuild** (which is written in Go and is 100x faster than Webpack's JS engine).
+
+
 </Callout>
+
 
 For production, Vite uses **Rollup** to mathematically bundle the final static assets, ensuring perfect optimization.
 

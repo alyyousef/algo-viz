@@ -4,26 +4,38 @@ description: The central, infinite while-loop that drives the execution, physics
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Game Loop">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Game Loop">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standard web app is **Event-Driven**. It sits perfectly still, using 0% of the CPU, waiting for the user to click a button.
 
 A Video Game is completely different. Even if the player drops the controller, the game must continue to mathematically calculate gravity, move the clouds, and render the screen 60 times a second. This is achieved via the infinite **Game Loop**.
 
+
 <Callout icon="info" title="The Holy Trinity">
+
+
   Every Game Loop executes three distinct mathematical phases per frame:
   1. `processInput()`: Read the Xbox controller or Keyboard.
   2. `update(deltaTime)`: Move the player, calculate physics, check for bullet collisions.
   3. `render()`: Send the newly updated 3D coordinates to the GPU.
+
+
 </Callout>
+
 
 ## Delta Time ($Delta t$)
 
-If a computer is extremely fast, the loop might run 120 times a second. If the computer is slow, the loop might run 30 times a second. 
+If a computer is extremely fast, the loop might run 120 times a second. If the computer is slow, the loop might run 30 times a second.
 
 If your code says `player.x += 5`, the fast computer moves the player twice as fast as the slow computer. This is a massive mathematical bug.
 
-To fix this, you must multiply everything by **Delta Time** (the exact number of milliseconds since the last frame). 
+To fix this, you must multiply everything by **Delta Time** (the exact number of milliseconds since the last frame).
 `player.x += speed * deltaTime`. This mathematically guarantees that the player moves at the exact same physical speed across the screen, regardless of whether the game is running at 30 FPS or 144 FPS.
 
-</ConceptTemplate>

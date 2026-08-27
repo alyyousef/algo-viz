@@ -4,16 +4,28 @@ description: Software extensions to Kubernetes that make use of custom resources
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kubernetes Operators">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kubernetes Operators">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Kubernetes is mathematically brilliant at managing stateless web servers. If a React server crashes, K8s just kills it and restarts it. 
+Kubernetes is mathematically brilliant at managing stateless web servers. If a React server crashes, K8s just kills it and restarts it.
 
 But what happens if a **PostgreSQL Database** crashes? You cannot just arbitrarily kill and restart a database without biological data corruption. Databases require human operational intelligence (taking backups, replicating data, running schema migrations).
 
+
 <Callout icon="info" title="Codifying Human Intelligence">
-  A **Kubernetes Operator** is a piece of software that mathematically replaces the human Database Administrator. 
-  
+
+
+  A **Kubernetes Operator** is a piece of software that mathematically replaces the human Database Administrator.
+
   It is a custom controller written in Go that runs inside the cluster. It contains the exact mathematical logic required to safely manage complex, stateful applications. If the Postgres primary node dies, the Postgres Operator mathematically knows the exact sequence of API calls required to safely promote a read-replica to primary without losing data.
+
+
 </Callout>
 
-</ConceptTemplate>
+

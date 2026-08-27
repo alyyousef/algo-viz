@@ -1,8 +1,28 @@
+---
+title: Optical Character Recognition (OCR)
+description: The specialized algorithmic and deep learning process of mathematically extracting semantic, machine-readable ASCII text from raw pixels in photographs or scanned documents.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OCR">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Optical Character Recognition (OCR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A human sees a stop sign and instantly reads "STOP". A computer only sees a matrix of red and white pixels. OCR is the mathematical bridge that converts physical pixel geometry back into semantic text.
 
-</ConceptTemplate>
+## 1. The Tesseract Pipeline (Traditional OCR)
+Traditional OCR (like the famous Tesseract engine) relies on strict mathematical heuristics.
+1. **Binarization**: The image is mathematically forced into pure black and white to isolate the ink from the paper.
+2. **Line and Word Finding**: The algorithm projects mathematical histograms horizontally and vertically to find the physical whitespace separating lines and words.
+3. **Pattern Matching**: The algorithm crops a single character and mathematically compares its pixel geometry against a hardcoded database of fonts. It is incredibly fast but fails catastrophically if the text is handwritten, rotated, or partially obscured.
+
+## 2. CRNNs (Deep Learning OCR)
+Modern OCR uses **Convolutional Recurrent Neural Networks (CRNNs)**.
+Instead of trying to isolate single characters (which is impossible in cursive writing), the network reads the entire word simultaneously.
+A CNN mathematically extracts the visual features of the word. Those features are passed into a sequential RNN (LSTM). The RNN mathematically predicts a sequence of characters over time. Because the RNN has "memory," it uses mathematical linguistic context to fix errors (e.g., if the CNN isn't sure if a pixel is an 'l' or a '1', the RNN knows the word is likely "Hello", not "He11o").
+

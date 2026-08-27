@@ -1,8 +1,25 @@
+---
+title: Foundation Models
+description: Massive, general-purpose Neural Networks mathematically trained on vast quantities of unlabelled data, designed to be adapted (fine-tuned) for thousands of different downstream tasks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Foundation models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Foundation Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before 2018, if you wanted an AI to translate French, you trained a French-translation model. If you wanted it to write code, you trained a coding model. Foundation Models shattered this paradigm.
 
-</ConceptTemplate>
+## 1. Unsupervised Pre-Training
+A Foundation Model (like GPT-4 or LLaMA) is not trained to do a specific task.
+It is trained using Self-Supervised Learning on the entire mathematical sum of the public internet. The model's only mathematical objective is to predict the next word (or mask a hidden word). By being forced to predict trillions of words across physics papers, Shakespeare, and Python code, the model mathematically builds an internal representation of human logic, reasoning, and syntax.
+
+## 2. Few-Shot Adaptation
+Because the pre-trained model has already mathematically mapped human reality, it requires almost zero effort to adapt it to a new task.
+You do not need to train it to classify Sentiment. You simply provide it a prompt with 3 examples (Few-Shot Prompting). The model mathematically extrapolates the pattern from your 3 examples and applies the general logic it learned during pre-training to solve your specific task, acting as the "foundation" for modern AI applications.
+

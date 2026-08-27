@@ -1,0 +1,23 @@
+---
+title: Azure Files
+description: A fully managed, cloud-based Server Message Block (SMB) file system that can be concurrently mounted by cloud virtual machines and on-premise corporate workstations.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Files"
+  subtitle="Managed SMB File Shares"
+  tags={['Azure', 'Storage', 'File', 'SMB']}
+>
+
+If an enterprise has a physical server in their office acting as an "F: Drive" (a shared network folder for employees), migrating that to the cloud is incredibly difficult because standard Object Storage (Blob/S3) does not function like a hard drive. Azure Files solves this.
+
+## 1. The SMB Protocol
+Unlike Azure Blob Storage (which requires API calls), Azure Files exposes a standard **Server Message Block (SMB)** protocol over the internet (Port 445).
+An employee sitting in an office in New York can open Windows Explorer, type `\\myaccount.file.core.windows.net\myshare`, and mathematically mount the cloud storage directly to their computer as a Z: Drive. Simultaneously, an Azure Virtual Machine in the cloud can mount that exact same drive. They can read and write files concurrently with strict mathematical file-locking semantics.
+
+## 2. Azure File Sync
+For companies with terrible internet bandwidth, mounting a cloud drive directly is too slow.
+Azure provides **File Sync**. You keep a physical Windows Server in your local office. Employees save files to the local server at gigabit LAN speeds. In the background, an Azure agent mathematically calculates the byte-level changes and seamlessly syncs the data up to Azure Files in the cloud. If the physical office burns down, 100% of the data is mathematically safe in Azure, and employees can mount the cloud drive from home.
+
+</TechnologyTemplate>

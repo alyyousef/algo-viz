@@ -4,13 +4,20 @@ description: A lightweight wrapper built on top of PyTorch that mathematically s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PyTorch Lightning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PyTorch Lightning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While raw PyTorch is incredibly powerful and flexible, writing the actual training loop (iterating over data, zeroing gradients, calculating loss, stepping the optimizer, moving tensors to the GPU) requires hundreds of lines of repetitive, error-prone boilerplate code. **PyTorch Lightning** mathematically abstracts this chaos into a perfect, standardized structure.
 
 ## 1. The LightningModule
-Lightning forces the Data Scientist to mathematically organize their code into a single, highly structured class (the `LightningModule`). 
-You strictly define the mathematical architecture in `__init__`, the forward pass in `forward()`, and the loss calculation in `training_step()`. 
+Lightning forces the Data Scientist to mathematically organize their code into a single, highly structured class (the `LightningModule`).
+You strictly define the mathematical architecture in `__init__`, the forward pass in `forward()`, and the loss calculation in `training_step()`.
 Lightning takes this object and completely handles the massive engineering loop automatically.
 
 ## 2. Zero-Code Engineering Features
@@ -22,4 +29,3 @@ Because the code is mathematically standardized, Lightning can automatically inj
 ## 3. The Standard for Research
 Because Lightning enforces a rigid mathematical structure, it makes reproducing AI research vastly easier. Instead of hunting through 10 files to figure out exactly when the optimizer steps, researchers can immediately look at the `LightningModule` and instantly understand the pure mathematical logic of the model.
 
-</ConceptTemplate>

@@ -1,8 +1,27 @@
+---
+title: Constants
+description: Immutable memory locations whose values are mathematically guaranteed by the compiler to never change during execution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Constants">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Constants">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Constant is a named memory location that stores a value that cannot be altered by the program during its execution.
 
-</ConceptTemplate>
+## 1. Compile-Time vs Run-Time Constants
+- **Compile-Time Constants**: Values that are known perfectly before the program runs (e.g., `const PI = 3.14159;`). The compiler mathematically optimizes these by completely removing the variable and physically hardcoding `3.14159` directly into the machine code instructions, saving RAM.
+- **Run-Time Constants**: Variables whose value is mathematically locked only *after* they are initialized during execution. For example, `const startTime = Date.now();`. The compiler cannot know this time in advance, so it must allocate RAM, but it mathematically prevents any subsequent line of code from altering that memory address.
+
+## 2. Pointers and Constness
+In low-level languages like C++, "Constness" is deeply mathematical.
+`const int* ptr` means the *data* is mathematically immutable, but you can point the pointer somewhere else.
+`int* const ptr` means the *pointer itself* is mathematically immutable (it can never point anywhere else), but you can change the data it points to.
+`const int* const ptr` means both the pointer and the data are permanently mathematically locked.
+

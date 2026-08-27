@@ -1,0 +1,24 @@
+---
+title: OCI Object Storage
+description: Oracle's infinitely scalable, mathematically durable flat-namespace storage service designed to house massive amounts of unstructured data such as backups, logs, and multimedia files.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Object Storage"
+  subtitle="Infinite Unstructured Data"
+  tags={['OCI', 'Storage', 'Object', 'Serverless']}
+>
+
+OCI Object Storage is the exact equivalent of AWS S3. It does not use folders or block sectors; it uses a massive, mathematical flat namespace of **Buckets** containing **Objects**.
+
+## 1. The Mathematical Physics of Object Storage
+You cannot install an operating system on Object Storage. It is designed purely for HTTP-based REST API access (PUT, GET, DELETE).
+When you upload a 10GB video file, OCI Object Storage mathematically fragments the file into tiny shards and distributes them across multiple independent fault domains within the region. This architecture mathematically guarantees **99.999999999% (Eleven 9s) of durability**. If two entire server racks in the Oracle data center physically burn down, the mathematical parity algorithms guarantee that not a single byte of your video file is lost.
+
+## 2. Standard vs. Archive Storage Tiers
+Storing petabytes of data is expensive. OCI provides mathematical cost optimization via storage tiers.
+- **Standard Tier**: Designed for "hot" data accessed frequently (like website images). You pay a premium for storage, but retrieval is instantaneous.
+- **Archive Tier**: Designed for 10-year compliance backups. The storage cost is mathematically slashed (often by 90%), but the data is physically moved to deep, cold storage arrays. If you request a file from the Archive tier, you must mathematically wait up to 4 hours for OCI to physically retrieve the data before you can download it.
+
+</TechnologyTemplate>

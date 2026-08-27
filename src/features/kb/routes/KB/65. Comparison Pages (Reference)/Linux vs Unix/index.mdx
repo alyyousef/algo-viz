@@ -1,8 +1,30 @@
+---
+title: Linux vs Unix
+description: "A historical and legal distinction between Unix, the ancient proprietary foundation of modern computing, and Linux, Linus Torvalds' open-source clone that conquered the internet."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Linux vs Unix">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Linux vs Unix"
+  subtitle="The Proprietary Past vs The Open Future"
+  tags={['Comparison', 'Operating Systems', 'Architecture', 'History']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+"Unix-like" is a term used to describe modern operating systems, but the legal and architectural differences between pure Unix and Linux are profound.
 
-</ConceptTemplate>
+## 1. Unix (The Ancient Standard)
+- **History**: Invented in 1969 at AT&T Bell Labs (by Ken Thompson and Dennis Ritchie, who also invented C). It established the mathematical foundation of modern computing: "Everything is a file," hierarchical file systems, and the CLI shell.
+- **Legality**: Unix is heavily trademarked and proprietary. Today, it primarily exists as specialized, highly expensive Enterprise systems tied to specific hardware, such as IBM's **AIX**, HP's **HP-UX**, and Oracle's **Solaris**. (Note: macOS is mathematically certified as a true Unix system, based on BSD).
+
+## 2. Linux (The Open Source Clone)
+- **History**: In 1991, a Finnish student named Linus Torvalds was frustrated that he couldn't afford a Unix license. He mathematically reverse-engineered the Unix architecture and wrote a completely free, open-source Kernel (Linux) from scratch.
+- **The GNU Project**: Richard Stallman provided all the free, open-source userland tools (Bash, GCC, Make), combining with Linus's kernel to create **GNU/Linux**.
+- **The Verdict**: Linux mathematically annihilated proprietary Unix in the server market. Today, Linux runs 100% of the top 500 supercomputers, the vast majority of web servers, and every Android phone on earth.
+

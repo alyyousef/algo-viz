@@ -1,8 +1,27 @@
+---
+title: Fish
+description: The Friendly Interactive Shell, a modern command-line shell focused heavily on user experience, syntax highlighting, and auto-suggestions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fish">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Fish Shell">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Released in 2005 by Axel Liljencrantz, Fish (Friendly Interactive Shell) is a smart, user-friendly command-line shell for Unix-like operating systems. It was designed to fix the archaic, unintuitive user experience of Bash and Zsh.
 
-</ConceptTemplate>
+## 1. Out-of-the-Box Experience
+If you install Zsh, it mathematically does nothing special until you install a massive framework (like Oh My Zsh) and configure dozens of plugins.
+Fish is mathematically designed to be perfect out-of-the-box. The moment you launch it, it provides:
+- **Real-time Syntax Highlighting**: If a command does not exist, it glows red. If it exists, it glows blue.
+- **Intelligent Auto-Suggestions**: As you type, Fish mathematically searches your entire command history and subtly ghosts the rest of the command on the screen, allowing you to hit the Right Arrow key to instantly complete it.
+
+## 2. Breaking POSIX Compliance
+Bash and Zsh are strictly bound to the POSIX mathematical standard from the 1980s. This means they share the same terrifying scripting flaws (like variables requiring exact spacing around the equals sign).
+Fish made the controversial architectural decision to intentionally **break POSIX compatibility**. Its scripting language is clean, modern, and mathematically logical (e.g., you set variables using `set x 5` instead of `x=5`), making writing complex shell scripts significantly safer, at the cost of not being able to run legacy Bash scripts directly.
+

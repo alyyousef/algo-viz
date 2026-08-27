@@ -4,7 +4,14 @@ description: A fork of iOS specifically optimized for tablet form factors, intro
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="iPadOS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="iPadOS">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For the first nine years of its existence, the iPad ran the exact same operating system as the iPhone (iOS). However, as iPads gained powerful desktop-class processors (the M-series chips) and keyboard/mouse accessories, the single-window paradigm of iOS became a massive bottleneck.
 
@@ -18,8 +25,13 @@ While the underlying XNU kernel and Cocoa Touch APIs remain identical to iOS, iP
 2. **Desktop-Class Safari**: The OS intentionally spoofs its User-Agent to tell websites it is a macOS device, forcing servers to deliver the complex, desktop versions of websites (like Google Docs or WordPress) rather than mobile layouts.
 3. **Peripheral Support**: Deep, native support for trackpads, mice, external 4K monitors, and external USB-C hard drives.
 
+
 <Callout icon="info" title="The Developer Dilemma">
+
+
   Despite its "desktop" features, iPadOS still enforces the strict **iOS Walled Garden and Sandboxing rules**. Because developers cannot access the terminal, cannot compile code natively without restrictions, and must go through the App Store, many power users still view iPadOS as a "mobile" OS rather than a true macOS replacement.
+
+
 </Callout>
 
-</ConceptTemplate>
+

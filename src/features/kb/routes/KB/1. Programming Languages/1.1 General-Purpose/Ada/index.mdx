@@ -5,10 +5,17 @@ description: "A highly robust, statically typed programming language designed by
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Ada"
   icon="shield"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Named after Ada Lovelace, the first computer programmer, **Ada** was developed in the late 1970s under a contract from the United States Department of Defense (DoD). Its primary goal was to replace the hundreds of different programming languages used across military hardware with a single, ultra-reliable standard.
 
@@ -37,8 +44,13 @@ begin
 end Hello;
 ```
 
+
 <Callout icon="info" title="The SPARK Subset">
+
+
 SPARK is a formally defined subset of the Ada language. It removes features that are hard to verify mathematically (like dynamic memory allocation) and allows developers to write mathematical proofs that guarantee the software will never experience a buffer overflow or runtime exception.
+
+
 </Callout>
 
-</ConceptTemplate>
+

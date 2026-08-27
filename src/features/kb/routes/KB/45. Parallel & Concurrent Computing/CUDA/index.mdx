@@ -4,7 +4,7 @@ description: A parallel computing platform and application programming interface
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="CUDA"
   subtitle="The engine of the AI revolution"
   logoUrl="https://upload.wikimedia.org/wikipedia/en/thumb/b/b9/Nvidia_CUDA_Logo.jpg/512px-Nvidia_CUDA_Logo.jpg"
@@ -19,13 +19,19 @@ Before CUDA, if a scientist wanted to use a GPU to calculate physics, they mathe
 
 CUDA changed the world by exposing the GPU as a general-purpose processor.
 
+
 <Callout icon="error" title="The Moat">
+
+
   CUDA is completely proprietary and mathematically locked to NVIDIA silicon. It cannot run on AMD or Intel GPUs. Because CUDA was first, and is incredibly developer-friendly, 99% of all global AI research (PyTorch, TensorFlow) was written in CUDA. This software lock-in is the primary reason NVIDIA became a $3 Trillion company.
+
+
 </Callout>
+
 
 ## How CUDA Works
 
-In CUDA, you write a C++ function called a **Kernel**. 
+In CUDA, you write a C++ function called a **Kernel**.
 
 When you launch the Kernel, you specify an execution grid (e.g., \`&lt;&lt;&lt;100, 256&gt;&gt;&gt;\`). The NVIDIA driver mathematically maps this grid directly to the physical silicon, instantly spawning 25,600 simultaneous threads on the GPU hardware to execute your function in parallel.
 

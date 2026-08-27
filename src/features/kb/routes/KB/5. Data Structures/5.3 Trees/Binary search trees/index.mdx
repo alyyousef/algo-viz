@@ -4,14 +4,21 @@ description: A node-based tree structure that maintains sorted data in memory, a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Binary Search Trees (BST)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Binary Search Trees (BST)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-An Array provides fast lookups but terrible $O(N)$ insertions. A Linked List provides fast insertions but terrible $O(N)$ lookups. 
+An Array provides fast lookups but terrible $O(N)$ insertions. A Linked List provides fast insertions but terrible $O(N)$ lookups.
 A **Binary Search Tree (BST)** bridges this gap, providing $O(\log N)$ time complexity for *both* lookups and insertions.
 
 ## 1. The Golden Rule of a BST
 
-A BST is composed of Nodes. Every Node has a value, a Left pointer, and a Right pointer. 
+A BST is composed of Nodes. Every Node has a value, a Left pointer, and a Right pointer.
 To qualify as a valid BST, the tree must strictly obey one mathematically invariant rule:
 
 For any given Node:
@@ -28,8 +35,13 @@ If you are looking for the number 42 in a BST:
 
 Every time you make a decision, you eliminate exactly half of the remaining tree from consideration. This halving mechanism is what provides the logarithmic $O(\log N)$ speed.
 
+
 <Callout icon="warning" title="The Unbalanced Degeneration">
+
+
   If you insert pre-sorted data (e.g., 1, 2, 3, 4, 5) into a naive BST, it will exclusively build down the right side. It degrades into a straight line (a Linked List), utterly destroying its efficiency and resulting in $O(N)$ lookups. In production environments, engineers never use naive BSTs; they use **Self-Balancing Trees** (like AVL Trees or Red-Black Trees) that automatically rotate their nodes to guarantee the tree never becomes lopsided.
+
+
 </Callout>
 
-</ConceptTemplate>
+

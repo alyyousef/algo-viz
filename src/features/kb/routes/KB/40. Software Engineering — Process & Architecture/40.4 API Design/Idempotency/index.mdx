@@ -1,8 +1,32 @@
+---
+title: Idempotency
+description: A fundamental mathematical property in API design stating that an operation can be applied multiple times without changing the result beyond the initial application, critical for ensuring safety in unreliable networks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Idempotency">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Idempotency"
+  subtitle="Mathematical Safety in Retries"
+  tags={['API', 'REST', 'Architecture', 'Networking']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a mobile app sends an HTTP POST request to a Stripe API to charge a credit card $100, the network might drop the HTTP Response. The mobile app doesn't know if the charge succeeded or failed. If it retries the POST request, it might accidentally charge the user $200.
 
-</ConceptTemplate>
+## 1. Mathematical Idempotency
+An operation is mathematically **Idempotent** if `f(f(x)) = f(x)`.
+In REST APIs, HTTP methods have strict mathematical rules regarding idempotency:
+- **GET, PUT, DELETE**: Mathematically Idempotent. (If you DELETE User 5, and then accidentally execute DELETE User 5 again due to a network retry, the end state is identical: User 5 is gone).
+- **POST**: Mathematically NON-Idempotent. (Executing POST twice creates two separate records).
+
+## 2. Idempotency Keys
+To safely retry POST requests (like credit card charges), APIs require an **Idempotency Key**.
+The client generates a unique UUID (e.g., `Key: 9b1deb4d`) and includes it in the header. The Stripe API receives the POST, charges the $100, and mathematically saves the UUID in a database.
+If the client retries the exact same POST request due to a timeout, Stripe sees the UUID, mathematically recognizes that it already processed this exact transaction, skips the charge, and simply returns the cached "Success" response. The user is safe from double-billing.
+

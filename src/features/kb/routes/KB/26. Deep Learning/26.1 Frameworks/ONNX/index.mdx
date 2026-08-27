@@ -4,17 +4,24 @@ description: The industry-standard open mathematical format for representing mac
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ONNX (Open Neural Network Exchange)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ONNX (Open Neural Network Exchange)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A model trained in PyTorch is saved as a `.pt` file. A model trained in TensorFlow is saved as a `.pb` file. Neither framework can mathematically read the other's file. This creates a massive nightmare in production. 
+A model trained in PyTorch is saved as a `.pt` file. A model trained in TensorFlow is saved as a `.pb` file. Neither framework can mathematically read the other's file. This creates a massive nightmare in production.
 **ONNX** was created by Microsoft and Meta as the absolute industry standard universal translator.
 
 ## 1. The Universal Computation Graph
-When you export a model to ONNX, it does not save the Python code. It mathematically traces the exact execution of the model and saves it as a pure, language-agnostic **Computation Graph**. 
+When you export a model to ONNX, it does not save the Python code. It mathematically traces the exact execution of the model and saves it as a pure, language-agnostic **Computation Graph**.
 It mathematically defines exactly what a Convolution is, what a Matrix Multiplication is, and what the weights are. Because it is pure math, it can be mathematically read and executed by anything.
 
 ## 2. The Deployment Advantage (ONNX Runtime)
-Because ONNX is a highly optimized mathematical standard, Microsoft built the **ONNX Runtime**, a blazing-fast execution engine written in C++. 
+Because ONNX is a highly optimized mathematical standard, Microsoft built the **ONNX Runtime**, a blazing-fast execution engine written in C++.
 1. You train your complex model using Python and PyTorch.
 2. You export it to ONNX.
 3. You deploy the ONNX file into production using C++, C#, or Rust via the ONNX Runtime.
@@ -24,4 +31,3 @@ The ONNX Runtime mathematically optimizes the graph (fusing layers together) and
 ## 3. Hardware Acceleration
 Hardware manufacturers (NVIDIA, Intel, Apple, Qualcomm) only need to optimize their silicon for one mathematical standard: ONNX. If a model is in ONNX format, it will automatically leverage the absolute maximum hardware acceleration available on an iPhone, an Intel CPU, or a massive NVIDIA GPU.
 
-</ConceptTemplate>

@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: New Relic
+description: A pioneering Application Performance Monitoring (APM) SaaS platform mathematically engineered to provide deep, code-level visibility into application performance, database queries, and user experience.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="New Relic">
+<TechnologyTemplate
+  title="New Relic"
+  subtitle="Code-Level Application Performance Monitoring"
+  tags={['Observability', 'APM', 'Monitoring', 'SaaS']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before New Relic, if a web application was slow, system administrators could only look at OS-level metrics (like CPU or RAM) or dig through unstructured text logs. They had no mathematical visibility into the actual code execution.
 
-</ConceptTemplate>
+## 1. The Language Agent
+New Relic changed the industry by introducing the mathematical **APM Agent**.
+A developer installs the New Relic Ruby, Java, or Node.js agent directly into their application runtime. This agent mathematically hooks into the language's core libraries (like the HTTP router or the Database ORM). As the application runs, the agent measures the exact millisecond latency of specific code functions.
+
+## 2. The Slow Query Trace
+The most powerful mathematical feature of New Relic is the **Transaction Trace**.
+If a user loads the "Shopping Cart" page and it takes 8 seconds, New Relic mathematically captures the entire execution path. An engineer can log into the dashboard and see a waterfall chart that proves: *"The Ruby code took 50ms, but the PostgreSQL `SELECT * FROM cart_items` query took 7.95 seconds."* It provides undeniable mathematical proof of where the code is failing, allowing developers to instantly apply database indexes or optimize algorithms.
+
+</TechnologyTemplate>

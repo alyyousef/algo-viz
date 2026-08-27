@@ -1,0 +1,24 @@
+---
+title: OCI Availability Domains
+description: The foundational physical architecture of Oracle Cloud Infrastructure, representing distinct, highly isolated data centers within a region designed for mathematical fault tolerance.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Availability Domains"
+  subtitle="Physical Data Center Isolation"
+  tags={['OCI', 'Architecture', 'Infrastructure', 'Reliability']}
+>
+
+An Oracle Cloud Region (e.g., US-Ashburn-1) is a geographic area. Inside that geographic area, OCI mathematically distributes its hardware into isolated physical buildings called **Availability Domains (ADs)**.
+
+## 1. Absolute Physical Isolation
+An Availability Domain is the exact equivalent of an AWS Availability Zone.
+If an OCI Region has 3 Availability Domains (AD 1, AD 2, AD 3), they are physically separated by several miles. They do not share power grids, cooling systems, or network switches. The mathematical premise is absolute isolation: If a massive fire completely destroys AD 1, the physical destruction has a 0% mathematical probability of affecting AD 2 or AD 3.
+To achieve High Availability (HA), cloud architects must deploy their Web Servers mathematically across at least two ADs, placing a Load Balancer in front of them.
+
+## 2. Fault Domains
+Within a single Availability Domain, Oracle further mathematically subdivides the hardware into **Fault Domains**.
+A Fault Domain is a grouping of physical hardware (racks of servers). Every AD has exactly 3 Fault Domains. If you deploy two Virtual Machines into AD 1, and you place them both in Fault Domain 1, a single power supply failure on that specific rack could take down both VMs. By mathematically forcing VM 1 into Fault Domain 1, and VM 2 into Fault Domain 2, you guarantee they are on different physical racks, protecting against localized hardware failure within the same building.
+
+</TechnologyTemplate>

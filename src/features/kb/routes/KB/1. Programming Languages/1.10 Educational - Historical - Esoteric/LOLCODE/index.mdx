@@ -1,8 +1,28 @@
+---
+title: LOLCODE
+description: A joke esoteric programming language heavily inspired by the "lolcat" internet meme culture of the late 2000s.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LOLCODE">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LOLCODE">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 2007 by Adam Lindsay, LOLCODE is an esoteric programming language built purely as a joke. Its syntax is mathematically mapped to the broken English associated with internet "lolcat" memes (e.g., "I Can Has Cheezburger?").
 
-</ConceptTemplate>
+## 1. The Syntax
+While completely absurd, LOLCODE is a Turing-complete language capable of standard logical operations.
+- Program Start: `HAI 1.2`
+- Print: `VISIBLE "HELLO WORLD!"`
+- Variable Declaration: `I HAS A VAR ITZ 5`
+- Loop: `IM IN YR LOOP ... IM OUTTA YR LOOP`
+- Program End: `KTHXBYE`
+
+## 2. Value as an Esolang
+While no one uses LOLCODE for production systems, it serves as a fascinating educational case study in parser construction. Writing an interpreter for LOLCODE is a common university assignment, teaching students how to mathematically map abstract syntax trees onto bizarre, non-standard grammar rules.
+

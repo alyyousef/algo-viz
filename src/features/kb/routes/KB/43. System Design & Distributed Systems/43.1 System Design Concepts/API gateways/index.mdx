@@ -4,15 +4,28 @@ description: An API management tool that sits between a client and a collection 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="API Gateways">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="API Gateways">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a Microservices architecture, an application might be split into 50 different microservices (Users API, Payments API, Search API). If a mobile app needs to load a complex dashboard, forcing the mobile app to mathematically track 50 different IP addresses and make 50 separate network calls over 4G is an architectural disaster.
 
 An **API Gateway** solves this by providing a single, unified entry point. The mobile app makes one call to `api.example.com`, and the Gateway handles the internal routing.
 
+
 <Callout icon="tip" title="API Gateway vs. Load Balancer">
+
+
   A Load Balancer operates at Layer 4 (TCP), blindly routing packets. An API Gateway operates at Layer 7 (HTTP), mathematically parsing the actual URL and JSON payload to make intelligent routing decisions.
+
+
 </Callout>
+
 
 ## Core Responsibilities of an API Gateway
 
@@ -22,4 +35,3 @@ Because the Gateway is the mathematical chokepoint for all incoming traffic, it 
 2. **Rate Limiting:** Blocking malicious IPs that are mathematically spamming the API, protecting the backend databases from crashing.
 3. **Request Aggregation:** The Gateway can take one incoming request, mathematically fan it out to 3 different microservices in parallel, stitch the JSON responses together, and return one clean payload to the client.
 
-</ConceptTemplate>

@@ -4,31 +4,43 @@ description: A CPU design philosophy that emphasizes a small, highly optimized s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RISC (Reduced Instruction Set Computer)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RISC (Reduced Instruction Set Computer)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-As memory became cheap in the 1980s, computer scientists at IBM and UC Berkeley realized a fundamental flaw in the CISC (Complex Instruction Set Computer) philosophy: 
-*Compilers almost never used the complex instructions.* 
+As memory became cheap in the 1980s, computer scientists at IBM and UC Berkeley realized a fundamental flaw in the CISC (Complex Instruction Set Computer) philosophy:
+*Compilers almost never used the complex instructions.*
 
-Hardware engineers were wasting massive amounts of silicon designing specialized instructions that were too difficult for compilers to actually utilize. The CPU was huge, hot, and power-hungry for no reason. 
+Hardware engineers were wasting massive amounts of silicon designing specialized instructions that were too difficult for compilers to actually utilize. The CPU was huge, hot, and power-hungry for no reason.
 This realization birthed the **RISC (Reduced Instruction Set Computer)** revolution.
 
+
 <Callout icon="success" title="The RISC Philosophy">
+
+
   Strip away all the complex, multi-step instructions. Give the CPU a very small vocabulary of extremely simple instructions that execute in exactly one clock cycle. The programs will require more lines of code (using more RAM), but the physical CPU will be so small and fast that it will outperform CISC.
+
+
 </Callout>
+
 
 ## Characteristics of RISC
 
 1. **Simple, Single-Cycle Instructions**: Every instruction takes exactly one tick of the CPU clock to execute.
 2. **Fixed-Length Instructions**: Every instruction is exactly the same size (e.g., exactly 32 bits long). This makes fetching and decoding blazing fast, because the CPU knows exactly where one instruction ends and the next begins.
-3. **Load/Store Architecture**: The ALU is strictly forbidden from doing math on data sitting in RAM. You must explicitly \`LOAD\` data from RAM into a Register, do the math inside the CPU, and explicitly \`STORE\` it back. 
+3. **Load/Store Architecture**: The ALU is strictly forbidden from doing math on data sitting in RAM. You must explicitly \`LOAD\` data from RAM into a Register, do the math inside the CPU, and explicitly \`STORE\` it back.
 4. **Many Registers**: Because everything must be loaded into the CPU before math can be done, RISC architectures provide a massive amount of General Purpose Registers (usually 32 or more) to act as a scratchpad.
 5. **Pipelining Excellence**: Because every instruction takes exactly one cycle, it is incredibly easy for the CPU to overlap them on an assembly line (Pipelining), achieving massive throughput.
 
 ## The ARM Revolution
 
-The most famous RISC architecture is **ARM** (Advanced RISC Machines). 
-Because RISC processors require significantly fewer transistors than CISC processors, they draw a fraction of the electricity and produce almost no heat. 
+The most famous RISC architecture is **ARM** (Advanced RISC Machines).
+Because RISC processors require significantly fewer transistors than CISC processors, they draw a fraction of the electricity and produce almost no heat.
 
 This made ARM the undisputed king of mobile computing. Every single smartphone on earth (Apple or Android) uses a RISC processor. Recently, Apple transitioned their entire laptop and desktop line away from Intel (CISC) to Apple Silicon (M1/M2/M3 chips), proving that RISC can match and beat CISC in high-performance desktop computing while preserving massive battery life.
 
-</ConceptTemplate>

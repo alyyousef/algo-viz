@@ -1,8 +1,30 @@
+---
+title: C vs C++
+description: "A historical and architectural comparison between C, the minimalist procedural foundation of modern computing, and C++, the massive, multi-paradigm superset introducing Object-Oriented Programming and templates."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="C vs C++">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="C vs C++"
+  subtitle="Procedural vs Multi-Paradigm"
+  tags={['Comparison', 'Languages', 'C', 'C++', 'Systems']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+C (1972) and C++ (1985) are both brutally fast, low-level systems programming languages compiled directly to machine code with zero garbage collection. However, their design philosophies are fundamentally opposed.
 
-</ConceptTemplate>
+## 1. C: The Portable Assembly
+- **Philosophy**: "Trust the programmer." C is a minimalist, purely **Procedural** language. It provides functions, structs, and raw memory pointers. It intentionally lacks modern abstractions to ensure that every single line of code maps directly and transparently to CPU instructions.
+- **Use Case**: Linux Kernel, Embedded Systems (microwaves, pacemakers), IoT devices, and foundational interpreters (CPython is written in C). It is mathematically impossible to hide performance costs in C.
+
+## 2. C++: The Multi-Paradigm Behemoth
+- **Philosophy**: "Zero-overhead abstractions." C++ was originally built as "C with Classes" to introduce **Object-Oriented Programming**. It has since evolved into a massive, highly complex multi-paradigm language featuring Templates (generic programming), Exceptions, and the Standard Template Library (STL).
+- **Use Case**: AAA Video Game Engines (Unreal Engine), High-Frequency Trading, Web Browsers (V8 Engine), and massive desktop applications.
+- **The Tradeoff**: C++ allows engineers to write highly abstract, reusable code that compiles down to the exact same mathematically optimized machine code as C. However, its massive feature set makes the compiler incredibly slow, and the language notoriously difficult to master.
+

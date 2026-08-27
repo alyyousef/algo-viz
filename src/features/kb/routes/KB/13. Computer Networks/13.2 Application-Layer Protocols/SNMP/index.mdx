@@ -4,16 +4,23 @@ description: The universal standard protocol used by administrators to monitor a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SNMP (Simple Network Management Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SNMP (Simple Network Management Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you have 500 Cisco switches and 100 enterprise printers in a building, you need a centralized dashboard to know if a switch's CPU is overheating, or if a printer is out of cyan ink. 
+If you have 500 Cisco switches and 100 enterprise printers in a building, you need a centralized dashboard to know if a switch's CPU is overheating, or if a printer is out of cyan ink.
 
 You cannot use SSH to log into 600 devices manually. You use **SNMP** (UDP Ports 161/162).
 
 ## Architecture
 
-SNMP consists of a central **Manager** (the monitoring dashboard) and **Agents** (software running on the switches/printers). 
-The data they exchange is structured in a highly organized, hierarchical database called a **MIB** (Management Information Base), using standardized OIDs (Object Identifiers). 
+SNMP consists of a central **Manager** (the monitoring dashboard) and **Agents** (software running on the switches/printers).
+The data they exchange is structured in a highly organized, hierarchical database called a **MIB** (Management Information Base), using standardized OIDs (Object Identifiers).
 
 For example, OID `1.3.6.1.2.1.2.2.1.10` universally means "Total Bytes Received on this Interface."
 
@@ -22,4 +29,3 @@ For example, OID `1.3.6.1.2.1.2.2.1.10` universally means "Total Bytes Received 
 - **SNMPv1 / v2c**: Used a concept called a "Community String" (essentially a password like `public` or `private`) to authenticate. However, these versions transmit the password and all data in **absolute plain text**. If a hacker sniffs the `private` community string, they can send a write command to completely erase the configuration of every router in the building.
 - **SNMPv3**: The modern standard. It completely overhauls security, requiring strong cryptographic authentication (SHA) and full payload encryption (AES), ensuring hackers cannot sniff or modify the monitoring data.
 
-</ConceptTemplate>

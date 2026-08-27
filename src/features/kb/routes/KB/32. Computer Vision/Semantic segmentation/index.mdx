@@ -1,8 +1,25 @@
+---
+title: Semantic Segmentation
+description: A dense computer vision task that mathematically classifies every single pixel in an image into a specific category (e.g., Road, Sky, Car) without distinguishing between individual objects.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Semantic segmentation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Semantic Segmentation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A self-driving car does not just need a bounding box around a pedestrian. It needs to know the exact physical boundaries of the drivable road, pixel by pixel.
 
-</ConceptTemplate>
+## 1. The Fully Convolutional Network (FCN)
+Standard CNNs end with a "Fully Connected" (Dense) layer that crushes the spatial 2D image into a flat 1D array to output a single word ("Dog").
+Segmentation architectures (like FCN) physically delete the Dense layer. They are mathematically constructed entirely of Convolutions. Instead of outputting a single word, the network outputs a massive 2D matrix that is the exact same physical size as the input image. If the input is $1080 \times 1920$, the output is a $1080 \times 1920$ matrix where the mathematical value of every cell corresponds to a specific class ID (e.g., $1 = Road$, $2 = Sky$).
+
+## 2. The Problem of Spatial Loss
+As an image passes through a CNN, it is mathematically shrunk (Max Pooling) to extract high-level features. A 1080p image is compressed to a tiny 32x32 feature map.
+If you try to mathematically blow that 32x32 map back up to 1080p to generate the final segmentation mask, the edges will be horribly blurred because the spatial data was destroyed. Architectures like **U-Net** solve this using **Skip Connections**, which mathematically wire the high-resolution edges from the early layers directly into the final upscaling layers, perfectly restoring spatial precision.
+

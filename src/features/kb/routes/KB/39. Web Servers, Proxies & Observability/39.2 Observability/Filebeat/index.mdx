@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Filebeat
+description: A highly lightweight, Go-based mathematical log shipper developed by Elastic, specifically designed to tail massive volumes of log files and securely forward them to Logstash or Elasticsearch.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Filebeat">
+<TechnologyTemplate
+  title="Filebeat"
+  subtitle="The Lightweight Log Shipper"
+  tags={['Observability', 'Logging', 'Elastic', 'Data Pipeline']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have 1,000 Linux servers generating Nginx logs, you cannot install a massive Java application (like Logstash) on every server just to read text files, as it would mathematically consume too much RAM.
 
-</ConceptTemplate>
+## 1. The Mathematical Shipper
+Filebeat (part of the Elastic Beats family) solves this. It is a single, compiled Go binary.
+It consumes virtually zero CPU or RAM. You configure Filebeat to mathematically watch a specific directory (e.g., `/var/log/nginx/*.log`). It constantly tails the files. When a new line is written, Filebeat grabs the raw text and mathematically ships it over the network to a central server.
+
+## 2. Backpressure Management
+Filebeat's greatest mathematical feature is how it handles network failure.
+If the central Logstash server goes offline, a naive log shipper would keep reading logs and mathematically run out of memory, or drop the logs entirely (data loss). Filebeat uses a mathematical registry file to track exactly which byte offset it has read up to. If the network dies, Filebeat mathematically halts reading. It simply waits. When the network returns, it resumes from the exact byte offset, mathematically guaranteeing zero data loss.
+
+</TechnologyTemplate>

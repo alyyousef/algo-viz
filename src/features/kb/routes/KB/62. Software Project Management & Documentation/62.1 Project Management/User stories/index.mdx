@@ -4,10 +4,16 @@ description: An informal, natural language description of one or more features o
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="User Stories">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="User Stories">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **User Story** is the atomic biological unit of Agile work.
 
 It is explicitly NOT a mathematical technical specification. Instead of writing "Update the SQL schema to include a bio column", a Product Manager writes a biological sentence from the perspective of the customer: *"As a User, I want to add a bio to my profile, so that other people can learn about me."* This mathematically forces the engineer to focus on the biological *value* they are delivering to the human, rather than just the code.
 
-</ConceptTemplate>

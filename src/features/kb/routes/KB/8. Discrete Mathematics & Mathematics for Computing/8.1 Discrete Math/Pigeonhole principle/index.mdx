@@ -1,8 +1,33 @@
+---
+title: Pigeonhole Principle
+description: "A deceptively simple yet profoundly powerful mathematical theorem proving that if you distribute N items into M containers where N > M, at least one container must mathematically hold multiple items."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pigeonhole principle">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Pigeonhole Principle"
+  subtitle="The Inevitability of Collisions"
+  tags={['Mathematics', 'Discrete Math', 'Combinatorics', 'Logic']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Pigeonhole Principle, formalized by Peter Gustav Lejeune Dirichlet in 1834, is one of the most intuitive statements in mathematics. Yet, it is used to formally prove incredibly complex theorems in compression algorithms, cryptography, and graph theory.
 
-</ConceptTemplate>
+## 1. The Formal Definition
+If $N$ objects are placed into $M$ containers, and $N > M$, then at least one container must contain strictly more than one object.
+- **Example**: There are exactly 366 possible birthdays (including leap years). If you put 367 people in a room, it is a mathematical certainty that at least two people share the exact same birthday. (No calculus required, just the Pigeonhole Principle).
+
+## 2. The Generalized Principle
+If $N$ objects are placed into $M$ containers, then at least one container must hold at least $\lceil N / M \rceil$ objects.
+- **Example**: If you distribute 10 balls into 3 boxes, at least one box must contain $\lceil 10 / 3 \rceil = 4$ balls.
+
+## 3. Applications in Computer Science
+- **Hash Collisions**: If a hash function generates a 256-bit output, there are exactly $2^{256}$ possible unique hashes. If you hash $2^{256} + 1$ distinct files, the Pigeonhole Principle mathematically guarantees that two completely different files will produce the exact same hash (a collision).
+- **Lossless Compression limits**: It is mathematically impossible to build a lossless compression algorithm (like ZIP) that guarantees it will shrink *every* file. If an algorithm shrinks all files of size $N$ to size $N-1$, you are mapping $2^N$ possible files into $2^{N-1}$ possible outputs. By the Pigeonhole Principle, multiple large files would compress to the exact same small file, making it mathematically impossible to decompress them accurately.
+

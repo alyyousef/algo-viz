@@ -1,0 +1,24 @@
+---
+title: OCI Service Gateway
+description: A mathematically secure, internal routing appliance that allows Virtual Machines in a private Subnet to privately access Oracle public services (like Object Storage) without traversing the internet.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Service Gateway"
+  subtitle="Private Access to Public Services"
+  tags={['OCI', 'Networking', 'Security', 'Routing']}
+>
+
+OCI Object Storage and OCI Autonomous Database are public services; their API endpoints exist on the public internet. If a highly secure, private Database VM needs to back itself up to Object Storage, sending that highly sensitive backup data over an Internet Gateway is a massive security risk.
+
+## 1. The Internal Backbone
+The Service Gateway mathematically solves this.
+You attach a Service Gateway to your VCN. In your Route Table, you add a rule: *"Route all traffic destined for 'All OCI Services in Region' to the Service Gateway."*
+When the Database initiates the backup, the VCN routing engine mathematically intercepts the packet. Instead of sending it out to the public internet, it routes it to the Service Gateway. The Gateway forwards the packet entirely over Oracle's private, encrypted, internal fiber-optic backbone directly to the Object Storage array.
+
+## 2. Perfect Mathematical Security
+Because the traffic never touches the public internet, it cannot be mathematically intercepted or routed through malicious third-party ISPs.
+More importantly, the Database VM does not need a Public IP address, an Internet Gateway, or a NAT Gateway. It remains 100% mathematically isolated from the outside world, yet it can still seamlessly consume all of Oracle's native cloud services, providing the ultimate enterprise security posture.
+
+</TechnologyTemplate>

@@ -4,25 +4,32 @@ description: The file format that revolutionized running local LLMs on CPUs and 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GGUF Format">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GGUF Format">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, saving and loading neural networks relied on Python-specific formats like `pickle` or `PyTorch tensors`. These required massive Python environments and were tightly coupled to Nvidia GPUs.
 
 **GGUF** (GPT-Generated Unified Format) is a revolutionary binary format created by the `llama.cpp` community. It allows massive LLMs to be distributed as a single file and executed on almost any hardware—including Apple MacBooks and standard Intel CPUs—with extreme efficiency.
 
+
 <Callout icon="success" title="The Quantization Integration">
+
+
   GGUF\'s massive popularity stems from its native support for quantization. You can download a 7B parameter model quantized to 4-bits as a single 4GB `.gguf` file, and run it locally on an old laptop using entirely CPU RAM, with incredible inference speed.
+
+
 </Callout>
+
 
 ## Key Advantages
 
-<ComparisonTable 
-  headers={['Advantage', 'Description']}
-  rows={[
-    ['Single File Deployment', 'A GGUF file contains the entire model: the weights, the tokenizer vocabulary, and all hyperparameter metadata. No external configuration files are needed.'],
-    ['Extensibility', 'It is a key-value based format. If a new architecture requires a new metadata field, it can be added to the GGUF file without breaking older software that parses it.'],
-    ['mmap Capability', 'The file can be mathematically memory-mapped directly from the SSD to RAM, meaning loading a 40GB model takes seconds instead of minutes.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Advantage', 'Description']} rows={[ ['Single File Deployment', 'A GGUF file contains the entire model: the weights, the tokenizer vocabulary, and all hyperparameter metadata. No external configuration files are needed.'], ['Extensibility', 'It is a key-value based format. If a new architecture requires a new metadata field, it can be added to the GGUF file without breaking older software that parses it.'], ['mmap Capability', 'The file can be mathematically memory-mapped directly from the SSD to RAM, meaning loading a 40GB model takes seconds instead of minutes.'] ]} />
+
+

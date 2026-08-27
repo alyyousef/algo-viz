@@ -5,7 +5,14 @@ description: The practical, 4-layer architecture that actually powers the modern
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="The TCP/IP Model">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The TCP/IP Model">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While the OSI model is a beautiful theoretical framework, it was over-engineered. The United States Department of Defense (DoD) funded the ARPANET project, which resulted in the **TCP/IP Model**—a leaner, meaner, 4-layer stack that physically powers the modern internet.
 
@@ -13,19 +20,12 @@ While the OSI model is a beautiful theoretical framework, it was over-engineered
 
 The TCP/IP model mathematically collapses the 7 OSI layers into 4 highly practical layers.
 
-<ComparisonTable 
-  headers={['TCP/IP Layer', 'Equivalent OSI Layers', 'Function & Protocols']} 
-  rows={[
-    ['4. Application', 'Application (7), Presentation (6), Session (5)', 'Handles all high-level software protocols. Data formatting and encryption happen natively here. (HTTP, HTTPS, SSH, FTP, DNS)'],
-    ['3. Transport', 'Transport (4)', 'Provides end-to-end communication control. Dictates if the connection needs to be highly reliable (TCP) or blazing fast (UDP).'],
-    ['2. Internet', 'Network (3)', 'Handles logical addressing and routing. Ensures packets can navigate across thousands of routers to reach a destination on the other side of the planet. (IPv4, IPv6, ICMP)'],
-    ['1. Network Access', 'Data Link (2), Physical (1)', 'Handles the physical hardware and local network frames. (Ethernet cables, MAC addresses, Wi-Fi waves).']
-  ]} 
-/>
+
+<ComparisonTable headers={['TCP/IP Layer', 'Equivalent OSI Layers', 'Function & Protocols']} rows={[ ['4. Application', 'Application (7), Presentation (6), Session (5)', 'Handles all high-level software protocols. Data formatting and encryption happen natively here. (HTTP, HTTPS, SSH, FTP, DNS)'], ['3. Transport', 'Transport (4)', 'Provides end-to-end communication control. Dictates if the connection needs to be highly reliable (TCP) or blazing fast (UDP).'], ['2. Internet', 'Network (3)', 'Handles logical addressing and routing. Ensures packets can navigate across thousands of routers to reach a destination on the other side of the planet. (IPv4, IPv6, ICMP)'], ['1. Network Access', 'Data Link (2), Physical (1)', 'Handles the physical hardware and local network frames. (Ethernet cables, MAC addresses, Wi-Fi waves).'] ]} />
+
 
 ## Why did TCP/IP win?
-In the 1980s, the "Protocol Wars" raged between the OSI model and TCP/IP. 
-OSI was heavily backed by European telecoms and government bureaucracies, resulting in sluggish standard development. 
+In the 1980s, the "Protocol Wars" raged between the OSI model and TCP/IP.
+OSI was heavily backed by European telecoms and government bureaucracies, resulting in sluggish standard development.
 TCP/IP was backed by UNIX researchers. It was lightweight, open-source, and crucially, **it actually worked**. The internet organically adopted TCP/IP because developers could immediately build real applications on it, completely killing the OSI protocol suite.
 
-</ConceptTemplate>

@@ -4,24 +4,36 @@ description: How a person feels when interfacing with a system. It incorporates 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="User Experience (UX)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="User Experience (UX)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **User Experience (UX)** is not making things look pretty. It is the brutal, systematic engineering of human emotion and friction.
 
 If a user opens an app, clicks a button, and the app takes 3 seconds to load, the user mathematically feels frustration. UX is the discipline of identifying that frustration and architecting a system to eliminate it.
 
+
 <Callout icon="warning" title="UX is NOT UI">
+
+
   The biggest misconception in the industry is confusing UX (Experience) with UI (Interface).
-  
+
   - **UI** is the saddle, the stirrups, and the reins.
-  - **UX** is the feeling of riding the horse. 
-  
+  - **UX** is the feeling of riding the horse.
+
   If a website has beautiful, breathtaking graphics (Great UI) but mathematically forces the user to click through 15 pages just to cancel a subscription, the UX is an absolute, engineered disaster (Dark Patterns).
+
+
 </Callout>
+
 
 ## The ROI of UX
 
-UX is not art; it is mathematics and economics. 
+UX is not art; it is mathematics and economics.
 If an e-commerce checkout page is mathematically confusing, 30% of users will abandon their carts. By applying UX research to remove 1 form field, a company can mathematically increase annual revenue by $500,000. Good UX is invisible; bad UX physically costs money.
 
-</ConceptTemplate>

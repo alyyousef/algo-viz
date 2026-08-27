@@ -1,8 +1,34 @@
+---
+title: Levenshtein Distance
+description: "A string metric for measuring the exact mathematical difference between two sequences, defined as the minimum number of single-character edits (insertions, deletions, or substitutions) required to change one word into the other."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Edit distance / Levenshtein">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Levenshtein Distance"
+  subtitle="The Mathematics of Spell Check"
+  tags={['Algorithms', 'Strings', 'Dynamic Programming', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Vladimir Levenshtein in 1965, this metric is the mathematical foundation of every modern spell-checker and fuzzy-search algorithm.
 
-</ConceptTemplate>
+## 1. The Three Operations
+To transform the word `"KITTEN"` into `"SITTING"`, what is the mathematical minimum number of edits required?
+1. **S**itten (Substitute K for S)
+2. Sitt**i**n (Substitute E for I)
+3. Sittin**g** (Insert G)
+The Levenshtein Distance is exactly **3**.
+
+## 2. The Dynamic Programming Matrix
+Brute-forcing every possible combination of inserts and deletes is mathematically catastrophic (O(3^N)).
+Instead, engineers use a 2D Dynamic Programming matrix.
+The matrix compares all prefixes of Word A against all prefixes of Word B.
+If the current characters match, the mathematical cost is 0. If they do not match, the algorithm mathematically checks the three adjacent cells in the matrix (which represent the cost of an Insert, Delete, or Substitute from previous prefixes), picks the minimum of the three, and adds +1 cost. The final cell in the matrix contains the absolute minimum distance, computed in exactly **O(N * M)** time.
+

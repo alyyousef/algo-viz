@@ -4,15 +4,22 @@ description: A highly portable BSD Unix variant famous for running on virtually 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NetBSD">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NetBSD">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Like FreeBSD, **NetBSD** is a complete, open-source operating system descended from the original Berkeley Software Distribution (BSD). 
+Like FreeBSD, **NetBSD** is a complete, open-source operating system descended from the original Berkeley Software Distribution (BSD).
 
 However, while FreeBSD focuses on performance and enterprise stability, NetBSD is laser-focused on **Clean Code and Extreme Portability**.
 
 ## "Of course it runs NetBSD"
 
-NetBSD's unofficial motto is *"Of course it runs NetBSD"*. The codebase is so beautifully abstracted that the OS can be compiled to run on almost anything with a CPU. 
+NetBSD's unofficial motto is *"Of course it runs NetBSD"*. The codebase is so beautifully abstracted that the OS can be compiled to run on almost anything with a CPU.
 
 It currently supports over 50 different hardware architectures, including:
 - Standard x86 and ARM processors.
@@ -21,8 +28,13 @@ It currently supports over 50 different hardware architectures, including:
 - Amiga computers.
 - VAX mainframes.
 
+
 <Callout icon="success" title="The Value of Portability">
+
+
   By forcing the codebase to run on highly obscure, weird hardware architectures, the NetBSD developers are forced to write exceptionally clean, strictly standards-compliant C code. This makes NetBSD highly attractive for embedded systems development, particularly in aerospace and industrial control systems.
+
+
 </Callout>
 
-</ConceptTemplate>
+

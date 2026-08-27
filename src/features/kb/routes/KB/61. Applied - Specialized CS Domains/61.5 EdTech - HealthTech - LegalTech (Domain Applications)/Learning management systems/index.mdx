@@ -4,10 +4,16 @@ description: A software application for the administration, documentation, track
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Learning Management Systems (LMS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Learning Management Systems (LMS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **LMS** (like Canvas or Moodle) is the biological backbone of modern universities and corporate training.
 
 It is a mathematically massive enterprise CRUD application that handles Role-Based Access Control (RBAC) for Teachers, Students, and Admins. It must biologically process video hosting, real-time quizzes, mathematical gradebook calculations, and integration with massive plagiarism detection APIs, all while legally maintaining student privacy laws (like FERPA).
 
-</ConceptTemplate>

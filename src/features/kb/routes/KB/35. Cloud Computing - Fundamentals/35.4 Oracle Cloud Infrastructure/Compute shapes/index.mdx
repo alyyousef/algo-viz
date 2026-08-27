@@ -1,0 +1,24 @@
+---
+title: OCI Compute Shapes
+description: The mathematical template in Oracle Cloud that defines the exact number of CPU cores and amount of RAM allocated to a Virtual Machine or Bare Metal server.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Compute Shapes"
+  subtitle="Hardware Resource Definitions"
+  tags={['OCI', 'Compute', 'Hardware', 'Virtualization']}
+>
+
+In OCI, you do not just "launch a VM." You must select a **Shape**, which is a strict mathematical definition of the underlying hardware architecture your instance will use.
+
+## 1. Fixed vs. Flexible Shapes
+Historically, cloud providers forced users into **Fixed Shapes** (e.g., you must buy 4 CPUs with 16GB of RAM). If your app needed 4 CPUs but 32GB of RAM, you had to overpay for an 8-CPU shape.
+OCI revolutionized this with **Flexible Shapes** (often based on AMD EPYC processors). When provisioning an OCI instance, you use two separate sliders in the UI. You mathematically dictate: *"Give me exactly 7 OCPUs, and exactly 22 GB of RAM."* OCI's hypervisor dynamically carves out that exact bespoke hardware profile, ensuring you never pay for mathematically wasted resources.
+
+## 2. OCPU vs. vCPU Mathematics
+When comparing clouds, the math of a CPU is critical.
+AWS and Azure use **vCPUs** (Virtual CPUs). A vCPU represents a single hardware *Thread* on a processor core.
+Oracle uses **OCPUs** (Oracle Compute Units). An OCPU represents an entire physical hardware *Core*, which typically contains 2 Threads (Hyperthreading). Therefore, 1 OCPU is mathematically equivalent to 2 AWS vCPUs. When an OCI Shape says "4 OCPUs", you are actually getting the raw processing power of 8 vCPUs on competing clouds.
+
+</TechnologyTemplate>

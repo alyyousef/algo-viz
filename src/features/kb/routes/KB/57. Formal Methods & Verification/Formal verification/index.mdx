@@ -4,16 +4,28 @@ description: The act of proving or disproving the correctness of intended algori
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Formal Verification">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Formal Verification">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In standard software engineering, we use Unit Tests. A Unit Test biologically proves that the code works for *one specific input*. 
+In standard software engineering, we use Unit Tests. A Unit Test biologically proves that the code works for *one specific input*.
 
 If you are programming the autopilot software for a Boeing 737, testing 10,000 inputs is mathematically insufficient, because the 10,001st input might crash the plane.
 
+
 <Callout icon="success" title="Mathematical Certainty">
-  **Formal Verification** abandons testing entirely. 
-  
+
+
+  **Formal Verification** abandons testing entirely.
+
   Instead of running the code, it treats the code as a mathematical theorem. Using pure logic, it mathematically proves that the software is 100% correct for *every single possible infinite input* in the universe. If the proof compiles, it is physically impossible for the software to contain a bug related to that specification.
+
+
 </Callout>
 
-</ConceptTemplate>
+

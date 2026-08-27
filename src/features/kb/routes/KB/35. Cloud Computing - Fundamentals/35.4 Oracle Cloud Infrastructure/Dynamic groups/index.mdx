@@ -1,0 +1,24 @@
+---
+title: OCI Dynamic Groups
+description: A mathematically rigorous IAM construct in Oracle Cloud that automatically grants permissions to cloud resources based on strict matching rules, eliminating the need to hardcode credentials.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Dynamic Groups"
+  subtitle="Identity for Cloud Resources"
+  tags={['OCI', 'Security', 'IAM', 'Identity']}
+>
+
+In AWS, if a Virtual Machine needs to read an S3 bucket, you assign an IAM Role to the VM. OCI handles this mathematically differently through the use of **Dynamic Groups**.
+
+## 1. Mathematical Matching Rules
+Instead of explicitly assigning a role to a specific Virtual Machine, you create a Dynamic Group based on a **Matching Rule**.
+You define a mathematical rule: *"Any Virtual Machine that exists inside the 'Production_Compartment' is automatically a member of this Dynamic Group."*
+When a new VM boots up inside that compartment, the OCI Identity system evaluates the mathematical rule, sees a match, and instantly injects the VM into the group. If the VM is moved to a different compartment, it mathematically falls out of the group and loses its permissions instantly.
+
+## 2. Secure Resource Authentication
+Once the Dynamic Group is created, you write a standard IAM Policy: *"Allow Dynamic Group 'Prod_VMs' to read Object Storage."*
+When the Virtual Machine attempts to download a file, it does not use a hardcoded API key or password. It mathematically requests a short-lived, cryptographically signed token from the OCI metadata service. OCI verifies the VM's membership in the Dynamic Group and grants the token. This guarantees absolute zero-trust security and completely eliminates credential leakage in source code.
+
+</TechnologyTemplate>

@@ -1,8 +1,27 @@
+---
+title: RAII (Resource Acquisition Is Initialization)
+description: A C++ programming idiom that mathematically binds the lifespan of a system resource to the lifespan of a local Stack variable.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RAII)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RAII (Resource Acquisition Is Initialization)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+RAII is the core mathematical philosophy of C++. It ensures that you never forget to close a File, release a Mutex Lock, or free Heap Memory by tying those actions directly to the CPU's deterministic Stack unwinding.
 
-</ConceptTemplate>
+## 1. The Mathematical Guarantee
+When you instantiate a class on the Stack in C++, the compiler mathematically guarantees two things:
+1. **Acquisition**: The Constructor is called exactly when the variable enters scope. This is where you mathematically allocate the Heap memory or acquire the OS File Handle.
+2. **Release**: The Destructor is called *unconditionally* when the variable goes out of scope.
+If an exception is thrown in the middle of a function, the CPU mathematically unwinds the Stack, unconditionally triggering the Destructor of every local variable. The Destructor contains the `free()` or `fclose()` logic, guaranteeing absolute resource cleanup regardless of how the function exits.
+
+## 2. RAII in Modern Languages
+Rust adopted RAII completely (via the `Drop` trait).
+Garbage Collected languages (Java, C#) mathematically struggle with RAII because Objects on the Heap are not destroyed deterministically (you don't know *when* the GC will run). Therefore, to safely close a File in Java, you cannot rely on the Destructor; you must mathematically use the `try-with-resources` block to simulate RAII behavior locally.
+

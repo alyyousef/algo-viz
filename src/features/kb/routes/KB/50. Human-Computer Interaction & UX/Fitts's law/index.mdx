@@ -4,25 +4,37 @@ description: A predictive model of human movement primarily used in human-comput
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fitts's Law">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Fitts's Law">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Fitts's Law** is a brutal, unyielding mathematical formula that predicts human biological movement. 
+**Fitts's Law** is a brutal, unyielding mathematical formula that predicts human biological movement.
 
 The law states: *The time it takes to move your mouse (or finger) to a target depends mathematically on the Distance to the target, and the Size of the target.*
 
+
 <Callout icon="success" title="The Mathematics of Clicks">
+
+
   The formula is: `T = a + b * log2(2D / W)`
   - `T` = Time to complete the movement.
   - `D` = Distance from the starting point to the target.
   - `W` = Width of the target.
-  
-  **The UX Translation:** Make important buttons bigger, and put them closer to where the user's mouse currently is. 
+
+  **The UX Translation:** Make important buttons bigger, and put them closer to where the user's mouse currently is.
+
+
 </Callout>
+
 
 ## The Magic of the Screen Edge
 
-Fitts's Law explains why the Mac OS Menu Bar is at the absolute top of the screen, and the Windows Start Menu is in the absolute bottom corner. 
+Fitts's Law explains why the Mac OS Menu Bar is at the absolute top of the screen, and the Windows Start Menu is in the absolute bottom corner.
 
 Because the mouse cursor physically cannot leave the monitor, the edge of the screen is mathematically **infinitely large**. If a user violently throws their mouse to the bottom-left, the cursor mathematically stops exactly on the Start Menu. It requires absolutely zero precision, making it the fastest possible button to click on the entire screen.
 
-</ConceptTemplate>

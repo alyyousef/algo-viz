@@ -4,15 +4,28 @@ description: A software reverse engineering (SRE) suite of tools developed by NS
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ghidra">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ghidra">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When malware analysts discover a new virus, they don't get the clean, readable Python or C++ source code. They only get the compiled, mathematical 1s and 0s (machine code). 
+When malware analysts discover a new virus, they don't get the clean, readable Python or C++ source code. They only get the compiled, mathematical 1s and 0s (machine code).
 
 **Ghidra** is a powerful reverse-engineering framework, released to the public by the NSA in 2019, designed to mathematically translate that machine code back into readable logic.
 
+
 <Callout icon="tip" title="The Decompiler Advantage">
+
+
   Historically, analysts had to read raw Assembly language (IDA Pro), which is incredibly difficult. Ghidra's killer feature is its built-in **Decompiler**. It mathematically attempts to translate the assembly instructions back into high-level C-style code, massively speeding up malware analysis.
+
+
 </Callout>
+
 
 ## Core Capabilities
 
@@ -20,4 +33,3 @@ When malware analysts discover a new virus, they don't get the clean, readable P
 2. **Decompilation:** Mathematically reconstructing the original logic (if-statements, loops, variables) into pseudo-C code.
 3. **Collaboration:** Unlike older tools, Ghidra was designed from day one to allow multiple analysts to mathematically work on the exact same binary simultaneously over a network, sharing their annotations and findings in real-time.
 
-</ConceptTemplate>

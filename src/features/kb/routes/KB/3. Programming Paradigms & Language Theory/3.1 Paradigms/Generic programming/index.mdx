@@ -1,8 +1,26 @@
+---
+title: Generic Programming
+description: A powerful compiler paradigm that allows developers to write mathematically abstract algorithms that operate flawlessly on any data type without sacrificing strict compile-time type safety.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Generic programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Generic Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you write a function to sort an Array of Integers, and you need to sort an Array of Strings, do you copy-paste the exact same algorithm? Generic Programming mathematically prevents this code duplication.
 
-</ConceptTemplate>
+## 1. Type Variables
+In Generics (C++ Templates, Java Generics, Rust Traits), you replace the hardcoded Type with a mathematical placeholder variable, usually `<T>`.
+You define the function as `sort(Array<T> data)`. The algorithm is now mathematically decoupled from the specific memory layout of the data. The compiler guarantees that the algorithm will mathematically work, as long as the Type `T` implements the necessary mathematical constraints (e.g., the Type `T` must support the `<` and `>` comparison operators).
+
+## 2. Monomorphization vs Type Erasure
+Compilers handle Generics in two radically different mathematical ways:
+- **Monomorphization (C++, Rust)**: At compile-time, the compiler physically copy-pastes the generic code. If you sort Integers and Strings, the compiler generates two completely separate, highly optimized machine-code functions. It is lightning fast but bloats the binary size.
+- **Type Erasure (Java)**: The compiler mathematically deletes the `<T>` at compile-time, replacing it with the generic `Object` class. It generates exactly one physical machine-code function. It keeps the binary tiny, but requires mathematical casting at runtime, slightly slowing down execution.
+

@@ -4,16 +4,28 @@ description: A password replacement that provides faster, easier, and more secur
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Passkeys">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Passkeys">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While WebAuthn is mathematically perfect, it had a massive UX flaw: If you generated a key on your iPhone, you biologically couldn't log into the same website from your Windows laptop, because the Private Key was trapped inside the iPhone's hardware.
 
 **Passkeys** are the consumer-friendly evolution of WebAuthn created by Apple, Google, and Microsoft.
 
+
 <Callout icon="success" title="The Cloud Sync Abstraction">
+
+
   A Passkey is mathematically just a WebAuthn Private Key, but with one critical difference: **It is synced to the cloud.**
-  
+
   If you create a Passkey on your iPhone, Apple mathematically encrypts it and syncs it via iCloud Keychain to your iPad and Mac. You can now use biometric FaceID to log into the website across all your devices seamlessly. It brings the unphishable mathematical security of WebAuthn to the masses without the biological friction of being locked to a single piece of hardware.
+
+
 </Callout>
 
-</ConceptTemplate>
+

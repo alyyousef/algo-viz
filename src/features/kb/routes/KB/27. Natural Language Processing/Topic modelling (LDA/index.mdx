@@ -1,8 +1,28 @@
+---
+title: Latent Dirichlet Allocation (LDA)
+description: A highly complex probabilistic generative model used in Topic Modeling to mathematically discover hidden thematic structures within massive, unlabelled document collections.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Topic modelling (LDA">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Latent Dirichlet Allocation (LDA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are handed 50,000 legal emails and asked, "What are these about?", reading them is impossible. LDA is an unsupervised mathematical algorithm that automatically groups them by topic.
 
-</ConceptTemplate>
+## 1. The Generative Assumption
+LDA operates on a mathematically bizarre assumption: It assumes that the documents were *generated* by a specific mathematical process.
+It assumes that a human author first selected a "Topic Mixture" (e.g., 60% Finance, 40% Law). Then, based on those percentages, the author randomly pulled words from "Topic Bins" to form the document. LDA's job is to mathematically reverse-engineer this assumed process to discover what the original Topic Bins contained.
+
+## 2. Dirichlet Distributions
+LDA uses complex Bayesian mathematics (Dirichlet Distributions).
+It mathematically forces two constraints:
+1. Every document is a sparse mixture of Topics (most documents only discuss 2 or 3 topics, not 50).
+2. Every Topic is a sparse mixture of Words (the word "Bankrupt" belongs strongly to the Finance topic, and weakly to everything else).
+By iteratively tweaking probabilities (using Gibbs Sampling), LDA mathematically converges on a set of Topics (clusters of words) that perfectly describe the hidden themes of the massive corpus.
+

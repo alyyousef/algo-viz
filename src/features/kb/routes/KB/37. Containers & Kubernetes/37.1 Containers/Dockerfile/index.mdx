@@ -6,24 +6,22 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Dockerfile">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dockerfile">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Dockerfile** is the blueprint for a container. It is a simple script consisting of specialized instructions that the Docker daemon executes sequentially to build a Docker Image.
 
 ## 1. Common Instructions
 
-<ComparisonTable 
-  headers={['Instruction', 'Purpose', 'Example']} 
-  rows={[
-    ['`FROM`', 'Sets the base image. Must be the first instruction.', '`FROM node:18-alpine`'],
-    ['`WORKDIR`', 'Sets the working directory inside the container for subsequent instructions.', '`WORKDIR /app`'],
-    ['`COPY`', 'Copies files from the host machine into the container.', '`COPY package.json .`'],
-    ['`RUN`', 'Executes a command during the **build** phase (creating a new layer).', '`RUN npm install`'],
-    ['`ENV`', 'Sets environment variables.', '`ENV NODE_ENV=production`'],
-    ['`EXPOSE`', 'Documents which ports the application listens on (does not actually publish them).', '`EXPOSE 8080`'],
-    ['`CMD`', 'Specifies the default command to execute when the container **starts**.', '`CMD ["npm", "start"]`']
-  ]} 
-/>
+
+<ComparisonTable headers={['Instruction', 'Purpose', 'Example']} rows={[ ['`FROM`', 'Sets the base image. Must be the first instruction.', '`FROM node:18-alpine`'], ['`WORKDIR`', 'Sets the working directory inside the container for subsequent instructions.', '`WORKDIR /app`'], ['`COPY`', 'Copies files from the host machine into the container.', '`COPY package.json .`'], ['`RUN`', 'Executes a command during the **build** phase (creating a new layer).', '`RUN npm install`'], ['`ENV`', 'Sets environment variables.', '`ENV NODE_ENV=production`'], ['`EXPOSE`', 'Documents which ports the application listens on (does not actually publish them).', '`EXPOSE 8080`'], ['`CMD`', 'Specifies the default command to execute when the container **starts**.', '`CMD ["npm", "start"]`'] ]} />
+
 
 ## 2. Example Dockerfile (Node.js)
 
@@ -49,8 +47,13 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
+
 <Callout icon="tip" title="CMD vs ENTRYPOINT">
+
+
 `CMD` provides default arguments that can be easily overridden from the CLI (e.g., `docker run myapp bash` replaces the CMD). `ENTRYPOINT` sets the primary executable that *cannot* be easily overridden, and any extra CLI arguments are passed to it instead.
+
+
 </Callout>
 
-</ConceptTemplate>
+

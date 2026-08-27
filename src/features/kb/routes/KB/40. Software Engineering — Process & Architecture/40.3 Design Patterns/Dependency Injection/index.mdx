@@ -1,8 +1,35 @@
+---
+title: Dependency Injection (DI)
+description: A software design pattern that physically implements Inversion of Control (IoC), resolving dependencies by mathematically injecting them into a class rather than allowing the class to instantiate them itself.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dependency Injection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Dependency Injection (DI)"
+  subtitle="The Eradication of the New Keyword"
+  tags={['Design Patterns', 'Architecture', 'SOLID', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a `UserService` class needs to save data, and it executes `Database db = new MySQLDatabase();` internally, it is mathematically tightly coupled to MySQL. You cannot test this class without spinning up a physical MySQL server.
 
-</ConceptTemplate>
+## 1. Injecting via Constructor
+Dependency Injection solves this by mathematically forbidding the use of the `new` keyword for dependencies.
+Instead, the `UserService` demands its dependency via its constructor:
+```java
+public class UserService {
+    private IDatabase db;
+    public UserService(IDatabase db) { this.db = db; }
+}
+```
+The class is now perfectly mathematically isolated. When running in production, the DI Framework (like Spring or NestJS) automatically instantiates the real `MySQLDatabase` and injects it into the constructor.
+
+## 2. The Power of Mocks
+Because the class only asks for an `IDatabase` interface, when a developer writes a Unit Test, they instantiate a `MockDatabase` (which just saves data to a temporary RAM array) and mathematically inject it into the `UserService` constructor. The code compiles, runs in 1 millisecond, and tests the core business logic perfectly without ever touching a real database.
+

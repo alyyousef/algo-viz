@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { Callout } from '@/features/kb/components/mdx/Callout'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="Reverse Proxies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reverse Proxies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In modern web architecture, users rarely connect directly to the server running your actual application code (e.g., your Node.js or Java process). Instead, they connect to a **Reverse Proxy**.
 
@@ -14,13 +21,9 @@ A Reverse Proxy is an intermediary server (like Nginx, HAProxy, or Envoy) that s
 
 ## 1. Forward Proxy vs Reverse Proxy
 
-<ComparisonTable 
-  headers={['Type', 'Who it protects', 'Use Case']} 
-  rows={[
-    ['Forward Proxy', 'The Client (User).', 'A corporate VPN proxy that hides the employee\'s IP address from the websites they visit.'],
-    ['Reverse Proxy', 'The Server (Backend).', 'Nginx hiding your internal database and application servers from the public internet.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Type', 'Who it protects', 'Use Case']} rows={[ ['Forward Proxy', 'The Client (User).', 'A corporate VPN proxy that hides the employee\'s IP address from the websites they visit.'], ['Reverse Proxy', 'The Server (Backend).', 'Nginx hiding your internal database and application servers from the public internet.'] ]} />
+
 
 ## 2. Why use a Reverse Proxy?
 
@@ -29,8 +32,13 @@ A Reverse Proxy is an intermediary server (like Nginx, HAProxy, or Envoy) that s
 3. **Caching**: If 100 users request the exact same image or API response, the proxy can cache the first response and serve it to the next 99 users instantly, without even waking up your application server.
 4. **Load Balancing**: The proxy can distribute incoming requests evenly across 5 different backend servers.
 
+
 <Callout icon="info" title="API Gateways">
+
+
 An **API Gateway** (like AWS API Gateway or Kong) is essentially an advanced Reverse Proxy that adds developer-focused features like rate-limiting, API key authentication, and request/response transformation.
+
+
 </Callout>
 
-</ConceptTemplate>
+

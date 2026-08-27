@@ -4,7 +4,14 @@ description: The foundational activation function of Deep Learning that mathemat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ReLU (Rectified Linear Unit)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ReLU (Rectified Linear Unit)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before **ReLU**, Neural Networks relied on smooth, curve-based activation functions like Sigmoid or Tanh. However, as networks grew deeper (more layers), those functions mathematically crushed the gradients down to microscopic numbers, halting learning entirely (the Vanishing Gradient Problem). ReLU solved this with brute-force mathematical simplicity.
 
@@ -18,10 +25,9 @@ $f(x) = max(0, x)$
 This means the mathematical derivative (the slope) is either exactly $0$ or exactly $1$. Because the gradient is $1$ for all positive values, the mathematical signal passes through a 100-layer Neural Network without degrading or vanishing.
 
 ## 2. Sparse Activation
-Because ReLU outputs absolute $0$ for any negative input, it mathematically "turns off" specific neurons. In a dense network, maybe only 30% of neurons fire for a specific input image. This **sparsity** mimics the human brain and makes the network vastly more computationally efficient. 
+Because ReLU outputs absolute $0$ for any negative input, it mathematically "turns off" specific neurons. In a dense network, maybe only 30% of neurons fire for a specific input image. This **sparsity** mimics the human brain and makes the network vastly more computationally efficient.
 
 ## 3. The Dying ReLU Problem
-The fatal flaw of ReLU is its harsh cutoff. If a neuron's weights update in such a way that it always receives a negative input, it will always output $0$. The derivative of $0$ is $0$, meaning Gradient Descent can mathematically never update its weights again. The neuron is permanently "dead". 
+The fatal flaw of ReLU is its harsh cutoff. If a neuron's weights update in such a way that it always receives a negative input, it will always output $0$. The derivative of $0$ is $0$, meaning Gradient Descent can mathematically never update its weights again. The neuron is permanently "dead".
 Variants like **Leaky ReLU** ($f(x) = max(0.01x, x)$) mathematically fix this by allowing a tiny, non-zero gradient for negative inputs.
 
-</ConceptTemplate>

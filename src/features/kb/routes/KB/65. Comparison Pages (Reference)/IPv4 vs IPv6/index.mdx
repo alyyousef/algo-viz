@@ -1,8 +1,31 @@
+---
+title: IPv4 vs IPv6
+description: "A comparison of internet addressing protocols, detailing the mathematical exhaustion of the 32-bit IPv4 system and the transition to the astronomically massive 128-bit IPv6 system."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IPv4 vs IPv6">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="IPv4 vs IPv6"
+  subtitle="The Exhaustion of Addresses"
+  tags={['Comparison', 'Networking', 'Protocols', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Every device connected to the internet requires a unique IP address to route packets. The transition from IPv4 to IPv6 is the largest, most painful infrastructure migration in human history.
 
-</ConceptTemplate>
+## 1. IPv4 (The 32-Bit Limit)
+- **Format**: Four decimal numbers separated by dots (e.g., `192.168.1.1`).
+- **The Math**: Because it is a 32-bit integer, there are mathematically exactly **2^32 (4.29 Billion)** possible addresses.
+- **The Problem**: In the 1980s, 4 billion seemed infinite. With the invention of smartphones and IoT devices, the world officially ran out of IPv4 addresses. Engineers invented NAT (Network Address Translation) as a desperate hack to hide multiple devices behind a single public router IP, but it broke fundamental end-to-end routing.
+
+## 2. IPv6 (The 128-Bit Future)
+- **Format**: Eight groups of hexadecimal numbers separated by colons (e.g., `2001:0db8:85a3:0000:0000:8a2e:0370:7334`).
+- **The Math**: Because it is a 128-bit integer, there are exactly **2^128 (340 Undecillion)** possible addresses.
+- **The Solution**: That is enough addresses to assign a unique IP to every single atom on the surface of the Earth. IPv6 eliminates the need for NAT entirely, restoring true peer-to-peer connectivity, and introduces native mathematical packet encryption (IPsec).
+

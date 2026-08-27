@@ -5,7 +5,14 @@ description: An ensemble learning method that mathematically crushes variance by
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Random Forests">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Random Forests">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A single Decision Tree is highly sensitive to noise and prone to catastrophic overfitting (High Variance). **Random Forests** solve this mathematically by employing an ensemble technique called **Bagging (Bootstrap Aggregating)** combined with feature randomness.
 
@@ -16,18 +23,23 @@ Instead of training one massive tree, a Random Forest trains hundreds of deep, o
 Each of the 100 trees is trained on a *random subset* of the rows, sampled **with replacement**. Mathematically, about 63% of the original data is used for each tree, leaving 37% as Out-Of-Bag (OOB) data.
 
 ### B. Feature Randomness (Column Sampling)
-At *every single node split*, the tree is not allowed to search all `n` features for the best split. It is mathematically restricted to a random subset of features (typically `sqrt(n)`). 
+At *every single node split*, the tree is not allowed to search all `n` features for the best split. It is mathematically restricted to a random subset of features (typically `sqrt(n)`).
 This forces the forest to explore suboptimal paths, explicitly un-correlating the trees.
 
 ## 2. Why it Works (The Wisdom of Crowds)
-If a single tree has a 70% chance of being correct, the probability of the majority of 100 un-correlated trees being wrong mathematically approaches zero. 
+If a single tree has a 70% chance of being correct, the probability of the majority of 100 un-correlated trees being wrong mathematically approaches zero.
 By averaging the predictions, the **Bias** remains the same as a single tree, but the **Variance** is geometrically reduced.
 
 ## 3. Out-Of-Bag (OOB) Error
 Because each tree only saw ~63% of the data during training, it can instantly be tested on the remaining 37% (the OOB data). By averaging these results, a Random Forest mathematically calculates its own validation score during training, eliminating the strict need for a separate validation holdout set.
 
+
 <Callout icon="tip" title="Feature Importance">
+
+
 Random Forests natively calculate Feature Importance. By calculating how much the Gini Impurity decreases every time a specific feature is chosen for a split across all 100 trees, the algorithm provides a highly accurate mathematical ranking of which features are driving the predictions.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,23 +4,30 @@ description: The foundational optimization algorithm used to minimize the loss f
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gradient Descent">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Gradient Descent">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Gradient Descent is a first-order iterative optimization algorithm for finding a local minimum of a differentiable function. In the context of Deep Learning, it is the mechanism that actually updates the network\'s weights based on the gradients computed by Backpropagation.
 
+
 <Callout icon="info" title="The Mountain Analogy">
+
+
   Imagine you are blindfolded on a rugged mountain and need to reach the lowest valley (minimum error). You feel the slope of the ground beneath your feet (the gradient). You take a step in the steepest downward direction. You repeat this until the ground is flat. That is Gradient Descent.
+
+
 </Callout>
+
 
 ## Variants
 
-<ComparisonTable 
-  headers={['Variant', 'Mechanism', 'Pros & Cons']}
-  rows={[
-    ['Batch Gradient Descent', 'Calculates the gradient over the ENTIRE training dataset before taking a single step.', 'Guarantees convergence to the global minimum (for convex functions), but is computationally impossible for massive datasets.'],
-    ['Stochastic Gradient Descent (SGD)', 'Calculates the gradient and updates weights for a SINGLE randomly chosen data point at a time.', 'Extremely fast and memory efficient, but the path to the minimum is highly chaotic and noisy.'],
-    ['Mini-Batch Gradient Descent', 'The industry standard. Calculates the gradient over a small batch (e.g., 32 or 64 samples) before updating.', 'The perfect middle ground. Exploits GPU vectorization for speed while maintaining a stable path to the minimum.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Variant', 'Mechanism', 'Pros & Cons']} rows={[ ['Batch Gradient Descent', 'Calculates the gradient over the ENTIRE training dataset before taking a single step.', 'Guarantees convergence to the global minimum (for convex functions), but is computationally impossible for massive datasets.'], ['Stochastic Gradient Descent (SGD)', 'Calculates the gradient and updates weights for a SINGLE randomly chosen data point at a time.', 'Extremely fast and memory efficient, but the path to the minimum is highly chaotic and noisy.'], ['Mini-Batch Gradient Descent', 'The industry standard. Calculates the gradient over a small batch (e.g., 32 or 64 samples) before updating.', 'The perfect middle ground. Exploits GPU vectorization for speed while maintaining a stable path to the minimum.'] ]} />
+
+

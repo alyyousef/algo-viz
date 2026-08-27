@@ -1,8 +1,26 @@
+---
+title: Prompt Versioning
+description: The LLMOps discipline of treating natural language prompts as executable code, enforcing strict version control and regression testing to prevent catastrophic failure in Generative AI systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prompt versioning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Prompt Versioning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In LLMOps, the Prompt is the Source Code. Changing one word in a 500-word System Prompt can mathematically alter the entire probability distribution of the LLM, breaking the application.
 
-</ConceptTemplate>
+## 1. Prompts as Code
+You cannot hardcode prompts in Python strings.
+Modern LLMOps platforms (like LangSmith or Helicone) decouple the Prompt from the Code. The Prompt is stored in a centralized, version-controlled repository (e.g., `SystemPrompt-v4`).
+The Python application calls the API: *"Fetch the latest production prompt, inject the user's variables, and send it to GPT-4."* This allows non-technical Prompt Engineers to update the prompt without requiring a full Kubernetes deployment of the backend.
+
+## 2. A/B Testing and Regression
+Because Prompts are mathematical instructions, you must test them.
+If you update a prompt to `v5`, you do not deploy it immediately. The LLMOps platform runs a **Regression Test**. It takes 1,000 historical user inputs, mathematically runs them through the `v4` prompt and the `v5` prompt side-by-side, and uses an LLM-as-a-Judge to grade the differences. If `v5` scores lower on factual accuracy, the version is mathematically blocked from production.
+

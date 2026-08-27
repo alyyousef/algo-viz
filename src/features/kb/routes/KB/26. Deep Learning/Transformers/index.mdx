@@ -4,25 +4,32 @@ description: The architecture that powers LLMs, replacing recurrence with parall
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Transformers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Transformers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Introduced by Google researchers in the seminal 2017 paper *"Attention Is All You Need"*, the Transformer architecture completely discarded the sequential nature of RNNs. Instead, it processes all tokens in a sequence simultaneously using **Self-Attention mechanisms**.
 
 This architecture powers ChatGPT (Generative Pre-trained Transformer), Claude, and essentially all state-of-the-art AI systems today.
 
+
 <Callout icon="success" title="The Hardware Advantage">
+
+
   Because RNNs are sequential, you cannot compute step 5 until you finish step 4. This made them terrible for GPUs. Transformers process the entire sequence in parallel via massive matrix multiplications, which is exactly what modern GPUs (like Nvidia H100s) are built to do at astronomical speeds.
+
+
 </Callout>
+
 
 ## Core Innovations
 
-<ComparisonTable 
-  headers={['Innovation', 'Description']}
-  rows={[
-    ['Self-Attention', 'Allows each word in a sequence to mathematically "look at" every other word to gather context. For example, understanding that "bank" means a river bank versus a financial bank based on the surrounding words.'],
-    ['Positional Encoding', 'Because the network ingests all words simultaneously, it has no concept of order. Positional encodings mathematically inject sine/cosine waves into the word embeddings so the network knows the position of each word.'],
-    ['Multi-Head Attention', 'Running the self-attention mechanism multiple times in parallel, allowing the network to simultaneously focus on different types of relationships (e.g., grammar vs semantics).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Innovation', 'Description']} rows={[ ['Self-Attention', 'Allows each word in a sequence to mathematically "look at" every other word to gather context. For example, understanding that "bank" means a river bank versus a financial bank based on the surrounding words.'], ['Positional Encoding', 'Because the network ingests all words simultaneously, it has no concept of order. Positional encodings mathematically inject sine/cosine waves into the word embeddings so the network knows the position of each word.'], ['Multi-Head Attention', 'Running the self-attention mechanism multiple times in parallel, allowing the network to simultaneously focus on different types of relationships (e.g., grammar vs semantics).'] ]} />
+
+

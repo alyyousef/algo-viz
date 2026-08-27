@@ -1,8 +1,26 @@
+---
+title: Text Classification
+description: The fundamental machine learning task of mathematically analyzing an unstructured document and assigning it to one or more predefined categorical labels.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Text classification">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Text Classification">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Text Classification is the foundational mathematics behind Spam Filtering, Sentiment Analysis, and Topic Routing (e.g., automatically sending customer support emails to the correct department).
 
-</ConceptTemplate>
+## 1. Feature Extraction
+A Neural Network cannot mathematically process the string "Buy cheap pills now!"
+The text must be mathematically vectorized. Traditionally, this was done using Bag-of-Words or TF-IDF. Today, it is done by passing the text through an Embedding model (like BERT), which mathematically converts the entire paragraph into a dense 768-dimensional float vector that captures the semantic meaning of the text.
+
+## 2. The Classifier Model
+Once the text is a mathematical vector, it is passed into a Classifier algorithm.
+- **Naive Bayes**: A mathematically lightweight statistical algorithm based on Bayes' Theorem. It calculates: "Given that the word 'pills' is in this email, what is the mathematical probability that this email belongs to the 'Spam' category?"
+- **Deep Learning**: The 768-dimensional vector is passed into a Feed-Forward Neural Network, terminating in a **Softmax** layer. The Softmax layer mathematically forces the output probabilities across all categories (e.g., Tech, Sports, Politics) to sum to exactly 1.0 (100%), allowing the system to confidently predict the most likely label.
+

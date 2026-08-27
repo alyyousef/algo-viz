@@ -1,8 +1,28 @@
+---
+title: Plug-in Architecture
+description: An extensible architectural pattern where a core system is mathematically designed to allow external, uncompiled modules (plugins) to be dynamically loaded at runtime to add new features without altering the core executable.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Plug-in architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Plug-in Architecture"
+  subtitle="Runtime Mathematical Extension"
+  tags={['Architecture', 'Extensibility', 'Design Patterns', 'Microkernel']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Also known as the **Microkernel Architecture**, this pattern is used by systems like VS Code, Eclipse, or web browsers, where the creators cannot mathematically anticipate every feature the users will ever want.
 
-</ConceptTemplate>
+## 1. The Core System
+The core application (the Microkernel) contains only the absolute minimum mathematical logic required to run (e.g., rendering a blank window and managing memory). It also publishes a strict, mathematically defined **Extension API** (a set of interfaces).
+
+## 2. Dynamic Loading
+A third-party developer writes a Plugin (a separate DLL or JS file) that conforms perfectly to the Extension API.
+When the user installs the Plugin, the core system uses Reflection or dynamic linking to mathematically load the new code into RAM while the application is running. This perfectly fulfills the Open-Closed Principle: the core system is completely closed to modification, but infinitely open to extension by anyone in the world.
+

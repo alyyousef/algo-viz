@@ -1,8 +1,32 @@
+---
+title: Named Entity Recognition (NER)
+description: A sequence-labeling algorithm that mathematically scans a block of text and categorizes specific nouns into predefined classes like People, Organizations, and Locations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Named entity recognition (NER)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Named Entity Recognition">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you feed a 500-page legal contract into a computer, it just sees 10 million meaningless ASCII characters. NER is the mathematical flashlight that highlights the important data.
 
-</ConceptTemplate>
+## 1. Sequence Labeling (BIO Tagging)
+NER is mathematically modeled as a Token Classification problem.
+The sentence is split into words (Tokens). The Neural Network must assign a mathematical label to every single word.
+It uses the BIO format (Begin, Inside, Outside).
+For "Tim Cook is the CEO of Apple Inc":
+- Tim: `B-PER` (Beginning of a Person)
+- Cook: `I-PER` (Inside a Person)
+- is the CEO of: `O` (Outside any entity)
+- Apple: `B-ORG` (Beginning of an Organization)
+- Inc: `I-ORG` (Inside an Organization)
+
+## 2. Context is Everything
+A simple dictionary lookup cannot solve NER. If the algorithm sees the word "Apple," is it a fruit (`O`) or a corporation (`B-ORG`)?
+Modern NER uses bi-directional mathematical models (like BERT or Bi-LSTMs). The algorithm physically reads the words *before* "Apple" and the words *after* "Apple" simultaneously. By mathematically processing the surrounding context, the model can accurately deduce whether the entity is a piece of fruit or a trillion-dollar tech company.
+

@@ -4,18 +4,30 @@ description: A computer algorithm that generates a one-time password (OTP) that 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Time-based One-Time Password (TOTP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Time-based One-Time Password (TOTP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-SMS (Text Message) based MFA is biologically flawed because hackers can execute "SIM Swapping" attacks to hijack your phone number. 
+SMS (Text Message) based MFA is biologically flawed because hackers can execute "SIM Swapping" attacks to hijack your phone number.
 
 The mathematical solution is **TOTP** (used by Google Authenticator and Authy).
 
+
 <Callout icon="success" title="The Mathematical Seed">
+
+
   When you enable TOTP, the server shows you a QR Code. This QR code contains a cryptographic **Secret Seed**. Your phone's authenticator app scans and saves this seed.
-  
-  Every 30 seconds, both your phone AND the server mathematically combine the Secret Seed with the **current Unix Timestamp**, run it through an HMAC-SHA1 hashing algorithm, and generate a 6-digit number (e.g., `482 194`). 
-  
+
+  Every 30 seconds, both your phone AND the server mathematically combine the Secret Seed with the **current Unix Timestamp**, run it through an HMAC-SHA1 hashing algorithm, and generate a 6-digit number (e.g., `482 194`).
+
   Because the math is synchronized by the clock, your phone generates the exact same number as the server *without ever connecting to the internet*. It is mathematically unhackable via SIM swapping.
+
+
 </Callout>
 
-</ConceptTemplate>
+

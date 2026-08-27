@@ -1,8 +1,30 @@
+---
+title: Randomized Algorithms
+description: "Algorithms that mathematically utilize a degree of randomness as part of their logic to reduce time or space complexity, deliberately breaking pathological worst-case inputs."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Randomized algorithms">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Randomized Algorithms"
+  subtitle="Breaking the Worst Case"
+  tags={['Algorithms', 'Techniques', 'Randomization', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In deterministic algorithms, a hacker can mathematically analyze the source code, find the absolute worst-case input, and send it to your server to cause a catastrophic Denial of Service (DoS) attack.
 
-</ConceptTemplate>
+## 1. Breaking the Hacker's Math
+If you use standard Quicksort (which always picks the last element as the pivot), a hacker can send an already-sorted list. The math forces Quicksort into its O(N²) worst-case scenario, crashing the server.
+By making the algorithm **Randomized** (e.g., Quicksort picking a randomly generated index for the pivot), you mathematically destroy the hacker's ability to predict the system. The worst-case scenario still mathematically exists, but the probability of hitting it drops to practically zero.
+
+## 2. Hashing and Prime Testing
+Randomization is deeply embedded in computer science:
+- **Hash Tables**: Many hash functions mathematically use random seeds to prevent hash-collision DoS attacks.
+- **Miller-Rabin Primality Test**: Determining if a 100-digit number is prime deterministically takes too long. The Miller-Rabin test uses random numbers to mathematically *guess* if it is prime. By running the random test 40 times, the mathematical probability of it being wrong becomes less than the probability of the computer being struck by a cosmic ray.
+

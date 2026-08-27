@@ -4,14 +4,26 @@ description: A type of layer-2 scaling solution that assumes transactions are va
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Optimistic Rollups">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Optimistic Rollups">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Optimistic Rollup** (like Arbitrum or Optimism) is a specific mathematical implementation of a Layer 2.
 
+
 <Callout icon="tip" title="Innocent Until Proven Guilty">
+
+
   The Rollup mathematically executes 10,000 transactions off-chain and submits the final state to Ethereum.
-  
+
   It is called "Optimistic" because it mathematically *assumes* the transactions are valid. It does not provide cryptographic proof upfront. However, there is a 7-day "Challenge Period". If a biological validator catches a fraudulent transaction, they can mathematically submit a "Fraud Proof" to Ethereum. The Rollup is rolled back, and the malicious actor's financial stake is mathematically slashed.
+
+
 </Callout>
 
-</ConceptTemplate>
+

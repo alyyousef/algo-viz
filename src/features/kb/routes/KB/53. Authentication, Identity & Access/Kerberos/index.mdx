@@ -4,16 +4,28 @@ description: A computer-network authentication protocol that works on the basis 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kerberos">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kerberos">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Invented at MIT in the 1980s, **Kerberos** is the mathematical cryptography protocol that actually powers Microsoft Active Directory. 
+Invented at MIT in the 1980s, **Kerberos** is the mathematical cryptography protocol that actually powers Microsoft Active Directory.
 
 It was named after the three-headed dog from Greek mythology because the protocol mathematically requires exactly three biological entities to function securely: the Client, the Server, and the Key Distribution Center (KDC).
 
+
 <Callout icon="success" title="The Ticket-Granting Ticket (TGT)">
-  When you log into your Windows laptop in the morning, you don't actually authenticate with the File Server. 
-  
+
+
+  When you log into your Windows laptop in the morning, you don't actually authenticate with the File Server.
+
   You authenticate with the KDC. The KDC mathematically issues you a "Ticket-Granting Ticket" (TGT). For the rest of the day, whenever you try to access a printer or a shared drive, your laptop silently presents this cryptographic Ticket. Because passwords are mathematically never transmitted over the network after the initial login, Kerberos is biologically immune to packet-sniffing replay attacks.
+
+
 </Callout>
 
-</ConceptTemplate>
+

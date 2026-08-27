@@ -1,8 +1,29 @@
+---
+title: Service Mesh
+description: A dedicated, mathematical infrastructure layer added to a microservices architecture that handles secure, reliable, and observable service-to-service communication via a network of proxy sidecars.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Service mesh">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Service Mesh"
+  subtitle="The Microservices Network Layer"
+  tags={['Architecture', 'Microservices', 'Networking', 'Security']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a monolithic application, functions call other functions in memory (which takes nanoseconds and never fails). In microservices, services call each other over the network, which is mathematically unreliable, slow, and insecure.
 
-</ConceptTemplate>
+## 1. Decoupling the Network
+If Service A calls Service B and the network times out, Service A needs a retry logic algorithm. If the developer hardcodes that algorithm into Service A (using Java or Node.js), the application becomes bloated.
+A **Service Mesh** (like Istio or Linkerd) extracts this mathematical logic entirely. It deploys a microscopic Proxy (a sidecar) next to every single container. The application simply sends a dumb HTTP request. The Proxy intercepts it, mathematically evaluates retry logic, circuit breaking, and load balancing, and routes it to the destination.
+
+## 2. Zero-Trust Security (mTLS)
+The greatest mathematical advantage of a Service Mesh is **Mutual TLS (mTLS)**.
+When Service A's proxy connects to Service B's proxy, the proxies mathematically authenticate each other using cryptographic certificates and encrypt 100% of the traffic. This means even if a hacker penetrates the internal Kubernetes network and attempts a packet-sniffing attack, they will mathematically only see unreadable encrypted ciphertext.
+

@@ -1,8 +1,41 @@
+---
+title: Method Overriding
+description: A fundamental feature of object-oriented polymorphism where a child class provides a completely new, mathematically distinct implementation for a method that is already defined in its parent class.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Method overriding">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Method Overriding"
+  subtitle="Runtime Mathematical Polymorphism"
+  tags={['OOP', 'Polymorphism', 'Inheritance', 'Java']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a `Vehicle` parent class possesses a `startEngine()` method, a `Tesla` child class cannot use the default implementation, because an electric motor mathematically starts differently than a combustion engine.
 
-</ConceptTemplate>
+## 1. The @Override Annotation
+The child class mathematically intercepts the method call by defining a method with the exact same Signature (Name + Parameters) as the parent.
+```java
+public class Tesla extends Vehicle {
+    @Override
+    public void startEngine() {
+        System.out.println("Activating Battery Pack silently.");
+    }
+}
+```
+The `@Override` annotation is critical. It mathematically forces the compiler to verify that the parent class *actually* possesses a `startEngine()` method. If the parent method is renamed or deleted, the compiler will instantly fail the build, preventing silent bugs.
+
+## 2. Dynamic Dispatch (Late Binding)
+Method Overriding relies on **Dynamic Dispatch** at runtime.
+```java
+Vehicle myCar = new Tesla();
+myCar.startEngine(); // Which method executes?
+```
+The variable is typed as `Vehicle`, but the actual object in RAM is a `Tesla`. The CPU cannot determine which method to call at compile-time. At runtime, the CPU mathematically inspects the actual object in memory via the **vtable** (virtual method table) and dynamically routes the execution to the Tesla's specific implementation.
+

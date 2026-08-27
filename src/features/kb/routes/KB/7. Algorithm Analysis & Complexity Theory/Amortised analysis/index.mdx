@@ -1,8 +1,42 @@
+---
+title: Amortised Analysis
+description: "A mathematical framework for evaluating the time complexity of a sequence of operations, proving that an occasional incredibly slow operation is mathematically negligible if preceded by many fast ones."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Amortised analysis">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Amortised Analysis"
+  subtitle="The Economics of Algorithms"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Data Structures']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Worst-case analysis (Big O) can sometimes be mathematically pessimistic and misleading. Amortized Analysis provides a much more realistic mathematical guarantee by averaging the cost of operations over a long sequence.
 
-</ConceptTemplate>
+## 1. The Dynamic Array Problem
+Consider a Dynamic Array (Python List, C++ `std::vector`). When you append an item, it usually takes $O(1)$ time.
+However, when the array mathematically fills up, it must allocate a brand new array double the size, and copy every single element over. This single operation takes **$O(N)$** time.
+If we only use Worst-Case analysis, we must say appending to a vector is $O(N)$, which implies that inserting $N$ items takes $O(N^2)$ time. This is mathematically false.
+
+## 2. The Mathematical Proof (Aggregate Method)
+If we start with an array of size 1 and insert $N$ items:
+- Most insertions cost 1 operation.
+- The 2nd, 4th, 8th, 16th... insertions trigger a resize.
+- The total cost of resizing over $N$ insertions is $1 + 2 + 4 + 8 + ... + N$.
+- Mathematically, a geometric series $1 + 2 + 4 + ... + N$ evaluates strictly to $2N - 1$.
+- Therefore, the total time to insert $N$ elements is $N$ (for the normal insertions) $+ 2N$ (for the resizing) $= 3N$.
+- $3N$ operations divided by $N$ insertions $= 3$.
+- The **Amortized Cost** per insertion is exactly **$O(1)$**.
+
+## 3. Methods of Analysis
+Computer scientists use three distinct mathematical techniques to prove amortized bounds:
+1. **Aggregate Analysis**: Summing the total cost of $N$ operations and dividing by $N$ (shown above).
+2. **The Accounting (Banker's) Method**: We mathematically "overcharge" the fast $O(1)$ operations, storing the extra time as "credits." When the expensive $O(N)$ resize happens, we pay for it using the banked credits, proving the system never goes into debt.
+3. **The Potential (Physicist's) Method**: We define a mathematical potential energy function $\Phi$ for the data structure. Fast operations increase the potential energy, and expensive operations release that energy to pay for themselves.
+

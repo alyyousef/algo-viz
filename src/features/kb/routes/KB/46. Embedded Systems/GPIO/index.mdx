@@ -4,17 +4,30 @@ description: An uncommitted digital signal pin on an integrated circuit or elect
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GPIO (General-Purpose Input/Output)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GPIO (General-Purpose Input/Output)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**GPIO** is the absolute most fundamental way a computer physically interacts with the real world. 
+**GPIO** is the absolute most fundamental way a computer physically interacts with the real world.
 
 A GPIO pin is literally a piece of copper wire sticking out of the microcontroller. The software engineer can mathematically configure that pin to act as an **Input** (reading electricity) or an **Output** (generating electricity).
 
+
 <Callout icon="info" title="The Digital Limitation">
-  GPIO pins are strictly **Digital**. They only mathematically understand binary: `0` or `1`. 
+
+
+  GPIO pins are strictly **Digital**. They only mathematically understand binary: `0` or `1`.
   - On a 3.3V system, Outputting a `1` physically sends 3.3 Volts down the wire. Outputting a `0` connects the wire to Ground (0 Volts).
   - Reading an Input works the same way: if the external wire has 3.3V, the CPU mathematically reads it as a `1`.
+
+
 </Callout>
+
 
 ## Real-World Applications
 
@@ -23,4 +36,3 @@ A GPIO pin is literally a piece of copper wire sticking out of the microcontroll
 
 By writing a `1` and `0` to a GPIO pin thousands of times a second (Bit-Banging), an engineer can mathematically simulate complex communication protocols purely in software.
 
-</ConceptTemplate>

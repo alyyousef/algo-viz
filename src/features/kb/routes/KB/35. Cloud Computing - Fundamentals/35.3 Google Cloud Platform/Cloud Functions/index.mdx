@@ -1,0 +1,26 @@
+---
+title: Google Cloud Functions
+description: Google's event-driven, serverless compute platform that allows developers to run mathematically isolated, single-purpose blocks of code in response to cloud events.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Functions"
+  subtitle="Serverless Event-Driven Code"
+  tags={['GCP', 'Serverless', 'Compute', 'Functions']}
+>
+
+Cloud Functions are GCP's direct equivalent to AWS Lambda. Instead of provisioning an entire Virtual Machine to run a 50-line Node.js script, you deploy the raw code directly to the cloud, and Google mathematically handles the execution.
+
+## 1. Event Triggers
+A Cloud Function is mathematically useless until an event triggers it.
+- **HTTP Triggers**: The function is assigned a public URL. When a user hits the URL, the code executes.
+- **Background Triggers**: The function is physically wired into the GCP ecosystem. You can mathematically decree: *"Whenever a new file is uploaded to this specific Cloud Storage Bucket, instantly boot up my Python function, pass the file metadata as a JSON argument, and execute."*
+This allows for highly decoupled, reactive architectures. The function scales from 0 to 1,000 parallel executions instantly if 1,000 files are uploaded simultaneously.
+
+## 2. Generations and Architecture
+GCP offers two mathematical generations of Functions:
+- **1st Gen**: The original architecture. Highly restricted, but extremely fast cold-starts.
+- **2nd Gen (Cloud Run under the hood)**: 2nd Gen Functions are mathematically compiled into Docker containers and run on Google's Cloud Run infrastructure. This provides massive benefits: longer execution timeouts (up to 60 minutes), larger instances (up to 16GB of RAM), and native integration with Eventarc for complex event routing, blurring the line between simple Functions and complex containerized microservices.
+
+</TechnologyTemplate>

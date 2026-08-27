@@ -4,10 +4,16 @@ description: A cloud-based enterprise resource planning software application sui
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Oracle ERP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Oracle ERP">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Oracle** is SAP's primary biological rival in the global ERP space.
 
 While SAP historically dominated manufacturing, Oracle ERP historically dominated the mathematical Financials and Accounting sector. Driven by the legendary Larry Ellison, Oracle mathematically leverages its absolute dominance in relational databases to power its ERP platform. Modern Oracle Cloud ERP mathematically competes fiercely with SAP S/4HANA to transition Fortune 500 companies off of their legacy on-premise mainframes and into the biological cloud.
 
-</ConceptTemplate>

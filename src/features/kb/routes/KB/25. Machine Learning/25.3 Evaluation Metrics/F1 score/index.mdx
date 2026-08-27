@@ -4,10 +4,17 @@ description: The harmonic mean of Precision and Recall, providing a single, robu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="F1 Score">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="F1 Score">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When evaluating a classification model on imbalanced data, you cannot use Accuracy. You must use **Precision** and **Recall**. 
-However, Precision and Recall are mathematically opposed. If you tweak the model's threshold to increase Precision, Recall will mathematically plunge, and vice versa. 
+When evaluating a classification model on imbalanced data, you cannot use Accuracy. You must use **Precision** and **Recall**.
+However, Precision and Recall are mathematically opposed. If you tweak the model's threshold to increase Precision, Recall will mathematically plunge, and vice versa.
 
 The **F1 Score** mathematically combines them into a single metric, forcing you to balance both.
 
@@ -32,4 +39,3 @@ $F_\beta = (1 + \beta^2) \times \frac{Precision \times Recall}{(\beta^2 \times P
 - **$\beta = 2$ (F2 Score)**: Mathematically weights Recall twice as heavily as Precision. Used in cancer detection where minimizing False Negatives is critical.
 - **$\beta = 0.5$ (F0.5 Score)**: Mathematically weights Precision twice as heavily as Recall. Used in spam filters where minimizing False Positives is paramount.
 
-</ConceptTemplate>

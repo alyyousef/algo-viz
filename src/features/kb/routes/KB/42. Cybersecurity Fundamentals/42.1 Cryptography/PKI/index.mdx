@@ -5,9 +5,16 @@ description: The global hierarchical system of Certificate Authorities, digital 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="PKI (Public Key Infrastructure)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PKI (Public Key Infrastructure)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Asymmetric encryption solves the problem of securely sending a secret over the internet. But it introduces a terrifying new vulnerability: **The Trust Problem**. 
+Asymmetric encryption solves the problem of securely sending a secret over the internet. But it introduces a terrifying new vulnerability: **The Trust Problem**.
 If you download a public key that claims to belong to "Bank of America", how do you mathematically know a hacker sitting in a coffee shop didn't just generate that key five minutes ago and put the Bank's name on it?
 
 **PKI (Public Key Infrastructure)** is the global administrative and cryptographic framework that binds Public Keys to actual, legally verified human identities and corporations using Digital Certificates.
@@ -34,8 +41,13 @@ When you type `https://bank.com`:
 3. Your browser checks the signature on the Intermediate Certificate using the Root CA's Public Key (which is hardcoded in your computer).
 4. Because the math holds up perfectly down the entire chain, the green padlock appears, proving you are not talking to a hacker.
 
+
 <Callout icon="error" title="Certificate Revocation">
+
+
   If a company's server is hacked and their Private Key is stolen, the Certificate is instantly compromised. PKI uses **CRLs (Certificate Revocation Lists)** and **OCSP (Online Certificate Status Protocol)** to broadcast to all browsers globally that the certificate is void, destroying the chain of trust before users are phished.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -5,8 +5,14 @@ description: The mathematical one-way function that guarantees data integrity, t
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-
-<ConceptTemplate title="Cryptographic Hashing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cryptographic Hashing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Cryptographic Hash Function** is an essential mathematical algorithm that takes an input (or 'message') of absolute arbitrary length (from a 1-character password to a 50 Terabyte database) and mathematically squashes it into a fixed-size string of bytes (the 'hash' or 'digest').
 
@@ -21,22 +27,21 @@ For a hash function to be considered cryptographically secure, it must mathemati
 4. **Collision Resistance**: It must be mathematically infeasible to find two completely different inputs that result in the exact same output hash.
 
 ## 2. The Avalanche Effect
-A secure hash function must exhibit the **Avalanche Effect**. 
+A secure hash function must exhibit the **Avalanche Effect**.
 If you mathematically alter a single bit of a 1 Terabyte file, the resulting hash should be wildly, completely different from the original hash. You cannot use the hash to deduce "how close" two files are.
 
 ## 3. Real-World Applications
 
-<ComparisonTable 
-  headers={['Application', 'How Hashing is Used']} 
-  rows={[
-    ['Password Storage', 'Databases NEVER store plaintext passwords. They store the Hash of the password. When you log in, the system hashes your input and mathematically compares the two hashes.'],
-    ['Data Integrity', 'When you download a Linux ISO, the website provides a SHA-256 hash. You hash the downloaded file on your CPU. If the hashes match exactly, the file was not corrupted or mathematically altered by a hacker.'],
-    ['Blockchain (Bitcoin)', 'Bitcoin relies entirely on SHA-256. Miners mathematically burn electricity to find a hash output that starts with a specific number of zeroes (Proof of Work).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Application', 'How Hashing is Used']} rows={[ ['Password Storage', 'Databases NEVER store plaintext passwords. They store the Hash of the password. When you log in, the system hashes your input and mathematically compares the two hashes.'], ['Data Integrity', 'When you download a Linux ISO, the website provides a SHA-256 hash. You hash the downloaded file on your CPU. If the hashes match exactly, the file was not corrupted or mathematically altered by a hacker.'], ['Blockchain (Bitcoin)', 'Bitcoin relies entirely on SHA-256. Miners mathematically burn electricity to find a hash output that starts with a specific number of zeroes (Proof of Work).'] ]} />
+
 
 <Callout icon="warning" title="MD5 and SHA-1 are Broken">
+
+
 Historically, developers used MD5 or SHA-1 for hashing. Both are now mathematically broken. Hackers can execute **Collision Attacks**, mathematically engineering a malicious virus file that outputs the exact same MD5 hash as a legitimate software update. Never use them.
+
+
 </Callout>
 
-</ConceptTemplate>
+

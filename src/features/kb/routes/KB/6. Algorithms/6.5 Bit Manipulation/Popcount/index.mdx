@@ -1,8 +1,32 @@
+---
+title: Popcount (Population Count)
+description: "The mathematical operation of counting the number of set bits (1s) in a binary integer, traditionally requiring O(bits) time but optimized to O(1) in modern CPUs using dedicated hardware instructions."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Popcount">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Popcount"
+  subtitle="Counting Set Bits"
+  tags={['Algorithms', 'Bit Manipulation', 'Hardware', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Popcount** (short for Population Count, also known as Hamming Weight) calculates exactly how many '1' bits exist in the binary representation of a number.
+For example, the integer 29 is `11101` in binary. Its popcount is **4**.
 
-</ConceptTemplate>
+## 1. Algorithmic Approaches
+Historically, engineers had to calculate popcount using loops:
+- **Naive Shift (O(B))**: Shift the number right B times (where B is bit width, e.g., 32), and check the lowest bit.
+- **Brian Kernighan's Algorithm (O(K))**: Mathematically performs `n = n & (n - 1)`. This instantly turns OFF the right-most 1-bit. The algorithm loops exactly K times (where K is the number of set bits). Much faster for sparse integers.
+- **SWAR (SIMD Within A Register) (O(1))**: A terrifyingly complex mathematical trick using bitwise shifts and magic hex constants (like `0x55555555`) to add adjacent bits together in parallel, computing the popcount of a 32-bit integer in constant time without a single loop or branch.
+
+## 2. Hardware-Level Implementation
+Because Popcount is fundamentally critical in cryptography (computing Hamming Distance) and chess engines (calculating pieces on a bitboard), modern Intel and AMD CPUs implemented a dedicated hardware instruction: **POPCNT**.
+In C++, calling `__builtin_popcount(x)` bypasses software entirely, executing directly on the silicon in a single CPU clock cycle, achieving absolute mathematical optimality.
+

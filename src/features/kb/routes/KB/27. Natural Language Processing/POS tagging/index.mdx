@@ -1,8 +1,30 @@
+---
+title: Part-of-Speech (POS) Tagging
+description: The foundational NLP task of mathematically assigning a grammatical category (Noun, Verb, Adjective) to every single word in a sentence based on its contextual meaning.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="POS tagging">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Part-of-Speech Tagging">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a computer sees the word "book," is it a Noun (a physical object) or a Verb (to reserve a flight)? POS Tagging provides the mathematical context required for higher-level AI.
 
-</ConceptTemplate>
+## 1. The Sequence Labeling Problem
+Like Named Entity Recognition (NER), POS Tagging is mathematically modeled as a Sequence Labeling problem.
+The algorithm reads a sentence and outputs a parallel mathematical array of tags (usually based on the Penn Treebank Tagset).
+Sentence: "I book the book."
+Tags: `[PRP, VBP, DT, NN]` (Pronoun, Verb, Determiner, Noun).
+
+## 2. Hidden Markov Models (HMM)
+Before Neural Networks, POS Tagging was dominated by Hidden Markov Models (HMMs).
+An HMM mathematically calculates two probabilities:
+1. **Emission Probability**: What is the probability that the mathematical tag "Noun" emits the physical word "book"?
+2. **Transition Probability**: What is the probability that a "Noun" tag immediately follows a "Determiner" (the) tag?
+Using the Viterbi Algorithm, the system mathematically calculates the single most probable sequence of tags for the entire sentence, successfully deciphering that the second "book" is a noun because it follows "the." Modern systems use Bi-directional LSTMs or Transformers to achieve near-perfect mathematical accuracy on this task.
+

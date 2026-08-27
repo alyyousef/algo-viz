@@ -1,0 +1,29 @@
+---
+title: Google Cloud Logging
+description: A highly scalable, centralized log management service that mathematically aggregates, stores, and searches telemetry data from all GCP resources and custom applications in real-time.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Logging"
+  subtitle="Centralized Telemetry Storage"
+  tags={['GCP', 'Monitoring', 'Logs', 'Observability']}
+>
+
+If a microservice running on a GKE Kubernetes cluster crashes, the Pod is instantly destroyed. If the logs were stored locally on that Pod, the forensic data is mathematically erased forever. Cloud Logging prevents this by streaming all logs to a permanent, central repository.
+
+## 1. The Log Router and Sinks
+Cloud Logging ingests terabytes of data per second. Storing all of it forever is mathematically bankrupting.
+To solve this, Cloud Logging uses the **Log Router**. Every single log entry mathematically passes through the Router. You create **Sinks** with specific mathematical filters to route the data:
+- *"Filter: Severity == ERROR. Route to: BigQuery for long-term SQL analysis."*
+- *"Filter: Resource == AuditLog. Route to: Cloud Storage for 7-year legal compliance."*
+- *"Filter: Severity == DEBUG. Route to: /dev/null (Discard it to save money)."*
+This mathematical routing allows enterprises to maintain total observability without paying exorbitant storage fees.
+
+## 2. Advanced Log Analytics
+Once the logs are stored, engineers must query them.
+Cloud Logging provides a powerful, specialized query language. Because logs in GCP are highly structured JSON payloads (not just flat strings), you can write strict mathematical queries:
+`resource.type="k8s_container" AND jsonPayload.latency_ms > 500 AND severity>="WARNING"`.
+This allows DevOps teams to instantly isolate the exact stack trace causing a performance degradation across a cluster of 1,000 nodes.
+
+</TechnologyTemplate>

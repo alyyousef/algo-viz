@@ -4,26 +4,34 @@ description: A software-based theoretical computer that executes programs like a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Virtual Machines (Language Level)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Virtual Machines (Language Level)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When we talk about Compilers, a **Virtual Machine (VM)** does not mean a hardware VM like VMware or VirtualBox. It refers to a **Process Virtual Machine** (like the Java Virtual Machine (JVM) or the V8 JavaScript Engine).
 
 A Process VM is a mathematically simulated CPU written in software. It has its own mathematical Instruction Set (Bytecode), its own simulated Registers or Stack, and its own simulated RAM (Garbage Collector).
 
+
 <Callout icon="success" title="Write Once, Run Anywhere">
+
+
   If you compile Java directly to x86 Machine Code, it will crash if you send it to an Apple M1 (ARM) chip. Instead, Java compiles to mathematical JVM Bytecode. As long as Apple has written a JVM for the M1 chip, the Java Bytecode will run flawlessly on it. The JVM mathematically absorbs the hardware differences.
+
+
 </Callout>
+
 
 ## Stack-Based vs. Register-Based VMs
 
 There are two primary mathematical architectures for building a Language VM:
 
-<ComparisonTable 
-  headers={['Architecture', 'How it works', 'Examples']}
-  rows={[
-    ['Stack-Based VM', 'All mathematical operations (`ADD`, `MUL`) pop operands off the top of a simulated Stack, calculate the result, and push it back on top.', 'Java Virtual Machine (JVM), WebAssembly (Wasm). Smaller bytecode size, easier to write compilers for.'],
-    ['Register-Based VM', 'Simulates physical CPU registers. Operations explicitly declare which registers to use (e.g., `ADD R1, R2, R3`).', 'LuaJIT, Android Dalvik/ART. Requires more mathematical optimization, but executes significantly faster because it mimics physical CPUs.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Architecture', 'How it works', 'Examples']} rows={[ ['Stack-Based VM', 'All mathematical operations (`ADD`, `MUL`) pop operands off the top of a simulated Stack, calculate the result, and push it back on top.', 'Java Virtual Machine (JVM), WebAssembly (Wasm). Smaller bytecode size, easier to write compilers for.'], ['Register-Based VM', 'Simulates physical CPU registers. Operations explicitly declare which registers to use (e.g., `ADD R1, R2, R3`).', 'LuaJIT, Android Dalvik/ART. Requires more mathematical optimization, but executes significantly faster because it mimics physical CPUs.'] ]} />
+
+

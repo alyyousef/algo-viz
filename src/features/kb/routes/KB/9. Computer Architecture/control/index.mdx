@@ -4,15 +4,28 @@ description: Disruptions in a pipelined CPU caused by branching instructions (if
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Control Hazards">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Control Hazards">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Data Hazards deal with data conflicts, **Control Hazards** (or Branch Hazards) are caused by the flow of the program itself. They occur specifically when the CPU encounters a conditional jump (like an `if/else` statement or a `while` loop).
 
+
 <Callout icon="warning" title="The Pipeline's Blind Spot">
-  In a pipelined processor, the CPU is always fetching the *next* instruction before it has finished executing the *current* instruction. 
-  But what if the current instruction is an `if (x == 0)`? 
+
+
+  In a pipelined processor, the CPU is always fetching the *next* instruction before it has finished executing the *current* instruction.
+  But what if the current instruction is an `if (x == 0)`?
   The CPU won't know if the answer is True or False until the ALU does the math in Stage 3. What is the CPU supposed to fetch for Stage 1 and Stage 2 in the meantime?
+
+
 </Callout>
+
 
 ## The Cost of Waiting
 
@@ -20,7 +33,7 @@ If the CPU takes the safe route and simply waits (Stalling) until the branch con
 
 ## The Solution: Branch Prediction
 
-Because stalling is unacceptable, modern CPUs simply **guess**. 
+Because stalling is unacceptable, modern CPUs simply **guess**.
 
 When the CPU fetches a branch instruction, a specialized piece of hardware called the **Branch Predictor** immediately kicks in. It looks at the historical behavior of this specific `if` statement and makes an educated guess (e.g., "This loop condition has been true 99 times in a row, I bet it will be true again").
 
@@ -30,8 +43,7 @@ The CPU immediately begins fetching and executing the instructions from the gues
 
 If the guess was correct (which happens >95% of the time on modern architectures), the CPU loses zero clock cycles. The pipeline remains perfectly full.
 
-If the guess was wrong, a disaster occurs. The CPU has spent the last 3 clock cycles executing the wrong code. It must immediately throw away (flush) all the half-completed speculative instructions, reverting the CPU state, and begin fetching from the correct path. This is known as the **Branch Penalty**. 
+If the guess was wrong, a disaster occurs. The CPU has spent the last 3 clock cycles executing the wrong code. It must immediately throw away (flush) all the half-completed speculative instructions, reverting the CPU state, and begin fetching from the correct path. This is known as the **Branch Penalty**.
 
 In deep pipelines (like the 31-stage Pentium 4), a wrong guess meant flushing up to 30 instructions, which is why modern CPU architectures invest billions of transistors into making Branch Predictors as accurate as possible.
 
-</ConceptTemplate>

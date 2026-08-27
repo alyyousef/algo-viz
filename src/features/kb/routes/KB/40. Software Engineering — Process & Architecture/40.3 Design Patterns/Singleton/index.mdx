@@ -1,8 +1,39 @@
+---
+title: Singleton Pattern
+description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically restricts the instantiation of a class to one "single" instance, providing a global point of access to that instance.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Singleton">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Singleton Pattern"
+  subtitle="The Global State Object"
+  tags={['Design Patterns', 'Creational', 'GoF', 'Anti-Pattern']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an application needs exactly one connection pool to the database, or exactly one file logger, instantiating multiple `DatabasePool` objects will mathematically corrupt the data or crash the server.
 
-</ConceptTemplate>
+## 1. The Private Constructor
+The Singleton mathematically prevents multiple instantiations by making the constructor strictly `private`. The outside world literally cannot use the `new` keyword.
+Instead, the class contains a `private static` variable of itself, and a `public static getInstance()` method.
+```java
+public class Logger {
+    private static Logger instance;
+    private Logger() {} // Private!
+    public static Logger getInstance() {
+        if (instance == null) { instance = new Logger(); }
+        return instance;
+    }
+}
+```
+
+## 2. The Anti-Pattern Controversy
+While famous, Singleton is widely considered a dangerous **Anti-Pattern** in modern architecture.
+Because it provides global mathematical access (any file can call `Logger.getInstance()` anywhere), it acts exactly like a Global Variable. This creates hidden dependencies, makes automated Unit Testing extremely difficult (because state carries over between tests), and introduces catastrophic mathematical Race Conditions in multi-threaded environments if not locked perfectly. Modern systems use Dependency Injection instead.
+

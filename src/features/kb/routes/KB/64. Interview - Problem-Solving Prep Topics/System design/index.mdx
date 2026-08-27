@@ -4,10 +4,16 @@ description: The process of defining the architecture, modules, interfaces, and 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="System Design Interviews">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="System Design Interviews">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While algorithmic interviews test how you write a function, **System Design** tests how you build an entire company.
 
 You will be given a biological, ambiguous prompt: *"Design Netflix"*. You have 45 minutes to mathematically draw the architecture. You must discuss Load Balancers, API Gateways, CDN caching for the video files, and how to mathematically shard a PostgreSQL database when it hits 100 Terabytes. It tests your ability to make mathematical trade-offs between Consistency and Availability (CAP Theorem).
 
-</ConceptTemplate>

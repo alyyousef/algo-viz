@@ -4,7 +4,14 @@ description: The foundational neural network architecture invented by Google in 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Transformer Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Transformer Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before 2017, AI processed language using Recurrent Neural Networks (RNNs) and LSTMs. These models read text sequentially, one word at a time, just like a human. This meant they were incredibly slow to train, and they suffered from "catastrophic forgetting"—by the time they reached the end of a paragraph, they had forgotten the beginning.
 
@@ -14,14 +21,14 @@ In 2017, researchers at Google published the landmark paper *"Attention Is All Y
 
 When a Transformer reads a sentence like *"The bank of the river was muddy"*, it does not read left-to-right. It looks at every single word in the sentence *simultaneously*.
 
-Through the **Self-Attention Mechanism**, the model calculates mathematical relationship scores between every word and every other word. 
+Through the **Self-Attention Mechanism**, the model calculates mathematical relationship scores between every word and every other word.
 - When it analyzes the word "bank", the attention mechanism mathematically links it strongly to "river" and "muddy", instantly understanding that "bank" means the side of a river, not a financial institution.
 
 Because it processes the entire block of text all at once, it understands the deep, global context of the paragraph flawlessly, regardless of how far apart the words are.
 
 ## 2. Parallelization (The Hardware Breakthrough)
 
-Because RNNs processed word-by-word (Word 2 had to wait for Word 1 to finish), you could not speed up training by adding more GPUs. 
+Because RNNs processed word-by-word (Word 2 had to wait for Word 1 to finish), you could not speed up training by adding more GPUs.
 Because Transformers process the entire context window simultaneously, the math is entirely parallelizable. You can split the massive matrix multiplications across a cluster of 10,000 GPUs, allowing tech giants to train models on the entire internet in a matter of months. **Transformers scaled perfectly with hardware.**
 
 ## 3. Encoders vs. Decoders
@@ -32,4 +39,3 @@ The original Transformer had two halves:
 
 Modern Large Language Models (like GPT-4, Llama 3, and Claude) are almost exclusively **Decoder-only Transformers**. They are gigantic prediction engines scaled to unprecedented sizes.
 
-</ConceptTemplate>

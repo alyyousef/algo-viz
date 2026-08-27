@@ -4,7 +4,14 @@ description: The intelligent Layer 2 process where dedicated hardware forwards d
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Switching">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Switching">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the early days of networking, offices used **Hubs**. A hub was a dumb electrical repeater. If Computer A sent a file to Computer B, the hub copied the electricity and blasted it out of every single port in the building. Everyone's network card had to process the file, realize it wasn't for them, and drop it. It was incredibly slow and insecure.
 
@@ -20,8 +27,13 @@ When you plug 10 computers into a switch, it learns the layout of the network by
 
 No other computer on the network ever sees the traffic.
 
+
 <Callout icon="warning" title="MAC Flooding Attacks">
+
+
   Switches have a finite amount of RAM to store the MAC Table. Hackers can launch a "MAC Flood" attack by rapidly blasting 50,000 fake MAC addresses into the switch in 3 seconds. The switch's RAM fills up, the table crashes, and the switch enters "Fail-Open" mode—reverting into a dumb Hub. The hacker can then use Wireshark to sniff all the passwords being blasted across the network.
+
+
 </Callout>
 
-</ConceptTemplate>
+

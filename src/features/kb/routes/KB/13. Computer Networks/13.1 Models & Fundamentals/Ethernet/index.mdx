@@ -4,7 +4,14 @@ description: The undisputed global standard for wired Layer 2 networking, defini
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ethernet (IEEE 802.3)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ethernet (IEEE 802.3)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Ethernet** is not just a cable; it is a massive family of technologies standardized as **IEEE 802.3**. It dictates exactly how devices in a local area network (LAN) format data for transmission and how they negotiate access to the physical wire.
 
@@ -22,8 +29,13 @@ A standard frame consists of:
 5. **Payload (Data)**: The actual Layer 3 IP packet.
 6. **FCS (Frame Check Sequence)**: A cryptographic hash (CRC32) calculated at the end. If the cable is slightly damaged and a single bit flips during transit, the receiving computer will recalculate the hash, realize it doesn't match, and silently delete the corrupted frame.
 
+
 <Callout icon="info" title="CSMA/CD (Collision Detection)">
+
+
   In the 1990s, networks used Hubs. Only one computer could talk at a time. If two computers transmitted simultaneously, the electricity collided and destroyed the data. Ethernet used CSMA/CD to listen for collisions, tell both computers to wait a random number of milliseconds, and try again. Modern Switches have entirely eliminated collisions, rendering CSMA/CD obsolete.
+
+
 </Callout>
 
-</ConceptTemplate>
+

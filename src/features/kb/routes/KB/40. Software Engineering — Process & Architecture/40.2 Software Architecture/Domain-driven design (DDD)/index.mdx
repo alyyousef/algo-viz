@@ -1,8 +1,31 @@
+---
+title: Domain-Driven Design (DDD)
+description: A holistic software engineering philosophy introduced by Eric Evans that mathematically centers the entire architecture, naming conventions, and code structure around the core business domain and its complex logic.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Domain-driven design (DDD)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Domain-Driven Design (DDD)"
+  subtitle="Modeling Software on Business Reality"
+  tags={['Architecture', 'Design Patterns', 'Methodology', 'Enterprise']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Software often fails because engineers write code using highly technical mathematical language (e.g., `updateUserRow()`), while the business experts talk in domain language (e.g., *"Promote the user to a Premium Subscriber"*). The translation between the two mathematically guarantees bugs.
 
-</ConceptTemplate>
+## 1. The Ubiquitous Language
+DDD solves this by forcing the creation of a **Ubiquitous Language**.
+Engineers and Business Experts must agree on a strict dictionary of terms. If the business calls it a "Subscriber," the engineers are mathematically forbidden from naming the database table `users`. The code must perfectly reflect the business language. The method must be `subscriber.promoteToPremium()`, not `user.setStatus(1)`.
+
+## 2. Tactical Patterns
+To implement this cleanly, DDD provides strict mathematical architectural patterns:
+- **Entities**: Objects that have a distinct identity (e.g., a `User` with an ID).
+- **Value Objects**: Immutable objects defined only by their attributes (e.g., a `Money` object with amount and currency; if you change the amount, it is mathematically a new object).
+- **Aggregates**: A cluster of domain objects treated as a single mathematical unit for data changes, protecting absolute transactional consistency (e.g., an `Order` aggregate mathematically protects its `OrderLineItems`).
+

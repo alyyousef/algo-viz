@@ -4,9 +4,16 @@ description: The mathematical technique of modifying the Loss Function to penali
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Regularisation (L1/L2)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Regularisation (L1/L2)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Left to its own devices, a complex Machine Learning model will mathematically memorize the training data. The weights (slopes) in its mathematical equation will explode in magnitude (e.g., $y = 50,000x_1 - 49,999x_2$). This makes the model hyper-sensitive to noise. 
+Left to its own devices, a complex Machine Learning model will mathematically memorize the training data. The weights (slopes) in its mathematical equation will explode in magnitude (e.g., $y = 50,000x_1 - 49,999x_2$). This makes the model hyper-sensitive to noise.
 
 **Regularisation** prevents this by mathematically punishing the model for having large weights.
 
@@ -29,4 +36,3 @@ Elastic Net mathematically combines L1 and L2 regularisation into a single Loss 
 - **Formula**: $Loss = MSE + lambda_1 \sum |w_i| + lambda_2 \sum w_i^2$
 - **Mathematical Effect**: It gives you the best of both worlds. It drops completely useless features to exactly 0 (like L1), but if two features are highly correlated (like "Square Footage" and "Number of Rooms"), L1 would randomly drop one of them. Elastic Net (via the L2 penalty) mathematically keeps both, shrinking their weights together.
 
-</ConceptTemplate>

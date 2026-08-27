@@ -4,7 +4,7 @@ description: An adaptable authentication and authorization platform.
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Auth0"
   subtitle="Identity as a Service (IDaaS)"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Auth0_logo.svg/512px-Auth0_logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Historically, if a startup needed a login system, a junior developer would mathematically attempt to write a BCrypt hashing algorithm, inevitably introduce a vulnerability, and get the database hacked.
 
+
 <Callout icon="success" title="The Cloud Identity Abstraction">
-  With Auth0, your frontend app biologically redirects the user to `your-app.auth0.com`. 
-  
+
+
+  With Auth0, your frontend app biologically redirects the user to `your-app.auth0.com`.
+
   The user enters their password securely on Auth0's mathematically hardened servers. Auth0 verifies the password, generates a signed **JWT**, and redirects the user back to your app. Your backend server simply verifies the JWT signature. You never touch, store, or see the user's password, completely removing the liability from your database.
+
+
 </Callout>
+
 
 *(Note: Auth0 was acquired by Okta in 2021 for $6.5 Billion).*
 

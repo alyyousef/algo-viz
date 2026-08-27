@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Midjourney
+description: A proprietary, state-of-the-art Generative AI service accessed via Discord, famous for its unparalleled mathematical optimization of artistic aesthetics and photorealism.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Midjourney)">
+<TechnologyTemplate
+  title="Midjourney"
+  subtitle="Aesthetic-First Image Generation"
+  tags={['AI', 'Generative', 'Art', 'Diffusion']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While open-source models like Stable Diffusion require intense manual prompt engineering and negative prompting to achieve good results, Midjourney is mathematically tuned to default to breathtaking artistry.
 
-</ConceptTemplate>
+## 1. RLHF for Aesthetics
+Most Image Generators are trained purely on minimizing the mathematical loss between the image and the text caption. If the prompt is "A car," and the AI draws a boring, badly-lit car, the mathematical loss is 0 (it successfully drew a car).
+Midjourney utilizes massive **RLHF (Reinforcement Learning from Human Feedback)**. Millions of users on Discord mathematically vote on which images they prefer. Midjourney's engineers use this data to mathematically fine-tune the model to not just draw the object, but to prioritize specific cinematic lighting, composition rules (Rule of Thirds), and highly detailed textures, ensuring almost every generation is a masterpiece.
+
+## 2. Continuous Latent Refinement
+Midjourney is renowned for its specific rendering engine. While the exact architecture is closed-source, it heavily utilizes advanced continuous latent refinement, where the V5 and V6 models mathematically preserve intricate details (like readable text and perfect human hands) that earlier Diffusion architectures mathematically destroyed during the denoising process.
+
+</TechnologyTemplate>

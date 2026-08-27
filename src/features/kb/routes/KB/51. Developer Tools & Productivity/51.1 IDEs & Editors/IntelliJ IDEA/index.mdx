@@ -5,7 +5,7 @@ description: "The flagship Java and Kotlin IDE developed by JetBrains, renowned 
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   name="IntelliJ IDEA"
   icon="intellij"
   creator="JetBrains"
@@ -26,14 +26,20 @@ JetBrains used the core platform of IntelliJ to spawn an entire empire of langua
 
 ## Deep Code Understanding
 
-Unlike text editors (like VS Code) which rely on Language Servers for hints, IntelliJ parses your entire project into a massive internal Abstract Syntax Tree (AST). 
+Unlike text editors (like VS Code) which rely on Language Servers for hints, IntelliJ parses your entire project into a massive internal Abstract Syntax Tree (AST).
 This requires significant RAM and indexing time when you first open a project, but it enables "god-tier" refactoring:
 
 - **Extract Interface**: Highlight a Java class, right-click, and extract an interface. It will automatically update all 500 places in your codebase that used the class to use the new interface.
 - **Smart Completion**: If it knows a method expects a `User` object, its autocomplete will instantly search your local variables, find the `currentUser` variable, and suggest it first.
 
+
 <Callout icon="info" title="Paid vs Community">
+
+
 IntelliJ IDEA has a free "Community" edition that is excellent for pure Java/Kotlin development. The paid "Ultimate" edition includes deep support for enterprise frameworks (like Spring Boot), databases, and web development (unlocking WebStorm features inside IntelliJ).
+
+
 </Callout>
+
 
 </TechnologyTemplate>

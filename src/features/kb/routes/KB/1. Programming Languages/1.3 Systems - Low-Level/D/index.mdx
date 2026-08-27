@@ -1,8 +1,28 @@
+---
+title: D
+description: A systems programming language that attempted to combine C++ performance with the developer productivity of Ruby or Python.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="D">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="D">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Walter Bright and Andrei Alexandrescu in 2001, D was the original attempt to build a "Better C++" before Rust, Go, or Carbon existed.
 
-</ConceptTemplate>
+## 1. The Best of Both Worlds
+D mathematically compiles down to native machine code and allows direct, low-level pointer manipulation exactly like C++.
+However, it also introduced features unheard of in systems languages at the time:
+- A built-in Garbage Collector (which can be mathematically disabled for critical loops).
+- First-class arrays and associative arrays (Hash Maps) built directly into the syntax.
+- Extremely fast compile times (compiling D code is often 10x faster than compiling heavily templated C++ code).
+
+## 2. Compile-Time Function Execution (CTFE)
+D pioneered CTFE. In D, you can write a standard function (e.g., parsing a complex regex string into a mathematical state machine) and instruct the compiler to execute that function *during compilation*.
+The compiler runs the math, calculates the final state machine, and physically hardcodes the result into the binary executable, mathematically guaranteeing zero execution time for that logic when the user runs the program.
+

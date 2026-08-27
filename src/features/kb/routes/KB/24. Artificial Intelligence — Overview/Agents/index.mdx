@@ -4,9 +4,16 @@ description: Autonomous software entities that perceive their environment, execu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AI Agents">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AI Agents">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-For decades, AI models were strictly passive. You gave a Neural Network an image, it classified it, and it stopped. 
+For decades, AI models were strictly passive. You gave a Neural Network an image, it classified it, and it stopped.
 An **AI Agent** is an active, autonomous system. It does not just classify data; it mathematically pursues a goal over time, taking actions, observing the results, and adjusting its strategy.
 
 ## 1. The Agent Architecture (PEAS)
@@ -30,4 +37,3 @@ By looping through Thought -> Action -> Observation, the Agent can autonomously 
 ## 3. Challenges: Hallucination and Drifting
 Agents are incredibly powerful, but they suffer from drifting. Over a 50-step task, a slight hallucination in Step 4 can cause the Agent to mathematically diverge completely from the goal, resulting in an infinite loop of API errors. Fixing this requires complex memory systems (Vector Databases) and strict deterministic state machines.
 
-</ConceptTemplate>

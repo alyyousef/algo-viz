@@ -4,7 +4,14 @@ description: The branch of the theory of computation that focuses on classifying
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Computational Complexity Theory">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Computational Complexity Theory">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Computability Theory asks: *"Can this mathematical problem be solved at all?"*
 
@@ -12,23 +19,23 @@ Computability Theory asks: *"Can this mathematical problem be solved at all?"*
 
 Complexity Theory classifies algorithms mathematically based on how the required execution Time (or RAM) scales as the size of the input (`n`) grows. This is the foundation of **Big-O Notation**.
 
+
 <Callout icon="error" title="P vs NP">
-  The Millennium Prize Problem "P vs NP" is the most important unsolved problem in theoretical computer science. 
+
+
+  The Millennium Prize Problem "P vs NP" is the most important unsolved problem in theoretical computer science.
   - **P:** Problems a computer can *solve* quickly (e.g., sorting an array).
   - **NP:** Problems a computer can *verify* quickly, but might take billions of years to *solve* (e.g., decrypting an AES-256 password).
-  
+
   If someone mathematically proves P = NP, it means every encryption algorithm on Earth can be instantly broken.
+
+
 </Callout>
+
 
 ## Mathematical Complexity Classes
 
-<ComparisonTable 
-  headers={['Class', 'Mathematical Definition', 'Examples']}
-  rows={[
-    ['P (Polynomial Time)', 'Algorithms that scale mathematically in `O(n^k)`. They are considered "fast" and efficiently solvable by modern computers.', 'Sorting algorithms, Shortest Path (Dijkstra), Hash Map lookups.'],
-    ['NP (Nondeterministic Polynomial)', 'If you are mathematically handed the correct answer, you can *verify* it is correct in Polynomial Time (`P`).', 'Sudoku. Solving a massive Sudoku board is brutally hard. But if someone hands you the completed board, verifying no numbers repeat takes 2 seconds.'],
-    ['NP-Complete', 'The mathematically hardest problems in `NP`. If you find a fast algorithm for one NP-Complete problem, you instantly solve ALL of them.', 'The Traveling Salesperson Problem, Knapsack Problem, Boolean Satisfiability (SAT).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Class', 'Mathematical Definition', 'Examples']} rows={[ ['P (Polynomial Time)', 'Algorithms that scale mathematically in `O(n^k)`. They are considered "fast" and efficiently solvable by modern computers.', 'Sorting algorithms, Shortest Path (Dijkstra), Hash Map lookups.'], ['NP (Nondeterministic Polynomial)', 'If you are mathematically handed the correct answer, you can *verify* it is correct in Polynomial Time (`P`).', 'Sudoku. Solving a massive Sudoku board is brutally hard. But if someone hands you the completed board, verifying no numbers repeat takes 2 seconds.'], ['NP-Complete', 'The mathematically hardest problems in `NP`. If you find a fast algorithm for one NP-Complete problem, you instantly solve ALL of them.', 'The Traveling Salesperson Problem, Knapsack Problem, Boolean Satisfiability (SAT).'] ]} />
+
+

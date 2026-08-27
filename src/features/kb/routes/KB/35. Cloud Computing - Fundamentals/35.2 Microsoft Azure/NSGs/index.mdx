@@ -1,0 +1,29 @@
+---
+title: Network Security Groups (NSGs)
+description: The fundamental, stateful virtual firewall in Azure that mathematically filters inbound and outbound network traffic to and from Azure resources within a Virtual Network.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Network Security Groups (NSGs)"
+  subtitle="The Virtual Network Firewall"
+  tags={['Azure', 'Security', 'Networking', 'Firewall']}
+>
+
+An NSG is Azure's equivalent to AWS Security Groups (and loosely, NACLs). It is a list of mathematical rules that the Azure software-defined network hypervisor enforces before a packet is ever allowed to touch the operating system of a Virtual Machine.
+
+## 1. Subnet vs. NIC Attachment
+Unlike AWS (which splits Security Groups and NACLs), an Azure NSG can be mathematically attached in two places:
+- **To a Subnet**: The rules apply to every single VM inside that entire subnet (like an AWS NACL).
+- **To a Network Interface (NIC)**: The rules apply strictly to one specific Virtual Machine.
+If a packet enters a subnet, it must mathematically pass the Subnet NSG *first*. If it passes, it must then mathematically pass the NIC NSG. If either one has a "Deny" rule, the packet is instantly destroyed.
+
+## 2. Default Rules and Priorities
+NSG rules are processed in strict mathematical order based on a Priority Number (100 to 4096). The lowest number wins.
+Azure implicitly includes mathematical default rules (Priority 65000+):
+- **Allow VNet Inbound**: All VMs inside a Virtual Network can ping each other by default.
+- **Allow Internet Outbound**: All VMs can access the internet to download updates.
+- **Deny All Inbound**: Everything else from the internet is strictly blocked.
+To allow web traffic, you must explicitly create a Priority 100 rule allowing Port 443 (HTTPS), which mathematically overrides the Priority 65500 "Deny All" rule.
+
+</TechnologyTemplate>

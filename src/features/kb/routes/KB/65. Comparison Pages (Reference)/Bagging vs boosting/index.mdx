@@ -1,8 +1,33 @@
+---
+title: Bagging vs Boosting
+description: "A detailed comparison between the two foundational Ensemble Learning techniques in Machine Learning, contrasting parallel model generation (Bagging) against sequential model correction (Boosting)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bagging vs boosting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bagging vs Boosting"
+  subtitle="Ensemble Learning Paradigms"
+  tags={['Comparison', 'Machine Learning', 'Data Science', 'Algorithms']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Machine Learning, a single Decision Tree is often weak and prone to overfitting. **Ensemble Learning** combines hundreds of weak models to create one massive, highly accurate meta-model. The two primary methods to do this are Bagging and Boosting.
 
-</ConceptTemplate>
+## 1. Bagging (Bootstrap Aggregating)
+- **Philosophy**: "Wisdom of the Crowd." Train many independent models in parallel and average their results to reduce **Variance** (overfitting).
+- **Mechanism**: You create 100 different datasets by mathematically sampling the original dataset *with replacement*. You train 100 completely independent Decision Trees simultaneously (Parallel). When making a prediction, all 100 trees vote, and the majority wins.
+- **Iconic Algorithm**: Random Forest.
+- **Pros/Cons**: Extremely fast to train (highly parallelizable). Excellent at preventing overfitting on noisy data.
+
+## 2. Boosting
+- **Philosophy**: "Learn from your Mistakes." Train models sequentially, where each new model is specifically designed to fix the mathematical errors of the previous model, reducing **Bias** (underfitting).
+- **Mechanism**: Train Tree 1. Test it. Identify all the data points Tree 1 got wrong. Mathematically increase the "weight" of those wrong points. Train Tree 2 *specifically* on the re-weighted dataset so it focuses on the hard problems. Repeat sequentially 100 times.
+- **Iconic Algorithm**: XGBoost, AdaBoost, Gradient Boosting.
+- **Pros/Cons**: Mathematically achieves the absolute highest accuracy on tabular data (dominates Kaggle competitions). Slower to train (cannot be parallelized easily), and more prone to overfitting if not tuned perfectly.
+

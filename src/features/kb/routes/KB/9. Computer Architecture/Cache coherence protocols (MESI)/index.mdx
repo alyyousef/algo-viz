@@ -4,7 +4,14 @@ description: The synchronization mechanisms required to ensure that multiple CPU
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cache Coherence Protocols (MESI)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cache Coherence Protocols (MESI)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a multi-core processor, each core has its own private L1 and L2 cache. This introduces a fatal flaw: **The Cache Coherence Problem**.
 
@@ -12,11 +19,17 @@ Imagine Core 1 and Core 2 both read variable \`X = 5\` from RAM into their priva
 1. Core 1 runs \`X = X + 1\`, changing its cached \`X\` to \`6\`.
 2. Core 2 later runs \`X = X + 1\`. Because it reads from its *own* cache, it still sees \`X = 5\`, and calculates \`X = 6\`.
 
-The final answer should be \`7\`, but because the caches are out of sync, the program is corrupted. 
+The final answer should be \`7\`, but because the caches are out of sync, the program is corrupted.
+
 
 <Callout icon="warning" title="Hardware over Software">
+
+
   Cache coherence is entirely managed by the hardware. The operating system and the software programmer are completely blind to this synchronization; the CPU handles it invisibly.
+
+
 </Callout>
+
 
 ## Bus Snooping
 
@@ -33,4 +46,3 @@ The most common implementation of bus snooping is the **MESI Protocol**, a state
 
 MESI ensures perfect mathematical consistency across 64-core processors without requiring constant, crippling communication to main memory.
 
-</ConceptTemplate>

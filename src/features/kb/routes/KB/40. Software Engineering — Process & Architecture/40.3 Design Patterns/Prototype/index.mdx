@@ -1,8 +1,29 @@
+---
+title: Prototype Pattern
+description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically allows you to copy or clone existing objects without making your code dependent on their specific, concrete classes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prototype">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Prototype Pattern"
+  subtitle="Mathematical Cloning"
+  tags={['Design Patterns', 'Creational', 'GoF', 'Memory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Creating a new object from scratch using the `new` keyword can sometimes be mathematically expensive, especially if the object requires pulling 5MB of configuration data from a database during its constructor phase.
 
-</ConceptTemplate>
+## 1. The Cloning Problem
+If you already have a fully configured `Monster` object in RAM and you need 10 more identical monsters, you could try to manually instantiate a new monster and copy the variables over one by one. But if some of those variables are mathematically `private`, the external code cannot access them, making a perfect copy impossible.
+
+## 2. The Prototype Interface
+The Prototype pattern solves this by delegating the cloning process to the object itself.
+The object implements an `IPrototype` interface requiring a `clone()` method.
+Because the `clone()` method exists *inside* the object, it has full mathematical access to its own private fields. It creates a new instance of itself, deeply copies all its own variables, and returns the perfect clone. The client code simply executes `Monster m2 = m1.clone()`, bypassing the expensive database constructor entirely.
+

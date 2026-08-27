@@ -1,8 +1,34 @@
+---
+title: Divide and Conquer
+description: "A fundamental algorithmic paradigm that mathematically breaks a massive problem down into two or more smaller sub-problems of the same type, solves them recursively, and combines their answers."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Divide and conquer">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Divide and Conquer"
+  subtitle="Breaking Down Complexity"
+  tags={['Algorithms', 'Techniques', 'Recursion', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Divide and Conquer is the mathematical foundation of almost all high-performance algorithms, including Merge Sort, Quick Sort, Binary Search, and the Fast Fourier Transform.
 
-</ConceptTemplate>
+## 1. The Three Mathematical Steps
+1. **Divide**: Break the problem into strictly smaller sub-problems. (e.g., in Merge Sort, cut the 100-item array into two 50-item arrays).
+2. **Conquer**: Recursively call the algorithm on the sub-problems. If the sub-problem is mathematically small enough (the "Base Case", e.g., an array of length 1), solve it directly.
+3. **Combine**: Mathematically merge the solutions of the sub-problems to form the solution to the massive original problem.
+
+## 2. The Master Theorem
+The Time Complexity of any Divide and Conquer algorithm can usually be mathematically proven using the Master Theorem:
+**T(n) = a * T(n/b) + f(n)**
+- **a**: The number of sub-problems you spawn (e.g., 2 in Merge Sort).
+- **b**: The factor by which the input shrinks (e.g., 2 in Merge Sort, because you cut it in half).
+- **f(n)**: The mathematical cost of the "Combine" step (e.g., O(N) in Merge Sort).
+Solving this equation mathematically proves why Merge Sort executes in exactly O(N log N) time.
+

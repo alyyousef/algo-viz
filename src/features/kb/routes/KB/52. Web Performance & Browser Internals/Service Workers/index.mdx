@@ -4,16 +4,28 @@ description: Scripts that your browser runs in the background, separate from a w
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Service Workers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Service Workers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Service Worker** is a specialized type of Web Worker designed to act as a mathematical **Network Proxy** between the browser and the internet.
 
 Service Workers are the architectural foundation of **PWAs (Progressive Web Apps)**.
 
+
 <Callout icon="tip" title="Offline Support">
-  Because the Service Worker mathematically intercepts every single `fetch()` request leaving the browser, it can return cached responses even if the computer's Wi-Fi is physically turned off. 
-  
+
+
+  Because the Service Worker mathematically intercepts every single `fetch()` request leaving the browser, it can return cached responses even if the computer's Wi-Fi is physically turned off.
+
   This allows web developers to build websites that load instantly offline, intercept push notifications, and sync data in the background, making web apps biologically indistinguishable from native iOS/Android apps.
+
+
 </Callout>
 
-</ConceptTemplate>
+

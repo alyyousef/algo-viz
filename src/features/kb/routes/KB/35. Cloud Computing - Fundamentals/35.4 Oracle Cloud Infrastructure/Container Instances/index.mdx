@@ -1,0 +1,26 @@
+---
+title: OCI Container Instances
+description: A fully managed, serverless compute service in Oracle Cloud designed to quickly and easily run isolated Docker containers without managing any underlying infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Container Instances"
+  subtitle="Serverless Docker Execution"
+  tags={['OCI', 'Containers', 'Serverless', 'Compute']}
+>
+
+Container Instances is OCI's direct equivalent to AWS Fargate or Azure Container Instances. It provides raw, serverless execution of Docker containers for developers who do not want to manage the intense complexity of a Kubernetes (OKE) cluster.
+
+## 1. The Serverless Architecture
+With Container Instances, there are no Virtual Machines to provision, no OS patches to apply, and no orchestration layers to manage.
+You simply provide OCI with a container image from a registry and specify a mathematical hardware requirement (e.g., `2 OCPUs, 16GB RAM`). OCI instantly provisions a hypervisor-isolated micro-VM, boots the container, executes the workload, and terminates it. You are billed purely by the mathematical second of execution time.
+
+## 2. Use Cases and Limitations
+Because there is no orchestration (like Kubernetes), Container Instances are not designed for massive, highly available microservice meshes.
+They are mathematically perfect for:
+- **Batch Processing**: Spinning up 50 containers at midnight to process PDF reports, then instantly terminating them to save money.
+- **CI/CD Pipelines**: Running isolated, ephemeral build agents for Jenkins or GitLab.
+- **Simple Web APIs**: Hosting a lightweight, stateless REST API that does not require complex internal networking or service discovery.
+
+</TechnologyTemplate>

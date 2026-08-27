@@ -1,8 +1,25 @@
+---
+title: Diffusion Models
+description: The mathematical architecture dominating Generative AI (Images/Video), where a neural network learns to reverse a thermodynamic noise-injection process to synthesize high-fidelity data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Diffusion models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Diffusion Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Diffusion Models (like Midjourney, Stable Diffusion, and Sora) mathematically replaced GANs (Generative Adversarial Networks) because their training process is vastly more stable and mathematically provable.
 
-</ConceptTemplate>
+## 1. The Forward Process (Destroying Data)
+The training phase relies on the mathematics of Non-Equilibrium Thermodynamics.
+You start with a pristine image of a cat. In step 1, you mathematically add a tiny amount of Gaussian Noise (static). In step 2, you add slightly more. After 1,000 steps, the image is physically obliterated; it is pure, mathematical static noise. This Forward Process requires no AI; it is a hardcoded mathematical equation (a Markov Chain).
+
+## 2. The Reverse Process (Generating Data)
+The Neural Network (usually a U-Net architecture) is trained to do exactly one thing: mathematically predict the noise that was added in the *previous* step.
+During Generation (Inference), you give the AI a grid of pure, random mathematical static, and a text prompt ("A cat"). The U-Net mathematically predicts the noise that contradicts the concept of "Cat", and subtracts it. It loops this mathematical subtraction 50 times. By systematically reversing the entropy, the random static slowly, mathematically coalesces into a photorealistic, brand new image.
+

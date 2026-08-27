@@ -4,11 +4,18 @@ description: The next-generation Layer 3 protocol designed to permanently solve 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IPv6">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IPv6">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Because the world ran out of IPv4 addresses, the IETF developed **Internet Protocol version 6 (IPv6)**.
 
-IPv6 does not use 32 bits. It uses **128 bits**. 
+IPv6 does not use 32 bits. It uses **128 bits**.
 This increases the total number of IP addresses from 4 Billion to **340 Undecillion** (340 followed by 36 zeros). This is enough to assign a unique, publicly routable IP address to every single atom on the surface of the Earth.
 
 ## IPv6 Addressing Format
@@ -27,8 +34,13 @@ To make typing easier, IPv6 allows you to compress the address:
 - **No More NAT**: Because IP addresses are infinite, Network Address Translation (NAT) is completely unnecessary. Every smartphone and smart fridge gets a direct, globally routable Public IP. (Firewalls simply block incoming traffic to protect them).
 - **No More Broadcasts**: IPv4 relied heavily on network-crushing Broadcasts (ARP). IPv6 completely abolishes Broadcasts, replacing them entirely with hyper-efficient Multicast groups (NDP - Neighbor Discovery Protocol).
 
+
 <Callout icon="success" title="The Dual-Stack Reality">
+
+
   Transitioning the entire planet to IPv6 overnight is impossible. Today, we live in a "Dual-Stack" world. Your smartphone and laptop are assigned both an IPv4 address and an IPv6 address simultaneously. When you visit Google, your device attempts to connect via IPv6 first; if it fails, it silently falls back to IPv4.
+
+
 </Callout>
 
-</ConceptTemplate>
+

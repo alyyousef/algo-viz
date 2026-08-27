@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Chef
+description: A legacy, Ruby-based configuration management tool designed to mathematically automate the provisioning and configuration of operating systems across massive fleets of physical and virtual servers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Chef">
+<TechnologyTemplate
+  title="Chef"
+  subtitle="Imperative Configuration Management"
+  tags={['Configuration Management', 'Ruby', 'Legacy', 'Infrastructure']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Docker containers existed, companies maintained fleets of 10,000 Linux servers. Ensuring every server mathematically possessed the exact same version of Nginx and the exact same SSH configuration was impossible to do manually. Chef was built to automate this.
 
-</ConceptTemplate>
+## 1. The Pull Architecture
+Chef operates on a mathematical **Pull Architecture**.
+You maintain a central "Chef Server." You write configuration scripts (called **Recipes** and **Cookbooks**) in the Ruby programming language.
+You install a "Chef Client" agent on all 10,000 servers. Every 30 minutes, the agent mathematically pulls the latest Recipe from the central server. The agent executes the Ruby code locally, checking if Nginx is installed. If it isn't, the agent installs it. If a human manually uninstalls Nginx, the agent will mathematically reinstall it on the next 30-minute loop, ensuring absolute configuration drift prevention.
+
+## 2. Imperative Complexity
+Chef's mathematical downfall in the modern era is its reliance on **Imperative Ruby code**.
+Instead of mathematically declaring *"I want a file to exist"* (like Terraform or Ansible), Chef requires developers to write complex Ruby logic detailing *how* to create the file. As infrastructure shifted toward immutable Docker containers (where you simply rebuild the image rather than maintaining long-lived servers), the heavy mathematical complexity of Chef Cookbooks became an anti-pattern for modern cloud-native teams.
+
+</TechnologyTemplate>

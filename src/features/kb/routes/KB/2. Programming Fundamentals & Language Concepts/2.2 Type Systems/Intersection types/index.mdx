@@ -1,8 +1,27 @@
+---
+title: Intersection Types
+description: A type system feature that mathematically merges multiple distinct types into a single type that contains the properties of all of them.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Intersection types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Intersection Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While a Union Type (`A | B`) mathematically means a value can be *either* A or B, an Intersection Type (`A & B`) mathematically means a value must simultaneously be *both* A and B.
 
-</ConceptTemplate>
+## 1. Mathematical Composition
+Intersection Types are heavily used in TypeScript for Object Composition.
+If you have a type `Loggable = { log(): void }` and a type `Serializable = { toJSON(): string }`.
+If you declare a variable as `Loggable & Serializable`, the compiler mathematically merges the definitions. The resulting object is strictly required to implement *both* the `log()` method and the `toJSON()` method.
+
+## 2. Conflict Resolution
+What happens if the intersected types mathematically conflict?
+If `A` requires `id: string` and `B` requires `id: number`.
+When you create `A & B`, the compiler attempts to mathematically intersect `string & number`. Because it is physically impossible for a memory address to be both a String and a Number simultaneously, the intersection collapses into the mathematical `never` type. The compiler will instantly reject any attempt to instantiate this mathematically impossible object.
+

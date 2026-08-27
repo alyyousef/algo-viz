@@ -4,7 +4,14 @@ description: The ultimate statistical metric indicating exactly what percentage 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="R² (Coefficient of Determination)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="R² (Coefficient of Determination)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 RMSE and MAE tell you exactly how many dollars or degrees your model is off by. But is an error of $50,000 good or bad? (If predicting the price of a $100M mansion, $50k is incredible. If predicting a $60k car, it is terrible).
 
@@ -27,4 +34,3 @@ $R^2$ has a fatal mathematical flaw. If you add completely random, useless colum
 
 **Adjusted $R^2$** mathematically fixes this. It introduces a massive algebraic penalty for every new column added to the model. If you add a column and it doesn't significantly improve the predictions, Adjusted $R^2$ will mathematically *drop*, punishing you for increasing the complexity of the model without merit.
 
-</ConceptTemplate>

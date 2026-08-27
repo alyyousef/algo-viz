@@ -5,30 +5,42 @@ description: "A major revision of the HTTP network protocol, introducing multipl
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="HTTP/2"
   icon="rocket"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Published in 2015 and heavily based on Google's SPDY protocol, **HTTP/2** was the first major upgrade to the web in 18 years. It was designed specifically to make websites load faster by fixing the inherent design flaws in HTTP/1.1.
 
 ## How it Works: Binary Framing
 
-HTTP/1.1 is text-based. HTTP/2 fundamentally changes this by adding a **Binary Framing Layer**. 
-Instead of sending raw text, HTTP/2 breaks down messages (Headers and Body) into discrete, binary frames. 
+HTTP/1.1 is text-based. HTTP/2 fundamentally changes this by adding a **Binary Framing Layer**.
+Instead of sending raw text, HTTP/2 breaks down messages (Headers and Body) into discrete, binary frames.
 
 Because the data is broken into frames, HTTP/2 can perform **Multiplexing**.
 
 ## Multiplexing (Solving Application HoL Blocking)
 In HTTP/1.1, if you wanted 10 files, you had to queue them one after another (or open 6 TCP connections).
-In HTTP/2, the browser opens **a single TCP connection** to the server. Over this single connection, it can send requests for the HTML, CSS, and 8 images simultaneously. The server sends back binary frames for all 10 files interspersed with each other. 
+In HTTP/2, the browser opens **a single TCP connection** to the server. Over this single connection, it can send requests for the HTML, CSS, and 8 images simultaneously. The server sends back binary frames for all 10 files interspersed with each other.
 
 ## Other Features
 - **Header Compression (HPACK)**: HTTP/1.1 sends the exact same headers (like cookies and user agents) on every single request, wasting bandwidth. HTTP/2 compresses headers and only sends the delta (what changed).
 - **Server Push**: (Largely deprecated now) Allowed a server to proactively send CSS and JS files to the client before the client even realized it needed them.
 
+
 <Callout icon="warning" title="TCP Head-of-Line Blocking">
+
+
 While HTTP/2 solved HoL blocking at the *application* layer, it created a new problem at the *TCP* layer. Because everything travels over a single TCP connection, if a single packet is lost on the network, TCP halts the *entire* connection to wait for retransmission, pausing the download of all multiplexed files simultaneously.
+
+
 </Callout>
 
-</ConceptTemplate>
+

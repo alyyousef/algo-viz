@@ -1,8 +1,31 @@
+---
+title: RTO (Recovery Time Objective)
+description: A strict mathematical metric defining the maximum acceptable duration of time a system can be completely offline following a disaster before the business suffers catastrophic financial or reputational consequences.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RTO">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="RTO (Recovery Time Objective)"
+  subtitle="Mathematical Downtime Tolerance"
+  tags={['SRE', 'Disaster Recovery', 'Architecture', 'Metrics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While RPO answers "How much data can we lose?", the Recovery Time Objective (RTO) mathematically answers "How long can we afford to be completely offline while we try to fix it?"
 
-</ConceptTemplate>
+## 1. The Cost of Speed
+If an internal HR system has an RTO of 48 hours, the Disaster Recovery architecture is mathematically simple.
+If the server dies, the IT team has 2 days to order a new physical server, wait for FedEx to deliver it, install Linux, and restore from a backup. The cost is low.
+If an e-commerce site generates $10,000 per minute, the RTO must be 1 minute. You cannot wait for FedEx. You are mathematically forced into a "Hot Standby" architecture.
+
+## 2. Active-Passive vs Active-Active
+To achieve near-zero RTO, engineers utilize distinct mathematical routing architectures:
+- **Active-Passive (Warm Standby)**: Production runs in AWS Virginia. A duplicate set of servers runs in AWS Ohio, but they are scaled down and receiving zero traffic. If Virginia dies, an automated script scales up Ohio and flips the DNS. RTO: 5 to 10 minutes.
+- **Active-Active (Hot Standby)**: Both Virginia and Ohio are fully scaled up, taking 50% of the traffic mathematically via a global load balancer. If Virginia dies, the load balancer instantly routes 100% of traffic to Ohio. RTO: 3 seconds. The mathematical cost is doubling your monthly AWS bill.
+

@@ -1,8 +1,26 @@
+---
+title: Aspect-Oriented Programming (AOP)
+description: A paradigm designed to mathematically extract "cross-cutting concerns" (like logging or security) from the main business logic and automatically weave them back in during compilation or runtime.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Aspect-oriented programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Aspect-Oriented Programming (AOP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a banking application, every single method (Deposit, Withdraw, Transfer) must implement Logging, Security Checks, and Database Transactions. If you hardcode this into every method, the business logic is mathematically buried under boilerplate (Code Tangling).
 
-</ConceptTemplate>
+## 1. Cross-Cutting Concerns
+AOP isolates these repetitive tasks into independent modules called **Aspects**.
+You write the Security Check mathematically exactly once inside a `SecurityAspect`. You write the actual business logic inside the `Withdraw` method, completely free of any security code.
+
+## 2. Pointcuts and Weaving
+How does the Security code actually execute? You define a **Pointcut**.
+A Pointcut is a mathematical regular expression for the compiler. You define a rule: `"Before any method starting with 'Transfer' is executed, run the SecurityAspect."`
+During compilation (or dynamically at runtime), the AOP framework performs **Weaving**. It mathematically intercepts the method calls, automatically injecting the Aspect code exactly where the Pointcut dictates. This results in an incredibly clean, mathematically modular codebase (popularized by frameworks like Spring in Java).
+

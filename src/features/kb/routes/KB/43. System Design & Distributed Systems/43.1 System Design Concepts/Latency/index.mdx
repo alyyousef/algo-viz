@@ -4,31 +4,35 @@ description: The time delay between the cause and the effect of some physical ch
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Latency">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Latency">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In computing, **Latency** is the mathematically measurable time it takes for a single packet of data to travel from point A to point B. It is typically measured in milliseconds (ms).
 
 If Throughput is the *width* of the highway (how many cars can fit side-by-side), Latency is the *speed limit* (how fast a single car can travel from New York to LA).
 
+
 <Callout icon="warning" title="The Speed of Light">
-  Latency is strictly bound by physics. The speed of light through a fiber-optic cable means that data traveling from London to Sydney will *always* take at least ~130 milliseconds mathematically, regardless of how much money you spend on the router. 
+
+
+  Latency is strictly bound by physics. The speed of light through a fiber-optic cable means that data traveling from London to Sydney will *always* take at least ~130 milliseconds mathematically, regardless of how much money you spend on the router.
+
+
 </Callout>
+
 
 ## The Latency Numbers Every Programmer Should Know
 
 To architect high-performance systems, engineers must understand the mathematical magnitude of different operations (approximations):
 
-<ComparisonTable 
-  headers={['Operation', 'Latency', 'Human Scale Equivalent']}
-  rows={[
-    ['L1 Cache Reference', '~0.5 nanoseconds', '1 heartbeat (0.5s)'],
-    ['Branch Mispredict', '~5 nanoseconds', '10 heartbeats (5s)'],
-    ['Main Memory (RAM) Reference', '~100 nanoseconds', '3 minutes'],
-    ['Read 1MB sequentially from SSD', '~1,000,000 ns (1 ms)', '1 month'],
-    ['Send a packet CA -> EU -> CA', '~150,000,000 ns (150 ms)', '15 years!']
-  ]}
-/>
+
+<ComparisonTable headers={['Operation', 'Latency', 'Human Scale Equivalent']} rows={[ ['L1 Cache Reference', '~0.5 nanoseconds', '1 heartbeat (0.5s)'], ['Branch Mispredict', '~5 nanoseconds', '10 heartbeats (5s)'], ['Main Memory (RAM) Reference', '~100 nanoseconds', '3 minutes'], ['Read 1MB sequentially from SSD', '~1,000,000 ns (1 ms)', '1 month'], ['Send a packet CA -> EU -> CA', '~150,000,000 ns (150 ms)', '15 years!'] ]} />
 
 *Conclusion:* The most powerful optimization you can make is preventing data from crossing the network if it can be kept in RAM, and preventing it from hitting RAM if it can be kept in the L1 CPU cache.
 
-</ConceptTemplate>

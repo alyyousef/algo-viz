@@ -1,8 +1,25 @@
+---
+title: Simula
+description: The grandfather of Object-Oriented Programming, developed in the 1960s to mathematically simulate complex systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Simula">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Simula">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in the 1960s by Ole-Johan Dahl and Kristen Nygaard at the Norwegian Computing Center, Simula (specifically Simula 67) is historically recognized as the first true Object-Oriented Programming (OOP) language.
 
-</ConceptTemplate>
+## 1. The Birth of the Object
+Before Simula, languages like Fortran and C were procedural; data and the functions that acted on that data were mathematically completely separate.
+Because Dahl and Nygaard were building complex mathematical simulations (e.g., simulating a busy airport or a queue of ships), they needed a way to bind data (a Ship's weight) and behavior (a Ship moving) together.
+Simula invented the **Class**, the **Object**, **Inheritance**, and **Virtual Procedures**—the exact concepts that form the foundation of C++, Java, and C# today.
+
+## 2. The Legacy
+While Simula was too slow and memory-intensive to conquer the commercial world in the 1960s, a young Bjarne Stroustrup used Simula during his PhD. Recognizing its architectural brilliance but its poor performance, he created "C with Classes," which eventually became **C++**.
+

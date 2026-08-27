@@ -1,8 +1,28 @@
+---
+title: Prolog
+description: A groundbreaking logic programming language used heavily in Artificial Intelligence, computational linguistics, and expert systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prolog">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Prolog">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1972, Prolog (Programming in Logic) completely abandons the imperative programming model (like C or Java, where you tell the computer *how* to do something). Instead, Prolog is a declarative logic language: you mathematically declare the facts and the rules, and you ask the compiler a question.
 
-</ConceptTemplate>
+## 1. Facts and Rules
+You do not write functions in Prolog. You write a mathematical knowledge base.
+- **Fact**: `parent(john, mary).` (John is the parent of Mary).
+- **Rule**: `grandparent(X, Y) :- parent(X, Z), parent(Z, Y).` (X is the grandparent of Y IF X is the parent of Z, AND Z is the parent of Y).
+
+## 2. The Inference Engine
+Once you declare the knowledge, you query it: `?- grandparent(john, alice).`
+Prolog uses a mathematical algorithm called **Unification** and **Backtracking**. It searches through all known facts, attempting to mathematically prove the statement. If it hits a dead end, it backtracks and tries another logical path until it either proves the statement true, or exhausts all possibilities and returns false.
+
+This makes Prolog astonishingly powerful for writing Expert Systems, pathfinding algorithms, and processing natural language grammars.
+

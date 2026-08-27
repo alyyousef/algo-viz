@@ -4,31 +4,37 @@ description: The first phase of a compiler that converts a sequence of character
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lexical Analysis (Lexing)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lexical Analysis (Lexing)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you write `let x = 10;`, the CPU does not see a variable. It mathematically sees an array of 12 ASCII bytes: `[108, 101, 116, 32, 120, 32, 61, 32, 49, 48, 59]`.
 
 The very first step of any Compiler or Interpreter is the **Lexer** (or Scanner). Its job is to mathematically group these raw characters into meaningful chunks called **Tokens**, stripping away useless whitespace and comments.
 
+
 <Callout icon="success" title="The Token Output">
+
+
   The Lexer mathematically transforms the string `let x = 10;` into a structured array of objects:
   `[ KEYWORD("let"), IDENTIFIER("x"), ASSIGN, NUMBER(10), SEMICOLON ]`
+
+
 </Callout>
+
 
 ## The Mathematics of Lexing
 
-Lexers are mathematically built using **Finite Automata** (specifically Deterministic Finite Automata or DFAs) and **Regular Expressions**. 
+Lexers are mathematically built using **Finite Automata** (specifically Deterministic Finite Automata or DFAs) and **Regular Expressions**.
 
 Because they only need to identify patterns at the character level, they do not require memory of previous tokens (they are mathematically "State-less" Context-Free processes).
 
-<ComparisonTable 
-  headers={['Input Character', 'Lexer Action', 'Resulting Token']}
-  rows={[
-    ['`l`, `e`, `t`', 'Continues reading until whitespace. Checks internal dictionary.', '`KEYWORD("let")`'],
-    ['` ` (Space)', 'Mathematically ignores and advances the cursor.', '*(None)*'],
-    ['`1`, `0`', 'Recognizes digits, continues until a non-digit.', '`NUMBER(10)`'],
-    ['`/`, `/`', 'Recognizes a comment trigger. Mathematically drops all characters until a newline (`\n`).', '*(None)*']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Input Character', 'Lexer Action', 'Resulting Token']} rows={[ ['`l`, `e`, `t`', 'Continues reading until whitespace. Checks internal dictionary.', '`KEYWORD("let")`'], ['` ` (Space)', 'Mathematically ignores and advances the cursor.', '*(None)*'], ['`1`, `0`', 'Recognizes digits, continues until a non-digit.', '`NUMBER(10)`'], ['`/`, `/`', 'Recognizes a comment trigger. Mathematically drops all characters until a newline (`\n`).', '*(None)*'] ]} />
+
+

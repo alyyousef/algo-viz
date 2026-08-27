@@ -1,8 +1,28 @@
+---
+title: Business Intelligence (BI)
+description: The architecture and mathematical modeling used to extract, transform, and visualize massive datasets to drive executive-level decision making.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Business intelligence (BI)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Business Intelligence (BI)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Software engineering generates the data; Business Intelligence (BI) mathematically analyzes it to extract actionable human insight. BI is the bridge between raw server logs and corporate strategy.
 
-</ConceptTemplate>
+## 1. The ETL Pipeline
+BI relies on a highly mathematical pipeline known as ETL (Extract, Transform, Load).
+- **Extract**: Pulling raw data from fragmented sources (Production SQL databases, JSON logs, external APIs).
+- **Transform**: The most mathematically complex phase. Data is cleaned, normalized, and aggregated (e.g., converting 10 million raw HTTP requests into a daily average latency metric).
+- **Load**: Inserting the transformed data into a highly optimized Data Warehouse (like Snowflake or BigQuery).
+
+## 2. Data Cubes and OLAP
+Production databases use OLTP (Online Transaction Processing), mathematically optimized for quickly inserting single rows.
+BI Warehouses use OLAP (Online Analytical Processing), mathematically optimized for running massive aggregations across billions of rows.
+BI engineers build **Data Cubes**—multidimensional mathematical arrays. Instead of calculating total sales per region per month on the fly (which would take hours), the Data Cube mathematically pre-calculates the intersections of all dimensions. When an executive opens a Tableau or PowerBI dashboard, the charts render in milliseconds because the complex mathematics have already been solved.
+

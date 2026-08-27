@@ -4,27 +4,34 @@ description: The specific implementation and API of a Hash Table used in modern 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hash Maps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hash Maps">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While "Hash Table" refers to the underlying algorithmic data structure, a **Hash Map** generally refers to the specific API and object implementation provided by standard libraries in modern programming languages (e.g., `HashMap` in Java, `dict` in Python, `Map` in JavaScript, `unordered_map` in C++).
 
+
 <Callout icon="info" title="Terminology Nuance">
+
+
   In general computer science discussions, Hash Table and Hash Map are used interchangeably. However, in specific ecosystems (like Java), there are historical differences: `Hashtable` is an older, thread-safe (synchronized) class that doesn't allow nulls, while `HashMap` is newer, unsynchronized (faster), and permits null keys.
+
+
 </Callout>
+
 
 ## Common Operations
 
 A Hash Map provides a key-value mapping interface. The underlying structure handles hashing, collision resolution, and resizing transparently to the developer.
 
-<ComparisonTable 
-  headers={['Operation', 'Description', 'Average Time']}
-  rows={[
-    ['Put / Set', 'Inserts a new key-value pair, or overwrites the value if the key already exists.', '$O(1)$'],
-    ['Get', 'Retrieves the value associated with a specific key. Returns null/undefined if not found.', '$O(1)$'],
-    ['Delete / Remove', 'Removes the key-value pair from the map.', '$O(1)$'],
-    ['Contains Key', 'Checks if a specific key exists in the map without retrieving its value.', '$O(1)$']
-  ]}
-/>
+
+<ComparisonTable headers={['Operation', 'Description', 'Average Time']} rows={[ ['Put / Set', 'Inserts a new key-value pair, or overwrites the value if the key already exists.', '$O(1)$'], ['Get', 'Retrieves the value associated with a specific key. Returns null/undefined if not found.', '$O(1)$'], ['Delete / Remove', 'Removes the key-value pair from the map.', '$O(1)$'], ['Contains Key', 'Checks if a specific key exists in the map without retrieving its value.', '$O(1)$'] ]} />
+
 
 ## When NOT to use a Hash Map
 
@@ -34,4 +41,3 @@ Despite their incredible speed, Hash Maps are not the solution to every problem:
 2. **Range Queries**: You cannot easily ask a Hash Map for "all keys between 10 and 20". You would have to scan the entire map $O(n)$. If you need range queries, use a Tree-based map (like Java's `TreeMap` which uses a Red-Black Tree).
 3. **Memory Overhead**: Hash Maps require allocating a large underlying array, much of which remains empty to maintain a low Load Factor. They use significantly more memory than a standard array.
 
-</ConceptTemplate>

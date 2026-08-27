@@ -4,18 +4,31 @@ description: Specialized operating systems designed to guarantee absolute, mathe
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Real-Time Operating Systems (RTOS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Real-Time Operating Systems (RTOS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Standard operating systems like Windows, Linux, and macOS are **General Purpose OSs**. They are designed for "fairness" and "throughput." If you open Microsoft Word, the OS might take 5 milliseconds to respond, or it might take 500 milliseconds if the CPU is busy updating the system. You, the human, barely notice.
 
-However, if the software is controlling the anti-lock brakes on a car, a robotic surgical arm, or the flight flaps of a fighter jet, a 500-millisecond delay results in death. 
+However, if the software is controlling the anti-lock brakes on a car, a robotic surgical arm, or the flight flaps of a fighter jet, a 500-millisecond delay results in death.
 
 These systems require a **Real-Time Operating System (RTOS)** (e.g., VxWorks, FreeRTOS, QNX).
 
+
 <Callout icon="warning" title="Real-Time does NOT mean Fast">
-  A common misconception is that an RTOS is "faster" than Linux. It is not. 
+
+
+  A common misconception is that an RTOS is "faster" than Linux. It is not.
   "Real-Time" means **Predictable and Deterministic**. An RTOS mathematically guarantees that a specific task will be executed within a strict, non-negotiable time deadline (e.g., exactly 2.0 milliseconds), every single time, without fail.
+
+
 </Callout>
+
 
 ## Hard vs Soft Real-Time
 
@@ -29,4 +42,3 @@ To achieve absolute determinism, an RTOS fundamentally changes how the Kernel op
 2. **No Virtual Memory (Usually)**: Many RTOSs disable Paging entirely. Page Faults take unpredictable amounts of time (fetching data from a disk). In an RTOS, everything is pinned directly to physical RAM.
 3. **No Garbage Collection**: Memory is strictly managed manually or pre-allocated at boot, because garbage collection pauses are unpredictable.
 
-</ConceptTemplate>

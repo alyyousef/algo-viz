@@ -4,7 +4,7 @@ description: A cross-platform game engine developed by Unity Technologies, domin
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Unity"
   subtitle="The engine of the Indie and Mobile revolution"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Unity_Technologies_logo.svg/512px-Unity_Technologies_logo.svg.png"
@@ -15,16 +15,22 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://unity.com/"
 >
 
-If Unreal Engine is a massive V8 Ferrari, Unity is an incredibly reliable, highly modular Toyota. 
+If Unreal Engine is a massive V8 Ferrari, Unity is an incredibly reliable, highly modular Toyota.
 
 Unity democratized game development. Instead of writing C++, developers use **C#** (via the Mono/IL2CPP runtimes). It provides an incredibly intuitive, component-based Editor that allows small indie teams to prototype games in days instead of years.
 
+
 <Callout icon="warning" title="The Architecture Paradigm">
-  Unity heavily relies on a **Component-Based** architecture (specifically, `MonoBehaviour`). 
-  You create an empty `GameObject`, attach a `Rigidbody` component for gravity, attach a `MeshRenderer` for visuals, and attach a custom `C# Script` component for logic. 
-  
+
+
+  Unity heavily relies on a **Component-Based** architecture (specifically, `MonoBehaviour`).
+  You create an empty `GameObject`, attach a `Rigidbody` component for gravity, attach a `MeshRenderer` for visuals, and attach a custom `C# Script` component for logic.
+
   However, because `MonoBehaviour` relies heavily on Reflection and scattered heap memory, Unity recently introduced **DOTS (Data-Oriented Technology Stack)**—a brutal, pure ECS architecture designed to mathematically squeeze maximum multi-threading performance out of the CPU.
+
+
 </Callout>
+
 
 ## The "Build Once, Deploy Anywhere" Promise
 

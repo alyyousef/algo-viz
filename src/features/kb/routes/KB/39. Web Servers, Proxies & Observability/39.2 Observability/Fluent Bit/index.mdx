@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Fluent Bit
+description: An ultra-lightweight, C-based open-source log processor and forwarder, mathematically optimized for edge computing and massive Kubernetes clusters where resource constraints are critical.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Fluent Bit">
+<TechnologyTemplate
+  title="Fluent Bit"
+  subtitle="The Micro-Log Processor"
+  tags={['Observability', 'Logging', 'Kubernetes', 'Edge Computing']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+As Kubernetes became the dominant mathematical architecture for the cloud, running heavy logging agents on every Worker Node became unfeasible. The industry required a log shipper that could process gigabytes of data while consuming almost zero memory.
 
-</ConceptTemplate>
+## 1. The C-Based Architecture
+Fluent Bit is the younger, much faster sibling of Fluentd. While Fluentd is written in Ruby (which requires a heavy runtime and garbage collection), Fluent Bit is written entirely in **pure C**.
+It mathematically consumes less than 1MB of memory. It can be deployed as a DaemonSet on a Kubernetes cluster with 5,000 nodes, tailing logs from 100,000 containers simultaneously, without mathematically impacting the compute resources available for the actual user applications.
+
+## 2. In-Stream Processing
+Despite its microscopic size, Fluent Bit is not a dumb pipe.
+It possesses mathematical processing capabilities. Before sending a log to Elasticsearch, Fluent Bit can parse the raw JSON, drop mathematical keys (like stripping out a user's credit card number for PCI compliance), append Kubernetes metadata (like adding the Pod Name and Namespace to the log), and route specific logs to different destinations (e.g., errors to Elasticsearch, access logs to AWS S3).
+
+</TechnologyTemplate>

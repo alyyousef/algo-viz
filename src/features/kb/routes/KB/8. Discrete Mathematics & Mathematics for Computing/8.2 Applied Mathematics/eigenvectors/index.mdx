@@ -1,8 +1,39 @@
+---
+title: Eigenvectors & Eigenvalues
+description: "The mathematical anchors of a matrix transformation—special vectors that do not get knocked off their geometric path when the space around them is warped."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="eigenvectors">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Eigenvectors & Eigenvalues"
+  subtitle="The Pillars of Transformation"
+  tags={['Mathematics', 'Linear Algebra', 'Data Science', 'Google PageRank']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a Matrix mathematically transforms (warps, stretches, or rotates) a space, almost every single vector in that space is knocked entirely off its original directional line. However, a select few magical vectors remain perfectly on their original geometric line. These are the **Eigenvectors**.
 
-</ConceptTemplate>
+## 1. The Core Definition
+For a given square Matrix $A$, an **Eigenvector** $v$ is a vector that, when multiplied by $A$, only changes in scale (length), not in direction.
+Mathematically: $A\vec{v} = \lambda\vec{v}$
+The amount the vector is stretched or squished is called its **Eigenvalue** ($\lambda$).
+
+## 2. Why Do They Matter?
+Eigenvectors mathematically reveal the fundamental axes of a system. They cut through the noise and tell you the true "skeleton" of the data.
+- If you have a 3D object and you apply a matrix to spin it, the **Eigenvector** of that matrix is the physical axis of rotation (because the axis line itself doesn't change direction while everything spins around it).
+
+## 3. Google PageRank (The $1 Trillion Eigenvector)
+When Google launched in 1998, they crushed all competing search engines using an algorithm called PageRank.
+Larry Page mathematically modeled the entire World Wide Web as a massive Matrix of links (if site A links to site B, the matrix has a 1).
+To find which websites were objectively the most important, Google calculated the dominant **Eigenvector** of the entire internet matrix. The resulting Eigenvector provided a strict numerical authority score for every single web page, creating the modern search industry.
+
+## 4. Principal Component Analysis (PCA)
+In Data Science, if you have a dataset with 10,000 dimensions and want to compress it to 2 dimensions for visualization, you calculate the Eigenvectors of the data's Covariance Matrix. The eigenvectors with the largest eigenvalues represent the "Principal Components"—the mathematical directions where the data has the most meaningful variance.
+
+\n

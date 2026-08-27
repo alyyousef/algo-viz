@@ -1,8 +1,30 @@
+---
+title: Commits
+description: The fundamental, immutable unit of version control that mathematically snapshots the exact state of a project's files at a specific moment in time, permanently recorded in the repository history.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Commits">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Commits"
+  subtitle="Immutable Snapshots in Time"
+  tags={['Version Control', 'Git', 'Data Structures', 'Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A commit is not a "save file." In traditional computing, hitting Ctrl+S overwrites the previous file, destroying history. In Git, a commit is a mathematical, immutable snapshot of the entire project timeline.
 
-</ConceptTemplate>
+## 1. The Cryptographic Hash
+Every time a developer creates a commit, Git mathematically compresses all the modified files.
+It then gathers the author's name, the timestamp, the commit message, and a mathematical pointer to the previous (parent) commit. It feeds all of this data through the **SHA-1 hashing algorithm** to generate a unique 40-character hexadecimal string (e.g., `f3a2b1...`).
+Because the parent commit hash is included in the new commit's hash calculation, the Git history is a mathematically unbroken cryptographic chain (a Merkle Tree). If a hacker secretly modifies a file from 3 years ago, the mathematical hashes of every subsequent commit will instantly break, alerting the system.
+
+## 2. The Atomic Unit of Work
+A commit should be **Atomic**—it should represent one single logical change.
+If you fix a login bug and change the CSS color of the footer, those should be two mathematically distinct commits. If the CSS change accidentally breaks the mobile layout, the DevOps team can mathematically revert the CSS commit without affecting the login bug fix.
+

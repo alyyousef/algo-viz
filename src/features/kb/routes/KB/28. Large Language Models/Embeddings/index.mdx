@@ -4,7 +4,14 @@ description: The mathematical translation of human language into high-dimensiona
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Text Embeddings">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Text Embeddings">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Neural networks cannot read English. They only understand numbers. To feed language into an LLM, we must mathematically convert words into arrays of floating-point numbers.
 
@@ -26,8 +33,13 @@ Embeddings are the absolute foundational technology behind **Retrieval-Augmented
 If a user searches for "Can my pet travel on the plane?", a legacy keyword search will fail if the database document says "Feline airline policy." They share zero keywords.
 However, if you convert the user's query into an Embedding Vector, and plot it on the graph, it will mathematically land right next to the vector for the database document, because "pet/travel/plane" and "feline/airline/policy" have nearly identical semantic coordinates.
 
+
 <Callout icon="info" title="Dimensionality">
+
+
   OpenAI's standard embedding model (`text-embedding-ada-002`) outputs exactly 1,536 numbers for every string of text you give it. You store these massive arrays of numbers in a specialized Vector Database (like Pinecone or Milvus) to rapidly calculate the cosine similarity (the angle) between different text vectors.
+
+
 </Callout>
 
-</ConceptTemplate>
+

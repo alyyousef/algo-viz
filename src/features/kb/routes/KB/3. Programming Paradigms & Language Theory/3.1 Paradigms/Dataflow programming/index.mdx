@@ -1,8 +1,26 @@
+---
+title: Dataflow Programming
+description: An architectural paradigm where execution is not driven by a central sequential thread, but mathematically triggered the instant data arrives at a node's input ports.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dataflow programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dataflow Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional Von Neumann architecture, a central CPU Counter dictates execution (Step 1, then Step 2). In Dataflow architecture, execution is mathematically decentralized, driven entirely by the physical movement of data.
 
-</ConceptTemplate>
+## 1. The Directed Graph
+A Dataflow program is mathematically modeled as a Directed Graph.
+Nodes are operations (e.g., Multiply, Add). Edges are the "pipes" connecting them.
+There is no "Main" function. Node C (Add) simply waits. It is mathematically asleep. The instant Node A pushes a number down pipe 1, and Node B pushes a number down pipe 2, Node C physically wakes up, executes the addition, and pushes the result down pipe 3.
+
+## 2. Inherent Parallelism
+Because execution is mathematically decoupled from a central thread, Dataflow architectures are massively, inherently parallel.
+If Node D and Node E both receive data simultaneously, they will mathematically execute at the exact same physical millisecond on different CPU cores, without the developer ever writing a Mutex lock or a Thread spawn command. This paradigm is the fundamental mathematics behind hardware description languages (Verilog), audio processing (Max/MSP), and deep learning frameworks (TensorFlow's execution graphs).
+

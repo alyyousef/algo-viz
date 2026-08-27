@@ -1,8 +1,25 @@
+---
+title: Move
+description: A highly secure, resource-oriented smart contract language originally developed by Facebook for the Diem blockchain.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Move">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Move">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Originally developed by Facebook (Meta) in 2019 for the ill-fated Diem (Libra) project, Move survived the project's cancellation and is now the native mathematical language for advanced blockchains like Aptos and Sui.
 
-</ConceptTemplate>
+## 1. Resource-Oriented Programming
+In Solidity, a token (like a stablecoin) is just an integer in a hash map mapping user addresses to balances. If a bug in the code accidentally adds 10 to a balance without subtracting it elsewhere, money is mathematically printed out of thin air.
+Move changes the fundamental mathematics using **Resources**.
+A Resource is a special data type inspired by Linear Logic. If you create a "Token" Resource, the Move compiler mathematically guarantees it can never be copied, cloned, or silently dropped. It can only be mathematically *moved* from one storage location to another.
+
+## 2. Security by Default
+By enforcing linear logic, Move mathematically eliminates the most common and devastating smart contract vulnerabilities. Reentrancy attacks (where a hacker repeatedly withdraws funds before the balance updates) and double-spending are physically prevented by the compiler's strict resource rules, making Move one of the safest languages in Web3.
+

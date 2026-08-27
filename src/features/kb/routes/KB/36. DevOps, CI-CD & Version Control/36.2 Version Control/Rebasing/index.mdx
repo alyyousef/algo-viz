@@ -1,8 +1,34 @@
+---
+title: Rebasing
+description: A mathematically complex Git operation that rewrites commit history by transplanting an entire branch onto a new base commit, resulting in a perfectly linear, conflict-free project timeline.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rebasing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Rebasing"
+  subtitle="Rewriting Mathematical History"
+  tags={['Version Control', 'Git', 'Algorithms', 'Advanced Operations']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard merging leaves a messy, web-like history of branches splitting and rejoining. Rebasing solves this by mathematically rewriting time to make it appear as if you wrote all your code *after* your colleagues finished theirs.
 
-</ConceptTemplate>
+## 1. The Rebase Algorithm
+Imagine you branch from `main` at Commit A. You write Commits B and C. Meanwhile, a colleague pushes Commit D to `main`.
+If you execute `git rebase main` while on your branch, Git performs a mathematical illusion:
+1. It temporarily saves your Commits B and C to memory.
+2. It mathematically moves the starting point of your branch forward to Commit D.
+3. It re-applies your Commits B and C on top of D, mathematically generating entirely new SHA-1 hashes for them (let's call them B' and C').
+The result is a perfectly linear history: A -> D -> B' -> C'. When you eventually merge this into `main`, it is guaranteed to be a simple Fast-Forward merge.
+
+## 2. The Golden Rule of Rebasing
+Rebasing is incredibly dangerous because it mathematically destroys existing commits and replaces them with clones.
+**The Golden Rule:** *Never rebase a branch that has been pushed to a public server and shared with other developers.*
+If you rebase a shared branch, you rewrite the mathematical history. When your colleagues try to pull, their local Git clients will mathematically panic because the timeline they were working on has been retroactively erased and replaced.
+

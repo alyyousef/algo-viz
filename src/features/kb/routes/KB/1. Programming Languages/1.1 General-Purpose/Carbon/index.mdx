@@ -5,12 +5,19 @@ description: "An experimental, open-source programming language started by Googl
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Carbon"
   icon="shield"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Introduced by Google in 2022, **Carbon** is an experimental, general-purpose programming language designed to be a bi-directional, interoperable successor to **C++**. 
+Introduced by Google in 2022, **Carbon** is an experimental, general-purpose programming language designed to be a bi-directional, interoperable successor to **C++**.
 
 ## Why not just use Rust?
 Rust is technically superior to C++ in memory safety. However, migrating a 50-million-line C++ codebase to Rust is effectively impossible due to vastly different paradigms. Carbon is designed specifically for organizations with massive, entrenched C++ codebases that cannot afford to rewrite everything from scratch.
@@ -46,8 +53,13 @@ fn Main() -> i32 {
 }
 ```
 
+
 <Callout icon="warning" title="Status: Experimental">
+
+
 Carbon is still in the highly experimental design phase. It is not ready for production use, and its syntax and feature set are actively mutating.
+
+
 </Callout>
 
-</ConceptTemplate>
+

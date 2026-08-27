@@ -4,21 +4,33 @@ description: The industry-standard positional encoding method allowing LLMs to e
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rotary Position Embedding (RoPE)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rotary Position Embedding (RoPE)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Transformers inherently have no concept of word order. The word "Dog" looks mathematically identical at the beginning or end of a sentence. Positional encodings are required to inject the concept of "position" into the tokens.
 
 **Rotary Position Embedding (RoPE)** is the state-of-the-art technique used by almost all modern open-weight models (like Llama 3 and Mistral).
 
+
 <Callout icon="tip" title="The Problem with Absolute Encodings">
+
+
   Older models (like GPT-2) added a fixed positional vector to the token embedding. This means the model memorized absolute positions. If you trained the model on 2,048 tokens, it mathematically crashed if you gave it 2,049 tokens because it had never learned an embedding for position 2,049.
+
+
 </Callout>
+
 
 ## The Rotary Math
 
-Instead of adding a vector, RoPE mathematically **rotates** the Query and Key vectors in a complex 2D plane. 
+Instead of adding a vector, RoPE mathematically **rotates** the Query and Key vectors in a complex 2D plane.
 - The amount of rotation is proportional to the absolute position of the token.
 - Because of trigonometric properties, the dot product between a Query and a Key (the core of the Attention mechanism) depends purely on the **relative distance** between the two tokens, rather than their absolute positions.
 - This allows models to naturally extrapolate to longer sequences than they were trained on, enabling the massive 100k+ token context windows we see today.
 
-</ConceptTemplate>

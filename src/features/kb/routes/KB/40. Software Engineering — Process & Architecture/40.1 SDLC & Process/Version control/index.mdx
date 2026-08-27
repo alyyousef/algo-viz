@@ -1,8 +1,29 @@
+---
+title: Version Control
+description: The foundational mathematical system (like Git) used to track, manage, and merge every single modification made to a software codebase over time, enabling massive parallel collaboration among distributed engineering teams.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Version control">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Version Control"
+  subtitle="The Mathematical Timeline of Code"
+  tags={['Process', 'Git', 'Collaboration', 'DevOps']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Without Version Control, software engineering at scale is mathematically impossible. If 50 developers try to edit the same `index.js` file on a shared network drive simultaneously, the code will be instantly corrupted by overwrites.
 
-</ConceptTemplate>
+## 1. The Directed Acyclic Graph (DAG)
+Modern distributed version control systems (like Git) do not just save files; they mathematically model the entire history of the project as a **Directed Acyclic Graph (DAG)**.
+Every time a developer "commits" code, Git calculates a cryptographic SHA-1 hash of the file contents and the parent commit. This creates an immutable, mathematically verifiable timeline. If a bug is introduced, an engineer can mathematically traverse the DAG backward in time to instantly locate the exact user, time, and keystroke that caused the defect.
+
+## 2. Branching and Merging
+Version control allows developers to mathematically split the universe.
+A developer creates a **Branch**. They are now working in a parallel mathematical universe where they can delete files and rewrite architecture without affecting the main production code. When they are finished, the Version Control system performs a mathematical **Merge**. It calculates the exact line-by-line differences (the diff) and mathematically splices the developer's parallel universe back into the main timeline, flagging any logical conflicts for human review.
+

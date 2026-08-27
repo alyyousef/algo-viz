@@ -1,8 +1,31 @@
+---
+title: Fortran (Legacy)
+description: The oldest high-level programming language, originally designed in 1957, still maintained in legacy enterprise and scientific systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fortran">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Fortran (Legacy)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While modern Fortran is heavily used in supercomputing, there are massive amounts of Legacy Fortran (Fortran 77 and earlier) deeply embedded in legacy enterprise and academic systems.
 
-</ConceptTemplate>
+## 1. Fixed-Format Source Code
+Before modern text editors, programmers wrote Fortran on physical punch cards.
+Because of this physical reality, legacy Fortran is **Fixed-Format**.
+The mathematical column where a character is typed is strictly enforced by the compiler:
+- Column 1: A "C" mathematically indicates a comment.
+- Columns 1-5: Used for numeric statement labels (for `GOTO` jumps).
+- Column 6: Any character here mathematically indicates the line is a continuation of the previous line.
+- Columns 7-72: The actual programming logic.
+If a developer accidentally types a command in column 6, the entire mathematical structure of the program instantly collapses.
+
+## 2. COMMON Blocks
+Legacy Fortran did not have modern Object-Oriented structures or dynamic memory allocation.
+To share memory globally between functions, developers used **COMMON blocks**. They mathematically defined a contiguous chunk of physical RAM, and different subroutines would map their own local variables to the exact same physical byte offsets. While incredibly memory-efficient, any mathematical mistake in aligning the bytes between two files would cause silent data corruption, making legacy Fortran extremely difficult to refactor.
+

@@ -1,8 +1,34 @@
+---
+title: Sliding Window
+description: "A highly optimized algorithmic technique used to track a subset of data moving over a larger data structure (usually an array or string) to solve subset/subarray problems in linear O(N) time."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sliding window">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Sliding Window"
+  subtitle="O(N) Subarray Processing"
+  tags={['Algorithms', 'Techniques', 'Arrays', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are asked to find the "Maximum sum of any contiguous subarray of size 3" in `[2, 1, 5, 1, 3, 2]`.
+A naive approach mathematically requires nested loops: Calculate [2,1,5], then [1,5,1], then [5,1,3]. This takes O(N * K) time.
 
-</ConceptTemplate>
+## 1. The Moving Window
+The Sliding Window mathematically realizes that recalculating the entire subset is redundant.
+Between [2,1,5] and [1,5,1], the numbers [1,5] are completely unchanged!
+Instead of recalculating, you mathematically create a "Window" of size 3.
+You calculate the first window: `2 + 1 + 5 = 8`.
+To "slide" the window one step to the right, you just mathematically **subtract the element leaving the window (2), and add the new element entering the window (1)**.
+`8 - 2 + 1 = 7`.
+
+## 2. Dynamic Windows
+The window doesn't have to be a fixed size.
+If asked to find the "Longest substring without repeating characters", you use two pointers (Left and Right) to represent the window. You mathematically expand the Right pointer until you hit a duplicate character. Then, you mathematically shrink the Left pointer until the duplicate is ejected from the window. Because each pointer only sweeps the array once, the Time Complexity is strictly **O(N)**.
+

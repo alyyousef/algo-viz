@@ -5,9 +5,16 @@ description: The legendary greedy algorithm that mathematically calculates the s
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Dijkstra's Algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dijkstra's Algorithm">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Invented by Edsger W. Dijkstra in 1956, this algorithm mathematically finds the absolute shortest path from a starting node to all other nodes in a **Weighted Graph**. 
+Invented by Edsger W. Dijkstra in 1956, this algorithm mathematically finds the absolute shortest path from a starting node to all other nodes in a **Weighted Graph**.
 Unlike BFS which assumes every road takes 1 minute to drive, Dijkstra understands that Highway A takes 10 minutes, and Highway B takes 50 minutes.
 
 ## 1. The Priority Queue (Min-Heap)
@@ -21,11 +28,16 @@ Dijkstra's algorithm is essentially BFS, but instead of using a standard Queue, 
    - If this new Cost is strictly less than the neighbor's known distance, update the table and push the neighbor into the Min-Heap.
 
 ## 2. The Greedy Mathematical Proof
-Dijkstra is a **Greedy Algorithm**. When it extracts a node from the Min-Heap, it mathematically assumes that it has found the absolute shortest possible path to that node. 
+Dijkstra is a **Greedy Algorithm**. When it extracts a node from the Min-Heap, it mathematically assumes that it has found the absolute shortest possible path to that node.
 Why is this mathematically true? Because it always processes the cheapest available node first. If a cheaper path existed, the Min-Heap would have extracted that path earlier.
 
+
 <Callout icon="warning" title="The Fatal Flaw: Negative Weights">
+
+
 Dijkstra mathematically relies on the assumption that adding edges can only increase the total cost (like driving a car: you cannot drive a road that gives you -5 gallons of gas). If the graph contains **Negative Edge Weights**, Dijkstra's greedy assumption catastrophically fails and it will return the wrong answer. You must use the Bellman-Ford algorithm instead.
+
+
 </Callout>
 
-</ConceptTemplate>
+

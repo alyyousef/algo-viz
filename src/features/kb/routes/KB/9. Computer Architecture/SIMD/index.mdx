@@ -4,19 +4,32 @@ description: A parallel computing architecture that allows a CPU to apply a sing
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SIMD (Single Instruction, Multiple Data)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SIMD (Single Instruction, Multiple Data)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Traditional CPU execution is **SISD (Single Instruction, Single Data)**. If you want to add 10 to a list of 4 numbers, the CPU must execute the `ADD` instruction 4 separate times. This is incredibly inefficient for media processing, graphics, and scientific simulations where the exact same math is applied to massive arrays of data.
 
 **SIMD (Single Instruction, Multiple Data)** is a hardware architecture designed specifically for this use case. With SIMD, you issue one `ADD` instruction, and the hardware adds 10 to all 4 numbers simultaneously in a single clock cycle.
 
+
 <Callout icon="success" title="The SIMD Speedup">
+
+
   Applying a brightness filter to an image requires adding a value to the Red, Green, and Blue bytes of a pixel. Using SISD, processing one pixel takes 3 instructions. Using SIMD, you pack all three colors into a single wide register and process the entire pixel in exactly 1 instruction—a 300% speed increase.
+
+
 </Callout>
+
 
 ## How SIMD Works: Wide Registers
 
-To facilitate SIMD, CPU manufacturers added specialized, ultra-wide registers to the CPU. 
+To facilitate SIMD, CPU manufacturers added specialized, ultra-wide registers to the CPU.
 While a standard 64-bit register (like `RAX`) holds a single 64-bit integer, a modern SIMD register might be **256 bits or 512 bits wide**.
 
 You can pack multiple smaller data types into one of these wide registers:
@@ -35,4 +48,3 @@ Every modern CPU includes SIMD extensions. The compiler (or the programmer writi
 
 Because SIMD hardware draws immense power, utilizing instructions like AVX-512 actually causes the CPU to generate so much heat that the processor is physically forced to lower its clock speed to prevent melting!
 
-</ConceptTemplate>

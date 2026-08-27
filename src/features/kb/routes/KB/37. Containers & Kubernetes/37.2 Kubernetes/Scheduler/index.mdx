@@ -1,8 +1,31 @@
+---
+title: kube-scheduler
+description: The control plane component mathematically responsible for assigning newly created, unscheduled Pods to optimal physical Worker Nodes based on strict resource constraints and affinity rules.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scheduler">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="kube-scheduler"
+  subtitle="The Orchestration Logistics Engine"
+  tags={['Kubernetes', 'Architecture', 'Control Plane', 'Algorithms']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When the Controller Manager creates a new Pod, the Pod mathematically exists in etcd, but its `nodeName` field is empty. It is physically running nowhere. The **kube-scheduler** is the mathematical algorithm that decides where it will run.
 
-</ConceptTemplate>
+## 1. The Two-Step Algorithm
+The Scheduler watches the API Server for any Pod with an empty `nodeName`. When it finds one, it executes a two-phase mathematical operation:
+1. **Filtering (Predicates)**: It eliminates incapable nodes. If the Pod requests 4GB of RAM, the scheduler mathematically filters out any Worker Node that has less than 4GB available.
+2. **Scoring (Priorities)**: It mathematically ranks the surviving nodes. It gives higher scores to nodes that currently have the lowest resource utilization, or nodes that already have the required Docker image cached locally, preventing unnecessary network downloads. The Node with the highest mathematical score wins.
+
+## 2. Affinity and Taints
+Administrators can heavily influence the mathematical scoring using advanced rules.
+- **Node Affinity**: You can mathematically force a Machine Learning Pod to *only* schedule on Worker Nodes that possess physical GPU hardware.
+- **Taints and Tolerations**: You can "Taint" a Node (e.g., "This Node is for the billing team only"). The scheduler is mathematically forbidden from placing any Pod on that Node unless the Pod explicitly contains a matching "Toleration."
+

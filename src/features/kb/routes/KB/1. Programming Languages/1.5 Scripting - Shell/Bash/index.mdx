@@ -1,8 +1,29 @@
+---
+title: Bash
+description: The Bourne Again Shell, the default command-line interface and scripting language for almost every Linux and Unix system.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bash">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bash">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Released in 1989 by Brian Fox for the GNU Project, Bash is a command processor and scripting language. It is the literal environment you interact with when you open a terminal in Linux, MacOS (historically), or WSL.
 
-</ConceptTemplate>
+## 1. The Unix Philosophy in Action
+Bash is mathematically designed to tie other programs together.
+Instead of providing massive internal libraries for math or JSON parsing, Bash relies on the Unix Philosophy: "Write programs that do one thing and do it well."
+Bash mathematically connects these programs using **Pipes** (`|`).
+```bash
+cat server.log | grep "404" | wc -l
+```
+Bash mathematically takes the output of the `cat` command, streams it into the input of `grep`, and streams that output into `wc` to count the lines. This creates an incredibly powerful data-processing pipeline out of independent C programs.
+
+## 2. Scripting Quirks
+While incredible for moving files and launching programs, Bash is a notoriously dangerous programming language for complex logic. Variables are untyped strings by default, whitespace is mathematically critical (`if [ $x = 1 ]` requires exact spacing), and failing to wrap a variable in double quotes can mathematically cause entire arrays to be parsed incorrectly, leading to catastrophic server bugs.
+

@@ -4,7 +4,14 @@ description: The computational problem of constructing or updating a map of an u
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SLAM (Simultaneous Localization and Mapping)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SLAM (Simultaneous Localization and Mapping)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you drop a Roomba vacuum in a brand new house, it faces a massive mathematical paradox:
 1. To know where it is, it needs a Map.
@@ -12,15 +19,20 @@ If you drop a Roomba vacuum in a brand new house, it faces a massive mathematica
 
 Solving this paradox is called **SLAM**. It is arguably the most famous and mathematically difficult problem in modern robotics.
 
+
 <Callout icon="error" title="The Odometry Drift Problem">
-  Why can't the robot just count its wheel rotations (Odometry) to know where it is? 
+
+
+  Why can't the robot just count its wheel rotations (Odometry) to know where it is?
   Because wheels slip. If the robot's wheels slip on a rug by just 1 millimeter, that mathematical error accumulates. After 10 minutes of driving, the robot mathematically believes it is in the kitchen, but it is physically crashing into the living room wall.
+
+
 </Callout>
+
 
 ## The SLAM Solution
 
-SLAM algorithms (like Gmapping or Cartographer) solve this using probabilistic mathematics (Particle Filters or Graph Optimization). 
+SLAM algorithms (like Gmapping or Cartographer) solve this using probabilistic mathematics (Particle Filters or Graph Optimization).
 
 As the robot drives, its LiDAR scans the walls. It mathematically aligns the *current* LiDAR scan with the *previous* LiDAR scan to correct the wheel slip. Slowly, it builds a massive 2D or 3D grid mathematically proving both the shape of the room and the robot's exact XY coordinate within that room.
 
-</ConceptTemplate>

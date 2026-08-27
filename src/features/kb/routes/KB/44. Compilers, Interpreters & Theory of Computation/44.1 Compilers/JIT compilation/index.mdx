@@ -4,15 +4,28 @@ description: A way of executing computer code that involves compilation during e
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Just-In-Time (JIT) Compilation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Just-In-Time (JIT) Compilation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A traditional Interpreter executes code mathematically line-by-line. If a `for` loop runs 100,000 times, the interpreter must re-translate the exact same mathematical addition instruction 100,000 times, wasting massive amounts of CPU cycles.
 
 **Just-In-Time (JIT) Compilation** is the miracle technology that bridges the mathematical gap between slow Interpreters (JavaScript, Python) and blazing-fast Ahead-Of-Time (AOT) Compilers (C++, Rust).
 
+
 <Callout icon="tip" title="The Best of Both Worlds">
+
+
   JIT allows JavaScript to start running instantly (because it doesn't wait for a 5-minute C++ compile step), but achieves near-native C++ performance within seconds of execution.
+
+
 </Callout>
+
 
 ## How JIT Mathematically Works (The V8 Engine)
 
@@ -21,4 +34,3 @@ A traditional Interpreter executes code mathematically line-by-line. If a `for` 
 3. **TurboFan (The Optimizer):** The JIT sends the "Hot" function to a background thread. It mathematically compiles that specific function directly into physical x86/ARM Machine Code.
 4. **On-Stack Replacement (OSR):** The next time the code calls that function, the JIT seamlessly swaps out the slow interpreter bytecode and executes the blazing-fast physical machine code instead.
 
-</ConceptTemplate>

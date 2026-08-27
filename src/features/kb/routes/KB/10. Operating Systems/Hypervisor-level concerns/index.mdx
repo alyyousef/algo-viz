@@ -4,17 +4,30 @@ description: The technology that allows multiple full Operating Systems to run s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hypervisors & Virtualization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hypervisors & Virtualization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Traditionally, a single physical computer runs a single Operating System (OS). The OS has absolute, unquestioned control over the hardware. 
+Traditionally, a single physical computer runs a single Operating System (OS). The OS has absolute, unquestioned control over the hardware.
 
 **Virtualization** changes this. It allows you to run multiple separate "Guest" Operating Systems (e.g., Windows and Linux) on the same physical hardware at the exact same time. This is the foundational technology that powers modern Cloud Computing (AWS, Azure).
 
 To do this, we use a **Hypervisor** (also known as a Virtual Machine Monitor - VMM).
 
+
 <Callout icon="success" title="The Illusion of Hardware">
+
+
   Just as an OS creates the illusion of infinite memory for a *Process*, a Hypervisor creates the illusion of an entire physical motherboard (CPU, RAM, Hard Drive) for a *Guest OS*. The Guest OS genuinely believes it is running on bare metal.
+
+
 </Callout>
+
 
 ## Type 1 vs Type 2 Hypervisors
 
@@ -26,7 +39,6 @@ You install a normal Host OS (like Windows 11). You then install the Hypervisor 
 
 ## Hardware-Assisted Virtualization (Intel VT-x / AMD-V)
 
-In the early days, Hypervisors had to use insane software hacks (Binary Translation) to intercept privileged Ring 0 commands issued by the Guest OS, because you can't have two OSs in Ring 0 at the same time. 
+In the early days, Hypervisors had to use insane software hacks (Binary Translation) to intercept privileged Ring 0 commands issued by the Guest OS, because you can't have two OSs in Ring 0 at the same time.
 Modern CPUs solved this by adding **Ring -1**. The physical CPU hardware natively understands virtualization. The Hypervisor runs in Ring -1 (Absolute God Mode), allowing the Guest OS to safely run in Ring 0 without actually controlling the physical host hardware.
 
-</ConceptTemplate>

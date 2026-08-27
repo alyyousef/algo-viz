@@ -4,23 +4,35 @@ description: The synchronization of state between multiple clients and a server 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multiplayer Netcode">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multiplayer Netcode">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you build a local Single Player game, when the player presses 'Jump', the character jumps. 
+If you build a local Single Player game, when the player presses 'Jump', the character jumps.
 
-If you build a Multiplayer game, when the player presses 'Jump', the client mathematically sends a UDP packet to a server in Virginia. 50 milliseconds later, the server verifies the jump. 50 milliseconds after that, the server tells the client to jump. 
+If you build a Multiplayer game, when the player presses 'Jump', the client mathematically sends a UDP packet to a server in Virginia. 50 milliseconds later, the server verifies the jump. 50 milliseconds after that, the server tells the client to jump.
 
 A 100-millisecond delay on a button press makes the game physically unplayable. Solving this paradox is the realm of **Netcode**.
 
+
 <Callout icon="error" title="Client-Side Prediction">
-  To fix the delay, the client mathematically **cheats**. 
-  
+
+
+  To fix the delay, the client mathematically **cheats**.
+
   When the player presses 'Jump', the local game immediately executes the jump animation on the screen, assuming the server will approve it. Simultaneously, it sends the request to the server. If the server eventually replies, *"No, you were actually stunned 10 milliseconds ago,"* the client mathematically snaps the player back to the ground (Rubberbanding).
+
+
 </Callout>
+
 
 ## Rollback Netcode vs Lockstep
 
 - **Deterministic Lockstep:** Used in RTS games (StarCraft). Every client waits until every other client sends their inputs for Frame 1 before executing Frame 1. If one player has bad internet, the entire game pauses for everyone.
 - **Rollback Netcode (GGPO):** Used in Fighting Games. The game constantly predicts what the opponent will do. If the opponent does something unexpected, the game mathematically rewinds the simulation 5 frames, applies the real input, and fast-forwards back to the present instantly. It is incredibly difficult to program but results in zero perceived latency.
 
-</ConceptTemplate>

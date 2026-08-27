@@ -4,7 +4,7 @@ description: An open standard for cross-platform, parallel programming of divers
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="OpenCL"
   subtitle="The open alternative to CUDA"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/OpenCL_logo.svg/512px-OpenCL_logo.svg.png"
@@ -19,9 +19,15 @@ If CUDA is the "Apple iOS" of parallel computing (highly polished but strictly l
 
 OpenCL was designed to be mathematically agnostic. An OpenCL Kernel written in C can be compiled and executed on an AMD graphics card, an Intel CPU, or a mobile ARM processor, completely unmodified.
 
+
 <Callout icon="warning" title="The Ecosystem Loss">
+
+
   Despite being the open standard, OpenCL largely lost the AI war to CUDA. Because OpenCL had to support a massive variety of hardware architectures, its API was mathematically much more verbose, difficult to write, and often less optimized for specific GPU silicon compared to NVIDIA's laser-focused CUDA compiler.
+
+
 </Callout>
+
 
 ## The Mathematics of Portability
 

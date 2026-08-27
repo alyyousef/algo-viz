@@ -8,20 +8,21 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 CI/CD bridges the gaps between development and operation activities and teams by enforcing automation in building, testing and deployment of applications. Modern CI/CD practices enable teams to deploy to production 50 times a day rather than once every 6 months.
 
+
 <Callout icon="error" title="The Integration Hell">
+
+
   Before CI/CD, developers would work on isolated branches for months. When they finally tried to merge their code together ("Integration"), it resulted in massive, unresolvable merge conflicts and broken code. CI solves this by forcing developers to merge small changes multiple times a day.
+
+
 </Callout>
+
 
 ## CI vs CD
 
-<ComparisonTable 
-  headers={['Phase', 'Definition', 'Core Activities']}
-  rows={[
-    ['Continuous Integration (CI)', 'Automating the merging and testing of code.', 'Linting, Compiling, Running Unit Tests, Building Docker Images.'],
-    ['Continuous Delivery (CD)', 'Automating the release process up to staging.', 'Deploying to Staging/UAT. Requires human approval to push to Production.'],
-    ['Continuous Deployment (CD)', 'Automating the entire pipeline through to production.', 'If tests pass, the code goes live to customers immediately with zero human intervention.']
-  ]}
-/>
+
+<ComparisonTable headers={['Phase', 'Definition', 'Core Activities']} rows={[ ['Continuous Integration (CI)', 'Automating the merging and testing of code.', 'Linting, Compiling, Running Unit Tests, Building Docker Images.'], ['Continuous Delivery (CD)', 'Automating the release process up to staging.', 'Deploying to Staging/UAT. Requires human approval to push to Production.'], ['Continuous Deployment (CD)', 'Automating the entire pipeline through to production.', 'If tests pass, the code goes live to customers immediately with zero human intervention.'] ]} />
+
 
 ## The Pipeline Lifecycle
 
@@ -30,20 +31,20 @@ A typical modern pipeline using GitHub Actions, GitLab CI, or Jenkins.
 <ArchitectureDiagram chart={`
 graph LR
   Code[Developer Pushes Code]
-  
+
   subgraph CI Pipeline
     Lint[Lint & Format]
     Test[Run Unit Tests]
     Build[Build Docker Image]
     Lint --> Test --> Build
   end
-  
+
   subgraph CD Pipeline
     Push[(Push Image to Registry)]
     Deploy[Deploy to K8s/Server]
     Push --> Deploy
   end
-  
+
   Code --> Lint
   Build --> Push
 `} />

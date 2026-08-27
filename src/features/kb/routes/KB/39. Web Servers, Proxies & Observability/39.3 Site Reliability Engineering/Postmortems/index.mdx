@@ -1,8 +1,35 @@
+---
+title: Postmortems
+description: The rigorous, blameless written analysis conducted after a production incident, mathematically investigating the root cause, timeline, and architectural flaws to prevent the exact same failure from ever occurring again.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Postmortems">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Postmortems"
+  subtitle="The Blameless Analysis of Failure"
+  tags={['SRE', 'Culture', 'Process', 'Continuous Improvement']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A production outage is a highly expensive tuition fee paid by the company. The Postmortem is the mathematical process of extracting the educational value from that expensive tuition.
 
-</ConceptTemplate>
+## 1. The Blameless Philosophy
+The foundational rule of an SRE postmortem is that it must be **blameless**.
+If the analysis concludes: *"Dave deleted the production database, therefore Dave is the problem,"* the organization learns nothing. The mathematically correct analysis is: *"Why did the system allow a human named Dave to execute a destructive command without a secondary automated safeguard?"* By removing the fear of punishment, engineers are incentivized to provide perfect, honest timelines of the outage.
+
+## 2. The Five Whys and Action Items
+The postmortem uses the **Five Whys** framework to drill down to the absolute mathematical root cause.
+*Problem: The website went down.*
+1. Why? The database locked up.
+2. Why? The connection pool was exhausted.
+3. Why? A new microservice opened too many connections.
+4. Why? The load balancer routed 100% of traffic to it instead of 10%.
+5. Why? The Terraform deployment script lacked a validation check for canary routing.
+The outcome is not a reprimand. The outcome is a mathematical **Action Item**: *"Write a Terraform validation test to strictly enforce canary routing percentages."*
+

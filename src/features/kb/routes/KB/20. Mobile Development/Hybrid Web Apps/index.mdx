@@ -4,7 +4,14 @@ description: The legacy of Cordova and the modern standard of wrapping standard 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hybrid Web Apps (Ionic & Capacitor)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hybrid Web Apps (Ionic & Capacitor)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 What if you don't want to learn Swift, Kotlin, Dart, or even React Native? What if you literally just want to take an existing HTML/CSS/JS website (like a Next.js or Nuxt app) and put it on the App Store?
 
@@ -15,13 +22,12 @@ In the early 2010s, Adobe PhoneGap (open-sourced as Apache Cordova) was massive.
 However, mobile browsers back then were extremely slow. Cordova apps felt incredibly sluggish, janky, and obviously fake.
 
 ## 2. The Modern Standard: Capacitor
-Built by the Ionic team, **Capacitor** is the modern successor to Cordova. 
+Built by the Ionic team, **Capacitor** is the modern successor to Cordova.
 You drop Capacitor into any standard web project (React, Vue, Angular). It generates an Xcode and Android Studio project containing a highly-optimized modern WebView. It exposes a beautiful TypeScript API to access native hardware (`Camera.getPhoto()`). Because modern phone processors are insanely fast, Capacitor apps often perform flawlessly for 90% of standard B2B or content apps.
 
 ## 3. Ionic Framework
-Capacitor simply provides the WebView and hardware bridge. It doesn't provide UI. 
+Capacitor simply provides the WebView and hardware bridge. It doesn't provide UI.
 If you put a standard HTML button on an iPhone, it looks like a website, not an app.
-**Ionic Framework** is a massive library of Web Components (written in HTML/CSS) that mathematically mimic Native UI. 
+**Ionic Framework** is a massive library of Web Components (written in HTML/CSS) that mathematically mimic Native UI.
 If you use an `<IonButton>`, it will render looking exactly like a flat Material Design button on Android, and will magically transform to look exactly like a rounded Apple button on iOS.
 
-</ConceptTemplate>

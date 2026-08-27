@@ -1,8 +1,33 @@
+---
+title: Merges
+description: The mathematical operation in version control where two distinct lines of development (branches) are computationally synthesized into a single unified history, resolving conflicting modifications.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Merges">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Merges"
+  subtitle="Synthesizing Parallel Timelines"
+  tags={['Version Control', 'Git', 'Algorithms', 'Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a developer finishes working on an isolated feature branch, that code is useless until it is computationally integrated back into the main codebase. A Merge is the algorithm that achieves this.
 
-</ConceptTemplate>
+## 1. Fast-Forward Merges
+The simplest mathematical merge is a **Fast-Forward**.
+If you create a branch from `main`, add 3 commits, and nobody else has touched `main` in the meantime, Git does not actually need to "merge" anything. It mathematically recognizes that your branch is a direct linear continuation of `main`. Git simply moves the `main` pointer forward 3 steps to catch up with your branch. The resulting history is a perfect, straight line.
+
+## 2. The 3-Way Merge Algorithm
+If you branch from `main`, and while you are working, a colleague pushes their own changes to `main`, the timelines have mathematically diverged. A Fast-Forward is impossible.
+Git executes a **3-Way Merge**. It computationally analyzes three specific points in time:
+1. The common ancestor commit (where your branches split).
+2. The tip of your branch.
+3. The tip of `main`.
+Git mathematically compares the diffs. If you edited file A and your colleague edited file B, Git automatically synthesizes a new "Merge Commit" containing both changes. If you both edited the exact same line in file A, Git mathematically halts and throws a **Merge Conflict**, forcing human intervention.
+

@@ -1,8 +1,29 @@
+---
+title: Introsort
+description: "A highly optimized hybrid sorting algorithm that mathematically begins with Quicksort but switches to Heapsort if the recursion depth exceeds a certain level, combining the best aspects of both algorithms."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Introsort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Introsort"
+  subtitle="The Best of Both Worlds"
+  tags={['Algorithms', 'Sorting', 'Performance', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Introsort (Introspective Sort) is the default sorting algorithm used by the C++ Standard Library (`std::sort`) and the .NET Framework, because it mathematically eliminates the weaknesses of standalone algorithms.
 
-</ConceptTemplate>
+## 1. The Quicksort Gamble
+Quicksort is mathematically the fastest general-purpose sort (O(N log N)), but it is a gamble. If it repeatedly picks a terrible "Pivot" (e.g., if the data is already sorted), the recursion tree becomes completely unbalanced, and the performance catastrophically degrades to O(N²), causing a Stack Overflow.
+
+## 2. The Introspective Switch
+Introsort solves this by mathematically tracking the recursion depth.
+It starts by running standard Quicksort. However, it passes a mathematical counter down the recursive calls, usually initialized to `2 * log(N)`.
+If the recursion goes deeper than that counter, Introsort mathematically realizes: *"I am hitting Quicksort's worst-case scenario."* It instantly aborts the Quicksort algorithm and switches to **Heapsort** for the remaining sub-arrays. Because Heapsort mathematically guarantees O(N log N) worst-case performance, Introsort achieves the blistering average speed of Quicksort with the mathematical safety net of Heapsort.
+

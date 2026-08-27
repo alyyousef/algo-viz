@@ -4,25 +4,32 @@ description: The administrative and mathematical lifecycle of cryptographic keys
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Key Management">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Key Management">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Bruce Schneier famously said, *"Cryptography is usually bypassed, not penetrated."* You can use military-grade AES-256 encryption, but if a developer accidentally commits the decryption key to a public GitHub repository, your entire system is compromised.
 
 **Key Management** is the secure administration of cryptographic keys over their entire lifecycle: generation, exchange, storage, use, revocation, and destruction.
 
+
 <Callout icon="warning" title="Hardware Security Modules (HSMs)">
+
+
   For absolute top-tier security (like banking systems or Root Certificate Authorities), keys are generated inside physical tamper-proof appliances called HSMs. The keys literally never leave the hardware. To sign a transaction, the server sends the data into the HSM, the HSM mathematically signs it internally, and outputs the signature. If someone tries to open the HSM with a screwdriver, it mathematically zeroes out its own RAM.
+
+
 </Callout>
+
 
 ## Key Management Best Practices
 
-<ComparisonTable 
-  headers={['Practice', 'Description']}
-  rows={[
-    ['Key Rotation', 'Cryptographic keys should be replaced periodically. If a key is compromised silently, rotation ensures the attacker only has a limited window of access.'],
-    ['Separation of Duties', 'The person who encrypts the data should not be the same person who holds the key to decrypt it. Modern systems use cloud KMS (Key Management Service) to handle this.'],
-    ['Envelope Encryption', 'You generate a Data Encryption Key (DEK) to encrypt your 10GB database. You then use a master Key Encryption Key (KEK) stored in a secure vault to encrypt the DEK. You store the encrypted DEK next to the database.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Practice', 'Description']} rows={[ ['Key Rotation', 'Cryptographic keys should be replaced periodically. If a key is compromised silently, rotation ensures the attacker only has a limited window of access.'], ['Separation of Duties', 'The person who encrypts the data should not be the same person who holds the key to decrypt it. Modern systems use cloud KMS (Key Management Service) to handle this.'], ['Envelope Encryption', 'You generate a Data Encryption Key (DEK) to encrypt your 10GB database. You then use a master Key Encryption Key (KEK) stored in a secure vault to encrypt the DEK. You store the encrypted DEK next to the database.'] ]} />
+
+

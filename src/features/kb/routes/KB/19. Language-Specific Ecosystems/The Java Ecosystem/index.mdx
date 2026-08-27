@@ -4,7 +4,14 @@ description: The core architecture of the JVM, JRE, JDK, and the build systems t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Java Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Java Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Java was created in 1995 with the revolutionary promise of **"Write Once, Run Anywhere" (WORA)**. Instead of compiling code into machine-specific binaries (like C++), Java compiles into mathematical byte-code that runs inside a virtual machine.
 
@@ -31,4 +38,3 @@ The historical industry standard. Maven uses an XML file (`pom.xml`) to declare 
 ### Gradle
 The modern, mathematically superior successor to Maven. Instead of static XML, Gradle uses a Domain-Specific Language (Groovy or Kotlin DSL) in its `build.gradle` file. It uses advanced caching and incremental compilation, making it massively faster than Maven. It is the official build system for Android development.
 
-</ConceptTemplate>

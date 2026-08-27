@@ -1,8 +1,25 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: AWS CDK
+description: The AWS Cloud Development Kit (CDK) is an advanced framework that mathematically synthesizes imperative, general-purpose programming languages (like TypeScript or Python) into declarative AWS CloudFormation templates.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="AWS CDK">
+<TechnologyTemplate
+  title="AWS Cloud Development Kit (CDK)"
+  subtitle="Infrastructure as Real Code"
+  tags={['AWS', 'Infrastructure as Code', 'TypeScript', 'Cloud']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Terraform and CloudFormation use declarative configuration languages (HCL and YAML). You declare what you want. But software engineers mathematically prefer imperative languages (like TypeScript) where they can use standard `for` loops, `if/else` statements, and object-oriented classes.
 
-</ConceptTemplate>
+## 1. The Mathematical Synthesis
+The AWS CDK bridges this gap.
+A developer writes standard TypeScript code, defining AWS resources as Object-Oriented classes.
+When the developer runs `cdk synth`, the CDK engine executes the TypeScript code. As the code runs, the CDK mathematically translates those object instantiations into a massive, thousands-of-lines-long declarative CloudFormation YAML file. That YAML is then deployed to AWS. The developer gets the power of a real programming language, while AWS gets the safe, declarative state engine of CloudFormation.
+
+## 2. Level 2 and Level 3 Constructs
+The greatest mathematical power of the CDK is **Constructs**.
+If you write raw CloudFormation to create a secure VPC, it requires 300 lines of complex YAML.
+In the CDK, AWS provides "L2 Constructs"—pre-built mathematical classes endowed with best practices. A developer simply writes `new ec2.Vpc(this, 'MyVpc', { maxAzs: 3 });`. The CDK mathematically expands that single line of TypeScript into the 300 lines of perfect, highly-secure CloudFormation YAML, saving massive amounts of engineering time.
+
+</TechnologyTemplate>

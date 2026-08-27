@@ -4,7 +4,14 @@ description: A specialized tree structure where each node is mathematically rest
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Binary Trees">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Binary Trees">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standard Tree can have infinite children per node (like a folder containing 500 files). A **Binary Tree** applies a massive mathematical restriction: every node can have a **maximum of exactly two children**, strictly labeled as the **Left Child** and the **Right Child**.
 
@@ -19,7 +26,6 @@ Because Arrays are linear, you just read them left to right. Because Binary Tree
 - **Post-Order**: (Left, Right, Root). Heavily used to safely delete a Tree from the bottom up.
 
 ## 3. The Foundation for Search
-A pure Binary Tree does not enforce any rules about *where* data goes (a $10$ could be the child of a $2$). Without sorting rules, searching a Binary Tree takes a brutally slow $O(N)$ time. 
+A pure Binary Tree does not enforce any rules about *where* data goes (a $10$ could be the child of a $2$). Without sorting rules, searching a Binary Tree takes a brutally slow $O(N)$ time.
 However, the Binary Tree is the absolute architectural foundation for the **Binary Search Tree (BST)**, which applies strict mathematical sorting rules to achieve blazing-fast $O(log N)$ performance.
 
-</ConceptTemplate>

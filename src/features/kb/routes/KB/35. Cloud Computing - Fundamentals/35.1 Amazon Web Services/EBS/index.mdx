@@ -1,0 +1,24 @@
+---
+title: Amazon Elastic Block Store (EBS)
+description: A high-performance, mathematically replicable block storage service designed to act as the primary, persistent hard drive for Amazon EC2 instances.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Elastic Block Store (EBS)"
+  subtitle="Persistent Block Storage for EC2"
+  tags={['AWS', 'Storage', 'Block', 'EC2']}
+>
+
+If an EC2 instance crashes and is destroyed, any data saved to its temporary physical hard drive (Instance Store) is mathematically erased forever. EBS solves this by decoupling the compute from the storage.
+
+## 1. Network-Attached Block Storage
+An EBS volume is not physically inside the EC2 server. It is a massive SAN (Storage Area Network) connected to the EC2 instance via a dedicated, hyper-fast fiber optic network.
+Because it is decoupled, if your EC2 server crashes, the EBS volume physically detaches itself. You can instantly spin up a new EC2 server and attach the exact same EBS volume, maintaining perfect mathematical continuity of your database or file system.
+
+## 2. Mathematical Replication and IOPS
+EBS guarantees data safety through invisible mathematical replication.
+When you save a file to an EBS volume, AWS automatically replicates that exact block of data to multiple physical hardware racks within the same Availability Zone.
+Furthermore, EBS provides **Provisioned IOPS** (Input/Output Operations Per Second). If you are running a massive PostgreSQL database, you can mathematically force AWS to guarantee exactly 64,000 read/write operations per second, ensuring your database never experiences physical IO bottlenecks regardless of how many users are querying it.
+
+</TechnologyTemplate>

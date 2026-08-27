@@ -4,20 +4,26 @@ description: A specialized linked list where the final tail node mathematically 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Circular Linked Lists">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Circular Linked Lists">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In a standard Linked List, the final `Tail` node holds a pointer strictly set to `NULL`, mathematically signaling to any traversing algorithm that the data structure has ended. 
+In a standard Linked List, the final `Tail` node holds a pointer strictly set to `NULL`, mathematically signaling to any traversing algorithm that the data structure has ended.
 A **Circular Linked List** completely removes the concept of an "end." The `Tail` node's `Next` pointer is mathematically wired directly back to the `Head` node, creating an infinite loop.
 
 ## 1. The Infinite Traversal
 Because there is no `NULL`, an algorithm can continuously traverse the list forever. This makes it the mathematically perfect data structure for **Round-Robin Scheduling** in Operating Systems. If the OS has 5 programs requesting CPU time, it simply traverses the Circular Linked List, giving each program 1 millisecond of execution time, infinitely looping around the ring until a program terminates.
 
 ## 2. Eliminating the Head
-Mathematically, a Circular Linked List does not actually have a true "Head." Any node can act as the starting point. 
-Because of this, implementations rarely store a pointer to the Head. Instead, they store a single master pointer exclusively to the **Tail**. 
+Mathematically, a Circular Linked List does not actually have a true "Head." Any node can act as the starting point.
+Because of this, implementations rarely store a pointer to the Head. Instead, they store a single master pointer exclusively to the **Tail**.
 By storing only the Tail pointer, you mathematically gain instant $O(1)$ access to the Tail, and instant $O(1)$ access to the Head (because `Head = Tail.Next`).
 
 ## 3. The Infinite Loop Danger
 Writing algorithms for Circular Linked Lists requires extreme mathematical precision. If you write a standard `while (node != NULL)` traversal loop, it will mathematically trap the CPU in an infinite loop forever. Traversal algorithms must strictly record their starting physical address and mathematically check if they have returned to it.
 
-</ConceptTemplate>

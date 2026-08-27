@@ -4,9 +4,16 @@ description: The pioneering distributed file system that spawned the Big Data er
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HDFS (Hadoop Distributed File System)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HDFS (Hadoop Distributed File System)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Before Cloud Object Storage (like AWS S3) existed, storing a 5-Petabyte dataset was a mathematical impossibility for a standard enterprise. The largest single hard drive could only hold a few Terabytes. 
+Before Cloud Object Storage (like AWS S3) existed, storing a 5-Petabyte dataset was a mathematical impossibility for a standard enterprise. The largest single hard drive could only hold a few Terabytes.
 
 **HDFS (Hadoop Distributed File System)**, heavily inspired by the Google File System (GFS) paper, revolutionized the industry by allowing software to mathematically treat 1,000 separate commodity hard drives as one single, colossal file system.
 
@@ -22,13 +29,12 @@ The physical commodity servers (often thousands of them). When you upload a mass
 ## 2. Mathematical Fault Tolerance (Replication)
 Because HDFS runs on cheap commodity hardware, hard drives mathematically fail every single day.
 HDFS solves this through strict **Replication**.
-By default, every single 128 MB block is replicated exactly **3 times** on three different physical servers (often ensuring they are on different physical power racks). 
+By default, every single 128 MB block is replicated exactly **3 times** on three different physical servers (often ensuring they are on different physical power racks).
 
 If a hard drive catches fire, the NameNode instantly detects the heartbeat failure, mathematically identifies the missing blocks, and dynamically instructs the remaining servers to re-copy the surviving replicas to maintain the 3x guarantee. The system heals itself without human intervention.
 
 ## 3. The Move to Cloud Object Storage
-While HDFS created the Big Data industry, managing thousands of physical hard drives is an operational nightmare. 
+While HDFS created the Big Data industry, managing thousands of physical hard drives is an operational nightmare.
 
 Today, HDFS is largely being replaced by Cloud Object Storage (AWS S3, Google Cloud Storage). S3 provides the same infinite scale and replication guarantees as HDFS, but is entirely serverless, allowing companies to physically shut down their HDFS racks.
 
-</ConceptTemplate>

@@ -1,8 +1,25 @@
+---
+title: Static Typing
+description: A programming paradigm where the compiler mathematically proves the type safety of every variable and function before the program is allowed to run.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Static typing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Static Typing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a Statically Typed language (C, Java, Rust), data types are a strict mathematical constraint bound to the **Variable name**, not just the data itself.
 
-</ConceptTemplate>
+## 1. Compile-Time Mathematical Proofs
+Before the compiler generates the binary executable, it runs a Type Checker. The Type Checker parses the Abstract Syntax Tree (AST) and mathematically attempts to prove that no type rules are violated.
+If you declare `int x = 5` and later write `x = "Hello"`, the compiler detects a mathematical impossibility (a 4-byte integer slot cannot hold a dynamic String pointer). The compilation process instantly halts. The error is caught by the developer immediately, rather than by a user 6 months later in production.
+
+## 2. Hardware Optimization
+Because the compiler mathematically knows the exact type (and therefore the exact byte-size) of every variable in advance, it can generate incredibly optimized Machine Code.
+In Python (Dynamic), `a + b` requires hundreds of assembly instructions to check the types at runtime. In C (Static), if `a` and `b` are known integers, the compiler generates exactly one assembly instruction (`ADD`), making statically typed languages mathematically vastly superior in raw hardware performance.
+

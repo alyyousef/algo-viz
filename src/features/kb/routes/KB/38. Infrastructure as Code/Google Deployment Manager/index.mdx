@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Google Deployment Manager
+description: The native infrastructure deployment service for Google Cloud Platform (GCP), mathematically orchestrating the creation and management of Google Cloud resources using declarative YAML or Python/Jinja2 templates.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Google Deployment Manager">
+<TechnologyTemplate
+  title="Google Deployment Manager"
+  subtitle="Native GCP Orchestration"
+  tags={['GCP', 'Infrastructure as Code', 'Cloud', 'Declarative']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Just as AWS has CloudFormation and Azure has ARM, Google Cloud Platform (GCP) provides **Google Deployment Manager** as its native mathematical engine for declarative infrastructure provisioning.
 
-</ConceptTemplate>
+## 1. YAML and Python/Jinja2
+At its core, a deployment is defined using a declarative YAML configuration file.
+However, raw YAML lacks mathematical logic (like `for` loops). To solve this, Deployment Manager natively supports **Python** and **Jinja2** templates. A developer can write a Python script that mathematically loops 10 times to generate 10 unique GCP Compute Engine configurations. Deployment Manager executes the Python, renders the final static YAML, and provisions the infrastructure.
+
+## 2. The Terraform Shift
+While mathematically robust, Deployment Manager suffers from a lack of multi-cloud capability. It only speaks GCP.
+Because the industry overwhelmingly standardized on HashiCorp Terraform for its cloud-agnostic mathematical model, Google themselves have heavily shifted their engineering resources. Rather than aggressively updating Deployment Manager, Google now writes massive amounts of code directly for the open-source **Terraform GCP Provider**, effectively acknowledging Terraform as the defacto standard for managing Google Cloud infrastructure.
+
+</TechnologyTemplate>

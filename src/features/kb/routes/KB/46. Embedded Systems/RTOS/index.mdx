@@ -4,17 +4,30 @@ description: An operating system intended to serve real-time applications that p
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Real-Time Operating Systems (RTOS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Real-Time Operating Systems (RTOS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A standard Operating System (like Windows or Linux) is designed for **Fairness** and **Throughput**. If you click a button, the OS tries to respond quickly, but if a background virus scan is running, the OS might delay your button click by 50 milliseconds. 
+A standard Operating System (like Windows or Linux) is designed for **Fairness** and **Throughput**. If you click a button, the OS tries to respond quickly, but if a background virus scan is running, the OS might delay your button click by 50 milliseconds.
 
-A **Real-Time Operating System (RTOS)** is mathematically designed for absolute **Determinism**. 
+A **Real-Time Operating System (RTOS)** is mathematically designed for absolute **Determinism**.
+
 
 <Callout icon="warning" title="The Mathematical Deadline">
-  In an RTOS, if the car's radar detects an impending crash, the software MUST mathematically guarantee that the brakes are applied within exactly 2.000 milliseconds. If the OS takes 2.001 milliseconds, people die. 
-  
+
+
+  In an RTOS, if the car's radar detects an impending crash, the software MUST mathematically guarantee that the brakes are applied within exactly 2.000 milliseconds. If the OS takes 2.001 milliseconds, people die.
+
   An RTOS is not necessarily "fast." It is mathematically *predictable*.
+
+
 </Callout>
+
 
 ## Hard vs Soft Real-Time
 
@@ -26,4 +39,3 @@ A **Real-Time Operating System (RTOS)** is mathematically designed for absolute 
 
 To achieve determinism, an RTOS mathematically strips out almost everything found in Linux. There is no virtual memory, no complex file system, and no GUI. It is essentially just an incredibly strict, pre-emptive Thread Scheduler that absolutely guarantees the highest-priority thread will always interrupt a lower-priority thread within a fixed number of CPU clock cycles.
 
-</ConceptTemplate>

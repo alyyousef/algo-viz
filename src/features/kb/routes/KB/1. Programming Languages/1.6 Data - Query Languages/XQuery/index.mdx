@@ -1,8 +1,31 @@
+---
+title: XQuery
+description: A deeply functional, Turing-complete language designed to mathematically query, transform, and construct XML data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="XQuery">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="XQuery">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While XPath is used to *find* things in an XML document, XQuery (XML Query) is a fully functional programming language designed to *query and transform* XML data on a massive scale. It is mathematically to XML what SQL is to a relational database.
 
-</ConceptTemplate>
+## 1. FLWOR Expressions
+The mathematical heart of XQuery is the **FLWOR** (pronounced "flower") expression. It stands for For, Let, Where, Order by, Return.
+```xquery
+for $book in doc("books.xml")//book
+let $title := $book/title
+where $book/price &lt; 30
+order by $title
+return <cheap-book>{ $title }</cheap-book>
+```
+This mathematical construct allows a developer to iterate over an XML document, mathematically bind variables (`$title`), filter the data, sort it, and then dynamically construct completely brand new XML elements (`<cheap-book>`) out of thin air to return to the user.
+
+## 2. The Native XML Database
+Because XQuery is Turing-complete and mathematically optimized for tree traversal, it became the foundation of "Native XML Databases" (like MarkLogic or eXist-db). Instead of trying to mathematically force XML data into rigid SQL tables (Object-Relational Impedance Mismatch), these databases store the raw XML trees and execute XQuery directly against the disk.
+

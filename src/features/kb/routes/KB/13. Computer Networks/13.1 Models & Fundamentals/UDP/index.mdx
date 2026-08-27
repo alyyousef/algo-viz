@@ -4,15 +4,22 @@ description: The blazing fast, connectionless Layer 4 protocol that prioritizes 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="UDP (User Datagram Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="UDP (User Datagram Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While TCP is a meticulous courier who requires a signature for every package, **UDP** is a machine gun. It blindly blasts packets of data at the destination as fast as physically possible. 
+While TCP is a meticulous courier who requires a signature for every package, **UDP** is a machine gun. It blindly blasts packets of data at the destination as fast as physically possible.
 
 UDP operates at Layer 4 (Transport) and is explicitly **Connectionless** and **Unreliable**. It performs no handshakes, expects no acknowledgements, and does not care if the data arrives out of order, or if it arrives at all.
 
 ## 1. Why Use UDP? (The Need for Speed)
 
-If UDP is so unreliable, why is it used? Because TCP's reliability (handshakes, ACKs, retransmissions) introduces massive latency. 
+If UDP is so unreliable, why is it used? Because TCP's reliability (handshakes, ACKs, retransmissions) introduces massive latency.
 There is a massive class of applications where **late data is worse than missing data**.
 
 - **VoIP / Video Calls (Zoom, Discord)**: If a packet containing a frame of video is dropped by a router, you don't want TCP to pause the video, request a retransmission, and wait 50ms for the missing frame. You want the app to just skip the frame (causing a tiny visual glitch) and immediately play the newest live frame.
@@ -26,8 +33,13 @@ To achieve this extreme speed, UDP strips away almost all of TCP's features:
 - **No Sequencing**: If packets arrive out of order, UDP passes them to the application out of order.
 - **No Congestion Control**: UDP will blast data at 1 Gigabit per second even if the receiving network can only handle 10 Megabits, causing catastrophic packet loss for everyone else on the network.
 
+
 <Callout icon="tip" title="Application-Layer Reliability">
+
+
   Just because you use UDP doesn't mean your app has to be completely unreliable. Modern protocols (like HTTP/3 which uses QUIC) are built on top of UDP. They leverage the raw speed of UDP at the transport layer, but manually implement their own highly-optimized reliability and sequencing features directly within the application layer code.
+
+
 </Callout>
 
-</ConceptTemplate>
+

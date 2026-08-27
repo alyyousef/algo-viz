@@ -4,10 +4,16 @@ description: The application of machine learning techniques to financial data to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Financial Machine Learning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Financial Machine Learning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Classic Quant finance relies on strict mathematical statistics and PDEs. **Financial ML** abandons formulas and lets AI find the patterns.
 
 Quants feed Deep Neural Networks or Random Forests massive datasets: 10 years of Order Book data, biological satellite imagery of Walmart parking lots, and NLP sentiment analysis of Elon Musk's tweets. The AI mathematically discovers invisible, non-linear relationships that no human mathematician could ever derive. However, financial data has a notoriously low signal-to-noise ratio, making these models highly prone to catastrophic overfitting.
 
-</ConceptTemplate>

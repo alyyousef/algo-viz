@@ -4,13 +4,20 @@ description: An extremely low-level locking mechanism where waiting threads acti
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Spinlocks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Spinlocks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When a thread fails to acquire a standard Mutex, the Operating System steps in, forcibly puts the thread to sleep, and performs a Context Switch to give the CPU to another program. 
+When a thread fails to acquire a standard Mutex, the Operating System steps in, forcibly puts the thread to sleep, and performs a Context Switch to give the CPU to another program.
 While this is efficient because the waiting thread uses 0% CPU, the Context Switch itself is very slow (taking thousands of CPU cycles to swap memory spaces).
 
-What if the lock is only going to be held for 5 nanoseconds? 
-Putting the thread to sleep and waking it back up would take 1000x longer than just waiting. 
+What if the lock is only going to be held for 5 nanoseconds?
+Putting the thread to sleep and waking it back up would take 1000x longer than just waiting.
 
 For incredibly short critical sections, OS developers use **Spinlocks**.
 
@@ -25,13 +32,18 @@ while (test_and_set(&lock) == 1) {
 // Lock acquired! Execute the critical section.
 ```
 
+
 <Callout icon="warning" title="The Golden Rule of Spinlocks">
-  Spinlocks must **only** be used in multi-core systems, and only if the critical section executes in a few microseconds. 
+
+
+  Spinlocks must **only** be used in multi-core systems, and only if the critical section executes in a few microseconds.
   If you use a Spinlock on a Single-Core CPU, you will deadlock the system. The spinning thread will consume 100% of the CPU, preventing the thread that actually holds the lock from ever running to release it.
+
+
 </Callout>
+
 
 ## Where are they used?
 
 You will almost never use Spinlocks in User Space programming (Java, Python, C#). They are exclusively used deep inside the **OS Kernel** (Ring 0) to protect core data structures (like the scheduler's run queue) where a traditional Mutex (which requires the scheduler to put a thread to sleep) would create an infinite recursive paradox.
 
-</ConceptTemplate>

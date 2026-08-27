@@ -1,8 +1,25 @@
+---
+title: Gradual Typing
+description: A hybrid type system that mathematically allows statically typed and dynamically typed code to seamlessly interoperate in the same codebase.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gradual typing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Gradual Typing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, a language was either entirely Statically Typed (Java) or entirely Dynamically Typed (Python). **Gradual Typing** (as seen in TypeScript or Python with Mypy) allows a codebase to mathematically exist in both states simultaneously.
 
-</ConceptTemplate>
+## 1. The "Any" Type
+The mathematical anchor of Gradual Typing is the `any` type.
+If a variable is typed as `any`, the compiler mathematically disables all static type-checking for that specific variable, reverting completely to Dynamic Duck Typing. This allows developers to take a massive legacy JavaScript codebase and incrementally add strict mathematical types file-by-file without having to rewrite the entire system at once.
+
+## 2. The Soundness Gap
+Gradual Typing is incredibly pragmatic, but it introduces a mathematical "Soundness Gap."
+Because `any` bypasses the compiler, you can mathematically cast a `String` to `any`, and then cast that `any` into an `Integer` without the compiler complaining. The compiler's absolute mathematical guarantee of safety is broken, and runtime crashes (TypeError) can still occur at the boundaries where the Static code physically interacts with the Dynamic code.
+

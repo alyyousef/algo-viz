@@ -1,8 +1,36 @@
+---
+title: GraphQL
+description: A revolutionary data query and manipulation language developed by Facebook, fundamentally altering how frontends mathematically request data from APIs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GraphQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GraphQL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Facebook in 2012 and open-sourced in 2015, GraphQL is a query language for APIs. It was mathematically designed to solve the two biggest architectural flaws of standard REST APIs: **Over-fetching** and **Under-fetching**.
 
-</ConceptTemplate>
+## 1. The Client Dictates the Shape
+In a traditional REST API, if a mobile app hits the `/users/1` endpoint, the server mathematically decides what JSON to return. It might return 50 fields (Over-fetching, wasting mobile data), or it might not include the user's friends, forcing the app to make a second HTTP request to `/users/1/friends` (Under-fetching, causing UI lag).
+
+In GraphQL, there is only one endpoint. The frontend mathematically sends a query describing the exact shape of the data it wants:
+```graphql
+{
+  user(id: 1) {
+    name
+    friends {
+      name
+    }
+  }
+}
+```
+The server mathematically traverses its Graph and returns exactly those fields, in that exact nested JSON structure, nothing more and nothing less.
+
+## 2. The Strongly Typed Schema
+GraphQL is mathematically strict. Before a server can accept a query, the backend developers must define a rigid Schema using the GraphQL Schema Definition Language (SDL). This schema defines exactly what objects exist (`User`, `Post`) and what types their fields are (`String`, `Int`). If the frontend requests a field that does not exist in the mathematical schema, the GraphQL engine rejects the query before executing any backend code.
+

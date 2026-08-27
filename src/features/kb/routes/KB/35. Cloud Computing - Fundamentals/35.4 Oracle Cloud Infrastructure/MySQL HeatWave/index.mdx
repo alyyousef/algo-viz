@@ -1,0 +1,25 @@
+---
+title: MySQL HeatWave
+description: Oracle's revolutionary, massively parallel in-memory query accelerator that mathematically allows a single MySQL database to process both rapid transactions and massive analytical queries simultaneously.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="MySQL HeatWave"
+  subtitle="Unified OLTP and OLAP"
+  tags={['OCI', 'Database', 'MySQL', 'Analytics']}
+>
+
+Historically, database architecture forced a mathematical divide: you used MySQL for fast, tiny transactions (OLTP), but if you wanted to run a massive data analytics report (OLAP), you had to export the data via a complex ETL pipeline into a separate Data Warehouse (like Snowflake or Redshift). HeatWave destroys this divide.
+
+## 1. The In-Memory Accelerator
+HeatWave is an in-memory, columnar processing engine physically attached to the OCI MySQL Database Service.
+When a user executes a standard SQL query, the MySQL optimizer mathematically analyzes it.
+If it is a simple query (*"Update User 5's password"*), MySQL handles it instantly.
+If it is a massive analytical query (*"Calculate the average sales of all products across 5 billion rows over the last 10 years"*), the optimizer mathematically intercepts the query and pushes it down to the HeatWave cluster. HeatWave executes the query across dozens of distributed in-memory nodes, returning the result up to 400x faster than standard MySQL, completely eliminating the need for a separate Data Warehouse.
+
+## 2. HeatWave AutoML
+Because HeatWave holds massive amounts of data in its distributed RAM, exporting that data to a separate Machine Learning server is mathematically inefficient.
+HeatWave includes **AutoML**. Data Scientists can write standard SQL commands directly inside the database to mathematically train Machine Learning models (like predicting customer churn) directly on the raw data resting in memory. This eliminates data movement, drastically improves security, and democratizes AI for standard SQL developers.
+
+</TechnologyTemplate>

@@ -4,13 +4,20 @@ description: The overarching theoretical introduction to the history, classifica
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AI Fundamentals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AI Fundamentals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Artificial Intelligence (AI)** is a broad branch of computer science focused on building systems capable of performing tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation.
 
 ## 1. The Turing Test
-In 1950, Alan Turing proposed a mathematical and philosophical test for machine intelligence, originally called the "Imitation Game". 
-A human evaluator engages in a text conversation with two entities: one human, and one machine. If the evaluator cannot reliably tell which is the machine, the machine has passed the Turing Test. 
+In 1950, Alan Turing proposed a mathematical and philosophical test for machine intelligence, originally called the "Imitation Game".
+A human evaluator engages in a text conversation with two entities: one human, and one machine. If the evaluator cannot reliably tell which is the machine, the machine has passed the Turing Test.
 While largely symbolic today (as LLMs easily pass it without achieving true consciousness), it established the foundational goal of the AI field.
 
 ## 2. Weak AI vs Strong AI
@@ -25,4 +32,3 @@ The history of AI is marked by periods of massive hype followed by catastrophic 
 - **1980s**: The rise of Expert Systems (rule-based if/then engines for corporations). Crashed because they were incredibly brittle and expensive to maintain.
 - **2012 - Present**: The Deep Learning Revolution. Powered by massive GPU clusters and infinite internet data, Neural Networks mathematically proved their superiority, launching the current era of Generative AI.
 
-</ConceptTemplate>

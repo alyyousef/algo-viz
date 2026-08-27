@@ -1,8 +1,25 @@
+---
+title: Parameters
+description: Mathematical placeholders defined in a function signature that dictate the types and structure of the input data the function requires.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Parameters">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Parameters (vs Arguments)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In programming theory, there is a strict mathematical distinction between a Parameter and an Argument.
+- **Parameter**: The mathematical variable defined in the function signature (e.g., `function add(x, y)`). `x` and `y` are parameters.
+- **Argument**: The physical, actual data passed into the function when it is called (e.g., `add(5, 10)`). `5` and `10` are arguments.
 
-</ConceptTemplate>
+## 1. Pass-by-Value
+In Pass-by-Value, when a function is called, the CPU mathematically clones the Argument in memory and passes the copy into the Parameter. If the function modifies the Parameter, it only modifies the local copy on its own Stack frame. The original Variable in the caller's scope remains mathematically untouched.
+
+## 2. Pass-by-Reference
+In Pass-by-Reference, the CPU does not clone the data. It mathematically passes the actual physical Memory Address (Pointer) of the caller's Variable into the Parameter. If the function modifies the Parameter, it is mathematically mutating the exact bytes in memory that the caller is pointing to, creating a Side Effect.
+

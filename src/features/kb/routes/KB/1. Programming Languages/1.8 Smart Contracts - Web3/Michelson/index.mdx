@@ -1,8 +1,26 @@
+---
+title: Michelson
+description: The deeply mathematical, stack-based smart contract language of the Tezos blockchain, designed specifically for Formal Verification.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Michelson">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Michelson">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Michelson is the native, low-level smart contract language for the Tezos blockchain. It is heavily inspired by functional programming and is mathematically structured to prevent catastrophic financial hacks.
 
-</ConceptTemplate>
+## 1. Stack-Based Execution
+Like Forth or the JVM, Michelson is a stack-based language. There are no variables. You mathematically push data onto a stack, execute an instruction (like `ADD` or `DUP`), which pops the data off the stack, performs the math, and pushes the result back on.
+Because it lacks variables and side-effects, the state of the contract at any given instruction is mathematically pure and explicitly defined by the state of the stack.
+
+## 2. Formal Verification
+The Tezos foundation chose Michelson because its mathematical purity makes it ideal for **Formal Verification**.
+In standard testing, you write 100 tests to check 100 possible scenarios.
+In Formal Verification, you use a theorem prover (like Coq) to mathematically prove that a bug (like an integer overflow or a reentrancy attack) is physically impossible to execute under *any* scenario, providing institutional-grade security for billion-dollar DeFi contracts.
+

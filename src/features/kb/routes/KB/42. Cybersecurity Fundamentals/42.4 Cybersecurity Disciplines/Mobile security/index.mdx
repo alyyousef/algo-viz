@@ -4,15 +4,28 @@ description: The protection of smartphones, tablets, and wearable devices from t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mobile Security">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mobile Security">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the modern enterprise, the smartphone is the new perimeter. Employees check corporate email, access Slack, and authenticate via 2FA apps on devices that easily fit in their pockets—and are easily lost, stolen, or compromised.
 
 **Mobile Security** deals with the unique mathematical and architectural challenges of securing iOS and Android ecosystems, which are vastly different from traditional Windows/Linux endpoints.
 
+
 <Callout icon="info" title="Sandboxing Architecture">
+
+
   Unlike a Windows PC where an application runs with the user\'s full permissions, iOS and Android employ strict mathematical Sandboxing. Every app runs in its own isolated container. App A cannot read the memory or files of App B unless explicitly permitted by the OS through APIs.
+
+
 </Callout>
+
 
 ## Enterprise Mobility Management (EMM)
 
@@ -22,4 +35,3 @@ To secure employee devices, corporations deploy Mobile Device Management (MDM) o
 2. **Containerization:** The MDM creates a secure, encrypted "Work" profile on the phone. The company has absolute control over the Work apps, but zero visibility into the user\'s personal apps or photos.
 3. **App Vetting:** The MDM can forbid the installation of known malicious applications or require the device to be running the latest OS version before allowing access to corporate email.
 
-</ConceptTemplate>

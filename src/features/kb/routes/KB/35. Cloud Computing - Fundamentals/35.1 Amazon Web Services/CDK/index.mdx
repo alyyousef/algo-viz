@@ -1,0 +1,27 @@
+---
+title: AWS Cloud Development Kit (CDK)
+description: A groundbreaking infrastructure-as-code framework that allows developers to define complex cloud architectures using familiar imperative programming languages like TypeScript and Python instead of static YAML.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Cloud Development Kit (CDK)"
+  subtitle="Infrastructure as True Code"
+  tags={['AWS', 'IaC', 'TypeScript', 'DevOps']}
+>
+
+Writing thousands of lines of static JSON or YAML (CloudFormation) to define a VPC is error-prone and unreadable. AWS CDK solves this by turning infrastructure into an object-oriented software engineering problem.
+
+## 1. Imperative to Declarative Compilation
+In CDK, you write standard TypeScript.
+You instantiate a VPC as a Class: `const vpc = new ec2.Vpc(this, 'MyVpc')`.
+You can use standard programming constructs like `for` loops, `if` statements, and functions to dynamically generate infrastructure.
+When you run `cdk synth`, the CDK compiler executes your TypeScript, mathematically calculates the dependency graph of all the objects, and automatically generates the massive, flawless, declarative CloudFormation YAML template required by AWS.
+
+## 2. L2 and L3 Constructs (Abstraction)
+The true power of CDK is mathematical abstraction.
+- **L1 Constructs**: A 1-to-1 mapping of a raw CloudFormation resource.
+- **L2 Constructs**: AWS-provided classes with mathematically safe defaults. If you instantiate an L2 `Bucket`, CDK automatically applies industry-standard encryption and IAM policies, saving you 50 lines of boilerplate.
+- **L3 Constructs (Patterns)**: Massive architectural templates. With a single line of code (`ApplicationLoadBalancedFargateService`), CDK will mathematically synthesize an entire architecture: a VPC, subnets, an Application Load Balancer, an ECS Cluster, a Fargate Task, and all the exact IAM security groups required to wire them together securely.
+
+</TechnologyTemplate>

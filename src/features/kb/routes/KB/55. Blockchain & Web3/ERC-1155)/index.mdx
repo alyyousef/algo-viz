@@ -4,16 +4,28 @@ description: A multi-token standard that allows a single smart contract to manag
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ERC-1155 (Multi-Token Standard)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ERC-1155 (Multi-Token Standard)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In a massive video game, you might have Fungible tokens (10,000 Gold Coins) and Non-Fungible tokens (1 Unique Excalibur Sword). 
+In a massive video game, you might have Fungible tokens (10,000 Gold Coins) and Non-Fungible tokens (1 Unique Excalibur Sword).
 
-Historically, you would have to deploy two separate Smart Contracts (an ERC-20 and an ERC-721). 
+Historically, you would have to deploy two separate Smart Contracts (an ERC-20 and an ERC-721).
+
 
 <Callout icon="tip" title="The Multi-Token Efficiency">
+
+
   **ERC-1155** (invented by Enjin) mathematically combines both standards into a single contract.
-  
+
   You can mint 10,000 Gold Coins and 1 Excalibur Sword in a single mathematical transaction, drastically reducing the Gas fees and completely unifying the gaming inventory system into one highly optimized Smart Contract.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,0 +1,28 @@
+---
+title: Amazon Cognito
+description: A massively scalable Customer Identity and Access Management (CIAM) service that handles secure user sign-up, authentication, and token generation for web and mobile applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Cognito"
+  subtitle="Managed User Authentication"
+  tags={['AWS', 'Security', 'Identity', 'JWT']}
+>
+
+Writing your own cryptography to hash passwords and manage session tokens in a database is a massive security risk. Cognito outsources the complex mathematics of user authentication to AWS.
+
+## 1. User Pools (Authentication)
+A **User Pool** is the managed database of your users.
+It handles the entire lifecycle: Sign-Up, Email Verification, Password Resets, and Multi-Factor Authentication (MFA).
+When a user successfully logs in, Cognito executes cryptographic math to generate three **JSON Web Tokens (JWTs)**:
+- **ID Token**: Contains the user's profile data (Email, Name).
+- **Access Token**: Contains the OAuth scopes (what the user is allowed to do).
+- **Refresh Token**: Used to securely get new Access Tokens when the old one expires.
+The frontend application mathematically attaches the Access Token to every API request to prove identity.
+
+## 2. Identity Pools (Authorization)
+A User Pool proves *who* you are. An **Identity Pool** dictates *what* AWS resources you can touch.
+If you want your mobile app users to upload profile pictures directly to an S3 bucket (without going through your backend API), the app sends the Cognito JWT to the Identity Pool. The Identity Pool mathematically verifies the cryptographic signature of the token, and exchanges it for temporary, highly restricted AWS IAM Credentials that only allow that specific user to write to their specific folder in S3.
+
+</TechnologyTemplate>

@@ -1,8 +1,34 @@
+---
+title: Interfaces
+description: Pure mathematical contracts in Object-Oriented Programming that define exactly what methods a class must implement, without providing any of the underlying implementation logic.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Interfaces">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Interfaces"
+  subtitle="The Pure Mathematical Contract"
+  tags={['OOP', 'Architecture', 'Java', 'Design Patterns']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An Abstract Class can contain a mix of unimplemented methods and fully implemented methods. An Interface is mathematically pure: it contains **zero** implementation. It is nothing but a list of signatures.
 
-</ConceptTemplate>
+## 1. The Strict Contract
+```java
+public interface Printable {
+    void print();
+}
+```
+If a class declares `class Document implements Printable`, the compiler enforces a strict mathematical contract. If the `Document` class fails to contain a method named `print()` that takes zero arguments and returns `void`, the compiler will refuse to build the software. The Interface mathematically guarantees behavior without dictating *how* that behavior is achieved.
+
+## 2. Multiple Inheritance
+In languages like Java and C#, a class can mathematically only inherit from **one** parent class (preventing the infamous "Diamond Problem" of multiple inheritance).
+However, a class can implement **infinite** Interfaces.
+A `Smartphone` class can inherit from `Computer`, but it can implement `ICamera`, `IGPSLocation`, and `IPhone`. This allows developers to mathematically compose wildly different behaviors onto a single object without building deep, brittle inheritance trees.
+

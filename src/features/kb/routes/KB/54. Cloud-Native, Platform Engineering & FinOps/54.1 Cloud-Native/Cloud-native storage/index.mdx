@@ -4,18 +4,30 @@ description: Storage systems architected specifically for cloud-native applicati
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cloud-Native Storage">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cloud-Native Storage">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Kubernetes containers are mathematically **Ephemeral**. If you save a file to `/app/data.txt` inside a container, and the container crashes, the file is biologically deleted forever.
 
 This is a massive problem for Databases that mathematically require persistent disk storage.
 
+
 <Callout icon="success" title="The CSI Architecture">
+
+
   Kubernetes solves this using the **CSI (Container Storage Interface)**.
-  
-  Instead of saving to the container's virtual filesystem, the developer mathematically requests a **Persistent Volume Claim (PVC)**. The K8s CSI plugin dynamically contacts the underlying cloud provider (e.g., AWS EBS). It mathematically provisions a physical 50GB cloud hard drive, physically detaches it, and mounts it directly into the container over the network. 
-  
+
+  Instead of saving to the container's virtual filesystem, the developer mathematically requests a **Persistent Volume Claim (PVC)**. The K8s CSI plugin dynamically contacts the underlying cloud provider (e.g., AWS EBS). It mathematically provisions a physical 50GB cloud hard drive, physically detaches it, and mounts it directly into the container over the network.
+
   If the container dies and respawns on a different server, K8s mathematically detaches the physical hard drive and re-mounts it to the new server, ensuring zero data loss.
+
+
 </Callout>
 
-</ConceptTemplate>
+

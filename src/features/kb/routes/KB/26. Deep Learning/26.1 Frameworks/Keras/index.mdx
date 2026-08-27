@@ -4,7 +4,14 @@ description: A high-level, extremely user-friendly deep learning API that drasti
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Keras">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Keras">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 2015, building a Neural Network required writing hundreds of lines of complex, low-level mathematical C++ and Python code. **Keras** was introduced as an ultra-high-level API that allowed developers to construct massive, mathematically complex models using a beautiful, Lego-like syntax in just 5 lines of code.
 
@@ -17,4 +24,3 @@ Keras became so overwhelmingly popular that Google mathematically surrendered. I
 ## 3. Keras 3.0 (The Return of the Multi-Backend)
 In a shocking mathematical pivot, Keras 3.0 was recently released, returning to its roots. You can now write a model in pure Keras syntax, and dynamically choose to execute that exact same code on the **TensorFlow**, **PyTorch**, or **JAX** mathematical engines. It allows Data Scientists to write beautiful code while leveraging the unique mathematical advantages (like JAX's XLA compiler) of whatever framework they choose.
 
-</ConceptTemplate>

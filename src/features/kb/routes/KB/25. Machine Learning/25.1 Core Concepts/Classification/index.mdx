@@ -4,7 +4,14 @@ description: The supervised learning task of mathematically assigning an input d
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Classification">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Classification">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Supervised Machine Learning, if the target variable you are trying to predict is a continuous number (e.g., Price), it is Regression. If the target variable is a discrete category (e.g., "Dog", "Cat", "Spam"), it is **Classification**.
 
@@ -23,4 +30,3 @@ Classification where a single data point can mathematically belong to *multiple*
 - *Example*: A movie genre classifier. A single movie like "The Matrix" can be classified as ["Action", "Sci-Fi", "Thriller"] simultaneously.
 - **Mathematical Output**: Instead of Softmax, the network uses a **Sigmoid** activation function on every single output node independently. The probability of "Action" being 0.9 does not mathematically reduce the probability of "Sci-Fi" also being 0.9.
 
-</ConceptTemplate>

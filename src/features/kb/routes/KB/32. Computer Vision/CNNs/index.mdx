@@ -1,8 +1,30 @@
+---
+title: Convolutional Neural Networks (CNNs)
+description: The foundational deep learning architecture of Computer Vision that mathematically detects visual patterns by sliding filters across a pixel matrix to extract hierarchical spatial features.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CNNs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Convolutional Neural Networks (CNNs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you feed a 1080p image into a standard Neural Network, it requires 2 million input neurons. The math instantly breaks. CNNs solve this by not looking at the whole image at once; they look at tiny patches using Convolutions.
 
-</ConceptTemplate>
+## 1. The Convolution Operation
+A Convolution is a mathematical matrix multiplication.
+The network learns a **Filter** (a tiny 3x3 grid of numbers). It physically slides this Filter across the massive 1080p image pixel by pixel (the Stride). At every step, it mathematically multiplies the Filter numbers by the underlying pixel values and sums them.
+If the Filter is mathematically optimized to detect vertical lines, the output of the Convolution will physically highlight every vertical line in the image, ignoring the rest.
+
+## 2. Hierarchical Feature Extraction
+A CNN stacks dozens of these Convolutional layers on top of each other, interspersed with **Pooling layers** (which mathematically shrink the image to save RAM).
+- Layer 1 detects raw edges and colors.
+- Layer 5 combines edges to detect shapes (circles, squares).
+- Layer 20 combines shapes to detect complex textures (fur, scales).
+- Layer 50 combines textures to detect "Dog."
+This mathematical hierarchy perfectly mirrors how the human visual cortex processes light from the retina.
+

@@ -1,8 +1,34 @@
+---
+title: Monitoring
+description: The continuous, mathematical collection and visualization of system metrics (CPU, memory, request rates) to evaluate the real-time health and performance of an infrastructure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Monitoring">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Monitoring"
+  subtitle="Real-Time System Health"
+  tags={['DevOps', 'Observability', 'Metrics', 'SRE']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Logging tells you *what* specific event happened. Monitoring tells you the mathematical *trend* of what is happening across the entire system.
 
-</ConceptTemplate>
+## 1. Time-Series Metrics
+Monitoring relies on **Time-Series Databases** (like Prometheus).
+Instead of collecting large text strings, a monitoring system collects pure mathematical data points tied to a timestamp:
+- `cpu_usage{server="web-01"}` -> `85%` @ `10:00:01`
+- `http_requests_total{status="500"}` -> `42` @ `10:00:01`
+Because this data is purely numeric, the database can mathematically compress millions of points per second and execute complex aggregations (e.g., *"Calculate the 99th percentile of HTTP latency over the last 5 minutes"*).
+
+## 2. Alerting and Dashboards
+Monitoring data is mathematically useless if humans have to stare at it.
+DevOps teams build visualizations (using Grafana) to see system health at a glance. More importantly, they define mathematical **Alerting Rules**.
+*"If the 5-minute moving average of HTTP 500 errors exceeds 2%, page the on-call engineer."*
+Monitoring shifts the paradigm from reactive (a customer calling to say the site is down) to proactive (the mathematical alert firing 10 minutes before the database runs completely out of memory).
+

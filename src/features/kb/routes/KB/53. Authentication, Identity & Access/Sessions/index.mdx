@@ -4,19 +4,31 @@ description: A method of authentication where the server stores the authenticati
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sessions (Stateful Authentication)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sessions (Stateful Authentication)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 HTTP is mathematically a **Stateless** protocol. If you log in on `/login`, and then navigate to `/dashboard`, the server has absolutely no biological memory of who you are.
 
 To solve this, developers invented **Session-based Authentication**.
 
+
 <Callout icon="info" title="The Architecture">
+
+
   1. **Login:** The user sends their username/password.
   2. **Session Creation:** The backend mathematically creates a "Session Object" in its RAM (or a Redis database) containing `{ userId: 123, role: "admin" }`.
   3. **The Cookie:** The backend sends a Set-Cookie header containing a random string: `session_id=abcxyz`.
   4. **Subsequent Requests:** Every time the browser makes a request, it biologically sends the `session_id` cookie. The backend looks up `abcxyz` in its Redis database, mathematically proves the user is logged in, and allows access.
+
+
 </Callout>
+
 
 This is highly secure but mathematically difficult to scale, because if you have 3 backend servers, you must synchronize the Session database across all of them.
 
-</ConceptTemplate>

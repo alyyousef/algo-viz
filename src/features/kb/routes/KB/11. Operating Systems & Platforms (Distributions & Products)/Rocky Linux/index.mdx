@@ -4,22 +4,34 @@ description: A wildly popular, 1:1 bug-for-bug clone of RHEL, created by the ori
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rocky Linux">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rocky Linux">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-To understand Rocky Linux, you have to understand the death of CentOS. 
-For 15 years, if a company wanted the incredible 10-year stability of RHEL, but didn't want to pay Red Hat thousands of dollars for the support contract, they simply installed **CentOS** (a free, community-compiled, 1:1 clone of RHEL). 
+To understand Rocky Linux, you have to understand the death of CentOS.
+For 15 years, if a company wanted the incredible 10-year stability of RHEL, but didn't want to pay Red Hat thousands of dollars for the support contract, they simply installed **CentOS** (a free, community-compiled, 1:1 clone of RHEL).
 
-In 2020, Red Hat controversially killed traditional CentOS. The corporate world was furious. 
+In 2020, Red Hat controversially killed traditional CentOS. The corporate world was furious.
 Gregory Kurtzer, the original founder of CentOS, immediately announced a new project: **Rocky Linux**.
 
 ## The Successor
 
 Rocky Linux (named in honor of late CentOS co-founder Rocky McGaugh) is exactly what CentOS used to be: a 100% bug-for-bug compatible, free downstream clone of Red Hat Enterprise Linux.
 
+
 <Callout icon="success" title="The Enterprise Migration">
+
+
   Because Rocky is bug-for-bug compatible with RHEL, the migration process is incredibly simple. A SysAdmin can take a server running RHEL 8 or CentOS 8, run a simple bash script provided by the Rocky team, and the server will seamlessly transform into a Rocky Linux 8 server without requiring a reboot or data wipe.
+
+
 </Callout>
+
 
 Alongside AlmaLinux, Rocky Linux has massively succeeded in replacing CentOS in datacenters around the world, backed by a massive community and a strong legal structure to ensure it cannot be bought and killed by IBM.
 
-</ConceptTemplate>

@@ -4,23 +4,35 @@ description: A signal to the processor emitted by hardware or software indicatin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Interrupts (ISRs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Interrupts (ISRs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Imagine you are waiting for a very important email. 
+Imagine you are waiting for a very important email.
 - **Polling:** You hit refresh on your browser 1,000 times a second. This wastes massive amounts of energy and CPU cycles.
 - **Interrupts:** You turn on push notifications and go to sleep. The moment the email arrives, your phone physically vibrates, instantly waking you up.
 
 In Embedded Systems, **Interrupts** are mathematical hardware signals that force the CPU to instantly drop whatever it is doing and execute a specific function.
 
+
 <Callout icon="error" title="The Interrupt Service Routine (ISR)">
+
+
   When a hardware pin receives 3.3V (e.g., the user pressed a physical button), the CPU mathematically pauses the `main()` infinite loop, saves all its current variables to the Stack, and instantly jumps to a special function called an **ISR (Interrupt Service Routine)**.
-  
+
   ISRs MUST be mathematically microscopic. If your ISR contains a `delay()` or an infinite loop, the entire CPU is permanently frozen and the main program will never resume.
+
+
 </Callout>
+
 
 ## Hardware vs Software Interrupts
 
 - **Hardware Interrupts:** Triggered by physical electricity. A timer reaching zero, a UART pin receiving a byte of data, or an ADC finishing a voltage reading.
 - **Software Interrupts:** Triggered mathematically by code (Exceptions). Division by zero, or a Page Fault in an OS.
 
-</ConceptTemplate>

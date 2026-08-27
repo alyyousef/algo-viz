@@ -4,17 +4,30 @@ description: Hardware devices that receive control signals and convert them into
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IoT Actuators">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IoT Actuators">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If Sensors are the eyes and ears of an IoT system, **Actuators** are the hands and muscles. 
+If Sensors are the eyes and ears of an IoT system, **Actuators** are the hands and muscles.
 
 An Actuator does the exact mathematical opposite of a Sensor. It takes a digital signal from the microcontroller (a `1` or `0`) and converts it back into physical, real-world energy (motion, heat, light).
 
+
 <Callout icon="warning" title="The Power Problem">
-  A microcontroller pin can only output about 20 milliamps of electricity at 3.3 Volts. That is mathematically barely enough to light up a single, tiny LED. 
-  
+
+
+  A microcontroller pin can only output about 20 milliamps of electricity at 3.3 Volts. That is mathematically barely enough to light up a single, tiny LED.
+
   If you connect a massive 120V AC water pump directly to a microcontroller pin, the chip will physically explode. Therefore, Actuators heavily rely on **Relays** and **Transistors** (MOSFETs) — electrical switches that allow a tiny 3.3V signal to mathematically trigger a massive 120V power line.
+
+
 </Callout>
+
 
 ## Types of Actuators
 
@@ -22,4 +35,3 @@ An Actuator does the exact mathematical opposite of a Sensor. It takes a digital
 - **Relays:** Electromechanical switches used to turn on massive industrial heaters, AC units, or house lights.
 - **Valves/Solenoids:** Electromagnets used to physically open or close a pipe for water or gas flow.
 
-</ConceptTemplate>

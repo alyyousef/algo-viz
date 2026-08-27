@@ -1,8 +1,27 @@
+---
+title: TF-IDF (Term Frequency - Inverse Document Frequency)
+description: A foundational mathematical algorithm that scores the absolute importance of a word within a document by balancing how often it appears against how rare it is across the entire corpus.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TF-IDF">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="TF-IDF">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a document mentions the word "the" 1,000 times, and the word "Quantum" 5 times, a simple frequency counter (Bag of Words) mathematically assumes "the" is the most important topic. TF-IDF corrects this mathematical flaw.
 
-</ConceptTemplate>
+## 1. Term Frequency (TF)
+The first half of the equation is Term Frequency: $TF = (Count of word X in document) / (Total words in document)$.
+If "Quantum" appears 5 times in a 100-word document, its TF is 0.05. It mathematically rewards words that appear frequently *in the current document*.
+
+## 2. Inverse Document Frequency (IDF)
+The second half is Inverse Document Frequency: $IDF = \log(Total Documents / Documents containing word X)$.
+If you have 1,000,000 documents, and the word "the" appears in all 1,000,000, its IDF is $\log(1) = 0$.
+If "Quantum" only appears in 10 documents, its IDF is $\log(1,000,000 / 10) = 5$.
+When you multiply them ($TF \times IDF$), the score for "the" mathematically drops to 0. The score for "Quantum" skyrockets. The algorithm mathematically proves that "Quantum" is the true keyword of the document because it is highly frequent locally, but extremely rare globally.
+

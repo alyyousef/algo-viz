@@ -1,8 +1,27 @@
+---
+title: Reference Counting
+description: A deterministic Garbage Collection strategy that mathematically tracks exactly how many pointers are currently referencing a block of memory.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="reference counting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reference Counting (ARC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Used extensively by Apple (Swift/Objective-C), Reference Counting is an automated memory management technique that avoids the massive "Stop-the-World" pauses of a Java-style Tracing Garbage Collector.
 
-</ConceptTemplate>
+## 1. The Mathematical Tally
+Every Object allocated on the Heap physically contains a hidden Integer field: The **Reference Count**.
+When you assign an object to a new variable (`let b = a`), the compiler mathematically inserts an assembly instruction to increment the counter (Count = 2).
+When a variable goes out of scope, the compiler inserts an instruction to decrement the counter (Count = 1).
+When the counter mathematically hits 0, the object knows it has no Owners left in the entire program, and it immediately calls `free()` on itself. Memory is cleaned up deterministically, instantly, without a background GC thread.
+
+## 2. Retain Cycles (Memory Leaks)
+Reference Counting has one catastrophic mathematical flaw: **Cyclic References**.
+If Object A contains a pointer to Object B, and Object B contains a pointer back to Object A, they both have a Reference Count of 1. If the main program loses track of both objects, they will float in the Heap forever. Object A cannot delete itself until Object B deletes it, and Object B cannot delete itself until Object A deletes it. Developers must mathematically break this cycle by explicitly declaring one of the pointers as a **Weak Reference** (a pointer that does not increment the mathematical tally).
+

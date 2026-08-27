@@ -1,8 +1,29 @@
+---
+title: Eclipse
+description: "A historically significant, open-source Integrated Development Environment (IDE) primarily used for Java development, famous for its massive plugin ecosystem and workspace-centric architecture."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Eclipse">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Eclipse"
+  subtitle="The Classic Java Workspace"
+  tags={['IDE', 'Java', 'Tooling', 'Open Source']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Released by IBM in 2001 and eventually donated to an open-source foundation, Eclipse mathematically dominated the enterprise Java ecosystem for over a decade before IntelliJ IDEA took the crown.
 
-</ConceptTemplate>
+## 1. The Workspace Paradigm
+Eclipse utilizes a rigid **Workspace** architecture. When you boot Eclipse, you must mathematically select a physical folder on your hard drive (the Workspace). Eclipse stores all its metadata, compiler settings, and project indexes in a hidden `.metadata` folder inside that workspace.
+This allows a developer to mathematically group dozens of related Java Microservices into a single visual window, compiling them simultaneously.
+
+## 2. The Plugin Architecture (OSGi)
+Eclipse was not built just for Java; it was built as a universal mathematical platform.
+It is powered by **Equinox**, an implementation of the OSGi framework. Everything in Eclipse is a plugin. If you want to write C++ (CDT) or Python (PyDev), you simply load the respective plugins. While incredibly powerful, this architecture historically made Eclipse famously memory-heavy and prone to sluggish performance (often requiring the developer to mathematically tweak the `eclipse.ini` JVM arguments).
+

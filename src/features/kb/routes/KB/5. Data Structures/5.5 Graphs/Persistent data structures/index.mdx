@@ -4,20 +4,26 @@ description: Immutable data structures that mathematically preserve the previous
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Persistent Data Structures">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Persistent Data Structures">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In standard imperative programming (like C++ or Python), when you update an array (`Array[0] = 5`), the old data is violently overwritten and destroyed forever. This is an **Ephemeral** data structure. 
+In standard imperative programming (like C++ or Python), when you update an array (`Array[0] = 5`), the old data is violently overwritten and destroyed forever. This is an **Ephemeral** data structure.
 A **Persistent Data Structure** is mathematically **Immutable**. When you "update" it, it does not destroy the old version; it creates a completely new, modified version of itself, while perfectly preserving the mathematical history of the original.
 
 ## 1. The Nightmare of Deep Copying
-If you have an Array of 1 Million elements and you want to change one item while preserving the old array, the naive approach is a "Deep Copy" (copying all 1 Million elements to a new array). This takes a disastrous $O(N)$ time and memory. 
+If you have an Array of 1 Million elements and you want to change one item while preserving the old array, the naive approach is a "Deep Copy" (copying all 1 Million elements to a new array). This takes a disastrous $O(N)$ time and memory.
 
 ## 2. Structural Sharing
-True Persistent Data Structures (like those used in Haskell, Clojure, or Git) achieve $O(log N)$ updates using a mathematical miracle called **Structural Sharing**. 
-If you have a massive Binary Search Tree and you want to change one Leaf node, the algorithm creates a new Leaf, and a new Parent for that Leaf, all the way up to a new Root. However, this new path mathematically *points back to the unmodified branches of the old tree*. 
+True Persistent Data Structures (like those used in Haskell, Clojure, or Git) achieve $O(log N)$ updates using a mathematical miracle called **Structural Sharing**.
+If you have a massive Binary Search Tree and you want to change one Leaf node, the algorithm creates a new Leaf, and a new Parent for that Leaf, all the way up to a new Root. However, this new path mathematically *points back to the unmodified branches of the old tree*.
 The new version shares $99\%$ of its physical memory with the old version. You get a completely independent, updated Tree in $O(log N)$ time with virtually zero memory duplication.
 
 ## 3. Time Travel and Concurrency
 Because data is mathematically never overwritten, Persistent Data Structures are completely immune to Concurrency issues (Race Conditions). 10,000 threads can safely read the data simultaneously because it is physically impossible for any thread to mutate it. Furthermore, because every state is preserved, algorithms can mathematically "Time Travel" back to any previous version of the data instantly.
 
-</ConceptTemplate>

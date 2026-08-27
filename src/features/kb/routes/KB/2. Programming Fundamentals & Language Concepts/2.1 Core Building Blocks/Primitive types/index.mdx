@@ -1,8 +1,26 @@
+---
+title: Primitive Types
+description: The most basic, mathematically irreducible data types provided natively by the CPU and the programming language.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Primitive types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Primitive Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Primitive Types are the absolute mathematical atoms of computer science. They are not Objects, they have no Methods, and they are usually mathematically mapped directly to the hardware registers of the CPU.
 
-</ConceptTemplate>
+## 1. Memory Footprint
+Every primitive type mathematically occupies a strictly defined number of bytes in RAM:
+- **Boolean**: Theoretically 1 bit (0 or 1), but mathematically padded to 1 byte (8 bits) by the compiler because CPUs cannot physically address single bits in RAM.
+- **Integer (32-bit)**: Mathematically occupies 4 bytes. It can represent exactly 4,294,967,296 unique states.
+- **Float (64-bit Double)**: Mathematically occupies 8 bytes, formatted according to the IEEE 754 standard (Sign, Exponent, Mantissa).
+
+## 2. The Stack vs The Heap
+Because the byte-size of primitive types is mathematically fixed and perfectly known at compile time, compilers almost always allocate Primitive variables directly on the **Stack**. This makes creating and destroying Primitives mathematically instantaneous compared to allocating dynamic Composite Types (like Objects or Strings) on the slower, fragmented Heap.
+

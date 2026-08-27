@@ -4,24 +4,36 @@ description: A virtual representation that serves as the real-time digital count
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Digital Twins">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Digital Twins">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you build a massive, $500 Million jet engine for an airplane, how do you mathematically know when it is going to break down *before* it actually breaks down in mid-air?
 
 You build a **Digital Twin**.
 
+
 <Callout icon="info" title="The Virtual Clone">
-  A Digital Twin is a perfect mathematical and 3D simulation of a physical object, running entirely on a cloud server. 
-  
+
+
+  A Digital Twin is a perfect mathematical and 3D simulation of a physical object, running entirely on a cloud server.
+
   As the physical jet engine flies, its thousands of physical IoT sensors stream real-time data (heat, vibration, RPM) directly into the mathematical simulation. The simulation instantly updates to mirror physical reality.
+
+
 </Callout>
+
 
 ## Predictive Maintenance
 
 The true power of a Digital Twin is **Time Travel**.
 
-Because the Digital Twin is a mathematical simulation, engineers can fast-forward the physics engine. They can mathematically apply the real-time wear-and-tear data to the simulation, run the simulation at 1,000x speed, and mathematically prove that a specific fan blade will snap in exactly 45 days. 
+Because the Digital Twin is a mathematical simulation, engineers can fast-forward the physics engine. They can mathematically apply the real-time wear-and-tear data to the simulation, run the simulation at 1,000x speed, and mathematically prove that a specific fan blade will snap in exactly 45 days.
 
 This enables **Predictive Maintenance**—fixing the hardware exactly 1 day before it breaks, preventing catastrophic failure while maximizing the lifespan of the part.
 
-</ConceptTemplate>

@@ -1,8 +1,29 @@
+---
+title: AI Agents
+description: Autonomous computational entities powered by Large Language Models that possess the architectural ability to reason, plan, and physically interact with external environments via tools.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agents">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AI Agents">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An LLM is a Brain in a jar; it can only read text and output text. An Agent is a Brain with hands; it is mathematically wired to APIs, allowing it to perform physical actions in the real world.
 
-</ConceptTemplate>
+## 1. The ReAct Architecture (Reason + Act)
+The foundational mathematical pattern for Agents is **ReAct**.
+Instead of just answering a prompt, the LLM is forced into a highly structured mathematical loop:
+1. **Thought**: The LLM mathematically reasons about the problem.
+2. **Action**: The LLM outputs a strictly formatted string (JSON) requesting to use a specific Tool (e.g., `{"tool": "Calculator", "args": "5*5"}`).
+3. **Observation**: The System intercepts the Action, physically executes the Tool, and mathematically feeds the Result back into the LLM.
+This loop repeats recursively until the LLM mathematically deduces that the overarching task is complete.
+
+## 2. Tool Use (Function Calling)
+How does the Agent know what "hands" it has?
+During initialization, the developer provides a mathematical JSON Schema defining available Tools (e.g., `SearchWeb`, `ExecuteSQL`, `SendEmail`) and their required arguments. The LLM's Softmax distribution is heavily conditioned on this Schema, mathematically guiding it to output perfectly formatted API requests instead of conversational text when a real-world action is required.
+

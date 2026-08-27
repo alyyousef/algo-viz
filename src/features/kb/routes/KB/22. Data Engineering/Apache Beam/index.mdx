@@ -4,14 +4,21 @@ description: A unified, mathematically rigorous programming model for executing 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Beam">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Beam">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, Data Engineers had to write two completely separate codebases: one using Apache Spark for daily Batch processing, and another using Apache Flink for real-time Stream processing. This was a maintenance nightmare.
 
 **Apache Beam** (Batch + strEAM) mathematically unifies these two paradigms.
 
 ## 1. The Unified Paradigm
-Apache Beam is an API, not an execution engine. You write your pipeline logic *once* using the Beam SDK (Python, Java, Go). 
+Apache Beam is an API, not an execution engine. You write your pipeline logic *once* using the Beam SDK (Python, Java, Go).
 You then compile that logic and send it to a **Runner** (the physical execution engine).
 
 Supported Runners include:
@@ -55,4 +62,3 @@ If you are streaming IoT sensor data, you cannot calculate an average because th
 
 Beam utilizes **Watermarks** to handle out-of-order data (Event Time vs Processing Time) and **Triggers** to determine when to mathematically emit the results of a window before it closes.
 
-</ConceptTemplate>

@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Vulnerabilities & CVEs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vulnerabilities & CVEs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Vulnerability** is the actual hole in the armor. It is a bug, a misconfiguration, or a logical flaw that violates the CIA Triad.
 A vulnerability by itself does no damage; it merely sits there, waiting to be exploited.
@@ -26,18 +33,17 @@ Every confirmed vulnerability receives a unique ID (e.g., `CVE-2021-44228`, the 
 Not all vulnerabilities are equal. A flaw that allows a remote attacker to execute code without a password is much worse than a flaw that requires physical access to a machine to crash a minor app.
 
 Vulnerabilities are scored from **0.0 to 10.0** based on severity:
-<ComparisonTable 
-  headers={['Score Range', 'Severity', 'Required Action']} 
-  rows={[
-    ['9.0 - 10.0', 'Critical', 'Emergency. Wake up the engineering team at 3 AM. Patch immediately.'],
-    ['7.0 - 8.9', 'High', 'Urgent. Patch within the next 48 hours or next sprint cycle.'],
-    ['4.0 - 6.9', 'Medium', 'Schedule patch during standard weekly/monthly maintenance.'],
-    ['0.1 - 3.9', 'Low', 'Trivial impact. Patch when convenient.']
-  ]} 
-/>
+
+
+<ComparisonTable headers={['Score Range', 'Severity', 'Required Action']} rows={[ ['9.0 - 10.0', 'Critical', 'Emergency. Wake up the engineering team at 3 AM. Patch immediately.'], ['7.0 - 8.9', 'High', 'Urgent. Patch within the next 48 hours or next sprint cycle.'], ['4.0 - 6.9', 'Medium', 'Schedule patch during standard weekly/monthly maintenance.'], ['0.1 - 3.9', 'Low', 'Trivial impact. Patch when convenient.'] ]} />
+
 
 <Callout icon="warning" title="Zero-Day Vulnerabilities">
+
+
 A **Zero-Day** is a critical vulnerability that is actively being exploited by hackers *before* the software vendor even knows it exists (meaning the vendor has had "zero days" to release a patch). These are highly prized by intelligence agencies and cybercriminals, often selling for millions of dollars on the dark web.
+
+
 </Callout>
 
-</ConceptTemplate>
+

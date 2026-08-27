@@ -4,25 +4,37 @@ description: An architectural pattern that is mostly used in game development, w
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Entity-Component-System (ECS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Entity-Component-System (ECS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the 2000s, games used traditional Object-Oriented Programming (OOP). You had a `class Player extends Character extends GameObject`.
 
-As games grew massive, OOP collapsed. If a `Tree` is a `StaticObject`, but you want the tree to magically walk, you mathematically cannot because it doesn't inherit from `MovableObject`. OOP created massive, rigid, terrifying inheritance hierarchies. 
+As games grew massive, OOP collapsed. If a `Tree` is a `StaticObject`, but you want the tree to magically walk, you mathematically cannot because it doesn't inherit from `MovableObject`. OOP created massive, rigid, terrifying inheritance hierarchies.
 
 The industry solved this by mathematically abandoning OOP and adopting **ECS (Entity-Component-System)**.
 
+
 <Callout icon="success" title="The ECS Paradigm">
+
+
   - **Entity:** Just an empty ID number (`Entity 45`). It contains absolutely zero code.
   - **Component:** Pure, raw data with no logic. (`PositionComponent {x, y}`, `HealthComponent {hp}`).
   - **System:** The actual logic. A System mathematically queries the database: *"Give me every Entity that has both a Position and a Velocity."* It then loops through them and applies the physics.
+
+
 </Callout>
+
 
 ## Cache-Locality (Data-Oriented Design)
 
-The true mathematical power of ECS is **Memory Architecture**. 
-In OOP, objects are randomly scattered across the RAM heap. When the CPU tries to calculate physics, it suffers massive Cache Misses. 
+The true mathematical power of ECS is **Memory Architecture**.
+In OOP, objects are randomly scattered across the RAM heap. When the CPU tries to calculate physics, it suffers massive Cache Misses.
 
 ECS mathematically packs all `PositionComponents` into a single, perfectly contiguous C++ array. The CPU can load 10,000 positions directly into its L1 Cache instantly and calculate the physics using SIMD (Single Instruction, Multiple Data) vectorized math, resulting in a 100x performance increase over traditional OOP.
 
-</ConceptTemplate>

@@ -4,15 +4,28 @@ description: An object representing the eventual completion or failure of an asy
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Promises">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Promises">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Computer Science literature, the terms **Future** and **Promise** are often used interchangeably, but there is a strict mathematical distinction in advanced concurrent systems.
 
+
 <Callout icon="info" title="The Mathematical Distinction">
+
+
   A **Future** is a read-only mathematical placeholder. You can only look at it and ask, *"Are you done yet?"*
-  
+
   A **Promise** is the writable mathematical controller. It is the entity that actually holds the power to say, *"I have successfully finished, here is the data."*
+
+
 </Callout>
+
 
 ## The JavaScript Ecosystem
 
@@ -30,4 +43,3 @@ fetchUserData()
 
 Every `.then()` mathematically returns a brand new Promise, allowing an infinite pipeline of asynchronous transformations.
 
-</ConceptTemplate>

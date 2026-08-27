@@ -1,8 +1,26 @@
+---
+title: Standard ML
+description: A mathematically rigorous, statically typed functional language famous for having a formally defined, mathematically proven specification.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Standard ML">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Standard ML (SML)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard ML is a general-purpose, modular, functional programming language with compile-time type checking and type inference. It is the grandfather of OCaml, F#, and heavily influenced Haskell.
 
-</ConceptTemplate>
+## 1. The Mathematical Definition
+What makes SML completely unique in computer science is *The Definition of Standard ML*.
+For most languages (like C or JavaScript), the language behavior is defined by its compiler or a loose English document.
+SML's behavior is defined entirely using mathematical **Operational Semantics**. Every single rule of the language (how types are evaluated, how memory is allocated) is mathematically proven as a theorem. This means that compiler writers have a mathematically infallible blueprint, guaranteeing that an SML program will execute identically across any compliant compiler on earth.
+
+## 2. The Module System
+SML introduced a highly advanced, mathematically sound Module system.
+Unlike Java packages, SML Modules (Structures) have Signatures (Interfaces). You can mathematically define "Functors," which are essentially functions that take a whole Module as an argument and return a brand new Module. This allows for an unprecedented level of mathematically safe code reuse and architecture.
+

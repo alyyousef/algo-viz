@@ -1,8 +1,29 @@
+---
+title: ReAct Pattern (Reason + Act)
+description: The fundamental mathematical paradigm that elevated LLMs from passive text generators to active autonomous Agents by forcing them to explicitly interleave internal logic with external tool execution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ReAct pattern">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ReAct Pattern (Reason + Act)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Introduced by researchers at Princeton and Google, ReAct is the exact mathematical algorithm that powers almost all modern AI Agents. It forces the LLM to "think out loud" before touching an API.
 
-</ConceptTemplate>
+## 1. The Mathematical Loop
+In standard generation, an LLM predicts the next word. In ReAct, the LLM is constrained to output a very specific sequence:
+1. **Thought**: The LLM outputs its mathematical reasoning. *"The user wants the weather in Paris. I need to get the coordinates of Paris first."*
+2. **Action**: The LLM outputs a strict API call. *"Action: GeocodeTool('Paris')"*
+The LLM mathematically pauses. The external system executes the API.
+3. **Observation**: The system injects the physical result. *"Observation: Lat 48.8, Lon 2.3"*
+The LLM resumes, generating Thought 2.
+
+## 2. Why the Thought is Mandatory
+If you remove the **Thought** step and force the LLM to go straight to **Action**, the Agent will mathematically fail at complex tasks.
+Generating the physical text of the "Thought" mathematically populates the Context Window with crucial logical tokens. When the Attention Mechanism calculates the next word for the "Action", it pays heavy mathematical attention to the logic it just wrote in the "Thought", acting as a self-correcting mathematical buffer that prevents erratic API calls.
+

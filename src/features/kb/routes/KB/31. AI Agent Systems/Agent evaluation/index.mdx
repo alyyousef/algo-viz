@@ -1,8 +1,28 @@
+---
+title: Agent Evaluation
+description: The highly complex, non-deterministic mathematical framework used to evaluate autonomous AI systems that execute multi-step logic, use tools, and interact with live environments.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agent evaluation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Agent Evaluation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Evaluating a standard LLM is easy: "Did it output the right text?" Evaluating an Agent is exponentially harder. An Agent might output the correct final text, but it might have mathematically wasted 50 API calls, deleted a file, and hallucinated twice along the way.
 
-</ConceptTemplate>
+## 1. Trajectory Evaluation
+Agents are evaluated not on their final answer, but on their **Trajectory** (the sequence of steps they took).
+Evaluators use directed mathematical graphs to trace the Agent's logic.
+- **Tool Selection Accuracy**: Did the Agent mathematically select the correct API for the current sub-task?
+- **Logic Branching**: When the API returned an error, did the Agent's logic branch correctly (Recovery), or did it get trapped in a mathematical loop (Thrashing)?
+You must mathematically score the efficiency of the path taken, heavily penalizing unnecessary actions.
+
+## 2. Environment Sandboxes
+Because Agents interact with the world, they cannot be evaluated in static text files. They must be evaluated inside **Sandboxes** (like Docker containers).
+The evaluation framework mathematically measures the State of the Sandbox before and after the Agent runs. If the prompt was "Refactor this code," the evaluator doesn't just read the Agent's response; it physically compiles the code inside the Sandbox and runs Unit Tests. This ensures the Agent is graded on actual, mathematically provable physical outcomes, not just semantic promises.
+

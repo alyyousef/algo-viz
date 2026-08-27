@@ -1,8 +1,27 @@
+---
+title: Actions (Reinforcement Learning)
+description: The mathematical set of all possible decisions an Agent can physically execute within an Environment to alter the state of the system and pursue a reward.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Actions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Actions (Reinforcement Learning)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Supervised Learning, the AI outputs a passive classification ("That is a dog"). In Reinforcement Learning (RL), the AI outputs an **Action**. It physically changes the world.
 
-</ConceptTemplate>
+## 1. Discrete vs. Continuous Action Spaces
+The complexity of the mathematical algorithm depends entirely on the **Action Space**.
+- **Discrete Action Space**: The Agent has a finite, hardcoded list of choices. (e.g., Pac-Man can only go UP, DOWN, LEFT, RIGHT). The AI outputs an integer representing one of these distinct choices. Standard Q-Learning excels here.
+- **Continuous Action Space**: The Agent must output a precise floating-point number. (e.g., A self-driving car must output a steering wheel angle between -90.0 and +90.0 degrees). Because the number of possible angles is mathematically infinite, you cannot use a simple lookup table. You must use advanced Policy Gradient methods (like PPO) to mathematically regress the exact float.
+
+## 2. The Policy Function ($\pi$)
+How does the Agent decide which Action to take? It uses a mathematical function called the **Policy** (denoted as $\pi$).
+$\pi(a|s)$ represents the probability of taking Action $a$ given the current State $s$.
+During training, the RL algorithm's entire goal is to mathematically update the weights of the Policy function so that it always outputs the Action that will maximize the long-term mathematical reward.
+

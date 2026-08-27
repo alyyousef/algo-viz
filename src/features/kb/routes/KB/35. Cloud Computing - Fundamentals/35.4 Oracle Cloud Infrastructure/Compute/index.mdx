@@ -1,0 +1,24 @@
+---
+title: OCI Compute
+description: Oracle Cloud's foundational Infrastructure as a Service (IaaS), providing extreme-performance Virtual Machines and Bare Metal servers powered by a custom-built off-box virtualization architecture.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Compute"
+  subtitle="Bare Metal and Virtual Machines"
+  tags={['OCI', 'Compute', 'IaaS', 'Bare Metal']}
+>
+
+OCI Compute provides the raw processing power for the Oracle Cloud. However, OCI's underlying architecture was built much later than AWS, allowing Oracle to implement a vastly different mathematical approach to hypervisor design.
+
+## 1. Off-Box Virtualization
+In a traditional cloud (like early AWS), the Hypervisor (the software that splits the physical server into Virtual Machines) runs on the main CPU. This mathematically consumes 10-20% of the server's compute power and creates potential security vulnerabilities.
+OCI utilizes **Off-Box Virtualization**. Oracle physically moved the network and storage virtualization math off the main CPU and onto a dedicated custom silicon card (a SmartNIC).
+This means if you rent an OCI Virtual Machine, the hypervisor consumes exactly 0% of the CPU. You get mathematically perfect, unadulterated access to the raw CPU power.
+
+## 2. Bare Metal Servers
+Because of this Off-Box Virtualization, OCI is famous for its **Bare Metal** offerings.
+You can rent an entire, massive physical server (e.g., 128 cores, 2 Terabytes of RAM). There is absolutely zero hypervisor software installed on the main CPU by Oracle. You have 100% mathematical root access to the bare physical hardware, exactly as if it were sitting in your own data center. This is strictly required for extreme-performance workloads like massive Oracle RAC databases, high-frequency trading, and heavy VMware migrations that cannot tolerate a single microsecond of hypervisor latency.
+
+</TechnologyTemplate>

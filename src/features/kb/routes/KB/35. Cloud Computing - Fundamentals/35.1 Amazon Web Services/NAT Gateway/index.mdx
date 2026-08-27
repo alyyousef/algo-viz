@@ -1,0 +1,24 @@
+---
+title: AWS NAT Gateway
+description: A highly available managed service that allows servers in a mathematically isolated Private Subnet to initiate outbound connections to the internet while strictly blocking all inbound internet connections.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS NAT Gateway"
+  subtitle="Secure Outbound Routing"
+  tags={['AWS', 'Networking', 'VPC', 'Security']}
+>
+
+You put your Database in a Private Subnet for security. Because it has no route to the Internet Gateway, hackers cannot reach it. However, the Database needs to download software updates from the internet. How does it get out without letting hackers in? The NAT Gateway.
+
+## 1. Network Address Translation
+You physically place the NAT Gateway in a **Public Subnet** (which has an Internet Gateway).
+You then go to the Route Table of your **Private Subnet** and add a mathematical rule: *"If a packet is destined for the internet (0.0.0.0/0), send it to the NAT Gateway."*
+When the Database tries to download an update, the packet hits the NAT Gateway. The NAT Gateway mathematically strips off the Database's Private IP, slaps on its own Public IP (Elastic IP), and sends it to the internet.
+
+## 2. One-Way Mathematical Routing
+When the software update comes back from the internet, it hits the NAT Gateway, which mathematically remembers the connection state, translates it back to the Private IP, and hands it to the Database.
+Crucially, this is a **One-Way Street**. If a hacker on the internet tries to initiate a connection directly to the NAT Gateway's Public IP, the NAT Gateway mathematically drops the packet immediately, because it has no internal state correlating to an outbound request. This architecture guarantees your backend servers can securely access the web while remaining physically invisible to it.
+
+</TechnologyTemplate>

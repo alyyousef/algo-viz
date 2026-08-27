@@ -1,8 +1,29 @@
+---
+title: Image Processing Fundamentals
+description: The core mathematical and algorithmic techniques used to manipulate raw pixel matrices before they are ever fed into deep learning models, forming the backbone of traditional Computer Vision.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Image processing fundamentals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Image Processing Fundamentals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Neural Networks existed, Computer Vision relied entirely on pure, hardcoded mathematics to extract information from pixels. These techniques remain absolutely critical for preprocessing data in modern AI pipelines.
 
-</ConceptTemplate>
+## 1. Kernels and Spatial Filtering
+An image is just a massive 2D array of integers (0 to 255).
+Traditional Image Processing uses **Kernels** (small matrices, like 3x3) that mathematically slide over the image.
+- **Gaussian Blur**: The Kernel mathematically averages the center pixel with its neighbors. This destroys high-frequency noise, which is mandatory before running edge detection.
+- **Sobel Operator**: A specific mathematical Kernel that calculates the gradient (the derivative) of the pixel intensities. If the color suddenly jumps from Black (0) to White (255), the derivative spikes, mathematically proving the exact location of a physical Edge.
+
+## 2. Morphological Operations and Thresholding
+When isolating objects, you must convert the image to binary (black and white) using **Thresholding** (e.g., if a pixel is > 128, set it to 255; else 0).
+This often leaves mathematical artifacts (tiny specks of white noise). You use **Morphological Operations** to clean it:
+- **Erosion**: Mathematically shaves pixels off the edges of white objects, destroying tiny noise specks.
+- **Dilation**: Mathematically adds pixels to the edges, filling in small holes inside the object. These deterministic mathematical algorithms are vastly faster than Neural Networks for simple, highly controlled environments (like factory assembly lines).
+

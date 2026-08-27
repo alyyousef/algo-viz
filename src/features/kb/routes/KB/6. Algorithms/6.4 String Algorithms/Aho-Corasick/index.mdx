@@ -1,8 +1,31 @@
+---
+title: Aho-Corasick Algorithm
+description: "A highly complex string-searching algorithm that mathematically constructs a finite state machine to locate multiple target keywords simultaneously within a massive block of text in strictly linear time."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Aho-Corasick">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Aho-Corasick Algorithm"
+  subtitle="The Multi-Pattern Search"
+  tags={['Algorithms', 'Strings', 'Automata', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to find the word "Cat" in a 1,000-page book, you can use KMP. But what if you want to find "Cat", "Dog", "Bird", and "Horse" simultaneously? Running KMP four times is mathematically inefficient.
 
-</ConceptTemplate>
+## 1. The Trie + Finite State Machine
+Aho-Corasick solves this by combining a **Trie** (Prefix Tree) with an **Automaton**.
+1. It mathematically builds a Trie containing all your target dictionary words.
+2. It then adds **Failure Links** to the Trie.
+If the algorithm is halfway through matching "Horse" but suddenly reads a 'u', it mathematically knows "Horse" has failed. Instead of starting the search over from the beginning, the Failure Link mathematically instantly teleports the algorithm to the prefix of another word (e.g., "House") that might still be valid based on the characters just read.
+
+## 2. Mathematical Performance
+Because the algorithm mathematically never moves backward in the massive text string, it processes the text in a single, continuous sweep.
+The Time Complexity is **O(N + M + Z)**, where N is the length of the text, M is the length of all dictionary words combined, and Z is the number of matches found. Aho-Corasick is the mathematical foundation of modern intrusion detection systems (like Snort) and antivirus scanners, which must search network packets for 100,000 virus signatures simultaneously.
+

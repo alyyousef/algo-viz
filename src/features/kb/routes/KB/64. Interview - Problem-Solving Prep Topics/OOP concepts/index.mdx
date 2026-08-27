@@ -4,7 +4,14 @@ description: Object-oriented programming is a programming paradigm based on the 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OOP Concepts (Interview Prep)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OOP Concepts (Interview Prep)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you are interviewing for a Java or C# role, you will be mathematically grilled on the 4 pillars of Object-Oriented Programming.
 
@@ -15,4 +22,3 @@ If you are interviewing for a Java or C# role, you will be mathematically grille
 
 You will also likely be asked about SOLID design principles.
 
-</ConceptTemplate>

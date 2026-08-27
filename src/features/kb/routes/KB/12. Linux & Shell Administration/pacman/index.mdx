@@ -4,7 +4,14 @@ description: The violently fast, simplistic package manager powering the Arch Li
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="pacman">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="pacman">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **pacman** is the official package manager for Arch Linux. Unlike Debian's APT or Red Hat's DNF, which are highly complex Python or C++ applications designed for enterprise stability, `pacman` is written purely in C with one goal: **Speed**.
 
@@ -12,7 +19,7 @@ It is famously used on Valve's SteamOS (Steam Deck).
 
 ## The Rolling Release Model
 
-`pacman` does not handle "Major Version Upgrades" (like upgrading from Ubuntu 20.04 to 22.04). 
+`pacman` does not handle "Major Version Upgrades" (like upgrading from Ubuntu 20.04 to 22.04).
 Arch Linux is a **Rolling Release** distribution. You install it once, and `pacman` continuously upgrades individual pieces of the OS every single day, keeping you on the absolute bleeding edge of software development.
 
 ## The Flag Syntax
@@ -23,8 +30,13 @@ The `pacman` syntax is entirely unique. It uses single-letter flags (mostly base
 - **`sudo pacman -S firefox`**: Syncs (Installs) Firefox from the repository.
 - **`sudo pacman -Rns firefox`**: Removes Firefox, its configuration files, and any orphaned dependencies that are no longer needed.
 
+
 <Callout icon="warning" title="The AUR (Arch User Repository)">
+
+
   The true power of Arch Linux lies in the **AUR**. It is a massive, community-driven database containing build scripts for almost every piece of Linux software ever written. While `pacman` itself cannot download from the AUR, users install third-party "AUR Helpers" (like `yay` or `paru`) that perfectly mimic the `pacman` syntax while compiling software directly from source code.
+
+
 </Callout>
 
-</ConceptTemplate>
+

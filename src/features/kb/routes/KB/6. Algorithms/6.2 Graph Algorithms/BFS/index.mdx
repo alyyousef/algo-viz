@@ -5,12 +5,19 @@ description: The fundamental graph traversal algorithm that mathematically explo
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Breadth-First Search (BFS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Breadth-First Search (BFS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Breadth-First Search (BFS)** is an algorithm for traversing or searching tree and graph data structures. It mathematically guarantees that it explores all neighbor nodes at the present depth prior to moving on to the nodes at the next depth level.
 
 ## 1. The Queue Data Structure
-The entire mathematical mechanism of BFS relies on a **Queue** (First-In-First-Out / FIFO). 
+The entire mathematical mechanism of BFS relies on a **Queue** (First-In-First-Out / FIFO).
 
 **The Algorithm:**
 1. Enqueue the starting node and mark it as 'Visited'.
@@ -25,8 +32,13 @@ In an **unweighted graph** (where every edge has a cost of exactly 1), BFS mathe
 
 If Alice is connected to Bob (Distance 1), and Bob is connected to Charlie (Distance 2), BFS will completely mathematically exhaust all of Alice's direct friends before it is even allowed to look at Charlie.
 
+
 <Callout icon="warning" title="Memory Complexity">
+
+
 While BFS is mathematically brilliant for finding shortest paths, its spatial complexity is extremely dangerous. At the bottom of a massive tree, BFS might have to hold half of the entire tree's nodes in its Queue simultaneously. The space complexity is exactly `O(V)` (or specifically, the maximum width of the graph), which can cause Out-Of-Memory (OOM) crashes on deep networks.
+
+
 </Callout>
 
-</ConceptTemplate>
+

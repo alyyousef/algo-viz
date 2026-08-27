@@ -1,8 +1,28 @@
+---
+title: Elm
+description: A delightful, purely functional language for the frontend that mathematically guarantees zero runtime exceptions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Elm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Elm">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Evan Czaplicki in 2012, Elm is a statically typed, purely functional programming language that compiles to JavaScript. Its primary claim to fame is a staggering promise: **No Runtime Exceptions in Practice**.
 
-</ConceptTemplate>
+## 1. The Elm Architecture (TEA)
+Elm mathematically forced the frontend world to rethink state. It introduced **The Elm Architecture**, consisting of exactly three parts:
+- **Model**: The exact mathematical state of your application.
+- **View**: A pure function that takes the Model and mathematically renders HTML.
+- **Update**: A pure function that takes a Message (an event like a button click) and the old Model, and mathematically returns a brand new Model.
+
+This one-way data flow architecture was so mathematically perfect that Dan Abramov directly ported the concept to JavaScript, resulting in **Redux**.
+
+## 2. The Compiler as an Assistant
+Elm achieves its "zero runtime exceptions" guarantee through its mathematically rigorous type system. There is no `null` or `undefined` in Elm. If a value might be missing, you must mathematically use a `Maybe` type, and the compiler will violently refuse to compile until you write the code to handle both the `Just` and `Nothing` cases. The Elm compiler is universally praised for having the most helpful, human-readable error messages in the entire software industry.
+

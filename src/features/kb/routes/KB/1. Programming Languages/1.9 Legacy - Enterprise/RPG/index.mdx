@@ -1,8 +1,25 @@
+---
+title: RPG
+description: Report Program Generator, a legacy language intimately tied to the IBM AS/400 (IBM i) architecture, still heavily used in manufacturing and retail.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RPG">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RPG (Report Program Generator)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by IBM in 1959, RPG is the primary programming language for the legendary IBM AS/400 (now IBM i) midrange server architecture. It is heavily utilized in global manufacturing, warehousing, and retail (e.g., Costco).
 
-</ConceptTemplate>
+## 1. The Fixed-Format Cycle
+Historically, RPG was not a procedural language. It was a **Cycle-Driven** language based on physical punch cards.
+The RPG compiler mathematically enforced a rigid, implicit loop (The Cycle). The developer did not write a `while(read_file)` loop. They simply defined the input file, the output report, and the mathematical calculations to perform on each record. The operating system automatically fed the records into the program, calculated the totals, and printed the report.
+
+## 2. RPG IV (ILE RPG)
+In 1994, IBM released RPG IV. It completely mathematically overhauled the language, moving away from the punch-card fixed format and introducing Free-Format coding.
+Modern Free-Format RPG looks very similar to C or Java. It supports Object-Oriented concepts, native SQL integration, and REST API calls. Despite its modern capabilities, millions of lines of the original, rigid, cycle-driven RPG code still mathematically execute daily in warehouses around the world, making it a critical legacy language.
+

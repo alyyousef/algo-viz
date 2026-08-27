@@ -1,8 +1,32 @@
+---
+title: Borůvka's Algorithm
+description: "The oldest known Minimum Spanning Tree (MST) algorithm, mathematically designed in 1926 to efficiently construct optimal electrical networks by aggressively adding the cheapest edges for all components simultaneously."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Borůvka">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Borůvka's Algorithm"
+  subtitle="The Parallel MST Algorithm"
+  tags={['Algorithms', 'Graphs', 'MST', 'Greedy']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Otakar Borůvka in 1926 to mathematically optimize the electrical grid of Moravia (long before computers existed), this algorithm finds a Minimum Spanning Tree (MST). While Kruskal's and Prim's are more famous, Borůvka's is mathematically superior for parallel computing.
 
-</ConceptTemplate>
+## 1. The Mathematical Mechanism
+Unlike Prim (which grows one tree) or Kruskal (which sorts all edges), Borůvka is completely decentralized.
+1. It starts by treating every single vertex as its own isolated "Tree" (or component).
+2. For *every* component simultaneously, it mathematically finds the cheapest outgoing edge connecting it to a different component.
+3. It adds all these cheapest edges to the MST, merging the components together.
+4. It repeats this process until there is only 1 massive component left (the final MST).
+
+## 2. Parallel Processing Supremacy
+Because the algorithm halves the number of components in every single pass, it mathematically finishes in at most **O(log V)** passes. The overall time complexity is **O(E log V)**.
+However, its true power lies in distributed systems. Step 2 (finding the cheapest outgoing edge for every component) can be executed mathematically in parallel across thousands of GPUs or Kubernetes pods, making Borůvka the algorithm of choice for finding MSTs on astronomically massive graphs.
+

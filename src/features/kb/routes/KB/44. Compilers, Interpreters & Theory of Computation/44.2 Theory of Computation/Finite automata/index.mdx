@@ -4,7 +4,14 @@ description: A mathematical model of computation consisting of a finite number o
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Finite Automata (DFA & NFA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Finite Automata (DFA & NFA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Finite Automaton** (or Finite State Machine) is the simplest mathematical model of a computer. It has no physical RAM, no hard drive, and no memory of the past (other than the single "State" it is currently in).
 
@@ -15,19 +22,19 @@ It is mathematically defined by exactly 5 things:
 4. A set of mathematical **Transitions** (if in State A and input is `1`, go to State B).
 5. A set of "Accepting" (or success) states.
 
+
 <Callout icon="info" title="The Limit of Power">
+
+
   Because a Finite Automaton has zero memory, it is mathematically impossible for it to count. A Finite Automaton cannot solve the problem: *"Ensure there are an equal number of opening and closing parentheses in this code."*
+
+
 </Callout>
+
 
 ## DFA vs NFA
 
-<ComparisonTable 
-  headers={['Type', 'Mathematical Definition', 'Implication']}
-  rows={[
-    ['DFA (Deterministic)', 'For every state and every possible input symbol, there is mathematically exactly ONE transition path.', 'Extremely fast to execute in software (e.g., Lexers in compilers). Every string follows a single, predictable path.'],
-    ['NFA (Non-Deterministic)', 'For a given state and input, there might be ZERO transitions, or MULTIPLE transitions. The machine mathematically "guesses" which path to take.', 'In software, an NFA must mathematically simulate exploring multiple branches simultaneously (using backtracking), making it slower.'],
-    ['Equivalence Theorem', 'Any NFA can be mathematically converted into a DFA.', 'While NFAs are easier for humans to design (like writing Regex), compilers always convert them to DFAs under the hood for maximum execution speed.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Type', 'Mathematical Definition', 'Implication']} rows={[ ['DFA (Deterministic)', 'For every state and every possible input symbol, there is mathematically exactly ONE transition path.', 'Extremely fast to execute in software (e.g., Lexers in compilers). Every string follows a single, predictable path.'], ['NFA (Non-Deterministic)', 'For a given state and input, there might be ZERO transitions, or MULTIPLE transitions. The machine mathematically "guesses" which path to take.', 'In software, an NFA must mathematically simulate exploring multiple branches simultaneously (using backtracking), making it slower.'], ['Equivalence Theorem', 'Any NFA can be mathematically converted into a DFA.', 'While NFAs are easier for humans to design (like writing Regex), compilers always convert them to DFAs under the hood for maximum execution speed.'] ]} />
+
+

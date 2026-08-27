@@ -4,7 +4,14 @@ description: Explains local mobile databases (SQLite, Core Data, Room, Realm), D
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mobile Architecture & Storage">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mobile Architecture & Storage">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Mobile apps have complex architectural requirements that do not exist on the web, specifically regarding offline data storage, state management, and OS integrations.
 
@@ -18,7 +25,7 @@ A web app stores data on the backend. A mobile app must store data on the phone 
 
 ## 2. The ViewModel Architecture (MVVM)
 In mobile development, the UI is constantly being destroyed and recreated (e.g., when an Android user rotates their phone from Portrait to Landscape, the entire Activity is killed and restarted).
-If you store data inside the UI class, the data is deleted on rotation. 
+If you store data inside the UI class, the data is deleted on rotation.
 The industry standard is **MVVM (Model-View-ViewModel)**. The ViewModel is a separate class that mathematically survives UI rotation. The View simply "observes" the ViewModel (using LiveData or StateFlow).
 
 ## 3. Deep Linking & Universal Links
@@ -26,4 +33,3 @@ How does clicking a link in an email open a specific screen *inside* your app in
 - **Deep Links**: Custom URL schemes (`myapp://profile/123`). Heavily insecure because any app can register that scheme.
 - **Universal Links (iOS) / App Links (Android)**: Standard HTTP URLs (`https://myapp.com/profile/123`). The OS mathematically verifies ownership by checking a hidden JSON file hosted on your actual web server. If the app is installed, the OS intercepts the click and opens the app; otherwise, it opens the website.
 
-</ConceptTemplate>

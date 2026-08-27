@@ -4,13 +4,20 @@ description: A cloud model that abstracts away the operating system and servers,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Platform as a Service (PaaS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Platform as a Service (PaaS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While IaaS gives you a raw Virtual Machine and forces you to install the Operating System and configure the web server yourself, **PaaS (Platform as a Service)** abstracts the entire underlying infrastructure away.
 
 ## 1. The Developer Experience
 
-In a PaaS model, you do not even know what operating system the server is running. You simply write your Node.js or Python code on your laptop, and upload it to the platform. 
+In a PaaS model, you do not even know what operating system the server is running. You simply write your Node.js or Python code on your laptop, and upload it to the platform.
 
 The PaaS provider automatically:
 1. Provisions the servers.
@@ -27,7 +34,6 @@ The PaaS provider automatically:
 
 ## 3. The Trade-off
 
-PaaS drastically accelerates development speed because software engineers don't have to waste time acting as system administrators. 
+PaaS drastically accelerates development speed because software engineers don't have to waste time acting as system administrators.
 However, you lose control over the underlying environment. If your application strictly requires a specific, obscure C++ library to be installed at the OS level, the PaaS provider might not allow you to install it, forcing you to downgrade back to IaaS.
 
-</ConceptTemplate>

@@ -5,8 +5,14 @@ description: The modern successor to RSA, providing vastly superior cryptographi
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-
-<ConceptTemplate title="ECC (Elliptic Curve Cryptography)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ECC (Elliptic Curve Cryptography)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For decades, the internet relied on **RSA** for public-key encryption. RSA derives its security from the mathematical difficulty of factoring massively large prime numbers. However, as computers got faster, RSA keys had to grow exponentially larger (from 1024-bit, to 2048-bit, to 4096-bit) to remain secure, eating up CPU power and bandwidth on mobile devices.
 
@@ -18,7 +24,7 @@ An Elliptic Curve is a symmetric, swooping mathematical graph defined by the equ
 
 ECC relies on a "Trapdoor Function" (easy to do in one direction, practically impossible to reverse).
 1. You pick a starting point on the curve (Point A).
-2. You draw a tangent line, see where it intersects the curve, and reflect it across the X-axis to find Point B. 
+2. You draw a tangent line, see where it intersects the curve, and reflect it across the X-axis to find Point B.
 3. You repeat this "bouncing" process $n$ times to land at a final Point Z.
 
 - **Private Key**: The number of bounces ($n$).
@@ -30,21 +36,20 @@ If a hacker intercepts Point Z and Point A, it is mathematically infeasible for 
 
 Because the math behind ECC is so much harder to crack than RSA's prime factorization, it requires vastly smaller keys to achieve the exact same level of security.
 
-<ComparisonTable 
-  headers={['Security Level (Symmetric Equivalent)', 'RSA Key Size', 'ECC Key Size']} 
-  rows={[
-    ['112-bit (Minimum Secure)', '2048-bit', '224-bit'],
-    ['128-bit (Standard)', '3072-bit', '256-bit'],
-    ['192-bit (Top Secret)', '7680-bit', '384-bit'],
-    ['256-bit (Quantum-resistant symmetric)', '15360-bit', '521-bit']
-  ]} 
-/>
 
-A 256-bit ECC key offers the same security as a massive 3072-bit RSA key. 
+<ComparisonTable headers={['Security Level (Symmetric Equivalent)', 'RSA Key Size', 'ECC Key Size']} rows={[ ['112-bit (Minimum Secure)', '2048-bit', '224-bit'], ['128-bit (Standard)', '3072-bit', '256-bit'], ['192-bit (Top Secret)', '7680-bit', '384-bit'], ['256-bit (Quantum-resistant symmetric)', '15360-bit', '521-bit'] ]} />
+
+
+A 256-bit ECC key offers the same security as a massive 3072-bit RSA key.
 This means ECC requires significantly less CPU power to generate, less battery drain on smartphones, and less network bandwidth to transmit during SSL/TLS handshakes.
 
+
 <Callout icon="success" title="The Bitcoin Standard">
+
+
   ECC is so efficient that it is the exclusive cryptographic foundation of Bitcoin and Ethereum. Every single cryptocurrency wallet address is mathematically derived from an Elliptic Curve public key using the **secp256k1** curve standard.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,15 +4,28 @@ description: A comprehensive open-source vulnerability scanner and manager.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OpenVAS (Open Vulnerability Assessment System)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OpenVAS (Open Vulnerability Assessment System)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When you have a network of 5,000 computers, it is impossible to manually check if every machine has the latest Windows patches or is running an outdated, vulnerable version of Apache. 
+When you have a network of 5,000 computers, it is impossible to manually check if every machine has the latest Windows patches or is running an outdated, vulnerable version of Apache.
 
 **OpenVAS** is a full-featured vulnerability scanner. It scans the network, identifies the software running on every machine, and cross-references it against a massive database of known Common Vulnerabilities and Exposures (CVEs).
 
+
 <Callout icon="info" title="The Nessus Fork">
+
+
   OpenVAS originally began as a fork of the famous "Nessus" scanner after Nessus transitioned from open-source to a closed-source commercial product in 2005. Today, OpenVAS is maintained by Greenbone Networks.
+
+
 </Callout>
+
 
 ## How it Works
 
@@ -20,4 +33,3 @@ When you have a network of 5,000 computers, it is impossible to manually check i
 2. **NVT Execution:** It executes thousands of Network Vulnerability Tests (NVTs). These are small scripts that interact with the open ports, attempting safe, mathematical checks to confirm if a specific vulnerability exists.
 3. **Reporting:** It generates a comprehensive PDF/HTML report, scoring vulnerabilities using the CVSS (Common Vulnerability Scoring System) so admins know what to patch first.
 
-</ConceptTemplate>

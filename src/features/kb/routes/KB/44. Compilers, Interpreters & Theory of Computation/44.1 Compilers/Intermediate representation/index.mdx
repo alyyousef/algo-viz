@@ -4,17 +4,30 @@ description: The data structure or code used internally by a compiler or virtual
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Intermediate Representation (IR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Intermediate Representation (IR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Early compilers (in the 1970s) translated C source code directly into x86 Assembly language. This created an `M * N` mathematical problem: If you have 5 languages (C, C++, Rust, Swift, Go) and 4 CPU architectures (x86, ARM, PowerPC, MIPS), you have to write 20 completely independent, massive compilers.
 
 Modern compilers (like LLVM) solve this using an **Intermediate Representation (IR)**.
 
+
 <Callout icon="success" title="The Universal Hub">
-  IR is a mathematically pure, generalized, and highly optimized assembly language that does not exist on any physical CPU. 
-  
+
+
+  IR is a mathematically pure, generalized, and highly optimized assembly language that does not exist on any physical CPU.
+
   Now, you only need to write a "Front-End" to translate Rust to IR. And you write a "Back-End" to translate IR to ARM. If Apple invents a new CPU, you only write ONE new Back-End, and suddenly all 5 languages can run on it perfectly.
+
+
 </Callout>
+
 
 ## LLVM IR
 
@@ -23,4 +36,3 @@ LLVM IR is the most famous Intermediate Representation in the world. It looks ma
 - **Infinite Registers:** Physical CPUs have 16 or 32 registers. LLVM IR mathematically assumes you have infinite registers (numbered `%1`, `%2`, `%3`). The Code Generator maps these to the physical constraints later.
 - **Static Single Assignment (SSA):** A mathematical rule stating that every register can only be assigned a value *exactly once*. If you want to change a value, you mathematically must create a new register (`%4 = add i32 %3, 1`). SSA makes the Optimization Passes vastly faster and more mathematically provable.
 
-</ConceptTemplate>

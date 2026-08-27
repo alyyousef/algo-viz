@@ -1,0 +1,24 @@
+---
+title: Heroku
+description: The pioneer of the Platform-as-a-Service (PaaS) model, mathematically abstracting away servers, load balancers, and Linux management so developers can focus purely on writing code.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Heroku"
+  subtitle="The Original PaaS"
+  tags={['Cloud', 'PaaS', 'Developer', 'Deployment']}
+>
+
+Historically, deploying a Ruby on Rails app required renting a Linux server, configuring Nginx, installing PostgreSQL, and writing complex Capistrano scripts. Heroku mathematically destroyed this complexity.
+
+## 1. The Git Push Workflow
+Heroku invented the magical deployment workflow: `git push heroku master`.
+When you push your code, Heroku's mathematical build engine automatically detects the language (e.g., Node.js). It installs the dependencies, compiles the assets, and bundles the application into a "Slug."
+Heroku then boots a **Dyno** (a lightweight Linux container), injects the Slug, and attaches it to the routing mesh. The developer never once looks at a Linux terminal, touches a firewall, or configures a load balancer.
+
+## 2. Ephemeral Filesystems
+A critical mathematical concept Heroku enforces is the **Ephemeral Filesystem**.
+If your Node.js app writes a PDF file to the local disk (`/tmp/file.pdf`), that file will vanish. Heroku mathematically restarts Dynos randomly at least once every 24 hours to maintain cluster health. Because Dynos are ephemeral, Heroku mathematically forced the industry to adopt the "Twelve-Factor App" methodology: Apps must be strictly stateless, and all persistent data (images, PDFs) must be offloaded to external services like AWS S3 or a managed PostgreSQL add-on.
+
+</TechnologyTemplate>

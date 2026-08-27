@@ -5,13 +5,20 @@ description: A volatile, tab-specific Web Storage API identical to LocalStorage,
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="SessionStorage">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SessionStorage">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **SessionStorage** shares the exact same API and 5MB capacity as LocalStorage (`setItem`, `getItem`), but its architectural lifespan and isolation scope are fundamentally different.
 
 ## 1. The Lifespan (Volatility)
-LocalStorage lives forever. **SessionStorage is volatile.** 
-The data only survives for the duration of the "Page Session". 
+LocalStorage lives forever. **SessionStorage is volatile.**
+The data only survives for the duration of the "Page Session".
 - If the user reloads the page, the data survives.
 - If the user closes the specific browser Tab, the data is instantly and permanently destroyed by the browser.
 
@@ -26,8 +33,13 @@ Because of its strict isolation, SessionStorage is the perfect tool for maintain
 - **Multi-Tab Workflows**: Imagine a user booking two different flights simultaneously in two different tabs. If you store the "current_flight_id" in LocalStorage, Tab A will overwrite Tab B's data, causing a catastrophic booking error. SessionStorage mathematically prevents this collision.
 - **Form Data Recovery**: Saving a long draft of an email so it survives an accidental page refresh, but vanishes when the user successfully closes the tab.
 
+
 <Callout icon="tip" title="Duplicating Tabs">
+
+
 There is one exception to the Tab Isolation rule: If a user right-clicks a tab and selects "Duplicate Tab" (or uses a `target="_blank"` link), modern browsers will deeply clone the existing SessionStorage into the new tab. However, from that exact millisecond onward, the two databases diverge and become isolated.
+
+
 </Callout>
 
-</ConceptTemplate>
+

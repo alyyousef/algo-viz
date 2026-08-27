@@ -4,10 +4,16 @@ description: A branch of fluid mechanics that uses numerical analysis and data s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Computational Fluid Dynamics (CFD)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Computational Fluid Dynamics (CFD)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Instead of building a biological wind tunnel to test a Formula 1 car, engineers mathematically simulate the wind tunnel using **CFD**.
 
 CFD relies on solving the Navier-Stokes equations—the terrifying mathematical formulas that govern exactly how fluids (air, water) flow. The computer divides the 3D space around the virtual car into a mesh of 100 million tiny biological tetrahedrons. It then mathematically calculates the exact air pressure, velocity, and turbulence inside every single tiny box, 1,000 times per biological second, allowing the engineer to see exactly where aerodynamic drag occurs.
 
-</ConceptTemplate>

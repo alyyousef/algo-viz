@@ -4,26 +4,32 @@ description: Mathematical algorithms used by a cache to decide which data to del
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cache Eviction Policies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cache Eviction Policies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A cache (like Redis) operates entirely in RAM. RAM is mathematically expensive and physically limited. If you have 16GB of RAM, and you try to insert 17GB of data, the system will crash. 
+A cache (like Redis) operates entirely in RAM. RAM is mathematically expensive and physically limited. If you have 16GB of RAM, and you try to insert 17GB of data, the system will crash.
 
 To prevent this, the cache uses an **Eviction Policy**—an algorithm that mathematically determines which data is the "least valuable" and deletes it to make room for new data.
 
+
 <Callout icon="info" title="Eviction vs. Expiration">
+
+
   Expiration (TTL) is when a key voluntarily dies because its timer ran out. Eviction is when a key is violently murdered by the system because it ran out of physical space.
+
+
 </Callout>
+
 
 ## The Primary Mathematical Algorithms
 
-<ComparisonTable 
-  headers={['Algorithm', 'How it Works', 'Use Case']}
-  rows={[
-    ['LRU (Least Recently Used)', 'The system tracks the exact timestamp of the last *Read* operation. It deletes the item that hasn\'t been looked at for the longest time.', 'The default and most mathematically optimal policy for 90% of web applications.'],
-    ['LFU (Least Frequently Used)', 'The system maintains a mathematical counter of how many *total times* an item was read. It deletes the item with the lowest score.', 'Useful for CDN caches protecting viral content. If a video goes viral, its LFU score skyrockets, making it mathematically immune to eviction.'],
-    ['FIFO (First In, First Out)', 'A simple queue. The oldest item inserted into the cache is the first one deleted, regardless of how popular it is.', 'Rarely used in modern systems because it mathematically deletes highly popular data just because it is old.'],
-    ['Random Replacement', 'Selects a completely random key and deletes it.', 'Incredibly low CPU overhead. Useful when the access pattern is completely unpredictable.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Algorithm', 'How it Works', 'Use Case']} rows={[ ['LRU (Least Recently Used)', 'The system tracks the exact timestamp of the last *Read* operation. It deletes the item that hasn\'t been looked at for the longest time.', 'The default and most mathematically optimal policy for 90% of web applications.'], ['LFU (Least Frequently Used)', 'The system maintains a mathematical counter of how many *total times* an item was read. It deletes the item with the lowest score.', 'Useful for CDN caches protecting viral content. If a video goes viral, its LFU score skyrockets, making it mathematically immune to eviction.'], ['FIFO (First In, First Out)', 'A simple queue. The oldest item inserted into the cache is the first one deleted, regardless of how popular it is.', 'Rarely used in modern systems because it mathematically deletes highly popular data just because it is old.'], ['Random Replacement', 'Selects a completely random key and deletes it.', 'Incredibly low CPU overhead. Useful when the access pattern is completely unpredictable.'] ]} />
+
+

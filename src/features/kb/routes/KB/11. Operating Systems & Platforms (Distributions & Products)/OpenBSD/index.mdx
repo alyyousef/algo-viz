@@ -4,11 +4,18 @@ description: A Unix-like operating system renowned worldwide for its extreme, pa
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OpenBSD">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OpenBSD">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**OpenBSD** is a free, open-source Unix-like operating system descended from the Berkeley Software Distribution (BSD). 
+**OpenBSD** is a free, open-source Unix-like operating system descended from the Berkeley Software Distribution (BSD).
 
-While FreeBSD focuses on enterprise performance, OpenBSD has exactly one goal: **Extreme, Uncompromising Security**. 
+While FreeBSD focuses on enterprise performance, OpenBSD has exactly one goal: **Extreme, Uncompromising Security**.
 
 Its famous slogan was *"Only two remote holes in the default install, in a heck of a long time!"* (referring to a 20+ year track record of near-perfect security).
 
@@ -16,15 +23,20 @@ Its famous slogan was *"Only two remote holes in the default install, in a heck 
 
 The OpenBSD developers do not wait for hackers to report bugs. They actively practice **Code Auditing**. The team reads through the entire multi-million line C codebase, line by line, aggressively searching for and fixing potential buffer overflows and memory leaks before they can be exploited.
 
+
 <Callout icon="success" title="Pioneering Mitigations">
-  OpenBSD is usually the very first operating system to invent and deploy major security features that eventually become standard across Windows and Linux. 
+
+
+  OpenBSD is usually the very first operating system to invent and deploy major security features that eventually become standard across Windows and Linux.
   They pioneered **W^X (Write XOR Execute)** memory protection, **Address Space Layout Randomization (ASLR)**, and aggressive privilege separation. If a security feature exists to make hacking harder, OpenBSD likely invented it.
+
+
 </Callout>
+
 
 ## The OpenSSH Legacy
 
-Even if you have never used OpenBSD, you rely on their code every single day. 
+Even if you have never used OpenBSD, you rely on their code every single day.
 
 The OpenBSD project created and maintains **OpenSSH**—the cryptographic software suite used to securely log into almost every single Linux server, router, and cloud virtual machine on the entire internet. They also develop LibreSSL and the PF firewall, proving that their obsessive focus on clean, secure code benefits the entire global software ecosystem.
 
-</ConceptTemplate>

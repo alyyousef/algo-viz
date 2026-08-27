@@ -1,8 +1,32 @@
+---
+title: Interface Segregation Principle (ISP)
+description: The "I" in the SOLID principles; it mathematically dictates that no client should be forced to depend on methods it does not use, advocating for many small, hyper-focused interfaces rather than one massive, generic interface.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ISP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Interface Segregation Principle (ISP)"
+  subtitle="Mathematical Interface Decoupling"
+  tags={['OOP', 'SOLID', 'Architecture', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine a massive interface called `IMachine` that contains three methods: `print()`, `scan()`, and `fax()`.
 
-</ConceptTemplate>
+## 1. The Fat Interface Problem
+If a developer builds a simple `BasicPrinter` class, they must mathematically implement `IMachine`.
+Because they signed the contract, the compiler forces them to write a `fax()` method. But a basic printer cannot fax. The developer is mathematically forced to write `public void fax() { throw new Error("Not Supported"); }`. This is a violation of the Interface Segregation Principle. The code is now lying to the compiler.
+
+## 2. Mathematical Segregation
+ISP solves this by mathematically fracturing the fat interface into hyper-specific micro-contracts.
+You create three distinct interfaces: `IPrinter`, `IScanner`, and `IFax`.
+The `BasicPrinter` class only implements `IPrinter`.
+An `AdvancedMultiFunctionPrinter` class implements all three: `implements IPrinter, IScanner, IFax`.
+By segregating the interfaces, you mathematically guarantee that classes only depend on the exact behaviors they actually possess, eliminating "Not Supported" runtime exceptions entirely.
+

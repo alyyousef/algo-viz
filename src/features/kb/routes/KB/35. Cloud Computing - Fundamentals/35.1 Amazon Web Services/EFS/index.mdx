@@ -1,0 +1,23 @@
+---
+title: Amazon Elastic File System (EFS)
+description: A fully managed, mathematically elastic NFS (Network File System) designed to be mounted concurrently by thousands of EC2 instances, providing shared, infinitely scalable file storage.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Elastic File System (EFS)"
+  subtitle="Shared Network File Storage"
+  tags={['AWS', 'Storage', 'File', 'Linux']}
+>
+
+An EBS Volume can only be attached to *one* EC2 instance at a time. If you have 50 web servers that all need to read and write to the exact same `/uploads` directory simultaneously, EBS is mathematically impossible. You need EFS.
+
+## 1. Concurrent NFS Mounting
+EFS uses the standard NFSv4 protocol.
+You can mathematically mount a single EFS file system onto 1,000 different EC2 instances simultaneously. To the Linux operating system, it looks like a standard physical folder (e.g., `/var/www/html`). If Server A writes a file to that folder, Server B can instantly read it. This is the foundational architecture for legacy CMS platforms like WordPress running in a highly available, multi-server cloud environment.
+
+## 2. Mathematical Elasticity
+With EBS, you must provision the size in advance (e.g., 100GB). If you hit 100GB, the disk crashes.
+EFS is mathematically **Elastic**. You do not provision a size. It starts at 0 bytes. As you add files, it physically grows to Petabytes. When you delete files, it shrinks. You are billed exactly for the mathematical byte count you are storing at the end of the month. Furthermore, it automatically replicates all files across three physical Availability Zones, guaranteeing massive durability against data center failures.
+
+</TechnologyTemplate>

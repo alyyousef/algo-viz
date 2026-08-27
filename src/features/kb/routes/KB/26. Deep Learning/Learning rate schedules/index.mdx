@@ -4,21 +4,27 @@ description: Advanced techniques for dynamically adjusting the learning rate dur
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Learning Rate Schedules">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Learning Rate Schedules">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you use a **Learning Rate** that is too high, the model will mathematically bounce over the valley and never converge. If it is too low, training will take thousands of years. 
+If you use a **Learning Rate** that is too high, the model will mathematically bounce over the valley and never converge. If it is too low, training will take thousands of years.
 **Learning Rate Schedules** solve this by mathematically shifting the learning rate *during* the training process.
 
 ## 1. Step Decay
-The simplest mathematical schedule. You start with a high learning rate (e.g., $0.1$) to blast through the early stages of training. Every 10 epochs, you multiply the learning rate by a fraction (e.g., $0.5$). 
+The simplest mathematical schedule. You start with a high learning rate (e.g., $0.1$) to blast through the early stages of training. Every 10 epochs, you multiply the learning rate by a fraction (e.g., $0.5$).
 This causes the algorithm to take massive leaps early on, but take mathematically tiny, precise steps as it approaches the final global minimum.
 
 ## 2. Cosine Annealing
-Instead of harsh, sudden drops, **Cosine Annealing** mathematically lowers the learning rate following the smooth curve of a cosine function. 
+Instead of harsh, sudden drops, **Cosine Annealing** mathematically lowers the learning rate following the smooth curve of a cosine function.
 It starts high, gently curves downward, and eventually approaches zero. This is the absolute standard schedule for training modern Large Language Models and Vision Transformers, as the smooth mathematical decay perfectly stabilizes complex loss landscapes.
 
 ## 3. Warmups
-When using massive batch sizes or complex optimizers like AdamW, the first few training steps are mathematically chaotic because the momentum trackers haven't collected any data yet. 
+When using massive batch sizes or complex optimizers like AdamW, the first few training steps are mathematically chaotic because the momentum trackers haven't collected any data yet.
 If the learning rate is high, the model might permanently destroy itself in the first 10 steps. **Warmups** mathematically force the learning rate to start at exactly $0$, and linearly increase to the maximum rate over the first few epochs, allowing the momentum to safely stabilize before real training begins.
 
-</ConceptTemplate>

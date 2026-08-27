@@ -4,23 +4,30 @@ description: The specialized neural network architecture that revolutionized Com
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Convolutional Neural Networks (CNNs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Convolutional Neural Networks (CNNs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A Convolutional Neural Network (CNN) is a class of deep neural networks heavily utilized for analyzing visual imagery. Before CNNs, attempting to feed raw pixels into a standard Multi-Layer Perceptron required an astronomical amount of weights, making image processing practically impossible.
 
+
 <Callout icon="success" title="The ImageNet Breakthrough">
+
+
   In 2012, a CNN named **AlexNet** decimated all non-deep-learning competitors in the ImageNet visual recognition challenge. This moment single-handedly ignited the modern Deep Learning boom.
+
+
 </Callout>
+
 
 ## Core Operations
 
-<ComparisonTable 
-  headers={['Operation', 'Description']}
-  rows={[
-    ['Convolution', 'Sliding a small matrix (a filter/kernel) across the image to mathematically detect features like edges, curves, and textures. This shares weights across the image, drastically reducing computation.'],
-    ['Pooling (Subsampling)', 'Shrinking the dimensions of the feature maps (e.g., Max Pooling keeps only the brightest pixel in a 2x2 grid). This makes the network invariant to small shifts and distortions.'],
-    ['Fully Connected Layers', 'After multiple rounds of convolution and pooling, the 2D feature maps are flattened into a 1D vector and fed into standard dense layers to make the final classification.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Operation', 'Description']} rows={[ ['Convolution', 'Sliding a small matrix (a filter/kernel) across the image to mathematically detect features like edges, curves, and textures. This shares weights across the image, drastically reducing computation.'], ['Pooling (Subsampling)', 'Shrinking the dimensions of the feature maps (e.g., Max Pooling keeps only the brightest pixel in a 2x2 grid). This makes the network invariant to small shifts and distortions.'], ['Fully Connected Layers', 'After multiple rounds of convolution and pooling, the 2D feature maps are flattened into a 1D vector and fed into standard dense layers to make the final classification.'] ]} />
+
+

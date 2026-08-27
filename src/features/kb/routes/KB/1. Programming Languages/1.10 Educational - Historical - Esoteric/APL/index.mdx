@@ -1,8 +1,36 @@
+---
+title: APL
+description: An esoteric, heavily mathematical array-programming language famous for its extreme conciseness and non-standard typography.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="APL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="APL (A Programming Language)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Designed in the 1960s by Kenneth Iverson, APL was originally created as a mathematical notation for teaching arrays and matrices, only later being implemented as an executable language. It is the grandfather of all modern array languages (like R and MATLAB).
 
-</ConceptTemplate>
+## 1. Typographical Insanity
+APL is famous for being mathematically unreadable to the uninitiated.
+Instead of English words (`map`, `reduce`), APL uses specialized Greek symbols (ρ, ⍋, ⍒, ⍟). In the 1970s, programmers literally required specialized APL keyboards to type the code.
+
+
+<Callout icon="warning" title="The Game of Life in One Line">
+
+
+Because of its immense mathematical density, John Conway's Game of Life (which takes 50 lines in Java) can be written in APL in exactly one line of code:
+`life ← {⊃1 ⍵ ∨.∧ 3 4 = +/ +/ ¯1 0 1 ∘.⊖ ¯1 0 1 ∘.⌽ ⊂⍵}`
+
+
+</Callout>
+
+
+## 2. Array Orientation
+In languages like C, adding two massive arrays requires a mathematical `for` loop.
+In APL, the array is the fundamental primitive. You simply execute `A + B`, and the language mathematically applies the addition to every single element in parallel, drastically reducing the cognitive overhead of state management.
+

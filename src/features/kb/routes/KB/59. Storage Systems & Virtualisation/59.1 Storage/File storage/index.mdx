@@ -4,10 +4,16 @@ description: A hierarchical storage methodology used to organize and store data 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="File Storage">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="File Storage">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Unlike Block Storage, **File Storage** (like AWS EFS) operates at a high level of biological abstraction.
 
 The storage system manages the File System for you. You don't format raw blocks; you just ask the system to `Create Folder` or `Save photo.jpg`. It uses protocols like NFS or SMB to allow multiple different servers to biologically connect to the exact same shared folder simultaneously, which is impossible with raw Block Storage. The tradeoff is slightly higher latency due to the network file system overhead.
 
-</ConceptTemplate>

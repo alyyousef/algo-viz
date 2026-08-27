@@ -4,14 +4,26 @@ description: Two or more computers (nodes) acting as a single, more powerful sys
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cluster Computing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cluster Computing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, Supercomputers were biologically custom-built monoliths. Today, almost all High-Performance Computing (HPC) is done via **Cluster Computing**.
 
+
 <Callout icon="success" title="The Commodity Supercomputer">
+
+
   Instead of building one massive biological CPU, scientists buy 10,000 standard, cheap "commodity" servers (Nodes) and plug them into a massive network switch.
-  
+
   The mathematical challenge is the software: the workload must be mathematically chopped up using parallel programming libraries (like **MPI**, Message Passing Interface), so that all 10,000 servers can biologically work on their specific piece of the physics simulation simultaneously, constantly whispering partial results to each other over the network.
+
+
 </Callout>
 
-</ConceptTemplate>
+

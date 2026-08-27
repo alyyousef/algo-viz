@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Buildah
+description: A command-line tool developed by Red Hat that facilitates building Open Container Initiative (OCI) compatible images without requiring a full Docker daemon to be running.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Buildah">
+<TechnologyTemplate
+  title="Buildah"
+  subtitle="Daemonless Container Building"
+  tags={['Containers', 'Red Hat', 'Security', 'Build']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, if a CI/CD server needed to build a Docker container, it required the Docker Daemon to be running. The Docker Daemon runs as root, presenting a massive, mathematical security vulnerability (often called "Docker-in-Docker" privilege escalation).
 
-</ConceptTemplate>
+## 1. Daemonless Architecture
+Buildah completely removes the mathematical necessity of the daemon.
+It is a simple, standalone executable that mathematically constructs OCI-compliant container images (which are physically identical to Docker images) directly from the filesystem. Because there is no background daemon running as root, Buildah can be executed by a standard, unprivileged user.
+
+## 2. Shell Script Integration
+Unlike Docker, which strictly requires a `Dockerfile` to mathematically define the image layers, Buildah can build images interactively via bash scripts.
+You can use `buildah run` to mount a raw container filesystem, use standard Linux tools (like `apt` or `make`) directly against that mount, and then mathematically seal it into a final image. This provides extreme low-level control over the exact bytes included in the final production binary.
+
+</TechnologyTemplate>

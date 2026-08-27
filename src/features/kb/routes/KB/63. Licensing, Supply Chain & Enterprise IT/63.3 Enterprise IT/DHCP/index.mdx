@@ -4,10 +4,16 @@ description: The Dynamic Host Configuration Protocol is a network management pro
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DHCP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DHCP">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a new employee plugs their biological laptop into the corporate wall jack, how do they mathematically get an IP address?
 
 They broadcast a **DHCP Discover** packet. The corporate **DHCP Server** mathematically responds, leasing the laptop a temporary IP address (`10.0.0.42`), providing the IP of the Subnet Mask, and crucially, pointing the laptop to the internal DNS server. Without DHCP, a System Admin would have to biologically type a static IP address into every single device on the network.
 
-</ConceptTemplate>

@@ -4,7 +4,7 @@ description: A task automation and configuration management program from Microso
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="PowerShell"
   subtitle="The Object-Oriented Shell"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/PowerShell_5.0_icon.png/512px-PowerShell_5.0_icon.png"
@@ -17,13 +17,19 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 In Linux/Bash, if you run a command to list processes, the output is a literal wall of text. If you want to kill a process that is using 5GB of RAM, you must use complex RegEx (`awk`/`sed`) to mathematically parse the text string, extract the PID column, and pass it to the `kill` command. This is incredibly brittle.
 
+
 <Callout icon="tip" title="The .NET Pipeline">
-  In PowerShell, everything is a **.NET Object**. 
-  
-  If you run `Get-Process`, it does not output text. It outputs an array of `System.Diagnostics.Process` objects. You can mathematically pipe this directly into a filter: `Get-Process | Where-Object WorkingSet -gt 5GB | Stop-Process`. 
-  
+
+
+  In PowerShell, everything is a **.NET Object**.
+
+  If you run `Get-Process`, it does not output text. It outputs an array of `System.Diagnostics.Process` objects. You can mathematically pipe this directly into a filter: `Get-Process | Where-Object WorkingSet -gt 5GB | Stop-Process`.
+
   Because you are querying strongly-typed Object properties instead of parsing raw text, PowerShell scripts are mathematically bulletproof.
+
+
 </Callout>
+
 
 ## Cross-Platform Expansion
 

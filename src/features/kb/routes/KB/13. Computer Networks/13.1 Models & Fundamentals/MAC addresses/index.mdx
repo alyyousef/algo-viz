@@ -4,9 +4,16 @@ description: The permanent, physical hardware address burned into every network 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MAC Addresses (Media Access Control)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="MAC Addresses (Media Access Control)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-An IP Address is a logical address that changes depending on what network you are connected to (like a mailing address). 
+An IP Address is a logical address that changes depending on what network you are connected to (like a mailing address).
 A **MAC Address** is a physical hardware address permanently burned into your computer's Wi-Fi chip or Ethernet port at the factory (like a VIN number on a car). It operates at Layer 2 (Data Link Layer) of the OSI model.
 
 ## 1. Anatomy of a MAC Address
@@ -19,17 +26,22 @@ It is split into two exact halves:
 
 ## 2. The Local Network Limitation
 
-MAC addresses have absolutely zero concept of geography or routing. 
-You cannot send a message across the internet using a MAC address. A router will not forward a MAC frame. 
+MAC addresses have absolutely zero concept of geography or routing.
+You cannot send a message across the internet using a MAC address. A router will not forward a MAC frame.
 MAC addresses are **only used to deliver data between two devices connected to the exact same local network (LAN)**.
 
 When you send a web request to Google:
-1. Your computer sends an Ethernet frame to your **Home Router's MAC address**. 
+1. Your computer sends an Ethernet frame to your **Home Router's MAC address**.
 2. Your router rips off the Ethernet frame, looks at the IP address, and builds a brand new Ethernet frame addressed to the **ISP's Router's MAC address**.
 3. The MAC address changes at every single "hop" across the internet, while the IP address remains constant.
 
+
 <Callout icon="warning" title="MAC Randomization (Privacy)">
+
+
   Historically, because your phone's Wi-Fi MAC address never changed, shopping malls would track your physical movements by scanning for your MAC address as you walked past different stores. To defeat this, modern iOS and Android devices use **MAC Randomization**, generating a fake, temporary MAC address for every new Wi-Fi network they connect to.
+
+
 </Callout>
 
-</ConceptTemplate>
+

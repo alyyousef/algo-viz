@@ -4,15 +4,28 @@ description: A mathematical model of concurrent computation that treats "actors"
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Actor Model">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Actor Model">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The standard mathematical approach to concurrency uses **Shared Memory** (Threads sharing the same variables) protected by Mutexes. This is notoriously difficult and highly prone to Deadlocks.
 
 The **Actor Model** (invented in 1973 and made famous by the Erlang programming language) proposes a completely different mathematical paradigm: **Share-Nothing Architecture**.
 
+
 <Callout icon="success" title="The Universal Primitive">
+
+
   In this model, an "Actor" is an isolated mathematical entity that has its own private state. It is physically impossible for Actor A to read or write Actor B's memory. The ONLY way Actors communicate is by sending asynchronous, immutable mathematical messages to each other's "mailboxes."
+
+
 </Callout>
+
 
 ## Mathematical Properties of an Actor
 
@@ -23,4 +36,3 @@ When an Actor receives a message in its mailbox, it mathematically can do exactl
 
 Because there is zero Shared Memory, there are mathematically zero Race Conditions and zero need for Mutexes. It is the gold standard for building highly fault-tolerant, massively distributed systems (like WhatsApp, which is built on Erlang).
 
-</ConceptTemplate>

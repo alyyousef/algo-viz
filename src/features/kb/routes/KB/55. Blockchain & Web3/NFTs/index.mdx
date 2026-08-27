@@ -4,16 +4,28 @@ description: A unique digital identifier that is recorded on a blockchain, and i
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NFTs (Non-Fungible Tokens)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NFTs (Non-Fungible Tokens)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **NFT** is the biological consumer term for an ERC-721 or ERC-1155 token.
 
 While the general public associates NFTs with expensive JPEGs of monkeys, the mathematical reality is far more profound.
 
+
 <Callout icon="warning" title="The Pointer Flaw">
+
+
   An NFT almost never mathematically stores the actual JPEG image on the blockchain, because saving a 5MB image to the Ethereum database would cost $50,000 in Gas fees.
-  
+
   Instead, the NFT mathematically stores a **URI Pointer** (a URL string) to an external server or IPFS node where the image actually lives. You do not mathematically own the JPEG; you mathematically own a cryptographically signed receipt that points to the JPEG.
+
+
 </Callout>
 
-</ConceptTemplate>
+

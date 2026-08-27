@@ -1,0 +1,23 @@
+---
+title: Google Kubernetes Engine (GKE)
+description: The industry's premier, fully managed Kubernetes orchestration platform, mathematically engineered by the original creators of Kubernetes to provide unparalleled automation and scale.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Kubernetes Engine (GKE)"
+  subtitle="The Premier Kubernetes Platform"
+  tags={['GCP', 'Kubernetes', 'Containers', 'Compute']}
+>
+
+Google invented Kubernetes (originally Borg). Consequently, GKE is widely considered the most advanced, stable, and deeply integrated managed Kubernetes service on the market, vastly outperforming AWS EKS in native automation.
+
+## 1. Autopilot Mode
+Managing the underlying Virtual Machines (Worker Nodes) of a Kubernetes cluster requires deep mathematical capacity planning. If you provision too many, you waste money. If you provision too few, pods fail to schedule.
+GKE introduced **Autopilot**. In Autopilot mode, you completely surrender the Worker Nodes to Google. You do not see them, and you cannot SSH into them. You simply submit a standard Kubernetes `Deployment.yaml` to the API. Google mathematically provisions the exact compute capacity required for those specific pods in real-time, completely eliminating node management and providing a true serverless Kubernetes experience.
+
+## 2. Native VPC Integration
+In AWS EKS, configuring the networking (CNI) to ensure Pods can talk to the VPC requires installing complex third-party add-ons.
+In GKE, Kubernetes is mathematically fused into the Google Cloud Software Defined Network (SDN). Every Pod automatically receives a native IP address directly from the GCP VPC Subnet. A Virtual Machine outside the cluster can ping a Pod directly by its IP address without traversing complex NAT translations, drastically reducing mathematical network latency and simplifying firewall architectures.
+
+</TechnologyTemplate>

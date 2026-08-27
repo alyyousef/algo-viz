@@ -4,7 +4,14 @@ description: A command-line utility used to schedule a script or command to be e
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="at">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="at">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While the famous `cron` utility is used to schedule scripts that run *repeatedly* (e.g., every Tuesday at 3 AM), the **`at`** command is designed to schedule a script to run exactly **one single time** in the future.
 
@@ -27,10 +34,15 @@ The time parser in `at` is incredibly flexible and understands human-readable sy
 - `at now + 2 hours`
 - `at 9:00 AM next friday`
 
+
 <Callout icon="info" title="The atq and atrm Commands">
-  Once a job is scheduled, the background `atd` daemon takes over. 
-  You can view all currently pending jobs by running the `atq` command. 
+
+
+  Once a job is scheduled, the background `atd` daemon takes over.
+  You can view all currently pending jobs by running the `atq` command.
   If you realize you made a mistake and want to cancel job #3 before midnight arrives, you simply run `atrm 3`.
+
+
 </Callout>
 
-</ConceptTemplate>
+

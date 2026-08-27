@@ -4,25 +4,32 @@ description: The process of adding more individual nodes or servers to a system,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Horizontal Scaling (Scaling Out)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Horizontal Scaling (Scaling Out)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Instead of buying one massive, $500,000 supercomputer (Vertical Scaling), **Horizontal Scaling** (or "Scaling Out") involves buying one thousand cheap, $500 commodity computers and mathematically linking them together to act as a single system.
 
+
 <Callout icon="tip" title="Infinite Scalability">
+
+
   Unlike Vertical Scaling, Horizontal Scaling has no mathematical ceiling. If Google needs more search capacity, they don't buy a faster CPU; they simply wheel another rack of 1,000 cheap servers into the datacenter and plug them into the network.
+
+
 </Callout>
+
 
 ## Architectural Complexity
 
 While horizontal scaling provides infinite mathematical capacity, it introduces massive software complexity. You are now building a **Distributed System**.
 
-<ComparisonTable 
-  headers={['Component', 'Vertical Architecture', 'Horizontal Architecture Challenge']}
-  rows={[
-    ['State Management', 'The web server holds user sessions in local RAM.', 'Requests are load-balanced. If User A hits Server 1, and their next request hits Server 2, Server 2 does not know who they are. State must be externalized to Redis.'],
-    ['Database Writes', 'A single PostgreSQL database handles all `INSERT` statements. ACID guarantees are easy.', 'Writes must be mathematically split across multiple databases (Sharding). Transactions across multiple shards (Two-Phase Commit) are painfully slow.'],
-    ['Failure Handling', 'If the server dies, the app goes down.', 'In a cluster of 1,000 servers, it is mathematically guaranteed that one server will die every single day. The software must automatically detect dead nodes and reroute traffic.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Component', 'Vertical Architecture', 'Horizontal Architecture Challenge']} rows={[ ['State Management', 'The web server holds user sessions in local RAM.', 'Requests are load-balanced. If User A hits Server 1, and their next request hits Server 2, Server 2 does not know who they are. State must be externalized to Redis.'], ['Database Writes', 'A single PostgreSQL database handles all `INSERT` statements. ACID guarantees are easy.', 'Writes must be mathematically split across multiple databases (Sharding). Transactions across multiple shards (Two-Phase Commit) are painfully slow.'], ['Failure Handling', 'If the server dies, the app goes down.', 'In a cluster of 1,000 servers, it is mathematically guaranteed that one server will die every single day. The software must automatically detect dead nodes and reroute traffic.'] ]} />
+
+

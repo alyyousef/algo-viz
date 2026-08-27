@@ -4,15 +4,28 @@ description: A vulnerability occurring when untrusted data is used to abuse the 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Insecure Deserialization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Insecure Deserialization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Serialization** is the mathematical process of taking a complex object in memory (like a Java User object) and converting it into a flat string of bytes so it can be saved to a database or sent over a network. **Deserialization** is putting it back together.
 
 **Insecure Deserialization** occurs when an application receives serialized data from the user and blindly deserializes it without mathematically verifying its contents.
 
+
 <Callout icon="warning" title="The Equifax Breach">
+
+
   Insecure Deserialization is incredibly dangerous because it almost always leads to full Remote Code Execution (RCE). The devastating 2017 Equifax breach, which compromised the financial data of 147 million Americans, was caused by an insecure deserialization flaw in the Apache Struts framework.
+
+
 </Callout>
+
 
 ## How the Attack Works
 
@@ -21,4 +34,3 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 3. When the server deserializes the modified payload, it blindly instantiates the object in memory, instantly granting the attacker administrative privileges.
 4. **Advanced RCE:** If the attacker understands the mathematical structure of the backend language (Java, Python Pickle, PHP), they can craft a malicious object that mathematically executes a shell command (like `whoami` or `rm -rf /`) the exact millisecond the server attempts to instantiate the object.
 
-</ConceptTemplate>

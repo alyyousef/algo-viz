@@ -4,19 +4,31 @@ description: Protocols that connect two blockchains to enable interactions betwe
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cross-Chain Bridges">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cross-Chain Bridges">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you have 10 Bitcoin, and you want to use them in an Ethereum DeFi protocol, you face a biological physics problem: The Bitcoin network and the Ethereum network mathematically cannot communicate with each other.
 
 You must use a **Cross-Chain Bridge**.
 
+
 <Callout icon="warning" title="The Locking Mechanism">
+
+
   A Bridge mathematically works like this:
   1. You send 10 BTC to a specific Smart Contract on the Bitcoin network. The contract mathematically "Locks" your BTC.
   2. A centralized (or decentralized) Oracle network detects this.
   3. The Oracle tells an Ethereum Smart Contract to mathematically "Mint" 10 Wrapped Bitcoin (WBTC) on the Ethereum network.
-  
+
   Bridges are the absolute weakest biological link in Web3. If a hacker finds a bug in the Ethereum minting contract, they can mint 50,000 WBTC out of thin air, completely crashing the ecosystem. Bridges account for over $2 Billion in mathematical hacks to date.
+
+
 </Callout>
 
-</ConceptTemplate>
+

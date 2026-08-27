@@ -4,9 +4,16 @@ description: The first major evolution of CSS tooling, introducing variables, ne
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CSS Preprocessors">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CSS Preprocessors">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In the late 2000s, writing pure CSS was a nightmare. The language lacked variables, you couldn't write functions, and you had to rewrite massive selector chains repeatedly. 
+In the late 2000s, writing pure CSS was a nightmare. The language lacked variables, you couldn't write functions, and you had to rewrite massive selector chains repeatedly.
 To solve this, developers created **Preprocessors**—new styling languages that compiled mathematically down into standard CSS before being shipped to the browser.
 
 ## The Big Three
@@ -35,7 +42,6 @@ Heavily popularized by the original Bootstrap framework. It functioned very simi
 The most minimalist preprocessor. It allowed developers to completely omit colons, semicolons, and curly braces if they desired, relying strictly on python-esque indentation.
 
 ## Modern Relevance
-Today, native CSS has caught up. We have native CSS Variables, and native CSS Nesting is now universally supported in modern browsers. 
+Today, native CSS has caught up. We have native CSS Variables, and native CSS Nesting is now universally supported in modern browsers.
 Because of this, the usage of heavy preprocessors like Sass has significantly declined in favor of PostCSS and Tailwind.
 
-</ConceptTemplate>

@@ -4,7 +4,14 @@ description: Microsoft's unified enterprise analytics service that mathematicall
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Azure Synapse Analytics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Synapse Analytics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, deploying an enterprise data architecture required duct-taping disparate tools together: using Azure Data Factory for pipelines, Azure Databricks for Spark processing, and Azure SQL Data Warehouse for BI.
 
@@ -20,14 +27,13 @@ It achieves this through a unified workspace that offers multiple specialized ma
 - **Apache Spark Pool**: A fully managed Spark engine built directly into Synapse, allowing Data Scientists to execute complex Python/Scala Machine Learning pipelines against the exact same Data Lake files.
 
 ## 2. Synapse Pipelines
-Synapse integrates **Azure Data Factory** directly into its core. 
+Synapse integrates **Azure Data Factory** directly into its core.
 You can mathematically construct complex Directed Acyclic Graphs (DAGs) using a drag-and-drop visual interface to orchestrate the movement of data. A pipeline can extract data from an on-premise Oracle database, trigger a Spark notebook to cleanse the data, and finally trigger a Dedicated SQL Pool stored procedure to aggregate it.
 
 ## 3. Competitive Landscape
-Synapse is Microsoft's answer to the fierce cloud analytics war. 
+Synapse is Microsoft's answer to the fierce cloud analytics war.
 - It directly competes with **Snowflake** and **Google BigQuery** in the Cloud Data Warehouse space.
-- It directly competes with **Databricks** in the Data Lakehouse / Apache Spark space. 
+- It directly competes with **Databricks** in the Data Lakehouse / Apache Spark space.
 
 By unifying ETL, Spark, and SQL into a single deeply integrated Microsoft ecosystem, it is heavily favored by massive enterprises already entrenched in the Azure ecosystem.
 
-</ConceptTemplate>

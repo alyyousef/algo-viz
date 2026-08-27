@@ -4,7 +4,14 @@ description: The background daemon responsible for collecting and indexing massi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="systemd-journald">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="systemd-journald">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before `systemd`, Linux logging was handled by `syslogd` (or `rsyslog`), which simply wrote raw, unstructured text to files like `/var/log/messages`.
 
@@ -17,8 +24,13 @@ Traditional Unix admins hated the shift to binary logs because they could no lon
 2. **Indexing**: Because the logs are structured, `journald` automatically attaches hidden metadata to every single line (e.g., the exact PID, User ID, and Systemd Unit that generated the text).
 3. **Storage Efficiency**: Binary logs are compressed automatically and rotate predictably.
 
+
 <Callout icon="info" title="Interacting with the Journal">
+
+
   You cannot read the raw `.journal` files directly. You must use the **`journalctl`** command to query the database. Many modern systems configure `journald` to forward its data to a legacy `syslog` daemon specifically so older text-parsing tools continue to work.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,31 @@
+---
+title: DevSecOps
+description: The architectural philosophy of mathematically integrating automated security practices directly into the Continuous Integration/Continuous Deployment (CI/CD) pipeline, shifting security "left" in the software development lifecycle.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DevSecOps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="DevSecOps"
+  subtitle="Shifting Security Left"
+  tags={['Security', 'DevOps', 'Process', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 2010s, "DevOps" merged Development and Operations to deploy code 100 times a day. However, the Security team was left behind. If Security performs a manual penetration test right before a release, they mathematically destroy the speed of DevOps. DevSecOps was created to automate security.
 
-</ConceptTemplate>
+## 1. Shifting Left
+The core mathematical principle of DevSecOps is "Shifting Left."
+In a standard timeline (left to right), writing code happens on the left, and deploying happens on the right. If you find a severe SQL injection vulnerability on the right (during deployment), it is mathematically 100x more expensive to fix than if you found it on the left (while the developer was typing).
+DevSecOps shifts the security checks all the way to the developer's laptop and the initial Git commit.
+
+## 2. SAST and DAST
+DevSecOps relies on automated mathematical pipelines:
+- **SAST (Static Application Security Testing)**: When a developer opens a Pull Request, a tool like SonarQube or Checkmarx mathematically scans the raw source code for known vulnerabilities (like hardcoded AWS keys or buffer overflows) and blocks the merge if found.
+- **DAST (Dynamic Application Security Testing)**: Once the code deploys to a staging environment, an automated tool mathematically attacks the running application (firing payloads at the REST API) to find runtime vulnerabilities before production deployment.
+

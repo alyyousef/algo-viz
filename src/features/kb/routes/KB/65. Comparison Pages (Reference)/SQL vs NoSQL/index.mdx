@@ -8,20 +8,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 The database landscape is broadly divided into SQL (Relational) and NoSQL (Non-relational) databases. Choosing between them is one of the most critical architectural decisions in system design.
 
+
 <Callout icon="info" title="The Golden Rule">
+
+
   Start with PostgreSQL (SQL). Only move to NoSQL if you have a specific, undeniable reason (e.g., you need to ingest 100,000 JSON documents per second, or you have highly unstructured data).
+
+
 </Callout>
+
 
 ## Key Differences
 
-<ComparisonTable 
-  headers={['Aspect', 'SQL (PostgreSQL, MySQL)', 'NoSQL (MongoDB, DynamoDB)']}
-  rows={[
-    ['Data Structure', 'Strict Tables, Rows, and Columns (Schemas).', 'Flexible JSON Documents, Key-Value pairs, or Graphs.'],
-    ['Scaling', 'Vertically (add more RAM to the server).', 'Horizontally (add 100 cheap servers).'],
-    ['Relationships', 'Excellent. Optimized for complex JOINs across multiple tables.', 'Poor. Data is usually duplicated (denormalized) to avoid JOINs.'],
-    ['ACID Guarantees', 'Strict ACID compliance.', 'Usually relaxed (Eventual Consistency) in favor of high Availability.']
-  ]}
-/>
+
+<ComparisonTable headers={['Aspect', 'SQL (PostgreSQL, MySQL)', 'NoSQL (MongoDB, DynamoDB)']} rows={[ ['Data Structure', 'Strict Tables, Rows, and Columns (Schemas).', 'Flexible JSON Documents, Key-Value pairs, or Graphs.'], ['Scaling', 'Vertically (add more RAM to the server).', 'Horizontally (add 100 cheap servers).'], ['Relationships', 'Excellent. Optimized for complex JOINs across multiple tables.', 'Poor. Data is usually duplicated (denormalized) to avoid JOINs.'], ['ACID Guarantees', 'Strict ACID compliance.', 'Usually relaxed (Eventual Consistency) in favor of high Availability.'] ]} />
+
 
 </TechnologyTemplate>

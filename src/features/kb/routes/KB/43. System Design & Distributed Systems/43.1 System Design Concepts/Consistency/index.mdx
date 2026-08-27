@@ -4,25 +4,32 @@ description: A guarantee that every read receives the most recent write or an er
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Consistency">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Consistency">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a distributed system, you cannot store all data on one machine. To achieve fault tolerance, data is mathematically replicated to multiple nodes (e.g., Node A in New York, Node B in London).
 
 **Consistency** asks a critical mathematical question: If I write a value to Node A, and immediately read from Node B, will Node B give me the new value, or the old value?
 
+
 <Callout icon="error" title="The Speed of Light Problem">
+
+
   It is physically impossible for the New York node to instantly teleport the data to the London node. It takes ~70 milliseconds for light to travel the Atlantic. During that 70ms window, the system is mathematically inconsistent.
+
+
 </Callout>
+
 
 ## The Consistency Spectrum
 
-<ComparisonTable 
-  headers={['Consistency Model', 'Mathematical Guarantee', 'Use Case']}
-  rows={[
-    ['Strong Consistency', 'Every read is guaranteed to return the absolute most recent write. Node A will lock the database and refuse to acknowledge the write until Node B confirms it has the data.', 'Banking ledgers, financial trading systems. (Slow performance, high safety).'],
-    ['Eventual Consistency', 'Node A accepts the write instantly and asynchronously sends it to Node B. If you read from Node B too fast, you might get stale data, but "eventually" it converges.', 'Social media likes, YouTube view counts, DNS records. (High performance, low safety).'],
-    ['Read-Your-Own-Writes', 'A hybrid model. A user is mathematically guaranteed to see their own updates immediately, but other users might see stale data for a few seconds.', 'Posting a Facebook status update.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Consistency Model', 'Mathematical Guarantee', 'Use Case']} rows={[ ['Strong Consistency', 'Every read is guaranteed to return the absolute most recent write. Node A will lock the database and refuse to acknowledge the write until Node B confirms it has the data.', 'Banking ledgers, financial trading systems. (Slow performance, high safety).'], ['Eventual Consistency', 'Node A accepts the write instantly and asynchronously sends it to Node B. If you read from Node B too fast, you might get stale data, but "eventually" it converges.', 'Social media likes, YouTube view counts, DNS records. (High performance, low safety).'], ['Read-Your-Own-Writes', 'A hybrid model. A user is mathematically guaranteed to see their own updates immediately, but other users might see stale data for a few seconds.', 'Posting a Facebook status update.'] ]} />
+
+

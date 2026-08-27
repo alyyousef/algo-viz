@@ -4,10 +4,16 @@ description: The application of machine learning, typically supervised, semi-sup
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Learning to Rank (LTR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Learning to Rank (LTR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the 1990s, search engine ranking formulas were biologically written by humans (e.g., `score = BM25 + (PageRank * 0.5)`). This mathematically failed as the web grew too complex.
 
 **Learning to Rank (LTR)** uses Machine Learning to mathematically discover the perfect ranking formula. Engineers feed the AI thousands of search queries alongside biological human ratings of the results. The AI (often using algorithms like XGBoost or RankNet) mathematically figures out exactly how to weigh Title matches vs URL matches vs Recency to produce the perfect Search Engine Results Page (SERP).
 
-</ConceptTemplate>

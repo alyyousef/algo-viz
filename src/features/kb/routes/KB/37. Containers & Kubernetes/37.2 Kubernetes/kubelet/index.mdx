@@ -1,8 +1,29 @@
+---
+title: kubelet
+description: The primary node agent running on every physical Worker Node in a Kubernetes cluster, serving as the mathematical bridge between the Control Plane's commands and the local container runtime.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="kubelet">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="kubelet"
+  subtitle="The Captain of the Node"
+  tags={['Kubernetes', 'Architecture', 'Node Agent', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If the Control Plane is the brain of the cluster, the **kubelet** is the spinal cord on every single physical server. It is the only Kubernetes component that physically touches the container runtime (like containerd).
 
-</ConceptTemplate>
+## 1. The Execution Engine
+The kubelet is a daemon (managed by systemd, not by Kubernetes itself) that mathematically registers its Node with the API Server.
+It then enters a continuous loop, watching the API Server for new Pod assignments. When the Scheduler assigns a Pod to its Node, the kubelet reads the mathematical specifications (the `PodSpec`). It reaches out to the Container Runtime Interface (CRI) via gRPC and commands it: *"Download this image, set up these Linux cgroups, and start this container."*
+
+## 2. Health Monitoring and Probes
+The kubelet is mathematically responsible for the lifecycle of the Pod.
+If a developer configures a **Liveness Probe** (e.g., pinging an HTTP endpoint every 5 seconds), it is the kubelet that actually executes the mathematical ping. If the application deadlocks and the ping fails 3 times in a row, the kubelet mathematically kills the container and commands containerd to restart it, reporting the failure back to the Control Plane.
+

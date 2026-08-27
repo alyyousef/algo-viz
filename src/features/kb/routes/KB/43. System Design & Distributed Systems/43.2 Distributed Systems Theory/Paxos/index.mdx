@@ -4,15 +4,28 @@ description: A family of protocols for solving consensus in a network of unrelia
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Paxos">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Paxos">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 1989, legendary computer scientist Leslie Lamport published a paper detailing the **Paxos** algorithm. It was the first mathematically rigorous solution to the problem of distributed consensus in an asynchronous network where nodes might crash or messages might be delayed.
 
 For 25 years, Paxos was the undisputed king of distributed systems theory, serving as the mathematical foundation for Google's Spanner database and Amazon's original Dynamo architecture.
 
+
 <Callout icon="error" title="The Notorious Complexity">
+
+
   Lamport originally explained Paxos using a metaphor about a fictional Greek parliament on the island of Paxos. The metaphor was so mathematically obtuse that no one understood the paper, forcing him to rewrite it years later. It remains incredibly difficult to implement correctly in C++ or Java.
+
+
 </Callout>
+
 
 ## The Mathematical Mechanism
 
@@ -23,4 +36,3 @@ Unlike Raft, which relies on a strict Leader Dictator, basic Paxos is mathematic
 
 *Because Paxos allows multiple Proposers to shout at the same time, it can mathematically lead to "Dueling Proposers" (livelock), where they constantly out-bid each other's Proposal Numbers without ever committing.*
 
-</ConceptTemplate>

@@ -1,8 +1,34 @@
+---
+title: Runbooks
+description: Highly structured, explicit mathematical manuals containing step-by-step procedures that on-call engineers use to diagnose and resolve specific production incidents rapidly, minimizing cognitive load during high-stress outages.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Runbooks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Runbooks (Playbooks)"
+  subtitle="Algorithmic Incident Resolution"
+  tags={['SRE', 'Operations', 'Documentation', 'Process']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a junior engineer is paged at 3:00 AM because the "Redis Cluster is OOM (Out of Memory)", their brain is mathematically impaired by sleep deprivation. They cannot invent a solution on the fly. They need an explicit algorithm to follow.
 
-</ConceptTemplate>
+## 1. The Mathematical Flowchart
+A Runbook is an algorithmic flowchart.
+It explicitly states:
+1. Run `redis-cli info memory` to verify the mathematical OOM state.
+2. Check the Datadog dashboard (Link provided) to see if a specific microservice is writing too much data.
+3. If yes, temporarily disable the microservice using this specific API call (Curl command provided).
+4. If no, scale the Redis cluster by executing this specific Terraform command.
+By providing exact, copy-pasteable mathematical commands, the Runbook eliminates guesswork and drastically reduces the Mean Time To Recovery (MTTR).
+
+## 2. Executable Runbooks
+The modern evolution of SRE is the **Executable Runbook**.
+Instead of a static Wiki page, tools like Jupyter Notebooks or specialized SRE platforms (like PagerDuty Process Automation) allow the Runbook to be code. The engineer clicks a button in the Runbook, and the platform mathematically executes the diagnostic scripts against the production server automatically, presenting the results directly in the document.
+

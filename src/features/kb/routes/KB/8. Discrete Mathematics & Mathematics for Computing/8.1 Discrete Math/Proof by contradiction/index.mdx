@@ -1,8 +1,38 @@
+---
+title: Proof by Contradiction
+description: "An incredibly elegant mathematical proof technique where you assume the exact opposite of what you want to prove, and demonstrate that this assumption leads to a mathematically impossible, exploding paradox."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Proof by contradiction">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Proof by Contradiction"
+  subtitle="Reductio ad Absurdum"
+  tags={['Mathematics', 'Discrete Math', 'Proof Techniques', 'Logic']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Discrete Mathematics, **Proof by Contradiction** (Reductio ad Absurdum) is a formal logical strategy. If a direct mathematical proof is too difficult, you simply assume your theorem is False. You follow the strict rules of algebra, and if your math eventually outputs something insane (like $1 = 0$ or "an integer is both even and odd"), your initial assumption *must* have been wrong. Therefore, your theorem must be True.
 
-</ConceptTemplate>
+## 1. The Classic Proof: The Irrationality of $\sqrt{2}$
+Around 500 BC, the Pythagoreans used contradiction to prove a terrifying truth: $\sqrt{2}$ cannot be written as a fraction.
+1. **The Assumption**: Assume $\sqrt{2}$ is rational. Therefore, it can be written as a perfect fraction $\frac{a}{b}$, where the fraction is completely simplified (meaning $a$ and $b$ share no common factors).
+2. **The Algebra**:
+   - $\sqrt{2} = \frac{a}{b}$
+   - Square both sides: $2 = \frac{a^2}{b^2}$
+   - Rearrange: $a^2 = 2b^2$
+3. **The Logical Step**: Because $a^2$ equals 2 times something, $a^2$ must be an Even number. Mathematically, if a square is even, its root ($a$) must also be Even.
+4. **The Cascade**: Since $a$ is even, we can write it as $2k$.
+   - Substitute: $(2k)^2 = 2b^2$ $\implies 4k^2 = 2b^2$ $\implies b^2 = 2k^2$
+   - This proves $b^2$ is Even, meaning $b$ must also be Even.
+5. **The Contradiction**: We just mathematically proved that both $a$ and $b$ are Even (divisible by 2). But in Step 1, we explicitly defined $\frac{a}{b}$ as a completely simplified fraction sharing *no* common factors! This is a mathematical paradox.
+6. **The Conclusion**: The only way to escape the paradox is to admit our very first assumption was wrong. $\sqrt{2}$ mathematically cannot be a fraction.
+
+## 2. Usage in Computer Science
+Contradiction is heavily used in Computability Theory. The most famous theorem in Computer Science, Alan Turing's **Halting Problem** (proving that it is mathematically impossible to write a program that checks if another program has an infinite loop), is proven entirely by contradiction. Turing assumed such a program existed, fed it into itself, and created a universe-breaking paradox, proving the program cannot exist.
+

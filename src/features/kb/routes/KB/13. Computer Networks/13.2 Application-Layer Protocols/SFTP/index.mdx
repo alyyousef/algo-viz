@@ -4,24 +4,36 @@ description: A highly secure, encrypted file transfer protocol that leverages th
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SFTP (SSH File Transfer Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SFTP (SSH File Transfer Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While SSH is used to execute commands remotely, administrators frequently need to upload or download massive files to the server. 
+While SSH is used to execute commands remotely, administrators frequently need to upload or download massive files to the server.
 
 Instead of configuring a completely separate, complicated FTP server, administrators use **SFTP (SSH File Transfer Protocol)**.
 
 ## How It Works
 
-Despite the name, SFTP has absolutely nothing to do with the legacy FTP protocol. 
-SFTP is an entirely separate subsystem built directly into the standard SSH daemon (OpenSSH). 
+Despite the name, SFTP has absolutely nothing to do with the legacy FTP protocol.
+SFTP is an entirely separate subsystem built directly into the standard SSH daemon (OpenSSH).
 
 Because it rides inside the existing SSH tunnel (TCP Port 22):
 - It requires zero additional firewall configuration (if Port 22 is open, SFTP works).
 - It inherits the flawless encryption of SSH.
 - It inherits the Asymmetric Key-Based Authentication of SSH.
 
+
 <Callout icon="info" title="SCP vs SFTP">
+
+
   For decades, administrators used the `scp` (Secure Copy) command to transfer files over SSH. However, the `scp` protocol is incredibly ancient and suffers from deep architectural security flaws. The OpenSSH project has officially deprecated `scp`. Modern systems now silently hijack the `scp` command and route the transfer through the far superior, feature-rich SFTP protocol in the background.
+
+
 </Callout>
 
-</ConceptTemplate>
+

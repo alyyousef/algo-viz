@@ -1,8 +1,33 @@
+---
+title: BFS vs DFS
+description: "A fundamental algorithmic comparison between Breadth-First Search (queue-based, shortest path) and Depth-First Search (stack-based, exhaustive exploration) in graph and tree traversal."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="BFS vs DFS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="BFS vs DFS"
+  subtitle="Graph Traversal Fundamentals"
+  tags={['Comparison', 'Algorithms', 'Graph Theory', 'Data Structures']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Breadth-First Search (BFS) and Depth-First Search (DFS) are the two foundational mathematical algorithms for visiting every node in a Graph or Tree. They both run in **O(V + E)** time, but their traversal philosophy and memory usage are completely opposed.
 
-</ConceptTemplate>
+## 1. Breadth-First Search (BFS)
+- **Philosophy**: Explore all neighbors of the current node before moving deeper. (Like a ripple in a pond expanding outwards).
+- **Data Structure**: Uses a **Queue** (FIFO).
+- **Primary Use Case**: Mathematically guaranteed to find the **Shortest Path** on an unweighted graph. Used in GPS routing, peer-to-peer networks, and finding the closest friend in a social network.
+- **Memory**: O(W) where W is the maximum width of the tree. (Can be mathematically disastrous for extremely wide trees, consuming massive amounts of RAM).
+
+## 2. Depth-First Search (DFS)
+- **Philosophy**: Dive as deep as possible down a single path until you hit a dead end, then mathematically backtrack. (Like solving a maze by keeping your hand on the left wall).
+- **Data Structure**: Uses a **Stack** (LIFO), usually implemented implicitly via Recursion.
+- **Primary Use Case**: Exhaustive puzzle solving (Sudoku backtracking), Topological Sorting, detecting Cycles, and counting connected components.
+- **Memory**: O(H) where H is the maximum height of the tree. (Highly memory efficient for wide trees, but mathematically susceptible to Stack Overflow errors on extremely deep graphs).
+

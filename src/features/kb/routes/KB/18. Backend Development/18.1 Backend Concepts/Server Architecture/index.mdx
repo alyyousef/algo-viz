@@ -4,7 +4,14 @@ description: The fundamental models of how clients and servers interact to gener
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Server Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Server Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The core of web development is the **Client-Server Model**. The Client (browser) requests a resource, and the Server (backend) computes the logic, fetches from the database, and returns a response.
 
@@ -17,7 +24,7 @@ Historically the most famous architectural pattern for backend applications (hea
 ## Rendering Strategies
 
 ### Server-Side Rendering (SSR) & Templating Engines
-Before the modern React era, all HTML was generated on the backend. 
+Before the modern React era, all HTML was generated on the backend.
 A **Templating Engine** (like Jinja for Python, EJS for Node, or Blade for PHP) allows you to inject backend variables directly into HTML strings.
 ```html
 <!-- EJS Template Example -->
@@ -31,7 +38,6 @@ A **Templating Engine** (like Jinja for Python, EJS for Node, or Blade for PHP) 
 When a user visits the URL, the server executes this loop, generates the raw HTML string, and sends it to the browser. This is incredible for SEO and initial load times, but creates a "hard page refresh" every time you click a link.
 
 ### Client-Side Rendering (SPA Architecture)
-The industry eventually shifted to Single Page Applications (React/Vue). 
+The industry eventually shifted to Single Page Applications (React/Vue).
 In this model, the backend completely stops rendering HTML. Instead, the backend simply exposes an API that returns raw JSON data. The Client (browser) downloads a massive Javascript bundle, fetches the JSON, and mathematically constructs the DOM elements on the user's computer.
 
-</ConceptTemplate>

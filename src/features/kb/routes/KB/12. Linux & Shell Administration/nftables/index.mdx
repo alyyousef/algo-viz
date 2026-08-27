@@ -4,7 +4,14 @@ description: The modern, high-performance Linux Kernel firewall subsystem design
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="nftables">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="nftables">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For 20 years, `iptables` was the absolute king of Linux firewalls. However, its architecture was deeply flawed. Every time a Sysadmin added a single new firewall rule, the Kernel had to flush the entire massive ruleset from memory and reload it, causing massive latency spikes on huge enterprise routers.
 
@@ -12,7 +19,7 @@ To fix this, the Linux Kernel developers created **nftables**.
 
 ## The Architecture
 
-`nftables` operates via a unified user-space tool called **`nft`**. 
+`nftables` operates via a unified user-space tool called **`nft`**.
 Unlike `iptables` (which hardcoded Tables and Chains into the Kernel), `nftables` provides a completely blank slate. You define your own custom tables, meaning the firewall uses virtually zero CPU if it's not configured.
 
 `nftables` also compiles its rules into a specialized, ultra-fast bytecode (similar to eBPF) before pushing them into the Kernel.
@@ -31,8 +38,13 @@ nft add chain inet my_firewall inbound { type filter hook input priority 0 ; pol
 nft add rule inet my_firewall inbound tcp dport 22 accept
 ```
 
+
 <Callout icon="success" title="The iptables-nft Wrapper">
+
+
   Because replacing thousands of legacy Bash scripts overnight is impossible, modern Linux distributions ship with a tool called `iptables-nft`. When an old script runs an `iptables` command, this wrapper silently intercepts the command, translates it into `nftables` bytecode, and pushes it to the new engine.
+
+
 </Callout>
 
-</ConceptTemplate>
+

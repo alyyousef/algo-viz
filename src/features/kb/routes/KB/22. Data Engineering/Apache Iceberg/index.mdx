@@ -4,7 +4,14 @@ description: An open standard Table Format developed at Netflix for huge analyti
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Iceberg">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Iceberg">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, Data Lakes tracked tables using the Hive Metastore, which physically mapped a "Table" to a "Directory" (e.g., `s3://bucket/table/year=2026/`). If that directory contained 100,000 Parquet files, a query engine had to execute a mathematically agonizing `list()` operation on the S3 API just to figure out what files existed before the query could even begin.
 
@@ -23,7 +30,7 @@ Because the Manifest Files store Min/Max stats, Iceberg achieves phenomenal spee
 ## 2. Core Features
 
 ### Hidden Partitioning
-In legacy Hive, if you partitioned by Date, you had to physically alter your SQL queries to explicitly query the `date` column, forcing Data Analysts to understand the physical disk layout. 
+In legacy Hive, if you partitioned by Date, you had to physically alter your SQL queries to explicitly query the `date` column, forcing Data Analysts to understand the physical disk layout.
 Iceberg hides this. You configure the table to partition by `day(timestamp)`, and Analysts simply query the `timestamp` column normally. Iceberg mathematically handles the partitioning invisibly in the background.
 
 ### Schema Evolution
@@ -41,4 +48,3 @@ SELECT count(*) FROM prod.db.events FOR SYSTEM_TIME AS OF '2026-01-01 10:00:00';
 
 Iceberg is arguably the most widely adopted open-source Table Format today, supported natively by Snowflake, BigQuery, Databricks, and AWS Athena.
 
-</ConceptTemplate>

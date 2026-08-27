@@ -1,0 +1,31 @@
+---
+title: Azure Bicep
+description: A clean, declarative, domain-specific language (DSL) mathematically compiled into native Azure Resource Manager (ARM) JSON, drastically simplifying Infrastructure as Code on Azure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Bicep"
+  subtitle="Modern Infrastructure as Code"
+  tags={['Azure', 'IaC', 'DevOps', 'Bicep']}
+>
+
+Writing raw ARM JSON templates is mathematically tedious and prone to severe syntax errors due to deep bracket nesting. Bicep was invented as a transparent compiler to solve this.
+
+## 1. The Transparent Abstraction
+Unlike Terraform, which maintains its own complex "State File", Bicep is completely stateless.
+You write clean, readable code (resembling TypeScript):
+```bicep
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
+  name: 'mystorageaccount'
+  location: 'eastus'
+  sku: { name: 'Standard_LRS' }
+}
+```
+When you deploy this, the Bicep CLI mathematically transpiles it into standard ARM JSON in milliseconds and passes it directly to the Azure API. Azure tracks the state natively. Because Bicep compiles directly to ARM, it supports new Azure features on "Day Zero" (the exact second Microsoft releases them), whereas Terraform often takes weeks to update its providers.
+
+## 2. Modules and Mathematical Reusability
+Bicep allows you to mathematically construct complex architectures using **Modules**.
+A central DevOps team can write a highly secure `SecureDatabase.bicep` file that hardcodes specific firewall rules and encryption standards. Application teams across the enterprise simply import this module into their own Bicep files, passing in parameters. This guarantees that every database deployed mathematically adheres to corporate security policies without the developers needing to understand the underlying networking.
+
+</TechnologyTemplate>

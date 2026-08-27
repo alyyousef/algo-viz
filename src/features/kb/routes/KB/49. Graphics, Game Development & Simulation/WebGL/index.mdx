@@ -4,7 +4,7 @@ description: A JavaScript API for rendering interactive 2D and 3D graphics withi
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="WebGL"
   subtitle="Bringing hardware-accelerated 3D to the Browser"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/WebGL_Logo.svg/512px-WebGL_Logo.svg.png"
@@ -19,11 +19,17 @@ Before 2011, if you wanted 3D graphics in a web browser, the user had to install
 
 **WebGL** mathematically integrated the GPU directly into the HTML5 `<canvas>` element.
 
+
 <Callout icon="warning" title="The Brutal Low-Level API">
-  WebGL is mathematically incredibly verbose. 
-  
+
+
+  WebGL is mathematically incredibly verbose.
+
   Because it is a direct binding to OpenGL ES, drawing a simple rotating cube requires manually compiling GLSL Shaders from raw text strings, allocating Float32Arrays for vertex buffers, and executing massive matrix algebra equations in pure JavaScript. It takes about 200 lines of raw WebGL code just to draw a triangle.
+
+
 </Callout>
+
 
 ## The Shift to WebGPU
 

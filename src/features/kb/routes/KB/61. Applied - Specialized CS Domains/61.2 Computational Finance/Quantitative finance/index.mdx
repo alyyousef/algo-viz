@@ -4,10 +4,16 @@ description: The use of mathematical models and extremely large datasets to anal
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantitative Finance">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Quantitative Finance">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The stock market is no longer run by human traders yelling on a biological trading floor. It is a massive, distributed computer system.
 
 **Quantitative Finance** (Quant) is the application of hardcore computer science, statistics, and physics to financial markets. "Quants" mathematically model the probability of a stock going up or down. They do not care about a company's CEO or their biological products; they only care about the mathematical signals hidden in the massive streams of market data.
 
-</ConceptTemplate>

@@ -4,26 +4,34 @@ description: The set of rules that dictate how threads interact through shared m
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Memory Models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Memory Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The most mind-bending reality of modern Computer Science is this: **The code you write is not the code that executes.**
 
 To achieve blazing speeds, both the Compiler (like GCC) and the physical CPU (like an Intel Core i9) are mathematically allowed to completely re-order your lines of code. If you write `A = 1` and then `B = 2`, the CPU might physically execute `B = 2` first, assuming it believes the variables are mathematically unrelated.
 
+
 <Callout icon="warning" title="The Concurrent Catastrophe">
+
+
   This reordering is perfectly safe for a single thread. But in a multi-threaded program, Thread 2 might mathematically rely on the fact that `A` was assigned before `B`. If the CPU secretly reordered them, the program will experience an impossible, untraceable mathematical bug.
+
+
 </Callout>
+
 
 ## Understanding Memory Models
 
 A **Memory Model** is the strict mathematical contract between the Programmer and the CPU/Compiler regarding exactly how much reordering is legally allowed.
 
-<ComparisonTable 
-  headers={['Memory Model', 'The Mathematical Rule', 'Implication']}
-  rows={[
-    ['Sequential Consistency', 'The holy grail. All threads mathematically see all memory writes happen in the exact, literal order written in the source code.', 'Easy for human brains to understand. Brutally slow for CPUs, as it completely disables hardware-level out-of-order execution.'],
-    ['Relaxed Ordering', 'Total mathematical anarchy. Threads are allowed to see memory writes happen in completely different orders.', 'Blazing fast, but requires the programmer to manually insert mathematical "Memory Barriers" (Fences) to forcibly stop the CPU from reordering critical lines of code.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Memory Model', 'The Mathematical Rule', 'Implication']} rows={[ ['Sequential Consistency', 'The holy grail. All threads mathematically see all memory writes happen in the exact, literal order written in the source code.', 'Easy for human brains to understand. Brutally slow for CPUs, as it completely disables hardware-level out-of-order execution.'], ['Relaxed Ordering', 'Total mathematical anarchy. Threads are allowed to see memory writes happen in completely different orders.', 'Blazing fast, but requires the programmer to manually insert mathematical "Memory Barriers" (Fences) to forcibly stop the CPU from reordering critical lines of code.'] ]} />
+
+

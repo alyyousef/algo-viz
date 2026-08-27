@@ -1,8 +1,34 @@
+---
+title: Bitmasking
+description: "A powerful mathematical data representation technique where individual bits within a single integer are used as boolean flags to represent the presence or absence of items in a set."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bitmasking">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bitmasking"
+  subtitle="Compressing Arrays into Integers"
+  tags={['Algorithms', 'Bit Manipulation', 'Data Structures', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a video game character has 8 possible status effects (Poison, Stun, Silence, etc.), you could store them in an array of 8 booleans (which mathematically takes 8 bytes of RAM).
+**Bitmasking** stores them all in a single 8-bit integer (1 byte of RAM).
 
-</ConceptTemplate>
+## 1. The Binary Mask
+Imagine the integer `5`. In binary, 5 is `00000101`.
+Reading from right to left (index 0 to 7), the bit at index 0 is 1 (True), index 1 is 0 (False), and index 2 is 1 (True).
+This single integer mathematically represents an exact subset of the status effects!
+
+## 2. Interacting with the Mask
+You modify the mask using Bitwise Operators and Bit Shifting (`<<`):
+- **Set a Flag (Turn ON)**: To inflict Status #4, you use Bitwise OR: `mask = mask | (1 <&lt; 4)`.
+- **Clear a Flag (Turn OFF)**: To cure Status #4, you use Bitwise AND with a NOT: `mask = mask & ~(1 <&lt; 4)`.
+- **Check a Flag**: To see if Status #4 is active: `if ((mask & (1 <&lt; 4)) > 0)`.
+Because the CPU can execute these bitwise operations in hardware, Bitmasking mathematically guarantees absolute maximum performance and minimal memory footprint, making it the standard for low-level system flags (like Linux file permissions: `chmod 777`).
+

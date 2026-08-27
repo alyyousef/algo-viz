@@ -8,9 +8,15 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 An Autoencoder is a specific type of artificial neural network used to learn efficient codings of unlabeled data (unsupervised learning). The goal of an autoencoder is to learn a representation (encoding) for a set of data, typically for dimensionality reduction, by training the network to ignore signal "noise."
 
+
 <Callout icon="info" title="Compression vs Autoencoders">
+
+
   Autoencoders are similar to compression algorithms like JPEG or MP3, but they are data-specific. An autoencoder trained on pictures of faces would do a terrible job compressing pictures of trees because the features it learned are specific to faces.
+
+
 </Callout>
+
 
 ## The Architecture
 
@@ -36,13 +42,8 @@ If an autoencoder didn't have a bottleneck (if the hidden layers were wider than
 
 ## Types of Autoencoders
 
-<ComparisonTable 
-  headers={['Type', 'Use Case']}
-  rows={[
-    ['Denoising Autoencoder', 'Trained by deliberately adding noise to the input, but evaluating the loss against the original clean image. Forces the model to learn how to remove noise.'],
-    ['Sparse Autoencoder', 'Adds a sparsity penalty to the loss function, forcing only a few nodes in the bottleneck to activate at once, encouraging the learning of distinct features.'],
-    ['Variational Autoencoder (VAE)', 'A generative model that learns the probability distribution of the latent space, allowing it to generate entirely new, similar data.']
-  ]}
-/>
+
+<ComparisonTable headers={['Type', 'Use Case']} rows={[ ['Denoising Autoencoder', 'Trained by deliberately adding noise to the input, but evaluating the loss against the original clean image. Forces the model to learn how to remove noise.'], ['Sparse Autoencoder', 'Adds a sparsity penalty to the loss function, forcing only a few nodes in the bottleneck to activate at once, encouraging the learning of distinct features.'], ['Variational Autoencoder (VAE)', 'A generative model that learns the probability distribution of the latent space, allowing it to generate entirely new, similar data.'] ]} />
+
 
 </TechnologyTemplate>

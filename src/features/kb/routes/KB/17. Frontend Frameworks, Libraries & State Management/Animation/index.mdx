@@ -4,7 +4,14 @@ description: The advanced Javascript architectures used to execute buttery-smoot
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Animation (Framer Motion, GSAP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Animation (Framer Motion, GSAP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While basic CSS Transitions and Keyframes are sufficient for simple hover effects, they completely fall apart when orchestrating massive, multi-step, scroll-linked animations or animating components mounting and unmounting from the DOM.
 
@@ -27,10 +34,9 @@ Crucially, it introduced the `<AnimatePresence>` wrapper, mathematically solving
 ## 2. GSAP (GreenSock Animation Platform)
 Before modern React existed, GSAP was the undisputed king of web animation, and it remains the most powerful library in existence for raw timeline orchestration.
 
-GSAP completely bypasses CSS and uses highly-optimized Javascript math via `requestAnimationFrame` to manipulate DOM properties directly at 60+ FPS. 
+GSAP completely bypasses CSS and uses highly-optimized Javascript math via `requestAnimationFrame` to manipulate DOM properties directly at 60+ FPS.
 It is explicitly designed for building massive "Scrollytelling" websites (like the Apple iPhone landing pages) where the entire page's animation state is mathematically linked to the user's scrollbar position (via the ScrollTrigger plugin).
 
 ## 3. Lottie
 Created by Airbnb. Lottie is an architecture that mathematically exports complex Adobe After Effects animations as tiny JSON files. The Lottie web player parses the JSON and renders the animation using high-performance SVGs, allowing designers to ship Hollywood-level animations directly to the browser with zero coding required.
 
-</ConceptTemplate>

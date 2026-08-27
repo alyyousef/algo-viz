@@ -4,16 +4,28 @@ description: A centralized hub that provides a comprehensive view of an organiza
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Internal Developer Portals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Internal Developer Portals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When an enterprise reaches 1,000 microservices, a massive biological problem occurs: **Nobody knows where anything is.**
 
 If you are a developer tasked with calling the "Billing API", you don't know who owns it, what the endpoints are, or where the documentation lives.
 
+
 <Callout icon="success" title="The Software Catalog">
+
+
   An **Internal Developer Portal** is the mathematical UI layer for the Internal Developer Platform (IDP).
-  
+
   It acts as a single, centralized Wikipedia and dashboard for the entire engineering organization. It mathematically catalogs every microservice, showing its Git repository, its CI/CD status, its owner (e.g., Team Alpha), its API documentation (Swagger), and its production health metrics, completely eliminating biological silos.
+
+
 </Callout>
 
-</ConceptTemplate>
+

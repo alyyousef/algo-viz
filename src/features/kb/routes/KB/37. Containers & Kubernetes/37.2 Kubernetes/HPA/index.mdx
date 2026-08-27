@@ -1,8 +1,32 @@
+---
+title: Horizontal Pod Autoscaler (HPA)
+description: A native Kubernetes controller that mathematically monitors resource metrics (like CPU or RAM) and dynamically adjusts the number of Pod replicas in a Deployment to match real-time traffic demand.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HPA">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Horizontal Pod Autoscaler (HPA)"
+  subtitle="Dynamic Mathematical Scaling"
+  tags={['Kubernetes', 'Scaling', 'Automation', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an e-commerce application experiences a massive traffic spike during Black Friday, manually typing `kubectl scale deployment --replicas=50` is too slow. The HPA automates this mathematical decision.
 
-</ConceptTemplate>
+## 1. The Scaling Algorithm
+The HPA controller constantly queries the Kubernetes Metrics Server (which aggregates data from the kubelets).
+You configure the HPA with a mathematical target: *"Maintain an average CPU utilization of 70% across all Pods in this Deployment."*
+If the average CPU hits 90%, the HPA executes a specific mathematical formula:
+`desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]`
+If you have 10 Pods at 90% CPU, the HPA calculates: `ceil[10 * (90 / 70)] = 13`. It instantly commands the Controller Manager to scale the Deployment to 13 Pods, distributing the load and bringing the average back down.
+
+## 2. Custom Metrics
+While CPU and Memory are standard, the HPA can scale based on arbitrary mathematical metrics.
+Using Custom Metrics adapters, you can configure the HPA to scale based on business logic. For example: *"If the number of unprocessed messages in the AWS SQS Queue exceeds 10,000, mathematically scale up the worker Pods to 50."* This enables extremely precise, event-driven architecture.
+

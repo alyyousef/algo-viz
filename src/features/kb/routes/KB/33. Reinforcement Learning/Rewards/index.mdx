@@ -1,8 +1,27 @@
+---
+title: Rewards (Reinforcement Learning)
+description: The scalar mathematical feedback signal issued by an Environment that dictates the absolute, unassailable objective function that the AI Agent must optimize.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rewards">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rewards">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Reinforcement Learning, there are no "instructions" or "rules." There is only a single floating-point number: The Reward. The Agent's entire neural network is mathematically enslaved to maximizing this scalar value over time.
 
-</ConceptTemplate>
+## 1. The Reward Hypothesis
+The foundational axiom of RL, stated by Richard Sutton, is the **Reward Hypothesis**: *"All of what we mean by goals and purposes can be well thought of as the maximization of the expected value of the cumulative sum of a received scalar signal (called reward)."*
+If you want an AI to cure cancer, you do not write a curing algorithm. You build an environment, you assign +1 for a cured cell and -1 for a dead cell, and the math of gradient descent forces the neural network to physically invent the cure to maximize the integer.
+
+## 2. The Credit Assignment Problem
+The deepest mathematical challenge regarding Rewards is the **Credit Assignment Problem**.
+In Chess, you only get a Reward (+1 or -1) at the very end of the game, after 50 moves.
+If the Agent wins, which of the 50 moves actually caused the win? Was Move 2 brilliant, and Move 49 terrible, but it still won?
+Mathematical algorithms (like Temporal Difference learning and Eligibility Traces) exist solely to physically "smear" that final +1 reward backward through time, mathematically adjusting the neural weights of the specific actions that genuinely contributed to the final outcome.
+

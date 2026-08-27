@@ -4,7 +4,14 @@ description: The engineering practice of ensuring web applications are fully usa
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Web Accessibility (a11y)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Web Accessibility (a11y)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Web Accessibility** (numeronym: **a11y**, meaning an 'a', 11 letters, then a 'y') is the architectural requirement that your application must be usable by people with visual, motor, or cognitive disabilities.
 
@@ -19,11 +26,10 @@ You must use **Semantic HTML**. By using a real `<button>Submit</button>`, the b
 
 ## ARIA (Accessible Rich Internet Applications)
 
-Sometimes, you have to build complex custom UI components (like a drag-and-drop modal) that have no native HTML equivalent. 
+Sometimes, you have to build complex custom UI components (like a drag-and-drop modal) that have no native HTML equivalent.
 In these cases, you use **ARIA attributes** to mathematically describe the state of the component to the Screen Reader.
 
 - `aria-hidden="true"`: Completely hides an irrelevant decorative icon from the screen reader.
 - `aria-expanded="true"`: Tells the screen reader that the accordion menu is currently open.
 - `aria-live="polite"`: If a background Javascript process finally finishes loading data, this attribute politely interrupts the screen reader to announce "Data loaded successfully" to the blind user.
 
-</ConceptTemplate>

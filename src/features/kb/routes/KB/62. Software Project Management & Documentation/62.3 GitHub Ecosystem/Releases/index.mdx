@@ -4,10 +4,16 @@ description: Deployments of software that are packaged and delivered to users, t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Releases">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Releases">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When your code is mathematically ready for the public, you create a **Release**.
 
 You biologically select a specific commit (via a Git Tag, like `v1.0.0`). GitHub mathematically packages the entire codebase into a downloadable `.zip` file. More importantly, GitHub Actions can automatically mathematically compile your C++ or Go code into a Windows `.exe` or Mac `.dmg` file and attach the biological binaries directly to the Release page for non-technical users to download.
 
-</ConceptTemplate>

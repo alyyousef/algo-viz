@@ -1,8 +1,43 @@
+---
+title: Coupling
+description: "A mathematical measurement of the degree of interdependence between different software modules; tight coupling means a change in one module forces a cascading change in another."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Coupling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Coupling"
+  subtitle="The Interdependence of Code"
+  tags={['Architecture', 'Clean Code', 'Design Principles', 'Metrics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Cohesion measures how well a class is structured internally, **Coupling** measures how mathematically entangled it is externally.
 
-</ConceptTemplate>
+## 1. Tight Coupling (The Danger)
+If Class A instantiates Class B directly using the `new` keyword, Class A is mathematically **Tightly Coupled** to Class B.
+```java
+class OrderService {
+    void process() {
+        MySQLDatabase db = new MySQLDatabase(); // Tight Coupling!
+        db.save();
+    }
+}
+```
+If the company migrates to MongoDB, the developer must open the `OrderService` file and physically rewrite the business logic to remove MySQL. The core business rules are held mathematically hostage by the database infrastructure.
+
+## 2. Loose Coupling (The Solution)
+Loose Coupling is achieved through Interfaces and Dependency Injection.
+```java
+class OrderService {
+    private IDatabase db; // Loose Coupling
+    public OrderService(IDatabase db) { this.db = db; }
+}
+```
+Now, `OrderService` is mathematically completely ignorant of whether the database is MySQL or Mongo. You can completely delete the MySQL library from the codebase, and the `OrderService` file does not need a single line changed. This provides ultimate architectural flexibility.
+

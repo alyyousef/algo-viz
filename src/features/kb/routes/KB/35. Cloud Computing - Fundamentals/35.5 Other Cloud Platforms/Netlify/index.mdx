@@ -1,0 +1,24 @@
+---
+title: Netlify
+description: The pioneer of the Jamstack architecture, mathematically automating the global deployment, continuous integration, and edge hosting of modern frontend web applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Netlify"
+  subtitle="The Jamstack Pioneer"
+  tags={['Cloud', 'Hosting', 'Jamstack', 'Frontend']}
+>
+
+Before Netlify, deploying a React or Vue SPA required provisioning an AWS S3 bucket, setting up CloudFront, manually configuring SSL certificates, and writing complex GitHub Actions to handle the build. Netlify mathematically automated all of this into a single platform.
+
+## 1. The Git-Centric Workflow
+Netlify's core architectural premise is that **Git is the source of truth**.
+You link your GitHub repository to Netlify. When you push to the `main` branch, a webhook triggers Netlify's mathematical build engine. It boots a container, runs `npm run build`, mathematically optimizes the HTML/CSS/JS assets, and deploys the static files directly to their massive global Edge CDN. The deployment is atomic; if a user is currently browsing the site, the state is mathematically consistent until they refresh.
+
+## 2. Edge Functions and Deploy Previews
+While initially for static sites, Netlify evolved to support dynamic compute.
+They offer **Netlify Edge Functions** (built on Deno). These run serverless TypeScript code directly at the CDN edge, allowing for instantaneous mathematical operations like A/B testing or personalized geo-routing before the HTML even reaches the user.
+Furthermore, Netlify provides **Deploy Previews**. If a developer opens a Pull Request on GitHub, Netlify automatically builds that specific branch and mathematically provisions a unique, temporary URL (e.g., `deploy-preview-42.netlify.app`) allowing QA teams to test the exact changes before they are merged to production.
+
+</TechnologyTemplate>

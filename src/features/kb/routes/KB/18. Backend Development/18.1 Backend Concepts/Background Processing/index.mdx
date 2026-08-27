@@ -4,9 +4,16 @@ description: The architecture of decoupling heavy, time-consuming computational 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Background Processing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Background Processing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When a user clicks "Generate PDF Report" on a website, generating that PDF might take 15 seconds. 
+When a user clicks "Generate PDF Report" on a website, generating that PDF might take 15 seconds.
 If the backend attempts to generate the PDF during the HTTP request, the user's browser will hang and spin for 15 seconds, and the server's thread will be completely blocked, preventing it from serving other users.
 
 This is solved using **Background Processing Architecture**.
@@ -28,4 +35,3 @@ The standard Cron expression has 5 fields: `Minute Hour Day Month DayOfWeek`.
 
 Modern systems use distributed task schedulers (like AWS EventBridge or Celery Beat) to trigger these jobs reliably across multiple worker nodes.
 
-</ConceptTemplate>

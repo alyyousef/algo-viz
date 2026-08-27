@@ -1,8 +1,33 @@
+---
+title: Union Types
+description: A mathematical type construct that allows a single variable or function to validly accept or return one of several distinct types.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Union types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Union Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Union Type (often denoted as `A | B`) mathematically declares that a memory location can hold a value of Type A, OR a value of Type B, but not both simultaneously.
 
-</ConceptTemplate>
+## 1. Untagged Unions (C/C++)
+In C, a `union` mathematically overlays multiple variables onto the exact same physical memory block.
+```c
+union Data {
+    int i;
+    float f;
+};
+```
+If you write to `data.i`, you are mathematically writing 4 bytes to RAM. If you immediately read `data.f`, the CPU reads those exact same 4 bytes but mathematically interprets the bits as an IEEE 754 float, resulting in garbage data. Untagged Unions are mathematically unsafe because the compiler does not track which type is currently occupying the memory.
+
+## 2. Tagged Unions (TypeScript / Rust)
+Modern languages use Tagged Unions (Sum Types).
+In TypeScript, if you declare `let id: string | number;`, you cannot mathematically call `id.toUpperCase()`. The compiler will block you because the value *might* be a number. You are mathematically forced to use **Type Narrowing**:
+`if (typeof id === "string") { id.toUpperCase(); }`.
+The compiler mathematically tracks the control flow, realizes that inside the `if` block the value is guaranteed to be a string, and safely permits the method call.
+

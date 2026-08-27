@@ -1,8 +1,32 @@
+---
+title: Strategy Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically defines a family of algorithms, encapsulates each one, and makes them interchangeable at runtime.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Strategy">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Strategy Pattern"
+  subtitle="Interchangeable Mathematical Algorithms"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an e-commerce checkout system needs to process payments, it might need to support Credit Cards, PayPal, and Bitcoin.
+If the `CheckoutService` uses a massive `if (type == "paypal") { ... } else if (type == "bitcoin") { ... }` block, it violates the Open-Closed Principle. Adding Apple Pay requires modifying the core file.
 
-</ConceptTemplate>
+## 1. Encapsulating the Algorithm
+The Strategy pattern solves this by extracting each algorithm into its own file.
+You create an `IPaymentStrategy` interface with a `pay(amount)` method.
+You create three completely separate classes: `PayPalStrategy`, `BitcoinStrategy`, and `CreditCardStrategy`.
+
+## 2. Runtime Injection
+The `CheckoutService` simply holds a reference to an `IPaymentStrategy` object.
+At runtime, when the user clicks the PayPal radio button on the UI, the system mathematically injects the `PayPalStrategy` object into the CheckoutService.
+The service blindly executes `this.strategy.pay(100)`. It has absolutely zero mathematical knowledge of *how* the payment is being processed. To add Apple Pay next year, you simply write a new Strategy class; the core CheckoutService file is never mathematically touched again.
+

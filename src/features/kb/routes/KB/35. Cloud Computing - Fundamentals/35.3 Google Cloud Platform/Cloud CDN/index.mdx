@@ -1,0 +1,24 @@
+---
+title: Google Cloud CDN
+description: A low-latency Content Delivery Network that mathematically caches static assets at the global edge of Google's private fiber-optic network to accelerate web performance.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud CDN"
+  subtitle="Global Edge Caching"
+  tags={['GCP', 'Networking', 'CDN', 'Performance']}
+>
+
+If a user in Paris requests a 5MB image from a server in Tokyo, the speed of light physically enforces a 250-millisecond delay. Cloud CDN mathematically eliminates this by caching the image directly in Paris.
+
+## 1. Global Anycast IP
+Cloud CDN leverages Google's massive Anycast DNS architecture.
+When you set up Cloud CDN (usually attached to an External HTTP(S) Load Balancer), you are given a single, global IP address.
+When the Parisian user requests the image, the Anycast network mathematically routes their packet to the physically closest Google Edge Point of Presence (PoP) in France. The PoP checks its RAM. If the image is there (Cache Hit), it instantly returns it in 5 milliseconds. If not (Cache Miss), the PoP retrieves the image from Tokyo over Google's private, dedicated underwater fiber backbone (bypassing the chaotic public internet), caches it in Paris, and serves it to the user.
+
+## 2. Cache Invalidation and Mathematics
+Managing a CDN requires strict mathematical control over cache expiration (Time-To-Live, TTL).
+If a developer updates a CSS file, but the Parisian PoP still has the old file cached, the website will look broken to French users. Developers use **Cache Invalidation**. They send a command to the Cloud CDN API: *"Mathematically purge `/styles.css` from every edge node globally."* Within seconds, the global network drops the file from RAM, forcing a fresh pull from the origin server on the next request.
+
+</TechnologyTemplate>

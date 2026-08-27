@@ -4,10 +4,16 @@ description: A branch of finance concerned with the details of how exchange occu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Market Microstructure">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Market Microstructure">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you buy a stock on Robinhood, you do not mathematically buy it from "the market". You buy it from a specific human or algorithm.
 
 **Market Microstructure** is the computer science study of *how* these trades physically occur. It examines the biological rules of the exchange, the latency of the network, the behavior of Market Makers (algorithms that constantly provide liquidity), and how a single massive trade can mathematically cause a "Flash Crash" by accidentally triggering a cascade of automated stop-loss algorithms.
 
-</ConceptTemplate>

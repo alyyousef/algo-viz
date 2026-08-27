@@ -1,8 +1,27 @@
+---
+title: Information Extraction (IE)
+description: The automated mathematical process of scanning unstructured human text (like PDFs or emails) and converting it into highly structured, relational database tables.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Information extraction">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Information Extraction">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The vast majority of human knowledge (medical records, legal contracts, news articles) is unstructured text. SQL databases cannot query it. Information Extraction (IE) bridges this mathematical gap.
 
-</ConceptTemplate>
+## 1. The IE Pipeline
+IE is not a single algorithm; it is a pipeline of mathematical models.
+1. **Named Entity Recognition (NER)**: Mathematically identifies nouns (People, Organizations, Dates).
+2. **Coreference Resolution**: Mathematically links pronouns back to the Entities.
+3. **Relation Extraction**: The most difficult step. If the text says, "Elon Musk founded SpaceX in 2002," the model must mathematically map the relationship: `FounderOf(Elon Musk, SpaceX)` and `FoundedIn(SpaceX, 2002)`.
+
+## 2. Knowledge Graphs
+The output of an IE pipeline is not a flat file; it is a mathematical **Knowledge Graph**.
+By extracting millions of relationships from Wikipedia, IE pipelines generate massive mathematical webs of Nodes (Entities) and Edges (Relationships). When you search Google for "Who is the CEO of Apple?", Google doesn't actually read a webpage. It mathematically queries its pre-compiled Knowledge Graph, instantly traversing the edge `CEO_Of` between the node "Tim Cook" and the node "Apple," providing the answer in milliseconds.
+

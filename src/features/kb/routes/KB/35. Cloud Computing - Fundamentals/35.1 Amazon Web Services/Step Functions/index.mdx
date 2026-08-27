@@ -1,0 +1,24 @@
+---
+title: AWS Step Functions
+description: A serverless orchestration service that allows developers to design complex, multi-step business workflows as visual State Machines, mathematically guaranteeing execution order, retries, and error handling.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Step Functions"
+  subtitle="Serverless State Machines"
+  tags={['AWS', 'Orchestration', 'Serverless', 'Workflow']}
+>
+
+Chaining Lambda functions together directly (Lambda A calls Lambda B) is an architectural anti-pattern. If Lambda B fails, Lambda A has to wait, wasting money. Complex workflows require a dedicated mathematical orchestrator.
+
+## 1. The JSON State Machine (ASL)
+In Step Functions, you define your workflow using the **Amazon States Language (ASL)**, a JSON-based schema.
+You define discrete states: `Task`, `Choice`, `Parallel`, `Wait`.
+AWS mathematically compiles this JSON into a visual flowchart. When executed, the Step Function engine tracks the absolute mathematical state of the execution. It runs Lambda A, takes its JSON output, passes it to a `Choice` state (which acts as an IF statement), and conditionally routes the data to Lambda B or Lambda C.
+
+## 2. Mathematical Resilience
+Because the Step Function engine holds the State (not the code), it mathematically handles failures gracefully.
+If a downstream API randomly times out, you do not write complex `try/catch` loops in your code. You define a **Retry Policy** in the Step Function JSON (e.g., *"If this specific error occurs, wait 5 seconds, double the wait time, and try exactly 3 more times"*). If it ultimately fails, it routes the execution to a **Catch** state, gracefully triggering an alert and mathematically cleaning up any partial data, guaranteeing transaction safety.
+
+</TechnologyTemplate>

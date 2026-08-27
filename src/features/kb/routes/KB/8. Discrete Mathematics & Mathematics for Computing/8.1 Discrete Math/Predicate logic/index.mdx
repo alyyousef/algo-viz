@@ -1,8 +1,44 @@
+---
+title: Predicate Logic
+description: "An advanced system of formal logic (First-Order Logic) that extends propositional logic by introducing variables and quantifiers ('For All' and 'There Exists') to evaluate complex mathematical statements."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Predicate logic">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Predicate Logic"
+  subtitle="First-Order Logic and Quantifiers"
+  tags={['Mathematics', 'Discrete Math', 'Logic', 'Formal Verification']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Basic Boolean Algebra (Propositional Logic) can only evaluate simple, fixed statements (e.g., $P = 	ext{It is raining}$). It cannot handle variables. **Predicate Logic** introduces mathematical functions that return True or False based on variable inputs, forming the foundation of database querying (SQL) and formal software verification.
 
-</ConceptTemplate>
+## 1. Predicates
+A Predicate is a statement containing a variable that evaluates to True or False.
+- Example: $P(x) = "x > 5"$.
+- If $x=6$, $P(6)$ is True. If $x=2$, $P(2)$ is False.
+
+## 2. The Quantifiers
+Predicate logic introduces two fundamental mathematical symbols to define the scope of variables over a set (domain).
+
+### The Universal Quantifier ($\forall$)
+Reads as: **"For All"** or **"For Every"**.
+- Statement: $\forall x \in \mathbb{R}, x^2 \ge 0$
+- Translation: "For every real number $x$, $x$ squared is greater than or equal to zero." (This is mathematically True).
+
+### The Existential Quantifier ($\exists$)
+Reads as: **"There Exists"** or **"For At Least One"**.
+- Statement: $\exists x \in \mathbb{Z}, x^2 = 25$
+- Translation: "There exists at least one integer $x$ such that $x$ squared equals 25." (True, $x=5$).
+
+## 3. Negating Quantifiers (De Morgan's Laws for Quantifiers)
+A massive source of bugs in programming is incorrectly negating logical statements. In Predicate logic, when you apply a NOT ($\neg$) operation, it mathematically flips the quantifiers:
+- $\neg(\forall x, P(x))$ becomes $\exists x, \neg P(x)$. (Saying "Not everyone passed the test" is exactly equivalent to saying "There exists at least one person who failed the test").
+- $\neg(\exists x, P(x))$ becomes $\forall x, \neg P(x)$. (Saying "There does not exist a black swan" is exactly equivalent to saying "For all swans, they are not black").
+

@@ -1,8 +1,27 @@
+---
+title: Vector Search
+description: The specific mathematical execution of querying a Latent Space to locate the nearest geometric neighbors to a given embedded query.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Vector search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vector Search">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Vector Search is the physical engine that makes RAG (Retrieval-Augmented Generation) possible. It is the mathematical act of measuring the distance between points in an unimaginably vast geometric space.
 
-</ConceptTemplate>
+## 1. Distance Metrics
+To determine which documents are "closest" to the query, the database must use a mathematical Distance Metric:
+- **Cosine Similarity**: Measures the angle between two vectors. If they point in the exact same direction, similarity is 1.0. This is the industry standard for NLP because it ignores the *magnitude* (length) of the vector, focusing purely on the semantic direction.
+- **Euclidean Distance (L2)**: Measures the absolute physical straight-line distance between two points using the Pythagorean theorem. Used more frequently in image retrieval.
+- **Dot Product**: Multiplies the vectors together. If the vectors are normalized, this is mathematically identical to Cosine Similarity, but computationally much faster for the CPU to execute.
+
+## 2. The K-Nearest Neighbors (k-NN) Problem
+The theoretical goal is **k-NN**: calculating the exact distance to every point to find the absolute Top K best matches.
+Because AI vectors are massive (often requiring 6 kilobytes of RAM per vector), a database of 100 million vectors consumes 600 Gigabytes of RAM. Computing k-NN on 600GB of RAM for every single user query is mathematically impossible for real-time systems. Therefore, Vector Search is always a trade-off: using algorithms like HNSW (Approximate Nearest Neighbors) to sacrifice 2% of mathematical accuracy in exchange for a 10,000x increase in execution speed.
+

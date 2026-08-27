@@ -1,0 +1,25 @@
+---
+title: Network Access Control Lists (NACLs)
+description: The stateless, subnet-level firewall in an AWS VPC that mathematically evaluates ordered rules to allow or deny network traffic before it ever reaches the servers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Network Access Control Lists (NACLs)"
+  subtitle="The Subnet Firewall"
+  tags={['AWS', 'Networking', 'Security', 'VPC']}
+>
+
+A Security Group protects a specific EC2 server. A NACL protects the entire Subnet (the neighborhood). If a hacker's packet is mathematically dropped by the NACL, the Security Group never even sees it.
+
+## 1. Stateless vs. Stateful
+Security Groups are **Stateful**. If an EC2 server initiates a request to the internet, the Security Group mathematically remembers the state of the connection and automatically allows the response packet back in, regardless of inbound rules.
+NACLs are **Stateless**. They have no memory. If a subnet sends a request out to the internet, the response packet coming back is evaluated purely on its own merits against the Inbound Rules. If you do not explicitly open the high Ephemeral Ports (1024-65535) on the Inbound NACL, the response packet is mathematically destroyed, and your server will appear to have no internet access.
+
+## 2. Ordered Rule Evaluation
+Unlike IAM policies (where a single Deny overrides everything), NACL rules are mathematically evaluated in strict numerical order.
+- Rule 100: ALLOW IP 192.168.1.5
+- Rule 110: DENY ALL
+If IP 192.168.1.5 tries to enter, the NACL evaluates Rule 100, matches it, and instantly allows the packet. It never looks at Rule 110. This strict mathematical ordering allows network administrators to create surgical Deny rules (e.g., "Deny this one specific hacker IP at Rule 90, but Allow the rest of the world at Rule 100").
+
+</TechnologyTemplate>

@@ -4,7 +4,14 @@ description: A self-adjusting binary search tree with the unique property that r
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Splay Trees">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Splay Trees">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Standard balanced trees (like AVL or Red-Black Trees) strictly enforce perfect mathematical balance to guarantee $O(log N)$ time. **Splay Trees** take a completely different, psychological approach. They do not enforce strict balance; instead, they mathematically self-optimize based on **Temporal Locality** (the assumption that if you access data once, you will likely access it again soon).
 
@@ -12,11 +19,10 @@ Standard balanced trees (like AVL or Red-Black Trees) strictly enforce perfect m
 When you search for, insert, or access a specific node in a Splay Tree, the tree violently reacts. It mathematically triggers a cascading series of tree rotations (called a **Splay**) that physically drags that specific node all the way up to become the absolute **Root** of the entire tree.
 
 ## 2. Unbeatable Cache Performance
-Because the most recently accessed node becomes the Root, the *next* time you search for it, the lookup time is mathematically an instant $O(1)$. 
+Because the most recently accessed node becomes the Root, the *next* time you search for it, the lookup time is mathematically an instant $O(1)$.
 If a company has 10 million users, but $80\%$ of traffic comes from just $20\%$ of VIP users, the Splay Tree will naturally push those VIP users to the absolute top of the tree, creating a massive performance boost that standard balanced trees cannot match.
 
 ## 3. Amortized Time Complexity
-Because a Splay Tree does not enforce strict mathematical balance, it is entirely possible for the tree to temporarily degrade into a straight line (a Linked List), taking $O(N)$ time to find a node. 
+Because a Splay Tree does not enforce strict mathematical balance, it is entirely possible for the tree to temporarily degrade into a straight line (a Linked List), taking $O(N)$ time to find a node.
 However, because finding that deep node mathematically *splays* it to the top (cutting the depth of the entire path in half), the tree instantly self-heals. The mathematical average across multiple operations is strictly guaranteed to be an **Amortized $O(log N)$**.
 
-</ConceptTemplate>

@@ -4,25 +4,32 @@ description: The architectural patterns used to keep the cache and the primary d
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Caching Strategies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Caching Strategies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Reading from a database (disk) takes ~1 millisecond. Reading from a cache like Redis (RAM) takes ~0.1 milliseconds. Caching is mathematically required for high-throughput systems.
 
 However, caching introduces the hardest problem in computer science: **Cache Invalidation**. When the data in the database mathematically changes, how do you ensure the cache isn't serving stale, incorrect data?
 
+
 <Callout icon="info" title="The Golden Rule of Caching">
+
+
   You must never cache data unless you have a mathematically rigorous plan for exactly how and when that cache will be deleted or updated.
+
+
 </Callout>
+
 
 ## Core Architectural Strategies
 
-<ComparisonTable 
-  headers={['Strategy', 'Data Flow', 'Trade-offs']}
-  rows={[
-    ['Cache-Aside (Lazy Loading)', 'The application mathematically checks the cache. If it\'s a Miss, the application queries the DB, returns the data, and writes it to the cache.', 'Pro: Only requested data is cached. Con: The first user to request new data experiences a slow mathematical DB hit.'],
-    ['Write-Through', 'The application mathematically writes to the cache and the DB simultaneously in the exact same transaction.', 'Pro: The cache is mathematically guaranteed to never be stale. Con: Every write operation is slower because it requires two network hops.'],
-    ['Write-Behind (Write-Back)', 'The application writes ONLY to the cache and returns success to the user instantly. An asynchronous worker mathematically flushes the cache to the DB later.', 'Pro: Extreme write throughput. Con: If the cache server crashes before flushing, data is permanently lost.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Strategy', 'Data Flow', 'Trade-offs']} rows={[ ['Cache-Aside (Lazy Loading)', 'The application mathematically checks the cache. If it\'s a Miss, the application queries the DB, returns the data, and writes it to the cache.', 'Pro: Only requested data is cached. Con: The first user to request new data experiences a slow mathematical DB hit.'], ['Write-Through', 'The application mathematically writes to the cache and the DB simultaneously in the exact same transaction.', 'Pro: The cache is mathematically guaranteed to never be stale. Con: Every write operation is slower because it requires two network hops.'], ['Write-Behind (Write-Back)', 'The application writes ONLY to the cache and returns success to the user instantly. An asynchronous worker mathematically flushes the cache to the DB later.', 'Pro: Extreme write throughput. Con: If the cache server crashes before flushing, data is permanently lost.'] ]} />
+
+

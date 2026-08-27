@@ -1,8 +1,35 @@
+---
+title: Cook-Levin Theorem
+description: "The foundational proof of computational complexity theory, mathematically demonstrating that the Boolean Satisfiability Problem (SAT) is NP-Complete, forming the basis for all modern NP-Hard proofs."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cook-Levin theorem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Cook-Levin Theorem"
+  subtitle="The Birth of NP-Completeness"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 1971, Stephen Cook and Leonid Levin independently published the most important mathematical theorem in computer science history. They proved the existence of **NP-Complete** problems—a class of "master problems" that perfectly encode the mathematical difficulty of every other problem in the universe.
 
-</ConceptTemplate>
+## 1. The SAT Problem
+The theorem revolves around the **Boolean Satisfiability Problem (SAT)**.
+Given a massive mathematical logic formula (e.g., $(A \lor B) \land (\neg A \lor C) \land ...$), is there a combination of True/False values for the variables that makes the entire formula True?
+
+## 2. The Genius of the Proof
+Cook and Levin didn't just prove that SAT was hard. They proved that **every single problem in the class NP can be mathematically reduced (translated) into a SAT problem in polynomial time.**
+- If you have a Sudoku puzzle, you can write a fast script to translate it into a SAT logic formula.
+- If you have a Traveling Salesperson graph, you can translate it into a SAT logic formula.
+- They proved that a Turing Machine's execution itself can be mathematically encoded into Boolean logic.
+
+## 3. The Ramifications
+Because every single NP problem can be translated into SAT, SAT is mathematically the "hardest" problem in NP. We call this **NP-Complete**.
+If a genius ever invents a fast ($O(N^3)$) algorithm to solve SAT, they can instantly use it to solve Sudoku, Traveling Salesperson, and break RSA Encryption. The Cook-Levin theorem mathematically chained the fate of thousands of completely unrelated computational problems to a single logic puzzle.
+

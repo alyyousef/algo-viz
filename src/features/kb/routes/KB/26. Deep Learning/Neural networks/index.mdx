@@ -4,24 +4,30 @@ description: The foundational architecture of modern deep learning, inspired by 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Neural Networks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Neural Networks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Artificial Neural Networks (ANNs) are computing systems inspired by the biological neural networks that constitute animal brains. They are the absolute foundation of all modern Deep Learning, from ChatGPT to self-driving cars.
 
+
 <Callout icon="info" title="The Biological Inspiration">
+
+
   Just as biological neurons receive signals via dendrites, process them in the soma, and pass them on via axons, artificial neurons receive numerical inputs, multiply them by **weights**, sum them up, apply an **activation function**, and pass the result to the next layer.
+
+
 </Callout>
+
 
 ## Core Components
 
-<ComparisonTable 
-  headers={['Component', 'Description']}
-  rows={[
-    ['Neuron (Node)', 'The basic computing unit. Holds a mathematical value representing activation.'],
-    ['Weights', 'The learnable parameters. The "strength" of the connection between two neurons. This is where the actual "knowledge" of the network is stored.'],
-    ['Biases', 'An extra parameter added to the neuron\'s sum before the activation function, allowing the activation function to be shifted left or right.'],
-    ['Layers', 'Groups of neurons. Networks typically have an Input Layer, multiple Hidden Layers, and an Output Layer.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Component', 'Description']} rows={[ ['Neuron (Node)', 'The basic computing unit. Holds a mathematical value representing activation.'], ['Weights', 'The learnable parameters. The "strength" of the connection between two neurons. This is where the actual "knowledge" of the network is stored.'], ['Biases', 'An extra parameter added to the neuron\'s sum before the activation function, allowing the activation function to be shifted left or right.'], ['Layers', 'Groups of neurons. Networks typically have an Input Layer, multiple Hidden Layers, and an Output Layer.'] ]} />
+
+

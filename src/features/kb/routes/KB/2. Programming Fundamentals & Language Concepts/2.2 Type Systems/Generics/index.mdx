@@ -1,8 +1,26 @@
+---
+title: Generics (Parametric Polymorphism)
+description: A type system feature that allows mathematical algorithms to be written abstractly, deferring the exact data type until compilation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Generics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Generics (Parametric Polymorphism)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Without Generics, if you want a function to reverse a List of Integers, and a function to reverse a List of Strings, you must mathematically write two distinct functions. Generics solve this code duplication.
 
-</ConceptTemplate>
+## 1. The Type Variable
+Generics introduce **Type Variables** (usually denoted as `<T>`).
+You write `function reverse<T>(list: T[])`. You are mathematically telling the compiler: "I do not care what T is. But whatever T is, this function takes an array of them."
+
+## 2. Monomorphization vs Type Erasure
+How do compilers mathematically handle Generics at the hardware level?
+- **Monomorphization (C++, Rust)**: The compiler actually generates duplicate code behind the scenes. If you call `reverse` with Integers and Strings, the compiler mathematically writes two separate, highly-optimized physical assembly functions in the binary (`reverse_int` and `reverse_string`). This makes execution lightning fast, but increases the final binary size (Code Bloat).
+- **Type Erasure (Java)**: The compiler only uses the `<T>` tags to check your math during compilation. When building the bytecode, it physically deletes `<T>` and replaces it with the base `Object` class. It only generates one function, saving space, but it forces the CPU to perform slow mathematical casting (`(String) obj`) at runtime.
+

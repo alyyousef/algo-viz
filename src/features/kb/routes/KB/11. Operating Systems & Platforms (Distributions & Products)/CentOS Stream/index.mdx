@@ -4,7 +4,14 @@ description: The midstream enterprise Linux distribution that sits directly betw
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CentOS Stream">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CentOS Stream">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 To understand **CentOS Stream**, you must understand the Red Hat enterprise ecosystem.
 
@@ -12,17 +19,22 @@ Historically, Red Hat released RHEL (a paid, enterprise OS). The community would
 
 ## The Great Shift
 
-In 2020, Red Hat controversially killed traditional CentOS and replaced it with **CentOS Stream**. 
+In 2020, Red Hat controversially killed traditional CentOS and replaced it with **CentOS Stream**.
 
 Instead of being a downstream clone of RHEL, CentOS Stream was moved *upstream*.
 1. **Fedora**: Bleeding-edge features (Alpha testing).
 2. **CentOS Stream**: Stabilized features preparing for enterprise (Beta testing).
 3. **RHEL**: The final, frozen, paid enterprise product.
 
+
 <Callout icon="warning" title="The Impact">
+
+
   Because CentOS Stream is effectively a rolling beta test for RHEL, it is no longer a 1:1 clone. It receives updates *before* RHEL does. This terrified enterprise sysadmins who relied on traditional CentOS for rock-solid, unchanging server stability, leading to the creation of Rocky Linux and AlmaLinux.
+
+
 </Callout>
+
 
 Despite the controversy, CentOS Stream is heavily used by massive hyperscalers (like Meta/Facebook) who actually *want* enterprise stability combined with a slightly faster update cadence.
 
-</ConceptTemplate>

@@ -4,7 +4,14 @@ description: A modern paradigm where standard web applications leverage advanced
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Progressive Web Apps (PWAs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Progressive Web Apps (PWAs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, if a company wanted a mobile app, they had to hire Objective-C developers for iOS, Java developers for Android, and submit the apps to heavily taxed, strictly controlled App Stores.
 
@@ -18,7 +25,6 @@ To be officially recognized by the browser as a PWA, a web app must implement th
 2. **Web Manifest**: A simple JSON file that dictates exactly how the app should look when installed to the user's home screen (the icon, the theme color, and hiding the browser's URL bar).
 3. **Service Worker**: A background JavaScript process that intercepts network requests, allowing the application to cache data and function completely offline without an internet connection.
 
-If these three conditions are met, Chrome/Safari will natively prompt the user: *"Add this app to your Home Screen?"* 
+If these three conditions are met, Chrome/Safari will natively prompt the user: *"Add this app to your Home Screen?"*
 The app installs instantly, bypassing the App Store, and runs in a full-screen, standalone window.
 
-</ConceptTemplate>

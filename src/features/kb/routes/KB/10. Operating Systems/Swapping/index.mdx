@@ -4,22 +4,34 @@ description: The mechanical process of the OS seamlessly moving inactive RAM dat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Swapping (Paging Out)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Swapping (Paging Out)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When the Page Replacement Algorithm decides that a specific 4KB page of physical RAM hasn't been used in a while, it initiates a process called **Swapping** (or Paging Out).
 
 ## The Page Fault Illusion
 
 1. **Eviction**: The OS Kernel takes the 4KB of physical RAM, writes it to a hidden file on the SSD (the `pagefile.sys` in Windows, or the Swap Partition in Linux), and marks the RAM frame as empty.
-2. **The Trap**: Crucially, the OS updates the Page Table. It marks that Virtual Page as "Invalid". 
-3. **The Awakening**: Three hours later, the program wakes up and tries to read that memory address. 
+2. **The Trap**: Crucially, the OS updates the Page Table. It marks that Virtual Page as "Invalid".
+3. **The Awakening**: Three hours later, the program wakes up and tries to read that memory address.
 4. **The Page Fault**: The CPU's MMU looks at the Page Table, sees it is marked "Invalid", and throws a massive hardware exception called a **Page Fault**.
 5. **The Rescue**: The CPU instantly pauses the program and jumps into the OS Kernel. The Kernel sees the Page Fault, realizes the data is on the SSD, reads the 4KB from the SSD back into a new RAM frame, updates the Page Table, and resumes the program.
 
 The program *never knew the data was missing*. It just experienced a slight 5-millisecond lag spike while the OS silently fetched the data from the SSD.
 
+
 <Callout icon="info" title="Swapping vs Paging">
+
+
   Historically, "Swapping" meant moving an *entire process* (like a 50MB program) to the hard drive all at once. "Paging" means moving individual 4KB blocks. Today, modern operating systems only do Paging, but the term "Swap File" and "Swapping" stuck around colloquially.
+
+
 </Callout>
 
-</ConceptTemplate>
+

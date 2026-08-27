@@ -1,8 +1,26 @@
+---
+title: Question Answering (QA)
+description: A highly advanced NLP architecture where an AI mathematically processes a natural language question and extracts or generates the precise factual answer from a text corpus.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Question answering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Question Answering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you ask Google "When was Abraham Lincoln born?", it doesn't give you 10 blue links; it mathematically extracts the exact date (Feb 12, 1809). This requires complex QA architectures.
 
-</ConceptTemplate>
+## 1. Extractive QA
+In Extractive QA (like the famous SQuAD dataset task), the AI is given a Question and a Paragraph of text.
+The Neural Network (usually BERT) mathematically reads both. Instead of generating a new sentence, the network is trained to mathematically predict exactly two numbers: the **Start Index** and the **End Index** of the answer within the provided paragraph. It literally highlights the text. If the mathematical probability of the Start Index is low across the entire paragraph, the model concludes that the answer is not present in the text.
+
+## 2. Generative QA (RAG)
+Modern Generative QA (like ChatGPT) doesn't just extract text; it synthesizes it.
+However, raw Generative models hallucinate. The industry standard solution is **Retrieval-Augmented Generation (RAG)**.
+First, the system mathematically converts your question into a Vector and searches a massive database to retrieve relevant facts. Second, it mathematically injects those retrieved facts into the prompt of a Generative AI. The AI then synthesizes a perfectly grammatical, mathematically constrained answer based *only* on the provided facts, preventing hallucinations.
+

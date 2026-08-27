@@ -1,8 +1,30 @@
+---
+title: Vertical Pod Autoscaler (VPA)
+description: A Kubernetes controller that mathematically analyzes the historical CPU and Memory utilization of Pods and automatically adjusts their resource requests and limits to optimize cluster efficiency.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="VPA">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Vertical Pod Autoscaler (VPA)"
+  subtitle="Mathematical Right-Sizing"
+  tags={['Kubernetes', 'Scaling', 'Optimization', 'Automation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While the Horizontal Pod Autoscaler (HPA) mathematically adds *more* Pods (scaling out), the **Vertical Pod Autoscaler (VPA)** mathematically makes existing Pods *bigger* or *smaller* (scaling up/down).
 
-</ConceptTemplate>
+## 1. The Right-Sizing Problem
+Developers are notoriously terrible at guessing resource requirements. A developer might request 4GB of RAM for a microservice that mathematically only ever uses 200MB. This results in massive cluster waste (paying AWS for unused RAM).
+Conversely, if a developer requests 200MB and the app needs 500MB, the Linux OOM Killer will mathematically assassinate the Pod.
+The VPA continuously analyzes Prometheus metrics. It mathematically calculates the true historical P90 utilization of the Pod.
+
+## 2. Automatic Updates
+If configured in "Auto" mode, the VPA mathematically enforces its recommendations.
+If it determines a Pod requesting 4GB only needs 500MB, the VPA cannot mathematically shrink the running Pod (Linux kernel limitations). Instead, it gracefully evicts the Pod. When the ReplicaSet controller restarts the Pod, a VPA Admission Webhook mathematically intercepts the creation request and rewrites the YAML, injecting the optimized 500MB request before it saves to etcd.
+

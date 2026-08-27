@@ -1,8 +1,35 @@
+---
+title: Iterator Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically provides a standard way to sequentially access the elements of an aggregate object without exposing its underlying internal representation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Iterator">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Iterator Pattern"
+  subtitle="Standardizing Sequential Traversal"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Data Structures']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a developer needs to loop through a standard Array, they use a standard `for(int i=0; i<length; i++)` loop. But what if the underlying data structure is a complex mathematical Graph, a Binary Search Tree, or a Linked List?
 
-</ConceptTemplate>
+## 1. The Traversal Problem
+If the client code manually writes the complex depth-first search logic to traverse a Graph, the client code becomes mathematically tightly coupled to the Graph's internal memory layout. If you later swap the Graph for an Array to improve performance, the client code breaks.
+
+## 2. The Universal Interface
+The Iterator pattern solves this by extracting the traversal behavior into a separate `Iterator` object.
+The Iterator implements a standard mathematical interface with two methods: `hasNext()` and `getNext()`.
+```java
+Iterator<User> iter = userDatabase.createIterator();
+while(iter.hasNext()) {
+    System.out.println(iter.getNext());
+}
+```
+The client code can now iterate over the collection using the exact same `while` loop, completely mathematically ignorant of whether it is traversing a contiguous array in RAM or performing a complex pre-order traversal of a balanced binary tree. (This pattern is built directly into almost all modern programming languages).
+

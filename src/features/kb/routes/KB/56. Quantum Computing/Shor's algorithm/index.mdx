@@ -4,16 +4,28 @@ description: A quantum algorithm for integer factorization that runs in polynomi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Shor's Algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Shor's Algorithm">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The entire global financial system, military communications, and internet privacy are mathematically protected by **RSA Encryption**. 
+The entire global financial system, military communications, and internet privacy are mathematically protected by **RSA Encryption**.
 
 RSA relies on the biological fact that it takes a classical supercomputer 300 million years to find the prime factors of a 2,048-bit number.
 
+
 <Callout icon="warning" title="The Cryptography Killer">
+
+
   Invented in 1994, **Shor's Algorithm** is a quantum algorithm that completely mathematically shatters RSA.
-  
+
   Using a sufficiently powerful quantum computer, Shor's Algorithm exploits quantum interference to find the prime factors of a 2,048-bit number not in 300 million years, but in **minutes**. When a full-scale quantum computer is finally built, every biological password, banking record, and encrypted military file on Earth will be instantly mathematically decrypted.
+
+
 </Callout>
 
-</ConceptTemplate>
+

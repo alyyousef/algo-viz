@@ -4,15 +4,28 @@ description: The second phase of a compiler that analyzes the string of tokens t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Parsing (Syntax Analysis)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Parsing (Syntax Analysis)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Once the Lexer has converted the raw text into a flat array of Tokens, the **Parser** takes over. 
+Once the Lexer has converted the raw text into a flat array of Tokens, the **Parser** takes over.
 
 The Parser's mathematical job is to verify that the tokens follow the strict grammatical rules of the programming language. If the Lexer hands the Parser the tokens: `[ KEYWORD("let"), NUMBER(10), ASSIGN, IDENTIFIER("x") ]` (which represents `let 10 = x;`), the Parser throws a **Syntax Error**, because mathematically, a number cannot be the target of an assignment.
 
+
 <Callout icon="tip" title="The Abstract Syntax Tree (AST)">
+
+
   The primary output of the Parser is a massive, multi-level mathematical tree structure called the **AST**. Every node in the tree represents a construct in the code (e.g., a `BinaryExpressionNode` with a left child `x`, right child `10`, and operator `+`).
+
+
 </Callout>
+
 
 ## Formal Grammars
 
@@ -24,4 +37,3 @@ Parsers rely on mathematical **Context-Free Grammars (CFGs)**. A language define
 
 Because the grammar allows recursion (expressions inside expressions), a Parser mathematically requires a Stack data structure (a Pushdown Automaton) to keep track of nested parentheses or brackets. A simple Regex is mathematically incapable of parsing HTML or modern programming languages.
 
-</ConceptTemplate>

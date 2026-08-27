@@ -4,14 +4,26 @@ description: A physical phenomenon that occurs when a group of particles are gen
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantum Entanglement">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Quantum Entanglement">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Albert Einstein famously referred to Quantum Entanglement as *"Spooky action at a distance"*, because it mathematically violates the speed of light.
 
+
 <Callout icon="info" title="The Invisible Thread">
+
+
   When two Qubits become **Entangled**, their mathematical states are permanently bound together.
-  
+
   If you put one entangled Qubit in New York, and the other on Mars, and you biologically measure the Qubit in New York to be `1`, the Qubit on Mars will *instantaneously* become `1`. There is no signal traveling between them. This phenomenon allows Quantum Computers to physically link Qubits together to perform complex, synchronized algorithms.
+
+
 </Callout>
 
-</ConceptTemplate>
+

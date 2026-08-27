@@ -4,7 +4,14 @@ description: A special kind of hashing such that when a hash table is resized, o
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Consistent Hashing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Consistent Hashing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In distributed systems, we often use the mathematical modulo operator to route data. If we have 4 cache servers, we route a user to a server using: `Hash(UserID) % 4`.
 
@@ -12,9 +19,15 @@ This works perfectly until Server #4 dies. Now we only have 3 servers. If we use
 
 **Consistent Hashing** is a brilliant mathematical algorithm that solves this.
 
+
 <Callout icon="success" title="The Mathematical Ring">
+
+
   Instead of a simple modulo, Consistent Hashing places all servers on a theoretical mathematical ring (from 0 to 360 degrees). When a key is hashed, it is placed on the ring. It then walks clockwise until it mathematically collides with the first server it finds.
+
+
 </Callout>
+
 
 ## The Elegance of the Ring
 
@@ -22,4 +35,3 @@ This works perfectly until Server #4 dies. Now we only have 3 servers. If we use
 2. **Removing a Server:** If Server #2 dies, its keys simply walk further clockwise to Server #3. The rest of the ring remains perfectly intact.
 3. **Virtual Nodes:** To prevent one server from mathematically taking on an unfair share of the circle, each physical server is assigned dozens of "Virtual Nodes" scattered randomly around the ring, ensuring a perfectly even distribution of data.
 
-</ConceptTemplate>

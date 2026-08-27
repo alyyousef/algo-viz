@@ -4,15 +4,28 @@ description: The frequent electronic copying of data from a database in one comp
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Database Replication">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Database Replication">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If your entire application relies on a single database server, you have a mathematical **Single Point of Failure (SPOF)**. If that hard drive fails, your company dies.
 
 **Database Replication** solves this by maintaining mathematically identical copies of the database across multiple physical servers.
 
+
 <Callout icon="success" title="Read Scalability">
+
+
   While Replication is primarily designed for Fault Tolerance, it also provides massive performance benefits. In most web apps, 95% of queries are Reads, and 5% are Writes. You can mathematically route all Read queries to the Replicas, entirely offloading the Primary DB.
+
+
 </Callout>
+
 
 ## Master-Slave (Primary-Replica) Architecture
 
@@ -24,4 +37,3 @@ This is the most common mathematical model in the world (used by default in Post
 
 *Note: Replication can be Synchronous (slow, zero data loss) or Asynchronous (fast, potential data loss if the Primary dies before transmitting).*
 
-</ConceptTemplate>

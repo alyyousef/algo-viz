@@ -1,8 +1,35 @@
+---
+title: Software Design
+description: The critical architectural phase of the SDLC where high-level business requirements are mathematically translated into precise technical blueprints, establishing the structural foundation of the system before coding begins.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Software design">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Software Design"
+  subtitle="The Translation to Architecture"
+  tags={['Process', 'Architecture', 'Design Patterns', 'UML']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Requirements Engineering defines *what* the system must do, Software Design mathematically defines *how* the system will do it.
 
-</ConceptTemplate>
+## 1. High-Level Design (HLD)
+Software Design begins at the macro level. The architect mathematically determines the physical shape of the system.
+- Will it be a Monolith or Microservices?
+- Will the database be Relational (PostgreSQL) or NoSQL (DynamoDB)?
+- How will the system mathematically scale? (Load balancers, caching layers like Redis, asynchronous message queues like Kafka).
+The HLD provides the "10,000-foot view" of the infrastructure, ensuring the system can mathematically handle the required traffic and latency constraints.
+
+## 2. Low-Level Design (LLD)
+Once the HLD is approved, the engineers move to the Low-Level Design. This is the microscopic mathematical blueprint for the actual code.
+- Defining the exact REST API JSON payloads (OpenAPI/Swagger specs).
+- Designing the internal Object-Oriented class hierarchies and applying SOLID principles.
+- Selecting specific mathematical Design Patterns (e.g., using the Strategy Pattern to handle different payment gateways).
+A rigorous LLD ensures that when the developers finally open their IDEs, they are not guessing; they are simply implementing a mathematically proven blueprint.
+

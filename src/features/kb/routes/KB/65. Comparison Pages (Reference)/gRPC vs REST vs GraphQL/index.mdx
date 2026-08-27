@@ -8,21 +8,22 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Choosing the right API architecture depends entirely on who is consuming the API and what the performance constraints are.
 
+
 <Callout icon="info" title="The Rule of Thumb">
+
+
   Use **REST** for public, external-facing APIs.
   Use **GraphQL** when building complex Mobile or Web frontends that need highly specific data shapes.
   Use **gRPC** for internal, backend-to-backend microservice communication where raw speed is critical.
+
+
 </Callout>
+
 
 ## Detailed Comparison
 
-<ComparisonTable 
-  headers={['API Style', 'Primary Data Format', 'Best Use Case', 'Drawback']}
-  rows={[
-    ['REST', 'JSON', 'Public APIs (Stripe, Twilio). Everyone understands it.', 'Over-fetching (getting too much data) and Under-fetching (having to make 5 requests to get what you need).'],
-    ['GraphQL', 'JSON', 'Frontend Data Fetching. The client asks for exactly what it wants in a single query.', 'Extremely difficult to cache responses at the network (CDN) level.'],
-    ['gRPC', 'Protocol Buffers (Binary)', 'Internal Microservices.', 'Browsers cannot easily speak raw HTTP/2 and Protobuf; it is strictly for server-to-server.']
-  ]}
-/>
+
+<ComparisonTable headers={['API Style', 'Primary Data Format', 'Best Use Case', 'Drawback']} rows={[ ['REST', 'JSON', 'Public APIs (Stripe, Twilio). Everyone understands it.', 'Over-fetching (getting too much data) and Under-fetching (having to make 5 requests to get what you need).'], ['GraphQL', 'JSON', 'Frontend Data Fetching. The client asks for exactly what it wants in a single query.', 'Extremely difficult to cache responses at the network (CDN) level.'], ['gRPC', 'Protocol Buffers (Binary)', 'Internal Microservices.', 'Browsers cannot easily speak raw HTTP/2 and Protobuf; it is strictly for server-to-server.'] ]} />
+
 
 </TechnologyTemplate>

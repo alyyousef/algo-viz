@@ -1,0 +1,25 @@
+---
+title: Google Cloud Monitoring
+description: A comprehensive, mathematical observability platform (formerly Stackdriver) that ingests metrics, traces, and events to generate dashboards, alerts, and performance insights across GCP and AWS.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Monitoring"
+  subtitle="Full-Stack Metrics and Alerting"
+  tags={['GCP', 'Monitoring', 'Metrics', 'Alerts']}
+>
+
+Cloud Logging handles text. Cloud Monitoring handles **Metrics** (pure numerical data mathematically tracked over time, e.g., CPU=80%, Latency=45ms). Combining both gives an SRE (Site Reliability Engineer) total observability.
+
+## 1. Metrics Explorer and MQL
+Google Cloud automatically tracks thousands of default metrics for every resource you deploy.
+Engineers use the **Metrics Explorer** to visually chart this data. For complex mathematical analysis, they use **MQL (Monitoring Query Language)**.
+MQL allows you to perform advanced time-series math. You can write a query that takes the total number of HTTP 500 errors, mathematically divides it by the total number of HTTP 200 successes over a rolling 10-minute window, and graphs the resulting error-rate percentage, giving you a mathematically perfect view of system health.
+
+## 2. Alerting Policies
+Staring at dashboards is inefficient. SREs rely on mathematical **Alerting Policies**.
+You define a strict rule: *"If the MQL error-rate percentage calculation exceeds 5% for more than 3 consecutive minutes, trigger an Alert."*
+When the threshold is breached, the mathematical state engine fires a notification to an Action Channel (e.g., PagerDuty, Slack, or an SMS to the on-call engineer), ensuring that humans are only woken up at 3:00 AM when a mathematical anomaly physically threatens the platform.
+
+</TechnologyTemplate>

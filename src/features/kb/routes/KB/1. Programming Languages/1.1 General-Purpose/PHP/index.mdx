@@ -5,10 +5,17 @@ description: "The legendary server-side scripting language that powers the vast 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="PHP"
   icon="server"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **PHP** (PHP: Hypertext Preprocessor) was created by Rasmus Lerdorf in 1994. Originally a simple set of Common Gateway Interface (CGI) binaries written in C, it evolved into the most widely used server-side language on the web.
 
@@ -38,7 +45,7 @@ function calculateTax(float $amount, float $rate): float {
 <body>
     <!-- Interleaving PHP directly into HTML -->
     <h1>Welcome, <?php echo htmlspecialchars($name); ?>!</h1>
-    
+
     <?php if ($isLoggedIn): ?>
         <p>Your dashboard is ready.</p>
     <?php else: ?>
@@ -48,8 +55,13 @@ function calculateTax(float $amount, float $rate): float {
 </html>
 ```
 
+
 <Callout icon="info" title="The Renaissance">
+
+
 PHP historically suffered from a terrible reputation regarding inconsistent function names and poor security defaults. However, with the release of PHP 7 and PHP 8, the language experienced a massive renaissance, adding strong typing, incredible performance improvements (JIT), and a highly professional modern framework ecosystem driven by **Laravel**.
+
+
 </Callout>
 
-</ConceptTemplate>
+

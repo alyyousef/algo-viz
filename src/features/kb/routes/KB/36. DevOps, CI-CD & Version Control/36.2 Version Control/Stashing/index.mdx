@@ -1,8 +1,29 @@
+---
+title: Stashing
+description: A localized Git mechanism that temporarily shelves uncommitted, modified files in a mathematical stack, allowing a developer to cleanly switch branches without losing their current work-in-progress.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stashing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Stashing"
+  subtitle="The Temporary Shelf"
+  tags={['Version Control', 'Git', 'Workflow', 'Productivity']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developers frequently encounter a workflow interruption: you are halfway through writing a complex new feature, your code does not compile yet, and suddenly your boss demands you switch branches to fix a critical production bug immediately.
 
-</ConceptTemplate>
+## 1. The Interruption Problem
+You cannot commit your current code, because committing broken code violates the mathematical integrity of the repository. But you cannot switch branches, because Git will mathematically block you, warning that your uncommitted changes will be overwritten by the new branch.
+
+## 2. The LIFO Stack
+Git solves this with `git stash`.
+When executed, Git takes all your currently modified (but uncommitted) files and mathematically compresses them into a temporary hidden commit. It then reverts your working directory to a perfectly clean state, matching the last official commit.
+You are now free to switch branches, fix the bug, and commit. When you return to your original feature branch, you execute `git stash pop`. Git mathematically retrieves the shelved changes from the top of the LIFO (Last-In-First-Out) stack and reapplies them to your working directory, allowing you to resume exactly where you left off.
+

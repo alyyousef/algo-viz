@@ -1,8 +1,33 @@
+---
+title: Lisp
+description: The second-oldest high-level programming language in existence, pioneering tree data structures, automatic storage management, and dynamic typing.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lisp">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lisp">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by John McCarthy in 1958 at MIT, Lisp (LISt Processor) is one of the most historically significant programming languages ever invented, second only to Fortran in age. It was originally designed as a practical mathematical notation for computer programs, based on Alonzo Church's lambda calculus.
 
-</ConceptTemplate>
+## 1. The Pioneer of Modern Computing
+Before Lisp, programming meant manually allocating memory and moving bits in assembly or Fortran.
+Lisp mathematically pioneered concepts that modern developers take for granted:
+- **Garbage Collection**: The compiler automatically cleans up unused memory.
+- **Dynamic Typing**: Variables do not need static type declarations.
+- **Tree Data Structures**: Lisp introduced the linked list (using `cons`, `car`, and `cdr` cells) as the fundamental building block of all data.
+- **REPL**: The Read-Eval-Print Loop, allowing interactive programming.
+
+## 2. Homoiconicity
+The most famous (and polarizing) feature of Lisp is its syntax—specifically, its massive use of parentheses.
+A Lisp program is written as an Abstract Syntax Tree (AST).
+```lisp
+(* (+ 1 2) (- 5 3))
+```
+This is mathematically identical to a data structure (a list of lists). Because the code *is* data, Lisp possesses an unrivaled Macro system, allowing the programmer to mathematically reshape the language to fit any domain.
+

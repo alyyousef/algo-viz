@@ -1,8 +1,27 @@
+---
+title: Image Super-Resolution
+description: The advanced AI technique of hallucinating missing high-frequency pixel data to mathematically upscale a low-resolution, blurry image into a sharp, high-definition output.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Image super-resolution">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Image Super-Resolution">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you upscale a 144p image to 4K using standard software (Bicubic Interpolation), it just mathematically stretches the pixels, resulting in a blurry, blocky mess. Super-Resolution uses AI to physically invent the missing details.
 
-</ConceptTemplate>
+## 1. Generative Adversarial Networks (GANs)
+The most successful Super-Resolution architectures (like SRGAN) use GANs.
+- **The Generator**: Takes the blurry 144p image and mathematically tries to hallucinate the missing pores on a face or the individual blades of grass.
+- **The Discriminator**: A second neural network that looks at the Generator's output and looks at real 4K photos. It mathematically tries to tell which one is the "fake" AI generation.
+Because the Generator is mathematically penalized every time the Discriminator catches its fake pixels, it is forced to hallucinate photorealistic, high-frequency textures that perfectly mimic real-world physics.
+
+## 2. Perceptual Loss
+Historically, AI was trained using Mean Squared Error (MSE), which mathematically calculates the physical difference between the generated pixel and the true pixel. MSE mathematically results in extremely blurry images because the AI "hedges its bets" by outputting the average color.
+Super-Resolution relies on **Perceptual Loss**. Instead of comparing raw pixels, the image is passed through a pre-trained CNN (like VGG-16). The mathematical loss is calculated based on the difference in the *features* (edges and textures), forcing the AI to optimize for crisp, human-perceivable sharpness rather than mathematical pixel averages.
+

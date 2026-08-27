@@ -1,8 +1,44 @@
+---
+title: Variables
+description: The mathematical input parameters in Terraform that allow infrastructure modules to be dynamic and reusable across completely different cloud environments without altering the core HCL source code.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Variables">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Variables"
+  subtitle="Dynamic Infrastructure Inputs"
+  tags={['Terraform', 'Configuration', 'Architecture', 'Code Quality']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you hardcode `instance_type = "t3.micro"` into your main Terraform code, your code is mathematically rigid. You can never use that code to deploy a massive `p3.16xlarge` server in production.
 
-</ConceptTemplate>
+## 1. Type Constraints and Validation
+Terraform variables are strictly typed.
+You can mathematically enforce that a variable is a `string`, a `number`, a `list(string)`, or a complex `object`.
+Furthermore, you can define **Custom Validation Rules**.
+```hcl
+variable "instance_type" {
+  type = string
+  validation {
+    condition     = can(regex("^t3\.", var.instance_type))
+    error_message = "The instance type must be a t3 family instance."
+  }
+}
+```
+If a user attempts to pass `m5.large`, Terraform mathematically evaluates the regex before touching the cloud, and throws a fatal error, preventing non-compliant infrastructure from ever being planned.
+
+## 2. Variable Precedence
+Terraform uses a strict mathematical hierarchy to determine variable values.
+If the same variable is defined in multiple places, Terraform resolves it in this order (from lowest to highest precedence):
+1. Environment variables (e.g., `TF_VAR_instance_type`)
+2. The `terraform.tfvars` file
+3. `.auto.tfvars` files
+4. Command-line flags (e.g., `-var="instance_type=t3.micro"`)
+

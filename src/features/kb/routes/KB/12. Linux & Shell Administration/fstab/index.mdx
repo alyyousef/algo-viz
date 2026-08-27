@@ -4,11 +4,18 @@ description: The critical system configuration file that dictates which hard dri
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="fstab (File System Table)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="fstab (File System Table)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Linux, plugging a hard drive into the motherboard does not make it usable. You must physically "mount" the drive's filesystem (e.g., `/dev/sdb1`) to an empty directory in the root tree (e.g., `/mnt/database`).
 
-When the server reboots, all manual mounts are instantly forgotten. 
+When the server reboots, all manual mounts are instantly forgotten.
 To make a mount permanent, you must declare it in **`/etc/fstab`**.
 
 ## The Syntax
@@ -27,8 +34,13 @@ UUID=1a2b3c4d      /             ext4   defaults   0      1
 4. **Options**: Mounting rules (e.g., `ro` for Read-Only, `noexec` to ban running scripts from the drive).
 5. **Dump & Pass**: Legacy fields for backup tools and filesystem checkers (`fsck`).
 
+
 <Callout icon="warning" title="The Boot-Loop Danger">
+
+
   If you make a typo in `/etc/fstab` (e.g., spelling `ext4` as `ex4`), Linux will panic during the boot sequence because it cannot mount the drive, dropping the server into "Emergency Mode". You must always run `mount -a` immediately after editing the file to test the syntax before you ever reboot.
+
+
 </Callout>
 
-</ConceptTemplate>
+

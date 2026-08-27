@@ -4,7 +4,7 @@ description: A software packaging system developed in 2016 by Facebook for the N
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Yarn"
   subtitle="Facebook's npm killer"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Yarn_logo.svg/512px-Yarn_logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Historically, if Developer A ran `npm install`, they might mathematically get different sub-dependency versions than Developer B running the same command 5 minutes later. This caused catastrophic production bugs.
 
+
 <Callout icon="tip" title="The Lockfile Innovation">
-  Yarn introduced the `yarn.lock` file. 
-  
+
+
+  Yarn introduced the `yarn.lock` file.
+
   When you install a package, Yarn mathematically calculates the exact cryptographic hash and version of every single nested sub-dependency and writes it to the lockfile. This guarantees that every developer on Earth gets the exact same biological byte-code when they install the project.
+
+
 </Callout>
+
 
 *(Note: npm mathematically copied this feature a year later with `package-lock.json`, restoring its dominance).*
 

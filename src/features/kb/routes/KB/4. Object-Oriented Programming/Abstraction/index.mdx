@@ -1,8 +1,36 @@
+---
+title: Abstraction
+description: One of the four core pillars of Object-Oriented Programming, mathematically reducing complexity by hiding unnecessary internal implementation details and exposing only the essential, high-level interfaces to the user.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Abstraction">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Abstraction"
+  subtitle="Hiding Mathematical Complexity"
+  tags={['OOP', 'Design Patterns', 'Architecture', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you press the brake pedal in a car, you apply a high-level abstraction. You do not need to understand the mathematical fluid dynamics of the hydraulic brake lines or the friction coefficients of the brake pads. You just press the pedal.
 
-</ConceptTemplate>
+## 1. Managing Cognitive Load
+In software, abstraction is the primary mathematical tool for managing cognitive load.
+If you are writing a `Database` class, the internal implementation might involve complex TCP socket management, connection pooling, and binary packet parsing.
+```java
+// The Abstraction (What the user sees)
+public interface Database {
+    void save(User user);
+}
+```
+The developer using the `Database` class only sees the `save()` method. The thousands of lines of mathematical complexity required to execute that save are hidden behind the abstraction barrier.
+
+## 2. Interface vs Implementation
+Abstraction allows you to mathematically decouple the *what* from the *how*.
+Because the user is only interacting with the high-level `save()` abstraction, you can completely rip out the underlying MySQL implementation and replace it with a MongoDB implementation. As long as the new implementation still honors the `save()` interface contract, the rest of the application mathematically does not need to change.
+

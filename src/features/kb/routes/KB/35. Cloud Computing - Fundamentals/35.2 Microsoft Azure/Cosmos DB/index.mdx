@@ -1,0 +1,26 @@
+---
+title: Azure Cosmos DB
+description: Microsoft's globally distributed, multi-model NoSQL database service, mathematically engineered to guarantee single-digit millisecond response times and 99.999% availability anywhere in the world.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Cosmos DB"
+  subtitle="Global NoSQL Database"
+  tags={['Azure', 'Database', 'NoSQL', 'Global']}
+>
+
+If a user in Tokyo queries a database in New York, the speed of light physically dictates a ~150-millisecond delay. For ultra-responsive web applications, this is unacceptable. Cosmos DB mathematically eliminates this geographical latency.
+
+## 1. Turnkey Global Distribution
+In Cosmos DB, you write data to the East US region. Within milliseconds, Cosmos DB's backbone network mathematically replicates that data to instances in Japan, Europe, and Australia.
+When the Tokyo user opens the app, the app queries the local Tokyo endpoint, retrieving the data in exactly 2 milliseconds. If the entire Eastern United States loses power, Cosmos DB mathematically reroutes read/write operations to the surviving regions instantly, guaranteeing a massive **99.999% SLA**.
+
+## 2. Tunable Mathematical Consistency
+In distributed databases, you must mathematically trade off between Consistency (everyone sees the exact same data instantly) and Availability (the database is fast and never goes down) — this is the CAP Theorem.
+Cosmos DB allows you to mathematically tune this on a sliding scale:
+- **Strong**: (Slowest) If you write a record in NY, it is mathematically locked until Tokyo confirms it saved it.
+- **Eventual**: (Fastest) NY saves it instantly and returns. Tokyo will get it *eventually*.
+- **Session**: (The Default) A user is mathematically guaranteed to read their *own* writes instantly within their current session, but other users might see a slight delay.
+
+</TechnologyTemplate>

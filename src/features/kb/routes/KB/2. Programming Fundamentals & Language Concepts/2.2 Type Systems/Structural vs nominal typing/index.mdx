@@ -1,8 +1,26 @@
+---
+title: Structural vs. Nominal Typing
+description: The mathematical ruleset compilers use to determine if two distinct types are considered equivalent or compatible.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Structural vs nominal typing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Structural vs. Nominal Typing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you try to pass an object of Type A into a function expecting Type B, the compiler must mathematically decide if they are compatible. It uses one of two distinct mathematical philosophies.
 
-</ConceptTemplate>
+## 1. Nominal Typing (By Name)
+Used by Java, C#, and C++. "Nominal" means "in name only."
+The compiler mathematically checks the explicit inheritance tree. If Type A does not explicitly state `class A implements B`, the compiler rejects it, even if Type A happens to have the exact same methods and fields as Type B. The mathematical name and explicit declaration are the *only* things that matter.
+
+## 2. Structural Typing (By Shape)
+Used by TypeScript and Go.
+The compiler completely ignores the names of the types. It mathematically compares their physical "Shape" (their internal structures).
+If a function expects `{ id: string, name: string }`, and you pass it a `Customer` object that happens to contain `id` and `name` strings, the compiler accepts it perfectly. It mathematically verifies that the required structure exists, allowing for highly flexible, decoupled code without the boilerplate of forcing everything to implement explicit Interfaces.
+

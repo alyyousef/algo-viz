@@ -4,15 +4,28 @@ description: The overarching framework of policies and technologies ensuring tha
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Identity and Access Management (IAM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Identity and Access Management (IAM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In modern cloud environments, the traditional network firewall is dead. The new perimeter is **Identity**. If an attacker steals a valid username and password, the firewall will happily let them right through the front door.
 
 **Identity and Access Management (IAM)** is the discipline of mathematically proving *who* a user is (Authentication) and strictly limiting *what* they are allowed to do (Authorization).
 
+
 <Callout icon="success" title="The Principle of Least Privilege">
+
+
   The golden mathematical rule of IAM is Least Privilege. A user or a service account should only be granted the absolute minimum permissions necessary to perform their job, and nothing more. (e.g., The Marketing team does not need read-access to the production database).
+
+
 </Callout>
+
 
 ## Core IAM Components
 
@@ -20,4 +33,3 @@ In modern cloud environments, the traditional network firewall is dead. The new 
 2. **Multi-Factor Authentication (MFA):** Requiring mathematically distinct forms of proof. (Something you know: Password; Something you have: A YubiKey or a phone; Something you are: A fingerprint).
 3. **Privileged Access Management (PAM):** Specialized vaults (like CyberArk) used to strictly control and monitor "God-mode" accounts (like Domain Admins or AWS Root users). These passwords are automatically rotated every few hours.
 
-</ConceptTemplate>

@@ -1,8 +1,30 @@
+---
+title: Error Budgets
+description: A core mathematical concept in Site Reliability Engineering that quantifies the acceptable level of unreliability in a system, balancing the velocity of new feature development against the requirement for system stability.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Error budgets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Error Budgets"
+  subtitle="The Mathematical Balance of Reliability"
+  tags={['SRE', 'Management', 'Metrics', 'SLO']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Google SRE asserts that 100% reliability is the wrong mathematical target. Pushing a system from 99.9% to 99.99% costs 10x more money and drastically slows down the release of new features, yet users on flaky mobile connections mathematically cannot tell the difference.
 
-</ConceptTemplate>
+## 1. Calculating the Budget
+If a team agrees to a Service Level Objective (SLO) of **99.9% uptime** for the month, they have a mathematical **Error Budget of 0.1%**.
+In a 30-day month (43,200 minutes), 0.1% equates to **43.2 minutes of allowable downtime**.
+This 43.2 minutes is a physical currency. When developers deploy a new feature, they spend a few minutes of that budget due to brief deployment instability or minor bugs.
+
+## 2. The Enforcement Mechanism
+The Error Budget acts as an objective, mathematical referee between Development (who want to move fast) and Operations (who want stability).
+If the Development team pushes buggy code and burns through all 43.2 minutes of the budget by the 15th of the month, the Error Budget is depleted. The mathematical rule is enforced: **All feature deployments are instantly frozen.** For the rest of the month, the Development team is only allowed to deploy bug fixes and reliability improvements until the mathematical budget resets on the 1st of the next month.
+

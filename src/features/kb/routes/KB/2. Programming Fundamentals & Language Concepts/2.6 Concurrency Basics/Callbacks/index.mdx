@@ -1,8 +1,25 @@
+---
+title: Callbacks
+description: The foundational mathematical technique for asynchronous execution, where a function is passed as an argument to be executed at a later time.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Callbacks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Callbacks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Callback is mathematically just a Memory Pointer to a function. Instead of executing the function immediately, you pass the pointer to another system, mathematically authorizing that system to execute your function when a specific event occurs.
 
-</ConceptTemplate>
+## 1. The Mathematical Mechanism
+In C, this is done via Function Pointers: `void onClick(void (*callback)())`.
+When you pass a Callback, you are telling the CPU: "Do not execute this code now. But when the user clicks the mouse, jump to this memory address." This is the foundational mathematical concept that makes all UI frameworks and Event-Driven systems possible.
+
+## 2. Callback Hell (Inversion of Control)
+When Callbacks are nested deeply for asynchronous I/O (e.g., read a file, then query a database, then send an email), the mathematical flow of the code becomes inverted.
+Instead of the top-level program controlling the execution, the control is entirely handed off to the deepest nested function. This leads to "Callback Hell" (the Pyramid of Doom), where error handling becomes mathematically disjointed because a `try-catch` block at the top level cannot mathematically catch an error thrown inside an asynchronous callback executed 50 milliseconds later.
+

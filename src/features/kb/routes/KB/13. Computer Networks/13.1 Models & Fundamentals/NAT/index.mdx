@@ -4,7 +4,14 @@ description: The vital routing technology that allows an entire private network 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NAT (Network Address Translation)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NAT (Network Address Translation)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the 1990s, engineers realized a catastrophic problem: the IPv4 protocol only allowed for 4.3 billion IP addresses, and the world was going to run out.
 **NAT** was invented as an emergency stopgap. It allows a home or corporate router to hide dozens, hundreds, or thousands of devices behind one single public IP address.
@@ -18,7 +25,7 @@ Certain blocks of IP addresses (like `192.168.x.x` or `10.x.x.x`) were permanent
 Imagine an office building where 100 employees all share the exact same outbound phone number, but each has a private 3-digit extension on their desk. This is how NAT works:
 
 1. **Outbound**: Your laptop (`192.168.1.50`) wants to load Google. It sends the packet to the router.
-2. **Translation**: The router intercepts the packet. It strips away your private IP address, and replaces it with the router's one **Public IP Address** (e.g., `203.0.113.5`). 
+2. **Translation**: The router intercepts the packet. It strips away your private IP address, and replaces it with the router's one **Public IP Address** (e.g., `203.0.113.5`).
 3. **The NAT Table**: The router writes down a note in its internal NAT Table: *"I sent a request to Google on behalf of 192.168.1.50."*
 4. **Inbound**: Google replies, sending the webpage back to the Public IP (`203.0.113.5`).
 5. **Reverse Translation**: The router receives the packet, checks its NAT Table, realizes the data belongs to your laptop, rewrites the destination to `192.168.1.50`, and forwards it to you.
@@ -26,11 +33,16 @@ Imagine an office building where 100 employees all share the exact same outbound
 ## 3. The Security Side-Effect
 
 While NAT was designed solely to conserve IP addresses, it accidentally created a massive security firewall.
-Because devices behind a NAT router do not have public IP addresses, a hacker in Russia literally cannot target your specific laptop. If they try to hack your Public IP, they hit the router, and because the router has no entry in its NAT table expecting inbound traffic, it silently drops the hacker's packets. 
+Because devices behind a NAT router do not have public IP addresses, a hacker in Russia literally cannot target your specific laptop. If they try to hack your Public IP, they hit the router, and because the router has no entry in its NAT table expecting inbound traffic, it silently drops the hacker's packets.
 *(This is why you have to manually configure "Port Forwarding" if you want to host a Minecraft server at home).*
 
+
 <Callout icon="tip" title="NAT in the IPv6 Era">
+
+
   Because IPv6 has $3.4 \times 10^{38}$ addresses, every single lightbulb and refrigerator on Earth can have a globally routable Public IP address. Therefore, NAT is completely unnecessary and structurally discouraged in pure IPv6 networks.
+
+
 </Callout>
 
-</ConceptTemplate>
+

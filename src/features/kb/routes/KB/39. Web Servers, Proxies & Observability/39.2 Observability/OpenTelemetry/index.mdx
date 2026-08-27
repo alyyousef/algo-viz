@@ -5,7 +5,14 @@ description: "A vendor-neutral standard for generating, collecting, and exportin
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="OpenTelemetry">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OpenTelemetry">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, the observability industry was plagued by vendor lock-in. If you wanted to use Datadog, you had to install the Datadog SDK in your application code. If you later decided to switch to New Relic, you had to rewrite thousands of lines of code to remove the Datadog SDK and install the New Relic SDK.
 
@@ -27,8 +34,13 @@ The Collector is a proxy server that sits between your application and the obser
 ## 2. Breaking Lock-in
 With OpenTelemetry, changing observability vendors is trivial. You do not touch your application code. You simply update the configuration YAML file of the OTel Collector to point to a new vendor's API endpoint, and the data instantly starts flowing there.
 
+
 <Callout icon="tip" title="Auto-Instrumentation">
+
+
 For languages like Java and Python, OTel supports "Auto-Instrumentation". It hooks into the runtime environment and automatically generates traces for incoming HTTP requests, database queries, and Redis calls without you writing a single line of instrumentation code.
+
+
 </Callout>
 
-</ConceptTemplate>
+

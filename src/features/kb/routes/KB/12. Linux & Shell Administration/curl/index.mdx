@@ -5,10 +5,17 @@ description: "A command-line tool and library for transferring data with URLs, s
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="curl"
   icon="terminal"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **curl (Client URL)** is the Swiss Army knife of networking on the command line. Developed by Daniel Stenberg in 1997, it is installed on almost every computer, router, and IoT device on the planet.
 
@@ -37,8 +44,13 @@ curl -I https://google.com
 ## libcurl
 While `curl` is the command-line tool, **libcurl** is the underlying C library. It is so rock-solid and feature-complete that thousands of other software applications (including PHP, video games, and cars) embed libcurl directly into their code to handle networking.
 
+
 <Callout icon="tip" title="Piping to bash (The dangerous installation method)">
+
+
 You will often see instructions like `curl -sL https://example.com/install.sh | bash`. This downloads a script and immediately executes it as root. While convenient, this is incredibly dangerous if you don't trust the source URL, as it gives the script full control of your machine.
+
+
 </Callout>
 
-</ConceptTemplate>
+

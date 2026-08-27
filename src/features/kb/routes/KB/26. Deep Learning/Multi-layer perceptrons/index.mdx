@@ -4,25 +4,32 @@ description: The classic feedforward neural network that solves the linear separ
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-Layer Perceptrons (MLPs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Layer Perceptrons (MLPs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A Multi-Layer Perceptron (MLP) is a class of feedforward artificial neural network. An MLP consists of at least three layers of nodes: an input layer, a hidden layer, and an output layer. 
+A Multi-Layer Perceptron (MLP) is a class of feedforward artificial neural network. An MLP consists of at least three layers of nodes: an input layer, a hidden layer, and an output layer.
 
 By stacking perceptrons and using **non-linear activation functions** (like Sigmoid or ReLU) instead of a simple binary step function, MLPs can mathematically approximate any continuous mathematical function.
 
+
 <Callout icon="success" title="Universal Approximation Theorem">
+
+
   The Universal Approximation Theorem mathematically guarantees that an MLP with a single, sufficiently wide hidden layer and a non-linear activation function can approximate ANY continuous function, no matter how complex. This solved the XOR problem that plagued the original perceptrons.
+
+
 </Callout>
+
 
 ## Architecture
 
-<ComparisonTable 
-  headers={['Layer Type', 'Function']}
-  rows={[
-    ['Input Layer', 'Passively receives the raw features (e.g., pixel intensities of an image).'],
-    ['Hidden Layers', 'The computational engine. Each neuron here learns to detect increasingly abstract features. The "Deep" in Deep Learning refers to having many hidden layers.'],
-    ['Output Layer', 'Produces the final prediction (e.g., probability of "Cat" vs "Dog").']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Layer Type', 'Function']} rows={[ ['Input Layer', 'Passively receives the raw features (e.g., pixel intensities of an image).'], ['Hidden Layers', 'The computational engine. Each neuron here learns to detect increasingly abstract features. The "Deep" in Deep Learning refers to having many hidden layers.'], ['Output Layer', 'Produces the final prediction (e.g., probability of "Cat" vs "Dog").'] ]} />
+
+

@@ -4,16 +4,28 @@ description: A secondary framework or protocol that is built on top of an existi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Layer 2 Solutions (L2)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Layer 2 Solutions (L2)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Ethereum (Layer 1) can mathematically only process ~15 transactions per second globally. During high demand, Gas fees biologically skyrocket to $100 per transaction, making the network completely unusable.
 
 **Layer 2 (L2)** solves this via mathematical off-chain scaling.
 
+
 <Callout icon="info" title="The Execution Shift">
-  Instead of executing the transaction on the slow, expensive Ethereum mainnet, users mathematically execute their transactions on a faster, cheaper secondary network (the L2). 
-  
+
+
+  Instead of executing the transaction on the slow, expensive Ethereum mainnet, users mathematically execute their transactions on a faster, cheaper secondary network (the L2).
+
   The L2 network mathematically bundles thousands of these transactions together, compresses them, and periodically submits a single mathematical proof back down to the Ethereum Layer 1, inheriting Ethereum's absolute security while achieving 100x faster speeds.
+
+
 </Callout>
 
-</ConceptTemplate>
+

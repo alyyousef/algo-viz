@@ -5,10 +5,17 @@ description: "CSS Grid Layout, a two-dimensional layout system tailored for comp
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Grid"
   icon="grid"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Flexbox excels at **one-dimensional** layouts (a row of buttons, a column of text), **CSS Grid** is the ultimate tool for **two-dimensional** layouts (rows *and* columns simultaneously).
 
@@ -38,8 +45,13 @@ Unlike Flexbox where items naturally flow, Grid allows you to explicitly place a
 }
 ```
 
+
 <Callout icon="info" title="Grid vs. Flexbox">
+
+
 A common misconception is that Grid replaces Flexbox. They are meant to be used together! Use Grid for the macro-layout (the skeleton of the page: header, sidebar, main, footer). Use Flexbox for the micro-layout (aligning the icons and text inside a navigation bar).
+
+
 </Callout>
 
-</ConceptTemplate>
+

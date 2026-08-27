@@ -1,8 +1,33 @@
+---
+title: Waterfall
+description: A traditional, linear, and highly sequential Software Development Life Cycle methodology where each phase of engineering must be mathematically and absolutely completed before the next phase can begin.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Waterfall">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Waterfall Methodology"
+  subtitle="The Linear Engineering Process"
+  tags={['Process', 'SDLC', 'Project Management', 'Legacy']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Agile existed, software was built using the Waterfall methodology, heavily borrowed from the construction and aerospace industries. If you are building a physical bridge, you mathematically cannot start pouring concrete (Implementation) until the structural blueprints (Design) are 100% finished.
 
-</ConceptTemplate>
+## 1. The Strict Sequential Phases
+In Waterfall, the SDLC phases cascade downwards, and you mathematically cannot flow backward:
+1. Requirements (6 months of writing documentation).
+2. Design (6 months of drawing UML diagrams).
+3. Implementation (1 year of writing code in total isolation).
+4. Testing (3 months of QA).
+5. Deployment.
+
+## 2. The Mathematical Flaw
+Waterfall is highly effective for building NASA space shuttles (where requirements mathematically cannot change). It is a disaster for commercial software.
+Because testing and customer feedback only occur at the very end of the 2-year cycle, if the initial requirements were slightly wrong, the mathematical cost to fix the software is astronomical. The team has built a perfectly engineered system that the customer no longer wants. This inflexible risk profile is exactly what led the industry to invent iterative Agile development.
+

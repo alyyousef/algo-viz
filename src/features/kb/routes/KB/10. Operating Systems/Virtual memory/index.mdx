@@ -5,9 +5,16 @@ description: The foundational OS architecture that abstracts physical RAM, givin
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Virtual Memory">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Virtual Memory">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In early computers, if an application needed 10MB of RAM, it literally wrote data to physical silicon addresses 0 through 10,000,000. 
+In early computers, if an application needed 10MB of RAM, it literally wrote data to physical silicon addresses 0 through 10,000,000.
 This was catastrophic:
 1. If Chrome and Spotify both try to write to address 500, they corrupt each other.
 2. If Chrome needs a 10MB contiguous block of memory, but the RAM is fragmented into tiny 1MB chunks, Chrome cannot launch (even if 50MB is technically free).
@@ -21,14 +28,19 @@ When the Process writes data to Virtual Address `0x0400`, the hardware **Memory 
 
 ## 2. Benefits of Virtual Memory
 1. **Total Isolation**: Because the OS strictly controls the MMU translation map, it is mathematically impossible for Chrome to generate a virtual address that translates into Spotify's physical RAM. The hardware will physically block it (Segmentation Fault).
-2. **Defeating Fragmentation**: A process might believe its 10MB array is perfectly contiguous in Virtual Memory. In reality, the MMU has physically scattered those 10MB into thousands of tiny, non-contiguous chunks across the physical RAM sticks. 
+2. **Defeating Fragmentation**: A process might believe its 10MB array is perfectly contiguous in Virtual Memory. In reality, the MMU has physically scattered those 10MB into thousands of tiny, non-contiguous chunks across the physical RAM sticks.
 
 ## 3. The Swapping Failsafe
-What happens if you have 8GB of physical RAM, but you open 16GB worth of Chrome tabs? 
+What happens if you have 8GB of physical RAM, but you open 16GB worth of Chrome tabs?
 Without Virtual Memory, the PC crashes. With Virtual Memory, the OS simply takes 8GB of RAM, mathematically packages it, and writes it to your physical Hard Drive (the Swap File / Pagefile). The Virtual Addresses remain perfectly valid, but the physical data is hiding on the SSD. If Chrome requests that memory, the OS triggers a **Page Fault**, freezes Chrome, reads the data off the SSD back into RAM, and resumes.
 
+
 <Callout icon="warning" title="Thrashing">
+
+
 If your RAM is 100% full, the OS will spend all its time constantly swapping data back and forth between the RAM and the SSD. Because SSDs are 1,000x slower than RAM, the entire computer will grind to an absolute halt. This is known as Thrashing.
+
+
 </Callout>
 
-</ConceptTemplate>
+

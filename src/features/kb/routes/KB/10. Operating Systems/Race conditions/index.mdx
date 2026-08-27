@@ -4,7 +4,14 @@ description: A catastrophic software bug that occurs when the timing of multi-th
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Race Conditions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Race Conditions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Race Condition** is the specific bug that occurs when Synchronization is not implemented correctly. It happens when two threads "race" to access the same shared variable, and the final output of the program depends entirely on which thread happened to win the race.
 
@@ -35,8 +42,13 @@ Because the OS Scheduler can Context Switch a thread at *any* moment, the execut
 
 **The final balance is 150, not 200.** Thread 2's deposit was completely erased because Thread 1 was holding a stale value in its register during the context switch.
 
+
 <Callout icon="success" title="The Fix">
+
+
   To prevent this, the three instructions (LOAD, ADD, STORE) must be executed **Atomically** (meaning they cannot be interrupted mid-execution). This is achieved by wrapping the code in a Mutex lock.
+
+
 </Callout>
 
-</ConceptTemplate>
+

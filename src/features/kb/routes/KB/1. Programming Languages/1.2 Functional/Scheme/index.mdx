@@ -1,8 +1,25 @@
+---
+title: Scheme
+description: A minimalist, highly elegant dialect of Lisp that introduced lexical scoping and first-class continuations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scheme">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Scheme">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created at MIT in the 1970s by Guy L. Steele and Gerald Jay Sussman, Scheme is a dialect of Lisp known for its extreme minimalism and mathematical elegance.
 
-</ConceptTemplate>
+## 1. Lexical Scoping
+Before Scheme, most Lisps (and many other languages) used "Dynamic Scoping." If you called a function, it could accidentally mathematically read the local variables of the function that called it, leading to terrifying runtime bugs.
+Scheme mathematically proved that **Lexical Scoping** (where a variable's scope is strictly defined by where it is written in the source code) was vastly superior. This concept directly influenced the design of almost all modern languages, especially JavaScript.
+
+## 2. First-Class Continuations
+Scheme provides a mathematically mind-bending feature called `call-with-current-continuation` (`call/cc`).
+A continuation is essentially a mathematical snapshot of the exact state of the program at a specific point in time (the call stack, the variables). Scheme allows you to capture this snapshot as a first-class function and mathematically jump back to it at any time. This allows developers to implement entirely new control flow mechanisms—like exceptions, generators, or coroutines—purely as library functions, without changing the core compiler.
+

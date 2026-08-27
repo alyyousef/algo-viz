@@ -4,7 +4,14 @@ description: The mathematical and statistical strategies used to handle null or 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Missing Value Imputation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Missing Value Imputation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Machine Learning algorithms are purely mathematical equations (like $y = mx + b$). If a user forgets to fill out the "Age" field on a signup form, the resulting `NaN` (Not a Number) value will mathematically crash the entire algorithm. You cannot multiply a string or a null.
 
@@ -26,4 +33,3 @@ Replacing the missing `NaN` with a calculated mathematical value.
 - **Forward Fill (Time Series)**: If a stock price tracker fails at 10:05 AM, you mathematically copy the price from 10:04 AM forward.
 - **Algorithmic Imputation (KNN or MICE)**: Using Machine Learning to predict the missing values based on the other columns. If a row is missing "Age", but the user is a "Vice President" with a $300k income, the KNN algorithm will mathematically impute an older age rather than the global mean of 34.
 
-</ConceptTemplate>

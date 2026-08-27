@@ -4,7 +4,14 @@ description: A regularized version of Linear Regression that mathematically util
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ridge Regression (L2)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ridge Regression (L2)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Ridge Regression** is standard Linear Regression with a critical mathematical safety net installed: **L2 Regularisation**. It is the absolute standard solution when dealing with Multicollinearity (highly correlated input variables) or datasets that threaten to mathematically overfit.
 
@@ -18,16 +25,15 @@ $Loss = MSE + \lambda \sum w_i^2$
 ## 2. The Geometry of the Penalty (Smooth Shrinkage)
 Unlike Lasso (L1) which forces weights to exactly zero, Ridge (L2) shrinks them smoothly, but they never reach exactly 0.0.
 
-Because the penalty is squared, large mathematical weights are punished exponentially. 
-- A weight of $10$ adds $100$ to the Loss function. 
+Because the penalty is squared, large mathematical weights are punished exponentially.
+- A weight of $10$ adds $100$ to the Loss function.
 - A weight of $0.1$ adds only $0.01$ to the Loss function.
-The Gradient Descent optimizer is mathematically terrified of large numbers, so it crushes all the weights down. However, as the weight gets closer to zero, the penalty gets infinitesimally small, so the optimizer loses the mathematical incentive to force it all the way to absolute zero. 
+The Gradient Descent optimizer is mathematically terrified of large numbers, so it crushes all the weights down. However, as the weight gets closer to zero, the penalty gets infinitesimally small, so the optimizer loses the mathematical incentive to force it all the way to absolute zero.
 
 ## 3. Solving Multicollinearity
-If a dataset contains "Square Footage" and "Square Meters", they are mathematically 100% correlated. 
-Standard Linear Regression matrices become singular (non-invertible) and explode. 
-Lasso (L1) will randomly delete one and keep the other. 
+If a dataset contains "Square Footage" and "Square Meters", they are mathematically 100% correlated.
+Standard Linear Regression matrices become singular (non-invertible) and explode.
+Lasso (L1) will randomly delete one and keep the other.
 
 Ridge (L2) handles this beautifully. The math dictates that minimizing $(w_1^2 + w_2^2)$ is achieved when $w_1$ and $w_2$ are exactly equal. Therefore, Ridge mathematically keeps *both* features, distributing the weight equally between them and shrinking them in tandem, making the model incredibly mathematically stable and robust against correlated noise.
 
-</ConceptTemplate>

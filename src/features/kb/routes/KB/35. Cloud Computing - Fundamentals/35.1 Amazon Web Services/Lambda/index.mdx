@@ -1,33 +1,24 @@
 ---
 title: AWS Lambda
-description: The pioneering Serverless compute service that lets you run code without provisioning or managing servers, scaling automatically based on incoming events.
+description: The flagship serverless compute service that allows developers to run raw code functions in the cloud without provisioning or managing any underlying servers, mathematically scaling from zero to thousands of concurrent executions in milliseconds.
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="AWS Lambda">
+<TechnologyTemplate
+  title="AWS Lambda"
+  subtitle="Event-Driven Serverless Compute"
+  tags={['AWS', 'Serverless', 'Compute', 'Functions']}
+>
 
-Introduced in 2014, **AWS Lambda** single-handedly invented the concept of Serverless computing (FaaS). It revolutionized cloud architecture by completely removing the need to manage EC2 virtual machines.
+Before Lambda, you had to rent an EC2 server and leave it running 24/7, paying for it even when no users were visiting your site. Lambda mathematically eliminated idle compute costs.
 
-## 1. Event-Driven Architecture
+## 1. Ephemeral Micro-VMs (Firecracker)
+When an event triggers a Lambda function (e.g., an HTTP request or a file uploaded to S3), AWS uses an open-source hypervisor called **Firecracker**.
+In less than 200 milliseconds, Firecracker mathematically carves out a tiny, secure micro-Virtual Machine, injects your Python/Node.js code, executes the function, returns the result, and immediately destroys the micro-VM. You are billed purely for the exact milliseconds the code was physically executing.
 
-Lambda is fundamentally event-driven. A Lambda function does absolutely nothing and costs absolutely nothing until an **Event** triggers it.
-Common triggers include:
-- An HTTP request hitting an AWS API Gateway.
-- A user uploading an image to an S3 Bucket (triggering a Lambda to create a thumbnail).
-- A message arriving in an SQS Queue.
-- A scheduled cron job from EventBridge running every 5 minutes.
+## 2. Horizontal Scaling and Cold Starts
+Lambda's mathematical scaling is brutal and instantaneous.
+If 10,000 users hit your API at the exact same second, Lambda does not queue them. It instantly boots 10,000 completely independent micro-VMs to process every request simultaneously.
+The only drawback is the **Cold Start**. If a function hasn't been used in 15 minutes, AWS deletes the container to save space. The next time it is called, AWS has to fetch the code from S3, boot the runtime, and execute it, which can add a 1-2 second delay. For ultra-low-latency applications, developers use "Provisioned Concurrency" to mathematically force AWS to keep a few instances "warm" at all times.
 
-## 2. Extreme Concurrency
-
-If your API receives 1 request, AWS spins up 1 micro-container to run your Lambda.
-If a Super Bowl commercial airs and your API receives 10,000 requests in a single second, AWS instantly spins up 10,000 isolated micro-containers to process them all simultaneously. 
-
-You do not need to configure Load Balancers or Autoscaling Groups. The concurrency is managed entirely by AWS.
-
-## 3. The Execution Limits
-
-Lambda is not meant for long-running processes. It is designed for microservices.
-- **Time Limit**: A Lambda function is hard-killed by AWS if it runs for more than 15 minutes. (If you have a batch job that takes 2 hours, you must use EC2 or ECS, not Lambda).
-- **Statelessness**: Because containers are constantly created and destroyed, Lambda functions are entirely stateless. You cannot save a file to the local hard drive and expect it to be there on the next request. All state must be saved to an external database like DynamoDB.
-
-</ConceptTemplate>
+</TechnologyTemplate>

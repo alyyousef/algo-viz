@@ -1,8 +1,32 @@
+---
+title: Control Plane
+description: The central orchestration brain of a Kubernetes cluster, composed of critical mathematical components that continuously manage global state, scheduling, and API communication.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Control plane">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="The Control Plane"
+  subtitle="The Brain of Kubernetes"
+  tags={['Kubernetes', 'Architecture', 'Control Plane', 'Distributed Systems']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If the Worker Nodes are the engines of a ship, the Control Plane is the bridge. It makes all mathematical decisions regarding cluster state, scaling, and recovery.
 
-</ConceptTemplate>
+## 1. Core Components
+The Control Plane is not a single program; it is a mathematical symphony of several distinct binaries:
+- **kube-apiserver**: The front door. Every kubectl command and internal component mathematically communicates *only* with the API server.
+- **etcd**: The central nervous system. A highly-available, distributed key-value store that holds the mathematical "Desired State" of every object in the cluster.
+- **kube-scheduler**: The logistics engine. When a new Pod is created, the scheduler mathematically analyzes the RAM/CPU usage of all Worker Nodes and assigns the Pod to the optimal server.
+- **kube-controller-manager**: The relentless enforcer. It runs continuous mathematical loops, ensuring the physical Live State of the cluster perfectly matches the Desired State in etcd.
+
+## 2. Managed Control Planes
+Managing a highly-available Control Plane requires immense mathematical expertise (managing etcd backups, upgrading API servers, handling TLS certificates).
+Because of this complexity, 90% of enterprises use Cloud-Managed Kubernetes (like AWS EKS, Google GKE, or Azure AKS). In these services, the cloud provider completely hides the Control Plane. The provider manages the master nodes mathematically behind the scenes, and the customer only pays for and manages the Worker Nodes.
+

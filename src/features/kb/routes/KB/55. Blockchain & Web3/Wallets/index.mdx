@@ -4,16 +4,28 @@ description: A software program or hardware device that stores the public and pr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Crypto Wallets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Crypto Wallets">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The term "Wallet" is biologically inaccurate. A wallet does not physically hold your money. Your money mathematically exists on the public blockchain.
 
 A **Wallet** (like MetaMask or Ledger) is simply a mathematical Key Management system.
 
+
 <Callout icon="warning" title="The Private Key">
-  A Wallet generates and mathematically stores your **Private Key** (usually represented as a 12-word Seed Phrase). 
-  
+
+
+  A Wallet generates and mathematically stores your **Private Key** (usually represented as a 12-word Seed Phrase).
+
   When you want to send money, the Wallet uses your Private Key to mathematically sign the transaction before broadcasting it to the network. If you biologically lose your Seed Phrase, the cryptography guarantees that you mathematically lose access to the funds forever. There is no "Forgot Password" button in Web3.
+
+
 </Callout>
 
-</ConceptTemplate>
+

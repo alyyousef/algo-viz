@@ -4,16 +4,28 @@ description: The process of verifying a user's identity using a secret string of
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Password Authentication">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Password Authentication">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The oldest and most mathematically flawed form of security in computer science.
 
 In a password authentication system, the user claims an identity (Username) and provides a biological secret (Password). The server mathematically verifies if the secret matches the stored identity.
 
+
 <Callout icon="warning" title="The Hashing Requirement">
+
+
   It is an absolute biological crime to store passwords in "Plain Text" in a database.
-  
+
   Servers must mathematically **Hash** the password (using algorithms like `bcrypt` or `Argon2`) and add a mathematical **Salt** (random string) before saving it to the database. When the user logs in, the server hashes their input and mathematically compares the two hashes. Because hashing is a one-way mathematical function, even if a hacker steals the database, they cannot reverse-engineer the original passwords.
+
+
 </Callout>
 
-</ConceptTemplate>
+

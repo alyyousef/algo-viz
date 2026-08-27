@@ -4,14 +4,26 @@ description: The Lightweight Directory Access Protocol is an open, vendor-neutra
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LDAP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LDAP">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Active Directory is the proprietary Microsoft product, **LDAP** is the mathematical protocol used to query it.
 
+
 <Callout icon="info" title="The Universal Directory Query">
+
+
   If an engineer writes a biological Java application that needs to mathematically check if "John Doe" is an employee, they do not write SQL.
-  
+
   They write an **LDAP Query** (e.g., `(&(objectClass=user)(sAMAccountName=jdoe))`). LDAP is a highly optimized protocol designed explicitly for massive read operations. It mathematically represents the corporation as a Tree, allowing third-party software (like VPNs or Firewalls) to biologically authenticate users against Active Directory.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,16 +4,29 @@ description: The essential role of an Operating System as the supreme manager of
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Operating System Fundamentals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Operating System Fundamentals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Operating System (OS)** is the most complex and critical piece of software running on a computer. It sits directly between the physical hardware (CPU, RAM, Hard Drives) and the user applications (Chrome, Video Games).
 
 Without an OS, every software developer would have to write their own custom machine code to spin the hard drive platters and physically address the RAM chips just to save a text file.
 
+
 <Callout icon="info" title="The Two Core Roles">
+
+
   1. **The Resource Manager**: The OS violently controls the hardware. It dictates exactly which program gets to use the CPU, how much RAM a program is allowed to consume, and prevents one crashing program from taking down the entire machine.
   2. **The Illusionist (Abstractions)**: The OS lies to user programs. It provides the illusion that a program has the entire CPU to itself (via Processes), that it has infinite memory (via Virtual Memory), and that the spinning magnetic disk is just a neat collection of folders (Filesystems).
+
+
 </Callout>
+
 
 ## The Key Components
 
@@ -23,4 +36,3 @@ Every modern operating system (Windows, Linux, macOS) is built on a few foundati
 - **Memory Management**: The system (Virtual Memory/Paging) that safely allocates RAM and prevents programs from reading each other's data.
 - **I/O and Filesystems**: The drivers and structures that allow software to interact with hard drives, keyboards, and network cards using simple commands like `open()`, `read()`, and `write()`.
 
-</ConceptTemplate>

@@ -4,9 +4,16 @@ description: Massively complex software applications designed to request, decryp
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Web Browsers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Web Browsers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A modern Web Browser is essentially a complete operating system running inside your computer. 
+A modern Web Browser is essentially a complete operating system running inside your computer.
 Its sole purpose is to securely execute untrusted code downloaded from the internet, rendering it visually while preventing that code from destroying your local machine.
 
 ## The Browser Architecture
@@ -19,7 +26,6 @@ Its sole purpose is to securely execute untrusted code downloaded from the inter
 6. **Data Storage**: Manages Cookies, LocalStorage, and IndexedDB on your hard drive.
 
 ## Multi-Process Architecture
-In modern browsers like Chrome, every single tab runs in a completely isolated, sandboxed OS-level process. 
+In modern browsers like Chrome, every single tab runs in a completely isolated, sandboxed OS-level process.
 If a malicious website in Tab 1 contains a critical memory leak that crashes its rendering engine, Tab 1 will die (Aw Snap!), but Tab 2 and the main browser UI will remain completely unaffected. This requires massive amounts of RAM, but guarantees extreme stability and security.
 
-</ConceptTemplate>

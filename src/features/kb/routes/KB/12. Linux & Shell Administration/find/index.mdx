@@ -5,10 +5,17 @@ description: "A command-line utility that searches one or more directory trees o
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="find"
   icon="search"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While `grep` searches *inside* files, the **find** command searches for the *files themselves* within the directory structure.
 
@@ -43,8 +50,13 @@ find . -name "*.tmp" -exec rm {} \;
 ```
 *(The `{}` is a placeholder for the found file's name, and the `\;` terminates the exec command).*
 
+
 <Callout icon="warning" title="Efficiency">
+
+
 If you are searching a massive file system, `find` can be slow because it actively crawls the disk. If you only need to search by filename, the `locate` command is often faster because it queries a pre-built background database (though that database might be hours out of date).
+
+
 </Callout>
 
-</ConceptTemplate>
+

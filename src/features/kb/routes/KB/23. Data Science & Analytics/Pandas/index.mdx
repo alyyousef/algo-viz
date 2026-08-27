@@ -4,13 +4,20 @@ description: The undisputed titan of Python data manipulation, providing the Dat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pandas">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pandas">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Built by Wes McKinney, **Pandas** is arguably the most famous and widely utilized library in the entire Data Science ecosystem. It provides the mathematical structures necessary to manipulate tabular, relational data (like Excel spreadsheets or SQL tables) directly in Python.
 
 ## 1. The DataFrame Architecture
 The core mathematical structure of Pandas is the **DataFrame** (heavily inspired by R dataframes).
-A DataFrame is a two-dimensional, mutable table with labeled axes (rows and columns). 
+A DataFrame is a two-dimensional, mutable table with labeled axes (rows and columns).
 
 Under the hood, Pandas is built entirely on top of **NumPy**. A Pandas DataFrame is essentially a collection of 1-Dimensional NumPy arrays (called Pandas Series) stitched together. Because it uses NumPy, Pandas operations are mathematically vectorized and incredibly fast.
 
@@ -40,4 +47,3 @@ Pandas mathematically requires the entire dataset to fit into your computer's RA
 
 If you have a 500GB dataset, Pandas will instantly throw an `Out Of Memory` exception and crash. To solve this, the industry utilizes Big Data engines like **Apache Spark (PySpark)** or modern optimized alternatives like **Polars**.
 
-</ConceptTemplate>

@@ -1,8 +1,31 @@
+---
+title: Insertion Sort
+description: "A simple sorting algorithm that builds the final sorted array one item at a time by mathematically taking the next element and 'inserting' it into its correct position among the already-sorted elements."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Insertion sort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Insertion Sort"
+  subtitle="How Humans Sort Playing Cards"
+  tags={['Algorithms', 'Sorting', 'Fundamentals', 'Big O']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Insertion sort is mathematically identical to how a human sorts a hand of playing cards. You hold the sorted cards in your left hand, pick up a new card with your right hand, and slide it into the correct position in your left hand.
 
-</ConceptTemplate>
+## 1. The Mathematical Mechanism
+The algorithm conceptually splits the array into a "sorted" left side and an "unsorted" right side.
+Initially, the first element (index 0) is considered sorted.
+It looks at index 1. If it is smaller than index 0, it shifts index 0 to the right and *inserts* index 1 at the beginning.
+It then looks at index 2, mathematically comparing it backward against the sorted left side, shifting larger elements rightward until it finds the exact spot where index 2 belongs.
+
+## 2. Performance and Use Cases
+The worst-case Time Complexity is **O(N²)** (if the array is completely backwards).
+However, Insertion Sort has a massive mathematical advantage: if the array is *already mostly sorted*, its Time Complexity drops to **O(N)**. Because it has extremely low overhead, modern algorithms like Tim Sort mathematically switch to Insertion Sort when the sub-arrays get very small (e.g., &lt; 32 elements).
+

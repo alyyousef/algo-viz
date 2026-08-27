@@ -4,17 +4,30 @@ description: A positional encoding method that allows models to extrapolate to l
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ALiBi (Attention with Linear Biases)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ALiBi (Attention with Linear Biases)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 ALiBi is a positional encoding technique designed to solve the context window extrapolation problem. While RoPE (Rotary Position Embeddings) mathematically rotates vectors, ALiBi takes a radically simpler approach: it directly manipulates the Attention scores.
 
+
 <Callout icon="tip" title="The Intuition">
+
+
   The core idea of ALiBi is that words closer together are usually more relevant to each other than words far apart. Therefore, ALiBi mathematically subtracts a penalty from the Attention score between two tokens, and that penalty grows linearly as the distance between the tokens increases.
+
+
 </Callout>
+
 
 ## The Mathematics of ALiBi
 
-In standard Attention, the score between a Query and a Key is simply their dot product. 
+In standard Attention, the score between a Query and a Key is simply their dot product.
 
 In ALiBi, the Attention score is modified before the softmax is applied:
 $AttentionScore = (Q \cdot K) - (m \times distance)$
@@ -24,4 +37,3 @@ $AttentionScore = (Q \cdot K) - (m \times distance)$
 
 Because ALiBi relies purely on relative distance and requires no complex trigonometric embeddings, a model trained on 1024 tokens can seamlessly be handed a 2048-token prompt during inference without breaking down.
 
-</ConceptTemplate>

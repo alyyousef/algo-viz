@@ -1,8 +1,31 @@
+---
+title: Onion Architecture
+description: An architectural pattern formulated by Jeffrey Palermo that mathematically enforces the Dependency Inversion Principle, structuring the application in concentric layers where all dependencies strictly flow toward the domain core.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Onion architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Onion Architecture"
+  subtitle="Dependency Inversion at Scale"
+  tags={['Architecture', 'Clean Code', 'SOLID', 'Design Patterns']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Onion Architecture is conceptually identical to Clean Architecture and Hexagonal Architecture. It was designed to mathematically eliminate the fatal flaw of traditional Layered Architecture.
 
-</ConceptTemplate>
+## 1. The Flaw in Layered Architecture
+In traditional Layered Architecture, the Business Logic layer depends on the Database layer. This means if the Database layer changes, the Business Logic mathematically breaks. The most important code (the business rules) is at the mercy of the least important code (the SQL infrastructure).
+
+## 2. Inverting the Onion
+Onion Architecture mathematically flips this.
+The core of the Onion contains the Domain Entities (pure business logic with zero dependencies).
+The next layer contains Domain Services (Interfaces).
+The outermost layer contains the UI, the Tests, and the Database infrastructure.
+Because dependencies can only point inward, the Database layer now mathematically depends on the Core Interfaces. The Core is totally ignorant of the Database, allowing the business logic to remain perfectly insulated from external technological changes.
+

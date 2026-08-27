@@ -4,19 +4,26 @@ description: The fundamental mathematical dilemma in Machine Learning, balancing
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bias-Variance Tradeoff">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bias-Variance Tradeoff">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Bias-Variance Tradeoff** is the central mathematical problem in all of Machine Learning. It dictates that you cannot simultaneously minimize both the errors introduced by simplifying assumptions (Bias) and the errors introduced by hypersensitivity to training data (Variance).
 
 ## 1. High Bias (Underfitting)
 **Bias** is the error introduced by approximating a real-world, highly complex problem with a mathematically simplistic model.
-- If you attempt to predict complex housing prices using a simple straight line (Linear Regression), the line will mathematically fail to capture the nuances (like a sudden drop in price for ancient houses). 
+- If you attempt to predict complex housing prices using a simple straight line (Linear Regression), the line will mathematically fail to capture the nuances (like a sudden drop in price for ancient houses).
 - The model is **Underfitting**. It has High Bias. It performs terribly on the training data, and terribly on the test data, because it is too simple.
 
 ## 2. High Variance (Overfitting)
 **Variance** is the error introduced by the model being mathematically too sensitive to the tiny fluctuations (noise) in the training data.
 - If you use a massive, unconstrained Decision Tree to predict housing prices, it will mathematically draw a boundary around every single house perfectly. It will achieve 100% accuracy on the training data.
-- However, it has mathematically memorized the *noise* (e.g., "A house with exactly 3 windows on a Tuesday sold for 10% less"). When you show it a new house, the model shatters. 
+- However, it has mathematically memorized the *noise* (e.g., "A house with exactly 3 windows on a Tuesday sold for 10% less"). When you show it a new house, the model shatters.
 - The model is **Overfitting**. It has High Variance. It performs perfectly on the training data, but catastrophically on the test data.
 
 ## 3. The Mathematical Tradeoff
@@ -27,4 +34,3 @@ Data Scientists must mathematically tune the model's **Complexity**.
 - As model complexity increases (adding Deep Neural Network layers), Bias drops rapidly, but Variance begins to skyrocket.
 - The goal is to find the mathematical "Sweet Spot" (the minimum of the Total Error curve) where the model is complex enough to learn the true signal, but constrained enough to ignore the noise. This is usually achieved via **Regularisation**.
 
-</ConceptTemplate>

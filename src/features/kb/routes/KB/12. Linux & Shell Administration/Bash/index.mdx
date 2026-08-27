@@ -5,10 +5,17 @@ description: "The Bourne Again SHell, the default command-line interpreter for m
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Bash"
   icon="terminal"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Bash (Bourne Again SHell)** is a Unix shell and command language written as a free software replacement for the original Bourne shell (`sh`). For decades, it has been the absolute standard interface for interacting with Linux servers.
 
@@ -31,8 +38,13 @@ tar -czvf db_backup_$(date +%F).tar.gz /var/lib/mysql
 echo "Backup complete!"
 ```
 
+
 <Callout icon="warning" title="Bash Quirkiness">
+
+
 Bash is famous for its archaic and unforgiving syntax. Missing a single space inside an `if [ $var == "yes" ]` statement will cause a syntax error. For complex logic, many modern sysadmins prefer to write Python scripts rather than pure Bash.
+
+
 </Callout>
 
-</ConceptTemplate>
+

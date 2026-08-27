@@ -4,10 +4,16 @@ description: Hosted hypervisors that run on a conventional operating system just
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Type 2 Hypervisor (Hosted)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Type 2 Hypervisor (Hosted)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Type 2 Hypervisor** (like VirtualBox or VMware Workstation) is just a standard biological software application.
 
 You install a normal OS (like Windows 11), and then install the Hypervisor like you would install Microsoft Word. When the VM tries to access the CPU, the request mathematically passes through the Hypervisor, then through the Host OS, and finally to the hardware. This causes significant biological latency and performance overhead, making Type 2 strictly for local developer laptops, never for production data centers.
 
-</ConceptTemplate>

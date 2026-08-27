@@ -5,12 +5,19 @@ description: Extreme Gradient Boosting. The undisputed king of tabular data, seq
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="XGBoost">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="XGBoost">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **XGBoost (Extreme Gradient Boosting)** is arguably the most successful Machine Learning algorithm of the 21st century. Before Deep Learning took over images and text, XGBoost mathematically dominated every Kaggle competition involving standard tabular data (CSVs, databases).
 
 ## 1. Boosting vs Bagging
-Unlike Random Forests (Bagging) which train 100 deep trees *in parallel* independently, XGBoost (Boosting) trains shallow trees **sequentially**. 
+Unlike Random Forests (Bagging) which train 100 deep trees *in parallel* independently, XGBoost (Boosting) trains shallow trees **sequentially**.
 Every new tree is mathematically obsessed with correcting the specific errors made by the *previous* tree.
 
 ## 2. The Mathematical Architecture
@@ -27,8 +34,13 @@ Standard Gradient Boosting Machines (GBMs) existed before XGBoost. Tianqi Chen m
 - **L1/L2 Regularization**: XGBoost natively penalizes complex trees directly in the mathematical objective function, dramatically preventing overfitting.
 - **Hardware Optimization**: It mathematically optimizes CPU cache utilization and employs a highly optimized algorithm for finding tree splits in parallel across RAM.
 
+
 <Callout icon="tip" title="Handling Missing Data">
+
+
 XGBoost is mathematically brilliant at handling `NaN` (null) values. During training, if a value is missing, the algorithm explicitly tests pushing it down the Left branch and the Right branch, calculating which direction mathematically minimizes the loss. It mathematically learns the optimal default path for missing data.
+
+
 </Callout>
 
-</ConceptTemplate>
+

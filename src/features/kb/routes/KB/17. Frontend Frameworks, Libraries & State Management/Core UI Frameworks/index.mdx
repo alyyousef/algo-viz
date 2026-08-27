@@ -4,7 +4,14 @@ description: The massive architectural shift from imperative DOM manipulation to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Core UI Frameworks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Core UI Frameworks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, rendering a list of users on a screen required manually querying the DOM (`document.getElementById`) and mathematically updating individual HTML nodes in a highly imperative manner. As applications grew into massive Single Page Applications (SPAs), this led to catastrophic spaghetti code.
 
@@ -28,4 +35,3 @@ Unlike React, Svelte does not ship a heavy framework runtime to the browser. Ins
 ## 5. SolidJS
 Created by Ryan Carniato. Solid looks identical to React (using JSX and Signals), but like Svelte, it completely abandons the Virtual DOM. It compiles down to direct DOM nodes, making it the fastest Javascript framework in existence for raw performance benchmarks.
 
-</ConceptTemplate>

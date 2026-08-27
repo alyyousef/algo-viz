@@ -4,24 +4,32 @@ description: The mathematical division of a logical database or its constituting
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Database Partitioning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Database Partitioning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While *Sharding* spreads data across multiple physical computers, **Partitioning** mathematically divides a massive table into smaller, faster chunks *on the exact same physical computer*.
 
 If a PostgreSQL `Orders` table has 10 billion rows, executing a `SELECT` or even rebuilding an index can mathematically lock the database for hours.
 
+
 <Callout icon="tip" title="The Filing Cabinet Analogy">
+
+
   A monolithic table is a single filing cabinet drawer stuffed with 10,000 papers. Partitioning is splitting those papers mathematically into 12 distinct folders (one for each month). Finding a receipt from July is now 12x faster because you can ignore 11 folders entirely.
+
+
 </Callout>
+
 
 ## Types of Partitioning
 
-<ComparisonTable 
-  headers={['Type', 'Mathematical Mechanism', 'Use Case']}
-  rows={[
-    ['Horizontal Partitioning', 'Splitting rows. (e.g., Table 1 holds rows 1-1M, Table 2 holds rows 1M-2M).', 'Managing massive time-series data or log files.'],
-    ['Vertical Partitioning', 'Splitting columns. Moving the massive, rarely-accessed `UserBioText` column into a separate table, leaving the heavily accessed `Username` and `PasswordHash` in the primary table.', 'Optimizing RAM cache. The database can fit way more Usernames into memory if it doesn\'t have to load the Bio text.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Type', 'Mathematical Mechanism', 'Use Case']} rows={[ ['Horizontal Partitioning', 'Splitting rows. (e.g., Table 1 holds rows 1-1M, Table 2 holds rows 1M-2M).', 'Managing massive time-series data or log files.'], ['Vertical Partitioning', 'Splitting columns. Moving the massive, rarely-accessed `UserBioText` column into a separate table, leaving the heavily accessed `Username` and `PasswordHash` in the primary table.', 'Optimizing RAM cache. The database can fit way more Usernames into memory if it doesn\'t have to load the Bio text.'] ]} />
+
+

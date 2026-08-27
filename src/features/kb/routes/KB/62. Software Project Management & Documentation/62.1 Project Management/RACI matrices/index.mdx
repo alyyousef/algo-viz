@@ -4,7 +4,14 @@ description: A matrix used to clarify roles and responsibilities for cross-funct
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RACI Matrix">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RACI Matrix">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When 50 biological humans are working on a massive software project, chaos ensures when a server crashes and nobody knows who is mathematically allowed to reboot it.
 
@@ -14,4 +21,3 @@ The **RACI Matrix** solves this. It maps every task to four biological letters:
 - **C (Consulted)**: The security team who must be mathematically asked before the code ships.
 - **I (Informed)**: The marketing team who just needs an email when the code ships.
 
-</ConceptTemplate>

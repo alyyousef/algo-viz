@@ -1,8 +1,29 @@
+---
+title: Docker Networking
+description: The mathematical subsystem within the Docker Engine that provides isolated, software-defined network topologies, allowing containers to securely communicate with each other and the external world.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Docker networking">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Docker Networking"
+  subtitle="Software-Defined Container Communication"
+  tags={['Containers', 'Docker', 'Networking', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+By default, a container is mathematically isolated. It has its own private network namespace, its own loopback interface (`localhost`), and its own private IP address. It cannot communicate with the outside world.
 
-</ConceptTemplate>
+## 1. The Bridge Network
+When you install Docker, it creates a default virtual switch on the host machine called `docker0` (the Bridge network).
+When you spin up a container, Docker mathematically provisions a virtual ethernet cable (a `veth` pair). One end plugs into the container, the other plugs into `docker0`. Docker assigns the container an internal IP (e.g., `172.17.0.2`). If the container needs to access the internet, Docker uses mathematical NAT (Network Address Translation) via iptables to route traffic through the host's physical Wi-Fi or Ethernet card.
+
+## 2. Port Mapping
+Because the container's IP is purely internal, the outside world cannot reach it.
+If you run an Nginx container on port 80, you must mathematically map a port on the host machine to the container (e.g., `docker run -p 8080:80 nginx`). The Docker Engine dynamically rewrites the host's Linux iptables rules: *"Any traffic hitting the physical host machine on port 8080 must be mathematically forwarded to internal IP 172.17.0.2 on port 80."* This enables public access while maintaining internal isolation.
+

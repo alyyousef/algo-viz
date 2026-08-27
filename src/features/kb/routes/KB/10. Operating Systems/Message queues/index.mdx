@@ -4,27 +4,39 @@ description: A robust IPC mechanism that allows processes to send structured, di
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Message Queues">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Message Queues">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Pipes (both Anonymous and Named) are **Byte Streams**. They do not understand the data they are carrying. If Process A writes 10 bytes, and then 5 bytes, Process B might read all 15 bytes at once, completely losing the boundary between the two messages. 
+Pipes (both Anonymous and Named) are **Byte Streams**. They do not understand the data they are carrying. If Process A writes 10 bytes, and then 5 bytes, Process B might read all 15 bytes at once, completely losing the boundary between the two messages.
 
 If a process needs to send structured, distinct packets of data, it uses a **Message Queue**.
 
 ## Discrete Messages
 
-A Message Queue is managed by the OS Kernel. Instead of a continuous stream of water, think of it as a post office mailbox. 
+A Message Queue is managed by the OS Kernel. Instead of a continuous stream of water, think of it as a post office mailbox.
 Process A places a sealed envelope (a Message) into the mailbox. Process B pulls out one envelope at a time. The boundary of the envelope is perfectly preserved.
 
+
 <Callout icon="success" title="Asynchronous Delivery">
-  Unlike Pipes, which require both the Reader and Writer to be actively running at the same time, Message Queues are **Asynchronous**. 
+
+
+  Unlike Pipes, which require both the Reader and Writer to be actively running at the same time, Message Queues are **Asynchronous**.
   Process A can send 50 messages to the queue and instantly terminate itself. The OS Kernel will safely hold those 50 messages in memory until Process B launches hours later to read them.
+
+
 </Callout>
+
 
 ## Priority Routing
 
-Modern Message Queues (like POSIX `mq`) allow messages to have attached Priorities. 
+Modern Message Queues (like POSIX `mq`) allow messages to have attached Priorities.
 If Process A sends 100 low-priority "logging" messages, and then sends 1 high-priority "shutdown" message, the OS will automatically push the high-priority message to the very front of the queue, ensuring Process B receives it immediately on its next read.
 
 *(Note: OS-level message queues are for processes on the same computer. Distributed systems use networked equivalents like RabbitMQ or Apache Kafka).*
 
-</ConceptTemplate>

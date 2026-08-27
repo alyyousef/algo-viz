@@ -1,8 +1,31 @@
+---
+title: Markdown
+description: A profoundly popular, lightweight markup language designed to be easy to read and write in plain text while seamlessly compiling to HTML.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Markdown">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Markdown">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by John Gruber in 2004, Markdown revolutionized how humans write on the web. Before Markdown, writing a blog post required writing raw HTML (`<strong>Bold</strong>`), which was mathematically impossible to read natively.
 
-</ConceptTemplate>
+## 1. Human-Readable Syntax
+Markdown was designed so that the raw text file looks like the intended output.
+- `**Bold**`
+- `*Italic*`
+- `# Heading 1`
+- `[Link Text](https://example.com)`
+
+A standard Markdown compiler (like marked.js) mathematically parses this text via Regular Expressions and generates the equivalent HTML tags.
+
+## 2. The Fragmentation Problem
+Because Gruber never provided a strict mathematical BNF grammar for Markdown, the language fragmented.
+How many spaces constitute a list indentation? What happens if you nest a blockquote in a list? Different compilers guessed differently.
+This led to the creation of **CommonMark** (a mathematically rigorous, unambiguous specification of Markdown) and **GitHub Flavored Markdown (GFM)**, which added tables, task lists, and strikethroughs to the standard.
+

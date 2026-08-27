@@ -1,8 +1,32 @@
+---
+title: Dependency Inversion Principle (DIP)
+description: The "D" in the SOLID principles; it states that high-level modules should not depend on low-level modules, but both should mathematically depend on abstractions (interfaces), flipping the traditional dependency graph.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dependency inversion">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Dependency Inversion Principle"
+  subtitle="Flipping the Mathematical Graph"
+  tags={['OOP', 'SOLID', 'Architecture', 'Design Patterns']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a naive, procedural architecture, high-level business logic mathematically depends directly on low-level implementation details.
+For example, a `ReportGenerator` (High Level) might mathematically instantiate a `MySQLDatabase` (Low Level). If the company switches to MongoDB, the high-level code is completely destroyed and must be rewritten.
 
-</ConceptTemplate>
+## 1. Inverting the Dependency
+The Dependency Inversion Principle (DIP) dictates that both the High-Level logic and the Low-Level implementation must mathematically depend on a shared **Abstraction (Interface)**.
+1. Define an interface: `public interface IDatabase { void save(); }`.
+2. The Low-Level `MySQLDatabase` class *implements* `IDatabase`.
+3. The High-Level `ReportGenerator` class mathematically *depends* on `IDatabase`, not MySQL.
+
+## 2. The Architectural Firewall
+By doing this, the mathematical dependency graph is inverted.
+The high-level business logic is protected behind an architectural firewall. You can physically delete the `MySQLDatabase` file from the codebase, write a brand new `MongoDatabase` file, and as long as Mongo implements `IDatabase`, the `ReportGenerator` will mathematically continue to function flawlessly without a single line of code changing in the high-level module.
+

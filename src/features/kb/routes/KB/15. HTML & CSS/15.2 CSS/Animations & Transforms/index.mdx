@@ -5,10 +5,17 @@ description: "Moving, scaling, rotating, and animating DOM elements smoothly usi
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Animations & Transforms"
   icon="play"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Modern CSS provides powerful tools to create fluid, hardware-accelerated motion without writing a single line of JavaScript.
 
@@ -49,8 +56,13 @@ For continuous animations or complex multi-step sequences, you use `@keyframes`.
 }
 ```
 
+
 <Callout icon="warning" title="Performance & The GPU">
+
+
 You should only ever animate `transform` and `opacity`. Animating properties like `width`, `margin`, or `box-shadow` forces the browser to recalculate the entire page layout on every single frame, causing severe lag on mobile devices. Transforms are offloaded directly to the device's GPU for silky smooth 60FPS motion.
+
+
 </Callout>
 
-</ConceptTemplate>
+

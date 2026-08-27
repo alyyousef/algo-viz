@@ -5,10 +5,17 @@ description: "A utility-first CSS framework that allows rapid UI development by 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Tailwind CSS"
   icon="feather"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Tailwind CSS** represents a massive paradigm shift in how developers write CSS. Instead of creating semantic class names (`.profile-card`) and writing custom CSS in a separate file, Tailwind provides thousands of atomic "utility classes" (`flex`, `p-4`, `text-center`) that you apply directly in your HTML/JSX.
 
@@ -37,8 +44,13 @@ You write:
 3. **Dead Code Elimination**: Traditional CSS files grow forever because developers are terrified to delete rules. Tailwind compiles your codebase at build-time, parsing your HTML and outputting a CSS file containing *only* the classes you actually used (often resulting in CSS payloads under 10KB).
 4. **Built-in Design System**: It forces you to use a standardized scale for spacing, typography, and colors, preventing UI inconsistencies.
 
+
 <Callout icon="info" title="The Backlash">
+
+
 When people first see Tailwind, they often hate it, claiming it looks like inline styles and clutters the HTML. However, in an era where we build UIs using component frameworks (React, Vue, Svelte), the "messy" HTML is encapsulated inside small, reusable components anyway. Once developers try it, they rarely go back.
+
+
 </Callout>
 
-</ConceptTemplate>
+

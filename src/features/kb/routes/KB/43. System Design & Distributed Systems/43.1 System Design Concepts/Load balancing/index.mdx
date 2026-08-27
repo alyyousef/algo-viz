@@ -4,27 +4,34 @@ description: The process of distributing network traffic across multiple servers
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Load Balancing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Load Balancing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Once you move from a single monolithic server to Horizontal Scaling, you introduce a new mathematical problem: how does the user know which of the 1,000 servers to talk to?
 
 A **Load Balancer (LB)** sits directly between the clients and the server cluster. It acts as the mathematical traffic cop, receiving all incoming HTTP requests and routing them to healthy backend servers based on a specific algorithm.
 
+
 <Callout icon="info" title="Hardware vs. Software">
+
+
   Historically, Load Balancers were expensive physical hardware boxes (F5 Big-IP). Today, they are almost exclusively software-based (HAProxy, Nginx) or managed cloud services (AWS Application Load Balancer).
+
+
 </Callout>
+
 
 ## Load Balancing Algorithms
 
 Load balancers do not just pick servers at random. They use strict mathematical algorithms:
 
-<ComparisonTable 
-  headers={['Algorithm', 'How it works', 'Best Use Case']}
-  rows={[
-    ['Round Robin', 'Iterates through the list of servers in order (1, 2, 3, 1, 2, 3).', 'When all backend servers have exactly the same CPU/RAM capacity.'],
-    ['Least Connections', 'Mathematically checks which server currently has the fewest active TCP connections and routes there.', 'When requests take highly variable amounts of time to process.'],
-    ['IP Hash', 'Mathematically hashes the client\'s IP address to consistently map them to the exact same backend server.', 'When your application relies on sticky sessions (storing login state in local server RAM).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Algorithm', 'How it works', 'Best Use Case']} rows={[ ['Round Robin', 'Iterates through the list of servers in order (1, 2, 3, 1, 2, 3).', 'When all backend servers have exactly the same CPU/RAM capacity.'], ['Least Connections', 'Mathematically checks which server currently has the fewest active TCP connections and routes there.', 'When requests take highly variable amounts of time to process.'], ['IP Hash', 'Mathematically hashes the client\'s IP address to consistently map them to the exact same backend server.', 'When your application relies on sticky sessions (storing login state in local server RAM).'] ]} />
+
+

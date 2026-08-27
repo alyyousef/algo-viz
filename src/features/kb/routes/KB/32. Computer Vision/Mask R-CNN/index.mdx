@@ -1,8 +1,29 @@
+---
+title: Mask R-CNN
+description: The industry-standard architecture for Instance Segmentation, mathematically extending Faster R-CNN by adding a parallel Fully Convolutional Network to predict pixel-perfect object masks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mask R-CNN">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mask R-CNN">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by Kaiming He (the creator of ResNet), Mask R-CNN solved the Instance Segmentation problem by proving that you can mathematically predict a highly complex 2D mask parallel to a simple 1D bounding box.
 
-</ConceptTemplate>
+## 1. The Tripartite Output
+When an image passes through Mask R-CNN, the final layer outputs three distinct mathematical tensors simultaneously for every object detected:
+1. **Classification**: What is it? (e.g., "Person" - 99%).
+2. **Bounding Box**: Where is it? (e.g., $[x, y, width, height]$).
+3. **The Mask**: A spatial $28 \times 28$ matrix of floating-point numbers between 0 and 1.
+Crucially, the Mask prediction is mathematically decoupled from the Classification. The Mask Branch just predicts a generic binary shape. The Classification Branch provides the label. This separation prevents the network from mathematically competing against itself.
+
+## 2. The Power of RoIAlign
+The absolute mathematical breakthrough of Mask R-CNN was fixing the quantization error of its predecessor (Faster R-CNN).
+When a CNN compresses a 1024x1024 image into a 32x32 feature map, a bounding box might start at coordinate 15.6. Faster R-CNN rounded this to 16. Mask R-CNN's **RoIAlign** uses bilinear interpolation to mathematically calculate the exact virtual pixel value at 15.6.
+Without RoIAlign, the generated mask would physically shift by several pixels, bleeding off the object. With RoIAlign, the network achieves pixel-perfect adherence to the physical boundaries of the object, making it the dominant architecture for medical cell segmentation and self-driving cars.
+

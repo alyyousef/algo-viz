@@ -4,14 +4,26 @@ description: A linear transformation on quantum bits, and is the quantum analogu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantum Fourier Transform (QFT)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Quantum Fourier Transform (QFT)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Quantum Fourier Transform (QFT)** is the hidden mathematical engine powering the most devastating quantum algorithms.
 
+
 <Callout icon="info" title="The Engine of Shor's Algorithm">
-  A classical Fourier Transform biologically decomposes a complex audio wave into its individual musical frequencies. 
-  
+
+
+  A classical Fourier Transform biologically decomposes a complex audio wave into its individual musical frequencies.
+
   The QFT does the same thing, but mathematically operates on the amplitudes of Quantum States. It is exponentially faster than a classical Fast Fourier Transform (FFT). By finding the hidden mathematical "period" (frequency) of a function, the QFT is the exact mechanism that allows Shor's Algorithm to instantly shatter RSA encryption.
+
+
 </Callout>
 
-</ConceptTemplate>
+

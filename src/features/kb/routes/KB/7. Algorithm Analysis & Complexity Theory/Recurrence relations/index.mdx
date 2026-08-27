@@ -1,8 +1,41 @@
+---
+title: Recurrence Relations
+description: "The mathematical equations used to rigorously define and solve the time complexity of recursive algorithms."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Recurrence relations">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Recurrence Relations"
+  subtitle="The Math of Recursion"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Calculus']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When you analyze a standard `for` loop, counting operations is trivial. However, when a function mathematically calls *itself* (Recursion), you cannot just count operations. You must model the algorithm as a **Recurrence Relation**—a mathematical equation that defines a sequence based on its previous terms.
 
-</ConceptTemplate>
+## 1. The Structure of a Recurrence
+A recurrence relation defines the time $T(n)$ taken for an input of size $n$.
+For **Merge Sort**, the algorithm splits the array exactly in half, sorts both halves, and then merges them in linear time.
+The mathematical relation is:
+$T(n) = 2T(n/2) + O(n)$
+(Two subproblems, each half the size, plus $O(n)$ work to merge).
+
+For **Binary Search**, the algorithm splits the array in half, but mathematically only explores *one* of the halves, doing constant work.
+$T(n) = T(n/2) + O(1)$
+
+## 2. Solving Recurrences
+To convert a recurrence relation into a definitive Big O bound, mathematicians use three primary techniques:
+1. **The Substitution Method**: Mathematically guess the answer (e.g., guess $O(N \log N)$), and then use Mathematical Induction to formally prove the guess is correct.
+2. **The Recursion Tree Method**: Draw a literal branching tree of the recursive calls. Calculate the amount of work done at each "level" of the tree, calculate the total height of the tree (usually $\log_2 N$), and sum the infinite series.
+3. **The Master Theorem**: A plug-and-play mathematical formula that instantly solves recurrences of the form $T(n) = aT(n/b) + O(n^d)$. (e.g., It instantly proves Merge Sort is $O(N \log N)$).
+
+## 3. The Fibonacci Disaster
+The naïve recursive Fibonacci algorithm is: $T(n) = T(n-1) + T(n-2) + O(1)$.
+If you solve this recurrence using the characteristic equation of linear difference equations, the mathematical root is the Golden Ratio ($\phi \approx 1.618$). The time complexity is mathematically proven to be $O(1.618^n)$, an exponential disaster.
+

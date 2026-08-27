@@ -6,20 +6,22 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Elastic Stack (ELK)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Elastic Stack (ELK)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you have 50 microservices spread across 200 servers, you cannot SSH into individual machines and run `grep` to find error logs. You need a centralized logging solution. The most famous architecture for this is the **ELK Stack**.
 
 ## 1. The ELK Components
 
-<ComparisonTable 
-  headers={['Component', 'Role', 'Metaphor']} 
-  rows={[
-    ['Logstash (or Beats)', 'The Data Shipper / Pipeline. Runs on the application servers, reads the local log files, parses them, and sends them over the network.', 'The Delivery Truck.'],
-    ['Elasticsearch', 'The highly-scalable, distributed NoSQL search engine. It indexes every single word of the logs for lightning-fast full-text search.', 'The Warehouse / Library.'],
-    ['Kibana', 'The web interface used by humans to search the logs, build dashboards, and create visualizations.', 'The Librarian / Search UI.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Component', 'Role', 'Metaphor']} rows={[ ['Logstash (or Beats)', 'The Data Shipper / Pipeline. Runs on the application servers, reads the local log files, parses them, and sends them over the network.', 'The Delivery Truck.'], ['Elasticsearch', 'The highly-scalable, distributed NoSQL search engine. It indexes every single word of the logs for lightning-fast full-text search.', 'The Warehouse / Library.'], ['Kibana', 'The web interface used by humans to search the logs, build dashboards, and create visualizations.', 'The Librarian / Search UI.'] ]} />
+
 
 ## 2. How it works
 1. Your Node.js app writes a JSON log to `/var/log/app.log`.
@@ -30,8 +32,13 @@ If you have 50 microservices spread across 200 servers, you cannot SSH into indi
 ## 3. The Cost Problem
 Elasticsearch is incredibly powerful because it indexes *everything*. However, maintaining a massive Elasticsearch cluster requires huge amounts of RAM and expensive SSDs. For many companies, storing application logs in ELK becomes more expensive than running the actual application itself.
 
+
 <Callout icon="info" title="Alternatives">
+
+
 Due to the high cost and complexity of running ELK, many teams have migrated to SaaS solutions like **Datadog** or **Splunk**, or cheaper open-source alternatives like **Grafana Loki** (which heavily sacrifices search speed in exchange for drastically lower storage costs using AWS S3).
+
+
 </Callout>
 
-</ConceptTemplate>
+

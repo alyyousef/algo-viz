@@ -1,8 +1,28 @@
+---
+title: Agent Tools
+description: The physical, executable code blocks that mathematically connect an LLM's neural network to the outside world, allowing it to perform actions like browsing the web or executing SQL.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tools">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Agent Tools">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An LLM cannot browse the internet. If you ask it for today's news, its neural weights mathematically cannot access real-time data. It must be provided a WebBrowser Tool.
 
-</ConceptTemplate>
+## 1. The Anatomy of a Tool
+A Tool is a strict mathematical contract between the LLM and the physical computer. It has three parts:
+1. **Name**: e.g., `execute_python`
+2. **Description**: The most critical part. The prompt mathematically explaining to the LLM *exactly* when and how to use it. (e.g., "Use this to run math equations").
+3. **Arguments (Schema)**: The exact JSON structure required (e.g., `{"code": "string"}`).
+4. **The Executable**: The actual physical Python/Node function sitting on the server that does the work.
+
+## 2. Tool Binding and Safety
+When the LLM requests a Tool, the Application Framework (LangChain, CrewAI) mathematically halts the LLM. It extracts the JSON, validates it against the Schema (preventing Malformed Tool calls), and physically executes the Python function.
+**Safety is paramount.** If you give an LLM a `BashTerminal` Tool without sandboxing it inside a Docker container, the LLM might hallucinate a `rm -rf /` command and physically destroy your entire server infrastructure. Tools are the mathematical bridge that makes AI dangerous.
+

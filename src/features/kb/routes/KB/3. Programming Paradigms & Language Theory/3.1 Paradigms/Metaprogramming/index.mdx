@@ -1,8 +1,26 @@
+---
+title: Metaprogramming
+description: The advanced architectural ability of a program to treat its own code as mathematical data, allowing the software to read, analyze, and physically rewrite itself during compilation or execution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Metaprogramming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Metaprogramming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Normally, a program manipulates data (numbers, strings). In Metaprogramming, the program manipulates *programs*. The code writes code.
 
-</ConceptTemplate>
+## 1. Compile-Time Metaprogramming (Macros)
+In languages like C, C++, or Rust, Metaprogramming happens before the final binary is generated.
+When the compiler encounters a **Macro** (e.g., `println!()` in Rust), it does not compile it into a function call. The Macro is a mathematical script that runs *inside the compiler*. It physically analyzes the Abstract Syntax Tree (AST) of the surrounding code and mathematically generates brand new, highly optimized raw code in its place. This allows developers to create entirely new syntactic constructs that don't exist in the base language, physically altering the compiler's behavior.
+
+## 2. Runtime Metaprogramming (Reflection)
+In dynamic languages (Java, Python, Ruby), Metaprogramming happens while the program is physically running.
+Using **Reflection**, an Object can mathematically inspect itself. It can ask the JVM, "What methods do I have? What is the name of this class?"
+A program can dynamically intercept method calls, inject new variables into classes on the fly, or even execute arbitrary strings as code (`eval()`). While incredibly powerful for building Frameworks (like Spring or Ruby on Rails), it mathematically destroys compile-time type safety and is extremely difficult to debug.
+

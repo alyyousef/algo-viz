@@ -4,7 +4,14 @@ description: A wildly fast, probabilistic classification algorithm based on Baye
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Naive Bayes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Naive Bayes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Naive Bayes** is a probabilistic classifier based entirely on **Bayes' Theorem**. It is the absolute foundational algorithm for classical NLP tasks, particularly Spam Filtering and Sentiment Analysis, due to its blazing mathematical speed and ability to handle massive sparse datasets.
 
@@ -22,13 +29,12 @@ The algorithm mathematically calculates this probability for both Spam and Not S
 ## 2. Why is it "Naive"?
 To calculate the exact probability of an email containing the words "Buy", "Cheap", and "Viagra", the algorithm would mathematically require thousands of historical emails containing that *exact combination* of words. This is computationally impossible (Data Sparsity).
 
-The algorithm solves this by making a mathematically "Naive" assumption: **Conditional Independence**. 
-It assumes that the probability of seeing the word "Cheap" is mathematically completely independent of seeing the word "Viagra". It simply multiplies the individual probabilities together: $P(Buy) \times P(Cheap) \times P(Viagra)$. 
+The algorithm solves this by making a mathematically "Naive" assumption: **Conditional Independence**.
+It assumes that the probability of seeing the word "Cheap" is mathematically completely independent of seeing the word "Viagra". It simply multiplies the individual probabilities together: $P(Buy) \times P(Cheap) \times P(Viagra)$.
 While this assumption is mathematically false in human language, the algorithm works surprisingly flawlessly in practice.
 
 ## 3. Laplace Smoothing
-There is one fatal mathematical flaw in the Naive assumption. If a new email contains a word the algorithm has *never* seen before, the probability $P(Word|Spam)$ is exactly $0$. 
+There is one fatal mathematical flaw in the Naive assumption. If a new email contains a word the algorithm has *never* seen before, the probability $P(Word|Spam)$ is exactly $0$.
 Because the algorithm multiplies all probabilities together, a single $0$ mathematically destroys the entire equation, forcing the total probability to $0.0$.
 **Laplace Smoothing** mathematically fixes this by adding a tiny baseline value (e.g., $+1$) to all word counts, guaranteeing that no probability ever mathematically reaches exactly zero.
 
-</ConceptTemplate>

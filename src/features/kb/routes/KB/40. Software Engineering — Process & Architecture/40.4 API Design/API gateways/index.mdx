@@ -1,8 +1,30 @@
+---
+title: API Gateways
+description: A crucial architectural component in Microservices that acts as the single mathematical entry point for all client requests, routing traffic, enforcing security, and providing rate limiting before requests reach the internal services.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="API gateways">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="API Gateways"
+  subtitle="The Front Door of Microservices"
+  tags={['API', 'Microservices', 'Architecture', 'Security']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an enterprise has 500 different Microservices, requiring a mobile app to mathematically know the IP address and port number of all 500 services is impossible. If the "Inventory Service" changes its IP address, all mobile apps in the world instantly break.
 
-</ConceptTemplate>
+## 1. The Reverse Proxy
+An API Gateway (like AWS API Gateway, Kong, or NGINX) acts as a mathematical Reverse Proxy.
+The mobile app only knows **one** URL: `api.company.com`.
+When the app requests `/orders`, the request hits the Gateway. The Gateway mathematically inspects the URL, looks up its internal routing table, and forwards the TCP packet to the correct internal, hidden Microservice.
+
+## 2. Centralized Cross-Cutting Concerns
+If you do not have a Gateway, every one of the 500 Microservices must independently implement mathematical logic for JWT Authentication, SSL Termination, and Rate Limiting.
+The API Gateway centralizes this. It mathematically terminates the HTTPS connection. It verifies the JWT signature. If the token is invalid, the Gateway immediately drops the packet and returns a 401 error. The internal Microservices receive clean, verified traffic and can focus purely on business logic.
+

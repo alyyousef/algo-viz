@@ -1,8 +1,25 @@
+---
+title: PL/pgSQL
+description: The procedural language extension for PostgreSQL, adding mathematical loops, variables, and complex logic directly inside the database engine.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PL/pgSQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PL/pgSQL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+SQL is a declarative language (you state *what* you want, not *how* to get it). PL/pgSQL (Procedural Language/PostgreSQL) is an imperative programming language mathematically embedded directly inside the PostgreSQL database engine.
 
-</ConceptTemplate>
+## 1. Moving Logic to Data
+In a standard application architecture, a Node.js server queries data from the database, pulls it across the network into RAM, performs mathematical calculations, and sends the update back.
+If the data involves 5 million rows, moving it across the network is mathematically catastrophic for performance.
+PL/pgSQL allows you to write `IF/ELSE` statements, `WHILE` loops, and variable assignments directly in the database. You compile this logic into a Stored Procedure. When executed, the mathematical logic runs directly on the database CPU, touching the physical disk immediately without any network latency.
+
+## 2. Triggers
+PL/pgSQL is most commonly used to write **Triggers**. A Trigger is a mathematical rule that automatically executes a function when a specific event occurs (e.g., `BEFORE INSERT`). This allows database administrators to mathematically enforce complex data integrity rules (like updating an audit log or recalculating a live inventory count) universally, regardless of which backend application is accessing the database.
+

@@ -1,8 +1,30 @@
+---
+title: Pug
+description: A high-performance, indentation-sensitive HTML templating engine for Node.js (formerly known as Jade).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pug">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pug">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Pug (originally named Jade until a trademark dispute) is a templating engine for Node.js that mathematically eliminates the need to write HTML tags and closing brackets, relying entirely on Python-style indentation.
 
-</ConceptTemplate>
+## 1. Indentation as Syntax
+Writing HTML is mathematically redundant. You open a `<div>`, write content, and must remember to close the `</div>`.
+In Pug, you just write the tag name and indent.
+```pug
+div.container
+  h1 Hello World
+  p.description This is Pug.
+```
+The compiler mathematically tracks the indentation levels. When the indentation decreases, it automatically injects the closing HTML tags. This drastically reduces file size and prevents structural HTML errors.
+
+## 2. JavaScript Integration
+Unlike Mustache, Pug is fully programmable. It supports `if`, `else`, `each` loops, and variable interpolation directly, compiling down to a highly optimized JavaScript function that mathematically concatenates strings at blazing speeds.
+

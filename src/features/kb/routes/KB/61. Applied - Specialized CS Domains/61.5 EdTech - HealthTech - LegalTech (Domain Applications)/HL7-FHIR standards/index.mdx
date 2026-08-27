@@ -4,10 +4,16 @@ description: Fast Healthcare Interoperability Resources is a standard describing
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HL7 & FHIR">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HL7 & FHIR">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, if Hospital A mathematically tried to send a patient's record to Hospital B, it biologically failed because Hospital A used XML and Hospital B used CSV.
 
 **FHIR** (Fast Healthcare Interoperability Resources) is the modern mathematical standard that fixes this. It dictates exactly how a biological patient, allergy, or prescription should be mathematically structured in JSON. It provides a standardized REST API, allowing HealthTech apps to instantly and biologically plug into massive hospital databases without writing custom integration code.
 
-</ConceptTemplate>

@@ -1,8 +1,29 @@
+---
+title: Decorator Pattern
+description: A Structural Design Pattern from the Gang of Four (GoF) that mathematically allows behavior to be added to an individual object, dynamically at runtime, without affecting the behavior of other objects from the same class.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Decorator">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Decorator Pattern"
+  subtitle="Dynamic Mathematical Wrapping"
+  tags={['Design Patterns', 'Structural', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a `Coffee` class and you want to add Milk, Sugar, or Vanilla, using mathematical inheritance requires creating `CoffeeWithMilk`, `CoffeeWithMilkAndSugar`, etc. This causes a mathematical explosion of subclasses.
 
-</ConceptTemplate>
+## 1. The Wrapper
+The Decorator pattern solves this using Composition. You create a `CoffeeDecorator` class that mathematically implements the exact same `ICoffee` interface as the base `Coffee` class, but it *also* takes an `ICoffee` object in its constructor (wrapping it).
+
+## 2. Runtime Stacking
+If you create a `MilkDecorator`, its `getCost()` method mathematically executes `return this.wrappedCoffee.getCost() + 0.50;`.
+At runtime, you can instantiate a base `Coffee`, wrap it in a `MilkDecorator`, and then wrap *that* in a `SugarDecorator`.
+The client simply calls `getCost()` on the outermost wrapper. The call mathematically drills down through the layers like a Matryoshka doll, returning the dynamically calculated total, completely bypassing the need for static inheritance. (This is the architectural basis of Java's `InputStream` libraries).
+

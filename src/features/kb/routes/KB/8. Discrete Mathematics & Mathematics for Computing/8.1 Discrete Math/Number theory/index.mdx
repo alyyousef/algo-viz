@@ -1,8 +1,41 @@
+---
+title: Number Theory
+description: "The branch of pure mathematics devoted entirely to the properties of integers (especially primes), historically considered 'useless' until it became the foundation of modern internet security."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Number theory">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Number Theory"
+  subtitle="The Queen of Mathematics"
+  tags={['Mathematics', 'Discrete Math', 'Theory', 'Cryptography']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For 2,000 years, mathematicians studied **Number Theory** (the properties of integers, divisibility, and primes) purely for its own beautiful, abstract sake. In 1940, G.H. Hardy famously boasted that Number Theory was the purest math because it had "no practical application in war or industry."
+Thirty years later, the invention of Public-Key Cryptography transformed Number Theory into the most militarily and economically critical mathematical field on earth.
 
-</ConceptTemplate>
+## 1. The Core Subjects
+Number Theory focuses almost entirely on the Set of Integers ($\mathbb{Z}$). It fundamentally ignores fractions, decimals, and continuous calculus.
+Key concepts include:
+- **Divisibility and Factors**
+- **Prime Numbers and Prime Factorization**
+- **Modular Arithmetic** (Congruences)
+- **Diophantine Equations** (Equations where only integer solutions are allowed).
+
+## 2. The Fundamental Theorem of Arithmetic
+The most critical theorem in Number Theory states that **every integer greater than 1 is either a prime itself, or can be uniquely factored into a product of primes.**
+- Example: $60 = 2^2 \times 3 \times 5$.
+Primes are mathematically the "atoms" of the number system. This unique factorization is the exact mathematical vulnerability that quantum computers (using Shor's Algorithm) exploit to break encryption.
+
+## 3. Euler's Totient Function ($\phi(N)$)
+A massive breakthrough in Number Theory was Euler's Totient function. $\phi(N)$ counts how many integers less than $N$ are co-prime to $N$.
+If $N$ is a prime number $P$, then mathematically: $\phi(P) = P - 1$.
+If $N$ is the product of two primes ($P \times Q$), then mathematically: $\phi(N) = (P-1)(Q-1)$.
+This specific Number Theory equation is the hidden mathematical trapdoor used to generate the private decryption key in RSA.
+

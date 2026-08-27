@@ -1,8 +1,29 @@
+---
+title: RL Agents
+description: The autonomous, decision-making entity in a Reinforcement Learning system that continuously interacts with an environment, mathematically mapping observed states to physical actions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agents">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RL Agents">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An Agent is not just an algorithm; it is an active participant in a mathematical universe (the Environment). It learns not by reading a dataset, but by physical trial and error.
 
-</ConceptTemplate>
+## 1. The State-Action-Reward Loop
+An Agent is forever trapped in a strict mathematical cycle modeled as a **Markov Decision Process (MDP)**.
+At time step $t$:
+1. The Agent receives the current **State ($S_t$)** from the Environment.
+2. The Agent consults its Policy and executes an **Action ($A_t$)**.
+3. The Environment transitions to a new state and returns a **Reward ($R_{t+1}$)** and the new **State ($S_{t+1}$)**.
+This loop is the absolute definition of Reinforcement Learning.
+
+## 2. The Goal: Maximizing Expected Return
+The Agent does not care about immediate gratification; it is mathematically programmed to maximize the **Return ($G_t$)**, which is the total sum of *all future rewards* until the end of the game.
+Because a reward 100 steps in the future is uncertain, the Agent uses a **Discount Factor ($\gamma$)** (usually 0.99). A reward of 10 points today is mathematically worth 10. A reward of 10 points in the future is worth $10 \times 0.99^n$. This mathematical discounting prevents the Agent's equations from spiraling to infinity and forces it to balance short-term survival with long-term strategy.
+

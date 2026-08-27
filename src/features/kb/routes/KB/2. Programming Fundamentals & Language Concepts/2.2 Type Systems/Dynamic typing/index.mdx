@@ -1,8 +1,26 @@
+---
+title: Dynamic Typing
+description: A paradigm where variable types are mathematically determined and checked at runtime rather than during compilation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dynamic typing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dynamic Typing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a Statically Typed language (C, Rust), types are a mathematical constraint enforced by the Compiler before the program ever runs. In a Dynamically Typed language (Python, JavaScript), types are a property of the data in memory, managed entirely by the Runtime Engine.
 
-</ConceptTemplate>
+## 1. Boxed Values
+In C, if you declare `int x = 5`, the compiler mathematically allocates exactly 4 bytes of raw memory. It is purely the number 5.
+In JavaScript, `let x = 5` is a mathematical **Pointer to a Box**. The Box contains the raw number 5, but it also contains hidden metadata (a tag) that mathematically identifies the memory block as a "Number".
+When you reassign `x = "Hello"`, the runtime doesn't overwrite the 4 bytes. It dynamically allocates a brand new String Box on the heap, updates the metadata tag to "String", and repoints the `x` pointer.
+
+## 2. Late Binding
+Because the compiler cannot mathematically prove what type a variable is, all operations use **Late Binding**.
+When Python executes `a + b`, the CPU cannot simply issue an assembly `ADD` instruction. It must mathematically pause, read the metadata tag of `a`, read the metadata tag of `b`, look up the rules for how to combine those two specific types, and *then* execute the logic. This continuous mathematical type-checking on every single line of code is why dynamically typed languages run significantly slower than compiled C or C++ code.
+

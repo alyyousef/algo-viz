@@ -4,7 +4,14 @@ description: Invisible HTML tags stored in the document head that dictate how th
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Metadata & SEO Tags">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Metadata & SEO Tags">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The `<head>` of an HTML document contains data *about* the data (Metadata). This information is invisible to the human user but is critical for Search Engines, Twitter, and Facebook.
 
@@ -25,7 +32,7 @@ When you paste a link into iMessage, Twitter, or Slack, the app instantly displa
 ```
 
 ## Structured Data (Schema.org / JSON-LD)
-To get "Rich Snippets" on Google (e.g., your recipe showing 5-star ratings and cooking time directly in the search results), you must inject mathematical **Structured Data** into the head. 
+To get "Rich Snippets" on Google (e.g., your recipe showing 5-star ratings and cooking time directly in the search results), you must inject mathematical **Structured Data** into the head.
 Today, this is done using JSON-LD (JSON for Linking Data) based on the `Schema.org` standard.
 
 ```html
@@ -39,4 +46,3 @@ Today, this is done using JSON-LD (JSON for Linking Data) based on the `Schema.o
 </script>
 ```
 
-</ConceptTemplate>

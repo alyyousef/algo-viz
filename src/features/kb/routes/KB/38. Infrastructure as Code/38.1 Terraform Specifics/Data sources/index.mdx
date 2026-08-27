@@ -1,8 +1,38 @@
+---
+title: Data Sources
+description: A Terraform mechanism that mathematically allows your configuration to fetch, query, and utilize read-only data defined outside of your immediate Terraform workspace, such as existing cloud infrastructure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data sources">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Data Sources"
+  subtitle="Mathematical Read-Only Queries"
+  tags={['Terraform', 'Configuration', 'Infrastructure', 'Cloud']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Terraform `resource` blocks are mathematically designed to *create, update, or destroy* infrastructure. Terraform `data` blocks are mathematically designed strictly to *read* information about infrastructure that already exists.
 
-</ConceptTemplate>
+## 1. Querying the Cloud
+Imagine your Security team manually created a specific AWS VPC (Virtual Private Cloud) a year ago. You need to deploy a new EC2 server into that exact VPC using Terraform.
+You do not want to hardcode the VPC ID (e.g., `vpc-01a2b3c4`) into your code, because if the ID changes, your code mathematically breaks.
+Instead, you write a Data Source:
+```hcl
+data "aws_vpc" "security_vpc" {
+  tags = {
+    Environment = "Production-Security"
+  }
+}
+```
+When Terraform runs, it makes a mathematical API call to AWS, finds the VPC matching that tag, and pulls its ID into memory.
+
+## 2. Dynamic Interpolation
+Once the Data Source fetches the information, you can mathematically interpolate it into your resources.
+You create your server using `vpc_id = data.aws_vpc.security_vpc.id`. This mathematically decouples your code from static IDs, making your Terraform configuration highly dynamic, reusable, and robust across different environments.
+

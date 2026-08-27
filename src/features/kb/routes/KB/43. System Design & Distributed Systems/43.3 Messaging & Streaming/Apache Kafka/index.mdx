@@ -4,9 +4,16 @@ description: An ultra-high-throughput, distributed event streaming platform used
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Kafka">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Kafka">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A standard message queue (like RabbitMQ) deletes a message the moment a consumer reads it. It is designed for simple task delegation. 
+A standard message queue (like RabbitMQ) deletes a message the moment a consumer reads it. It is designed for simple task delegation.
 **Apache Kafka** is completely different. It is a **Distributed Event Streaming Platform**. It operates like an append-only, immutable database log. When you write a message to Kafka, it stays on the hard drive permanently (or for a configured retention period).
 
 ## 1. The Anatomy of Kafka
@@ -18,11 +25,16 @@ A standard message queue (like RabbitMQ) deletes a message the moment a consumer
 
 ## 2. High Throughput
 
-Kafka is famous for processing millions of messages per second on cheap hardware. It achieves this by bypassing RAM entirely. 
+Kafka is famous for processing millions of messages per second on cheap hardware. It achieves this by bypassing RAM entirely.
 It uses a Linux kernel feature called **Zero-Copy**, moving data directly from the network socket to the hard drive, and directly from the hard drive back to the network socket, utilizing sequential disk I/O which is blazingly fast.
 
+
 <Callout icon="info" title="Kafka vs Traditional Queues">
+
+
   Use RabbitMQ or AWS SQS when you want to execute a specific task exactly once (like sending an email). Use Kafka when you want to broadcast a massive stream of events (like website clicks, IoT sensor data, or financial ticker prices) to multiple different analytical systems simultaneously.
+
+
 </Callout>
 
-</ConceptTemplate>
+

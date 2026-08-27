@@ -4,7 +4,14 @@ description: The mathematical trade-offs between Native performance and Cross-Pl
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Mobile Ecosystem (Native vs Cross-Platform)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Mobile Ecosystem (Native vs Cross-Platform)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Mobile Engineering is fundamentally different from Web Development. A web browser is a relatively safe sandbox, but a mobile application interacts directly with the operating system, device hardware (GPS, Camera, Bluetooth), and has strict limitations on battery usage and memory.
 
@@ -28,4 +35,3 @@ Unlike a website (which is just "open" or "closed"), a mobile OS aggressively ma
 3. **Suspended**: The OS freezes the app in RAM. It consumes zero CPU, but uses memory.
 4. **Terminated (Killed)**: If the user opens a heavy 3D game, the OS will violently kill suspended apps to free up RAM. The app must mathematically save its exact UI state so that when the user reopens it, it appears as if it was never killed.
 
-</ConceptTemplate>

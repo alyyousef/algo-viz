@@ -4,7 +4,7 @@ description: An open-source, cross-platform, language-agnostic package manager a
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Conda"
   subtitle="The Data Science juggernaut"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Conda_logo.svg/512px-Conda_logo.svg.png"
@@ -15,14 +15,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://docs.conda.io/"
 >
 
-Libraries like NumPy, TensorFlow, and PyTorch are not written in pure Python. They are mathematically written in highly optimized C++ and CUDA. 
+Libraries like NumPy, TensorFlow, and PyTorch are not written in pure Python. They are mathematically written in highly optimized C++ and CUDA.
 
 If you use `pip` to install them, you often need the correct C++ compilers installed on your Linux machine to build them. This notoriously fails.
 
+
 <Callout icon="success" title="Pre-Compiled Binaries">
-  Conda bypasses compilers entirely. 
-  
+
+
+  Conda bypasses compilers entirely.
+
   When you run `conda install pytorch`, Conda mathematically identifies your exact OS and CPU architecture and downloads the already-compiled C++ binary directly. Furthermore, Conda is not just a package manager; it is a mathematical environment manager, completely replacing the need for Python's clunky `venv`.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

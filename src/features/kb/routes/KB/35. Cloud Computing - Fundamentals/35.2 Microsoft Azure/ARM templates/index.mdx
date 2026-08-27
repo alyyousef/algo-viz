@@ -1,0 +1,23 @@
+---
+title: Azure Resource Manager (ARM) Templates
+description: The native Infrastructure as Code (IaC) engine for Azure, allowing developers to mathematically define and deploy complex cloud architectures using declarative JSON files.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Resource Manager (ARM) Templates"
+  subtitle="Declarative Azure Infrastructure"
+  tags={['Azure', 'IaC', 'JSON', 'DevOps']}
+>
+
+ARM Templates are Azure's exact equivalent to AWS CloudFormation. Instead of manually clicking in the Azure Portal to create databases and virtual networks, you define the absolute mathematical state of your architecture in JSON.
+
+## 1. Declarative Idempotency
+ARM Templates are strictly **Idempotent**.
+If you run an ARM template that says "Create a Storage Account", Azure creates it. If you run the exact same ARM template again 5 minutes later, Azure mathematically calculates the difference between the template and reality. Because the difference is zero, Azure does absolutely nothing. This guarantees that you can run your deployment pipeline 1,000 times a day safely; it will only execute mathematical changes when the JSON is updated.
+
+## 2. Bicep (The JSON Alternative)
+Writing pure JSON for complex ARM templates is mathematically brutal (requiring massive nested arrays and string-escaped functions).
+To solve this, Microsoft invented **Bicep**, a domain-specific language (DSL). Bicep looks similar to Terraform or TypeScript. You write clean, readable Bicep code, and the compiler mathematically transcompiles it into the massive, ugly ARM JSON required by the Azure APIs. Bicep drastically reduced the cognitive load of managing Azure Infrastructure as Code.
+
+</TechnologyTemplate>

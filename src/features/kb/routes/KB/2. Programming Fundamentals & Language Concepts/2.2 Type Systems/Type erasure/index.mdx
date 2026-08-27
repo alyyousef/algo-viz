@@ -1,8 +1,25 @@
+---
+title: Type Erasure
+description: A compiler technique where generic type information is mathematically verified during compilation but physically deleted before generating the final binary or bytecode.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Type erasure">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Type Erasure">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Type Erasure is the architectural mechanism used by the Java Virtual Machine (JVM) and TypeScript to implement Generics without modifying the underlying runtime engine.
 
-</ConceptTemplate>
+## 1. The Java Implementation
+In Java, if you create a `List<String>`, the compiler rigorously checks your math to ensure you only put Strings in it. However, when compiling to `.class` bytecode, the compiler performs **Type Erasure**. It physically deletes the `<String>` metadata.
+At runtime, the JVM only sees a raw `List` of `Object`. When you call `list.get(0)`, the compiler has silently inserted a mathematical cast (`(String) obj`) into the bytecode.
+
+## 2. Pros and Cons
+- **Pros (Backward Compatibility)**: When Java added Generics in Java 5, they did not have to alter the JVM architecture at all. A `List<String>` compiled exactly the same as a legacy `List` from Java 1.0, allowing old and new code to perfectly interoperate.
+- **Cons (Runtime Blindness)**: Because the type is erased, you mathematically cannot ask the JVM `if (list instanceof List<String>)` at runtime. The JVM has no idea; it only knows it is a `List`. Furthermore, Type Erasure prevents you from mathematically instantiating a generic type directly (e.g., `new T()` is impossible in Java because `T` does not physically exist at runtime).
+

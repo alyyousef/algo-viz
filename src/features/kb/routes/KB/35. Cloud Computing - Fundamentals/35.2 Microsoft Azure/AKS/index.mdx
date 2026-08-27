@@ -1,0 +1,23 @@
+---
+title: Azure Kubernetes Service (AKS)
+description: Microsoft Azure's fully managed container orchestration service, deeply integrated with the Microsoft ecosystem and Active Directory for enterprise-grade Kubernetes deployments.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Kubernetes Service (AKS)"
+  subtitle="Managed Kubernetes on Azure"
+  tags={['Azure', 'Kubernetes', 'Containers', 'Compute']}
+>
+
+While AWS EKS requires you to manually manage many networking and identity integrations, Azure Kubernetes Service (AKS) was mathematically designed to offer a smoother, more highly automated developer experience for deploying upstream Kubernetes.
+
+## 1. The Free Control Plane
+In Kubernetes, the Control Plane (the Master Nodes that run the API and etcd database) is notoriously difficult to manage.
+Like AWS EKS, AKS mathematically abstracts the Control Plane away from you. However, historically, Azure offered the AKS Control Plane entirely for **free** (unlike AWS which charged an hourly fee), only charging you for the physical virtual machines (Worker Nodes) your containers actually consumed. (Azure has since introduced paid SLA tiers, but the free tier remains a massive draw).
+
+## 2. Deep Active Directory Integration
+The strongest mathematical advantage of AKS is its native integration with **Azure Active Directory (Entra ID)**.
+If an enterprise already uses Office 365, all their employee identities are in Active Directory. AKS natively links Kubernetes Role-Based Access Control (RBAC) directly to Active Directory Groups. An administrator does not have to create custom Kubernetes service accounts; they simply decree: *"Any human in the 'Developers' AD Group is mathematically allowed to run `kubectl deploy` in the 'Staging' namespace."* When a developer leaves the company and their AD account is disabled, their Kubernetes access is instantly mathematically revoked.
+
+</TechnologyTemplate>

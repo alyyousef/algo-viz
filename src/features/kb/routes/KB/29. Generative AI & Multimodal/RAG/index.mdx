@@ -1,8 +1,28 @@
+---
+title: Retrieval-Augmented Generation (RAG)
+description: The industry-standard enterprise AI architecture that mathematically prevents LLM hallucinations by forcing the model to explicitly read retrieved, factual documents before answering.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RAG">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Retrieval-Augmented Generation (RAG)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An LLM is a mathematical probability engine, not a database. If you ask it for your company's Q3 revenue, it will hallucinate a highly probable, but factually false, number. RAG solves this.
 
-</ConceptTemplate>
+## 1. The Retrieval Phase (Vector Search)
+Before the LLM is even invoked, RAG mathematically searches your private data.
+1. All your company PDFs are converted into mathematical Vectors (Embeddings) and stored in a Vector Database (like Pinecone).
+2. The user asks: "What is our Q3 revenue?"
+3. The question is vectorized. The database calculates the mathematical Cosine Similarity between the question vector and all document vectors, instantly retrieving the 3 paragraphs that actually contain the Q3 revenue data.
+
+## 2. The Generation Phase (In-Context Learning)
+The system mathematically constructs a massive new Prompt.
+It says: `"You are an AI. Answer the user's question based ONLY on the following context. If the answer is not in the context, say 'I don't know'. CONTEXT: [Pasted Q3 Revenue Paragraphs]. QUESTION: What is our Q3 revenue?"`
+The LLM now acts purely as a reading comprehension engine. It mathematically synthesizes the answer directly from the injected context, guaranteeing absolute factual accuracy and mathematically eliminating hallucination.
+

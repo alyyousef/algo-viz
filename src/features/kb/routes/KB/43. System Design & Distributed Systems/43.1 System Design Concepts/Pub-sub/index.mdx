@@ -4,27 +4,34 @@ description: A messaging pattern where senders (publishers) categorize published
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Publish-Subscribe (Pub/Sub)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Publish-Subscribe (Pub/Sub)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While a Message Queue (like RabbitMQ or SQS) is mathematically designed for **Point-to-Point** task distribution (one message goes to exactly one worker), **Pub/Sub** is designed for **Fan-Out** broadcasting.
 
 In Pub/Sub, a Publisher generates an event and mathematically broadcasts it to a "Topic". Any number of completely independent Microservices (Subscribers) can listen to that Topic and react simultaneously.
 
+
 <Callout icon="tip" title="Ultimate Decoupling">
+
+
   When the `OrderService` publishes a `checkout_complete` event, it has absolutely zero mathematical knowledge of who is listening. The `EmailService` can listen to send a receipt, the `InventoryService` can listen to deduct stock, and the `AnalyticsService` can listen to update a dashboard—all perfectly parallelized.
+
+
 </Callout>
+
 
 ## Pub/Sub Mechanics
 
-<ComparisonTable 
-  headers={['Component', 'Mathematical Role', 'Example']}
-  rows={[
-    ['Topic', 'The central named channel where messages are broadcast.', '`topic/user_signups`'],
-    ['Publisher', 'The system that mathematically generates the data and fires it into the topic.', 'The Frontend Web Server.'],
-    ['Subscriber', 'The system that registers a mathematical interest in a topic. Every subscriber gets a perfect clone of every message.', 'The Welcome Email microservice.']
-  ]}
-/>
+
+<ComparisonTable headers={['Component', 'Mathematical Role', 'Example']} rows={[ ['Topic', 'The central named channel where messages are broadcast.', '`topic/user_signups`'], ['Publisher', 'The system that mathematically generates the data and fires it into the topic.', 'The Frontend Web Server.'], ['Subscriber', 'The system that registers a mathematical interest in a topic. Every subscriber gets a perfect clone of every message.', 'The Welcome Email microservice.'] ]} />
+
 
 *Popular Technologies:* AWS SNS, Google Cloud Pub/Sub, Redis Pub/Sub.
 
-</ConceptTemplate>

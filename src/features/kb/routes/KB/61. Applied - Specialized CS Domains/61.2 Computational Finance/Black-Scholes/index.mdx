@@ -4,14 +4,26 @@ description: A mathematical model for the dynamics of a financial market contain
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Black-Scholes Model">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Black-Scholes Model">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 1973, Fischer Black and Myron Scholes published a mathematical equation that literally revolutionized global finance, ultimately winning a Nobel Prize.
 
+
 <Callout icon="success" title="Pricing the Future">
+
+
   The **Black-Scholes equation** mathematically calculates the exact, fair biological price of a European Call Option (a contract to buy a stock in the future).
-  
+
   Before this equation, options trading was basically biological gambling. Black-Scholes proved that by mathematically combining the current stock price, the strike price, the time to expiration, the risk-free interest rate, and the stock's volatility, you can eliminate risk entirely through dynamic hedging. It is the mathematical foundation of the multi-trillion-dollar derivatives market.
+
+
 </Callout>
 
-</ConceptTemplate>
+

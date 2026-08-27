@@ -1,8 +1,30 @@
+---
+title: Event-Driven Architecture (EDA)
+description: A distributed architectural pattern where system components mathematically decouple by communicating exclusively through the asynchronous production, detection, and consumption of state-change events.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Event-driven architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Event-Driven Architecture (EDA)"
+  subtitle="Asynchronous System Decoupling"
+  tags={['Architecture', 'Distributed Systems', 'Microservices', 'Messaging']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a synchronous Request-Response architecture (like REST), if the "Order Service" needs to tell the "Shipping Service" to ship a package, it makes an HTTP call. If the Shipping Service is offline, the Order Service mathematically crashes.
 
-</ConceptTemplate>
+## 1. The Event Broker
+Event-Driven Architecture (EDA) breaks this mathematical coupling.
+When an order is placed, the Order Service does not call the Shipping Service. Instead, it emits a mathematical fact (an Event) to a central **Event Broker** (like Apache Kafka or RabbitMQ): `{ type: "OrderPlaced", id: 123 }`.
+The Order Service's job is mathematically complete. It does not care who is listening.
+
+## 2. Asynchronous Consumption
+The Shipping Service, the Analytics Service, and the Billing Service are all mathematically subscribed to the Broker.
+They consume the `OrderPlaced` event asynchronously. If the Shipping Service is offline, Kafka mathematically holds the event safely on disk. When the Shipping Service boots back up, it pulls the event and processes it. EDA provides ultimate mathematical resilience, as the producer and the consumers are totally isolated in both time and space.
+

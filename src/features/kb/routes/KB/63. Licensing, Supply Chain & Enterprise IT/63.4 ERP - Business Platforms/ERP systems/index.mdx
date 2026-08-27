@@ -4,10 +4,16 @@ description: Enterprise resource planning is the integrated management of main b
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Enterprise Resource Planning (ERP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Enterprise Resource Planning (ERP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **ERP** is the most mathematically terrifying and biologically critical piece of software on Earth.
 
 If a company manufactures cars, the ERP is the single monolithic mathematical database that connects the biological assembly line, the HR payroll system, the supply chain logistics, and the Wall Street accounting ledgers. If the ERP mathematically crashes, the biological factory instantly stops producing cars, the trucks stop moving, and the company loses millions of dollars per minute.
 
-</ConceptTemplate>

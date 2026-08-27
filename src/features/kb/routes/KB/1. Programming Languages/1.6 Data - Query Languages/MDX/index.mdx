@@ -1,8 +1,28 @@
+---
+title: MDX
+description: MultiDimensional eXpressions, the query language used to mathematically slice, dice, and query complex OLAP Data Cubes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MDX">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="MDX (MultiDimensional eXpressions)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Microsoft in 1997 for SQL Server Analysis Services, MDX is a query language designed specifically for **OLAP (Online Analytical Processing) Cubes**.
 
-</ConceptTemplate>
+## 1. Multidimensional Mathematics
+SQL is mathematically designed to query two-dimensional tables (Rows and Columns).
+MDX is designed to query N-dimensional mathematical Cubes.
+If a corporation has data categorized by Time, Geography, Product, and Salesperson, that data mathematically exists in a 4-dimensional hypercube. MDX allows an analyst to mathematically "slice" this cube (e.g., locking Time to 2023) and "dice" it (e.g., looking at Geography vs Product) instantly, because the cube has pre-calculated the mathematical intersections.
+
+## 2. Tuples and Sets
+The fundamental mathematical units of MDX are not rows, but Tuples and Sets.
+- A **Tuple** defines a specific, multidimensional intersection in the cube: `([Geography].[City].[New York], [Time].[Year].[2023])`.
+- A **Set** is an ordered mathematical collection of Tuples.
+While the syntax resembles SQL (`SELECT ... FROM ... WHERE`), the mathematical execution is entirely different. An MDX query does not scan tables; it mathematically maps geometric coordinates on the cube to return pre-aggregated numerical values.
+

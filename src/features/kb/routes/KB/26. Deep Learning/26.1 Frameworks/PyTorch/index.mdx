@@ -8,21 +8,21 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 PyTorch is a machine learning library based on the Torch library, used for applications such as computer vision and natural language processing. Originally developed by Meta AI (formerly Facebook AI Research), it is now part of the Linux Foundation.
 
+
 <Callout icon="info" title="Dynamic Computational Graph">
+
+
   Unlike older versions of TensorFlow which used a static graph, PyTorch utilizes a **Dynamic Computational Graph** (define-by-run). This means the graph is built on-the-fly as operations are executed, making debugging much easier and allowing for dynamic control flow (standard Python loops and if statements).
+
+
 </Callout>
+
 
 ## PyTorch vs TensorFlow
 
-<ComparisonTable 
-  headers={['Feature', 'PyTorch', 'TensorFlow']}
-  rows={[
-    ['Graph Type', 'Dynamic (Define-by-run)', 'Static (historically) / Dynamic (TF 2.x)'],
-    ['Target Audience', 'Researchers, Academia', 'Industry, Production Deployment'],
-    ['Deployment Tools', 'TorchServe (getting better)', 'TFX, TensorFlow Serving (highly mature)'],
-    ['Primary Language', 'Pythonic and intuitive', 'Has a steeper learning curve without Keras']
-  ]}
-/>
+
+<ComparisonTable headers={['Feature', 'PyTorch', 'TensorFlow']} rows={[ ['Graph Type', 'Dynamic (Define-by-run)', 'Static (historically) / Dynamic (TF 2.x)'], ['Target Audience', 'Researchers, Academia', 'Industry, Production Deployment'], ['Deployment Tools', 'TorchServe (getting better)', 'TFX, TensorFlow Serving (highly mature)'], ['Primary Language', 'Pythonic and intuitive', 'Has a steeper learning curve without Keras'] ]} />
+
 
 ## Tensor Basics
 

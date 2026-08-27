@@ -4,21 +4,33 @@ description: A terminal multiplexer for Unix-like operating systems. It allows m
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="tmux (Terminal Multiplexer)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="tmux (Terminal Multiplexer)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you SSH into a remote Linux server and start a massive 10-hour database migration, what happens if your laptop's WiFi drops for 1 second? 
+If you SSH into a remote Linux server and start a massive 10-hour database migration, what happens if your laptop's WiFi drops for 1 second?
 The SSH connection breaks, the Bash session is mathematically terminated by the Linux kernel, and your 10-hour migration instantly dies.
 
 This is solved by **tmux**.
 
+
 <Callout icon="success" title="The Detachable Session">
-  When you run `tmux`, it mathematically creates a virtual terminal session running in the background of the server. 
-  
+
+
+  When you run `tmux`, it mathematically creates a virtual terminal session running in the background of the server.
+
   If your WiFi drops, the SSH connection dies, but the `tmux` session continues running safely on the server. When you reconnect, you simply type `tmux attach`, and you are mathematically dropped right back into the exact same screen, with your migration still running perfectly.
+
+
 </Callout>
+
 
 ## Window Splitting (Panes)
 
 Beyond safety, tmux is a window manager for the terminal. It allows you to mathematically split a single black terminal screen into 4 distinct physical panes (e.g., one pane running the Node.js server, one running a Docker log tail, one running `htop`, and one running Vim). You navigate between them entirely using the keyboard (Prefix: `Ctrl+B`).
 
-</ConceptTemplate>

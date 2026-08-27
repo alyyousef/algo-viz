@@ -4,7 +4,14 @@ description: The quintessential Unix mechanism allowing the output of one progra
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pipes (|)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pipes (|)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The core philosophy of Unix, pioneered in 1973, is: *"Write programs that do one thing and do it well. Write programs to work together."*
 
@@ -16,17 +23,22 @@ When you use a Pipe, the Shell intercepts the **Standard Output (stdout)** of th
 
 - **`cat access.log | grep "404"`**: The `cat` command spits out 10,000 lines of text. The Pipe catches it and forces it into `grep`, which filters it down to only the 404 errors.
 
+
 <Callout icon="success" title="Infinite Chaining">
+
+
   You can chain as many pipes together as you want, building massive, complex data processing pipelines directly in the terminal:
-  
+
   `cat access.log | grep "404" | awk '{print $1}' | sort | uniq -c | sort -nr | head -n 5`
-  
+
   This single command reads a log, finds all errors, extracts the IP addresses, counts them, sorts them by the worst offenders, and displays the top 5 hackers.
+
+
 </Callout>
 
+
 ## The xargs Command
-Some older programs (like `rm`) do not know how to read data from Standard Input (a Pipe). 
+Some older programs (like `rm`) do not know how to read data from Standard Input (a Pipe).
 To fix this, you use the **`xargs`** utility. `xargs` catches the piped data and dynamically converts it into command-line arguments.
 For example: `find . -name "*.tmp" | xargs rm`
 
-</ConceptTemplate>

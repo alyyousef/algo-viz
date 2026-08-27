@@ -4,10 +4,17 @@ description: A technology that logically splits a single physical switch into mu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="VLAN (Virtual LAN)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="VLAN (Virtual LAN)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Imagine an enterprise office with 100 employees: 50 in HR, and 50 in Engineering. 
-For security, HR computers should never be able to talk to Engineering computers. 
+Imagine an enterprise office with 100 employees: 50 in HR, and 50 in Engineering.
+For security, HR computers should never be able to talk to Engineering computers.
 
 Historically, you would have to buy two physical Switches and run two completely separate wiring infrastructures. **VLANs (Virtual Local Area Networks - IEEE 802.1Q)** solve this in software.
 
@@ -26,8 +33,13 @@ What if the HR department spans across three different floors, using three diffe
 You use a **Trunk Port**.
 A Trunk is a single physical cable connecting two switches. When data leaves a switch via a Trunk, the switch forcibly injects a **4-byte VLAN Tag** into the middle of the Ethernet frame. The receiving switch reads the tag (e.g., "This data belongs to VLAN 10"), strips the tag off, and forwards the data to the correct HR computer.
 
+
 <Callout icon="info" title="Inter-VLAN Routing">
+
+
   VLANs provide perfect Layer 2 isolation. If a manager in HR legitimately needs to send a file to Engineering, they cannot do it through the switch. The traffic must be sent up to a **Layer 3 Router** (often using a "Router on a Stick" topology or a Layer 3 Switch). The router inspects the IP addresses, applies firewall rules, and routes the traffic down into the other VLAN.
+
+
 </Callout>
 
-</ConceptTemplate>
+

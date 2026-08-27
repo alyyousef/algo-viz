@@ -1,8 +1,25 @@
+---
+title: Lifetimes
+description: The strict mathematical rules defining the exact duration that a specific piece of data is guaranteed to exist safely in memory.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lifetimes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lifetimes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In memory management, a Lifetime is the mathematical duration between the exact CPU cycle a memory block is Allocated, and the exact CPU cycle it is Deallocated (freed).
 
-</ConceptTemplate>
+## 1. Stack Lifetimes
+Variables allocated on the Stack have mathematically deterministic lifetimes.
+When the CPU enters a function, it pushes a Stack Frame (Allocation). When the CPU hits the `return` statement, it pops the Stack Frame (Deallocation). The Lifetime of all local variables is strictly mathematically bound to the duration of that function call.
+
+## 2. Heap Lifetimes and Rust
+Variables allocated on the Heap do not have deterministic lifetimes; they live until they are manually freed. If you free them too early and try to read them, you mathematically cause a Use-After-Free crash.
+Rust mathematically solved this by introducing **Explicit Lifetimes** into the compiler syntax (e.g., `<'a>`). The Rust compiler's Borrow Checker mathematically analyzes the Abstract Syntax Tree and proves that no Pointer can ever outlive the data it points to. It mathematically refuses to compile the code if there is even a theoretical possibility of a Lifetime mismatch, guaranteeing 100% memory safety without a Garbage Collector.
+

@@ -1,8 +1,35 @@
+---
+title: Function Calling (Tool Use)
+description: The strict mathematical protocol allowing Large Language Models to deterministically request the execution of predefined external code functions, acting as the foundation of all AI Agents.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Function calling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Function Calling">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+LLMs are mathematically trained to generate human language. Getting them to generate a perfectly formatted, syntactically flawless JSON object to trigger an API was historically very difficult. OpenAI solved this mathematically at the API level with Function Calling.
 
-</ConceptTemplate>
+## 1. The JSON Schema Definition
+When calling the LLM API, the developer passes a mathematical **Schema** defining the available tools.
+```json
+{
+  "name": "get_weather",
+  "description": "Get current temperature",
+  "parameters": {
+    "type": "object",
+    "properties": { "location": { "type": "string" } }
+  }
+}
+```
+The LLM is mathematically fine-tuned to recognize these schemas. If the user asks, "Is it hot in Tokyo?", the LLM calculates that answering with text is mathematically less optimal than triggering the function.
+
+## 2. Deterministic Interception
+The LLM does *not* execute the function. It mathematically stops generating text and outputs a strict JSON payload: `{"name": "get_weather", "arguments": {"location": "Tokyo"}}`.
+The developer's server intercepts this payload, physically executes the `get_weather()` Python code, and sends the integer `32` back to the LLM. Only then does the LLM mathematically resume text generation, combining the physical data (32) with natural language to say, *"It is currently 32 degrees in Tokyo."*
+

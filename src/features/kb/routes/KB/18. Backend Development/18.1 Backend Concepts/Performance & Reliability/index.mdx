@@ -4,14 +4,21 @@ description: The architectural strategies required to ensure a backend survives 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Performance & Reliability">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Performance & Reliability">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Building a backend that works for 1 user is easy. Building a backend that survives 100,000 users hitting it simultaneously requires mathematical defenses.
 
 ## 1. Caching
 Fetching data from a PostgreSQL database on a hard drive is slow.
 **Caching** is the strategy of storing the result of an expensive database query in **RAM** (Random Access Memory).
-**Redis** is the industry standard for this. It is an in-memory key-value store. 
+**Redis** is the industry standard for this. It is an in-memory key-value store.
 When a user requests the homepage leaderboard:
 1. Backend checks Redis. (1 millisecond response).
 2. If Redis is empty (Cache Miss), Backend queries PostgreSQL (50 milliseconds).
@@ -23,7 +30,7 @@ Without rate limiting, a malicious attacker (or a buggy frontend infinite loop) 
 Rate Limiting (often implemented in Redis or at the API Gateway) mathematically limits a specific IP address or User ID to a maximum number of requests (e.g., 100 requests per minute). If they exceed it, the server instantly returns an HTTP `429 Too Many Requests`.
 
 ## 3. Structured Logging
-When a backend crashes in Production, you cannot use `console.log()` or attach a debugger. 
+When a backend crashes in Production, you cannot use `console.log()` or attach a debugger.
 You must implement **Structured Logging**. Instead of printing text, the server prints JSON objects for every significant event.
 
 ```json
@@ -32,4 +39,3 @@ You must implement **Structured Logging**. Instead of printing text, the server 
 
 These JSON logs are ingested by observability platforms (like Datadog, ELK Stack, or Splunk). Because they are structured as JSON, engineers can execute massive SQL-like queries to instantly find exactly how many users experienced a payment failure in the last hour.
 
-</ConceptTemplate>

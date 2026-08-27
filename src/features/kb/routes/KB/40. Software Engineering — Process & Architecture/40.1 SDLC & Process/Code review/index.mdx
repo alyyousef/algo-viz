@@ -1,8 +1,30 @@
+---
+title: Code Review
+description: A mandatory mathematical and psychological quality-gate in the Software Development Life Cycle where peer engineers rigorously scrutinize newly written code for bugs, architectural flaws, and security vulnerabilities before it merges into production.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Code review">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Code Review"
+  subtitle="The Peer-Driven Quality Gate"
+  tags={['Process', 'Quality Assurance', 'Git', 'Security']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+No matter how brilliant a software engineer is, they mathematically possess blind spots. They will accidentally write O(N^2) algorithms, forget to close database connections, or expose an API route without authentication. Code Review is the structural defense against human error.
 
-</ConceptTemplate>
+## 1. The Pull Request (PR)
+In modern SDLC (Software Development Life Cycle), Code Review is enforced via the **Pull Request** (or Merge Request).
+The developer writes their code on an isolated Git branch. They cannot push this branch directly to the `main` production branch; the Git server mathematically rejects it. They must open a PR.
+The CI/CD pipeline runs automated tests, but the actual merge is physically blocked until at least one (often two) senior peer engineers mathematically review the diff, highlight architectural flaws, and click "Approve."
+
+## 2. Psychological Safety
+Code Review is not a mathematical compiler; it is a human interaction.
+If reviews are used to mock or punish junior developers, the organization's culture will collapse. Strict engineering guidelines mandate that code reviews must focus on the code, not the coder. Reviews should rely on automated linters (like ESLint or SonarQube) to argue about syntax, freeing the human reviewers to focus strictly on high-level mathematical logic, business requirements, and architectural integrity.
+

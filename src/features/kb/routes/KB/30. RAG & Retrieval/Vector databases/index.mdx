@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Vector Databases
+description: Highly specialized, mathematically optimized database architectures designed exclusively to store, index, and rapidly search massive, high-dimensional floating-point arrays (Embeddings).
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Vector databases">
+<TechnologyTemplate
+  title="Vector Databases"
+  subtitle="The Storage Engine of AI"
+  tags={['Database', 'AI', 'Embeddings', 'Infrastructure']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You cannot store 1,536-dimensional arrays in a standard PostgreSQL table and expect to search them quickly. To find the Cosine Similarity of 1 billion vectors, a CPU would have to perform 1.5 trillion math operations for every single search query. Vector Databases solve this using Approximate Nearest Neighbor (ANN) algorithms.
 
-</ConceptTemplate>
+## 1. HNSW (Hierarchical Navigable Small World)
+The industry-standard algorithm for Vector indexing is HNSW.
+Instead of mathematically comparing the Query Vector to all 1 billion Database Vectors (k-NN), HNSW builds a mathematical graph with multiple layers.
+The top layer contains only a few, highly scattered "Highway" nodes. The query mathematically drops into the top layer, rapidly moving toward the closest Highway node. It then drops to a lower, denser layer, refining its search, until it reaches the bottom layer. This hierarchical graph traversal reduces the search time from $O(N)$ (scanning everything) to $O(\log N)$, returning results in milliseconds.
+
+## 2. Production Systems
+Purpose-built Vector Databases (like Pinecone, Milvus, and Qdrant) are engineered specifically to manage these massive HNSW graphs in RAM.
+They also solve the **Metadata Filtering** problem. If a user searches for a vector but adds a SQL constraint (`WHERE date > 2023`), standard HNSW graphs break. Modern Vector DBs use mathematical "pre-filtering" or "post-filtering" architectures to seamlessly blend exact relational logic with high-dimensional geometric searches.
+
+</TechnologyTemplate>

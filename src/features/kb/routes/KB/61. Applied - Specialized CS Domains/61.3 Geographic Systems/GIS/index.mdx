@@ -4,10 +4,16 @@ description: A conceptualized framework that provides the ability to capture and
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GIS (Geographic Information System)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GIS (Geographic Information System)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **GIS** is the computer science of mathematically mapping the biological Earth.
 
 It is vastly more complex than just drawing a Google Map. GIS involves layering massive, disparate datasets—mathematically combining road networks, biological population density, elevation topography, and real-time weather data. City planners use GIS software (like ArcGIS or QGIS) to mathematically calculate the optimal location to build a new hospital based on 30 different geographic variables.
 
-</ConceptTemplate>

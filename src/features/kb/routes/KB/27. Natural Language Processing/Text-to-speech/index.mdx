@@ -1,8 +1,26 @@
+---
+title: Text-to-Speech (TTS)
+description: The highly complex AI process of mathematically synthesizing human-like acoustic waveforms from raw text, accounting for emotion, cadence, and pronunciation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Text-to-speech">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Text-to-Speech">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Early TTS systems (like Microsoft Sam) were mathematically primitive. They simply took pre-recorded audio snippets of human phonemes and violently concatenated them together, resulting in a robotic, soulless voice. Modern TTS mathematically synthesizes the audio from scratch.
 
-</ConceptTemplate>
+## 1. Text Normalization and Grapheme-to-Phoneme
+First, the AI must mathematically normalize the text. If it sees "I owe him $5", it must convert it to "I owe him five dollars."
+Next, it uses a Grapheme-to-Phoneme (G2P) mathematical model. It translates English letters (which have terrible, inconsistent spelling rules) into absolute phonetic representations (e.g., the International Phonetic Alphabet), ensuring the AI knows exactly how the word physically sounds.
+
+## 2. The Mel-Spectrogram and Vocoder
+The AI does not mathematically generate audio directly.
+It uses a Sequence-to-Sequence neural network (like Tacotron 2) to translate the Phonemes into a **Mel-Spectrogram** (a visual, mathematical image of what the audio frequencies should look like).
+Finally, a massive Neural Vocoder (like DeepMind's WaveNet) takes that mathematical image and mathematically calculates the exact physical air pressure amplitude required for every single audio sample (44,100 times a second), producing indistinguishable-from-human speech.
+

@@ -4,26 +4,38 @@ description: The massively popular package manager powering Debian, Ubuntu, and 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="apt (Advanced Package Tool)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="apt (Advanced Package Tool)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you have ever used Ubuntu, Linux Mint, or a Raspberry Pi, you have used **APT (Advanced Package Tool)**. 
+If you have ever used Ubuntu, Linux Mint, or a Raspberry Pi, you have used **APT (Advanced Package Tool)**.
 Built by the Debian project, APT changed the Linux world by being one of the first systems to automatically download and install software dependencies over the internet.
 
 Under the hood, Debian software is distributed as `.deb` files. The low-level `dpkg` tool actually installs the files, while `apt` handles the high-level logic of contacting remote servers and calculating dependencies.
 
 ## The Two-Step Update Process
 
-Unlike Windows, `apt` does not constantly poll servers in the background. It relies on a local database (cache) of available software stored on your hard drive. 
+Unlike Windows, `apt` does not constantly poll servers in the background. It relies on a local database (cache) of available software stored on your hard drive.
 
 Therefore, installing software is always a two-step process:
 1. **`sudo apt update`**: Reaches out to the Ubuntu servers, downloads the newest list of available software, and updates the local cache. (This does NOT install anything).
 2. **`sudo apt upgrade`**: Compares your installed software against the newly downloaded list, and physically downloads/installs the newer versions.
 
+
 <Callout icon="info" title="apt vs apt-get">
+
+
   For decades, the command was `apt-get`. In 2014, Debian released the `apt` command, which is a wrapper that combines `apt-get` and `apt-cache` into a single, user-friendly tool that features a colorful progress bar. While `apt` is perfect for humans, it explicitly warns you not to use it in automated Bash scripts, where the older, stable `apt-get` is still required.
+
+
 </Callout>
+
 
 ## PPA Repositories
 Because Debian values extreme stability, software in the official `apt` repositories is often years out of date. Ubuntu solved this by introducing **PPAs (Personal Package Archives)**, allowing developers to host their own third-party `apt` repositories, enabling users to easily install cutting-edge software.
 
-</ConceptTemplate>

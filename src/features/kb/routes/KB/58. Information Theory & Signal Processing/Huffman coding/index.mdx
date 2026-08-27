@@ -4,14 +4,26 @@ description: An optimal prefix code commonly used for lossless data compression.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Huffman Coding">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Huffman Coding">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In standard ASCII, every letter mathematically takes exactly 8 bits. The letter 'e' (used constantly) takes 8 bits. The letter 'z' (rarely used) takes 8 bits. This is mathematically inefficient.
 
+
 <Callout icon="success" title="Variable-Length Prefix Codes">
+
+
   Invented in 1952, **Huffman Coding** biologically counts how often every letter appears in a specific file.
-  
+
   It then builds a mathematical binary tree. It assigns extremely short codes to common letters (e.g., 'e' becomes just `01`, 2 bits), and extremely long codes to rare letters (e.g., 'z' becomes `110101`, 6 bits). Because common letters are now tiny, the overall file size drastically mathematically shrinks. This algorithm is the biological foundation of almost all modern compression (including ZIP and MP3).
+
+
 </Callout>
 
-</ConceptTemplate>
+

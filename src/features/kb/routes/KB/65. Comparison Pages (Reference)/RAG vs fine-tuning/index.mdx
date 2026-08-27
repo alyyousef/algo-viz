@@ -1,8 +1,31 @@
+---
+title: RAG vs Fine-Tuning
+description: "A comparison of two fundamental methods for teaching Large Language Models new information: permanently altering the model's mathematical weights (Fine-Tuning) versus injecting context dynamically via search (RAG)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RAG vs fine-tuning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="RAG vs Fine-Tuning"
+  subtitle="Customizing Large Language Models"
+  tags={['Comparison', 'Machine Learning', 'AI', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a massive internal database of corporate documents and want an LLM (like ChatGPT) to answer questions about them, you face a massive architectural decision.
 
-</ConceptTemplate>
+## 1. Fine-Tuning
+- **Mechanism**: You take your documents, convert them into Q&A pairs, and run a mathematical training algorithm (like Backpropagation or LoRA) to permanently alter the physical weights (parameters) inside the Neural Network.
+- **Pros**: The model mathematically learns the "tone" and "style" of your company. It becomes natively fluent in your specific domain vocabulary.
+- **Cons**: Mathematically terrible for memorizing exact facts. The LLM will still hallucinate. If a document changes tomorrow, you must re-train the entire model. Training requires massive GPU computing power.
+
+## 2. RAG (Retrieval-Augmented Generation)
+- **Mechanism**: The LLM's weights are completely untouched. Instead, you mathematically convert your documents into Vectors and store them in a Vector Database (like Pinecone). When a user asks a question, you perform a similarity search, retrieve the 3 most relevant paragraphs, and paste them into the LLM's prompt: *"Answer the user's question using only this context: [Paragraphs]"*.
+- **Pros**: Zero hallucinations (the model is strictly constrained to the provided context). Instant updates (if a document changes, you just update the database). Mathematically requires zero GPU training.
+- **The Verdict**: Use Fine-Tuning to teach a model *how* to speak (tone, formatting, logic). Use RAG to teach a model *what* to say (facts, dynamic knowledge). Most enterprise systems use both.
+

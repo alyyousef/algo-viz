@@ -1,8 +1,30 @@
+---
+title: GitOps
+description: An operational framework where a Git repository serves as the absolute, single mathematical source of truth for declarative infrastructure and applications, relying on automated reconciliation loops.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitOps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="GitOps"
+  subtitle="Infrastructure via Pull Requests"
+  tags={['DevOps', 'GitOps', 'Kubernetes', 'Automation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+GitOps is the mathematical evolution of Infrastructure as Code. In traditional DevOps, an engineer runs `kubectl apply` or `terraform apply` from their laptop or a CI server to push changes to the cluster. This "Push" model is a security risk and can lead to configuration drift.
 
-</ConceptTemplate>
+## 1. The Pull-Based Reconciliation Loop
+In GitOps (pioneered by Weaveworks), the cluster itself reaches out to Git.
+You install a software agent (like ArgoCD or Flux) *inside* your Kubernetes cluster. You configure the agent with a mathematical rule: *"Your desired state is defined in this specific Git repository."*
+The agent continuously polls Git. If a developer merges a Pull Request changing the deployment replica count from 3 to 5, the agent mathematically detects the drift between Git (Desired State) and the Cluster (Actual State). It automatically "pulls" the changes and modifies the cluster to match Git.
+
+## 2. Security and Auditability
+GitOps mathematically removes human access to production.
+No engineer has SSH access. No engineer has the Kubernetes Admin password. If an engineer wants to scale up a server, they must open a Git Pull Request. This mathematically forces all infrastructure changes to undergo peer review, CI testing, and leaves a perfect, immutable Git commit log for security auditors.
+

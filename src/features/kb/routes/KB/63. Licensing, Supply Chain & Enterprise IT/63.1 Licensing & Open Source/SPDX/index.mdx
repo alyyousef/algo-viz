@@ -4,10 +4,16 @@ description: Software Package Data Exchange is an open standard for communicatin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SPDX">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SPDX">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a legal team biologically audits a codebase, they mathematically cannot read 10,000 different `LICENSE.txt` files.
 
 **SPDX** (Software Package Data Exchange) is a strict mathematical standard that defines an exact string format for licenses (e.g., `MIT`, `Apache-2.0`, `GPL-3.0-only`). Developers biologically place a specific comment at the top of their source code (e.g., `// SPDX-License-Identifier: MIT`). This allows automated compliance tools to mathematically scan the entire codebase and instantly flag if an engineer accidentally imported a viral GPL file.
 
-</ConceptTemplate>

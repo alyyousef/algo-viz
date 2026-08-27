@@ -1,8 +1,37 @@
+---
+title: Brainfuck
+description: An infamous esoteric programming language famous for extreme minimalism, using exactly 8 commands to create Turing-complete chaos.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Brainfuck">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Brainfuck">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1993 by Urban Müller, Brainfuck is the most famous "Esoteric Programming Language" (esolang) in existence. It was designed purely to challenge and amuse programmers, with the specific goal of having the smallest possible compiler in the world (the original was 296 bytes).
 
-</ConceptTemplate>
+## 1. The Turing Machine Architecture
+Brainfuck operates on a mathematically pure Turing Machine model.
+It provides an array of 30,000 bytes, all initialized to zero, and a single data pointer.
+
+There are exactly 8 commands in the entire language:
+- `>` : Move pointer right.
+- `<` : Move pointer left.
+- `+` : Increment the byte at the pointer.
+- `-` : Decrement the byte at the pointer.
+- `.` : Output the byte at the pointer (as an ASCII character).
+- `,` : Accept one byte of input, storing it at the pointer.
+- `[` : Jump forward to the matching `]` if the byte at the pointer is zero.
+- `]` : Jump backward to the matching `[` if the byte at the pointer is non-zero.
+
+## 2. Hello World
+Because there are no strings or numbers, printing "Hello World" requires mathematically calculating the exact ASCII integer values (72 for 'H', 101 for 'e') by looping increments.
+```brainfuck
+++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.
+```
+

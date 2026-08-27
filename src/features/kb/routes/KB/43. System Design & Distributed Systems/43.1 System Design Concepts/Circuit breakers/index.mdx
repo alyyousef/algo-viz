@@ -4,27 +4,34 @@ description: A design pattern used in software architecture to prevent an applic
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Circuit Breakers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Circuit Breakers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a microservices architecture, if Service A calls Service B, and Service B is mathematically dead, Service A will sit there waiting for a network timeout (e.g., 30 seconds). If 1,000 users hit Service A, it will open 1,000 pending connections to Service B, exhausting its own RAM and causing Service A to crash as well. This is known as a **Cascading Failure**.
 
 The **Circuit Breaker** pattern mathematically prevents this by monitoring failure rates and instantly "tripping" to cut off the connection before the entire system melts down.
 
+
 <Callout icon="success" title="The Fail-Fast Philosophy">
+
+
   Instead of waiting 30 seconds for a guaranteed timeout, an open Circuit Breaker instantly returns an error (or a cached fallback response) in 1 millisecond. This saves Service A's resources and gives Service B time to recover.
+
+
 </Callout>
+
 
 ## The Three Mathematical States
 
 A Circuit Breaker operates exactly like an electrical breaker in your house:
 
-<ComparisonTable 
-  headers={['State', 'Mechanism', 'Action Taken']}
-  rows={[
-    ['CLOSED', 'Everything is healthy. The failure rate is below the mathematical threshold (e.g., < 5%).', 'Requests pass through normally.'],
-    ['OPEN', 'Failures spiked above the threshold. The circuit is mathematically broken.', 'Requests instantly fail without ever touching the network. Service A returns a fallback UI to the user.'],
-    ['HALF-OPEN', 'After a timeout period (e.g., 60 seconds), the breaker allows *exactly one* test request through.', 'If it succeeds, the breaker resets to CLOSED. If it fails, it snaps back to OPEN immediately.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['State', 'Mechanism', 'Action Taken']} rows={[ ['CLOSED', 'Everything is healthy. The failure rate is below the mathematical threshold (e.g., &lt; 5%).', 'Requests pass through normally.'], ['OPEN', 'Failures spiked above the threshold. The circuit is mathematically broken.', 'Requests instantly fail without ever touching the network. Service A returns a fallback UI to the user.'], ['HALF-OPEN', 'After a timeout period (e.g., 60 seconds), the breaker allows *exactly one* test request through.', 'If it succeeds, the breaker resets to CLOSED. If it fails, it snaps back to OPEN immediately.'] ]} />
+
+

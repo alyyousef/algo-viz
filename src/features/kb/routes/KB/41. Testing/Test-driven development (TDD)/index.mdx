@@ -5,7 +5,14 @@ description: "A software development process where developers write the automate
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Test-Driven Development (TDD)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Test-Driven Development (TDD)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Test-Driven Development (TDD)** flips the traditional development process upside down. Instead of writing code and then writing tests to verify it, you write the test first, watch it fail, and then write the minimum amount of code required to make it pass.
 
@@ -21,8 +28,13 @@ TDD is driven by a strict, repetitive three-step cycle:
 - **YAGNI (You Aren't Gonna Need It)**: Because you only write code to make a failing test pass, TDD prevents you from over-engineering features that the requirements didn't ask for.
 - **Fearless Refactoring**: The test suite grows organically with the codebase, providing a 100% reliable safety net for future changes.
 
+
 <Callout icon="warning" title="The TDD Learning Curve">
+
+
 TDD is notoriously difficult for beginners to adopt. It feels counter-intuitive and significantly slows down initial development speed. However, advocates argue that the time lost writing tests upfront is paid back tenfold by preventing long debugging sessions and regressions in the future.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,25 @@
+---
+title: Episodic Memory in Agents
+description: The architectural mechanism allowing AI Agents to mathematically record, index, and retrieve specific past events and actions, preventing them from repeating identical logic errors.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="episodic)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Episodic Memory in Agents">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a human burns their hand on a stove, they remember the *episode* and never do it again. If an LLM Agent crashes a server using a bad SQL query, and its context window is cleared, it will mathematically execute the exact same bad query again. Episodic Memory solves this.
 
-</ConceptTemplate>
+## 1. The Experience Buffer
+Instead of just executing a ReAct loop (Thought $\rightarrow$ Action $\rightarrow$ Observation) and throwing the data away, the Agent mathematically serializes the entire "Episode" into a JSON object and saves it to a persistent Vector Database.
+This Episode includes the Initial Goal, the exact Sequence of Tools used, and the Final Outcome (Success/Failure).
+
+## 2. Reflection and Retrieval
+Before the Agent tackles a new task, it mathematically embeds the new task into a Vector and queries its Episodic Memory.
+If it finds a mathematically similar past Episode that resulted in Failure, the Agent's System Prompt dynamically injects a **Reflection**: *"Last time you tried this, it failed because of a syntax error. Do not use that approach."* By maintaining a persistent, searchable database of its own mathematical failures and successes, the Agent exhibits true long-term learning across isolated sessions.
+

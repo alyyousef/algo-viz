@@ -1,8 +1,31 @@
+---
+title: Kafka vs RabbitMQ
+description: "A fundamental architectural comparison of messaging systems, contrasting RabbitMQ's memory-based, point-to-point message queuing with Kafka's disk-based, massive-scale distributed event streaming log."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kafka vs RabbitMQ">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Kafka vs RabbitMQ"
+  subtitle="Message Queues vs Event Streams"
+  tags={['Comparison', 'System Design', 'Architecture', 'Streaming']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When microservices need to talk to each other asynchronously, they use Message Brokers. However, RabbitMQ and Apache Kafka solve two completely different mathematical problems.
 
-</ConceptTemplate>
+## 1. RabbitMQ (The Smart Broker, Dumb Consumer)
+- **Architecture**: A traditional Message Queue. When Service A sends a message, RabbitMQ mathematically routes it to the specific queue for Service B.
+- **Mechanism**: Once Service B reads the message and acknowledges it, RabbitMQ physically deletes it from RAM.
+- **Use Case**: Complex routing rules (e.g., "Send PDF generation tasks to Server X, and Image tasks to Server Y"). Used when you want mathematically guaranteed, once-only task processing.
+
+## 2. Apache Kafka (The Dumb Broker, Smart Consumer)
+- **Architecture**: A Distributed Commit Log (Event Stream). Kafka does not delete messages when read. It mathematically appends every event to a massive, immutable text file on a Hard Drive.
+- **Mechanism**: The Consumer is responsible for remembering its own "offset" (which line of the file it read last). Because Kafka just writes to disk sequentially, it can process **Millions of messages per second** (LinkedIn uses it to track every single button click globally).
+- **Use Case**: Massive scale Data Pipelines, Event Sourcing, and scenarios where multiple different microservices need to independently replay the exact same historical data from a week ago.
+

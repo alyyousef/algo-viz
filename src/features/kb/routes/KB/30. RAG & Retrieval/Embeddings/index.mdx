@@ -1,8 +1,28 @@
+---
+title: Vector Embeddings
+description: The foundational mathematics of modern AI, where words, sentences, or images are translated into massive, high-dimensional arrays of numbers representing pure semantic meaning.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Embeddings">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vector Embeddings">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A computer cannot mathematically compare the word "King" to the word "Queen." It only sees ASCII characters. To understand meaning, AI uses Vector Embeddings to map human concepts onto a massive geometric graph.
 
-</ConceptTemplate>
+## 1. High-Dimensional Latent Space
+An Embedding Model (like OpenAI's `text-embedding-3`) takes a sentence and mathematically converts it into an Array of floating-point numbers (a Vector), usually containing 1,536 dimensions.
+Imagine a 1,536-dimensional graph. The Vector is a specific coordinate in that space.
+The Neural Network is trained so that concepts with similar semantic meanings are mathematically pushed close together in this geometry. The Vector for "Dog" will be physically adjacent to the Vector for "Puppy." The Vector for "Car" will be millions of units away.
+
+## 2. Mathematical Relationships
+Because meaning is now physical geometry, you can perform actual math on human concepts.
+The most famous proof of this is the equation: $Vector("King") - Vector("Man") + Vector("Woman") \approx Vector("Queen")$.
+If you take the coordinate for King, subtract the mathematical direction representing masculinity, and add the direction representing femininity, you land exactly on the coordinate for Queen.
+In RAG, when a user asks a question, the question is turned into a Vector. The database calculates the **Cosine Similarity** (the physical angle between the vectors) to instantly find the documents that are mathematically closest in meaning to the question.
+

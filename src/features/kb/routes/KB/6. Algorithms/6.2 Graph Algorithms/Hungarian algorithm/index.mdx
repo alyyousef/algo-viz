@@ -1,8 +1,34 @@
+---
+title: Hungarian Algorithm
+description: "A highly complex combinatorial optimization algorithm mathematically designed to solve the assignment problem in polynomial time, finding the lowest possible cost to assign a set of workers to a set of tasks."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hungarian algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Hungarian Algorithm"
+  subtitle="Optimal Cost Assignment"
+  tags={['Algorithms', 'Graphs', 'Optimization', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You have 3 Workers (Alice, Bob, Charlie) and 3 Tasks (Clean, Cook, Drive).
+Alice demands $10 to clean, $15 to cook, $20 to drive. Bob and Charlie have different price charts.
+What is the mathematically cheapest way to assign exactly 1 unique task to each worker?
 
-</ConceptTemplate>
+## 1. The Assignment Problem
+A brute-force approach would calculate every possible combination (N! permutations). For 20 workers and 20 tasks, 20! is a number so astronomically large the universe would end before the computer finished calculating.
+In 1955, Harold Kuhn mathematically solved this in polynomial time **O(N³)**, naming it the Hungarian Algorithm.
+
+## 2. Matrix Manipulation
+The algorithm does not use standard graph traversal. It places the costs into a 2D Matrix and mathematically manipulates the rows and columns.
+1. It finds the lowest cost in each row and subtracts it from the entire row (creating at least one $0 in every row).
+2. It repeats this for columns.
+3. It draws the minimum number of mathematical lines required to cover all the $0s.
+4. If the number of lines equals N, the $0s represent the mathematically perfect assignment! If not, it performs another shift on the matrix and tries again.
+

@@ -1,8 +1,28 @@
+---
+title: Canary Deployment
+description: A risk-mitigation deployment strategy where a new Machine Learning model is slowly rolled out to a tiny fraction of live users to verify stability and mathematical correctness before a full launch.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Canary deployment">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Canary Deployment">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you deploy a new AI model to 100% of your users and it contains a fatal mathematical flaw, you crash the entire company. A Canary Deployment minimizes the blast radius of failure.
 
-</ConceptTemplate>
+## 1. The Incremental Rollout
+Instead of a hard switch, the API Gateway routes exactly **1%** of live traffic to the new model (the Canary) and keeps **99%** of traffic on the stable Legacy model.
+For the next 24 hours, automated MLOps monitoring systems hyper-analyze the Canary model.
+- Is the latency spiking?
+- Are the predictions mathematically drifting (e.g., is it predicting "Fraud" 50% more often than the Legacy model)?
+- Are the servers running out of VRAM?
+
+## 2. Automated Rollback
+If the metrics of the Canary model cross a critical mathematical threshold (e.g., API errors exceed 0.5%), the system executes an **Automated Rollback**. The Gateway instantly routes the 1% of traffic back to the Legacy model. The users barely notice, and the engineers have full logs of the failure to debug.
+If the Canary model survives the 1% test, the Gateway mathematically scales it to 10%, then 25%, then 50%, until it safely handles 100% of the production load.
+

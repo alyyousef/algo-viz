@@ -4,7 +4,14 @@ description: The systems-level, hyper-performance tier designed for massive clou
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Go & Rust Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Go & Rust Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When Node.js or Python is simply too slow, and Java consumes too much RAM, the industry shifts to modern compiled Systems Languages.
 
@@ -26,4 +33,3 @@ Historically the fastest web framework on the planet. Actix utilizes a powerful 
 ### 2. Axum
 Created by the Tokio team (the maintainers of Rust's primary async runtime). Axum is rapidly becoming the modern standard for Rust web development. It leverages advanced Rust type-safety to ensure that your API routes and middleware are mathematically verified at compile time, completely preventing runtime routing crashes.
 
-</ConceptTemplate>

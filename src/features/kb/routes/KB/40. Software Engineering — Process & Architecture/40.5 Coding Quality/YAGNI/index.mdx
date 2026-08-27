@@ -1,8 +1,32 @@
+---
+title: YAGNI (You Aren't Gonna Need It)
+description: "A foundational principle of Extreme Programming (XP) mathematically stating that a programmer should not add functionality until deemed strictly necessary, avoiding the massive costs of premature abstraction."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="YAGNI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="YAGNI (You Aren't Gonna Need It)"
+  subtitle="The Antidote to Over-Engineering"
+  tags={['Process', 'Agile', 'Clean Code', 'Philosophy']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Junior engineers build exactly what is asked. Intermediate engineers build massive, complex abstraction layers because they try to predict what the business will ask for next year. Senior engineers apply YAGNI.
 
-</ConceptTemplate>
+## 1. The Mathematical Cost of Prediction
+If a developer thinks, *"I should build this database layer to support Oracle, MySQL, and Postgres, just in case the client wants to switch databases in the future,"* they have violated YAGNI.
+By building for the future, the developer mathematically incurs three massive costs today:
+1. **Time**: It takes 3x longer to build the abstraction.
+2. **Complexity**: The code is now 3x harder to read and debug for the rest of the team.
+3. **Maintenance**: The team now has to write unit tests for the Postgres connector, even though it isn't being used.
+
+## 2. Agile Deferment
+Statistically, 80% of the features developers "think" they will need in the future never actually materialize, because business requirements change rapidly.
+YAGNI states you must mathematically defer the architectural decision until the very last possible moment. Build only what is needed today. When the future arrives, and the requirement is *actually* solidified, then you refactor.
+

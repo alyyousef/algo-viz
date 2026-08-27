@@ -1,8 +1,31 @@
+---
+title: REST vs GraphQL
+description: "An architectural comparison of API design, contrasting REST's strict, resource-based URL endpoints with GraphQL's flexible, single-endpoint, client-driven query language."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="REST vs GraphQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="REST vs GraphQL"
+  subtitle="The Evolution of APIs"
+  tags={['Comparison', 'System Design', 'Architecture', 'Web Development']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+REST has been the mathematical standard for APIs for two decades, but as mobile frontends became more complex, Facebook invented GraphQL to solve REST's fundamental inefficiencies.
 
-</ConceptTemplate>
+## 1. REST (Representational State Transfer)
+- **Architecture**: Resource-based. Every entity has its own URL endpoint (e.g., `/users/123`). You use HTTP verbs (GET, POST, PUT, DELETE) to interact with them.
+- **The Problem (Over-fetching)**: If the frontend only needs the User's name, hitting `/users/123` returns the entire 50-field JSON object, mathematically wasting bandwidth.
+- **The Problem (Under-fetching)**: If the frontend needs the User's name AND their last 5 posts, it must mathematically make two completely separate network requests (`/users/123`, then `/users/123/posts`), increasing latency (the N+1 problem).
+
+## 2. GraphQL
+- **Architecture**: Client-driven query language. There is only exactly one endpoint (e.g., `/graphql`). You always use POST.
+- **The Solution**: The client sends a mathematically precise JSON-like query specifying *exactly* the fields it wants, and the server returns *only* those fields. You can fetch a User, their Posts, and the Comments on those Posts all in a single, massive mathematical query.
+- **The Tradeoff**: GraphQL is mathematically much harder to cache at the CDN level (because every request goes to the same URL), and it opens the door to malicious users requesting infinitely nested data, requiring complex Rate Limiting and Query Depth analysis.
+

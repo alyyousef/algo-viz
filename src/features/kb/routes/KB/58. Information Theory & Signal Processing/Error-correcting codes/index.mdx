@@ -4,14 +4,26 @@ description: An encoding of a message or data that enables the detection and cor
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Error-Correcting Codes (ECC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Error-Correcting Codes (ECC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a cosmic ray biologically flips a `0` to a `1` while data is traveling through a fiber optic cable, how does the receiving computer know it's broken? And more importantly, how does it fix it without asking the sender to re-transmit the file?
 
+
 <Callout icon="success" title="Mathematical Redundancy">
+
+
   **Error-Correcting Codes** (like Reed-Solomon or Hamming Codes) mathematically inject redundant parity bits into the data *before* transmission.
-  
+
   Unlike simple Checksums (which can only biologically detect an error), ECCs contain enough mathematical relationships that the receiving computer can run an algebraic equation on the corrupted data and mathematically reconstruct the exact missing or flipped bits. This is the exact technology that allows CDs to play perfectly even when physically scratched.
+
+
 </Callout>
 
-</ConceptTemplate>
+

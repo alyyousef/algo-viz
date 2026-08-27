@@ -1,8 +1,31 @@
+---
+title: Static vs Dynamic Typing
+description: "An architectural analysis of programming languages, contrasting the mathematical compile-time safety of Static typing (Java, Rust) with the rapid runtime flexibility of Dynamic typing (Python, JavaScript)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Static vs dynamic typing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Static vs Dynamic Typing"
+  subtitle="The Compiler vs The Interpreter"
+  tags={['Comparison', 'Languages', 'Architecture', 'Computer Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The choice of typing discipline dictates the mathematical architecture of your entire codebase, trading developer speed against mathematical guarantees of correctness.
 
-</ConceptTemplate>
+## 1. Static Typing (Java, C++, Rust, TypeScript)
+- **Mechanism**: The types of all variables must be mathematically known and fixed at **Compile Time**. If a function expects an `Integer`, the compiler will absolutely refuse to build the program if you attempt to pass a `String`.
+- **Pros**: Massive reduction in runtime crashes. Your IDE can provide perfect autocomplete because it mathematically knows exactly what methods exist on an object. Refactoring a million-line codebase is mathematically safe.
+- **Cons**: High verbosity. You must spend significant time writing type definitions, interfaces, and generics before the code actually does anything.
+
+## 2. Dynamic Typing (Python, JavaScript, Ruby)
+- **Mechanism**: Types are checked exclusively at **Runtime**. A variable can hold an `Integer` on line 5, and then immediately be reassigned to a `String` on line 6.
+- **Pros**: Blisteringly fast prototyping. You can write a web scraper in 10 lines of Python that would take 100 lines in Java.
+- **Cons**: The "Undefined is not a function" mathematical nightmare. If you pass a String to a math function, the program compiles perfectly, deploys perfectly, and then violently crashes in production when a user actually hits that specific line of code. (This exact flaw is why the industry invented TypeScript).
+

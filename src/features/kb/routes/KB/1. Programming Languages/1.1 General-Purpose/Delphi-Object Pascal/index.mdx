@@ -5,10 +5,17 @@ description: "The rapid application development language that dominated the 1990
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Delphi & Object Pascal"
   icon="window"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Object Pascal** is an extension of the classic Pascal language that adds Object-Oriented capabilities. **Delphi** is the famous Integrated Development Environment (IDE) and visual framework created by Borland in 1995 to compile Object Pascal.
 
@@ -32,7 +39,7 @@ var
 
 begin
   Message := 'Hello from Object Pascal!';
-  
+
   for i := 1 to 3 do
   begin
     Writeln(Message);
@@ -40,8 +47,13 @@ begin
 end.
 ```
 
+
 <Callout icon="info" title="Where is it now?">
+
+
 While Delphi's popularity plummeted with the rise of C# (.NET) and web applications, millions of lines of legacy enterprise Delphi code still run heavily in medical, point-of-sale, and financial systems globally.
+
+
 </Callout>
 
-</ConceptTemplate>
+

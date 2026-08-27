@@ -1,8 +1,37 @@
+---
+title: Alice
+description: An innovative, block-based educational programming environment designed to teach object-oriented concepts via 3D animations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Alice">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Alice">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by Carnegie Mellon University, Alice is a visual programming environment specifically designed to lower the barrier to entry for learning Object-Oriented Programming (OOP) and 3D mathematics.
 
-</ConceptTemplate>
+## 1. Visualizing Objects
+Traditional OOP requires students to mathematically abstract objects (e.g., `class Dog`).
+In Alice, objects are literal 3D models (a dragon, a car, a person) placed in a virtual world. Students do not type raw syntax; they drag and drop visual instruction tiles to call methods on the objects (e.g., `Dragon.moveForward(2)`).
+
+
+<Callout icon="tip" title="Immediate Feedback Loop">
+
+
+Because every method call results in a direct, visual 3D animation, students immediately mathematically understand the flow of execution, parameters, and state changes without struggling with syntax errors or compiler warnings.
+
+
+</Callout>
+
+
+## 2. Teaching Complex Architectures
+Despite its toy-like appearance, Alice mathematically enforces rigorous computer science concepts:
+- **Methods and Functions**: Creating reusable blocks of animation.
+- **Events**: Triggering code when a user clicks an object or presses a key.
+- **Concurrency**: Using a `Do Together` block to mathematically execute multiple methods on multiple threads simultaneously (e.g., making a bird flap its wings *while* moving forward).
+

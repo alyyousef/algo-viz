@@ -4,23 +4,30 @@ description: A highly robust linear regression algorithm that mathematically com
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Elastic Net">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Elastic Net">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When training a Linear Regression model on thousands of features, Data Scientists apply **Regularisation** to mathematically constrain the weights and prevent overfitting. 
+When training a Linear Regression model on thousands of features, Data Scientists apply **Regularisation** to mathematically constrain the weights and prevent overfitting.
 **Elastic Net** is the ultimate compromise, mathematically combining the absolute value penalty of L1 (Lasso) with the squared penalty of L2 (Ridge) into a single Loss Function.
 
 ## 1. The Mathematical Equation
 The Loss Function for Elastic Net is defined as:
 $Loss = MSE + lambda_1 \sum |w_i| + lambda_2 \sum w_i^2$
 
-By introducing a mixing hyperparameter (often called $\alpha$ or `l1_ratio`), you mathematically control the blend. 
+By introducing a mixing hyperparameter (often called $\alpha$ or `l1_ratio`), you mathematically control the blend.
 - If `l1_ratio = 1.0`, the L2 penalty is mathematically erased, and the model becomes pure Lasso.
 - If `l1_ratio = 0.5`, the model is a mathematically perfect 50/50 blend of L1 and L2.
 
 ## 2. Solving the Collinearity Problem
 The primary reason Elastic Net exists is to solve a fatal mathematical flaw in L1 (Lasso) regarding **Multicollinearity**.
 
-If a dataset contains three features that are mathematically highly correlated (e.g., "Square Footage", "Number of Bedrooms", "House Length"), L1 Regularisation behaves erratically. Because it forces weights to exactly zero, it will randomly pick one of those features to keep, and brutally drop the other two to 0.0. 
+If a dataset contains three features that are mathematically highly correlated (e.g., "Square Footage", "Number of Bedrooms", "House Length"), L1 Regularisation behaves erratically. Because it forces weights to exactly zero, it will randomly pick one of those features to keep, and brutally drop the other two to 0.0.
 
 Elastic Net solves this. The L2 (Ridge) component mathematically desires to keep correlated features together. The result is that Elastic Net will perform feature selection (dropping totally useless columns to 0 like "Astrological Sign"), but it will mathematically group the correlated housing features together, shrinking their weights simultaneously rather than deleting them.
 
@@ -29,4 +36,3 @@ Elastic Net is the mathematically optimal choice when:
 1. You have a massive dataset where $P > N$ (You have 10,000 columns, but only 5,000 rows). Standard regression mathematically crashes in this scenario.
 2. You know mathematically that there is heavy correlation between your columns (like financial indicators or genetic microarray data).
 
-</ConceptTemplate>

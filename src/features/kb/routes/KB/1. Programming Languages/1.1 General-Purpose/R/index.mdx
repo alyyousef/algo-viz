@@ -5,10 +5,17 @@ description: "The lingua franca of statistics, data visualization, and academic 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="R"
   icon="bar-chart"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created in 1993, **R** is a programming language and software environment explicitly designed for statistical computing, data analysis, and graphical visualization.
 
@@ -43,8 +50,13 @@ model <- lm(Age ~ Healthy, data=patients)
 summary(model)
 ```
 
+
 <Callout icon="warning" title="General Purpose Limitations">
+
+
 R is highly specialized. While it is incredible for crunching a CSV file and generating a PDF report, it is rarely used to build web backends, APIs, or interactive software.
+
+
 </Callout>
 
-</ConceptTemplate>
+

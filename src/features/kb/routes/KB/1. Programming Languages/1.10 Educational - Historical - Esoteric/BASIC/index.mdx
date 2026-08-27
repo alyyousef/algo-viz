@@ -1,8 +1,37 @@
+---
+title: BASIC
+description: The Beginner's All-purpose Symbolic Instruction Code, the language that sparked the 1980s microcomputer revolution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="BASIC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="BASIC">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1964 at Dartmouth College, BASIC was explicitly designed to allow non-STEM students to use computers, which at the time required highly complex Assembly or Fortran knowledge.
 
-</ConceptTemplate>
+## 1. The Microcomputer Explosion
+In the late 1970s and 1980s, when personal computers (like the Apple II, Commodore 64, and IBM PC) were released, they mathematically did not have enough memory to run complex operating systems.
+Instead, they booted directly into a BASIC interpreter. Microsoft's founding product was a highly optimized BASIC interpreter (Altair BASIC).
+
+## 2. Syntax and Line Numbers
+Early BASIC required every single line of code to be manually numbered by the programmer (10, 20, 30).
+This mathematically allowed the interpreter to know the execution order, and allowed the infamous `GOTO 10` statement, which caused execution to jump instantly to line 10.
+
+
+<Callout icon="error" title="Spaghetti Code">
+
+
+Because early BASIC lacked structured programming (no functions or local variables, only global scope and GOTO statements), large programs rapidly degenerated into mathematically untraceable "Spaghetti Code". This led to intense criticism from computer scientists like Edsger Dijkstra.
+
+
+</Callout>
+
+
+While modern variants like Visual Basic and QuickBASIC introduced strict structuring and killed the line number, the original 8-bit BASIC remains a foundational pillar of computing history.
+

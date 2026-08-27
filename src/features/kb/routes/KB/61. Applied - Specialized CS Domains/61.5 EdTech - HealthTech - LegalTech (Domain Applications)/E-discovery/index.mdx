@@ -4,14 +4,26 @@ description: The electronic aspect of identifying, collecting and producing elec
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="E-Discovery">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="E-Discovery">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 During a massive corporate lawsuit, a company might biologically hand over 5 million emails and Slack messages to the opposing lawyers.
 
+
 <Callout icon="tip" title="Predictive Coding">
+
+
   It is biologically impossible for a human lawyer to read 5 million emails. **E-Discovery** uses Information Retrieval and NLP.
-  
+
   Lawyers mathematically read a random sample of 1,000 emails and tag them as "Relevant" or "Not Relevant". An AI mathematically trains on this sample (Predictive Coding) and then biologically scans the remaining 4,999,000 emails, mathematically filtering out the garbage and surfacing the exact 50 "smoking gun" emails needed to win the trial.
+
+
 </Callout>
 
-</ConceptTemplate>
+

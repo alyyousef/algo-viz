@@ -1,8 +1,30 @@
+---
+title: Chain of Responsibility Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically lets you pass requests along a chain of handlers, where each handler decides either to process the request or to pass it to the next handler.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Chain of Responsibility">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Chain of Responsibility Pattern"
+  subtitle="Passing the Baton"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a web application, an incoming HTTP request mathematically requires several checks before the business logic executes: Is it authenticated? Is it authorized? Is the JSON valid? Does it pass the rate limiter?
 
-</ConceptTemplate>
+## 1. The Monolithic If-Statement
+If you put all this logic in the controller, you get a massive, mathematically fragile `if (auth) { if (valid) { if (rate) { ... } } }` block. This violates the Single Responsibility Principle.
+
+## 2. The Linked List Chain
+The Chain of Responsibility mathematically solves this by modeling the handlers as a Linked List.
+You create standalone classes: `AuthHandler`, `ValidationHandler`, and `RateLimitHandler`. Each class mathematically possesses a pointer to the `next` handler in the chain.
+When the request arrives, it hits the `AuthHandler`. If authentication fails, the handler immediately returns a 401 Error, mathematically terminating the chain. If it succeeds, it calls `next.handle(request)`, passing it to the ValidationHandler.
+This allows architects to mathematically snap new filters into the chain at runtime without altering the core controller logic. (This pattern is the exact mathematical foundation of "Middleware" in Express.js).
+

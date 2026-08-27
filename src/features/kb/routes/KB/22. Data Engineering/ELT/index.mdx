@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="ELT (Extract, Load, Transform)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ELT (Extract, Load, Transform)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **ELT** represents a massive paradigm shift in Data Engineering, brought about by the rise of cheap cloud storage and highly scalable cloud data warehouses (like Snowflake and BigQuery).
 
@@ -20,18 +27,16 @@ Cloud Data Warehouses decoupled compute from storage. You can store petabytes of
 
 ## 3. ETL vs ELT
 
-<ComparisonTable 
-  headers={['Feature', 'ETL (Traditional)', 'ELT (Modern)']} 
-  rows={[
-    ['Transformation Location', 'Separate staging server before the warehouse.', 'Inside the warehouse itself.'],
-    ['Flexibility', 'Low. If raw data is dropped, it is gone forever.', 'High. Raw data is always preserved; you can re-transform anytime.'],
-    ['Time to Load', 'Slow (must wait for transforms).', 'Fast (dump immediately).'],
-    ['Tooling', 'Informatica, Talend.', 'Fivetran, Airbyte, dbt, Snowflake.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Feature', 'ETL (Traditional)', 'ELT (Modern)']} rows={[ ['Transformation Location', 'Separate staging server before the warehouse.', 'Inside the warehouse itself.'], ['Flexibility', 'Low. If raw data is dropped, it is gone forever.', 'High. Raw data is always preserved; you can re-transform anytime.'], ['Time to Load', 'Slow (must wait for transforms).', 'Fast (dump immediately).'], ['Tooling', 'Informatica, Talend.', 'Fivetran, Airbyte, dbt, Snowflake.'] ]} />
+
 
 <Callout icon="tip" title="dbt (data build tool)">
+
+
 The shift to ELT birthed **dbt**, the industry standard for the "T" in ELT. It allows data analysts to write simple SQL SELECT statements, which dbt compiles into complex transformation pipelines running directly inside Snowflake or BigQuery.
+
+
 </Callout>
 
-</ConceptTemplate>
+

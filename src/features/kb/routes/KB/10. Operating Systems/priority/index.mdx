@@ -4,11 +4,18 @@ description: A scheduling algorithm where processes are assigned absolute rankin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Priority Scheduling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Priority Scheduling">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While Round-Robin treats every program fairly, operating systems do not actually want to be fair. 
+While Round-Robin treats every program fairly, operating systems do not actually want to be fair.
 
-The process rendering your mouse cursor *must* get CPU time immediately when you move your hand, otherwise the computer feels broken. Conversely, a background Dropbox sync process can safely wait a few seconds. 
+The process rendering your mouse cursor *must* get CPU time immediately when you move your hand, otherwise the computer feels broken. Conversely, a background Dropbox sync process can safely wait a few seconds.
 
 **Priority Scheduling** assigns a strict numerical rank to every process. The Scheduler will always choose the process with the highest priority to run next.
 
@@ -19,14 +26,19 @@ The process rendering your mouse cursor *must* get CPU time immediately when you
 
 ## The Starvation Problem
 
-Strict Priority Scheduling has a fatal flaw called **Starvation**. 
+Strict Priority Scheduling has a fatal flaw called **Starvation**.
 If a low-priority task is waiting for the CPU, but high-priority tasks keep waking up and demanding CPU time, the low-priority task will literally never execute. It starves to death.
 
+
 <Callout icon="info" title="The MIT Starvation Incident">
+
+
   In 1973, when MIT shut down their massive IBM 7094 mainframe, they found a low-priority process that had been submitted in 1967. It had been starving for 6 years because higher-priority tasks constantly kept it off the CPU.
+
+
 </Callout>
+
 
 ### The Solution: Aging
 To prevent Starvation, operating systems use a technique called **Aging**. Every minute a process spends waiting in the queue without getting CPU time, the Scheduler artificially boosts its priority. Eventually, even the lowest-priority background task will age into a high-priority task, ensuring it gets at least a brief turn on the CPU.
 
-</ConceptTemplate>

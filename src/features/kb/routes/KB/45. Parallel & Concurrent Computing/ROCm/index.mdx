@@ -4,7 +4,7 @@ description: AMD's open-source software development stack for highly parallel co
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="ROCm"
   subtitle="AMD's direct answer to CUDA"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/AMD_ROCm_logo.svg/512px-AMD_ROCm_logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 For years, the AI industry begged for a viable competitor to NVIDIA. AMD hardware was incredibly fast mathematically, but scientists couldn't use it because PyTorch and TensorFlow were inextricably hardcoded to use CUDA.
 
-AMD responded by building **ROCm**. 
+AMD responded by building **ROCm**.
+
 
 <Callout icon="success" title="The HIPIllusion">
+
+
   The true genius of the ROCm stack is a tool called **HIP (Heterogeneous-Compute Interface for Portability)**. HIP mathematically intercepts standard CUDA C++ code and compiles it on the fly to run perfectly on AMD GPUs. It allows developers to take a million lines of NVIDIA-locked code and port it to AMD silicon in a matter of hours.
+
+
 </Callout>
+
 
 ## The Exascale Era
 

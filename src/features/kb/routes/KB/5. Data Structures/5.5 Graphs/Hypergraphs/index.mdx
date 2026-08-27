@@ -4,20 +4,26 @@ description: A generalization of a standard graph where a single mathematical ed
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hypergraphs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hypergraphs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a standard graph, an edge is mathematically defined as a strict pair: it connects exactly two vertices ($A$ and $B$). A **Hypergraph** completely destroys the concept of a binary connection. In a Hypergraph, an edge (called a **Hyperedge**) is a mathematical Set that can enclose $1, 3, 50,$ or an infinite number of vertices simultaneously.
 
 ## 1. Group Relationships
-A standard graph is excellent for 1-on-1 relationships (e.g., User A is friends with User B). But standard graphs fail spectacularly at modeling Group Dynamics. 
-If 5 people are in a single Group Chat, drawing standard edges between all 5 of them creates a messy, overlapping web that implies they just talk to each other 1-on-1. 
+A standard graph is excellent for 1-on-1 relationships (e.g., User A is friends with User B). But standard graphs fail spectacularly at modeling Group Dynamics.
+If 5 people are in a single Group Chat, drawing standard edges between all 5 of them creates a messy, overlapping web that implies they just talk to each other 1-on-1.
 A Hypergraph simply draws a single, massive Hyperedge that mathematically swallows all 5 users, perfectly representing a unified Group relationship.
 
 ## 2. Database Modeling
 Hypergraphs are the absolute foundation of complex Relational Databases. When a SQL database performs a massive `JOIN` across three different tables, the relationship isn't a line connecting two dots; it is a hyperedge mathematically uniting data points across multiple independent domains into a single query result.
 
 ## 3. Bipartite Equivalence
-Because Hypergraphs are incredibly difficult to visualize and code, they are almost never implemented natively. Instead, any Hypergraph can be mathematically perfectly converted into a standard **Bipartite Graph**. 
+Because Hypergraphs are incredibly difficult to visualize and code, they are almost never implemented natively. Instead, any Hypergraph can be mathematically perfectly converted into a standard **Bipartite Graph**.
 You simply create two types of nodes: "Data Nodes" and "Edge Nodes." If a Hyperedge contains 5 data points, you just draw 5 standard edges connecting those 5 Data Nodes to the single central Edge Node, seamlessly translating hyper-dimensional mathematics into standard graph traversal.
 
-</ConceptTemplate>

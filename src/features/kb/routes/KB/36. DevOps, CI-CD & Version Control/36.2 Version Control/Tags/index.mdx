@@ -1,8 +1,30 @@
+---
+title: Tags
+description: Static, immutable mathematical pointers in a Git repository designed specifically to permanently mark milestone commits, such as official software release versions (e.g., v1.0.0).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tags">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Tags"
+  subtitle="Permanent Milestone Markers"
+  tags={['Version Control', 'Git', 'Release Management', 'Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While a Branch is a pointer that automatically moves forward every time a new commit is added, a Tag is a mathematical pointer that is explicitly designed to **never move**.
 
-</ConceptTemplate>
+## 1. Semantic Versioning Markers
+When a software team officially releases version 2.4.1 to production, they need a mathematical guarantee that they can look back 5 years from now and see the exact codebase that was released that day.
+They find the exact commit hash that passed QA and execute `git tag v2.4.1`. This creates an immutable reference. If a bug is discovered in production a year later, the DevOps team can execute `git checkout v2.4.1` to instantly revert their local repository to the exact mathematical state of the release, completely ignoring the thousands of commits that have occurred since.
+
+## 2. Annotated vs. Lightweight
+Git supports two mathematical types of tags:
+- **Lightweight**: Just a pointer to a commit hash.
+- **Annotated**: A full Git object. It contains a timestamp, a message (like release notes), and the tagger's name, and it is mathematically hashed and stored in the Git database. Annotated tags can also be cryptographically signed with a GPG key, providing absolute mathematical proof that the release was authorized by a specific senior engineer and not maliciously injected by a hacker.
+

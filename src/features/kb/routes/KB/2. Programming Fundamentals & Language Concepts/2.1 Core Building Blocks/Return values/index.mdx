@@ -1,8 +1,27 @@
+---
+title: Return Values
+description: The mathematical mechanism by which a function passes its computed result back to the specific memory location of its caller.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Return values">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Return Values">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Return Value is the mathematical output of a function, representing the collapse of the function's internal logic into a single piece of data.
 
-</ConceptTemplate>
+## 1. The Hardware Implementation
+When a function executes the `return` statement, the CPU performs a specific mathematical sequence.
+First, it places the data to be returned into a dedicated, mathematically agreed-upon CPU Register (in x86-64, this is usually the `RAX` register).
+Next, it destroys its own Stack Frame.
+Finally, it executes a `RET` assembly instruction, which pops the Return Address off the stack and jumps back to the caller. The caller immediately reads the `RAX` register, extracting the mathematical result and continuing its own execution.
+
+## 2. Void and Early Returns
+- **Void**: If a function does not mathematically return a value, it is a Void function. At the hardware level, it still executes the `RET` instruction to jump back to the caller, it simply leaves garbage data in the `RAX` register.
+- **Early Return**: A highly recommended mathematical pattern (Guard Clauses). Instead of wrapping an entire function in a massive `if (valid)` block, you check for invalid data at the very top of the function and instantly `return;`. This mathematically terminates the function early, reducing nested complexity.
+

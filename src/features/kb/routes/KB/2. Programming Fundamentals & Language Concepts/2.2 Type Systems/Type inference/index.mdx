@@ -1,8 +1,26 @@
+---
+title: Type Inference
+description: A compiler optimization where the language mathematically deduces the type of a variable automatically, removing the need for explicit declarations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Type inference">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Type Inference">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, strongly typed languages required developers to mathematically declare every type explicitly (e.g., `std::vector<int>::iterator it = vec.begin();`). Type Inference allows the compiler to do the mathematical heavy lifting for you.
 
-</ConceptTemplate>
+## 1. Local Variable Inference
+Modern languages use keywords like `var` (C#, Java), `auto` (C++), or `let` (Rust, Swift) for inference.
+If you write `let x = 5;` in Rust, you have not declared a type. But Rust is strictly Statically Typed. How does this work?
+The compiler mathematically analyzes the Right-Hand Side (the R-value). It sees the literal `5`. It deduces that `5` is an Integer. It then implicitly, mathematically binds the `i32` type to `x` at compile-time. The resulting binary is mathematically identical to if you had typed `let x: i32 = 5;`, maintaining absolute type safety with significantly less boilerplate.
+
+## 2. Hindley-Milner Algorithm
+Languages like Haskell and OCaml use the **Hindley-Milner Type System**, which is mathematically profound.
+You can write an entire 10,000-line Haskell program without writing a single Type Declaration. The Hindley-Milner algorithm uses Unification to traverse the entire Abstract Syntax Tree, mathematically deducing the type of every single variable, function, and parameter based on how they are used. If a mathematical contradiction is found anywhere in the codebase, the compilation fails instantly.
+

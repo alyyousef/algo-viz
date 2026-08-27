@@ -1,8 +1,31 @@
+---
+title: Webhooks
+description: "A mathematical architectural pattern often called 'Reverse APIs', where the server asynchronously pushes data to the client's URL via HTTP POST the exact moment a specific event occurs, eliminating the need for polling."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Webhooks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Webhooks"
+  subtitle="The Reverse API"
+  tags={['API', 'Architecture', 'Event-Driven', 'Networking']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If your application integrates with Stripe, and you need to know when a customer's monthly subscription payment successfully clears, how do you mathematically find out?
 
-</ConceptTemplate>
+## 1. The Inefficiency of Polling
+You could write a script that makes a standard REST API request to `GET /payments` every 60 seconds to check for new data. This is called **Polling**.
+It is mathematically terrible. 99% of the time, the response is "No new payments," wasting your CPU, Stripe's CPU, and network bandwidth.
+
+## 2. Event-Driven Push
+Webhooks solve this by mathematically inverting the relationship.
+You build an endpoint on *your* server (e.g., `POST https://your-app.com/stripe-webhook`) and give the URL to Stripe.
+You do nothing. You do not poll.
+At 3:00 AM, when the customer's credit card clears, Stripe's servers mathematically initiate an HTTP POST request *to your server*, containing a JSON payload with the payment details. You receive the data instantly (in milliseconds) exactly when the event occurs, mathematically eliminating the need for polling and drastically improving system efficiency.
+

@@ -1,8 +1,40 @@
+---
+title: Variance and Standard Deviation
+description: "Mathematical measures of how spread out a dataset or probability distribution is, quantifying uncertainty, risk, and noise."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="variance)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Variance & Standard Deviation"
+  subtitle="Measuring the Spread of Data"
+  tags={['Mathematics', 'Probability', 'Statistics', 'Data Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If the Expected Value tells you where the "center" of the data is, **Variance** and **Standard Deviation** tell you how wildly the data swings away from that center.
 
-</ConceptTemplate>
+## 1. Variance ($\sigma^2$)
+Variance calculates the average of the *squared* differences from the Mean.
+Why squared? Because if you just averaged the differences, the negative swings would perfectly cancel out the positive swings, resulting in zero. Squaring them forces all deviations to be mathematically positive, penalizing large outliers heavily.
+
+$Variance(X) = E[(X - \mu)^2]$
+
+## 2. Standard Deviation ($\sigma$)
+Because Variance squares the numbers, its units are distorted (if you measure height in meters, Variance is in "meters squared").
+The **Standard Deviation** is simply the square root of the Variance, mathematically bringing the measurement back down to the original units.
+
+## 3. The 68-95-99.7 Rule
+For any Normally Distributed data (a Bell Curve):
+- ~68% of the data falls within exactly **One Standard Deviation** ($\pm 1\sigma$) of the mean.
+- ~95% falls within **Two Standard Deviations** ($\pm 2\sigma$).
+- ~99.7% falls within **Three Standard Deviations** ($\pm 3\sigma$).
+
+In software engineering, if a server's response time is usually 50ms with a standard deviation of 5ms, a 70ms response time is a $4\sigma$ event—a statistical anomaly that should likely trigger a monitoring alert.
+
+\n

@@ -4,9 +4,16 @@ description: The dominant mathematical paradigm of Machine Learning where algori
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Supervised Learning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Supervised Learning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Supervised Learning** is the workhorse of the modern AI industry. It is the mathematical process of deriving a function that maps an input to an output based on example input-output pairs. 
+**Supervised Learning** is the workhorse of the modern AI industry. It is the mathematical process of deriving a function that maps an input to an output based on example input-output pairs.
 
 In this paradigm, a human acts as the "Supervisor", providing the algorithm with the exact correct mathematical answers during training.
 
@@ -23,7 +30,6 @@ Supervised Learning is split into two massive sub-branches depending on the math
 - **Classification**: The target $Y$ is a discrete category (e.g., Predicting if a transaction is Fraud or Not Fraud). Algorithms: Logistic Regression, Random Forest Classifier, Support Vector Machines.
 
 ## 3. The Data Bottleneck
-Because Supervised Learning relies entirely on the mathematical ground truth ($Y$), it is severely bottlenecked by human labor. 
+Because Supervised Learning relies entirely on the mathematical ground truth ($Y$), it is severely bottlenecked by human labor.
 To train an autonomous vehicle using pure Supervised Learning, humans must manually draw strict mathematical bounding boxes around every single pedestrian, stop sign, and vehicle across 10 million video frames. This economic constraint led to the rise of Self-Supervised and Reinforcement Learning.
 
-</ConceptTemplate>

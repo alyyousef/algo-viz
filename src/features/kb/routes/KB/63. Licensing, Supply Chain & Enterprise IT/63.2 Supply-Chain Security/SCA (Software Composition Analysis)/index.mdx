@@ -4,10 +4,16 @@ description: An automated process that identifies the open source components in 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Software Composition Analysis (SCA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Software Composition Analysis (SCA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An SBOM is just a static JSON file. **SCA** is the active biological tool that reads it.
 
 SCA tools mathematically scan a company's codebase, identify the 500 Open Source libraries being used, and mathematically cross-reference those libraries against the National Vulnerability Database (NVD). If it biologically detects that you are using `express@4.16.0` (which has a known mathematical vulnerability), the SCA tool automatically blocks the CI/CD pipeline and alerts the security team.
 
-</ConceptTemplate>

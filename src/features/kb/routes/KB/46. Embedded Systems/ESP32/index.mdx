@@ -4,7 +4,7 @@ description: A series of low-cost, low-power system on a chip microcontrollers w
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="ESP32"
   subtitle="The undisputed king of DIY IoT"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Espressif_Systems_logo.svg/512px-Espressif_Systems_logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Before the ESP32 (and its predecessor, the ESP8266), adding Wi-Fi to an embedded project was a mathematical nightmare. You had to buy a $40 external Wi-Fi shield and write complex AT-commands over a UART serial connection.
 
-The ESP32 integrated a full 240 MHz dual-core CPU, RAM, Wi-Fi antenna, and Bluetooth radio onto a single piece of silicon. 
+The ESP32 integrated a full 240 MHz dual-core CPU, RAM, Wi-Fi antenna, and Bluetooth radio onto a single piece of silicon.
+
 
 <Callout icon="success" title="The RTOS Core">
+
+
   Because the ESP32 must mathematically maintain a complex Wi-Fi connection while also running your custom code, it is almost impossible to program it Bare-Metal. Instead, the ESP32's official framework (ESP-IDF) is built entirely on top of **FreeRTOS**. One CPU core mathematically handles the Wi-Fi stack, while the other core executes your application code.
+
+
 </Callout>
+
 
 ## The Ultimate Hobbyist Chip
 

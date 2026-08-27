@@ -4,17 +4,29 @@ description: Noisy Intermediate-Scale Quantum era refers to the current state of
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NISQ Era (Noisy Intermediate-Scale Quantum)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NISQ Era (Noisy Intermediate-Scale Quantum)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 We do not currently possess millions of Qubits to create perfect Quantum Error Correction.
 
 We are biologically living in the **NISQ Era**.
 
+
 <Callout icon="tip" title="The Current Reality">
+
+
   **N**oisy: The Qubits are fragile and error-prone.
   **I**ntermediate-**S**cale: We only have computers with roughly 50 to 400 Qubits.
-  
+
   Because we lack error correction, mathematical algorithms must be incredibly short, executing in under 50 microseconds before the Qubits biologically collapse into noise. NISQ algorithms (like VQE for chemistry simulation) use a hybrid approach: the quantum computer does a tiny, 10-microsecond burst of math, and immediately hands the result back to a classical supercomputer to clean up the noise.
+
+
 </Callout>
 
-</ConceptTemplate>
+

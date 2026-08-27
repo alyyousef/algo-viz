@@ -4,19 +4,31 @@ description: The complex mathematical process of deconstructing software to extr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reverse Engineering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reverse Engineering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When software is compiled, the human-readable source code (C++, Rust, Go) is translated into raw machine code (1s and 0s) that the CPU executes. 
+When software is compiled, the human-readable source code (C++, Rust, Go) is translated into raw machine code (1s and 0s) that the CPU executes.
 
 **Reverse Engineering** is the grueling process of taking that compiled binary and working backward to deduce how it functions. In cybersecurity, this is primarily used for malware analysis, finding zero-day vulnerabilities in closed-source software, and understanding undocumented network protocols.
 
+
 <Callout icon="warning" title="Anti-Reversing Techniques">
+
+
   Malware authors actively try to prevent reverse engineering. They use mathematical "Packers" to compress and encrypt the binary, "Obfuscators" to turn the code into spaghetti logic, and "Anti-Debugging" checks that cause the virus to delete itself if it detects it is running inside an analysis tool like IDA Pro.
+
+
 </Callout>
+
 
 ## Core Techniques
 
 1. **Static Analysis:** Examining the binary without executing it. Analysts use Disassemblers (like IDA Pro or Ghidra) to convert the machine code back into Assembly language, and then mathematically trace the flow of execution.
 2. **Dynamic Analysis:** Executing the binary in a secure, isolated sandbox (a Virtual Machine) and using Debuggers (like x64dbg) to pause the execution at specific memory addresses, observing exactly how the CPU registers and RAM change in real-time.
 
-</ConceptTemplate>

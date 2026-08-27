@@ -4,7 +4,14 @@ description: The absolute state-of-the-art framework for stateful, exactly-once 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Flink">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Flink">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Apache Spark revolutionized Batch processing, it historically struggled with true real-time streaming (relying on "micro-batches" that caused seconds of latency).
 
@@ -14,7 +21,7 @@ While Apache Spark revolutionized Batch processing, it historically struggled wi
 Unlike Spark Streaming, Flink does not wait to collect a "batch" of data. It processes every single event individually the exact millisecond it arrives.
 
 The mathematical challenge of stream processing is **State**. If you are calculating the "Rolling 1-Hour Revenue", the Flink application must hold the current revenue mathematically in memory.
-- **State Checkpointing**: Flink uses a mathematical algorithm called Chandy-Lamport to take distributed, asynchronous snapshots of this memory state and save it to persistent storage (like S3) without pausing the stream. 
+- **State Checkpointing**: Flink uses a mathematical algorithm called Chandy-Lamport to take distributed, asynchronous snapshots of this memory state and save it to persistent storage (like S3) without pausing the stream.
 - **Exactly-Once Semantics**: If a Flink server crashes and loses its RAM, a new server spins up, loads the state from the checkpoint, rewinds the Kafka offset, and mathematically guarantees that no financial transaction is ever double-counted or lost.
 
 ## 2. Event Time & Watermarks
@@ -27,4 +34,3 @@ Flink utilizes **Watermarks**—a mathematical heuristic that tells the system: 
 ## 3. SQL on Streams
 Flink supports executing standard SQL directly on infinite streams. You can write a `SELECT` statement that continuously runs forever, dynamically updating a live dashboard the millisecond a new Kafka event arrives.
 
-</ConceptTemplate>

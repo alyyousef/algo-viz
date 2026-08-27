@@ -1,8 +1,38 @@
+---
+title: Big Omega
+description: "The mathematical notation used to describe the asymptotic lower bound of an algorithm, proving that an algorithm will take at least a certain amount of time to execute."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Big Omega">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Big Omega (Ω)"
+  subtitle="Asymptotic Lower Bounds"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Formal Logic']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Big O ($O$) provides the ceiling (the worst-case), **Big Omega ($\Omega$)** mathematically provides the floor. It defines the **Asymptotic Lower Bound**.
 
-</ConceptTemplate>
+## 1. The Formal Mathematical Definition
+Let $f(n)$ and $g(n)$ be functions. We say $f(n) = \Omega(g(n))$ if there exist positive constants $c$ and $n_0$ such that:
+$0 \le c \cdot g(n) \le f(n)$ for all $n \ge n_0$.
+
+In plain English: Past a certain point ($n_0$), the function $f(n)$ will **always** take at least as long as $g(n)$. $g(n)$ is the absolute mathematical floor.
+
+## 2. Big Omega vs Best Case
+It is a massive misconception that Big Omega *only* describes the Best-Case scenario. Big Omega describes a mathematical boundary.
+For example, consider an algorithm that simply prints every element in an array of size $N$.
+- What is the Best-Case? It must print every element. That takes $N$ operations.
+- What is the Worst-Case? It must print every element. That takes $N$ operations.
+We can mathematically state that the time complexity of printing an array is **$\Omega(N)$**. It will *at least* take linear time, no matter what.
+
+## 3. The Sorting Lower Bound
+One of the most famous proofs in computer science uses Big Omega. It is mathematically proven that any sorting algorithm that relies on comparing elements (like Merge Sort or Quick Sort) must make at least $N \log N$ comparisons in the worst case.
+Therefore, the mathematical lower bound for comparison-based sorting is **$\Omega(N \log N)$**. It is physically impossible to sort faster than this using comparisons.
+

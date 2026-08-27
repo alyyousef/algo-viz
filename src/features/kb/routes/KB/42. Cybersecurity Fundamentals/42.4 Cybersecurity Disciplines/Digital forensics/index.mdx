@@ -4,25 +4,32 @@ description: The branch of forensic science encompassing the recovery and invest
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Digital Forensics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Digital Forensics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a major cybercrime occurs, it is not enough to just delete the virus. You must mathematically prove *exactly* what happened, especially if the incident will lead to civil litigation or criminal prosecution by law enforcement.
 
 **Digital Forensics** is the meticulous scientific process of preserving, identifying, extracting, and documenting computer evidence.
 
+
 <Callout icon="warning" title="The Chain of Custody">
+
+
   The most critical concept in forensics is the **Chain of Custody**. If a forensic analyst mathematically alters even a single byte of data on the suspect\'s hard drive, the evidence becomes legally inadmissible in court. Analysts must create perfect mathematical copies (forensic images) of the drive and only analyze the copies.
+
+
 </Callout>
+
 
 ## The Forensic Process
 
-<ComparisonTable 
-  headers={['Phase', 'Action']}
-  rows={[
-    ['Collection', 'Seizing the physical device. If the device is powered on, immediately dumping the volatile RAM to a file before turning it off, as RAM contains decrypted passwords and active malware.'],
-    ['Preservation', 'Using specialized hardware write-blockers to create a bit-for-bit mathematical clone of the hard drive. A cryptographic hash (SHA-256) is calculated to prove the copy is identical to the original.'],
-    ['Analysis', 'Searching the clone for hidden files, deleted files (carving), browser history, and timeline reconstruction to prove the suspect\'s mathematical actions.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Phase', 'Action']} rows={[ ['Collection', 'Seizing the physical device. If the device is powered on, immediately dumping the volatile RAM to a file before turning it off, as RAM contains decrypted passwords and active malware.'], ['Preservation', 'Using specialized hardware write-blockers to create a bit-for-bit mathematical clone of the hard drive. A cryptographic hash (SHA-256) is calculated to prove the copy is identical to the original.'], ['Analysis', 'Searching the clone for hidden files, deleted files (carving), browser history, and timeline reconstruction to prove the suspect\'s mathematical actions.'] ]} />
+
+

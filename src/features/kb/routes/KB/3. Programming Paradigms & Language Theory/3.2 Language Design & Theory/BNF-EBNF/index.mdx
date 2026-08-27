@@ -1,8 +1,29 @@
+---
+title: BNF and EBNF
+description: The formal mathematical metasyntaxes used to unambiguously define the grammar and rules of programming languages, network protocols, and data formats.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="BNF/EBNF">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="BNF and EBNF">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How does a compiler know what a valid `if` statement looks like? It does not use regular expressions. It uses Backus-Naur Form (BNF) or Extended BNF (EBNF), mathematically rigorous grammar definition languages.
 
-</ConceptTemplate>
+## 1. Terminals and Non-Terminals
+A BNF grammar consists of mathematical **Production Rules**.
+- **Terminals**: The actual, physical characters in the language (like `"if"`, `"+"`, or `"1"`).
+- **Non-Terminals**: Abstract mathematical concepts enclosed in angle brackets (like `<digit>` or `<statement>`).
+A rule mathematically defines a Non-Terminal: `<digit> ::= "0" | "1" | "2"`. The compiler replaces the left side with one of the options on the right side.
+
+## 2. Recursive Grammars
+BNF's absolute mathematical power comes from Recursion.
+You can define an expression like this:
+`<expr> ::= <digit> | <expr> "+" <expr>`
+Because `<expr>` is defined using itself, this single, tiny mathematical rule allows the compiler to perfectly parse an infinitely long addition string (e.g., `1+2+3+4+5`). Without mathematical recursion, parsing modern programming languages would be impossible. EBNF simply adds modern syntactical sugar (like `[]` for optional elements and `{}` for repetition) to make BNF human-readable.
+

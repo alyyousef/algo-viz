@@ -5,10 +5,17 @@ description: "A fast, concise, readable, pragmatic and open sourced systems prog
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Odin"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Odin** is a modern systems programming language created by Ginger Bill. It is designed as a direct, pragmatic alternative to C, focusing on high performance, fast compilation times, and readability, without the extreme complexity of C++ or the steep learning curve of Rust.
 
@@ -36,10 +43,10 @@ Person :: struct {
 main :: proc() {
     // Implicit type inference
     p := Person{"Odin Developer", 25}
-    
+
     // Explicit format printing
     fmt.printf("Hello, my name is %s and I am %d years old.\n", p.name, p.age)
-    
+
     // Arrays and slices
     numbers := [?]int{1, 2, 3, 4, 5}
     for n in numbers {
@@ -48,8 +55,13 @@ main :: proc() {
 }
 ```
 
+
 <Callout icon="tip" title="Built-in Custom Allocators">
+
+
 Odin's defining feature is its context system, which allows you to pass custom memory allocators (like arena allocators) implicitly to functions. This allows game developers to allocate memory instantly without expensive OS-level `malloc` calls, drastically improving framerates.
+
+
 </Callout>
 
-</ConceptTemplate>
+

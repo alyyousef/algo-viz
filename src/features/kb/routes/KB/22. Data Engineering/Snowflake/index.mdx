@@ -4,7 +4,14 @@ description: The revolutionary cloud-native Data Warehouse that mathematically d
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Snowflake">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Snowflake">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Snowflake** is arguably the most successful and disruptive Data Engineering technology of the 2010s. It completely destroyed the legacy on-premise Data Warehouse market (Teradata, Oracle) by engineering a mathematically flawless, cloud-native architecture from the ground up.
 
@@ -26,4 +33,3 @@ In Snowflake, you simply spin up **two separate Virtual Warehouses**. The CEO's 
 - **Micro-Partitions**: Snowflake does not use traditional indexes. It mathematically chunks data into millions of tiny, immutable micro-partitions (50MB - 500MB). It tracks the Min/Max values for every column in the Cloud Services layer, allowing it to instantly skip 99% of the disk during a query.
 - **Zero-Copy Cloning**: If a Data Engineer wants to test a destructive SQL script on the 10-Terabyte Production table, they can execute `CREATE TABLE dev CLONE prod`. Because files are immutable, Snowflake does not copy the 10TB of data. It mathematically copies only the metadata pointers (taking 1 second and costing $0), allowing the engineer to safely test on production data.
 
-</ConceptTemplate>

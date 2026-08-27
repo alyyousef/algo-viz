@@ -1,8 +1,34 @@
+---
+title: Two Pointers
+description: "A mathematical algorithmic technique that utilizes two indices (pointers) to traverse a linear data structure simultaneously, typically moving towards each other or in the same direction, to solve problems in linear time."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Two pointers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Two Pointers"
+  subtitle="Simultaneous Array Traversal"
+  tags={['Algorithms', 'Techniques', 'Arrays', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are asked to find two numbers in a sorted array that sum exactly to a Target, a naive double `for` loop takes O(N²) time.
 
-</ConceptTemplate>
+## 1. The Squeezing Technique (Opposite Ends)
+Because the array is mathematically sorted, you can place a **Left Pointer** at index 0 (the smallest number) and a **Right Pointer** at index N-1 (the largest number).
+Add them together.
+- If the `Sum > Target`, the only mathematical way to reduce the sum is to move the Right Pointer one step to the left.
+- If the `Sum &lt; Target`, you mathematically must move the Left Pointer one step to the right.
+The pointers "squeeze" towards the middle, finding the exact pair in exactly **O(N)** time without any nested loops.
+
+## 2. The Slow/Fast Technique (Same Direction)
+Used famously in "Floyd's Cycle-Finding Algorithm" (The Tortoise and the Hare) to detect infinite loops in a Linked List.
+You mathematically place a Slow pointer and a Fast pointer at the start.
+The Slow pointer moves 1 step per tick. The Fast pointer moves 2 steps.
+If the Linked List contains a cycle (a circle), the math guarantees that the Fast pointer will eventually "lap" the Slow pointer from behind, meaning they will equal each other. If the Fast pointer hits a `null`, there is no cycle. Time Complexity: O(N), Space Complexity: O(1).
+

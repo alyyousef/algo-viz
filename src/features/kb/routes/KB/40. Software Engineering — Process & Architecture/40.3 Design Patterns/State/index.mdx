@@ -1,8 +1,31 @@
+---
+title: State Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically allows an object to completely alter its behavior when its internal state changes, appearing as if the object changed its class.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="State">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="State Pattern"
+  subtitle="Object-Oriented Finite State Machines"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are programming a Vending Machine, its behavior drastically changes based on its state. If the state is `NO_COIN`, pressing the "Dispense" button must mathematically fail. If the state is `HAS_COIN`, pressing "Dispense" must succeed and change the state to `DISPENSING`.
 
-</ConceptTemplate>
+## 1. The Switch-Statement Nightmare
+Developers usually solve this with massive `switch(currentState)` blocks inside every single method (`insertCoin()`, `dispense()`). If you add a new state, you must mathematically update 15 different switch statements, violating the Open-Closed Principle.
+
+## 2. Polymorphic States
+The State pattern solves this by converting the States into concrete Objects.
+You create an `IState` interface with methods for every action (`insert()`, `dispense()`).
+You create concrete classes for the states: `NoCoinState` and `HasCoinState`.
+The VendingMachine object just holds a pointer to an `IState` object. When the user presses "Dispense", the VendingMachine blindly delegates the call: `this.currentState.dispense()`.
+The `HasCoinState` object executes the logic and mathematically injects the new `DispensingState` object into the VendingMachine, elegantly replacing complex branching logic with polymorphism.
+

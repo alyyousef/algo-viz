@@ -1,0 +1,25 @@
+---
+title: AWS Internet Gateway (IGW)
+description: A highly available, horizontally scaled VPC component that mathematically routes IPv4 and IPv6 traffic between a private virtual cloud network and the public internet.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Internet Gateway (IGW)"
+  subtitle="The Bridge to the Public Web"
+  tags={['AWS', 'Networking', 'VPC', 'Internet']}
+>
+
+When you create a Virtual Private Cloud (VPC), it is a mathematically isolated island of private IP addresses (e.g., `10.0.0.0/16`). A server inside this VPC cannot talk to Google, and the internet cannot talk to the server. The IGW is the bridge.
+
+## 1. Network Address Translation (NAT)
+A web server in a VPC has a Private IP (e.g., `10.0.0.5`). It also has a Public IP assigned by AWS (e.g., `54.2.3.4`).
+However, the server's operating system only knows about the Private IP.
+When a packet leaves the server destined for the internet, it hits the Internet Gateway. The IGW mathematically performs 1-to-1 Network Address Translation. It strips off the Private IP header, slaps on the Public IP header, and routes it to the internet. When the response comes back, it mathematically reverses the process.
+
+## 2. Route Tables and Public Subnets
+Attaching an IGW to a VPC does not magically connect all servers to the internet.
+You must mathematically configure the **Route Table** of a Subnet. You add a rule: *"If a packet is destined for `0.0.0.0/0` (anywhere on the internet), send it to the IGW."*
+A subnet with this rule is mathematically defined as a **Public Subnet**. If a subnet does not have this route, it is a **Private Subnet**, and it is physically impossible for traffic from the internet to reach it, regardless of security groups.
+
+</TechnologyTemplate>

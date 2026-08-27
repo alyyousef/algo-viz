@@ -5,19 +5,26 @@ description: The strict browser security mechanism that restricts a webpage from
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Cross-Origin Resource Sharing (CORS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cross-Origin Resource Sharing (CORS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Imagine you are logged into your bank (`bank.com`). The browser holds your secure authentication cookie. 
+Imagine you are logged into your bank (`bank.com`). The browser holds your secure authentication cookie.
 You then open a malicious website (`evil.com`) in another tab. If a JavaScript script on `evil.com` silently makes an HTTP `POST` request to `api.bank.com/transfer`, the browser would automatically attach your bank cookie, and your money would be stolen.
 
 **CORS** is the browser-level shield that prevents this exact catastrophe.
 
 ## 1. The Same-Origin Policy
-By default, the browser enforces the **Same-Origin Policy (SOP)**. 
+By default, the browser enforces the **Same-Origin Policy (SOP)**.
 A JavaScript file loaded from `https://my-app.com` can only make API requests to `https://my-app.com`. If it attempts to fetch data from `https://api.other-app.com`, the browser intercepts the request, blocks the JavaScript from reading the response, and throws a massive red CORS error in the console.
 
 ## 2. Bypassing SOP with CORS
-What if your Frontend is hosted on `my-app.com`, but your legitimate Backend API is hosted on `api.my-app.com`? Because the subdomains differ, the browser blocks the request. 
+What if your Frontend is hosted on `my-app.com`, but your legitimate Backend API is hosted on `api.my-app.com`? Because the subdomains differ, the browser blocks the request.
 
 To fix this, the Backend Server must explicitly whitelist the Frontend by sending specific HTTP Response Headers:
 - `Access-Control-Allow-Origin: https://my-app.com`
@@ -25,13 +32,18 @@ To fix this, the Backend Server must explicitly whitelist the Frontend by sendin
 When the browser sees this header, it relaxes the Same-Origin Policy and allows the JavaScript to read the data.
 
 ## 3. Preflight Requests (OPTIONS)
-For "complex" requests (like a `PUT` request, or a request with a custom `Authorization` header), the browser is terrified of even sending the request to the backend. 
-Before sending the real request, the browser automatically sends a hidden, invisible HTTP `OPTIONS` request (the Preflight). 
+For "complex" requests (like a `PUT` request, or a request with a custom `Authorization` header), the browser is terrified of even sending the request to the backend.
+Before sending the real request, the browser automatically sends a hidden, invisible HTTP `OPTIONS` request (the Preflight).
 It asks the backend: *"Hey, are you going to allow this `PUT` request from this origin?"*
 If the server responds positively, the browser then sends the real request.
 
+
 <Callout icon="warning" title="CORS is a Browser Policy">
+
+
 CORS does **not** protect your API from being hacked via tools like Postman, curl, or a Python script. Those tools simply ignore CORS. CORS only exists inside standard web browsers to protect end-users from malicious cross-site scripts.
+
+
 </Callout>
 
-</ConceptTemplate>
+

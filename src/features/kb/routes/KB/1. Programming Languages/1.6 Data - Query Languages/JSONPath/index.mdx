@@ -1,8 +1,25 @@
+---
+title: JSONPath
+description: The spiritual successor to XPath, designed to mathematically query and extract data from JSON structures.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JSONPath">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JSONPath">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Proposed by Stefan Goessner in 2007, JSONPath was created to bring the mathematical querying power of XPath (used for XML) to JSON documents.
 
-</ConceptTemplate>
+## 1. Syntax and Traversal
+JSONPath uses a dot-notation syntax combined with mathematical brackets to traverse the document tree. The root object is always represented by `$`.
+- `$.store.book[*].author` : Mathematically extracts all authors from every book in the store.
+- `$..book[?(@.price &lt; 10)]` : Mathematically performs a deep recursive descent (`..`) finding any book anywhere in the document that costs less than 10.
+
+## 2. Standardization Issues
+Unlike JMESPath, which has a strict mathematical specification, JSONPath was originally just a blog post. As a result, different programming languages implemented JSONPath with slightly different mathematical behaviors (especially regarding how filters and arrays are handled). While incredibly useful for quick data extraction, this lack of strict standardization can cause bugs when migrating queries between backend systems.
+

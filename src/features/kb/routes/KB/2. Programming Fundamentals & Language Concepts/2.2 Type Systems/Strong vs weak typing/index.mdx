@@ -1,8 +1,26 @@
+---
+title: Strong vs. Weak Typing
+description: The spectrum defining how strictly a language's runtime engine enforces the mathematical boundaries between different data types.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Strong vs weak typing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Strong vs. Weak Typing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+"Strong" and "Weak" typing are not absolute mathematical definitions (unlike Static vs Dynamic). They represent a spectrum of how much implicitly unsafe mathematical conversion (Coercion) a language will tolerate.
 
-</ConceptTemplate>
+## 1. Weak Typing (Implicit Coercion)
+Languages like JavaScript and C are weakly typed. They will aggressively bend mathematical rules to prevent the program from halting.
+In JavaScript: `"5" + 2` evaluates to the string `"52"`. The engine implicitly coerced the integer 2 into a string.
+In C: If you add an `int` and a `float`, the compiler implicitly promotes the integer to a float. While convenient, weak typing causes massive, silent mathematical logic bugs because the runtime guesses the developer's intent instead of throwing an error.
+
+## 2. Strong Typing (Strict Boundaries)
+Languages like Python and Rust are strongly typed. They fiercely protect the mathematical boundaries of types.
+In Python: `"5" + 2` instantly crashes the program with a `TypeError`. The engine mathematically refuses to combine a String and an Integer. The developer must explicitly, mathematically cast the type (`int("5") + 2`). Strong typing forces explicit developer intent, significantly reducing hidden runtime bugs.
+

@@ -4,20 +4,27 @@ description: The networking protocols required to push live data from the server
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Real-Time Communication">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Real-Time Communication">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Standard HTTP is strictly a **Request/Response** protocol. The Client must initiate the request, and the Server responds. 
+Standard HTTP is strictly a **Request/Response** protocol. The Client must initiate the request, and the Server responds.
 If a user is waiting for a chat message to arrive, the server has no native way to reach out and "push" the message to the browser.
 
 ## 1. Short Polling (The Legacy Hack)
-Before modern protocols existed, developers used Javascript `setInterval` to send an AJAX request to the server every 3 seconds, asking "Are there new messages?". 
+Before modern protocols existed, developers used Javascript `setInterval` to send an AJAX request to the server every 3 seconds, asking "Are there new messages?".
 This is mathematically disastrous. If you have 10,000 users, your server is hit by 3,333 requests every single second, 99% of which return "No new messages," wasting massive amounts of server CPU and network bandwidth.
 
 ## 2. WebSockets
-Introduced in HTML5, WebSockets completely solved the real-time problem. 
-The client sends a standard HTTP request to the server with an `Upgrade: websocket` header. If the server agrees, the connection is kept **permanently open**. 
+Introduced in HTML5, WebSockets completely solved the real-time problem.
+The client sends a standard HTTP request to the server with an `Upgrade: websocket` header. If the server agrees, the connection is kept **permanently open**.
 
-This creates a full-duplex, bidirectional TCP connection. 
+This creates a full-duplex, bidirectional TCP connection.
 - The Client can send data to the Server at any time.
 - The Server can push data to the Client at any time, instantly (under 10 milliseconds).
 
@@ -25,8 +32,7 @@ WebSockets are the absolute industry standard for Chat Applications (Discord, Sl
 
 ## 3. Server-Sent Events (SSE)
 WebSockets are heavily complex to scale (requiring complex load balancer configurations to maintain millions of persistent TCP connections).
-If your application only needs data to flow in ONE direction (Server to Client), **Server-Sent Events** are mathematically superior. 
-SSE operates over standard HTTP. The client opens a request, and the server holds it open, trickling down text data in a continuous stream. 
+If your application only needs data to flow in ONE direction (Server to Client), **Server-Sent Events** are mathematically superior.
+SSE operates over standard HTTP. The client opens a request, and the server holds it open, trickling down text data in a continuous stream.
 This is the technology used by ChatGPT to "stream" the AI's text response into the browser token by token.
 
-</ConceptTemplate>

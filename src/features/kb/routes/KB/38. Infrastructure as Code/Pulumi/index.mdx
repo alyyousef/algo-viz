@@ -5,7 +5,14 @@ description: "A modern IaC platform that allows you to define infrastructure usi
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Pulumi">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pulumi">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Pulumi** is a modern Infrastructure as Code tool that challenges Terraform's dominance by changing *how* you write infrastructure.
 
@@ -19,13 +26,18 @@ Because you are using a real programming language, you gain massive advantages:
 - **Package Managers**: You can publish reusable infrastructure components as standard NPM packages or Python wheels.
 
 ## 2. How it works
-Under the hood, Pulumi is highly declarative. When you run a Pulumi program, it doesn't immediately create resources. 
+Under the hood, Pulumi is highly declarative. When you run a Pulumi program, it doesn't immediately create resources.
 1. It executes your TypeScript/Python code to dynamically build a target state graph.
 2. The Pulumi Engine compares this graph to the current state.
 3. It makes the necessary API calls to the cloud providers to reconcile the differences.
 
+
 <Callout icon="info" title="Pulumi vs AWS CDK">
+
+
 While both allow you to write infrastructure in real languages, **AWS CDK** only works for AWS (compiling down to CloudFormation). **Pulumi** is cloud-agnostic and interacts directly with the cloud provider's APIs, just like Terraform.
+
+
 </Callout>
 
-</ConceptTemplate>
+

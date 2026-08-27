@@ -5,7 +5,14 @@ description: The fundamental synchronization lock that mathematically guarantees
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Mutexes (Mutual Exclusion)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mutexes (Mutual Exclusion)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When multiple Threads run concurrently, they share the same physical RAM. If two threads try to modify a shared variable (e.g., `bank_balance += 100`) at the exact same microsecond, the CPU instructions interleave, and the data is mathematically destroyed. This is a **Race Condition**.
 
@@ -16,15 +23,20 @@ A Mutex acts like the single key to a public restroom.
 1. Thread A wants to enter the **Critical Section** (the code that modifies the shared variable).
 2. Thread A calls `mutex.lock()`. It takes the key and proceeds.
 3. Thread B arrives and calls `mutex.lock()`. Because the key is missing, the OS instantly physically freezes (blocks) Thread B.
-4. Thread A finishes and calls `mutex.unlock()`. 
+4. Thread A finishes and calls `mutex.unlock()`.
 5. The OS wakes up Thread B, hands it the key, and allows it to proceed.
 
 ## 2. Hardware Level Atomicity
 How does the `mutex.lock()` function itself avoid a race condition? If two threads call `lock()` at the same time, who wins?
 Mutexes mathematically rely on specialized CPU hardware instructions, such as **Compare-And-Swap (CAS)** or **Test-And-Set**. These instructions execute entirely inside the silicon in a single, uninterruptible clock cycle. They are mathematically atomic.
 
+
 <Callout icon="warning" title="The Threat of Deadlocks">
+
+
 Mutexes are dangerous. If Thread A locks Mutex 1, and Thread B locks Mutex 2... and then Thread A attempts to lock Mutex 2, and Thread B attempts to lock Mutex 1, they will both freeze. They are permanently waiting for each other to release the locks. This is a **Deadlock**, and it permanently crashes the application.
+
+
 </Callout>
 
-</ConceptTemplate>
+

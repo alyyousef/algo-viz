@@ -1,8 +1,33 @@
+---
+title: MongoDB vs PostgreSQL
+description: "A fundamental comparison of Database architectures, contrasting the rigid, mathematically relational schema of PostgreSQL with the flexible, document-based, horizontally scalable approach of MongoDB."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MongoDB vs PostgreSQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="MongoDB vs PostgreSQL"
+  subtitle="SQL vs NoSQL"
+  tags={['Comparison', 'Databases', 'Architecture', 'Data Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When starting a project, the choice between SQL (PostgreSQL) and NoSQL (MongoDB) determines how you will mathematically model your entire data domain.
 
-</ConceptTemplate>
+## 1. PostgreSQL (The Relational Titan)
+- **Architecture**: Relational Database Management System (RDBMS). Data is stored in strict Tables with rows and columns.
+- **Philosophy**: **ACID Compliance** and Data Integrity. You must define a mathematical Schema upfront. If a column is an Integer, the database will aggressively reject a String.
+- **Superpower**: JOINs. You can write incredibly complex mathematical queries combining data from 10 different normalized tables with perfect consistency.
+- **Limitation**: Harder to scale Horizontally across multiple servers (requires complex sharding).
+
+## 2. MongoDB (The Document Pioneer)
+- **Architecture**: NoSQL Document Store. Data is stored in collections of JSON-like BSON documents.
+- **Philosophy**: Flexibility and Velocity. There is zero enforced schema. Document #1 can have 3 fields, and Document #2 in the exact same collection can have 50 completely different fields. You embed data (e.g., placing the array of comments directly *inside* the blog post document) to avoid JOINs.
+- **Superpower**: **Horizontal Scaling**. MongoDB was mathematically built from the ground up for massive, multi-server distributed sharding and replica sets.
+- **Limitation**: Lacks complex mathematical JOINs; if your data is highly relational (like a banking ledger), MongoDB will force you into painful application-level logic.
+

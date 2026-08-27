@@ -1,8 +1,26 @@
+---
+title: Header Files
+description: The legacy modularity system used by C and C++, mathematically separating the declaration of a function from its physical implementation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Header files">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Header Files">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In C and C++, a module is split into two physical text files: The Header file (`.h`) and the Implementation file (`.c / .cpp`).
 
-</ConceptTemplate>
+## 1. The Preprocessor and #include
+Unlike modern languages that use mathematically intelligent `import` statements, C relies on the Preprocessor.
+When you write `#include "math.h"`, the Preprocessor physically opens `math.h`, copies all of the raw text inside it, and literally pastes it into your source file before handing it to the compiler. It is a completely blind, text-based copy-paste operation.
+
+## 2. Declarations vs Definitions
+The Header file mathematically contains **Declarations** (the Function Signatures). It tells the compiler, "A function named `calculate()` exists somewhere, and it takes an integer." This gives the compiler enough mathematical information to type-check your code.
+The `.cpp` file contains the **Definition** (the actual logic).
+Because of this separation, if a project has 10,000 files that `#include "math.h"`, the compiler has to physically parse the exact same text 10,000 times, making C++ compilation mathematically exponentially slower than modern languages that use pre-compiled Modules.
+

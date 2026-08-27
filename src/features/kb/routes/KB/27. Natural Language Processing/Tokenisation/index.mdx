@@ -1,8 +1,27 @@
+---
+title: Tokenization
+description: The critical first step in NLP where a continuous string of text is mathematically shattered into discrete, analyzable units (words, sub-words, or characters).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tokenisation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tokenization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Neural Network cannot mathematically ingest the raw string `"Don't panic!"`. The string must be physically broken apart into Tokens before any AI processing can begin.
 
-</ConceptTemplate>
+## 1. Word and Character Tokenization
+- **Word Tokenization**: Splitting by spaces (`["Don't", "panic!"]`). This is mathematically fragile. It fails to separate the punctuation from the word (treating "panic" and "panic!" as two entirely different mathematical entities), and fails on languages without spaces (like Chinese).
+- **Character Tokenization**: Splitting into individual letters (`["D", "o", "n", "'", "t"]`). This solves the punctuation and Out-of-Vocabulary problem, but mathematically destroys the semantic meaning of the words, forcing the Neural Network to re-learn basic spelling from scratch.
+
+## 2. Sub-Word Tokenization (BPE)
+Modern LLMs (like GPT-4) use **Byte-Pair Encoding (BPE)**, a sub-word tokenizer.
+It mathematically analyzes a massive corpus and merges frequent character pairs into single Tokens.
+It might tokenize "unbelievable" into `["un", "believ", "able"]`.
+Because these sub-words are mathematically highly frequent across the English language, the Neural Network can easily learn their semantic meaning, providing a perfect mathematical balance between Vocabulary size and Semantic retention.
+

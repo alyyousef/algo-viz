@@ -1,8 +1,36 @@
+---
+title: VB.NET
+description: An object-oriented programming language implemented on the .NET Framework, designed as the modern successor to Visual Basic.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="VB.NET">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="VB.NET">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Visual Basic .NET (VB.NET) was released by Microsoft in 2002. While it retained the English-like syntax of legacy Visual Basic (VB6), it was a complete architectural rewrite, transforming it into a fully object-oriented language running on the Common Language Runtime (CLR).
 
-</ConceptTemplate>
+## 1. The C# Parallel
+Technologically, VB.NET and C# are mathematically identical under the hood.
+Both compile down to the exact same Intermediate Language (IL). Any library written in C# can be used seamlessly in VB.NET and vice versa.
+
+
+<Callout icon="warning" title="The Decline of VB.NET">
+
+
+While heavily used in enterprise legacy systems, Microsoft explicitly shifted its focus to C# as the primary .NET language. VB.NET is mathematically feature-complete, but it no longer receives the cutting-edge language features that C# receives annually.
+
+
+</Callout>
+
+
+## 2. Syntax Characteristics
+VB.NET was designed for rapid application development and readability by non-C programmers.
+- It uses English words (`AndAlso`, `OrElse`, `Not`) instead of C-style symbols (`&&`, `||`, `!`).
+- It does not use case-sensitive variables, and blocks are terminated with explicitly named tags (`End If`, `Next`, `End Sub`) rather than curly braces.
+

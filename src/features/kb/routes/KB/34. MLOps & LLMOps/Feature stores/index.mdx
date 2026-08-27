@@ -1,8 +1,27 @@
+---
+title: Feature Stores
+description: A centralized, high-performance data engineering layer in MLOps that calculates, mathematically transforms, and serves Machine Learning features to guarantee absolute consistency between training and production.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Feature stores">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Feature Stores">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Data Scientist calculates a feature in a Jupyter Notebook: *"User's average spend over 30 days."* Six months later, a Software Engineer tries to rewrite that exact mathematical logic in Java for the production API. The math is slightly different. The model silently fails. This is Training-Serving Skew.
 
-</ConceptTemplate>
+## 1. The Single Source of Mathematical Truth
+A Feature Store (like Feast or Hopsworks) solves this by decoupling the Feature Math from the Model.
+The Data Engineer writes the mathematical transformation *once* and registers it to the Feature Store.
+- **Offline Store (Training)**: The Feature Store uses a massive Data Warehouse (like Snowflake) to run batch processing, generating millions of historical rows of the feature so the Data Scientist can train the Neural Network.
+- **Online Store (Serving)**: The Feature Store simultaneously syncs that exact same mathematical logic to a low-latency database (like Redis).
+
+## 2. Preventing Training-Serving Skew
+When the API receives a live request (e.g., User ID 123 applies for a loan), the API does *not* calculate the "30-day average spend" itself.
+It queries the Online Feature Store, which returns the exact, pre-calculated float in 2 milliseconds. Because the Offline Store and the Online Store are physically powered by the exact same mathematical definition, Training-Serving Skew is mathematically eliminated.
+

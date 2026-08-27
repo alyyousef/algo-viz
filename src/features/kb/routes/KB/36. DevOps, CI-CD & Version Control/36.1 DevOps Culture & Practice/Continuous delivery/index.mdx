@@ -1,8 +1,29 @@
+---
+title: Continuous Delivery
+description: The DevOps practice of ensuring that software is always mathematically in a deployable state, with all code changes automatically built, tested, and packaged for release to a production environment.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Continuous delivery">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Continuous Delivery (CD)"
+  subtitle="Always Ready for Production"
+  tags={['DevOps', 'CI/CD', 'Release Management', 'Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Continuous Delivery is the bridge between Continuous Integration (CI) and Continuous Deployment. While CI ensures the code compiles and tests pass, Continuous Delivery ensures the resulting binary is perfectly packaged and physically staged for deployment.
 
-</ConceptTemplate>
+## 1. The Artifact Repository
+When a developer merges code, CI tests it. Continuous Delivery takes the next mathematical step: it builds the final executable (e.g., a Docker Image) and pushes it to an **Artifact Repository** (like AWS ECR, Nexus, or Artifactory).
+This artifact is mathematically tagged with a semantic version or a Git commit hash. The critical rule of Continuous Delivery is that this artifact is **immutable**. You never rebuild the code for staging and then rebuild it again for production. You promote the exact same mathematical binary artifact through the environments.
+
+## 2. The Manual Push-Button Release
+The defining mathematical difference between Continuous *Delivery* and Continuous *Deployment* is a manual approval gate.
+In Continuous Delivery, the code is fully built, tested, and deployed automatically to Staging. However, the final pipeline step to Production halts. It requires a human (a Release Manager or Product Owner) to physically click a "Deploy" button. This is mathematically necessary for enterprises that require manual compliance sign-offs or coordinated marketing launches.
+

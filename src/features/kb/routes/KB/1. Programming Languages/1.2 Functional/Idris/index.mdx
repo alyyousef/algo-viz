@@ -1,8 +1,28 @@
+---
+title: Idris
+description: A general-purpose functional programming language featuring full dependent types, allowing developers to mathematically prove their software is correct.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Idris">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Idris">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Edwin Brady, Idris is syntactically very similar to Haskell, but it introduces one of the most advanced mathematical concepts in computer science: **Dependent Types**.
 
-</ConceptTemplate>
+## 1. First-Class Types
+In Idris, Types are first-class citizens. They are not mathematically separate from values.
+You can write a function whose return *type* changes depending on the *value* of the input.
+For example, you can write a function that takes a boolean. If the boolean is `true`, the function mathematically returns the Type `String`. If the boolean is `false`, it returns the Type `Integer`.
+
+## 2. Theorem Proving as Programming
+Because Types can depend on Values, the compiler can mathematically prove properties of your code.
+In C#, you might write a `sort()` function and write 20 unit tests to verify it works.
+In Idris, you write the mathematical type signature to state: "This function takes an Array of length N, and returns an Array of length N where every element is less than or equal to the next element."
+If your implementation is flawed, the compiler mathematically refuses to compile. By satisfying the compiler, you have definitively proven, via mathematical logic (the Curry-Howard correspondence), that your software has zero bugs.
+

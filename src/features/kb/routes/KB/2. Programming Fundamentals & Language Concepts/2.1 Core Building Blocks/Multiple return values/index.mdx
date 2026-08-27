@@ -1,8 +1,30 @@
+---
+title: Multiple Return Values
+description: Techniques used to mathematically circumvent the standard limitation of returning only a single value from a function.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multiple return values">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multiple Return Values">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, standard CPU calling conventions (like the C ABI) mathematically dictate that a function can only return a single value (usually placed in the `EAX` or `RAX` register). However, modern programming often requires returning multiple distinct pieces of data.
 
-</ConceptTemplate>
+## 1. Out Parameters (Pointers)
+In C or C++, you mathematically bypass the single-return limit using Pointers (Out Parameters).
+You pass the memory addresses of empty variables into the function (`void calculate(int* outA, int* outB)`). The function mathematically writes the results directly into those physical memory addresses and returns void. While memory-efficient, this is considered a mathematical "Side Effect" and violates pure functional programming principles.
+
+## 2. Tuples and Destructuring
+Modern languages (like Python, Go, and Rust) support multiple returns natively.
+```python
+def get_coordinates():
+    return 10, 20
+x, y = get_coordinates()
+```
+Under the hood, the Python compiler mathematically wraps the `10` and `20` into a single Composite Type (a Tuple). It returns the single Tuple object to satisfy the CPU, and then immediately mathematically "destructures" the Tuple, unpacking the values into the local variables `x` and `y`.
+

@@ -4,11 +4,18 @@ description: The physical, global infrastructure of underwater fiber-optic cable
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Internet">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Internet">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The Internet and the World Wide Web are **not** the same thing. 
+The Internet and the World Wide Web are **not** the same thing.
 
-**The Internet is the physical infrastructure.** 
+**The Internet is the physical infrastructure.**
 It is the massive, planetary network of hardware. It is the underwater fiber-optic cables crossing the Atlantic Ocean. It is the Cisco BGP routers sitting in massive datacenters. It is the IP addresses (Layer 3) and TCP/UDP ports (Layer 4) that allow a laptop in Tokyo to mathematically route a packet to a server in London.
 
 ## Core Protocols of the Internet
@@ -19,4 +26,3 @@ It is the massive, planetary network of hardware. It is the underwater fiber-opt
 
 You can use The Internet without ever using the Web. Sending an email via SMTP, playing a multiplayer game over UDP, or SSHing into a Linux server all utilize the Internet, completely bypassing the World Wide Web.
 
-</ConceptTemplate>

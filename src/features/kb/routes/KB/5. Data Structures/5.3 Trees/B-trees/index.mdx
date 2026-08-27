@@ -5,30 +5,42 @@ description: The massively wide, disk-optimized search tree that mathematically 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="B-Trees">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="B-Trees">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Binary Search Trees (like AVL and Red-Black) are mathematically perfect when data fits in RAM. However, RAM is expensive. When data exceeds RAM (e.g., a 10TB PostgreSQL database), it must be stored on a slow, spinning Hard Disk (or SSD). 
+Binary Search Trees (like AVL and Red-Black) are mathematically perfect when data fits in RAM. However, RAM is expensive. When data exceeds RAM (e.g., a 10TB PostgreSQL database), it must be stored on a slow, spinning Hard Disk (or SSD).
 A Disk is highly optimized for reading massive sequential blocks of data (e.g., 4KB at a time), but terrible at tiny, random reads.
 
 If you stored a 10TB index in a Binary Search Tree, searching for a user would require ~40 pointer hops. On disk, that requires 40 individual disk I/O operations, which is catastrophically slow.
 **B-Trees** were invented to solve this exact bottleneck.
 
 ## 1. The Fat Node (High Arity)
-Instead of a node holding exactly 1 value and 2 children (Binary), a B-Tree node is mathematically massive. 
+Instead of a node holding exactly 1 value and 2 children (Binary), a B-Tree node is mathematically massive.
 
-A single B-Tree node is designed to perfectly match the size of a disk block (e.g., 4KB). 
-A single node can hold **hundreds of sorted values** and **hundreds of child pointers**. 
+A single B-Tree node is designed to perfectly match the size of a disk block (e.g., 4KB).
+A single node can hold **hundreds of sorted values** and **hundreds of child pointers**.
 Because each node branches out in hundreds of directions (High Arity/Degree), the tree becomes incredibly short and incredibly wide.
 
 ## 2. Disk I/O Minimization
 If you insert 1 billion records into a standard Binary Tree, the tree height is ~30. (30 slow disk reads to find data).
 If you insert 1 billion records into a B-Tree with a branching factor of 100, the tree height is only **4**.
 
-Searching a B-Tree for a user ID involves loading the massive Root node into RAM (1 disk read). The CPU does a lightning-fast Binary Search over the hundreds of keys in RAM to find the correct child pointer. It then loads that child node from disk (Disk read 2), and so on. 
+Searching a B-Tree for a user ID involves loading the massive Root node into RAM (1 disk read). The CPU does a lightning-fast Binary Search over the hundreds of keys in RAM to find the correct child pointer. It then loads that child node from disk (Disk read 2), and so on.
 **You find your data out of 1 billion records with a mathematical maximum of 4 disk I/O operations.**
 
+
 <Callout icon="warning" title="B-Tree Splitting">
+
+
 B-Trees are self-balancing. When a node fills up completely (exceeds its mathematical capacity of keys), it physically splits in half, and promotes the middle median key up to its parent node. If the root fills up and splits, the tree mathematically grows taller by exactly 1 level.
+
+
 </Callout>
 
-</ConceptTemplate>
+

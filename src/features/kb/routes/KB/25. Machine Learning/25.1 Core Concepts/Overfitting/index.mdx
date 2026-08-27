@@ -4,14 +4,21 @@ description: The catastrophic mathematical failure where a model perfectly memor
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Overfitting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Overfitting">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Overfitting** is the most common and dangerous mathematical failure in all of Machine Learning. It occurs when a model is mathematically too complex for the amount of data provided. Instead of learning the underlying signal (the true trend), it mathematically memorizes the exact coordinates of every single data point, including the random noise.
 
 ## 1. The Mathematical Symptoms
 You can mathematically diagnose overfitting by tracking the Loss Function (Error) during training.
 - **Training Error**: Plummets to zero. The model is predicting the training data with 99.9% accuracy.
-- **Validation Error**: Drops initially, but suddenly hits an inflection point and begins to rapidly *increase*. 
+- **Validation Error**: Drops initially, but suddenly hits an inflection point and begins to rapidly *increase*.
 
 This divergence is the absolute mathematical signature of overfitting. The model has become so hyper-specialized to the training data that its ability to generalize to unseen data is collapsing.
 
@@ -26,4 +33,3 @@ To stop overfitting, Data Scientists mathematically constrain the model.
 - **L1/L2 Regularisation**: Adding a mathematical penalty to the Loss Function that punishes the model for having weights that are too large, forcing the model to remain simple.
 - **Dropout (Deep Learning)**: During training, randomly shutting off 50% of the neurons on every pass. This mathematically prevents the neurons from co-adapting and memorizing highly specific noise patterns.
 
-</ConceptTemplate>

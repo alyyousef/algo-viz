@@ -4,39 +4,46 @@ description: The neural network architecture that powers modern Generative AI.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Transformers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Transformers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Introduced by Google in the 2017 paper *"Attention Is All You Need"*, the Transformer is a deep learning architecture that relies entirely on a mechanism called **Self-Attention** to draw global dependencies between input and output.
 
+
 <Callout icon="tip" title="Why it matters">
+
+
   Before Transformers, NLP relied heavily on Recurrent Neural Networks (RNNs) and LSTMs. Transformers process entire sequences simultaneously rather than sequentially, enabling massive parallelization and the creation of Large Language Models (LLMs) like GPT-4.
+
+
 </Callout>
+
 
 ## Core Mechanism
 
-<ComparisonTable 
-  headers={['Component', 'Function']}
-  rows={[
-    ['Self-Attention', 'Allows the model to weigh the importance of different words in a sentence relative to one another.'],
-    ['Multi-Head Attention', 'Runs multiple self-attention layers in parallel to capture different types of relationships.'],
-    ['Positional Encoding', 'Injects information about the position of the tokens in the sequence since the model has no inherent sense of order.']
-  ]}
-/>
+
+<ComparisonTable headers={['Component', 'Function']} rows={[ ['Self-Attention', 'Allows the model to weigh the importance of different words in a sentence relative to one another.'], ['Multi-Head Attention', 'Runs multiple self-attention layers in parallel to capture different types of relationships.'], ['Positional Encoding', 'Injects information about the position of the tokens in the sequence since the model has no inherent sense of order.'] ]} />
+
 
 ## Architecture
 
 <ArchitectureDiagram chart={`
 graph TD
   Input(Input Tokens) --> Embed(Embedding + Positional Encoding)
-  
+
   subgraph Encoder Block
     Embed --> MHA1(Multi-Head Attention)
     MHA1 --> AddNorm1(Add & Norm)
     AddNorm1 --> FF1(Feed Forward)
     FF1 --> AddNorm2(Add & Norm)
   end
-  
+
   AddNorm2 --> Output(To next block / Output)
 `} />
 
-</ConceptTemplate>

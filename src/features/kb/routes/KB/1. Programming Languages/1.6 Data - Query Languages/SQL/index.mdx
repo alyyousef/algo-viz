@@ -1,8 +1,25 @@
+---
+title: SQL
+description: The Structured Query Language, the mathematical foundation of relational algebra and the absolute bedrock of modern data storage.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SQL (Structured Query Language)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Donald Chamberlin and Raymond Boyce at IBM in the 1970s, SQL is based on the mathematical theory of Relational Algebra developed by Edgar F. Codd. It is arguably the most successful and resilient programming language in human history.
 
-</ConceptTemplate>
+## 1. Relational Algebra
+SQL is a purely declarative language. You mathematically declare *what* data you want (`SELECT name FROM users WHERE age > 18`). You do not write a `for` loop to scan the disk.
+The database engine contains a **Query Optimizer**. It mathematically parses your SQL into a tree of relational algebra operations, calculates the most efficient physical disk retrieval path (using B-Trees or Hash Indexes), and executes it. This mathematical abstraction guarantees that queries remain optimal even as data grows from megabytes to terabytes.
+
+## 2. The Power of the JOIN
+The defining mathematical feature of SQL is the `JOIN`.
+Relational databases enforce Data Normalization (preventing duplicate data). If you have a `Users` table and an `Orders` table, SQL mathematically calculates the Cartesian product of the tables and filters them based on matching Foreign Keys. This allows infinite, complex mathematical relationships to be queried instantly without duplicating data on the physical hard drive.
+

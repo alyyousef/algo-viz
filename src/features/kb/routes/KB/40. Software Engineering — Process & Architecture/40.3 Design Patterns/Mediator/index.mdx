@@ -1,8 +1,30 @@
+---
+title: Mediator Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically reduces chaotic, direct dependencies between communicating objects by forcing them to collaborate exclusively through a central mediator object.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mediator">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Mediator Pattern"
+  subtitle="The Mathematical Traffic Cop"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine the UI for an airplane cockpit or a complex form. If checking the "Is Married" Checkbox must enable the "Spouse Name" TextField, and checking the "Is Employed" Checkbox must disable the "Unemployment Benefits" Dropdown.
 
-</ConceptTemplate>
+## 1. The Spiderweb of Dependencies
+If the Checkbox object has a direct mathematical pointer to the TextField object, and the Dropdown object has a direct pointer to the Checkbox, you create an unmaintainable mathematical spiderweb. If you delete one UI component, five others crash because their direct pointers become null.
+
+## 2. The Central Hub
+The Mediator pattern extracts all direct communication.
+UI components are mathematically forbidden from knowing about each other. Instead, they only know about the **Mediator** (e.g., a `FormController`).
+When the "Is Married" Checkbox is clicked, it simply says: `mediator.notify("CheckboxClicked", true)`.
+The Mediator holds all the complex mathematical routing logic. It receives the event, looks at its rules, and executes `spouseTextField.enable()`. By centralizing the chaos into a single hub, the individual UI components remain mathematically independent and highly reusable.
+

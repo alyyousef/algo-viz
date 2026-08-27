@@ -4,7 +4,14 @@ description: The fundamental data engineering pipeline pattern for moving raw da
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ETL (Extract, Transform, Load)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ETL (Extract, Transform, Load)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 You cannot run massive analytical queries (e.g., *"Give me the average lifetime value of all users grouped by region over the last 5 years"*) on your production PostgreSQL database. It would max out the CPU and cause the live website to crash for actual customers.
 
@@ -22,8 +29,13 @@ Raw data is messy. During the Transform phase (usually handled by Python scripts
 ## 3. Load
 The perfectly formatted, deeply cleaned data is finally written (loaded) into the Data Warehouse, where Data Scientists can query it safely.
 
+
 <Callout icon="info" title="ETL vs ELT">
+
+
   Historically, servers were weak, so transformation had to happen *before* data entered the warehouse. Today, massive cloud warehouses (like BigQuery) are so powerful that they can transform data instantly. This created **ELT (Extract, Load, Transform)**. You dump the messy raw data directly into the warehouse (Load), and then use raw SQL to clean and format it directly inside the warehouse itself (Transform), heavily utilizing tools like **dbt (data build tool)**.
+
+
 </Callout>
 
-</ConceptTemplate>
+

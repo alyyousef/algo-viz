@@ -1,8 +1,32 @@
+---
+title: Rate Limiting
+description: "A defensive architectural mechanism that mathematically restricts the number of API requests a single client or IP address can make within a specific time window, protecting the system from DDoS attacks and accidental resource exhaustion."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rate limiting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Rate Limiting"
+  subtitle="Protecting the Mathematical Bottleneck"
+  tags={['API', 'Security', 'Architecture', 'Networking']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a malicious user runs a Python script that hits your `POST /login` endpoint 10,000 times per second, they will mathematically overwhelm your database's connection pool, causing a Denial of Service (DoS) for all legitimate users.
 
-</ConceptTemplate>
+## 1. The Token Bucket Algorithm
+Rate Limiting is mathematically implemented using algorithms like the **Token Bucket**.
+Imagine a bucket that holds a maximum of 100 tokens.
+- Every time a user makes an API request, 1 token is mathematically subtracted from the bucket.
+- A background process automatically drops 1 new token into the bucket every second.
+If the script hits the API 200 times instantly, the bucket empties. The API Gateway mathematically rejects the 101st request with an HTTP `429 Too Many Requests` status code, forcing the client to wait until the bucket refills.
+
+## 2. Distributed State
+In a Microservice architecture, rate limiting cannot rely on local server RAM, because the user might hit Server A on request 1, and Server B on request 2.
+To mathematically enforce a global limit, the API Gateway uses a highly available, ultra-fast, in-memory data store like **Redis**. The user's IP address or API Key acts as the Redis key, and the remaining token count is the value, allowing all gateways to synchronize rate limits globally in under 2 milliseconds.
+

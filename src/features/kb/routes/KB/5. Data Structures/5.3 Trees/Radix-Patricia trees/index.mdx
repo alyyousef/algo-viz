@@ -4,21 +4,27 @@ description: A space-optimized Trie where nodes with only one child are mathemat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Radix Trees (Patricia Tries)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Radix Trees (Patricia Tries)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standard **Trie** is incredibly fast for routing and autocomplete, but mathematically incredibly wasteful. If you insert the word `"ALGORITHM"` into an empty Trie, it creates 9 completely separate nodes. The nodes `L-G-O-R-I-T-H-M` each have exactly one child. A **Radix Tree** (also known as a Patricia Trie) mathematically compresses this waste.
 
 ## 1. Mathematical Compression
-A Radix Tree enforces a strict architectural rule: **No node can exist if it has exactly one child.** 
-If a parent has only one child, the tree violently merges the child into the parent. 
+A Radix Tree enforces a strict architectural rule: **No node can exist if it has exactly one child.**
+If a parent has only one child, the tree violently merges the child into the parent.
 Instead of a chain of 9 nodes, the Radix Tree mathematically merges them into a single node holding the entire string: `"ALGORITHM"`.
 
 ## 2. Branching on Divergence
-If you later insert the word `"ALGEBRA"`, the tree mathematically calculates the exact point of divergence. 
-It splits the merged node at the letters `"ALG"`. `"ALG"` becomes the parent node, branching into two children: `"ORITHM"` and `"EBRA"`. 
+If you later insert the word `"ALGEBRA"`, the tree mathematically calculates the exact point of divergence.
+It splits the merged node at the letters `"ALG"`. `"ALG"` becomes the parent node, branching into two children: `"ORITHM"` and `"EBRA"`.
 This dynamic splitting and merging ensures the tree only uses memory at mathematical points of decision.
 
 ## 3. Operating System Routing
 Radix Trees are not academic toys; they run the entire internet. Linux mathematically relies on highly optimized Radix Trees for **IP Routing** and **Page Cache Mapping**. Because they heavily compress long, singular paths, they allow the OS to perform blazing-fast longest-prefix matches on IP addresses using a fraction of the memory of a standard Trie.
 
-</ConceptTemplate>

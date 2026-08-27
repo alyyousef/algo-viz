@@ -1,8 +1,31 @@
+---
+title: Tarjan's SCC Algorithm
+description: "An elegant, single-pass mathematical algorithm for finding the Strongly Connected Components (SCCs) of a directed graph using Depth-First Search and a stack to track discovery times."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tarjan's SCC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Tarjan's SCC Algorithm"
+  subtitle="Single-Pass Component Isolation"
+  tags={['Algorithms', 'Graphs', 'DFS', 'SCC']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Kosaraju's Algorithm finds Strongly Connected Components using *two* DFS passes, Robert Tarjan mathematically solved it using only a **single DFS pass**.
 
-</ConceptTemplate>
+## 1. Discovery and Low-Link Values
+Tarjan's algorithm uses the same mathematical concepts he invented for finding Bridges (Discovery Time and Low-Link Value).
+As the DFS explores the graph, it pushes every visited node onto a Stack.
+It calculates the `low-link` value for every node (the lowest discovery time reachable from that node). If a node can mathematically reach back to an ancestor on the Stack, its low-link value drops.
+
+## 2. Popping the SCC
+Because all nodes in an SCC can reach each other, they will mathematically all share the exact same low-link value (specifically, the discovery time of the "root" node of that SCC).
+When the recursive DFS finishes exploring a node, it checks: `Is my low-link value equal to my discovery time?`
+If YES, this node is mathematically the root of an SCC. The algorithm instantly pops nodes off the Stack until it pops the root node itself. Everything it just popped is guaranteed to form a single, isolated Strongly Connected Component. The Time Complexity is an optimal **O(V + E)**.
+

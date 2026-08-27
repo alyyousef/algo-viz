@@ -4,7 +4,14 @@ description: "The industry-standard open-source platform for visualizing metrics
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Grafana">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Grafana">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Prometheus is incredible at storing and querying metrics, its built-in UI is extremely basic. **Grafana** is the visualization layer that sits on top of Prometheus (and dozens of other databases).
 
@@ -31,4 +38,3 @@ While Grafana initially only focused on visualization, the company behind it (Gr
 
 This combination is widely known as the **PLG Stack**.
 
-</ConceptTemplate>

@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="End-to-End (E2E) Testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="End-to-End (E2E) Testing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **End-to-End (E2E) Testing** sits at the very top of the testing pyramid. It verifies that the entire system—the frontend UI, the backend API, the database, and third-party integrations—all work together to deliver a successful user journey.
 
@@ -26,18 +33,16 @@ A system can have 100% passing unit tests and 100% passing integration tests, bu
 
 ## 3. The Testing Pyramid Trade-offs
 
-<ComparisonTable 
-  headers={['Metric', 'Unit Tests', 'E2E Tests']} 
-  rows={[
-    ['Execution Speed', 'Milliseconds (extremely fast).', 'Minutes (very slow).'],
-    ['Cost to Write/Maintain', 'Low.', 'High (UI changes frequently break tests).'],
-    ['Confidence Level', 'Low (doesn\'t prove the app works).', 'High (proves the user can use the app).'],
-    ['Debugging', 'Easy (points exactly to the broken line of code).', 'Hard (did the network fail? Did the DB time out?).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Metric', 'Unit Tests', 'E2E Tests']} rows={[ ['Execution Speed', 'Milliseconds (extremely fast).', 'Minutes (very slow).'], ['Cost to Write/Maintain', 'Low.', 'High (UI changes frequently break tests).'], ['Confidence Level', 'Low (doesn\'t prove the app works).', 'High (proves the user can use the app).'], ['Debugging', 'Easy (points exactly to the broken line of code).', 'Hard (did the network fail? Did the DB time out?).'] ]} />
+
 
 <Callout icon="tip" title="The E2E Rule of Thumb">
+
+
 Because E2E tests are slow and brittle, you should not use them to test edge cases (like testing 15 different invalid email formats). Use Unit Tests for exhaustive edge cases. Reserve E2E tests for your core "Happy Paths" (Login, Signup, Checkout, Core Workflows).
+
+
 </Callout>
 
-</ConceptTemplate>
+

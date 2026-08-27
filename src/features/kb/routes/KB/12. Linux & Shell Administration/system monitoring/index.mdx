@@ -4,7 +4,14 @@ description: An overview of the critical methodologies and philosophies used by 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="System Monitoring">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="System Monitoring">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A sysadmin cannot manually SSH into 500 servers every morning to run `htop`. **System Monitoring** is the practice of automating the collection, aggregation, and alerting of server health metrics.
 
@@ -16,8 +23,13 @@ Modern infrastructure monitoring is broken down into three distinct categories:
 2. **Logs (The "Why")**: Unstructured text data emitted by applications. (e.g., "Error: Database connection timeout"). Tools like the **ELK Stack (Elasticsearch, Logstash, Kibana)** or **Splunk** ingest millions of logs a minute, allowing admins to search for the root cause of the CPU spike.
 3. **Traces (The "Where")**: Following a single user's request as it bounces across 20 different microservices. (e.g., "The request took 5 seconds, and 4.8 of those seconds were spent waiting on the Payment API").
 
+
 <Callout icon="warning" title="Alert Fatigue">
+
+
   The biggest mistake junior admins make is configuring alerts for everything. If a Sysadmin's phone buzzes 50 times a day for minor CPU spikes, they will start ignoring the alerts (Alert Fatigue). When a real catastrophic failure happens, it will be ignored. Alerts should only trigger for actionable, critical failures (e.g., "The main database has crashed", or "The hard drive will be 100% full in 2 hours").
+
+
 </Callout>
 
-</ConceptTemplate>
+

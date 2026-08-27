@@ -1,8 +1,26 @@
+---
+title: DAX
+description: Data Analysis Expressions, the mathematical formula language created by Microsoft to power Power BI, Excel Power Pivot, and SQL Server Analysis Services.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DAX">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DAX (Data Analysis Expressions)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Microsoft in 2010, DAX is a functional, mathematical formula language. If you look at a DAX formula, it looks almost exactly like a standard Microsoft Excel formula (e.g., `SUM(Table[Column])`), but its underlying architecture is completely different.
 
-</ConceptTemplate>
+## 1. Columnar Memory Architecture
+An Excel formula mathematically calculates data cell-by-cell.
+DAX calculates data **Column-by-Column**.
+DAX operates on top of the VertiPaq engine—an in-memory, highly compressed columnar database. When you run a DAX formula on a dataset of 100 million rows, the engine mathematically vectorizes the calculation across the entire column simultaneously in RAM, returning answers in fractions of a second.
+
+## 2. Evaluation Context
+The most complex and powerful mathematical concept in DAX is the **Evaluation Context** (specifically Row Context and Filter Context).
+Unlike SQL, where a `WHERE` clause is explicitly written in the query, DAX calculates formulas dynamically based on what the user is looking at in the Power BI dashboard. If the user clicks a visual chart representing "Year 2023," the DAX engine mathematically applies an invisible Filter Context to all underlying data tables before calculating the `SUM`, allowing non-technical business users to slice and dice massive datasets dynamically without writing database queries.
+

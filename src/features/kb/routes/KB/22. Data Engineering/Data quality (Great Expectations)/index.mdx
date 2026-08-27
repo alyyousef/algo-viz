@@ -4,9 +4,16 @@ description: The practice of enforcing mathematical assertions and unit tests on
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data Quality">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Quality">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In traditional Software Engineering, if code breaks, the server throws an explicit 500 Error. 
+In traditional Software Engineering, if code breaks, the server throws an explicit 500 Error.
 In Data Engineering, if a pipeline breaks (e.g., an upstream software engineer accidentally changes the API payload from dollars to cents), the pipeline will execute perfectly. It will silently output corrupted data, and the CEO will make catastrophic business decisions based on a false dashboard.
 
 This is called **Silent Data Corruption**. Data Quality tools mathematically prevent this.
@@ -30,7 +37,6 @@ extract_data >> transform_data >> run_great_expectations >> load_to_dashboard
 If the `transform_data` step outputs a table where 5% of the ages are negative numbers, the `run_great_expectations` step mathematically detects the anomaly. It immediately fails the Airflow DAG, preventing the `load_to_dashboard` step from executing. The corrupted data never reaches the business users.
 
 ## 3. Data Observability
-While Great Expectations relies on hardcoded rules, modern Data Observability platforms (like Monte Carlo or Anomalo) use Machine Learning to automatically monitor tables. 
+While Great Expectations relies on hardcoded rules, modern Data Observability platforms (like Monte Carlo or Anomalo) use Machine Learning to automatically monitor tables.
 They mathematically calculate the historical variance of a table (e.g., "This table usually receives 10,000 rows a day"). If the table suddenly receives 2 rows on a Tuesday, the ML model mathematically flags an anomaly and alerts the Data Engineering team in Slack, even if no explicit rule was written.
 
-</ConceptTemplate>

@@ -4,15 +4,28 @@ description: The industry standard compliance framework for evaluating how effec
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SOC 2 (System and Organization Controls 2)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SOC 2 (System and Organization Controls 2)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If your company uses AWS, Salesforce, or Datadog, you are trusting a third party with your sensitive data. How do you know their internal security isn\'t terrible? 
+If your company uses AWS, Salesforce, or Datadog, you are trusting a third party with your sensitive data. How do you know their internal security isn\'t terrible?
 
 **SOC 2** is an auditing procedure developed by the American Institute of CPAs (AICPA) specifically to ensure that cloud service providers securely manage data to protect the interests of the organization and the privacy of its clients.
 
+
 <Callout icon="success" title="The B2B Requirement">
+
+
   If you are building a B2B SaaS startup, achieving SOC 2 compliance is practically mandatory. Enterprise companies will almost never sign a contract with you until you can hand them your SOC 2 audit report proving you follow basic security hygiene.
+
+
 </Callout>
+
 
 ## The Trust Services Criteria
 
@@ -29,4 +42,3 @@ A SOC 2 audit is based on five "Trust Services Criteria." Only Security is stric
 - **SOC 2 Type I:** Evaluates the *design* of the security processes at a specific point in time (e.g., "Do you have a policy that requires background checks today?").
 - **SOC 2 Type II:** Evaluates the *operating effectiveness* of those processes over a period of time, usually 6–12 months (e.g., "Did you actually run background checks on every employee hired over the last year?").
 
-</ConceptTemplate>

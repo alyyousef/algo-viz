@@ -4,7 +4,14 @@ description: Explains the Android SDK, the shift from Java to Kotlin, Android St
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Android Development (Kotlin & Compose)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Android Development (Kotlin & Compose)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Android is a Linux-based mobile operating system developed by Google. Historically, it was programmed exclusively in Java, but has undergone a massive architectural shift.
 
@@ -29,4 +36,3 @@ fun Greeting(name: String) {
 }
 ```
 
-</ConceptTemplate>

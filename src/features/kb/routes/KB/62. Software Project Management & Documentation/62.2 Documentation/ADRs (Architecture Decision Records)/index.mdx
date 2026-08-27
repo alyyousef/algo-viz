@@ -4,10 +4,16 @@ description: A short text file in a format similar to an Alexandrian pattern tha
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Architecture Decision Records (ADRs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Architecture Decision Records (ADRs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a new engineer joins a company, they biologically look at the codebase and ask: *"Why on earth did you choose to use MongoDB instead of PostgreSQL?"*
 
 An **ADR** is a mathematical markdown file committed directly to the Git repository that biologically answers this exact question. It permanently documents the context, the mathematical alternatives considered, and the exact biological reason the Senior Engineers made a massive architectural decision on a specific date. It mathematically preserves institutional memory.
 
-</ConceptTemplate>

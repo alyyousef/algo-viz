@@ -1,0 +1,25 @@
+---
+title: Google Compute Engine (GCE)
+description: Google's core Infrastructure as a Service (IaaS) offering, providing customizable, high-performance Virtual Machines that boot in seconds on Google's global fiber network.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Compute Engine (GCE)"
+  subtitle="IaaS Cloud Compute"
+  tags={['GCP', 'Compute', 'IaaS', 'Virtualization']}
+>
+
+Compute Engine is GCP's equivalent to AWS EC2. It gives you raw, root-level SSH access to Virtual Machines running on Google's custom-built hardware and hypervisors.
+
+## 1. Custom Machine Types
+AWS and Azure force you into pre-defined mathematical hardware buckets (e.g., you must choose 2 CPUs/4GB RAM or 4 CPUs/8GB RAM).
+If your specific application mathematically requires exactly 6 CPUs and 11GB of RAM, AWS forces you to overpay for a larger instance.
+Compute Engine allows **Custom Machine Types**. You use a slider in the UI to mathematically dictate exactly how many vCPUs and exactly how many Megabytes of RAM you want. Google's hypervisor dynamically carves out that exact micro-architecture, ensuring you never pay for hardware you do not need.
+
+## 2. Live Migration
+Physical server hardware eventually fails and requires maintenance.
+In AWS, if the underlying physical host needs a patch, AWS sends you an email telling you to reboot your EC2 instance (causing downtime).
+Google Compute Engine uses **Live Migration**. When the physical server needs maintenance, Google mathematically spins up a clone on a new physical server, copies the RAM over the network in real-time, and seamlessly cuts over the network connection. The Virtual Machine never reboots; the application never goes down. You literally do not know it happened.
+
+</TechnologyTemplate>

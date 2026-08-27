@@ -1,8 +1,36 @@
+---
+title: Static Analysis Tools
+description: "Automated software tools that mathematically analyze source code without executing it, searching for syntax errors, security vulnerabilities, memory leaks, and violations of clean code principles."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Static analysis tools">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Static Analysis Tools"
+  subtitle="Mathematical Code Inspection"
+  tags={['Process', 'Tooling', 'Security', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Human code review is excellent for verifying business logic, but humans are mathematically terrible at spotting a missing null-check on line 5,432 of a massive pull request.
 
-</ConceptTemplate>
+## 1. How They Work
+Unlike Dynamic Analysis (which requires running the code and observing its behavior in RAM), **Static Analysis** tools parse the raw text of the source code into a mathematical Abstract Syntax Tree (AST).
+They traverse the AST to find known anti-patterns.
+- **Linters** (e.g., ESLint, Pylint): Check for formatting, unused variables, and stylistic violations.
+- **SAST (Static Application Security Testing)** (e.g., Checkmarx, Fortify): Search the AST specifically for mathematical vulnerabilities like SQL Injection, Hardcoded Passwords, or Cross-Site Scripting (XSS).
+
+## 2. SonarQube
+The industry standard for Static Analysis is **SonarQube**.
+It runs automatically during the CI/CD pipeline and mathematically generates a holistic "Quality Gate" score.
+It calculates:
+- **Technical Debt Ratio**: "You have 15 days of technical debt."
+- **Code Coverage**: "Only 45% of your code has unit tests."
+- **Cyclomatic Complexity**: "This function has 15 nested IF statements; it is mathematically too complex to maintain."
+If the Quality Gate fails, the CI pipeline mathematically blocks the deployment.
+

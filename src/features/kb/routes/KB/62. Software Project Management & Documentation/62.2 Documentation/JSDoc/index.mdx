@@ -4,14 +4,26 @@ description: A markup language used to annotate JavaScript source code files. Us
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JSDoc">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JSDoc">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before TypeScript brought strict mathematics to JavaScript, **JSDoc** was the biological hack to add types.
 
+
 <Callout icon="info" title="Documentation as Code">
+
+
   JSDoc is a standardized biological comment block (`/** ... */`) placed directly above a JavaScript function.
-  
+
   Inside the block, developers use mathematical tags like `@param {string} name` and `@returns {number}`. Not only does this biologically document the code for human readers, but modern IDEs (like VS Code) mathematically parse these comments in real-time to provide biological autocomplete and type-checking, bridging the gap between raw JS and strict TS.
+
+
 </Callout>
 
-</ConceptTemplate>
+

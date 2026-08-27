@@ -1,8 +1,26 @@
+---
+title: Result / Either Types
+description: A mathematically rigorous pattern for error handling that completely replaces traditional Try/Catch Exception mechanisms.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Result/Either types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Result / Either Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Exceptions (Try/Catch) are mathematically flawed because they act as invisible GOTO statements. They instantly break the CPU's control flow, jumping up the Call Stack unpredictably. **Result Types** fix this by making errors physical, mathematically trackable return values.
 
-</ConceptTemplate>
+## 1. The Sum Type Architecture
+A `Result<T, E>` (or `Either<L, R>`) is a Sum Type Enum with exactly two states:
+1. `Ok(T)`: The operation succeeded, and here is the data `T`.
+2. `Err(E)`: The operation failed, and here is the error data `E`.
+
+## 2. Compile-Time Error Handling
+If a function reads a file, it does not throw an exception if the file is missing. It mathematically returns a `Result<String, IOError>`.
+The caller cannot mathematically access the String. They must use a `match` statement to handle both the `Ok` state and the `Err` state. Because the Error is part of the function's strict mathematical signature, the Compiler guarantees that no error can ever be accidentally ignored or bubble up invisibly to crash the application, making the software incredibly resilient.
+

@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { Callout } from '@/features/kb/components/mdx/Callout'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="K-Means Clustering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="K-Means Clustering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **K-Means** is the most widely used **Unsupervised Learning** algorithm. Unlike classification, there are no labels in the dataset. The algorithm mathematically discovers hidden geometric groupings (clusters) on its own.
 
@@ -26,17 +33,16 @@ The algorithm requires the engineer to define `K` manually. To find the optimal 
 
 ## 3. Limitations of K-Means
 
-<ComparisonTable 
-  headers={['Limitation', 'Mathematical Reason']} 
-  rows={[
-    ['Assumes Spherical Clusters', 'It relies exclusively on Euclidean distance from a central point. If data is shaped like concentric rings, K-Means fails catastrophically (use DBSCAN instead).'],
-    ['Requires Feature Scaling', 'If Feature A ranges from 0-1 and Feature B ranges from 0-1000, Feature B will mathematically dominate the Euclidean distance calculation. You MUST apply StandardScaler.'],
-    ['Local Minima Trap', 'If the initial random centroids are poorly placed, the algorithm can get mathematically trapped in a terrible local minimum. (Solved by using the K-Means++ initialization algorithm).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Limitation', 'Mathematical Reason']} rows={[ ['Assumes Spherical Clusters', 'It relies exclusively on Euclidean distance from a central point. If data is shaped like concentric rings, K-Means fails catastrophically (use DBSCAN instead).'], ['Requires Feature Scaling', 'If Feature A ranges from 0-1 and Feature B ranges from 0-1000, Feature B will mathematically dominate the Euclidean distance calculation. You MUST apply StandardScaler.'], ['Local Minima Trap', 'If the initial random centroids are poorly placed, the algorithm can get mathematically trapped in a terrible local minimum. (Solved by using the K-Means++ initialization algorithm).'] ]} />
+
 
 <Callout icon="info" title="Time Complexity">
+
+
 Lloyd's Algorithm (the standard K-Means implementation) runs in `O(n * K * I * d)` where `I` is iterations and `d` is dimensions. It is extremely fast and scalable to massive datasets.
+
+
 </Callout>
 
-</ConceptTemplate>
+

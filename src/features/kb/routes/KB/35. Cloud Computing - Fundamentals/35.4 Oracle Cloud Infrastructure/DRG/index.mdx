@@ -1,0 +1,24 @@
+---
+title: Dynamic Routing Gateway (DRG)
+description: A massive, centralized virtual router in Oracle Cloud mathematically engineered to establish private, encrypted network connections between OCI VNets and on-premise corporate data centers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Dynamic Routing Gateway (DRG)"
+  subtitle="The Enterprise Network Hub"
+  tags={['OCI', 'Networking', 'Routing', 'Hybrid Cloud']}
+>
+
+A Virtual Cloud Network (VCN) is an isolated island. If an enterprise wants their on-premise physical office network to securely talk to their OCI databases without touching the public internet, they must route traffic through a DRG.
+
+## 1. Hybrid Cloud Connectivity
+The DRG acts as the mathematical anchor point for two types of private connections:
+- **IPSec VPN**: A software-based, mathematically encrypted tunnel over the public internet. Cheap, but subject to internet latency fluctuations.
+- **OCI FastConnect**: A physical, dedicated fiber-optic cable running directly from your corporate data center into the Oracle Cloud data center. It bypasses the internet entirely, guaranteeing massive mathematical bandwidth (up to 100 Gbps) and ultra-low latency for critical enterprise workloads.
+
+## 2. Hub-and-Spoke Routing
+Historically, if you had 50 VCNs in Oracle Cloud, connecting them all required a massive, mathematically complex web of VCN Peering connections (a full mesh).
+The modern DRG acts as a centralized **Hub router**. You mathematically attach all 50 VCNs (the Spokes) directly to the DRG. You also attach your on-premise FastConnect to the DRG. The DRG handles the mathematical routing tables, allowing VCN A to talk to VCN B, and VCN C to talk to the on-premise data center, all through a single, easily manageable central routing appliance.
+
+</TechnologyTemplate>

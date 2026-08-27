@@ -1,8 +1,31 @@
+---
+title: Visitor Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically separates an algorithm from the object structure on which it operates, allowing you to add new operations to classes without modifying them.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Visitor">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Visitor Pattern"
+  subtitle="Mathematical Double Dispatch"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine you have a complex mathematical tree of Objects (e.g., a Document containing `Paragraph`, `Image`, and `Table` objects). You want to add a feature to export the document to XML.
+If you add an `exportXML()` method to all three classes, you violate the Single Responsibility Principle. If you later need to export to PDF, you have to modify the classes again.
 
-</ConceptTemplate>
+## 1. The Visitor Object
+The Visitor pattern extracts the operation. You create an `IXMLVisitor` interface with methods: `visit(Paragraph p)`, `visit(Image i)`.
+The core classes only implement a single, permanent method: `accept(IVisitor v)`.
+
+## 2. Double Dispatch
+When you run the algorithm, you pass the Visitor into the object: `image.accept(xmlVisitor)`.
+Inside the `Image` class, the `accept` method simply executes: `visitor.visit(this)`.
+This is **Double Dispatch**. The CPU mathematically bounces the execution: the client calls the Object, and the Object instantly bounces the execution back to the Visitor's highly specific `visit(Image i)` method. You can now add a `PDFVisitor` next week, and the original Domain classes remain completely untouched.
+

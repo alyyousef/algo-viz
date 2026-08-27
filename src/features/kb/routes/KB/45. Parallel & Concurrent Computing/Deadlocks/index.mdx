@@ -4,22 +4,35 @@ description: A situation in concurrent computing where two or more competing act
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Deadlocks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Deadlocks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If a Race Condition is the nightmare of data corruption, a **Deadlock** is the nightmare of system paralysis. 
+If a Race Condition is the nightmare of data corruption, a **Deadlock** is the nightmare of system paralysis.
 
 A Deadlock is a mathematical state where two or more Threads are permanently blocked, because they are both holding a resource that the other thread mathematically requires to proceed.
 
+
 <Callout icon="warning" title="The Classic Example">
+
+
   Imagine Thread A needs the Database Connection and the File System to save a user. Thread B needs the File System and the Database Connection to load a user.
-  
+
   - Thread A locks the Database.
   - Thread B locks the File System.
   - Thread A tries to lock the File System (but must mathematically wait for B).
   - Thread B tries to lock the Database (but must mathematically wait for A).
-  
+
   They will wait until the end of the universe. The server has mathematically frozen.
+
+
 </Callout>
+
 
 ## The Four Coffman Conditions
 
@@ -32,4 +45,3 @@ Mathematically, a Deadlock CANNOT occur unless all four of these conditions are 
 
 If an engineer can mathematically break even *one* of these four conditions, the system is permanently immune to Deadlocks.
 
-</ConceptTemplate>

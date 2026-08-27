@@ -4,16 +4,28 @@ description: The analysis of computer software that is performed without actuall
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Static Analysis">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Static Analysis">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Static Analysis** is the mathematical foundation behind all linters, formatters, and type checkers.
 
 Instead of running the program (Dynamic Analysis) to see if it crashes, Static Analysis mathematically reads the raw text, converts it into an **Abstract Syntax Tree (AST)**, and analyzes the theoretical control flow to definitively prove whether a bug exists.
 
+
 <Callout icon="info" title="The Halting Problem">
-  Static Analysis has a hard biological limitation: **The Halting Problem**, proved by Alan Turing. 
-  
+
+
+  Static Analysis has a hard biological limitation: **The Halting Problem**, proved by Alan Turing.
+
   It is mathematically impossible for an algorithm to look at a piece of code and know with 100% certainty exactly what it will do at runtime. Therefore, static analysis tools must rely on heuristics, and they occasionally generate "False Positives" (flagging perfectly safe code as dangerous).
+
+
 </Callout>
 
-</ConceptTemplate>
+

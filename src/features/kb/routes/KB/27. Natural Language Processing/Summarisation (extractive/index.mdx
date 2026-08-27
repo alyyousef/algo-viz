@@ -1,8 +1,26 @@
+---
+title: Extractive Summarization
+description: A computationally efficient NLP technique that mathematically scores the importance of every sentence in a document and simply copies the top N sentences to form a summary.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Summarisation (extractive">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Extractive Summarization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Unlike Abstractive Summarization (which requires a massive AI to write brand new text), Extractive Summarization acts like a student with a yellow highlighter. It mathematically identifies the most important sentences and copies them verbatim.
 
-</ConceptTemplate>
+## 1. Sentence Scoring (TF-IDF)
+To figure out which sentences are important, the algorithm mathematically scores them.
+It calculates the TF-IDF (Term Frequency - Inverse Document Frequency) of every word in the document. Words that appear frequently in this document, but rarely in other documents, receive a massively high mathematical score (they are "keywords").
+The algorithm then mathematically sums the scores of all the words in a sentence. A sentence containing 5 keywords gets a much higher score than a sentence containing mostly "the" and "and."
+
+## 2. Graph-Based Ranking (TextRank)
+A more advanced mathematical approach is TextRank (derived from Google's PageRank).
+Every sentence in the document becomes a Node in a mathematical Graph. If two sentences share similar vocabulary, an Edge is drawn between them. Sentences that share vocabulary with many other sentences are mathematically calculated to be the "central hubs" of the document's meaning. The algorithm ranks the Nodes by their mathematical centrality and extracts the top 3 as the final summary.
+

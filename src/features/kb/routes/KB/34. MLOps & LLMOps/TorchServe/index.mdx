@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: TorchServe
+description: The official, production-ready model serving engine for PyTorch, developed jointly by AWS and Meta to provide high-performance, dynamic batching and lifecycle management for PyTorch models.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="TorchServe">
+<TechnologyTemplate
+  title="TorchServe"
+  subtitle="The PyTorch Inference Engine"
+  tags={['MLOps', 'PyTorch', 'Serving', 'AWS']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For years, researchers loved PyTorch for training, but hated it for production (defaulting to TensorFlow Serving). TorchServe was built to solve this, providing an enterprise-grade C++/Java backend to serve PyTorch models at scale.
 
-</ConceptTemplate>
+## 1. The MAR Archive (Model Archive)
+To use TorchServe, you cannot just upload a `.pt` weight file. You must use the `torch-model-archiver` CLI.
+This tool mathematically packages your weights, your custom Python preprocessing script (the Handler), and your dependencies into a single `.mar` file. TorchServe loads this archive, instantiates the neural network, and exposes a high-performance REST/gRPC API.
+
+## 2. Multi-Model and GPU Scaling
+A single 80GB GPU is wasted on a tiny 2GB model.
+TorchServe allows you to load dozens of different `.mar` models onto a single GPU simultaneously. It acts as a mathematical traffic cop, dynamically allocating VRAM and compute cycles between the models. Furthermore, it supports built-in metrics (Prometheus/Grafana integration), allowing DevOps teams to mathematically track exact GPU utilization, inference latency, and queue depths in real-time.
+
+</TechnologyTemplate>

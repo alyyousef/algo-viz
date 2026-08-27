@@ -4,19 +4,25 @@ description: Google's high-performance numerical computing framework that superc
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JAX">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JAX">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While PyTorch and TensorFlow were built strictly for Deep Learning, **JAX** is something mathematically purer. Built by Google, JAX is technically not a Deep Learning framework; it is an ultra-high-performance mathematical engine that can execute arbitrary Python code at blistering speeds on massive TPU clusters.
 
 ## 1. Autograd (Automatic Differentiation)
-The core magic of JAX is its ability to mathematically take the derivative of *any* native Python function. 
+The core magic of JAX is its ability to mathematically take the derivative of *any* native Python function.
 If you write a standard Python loop using NumPy, you can wrap it in `jax.grad()`. JAX will mathematically tear apart your Python code and perfectly calculate the exact gradient, allowing you to optimize bizarre mathematical structures that traditional Deep Learning frameworks cannot handle.
 
 ## 2. XLA (Accelerated Linear Algebra)
 JAX uses Google's **XLA Compiler**. When you wrap a function in `@jax.jit` (Just-In-Time compilation), JAX mathematically fuses all your separate math operations (like multiplying a matrix, then adding a bias, then applying ReLU) into one single, monolithic mathematical kernel. This mathematically eliminates memory bottlenecks and allows the code to run terrifyingly fast on GPUs and TPUs.
 
 ## 3. The Functional Paradigm
-Unlike PyTorch, which is highly Object-Oriented (using classes and states), JAX mathematically forces you to write **Pure Functional Code**. Functions cannot have "side effects," and arrays are strictly mathematically immutable (you cannot modify them in place). 
+Unlike PyTorch, which is highly Object-Oriented (using classes and states), JAX mathematically forces you to write **Pure Functional Code**. Functions cannot have "side effects," and arrays are strictly mathematically immutable (you cannot modify them in place).
 While this makes JAX notoriously difficult to learn, this strict mathematical purity is exactly what allows the XLA compiler to safely distribute the code across 10,000 TPUs perfectly. Today, JAX is heavily favored by Google DeepMind for cutting-edge AI research.
 
-</ConceptTemplate>

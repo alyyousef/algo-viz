@@ -1,0 +1,23 @@
+---
+title: Amazon Redshift
+description: A massive, petabyte-scale data warehouse service mathematically engineered for complex OLAP (Online Analytical Processing) SQL queries using columnar storage and massively parallel processing.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Redshift"
+  subtitle="The Petabyte Data Warehouse"
+  tags={['AWS', 'Database', 'Analytics', 'Big Data']}
+>
+
+A standard RDS Postgres database (OLTP) is mathematically designed to find a single row extremely fast (e.g., "Find User 123"). If you ask Postgres to sum the total sales of 10 billion rows, the architecture will physically fail. Redshift (OLAP) is designed specifically to analyze billions of rows simultaneously.
+
+## 1. Columnar Storage
+Postgres stores data in **Rows**. To sum up the "Price" column of 10 billion rows, Postgres must physically read the Name, Address, and Email of every single row from the hard drive just to find the Price.
+Redshift stores data in **Columns**. All the "Prices" are mathematically clustered together on the SSD. If you run a `SUM(Price)` query, the SSD only reads the exact blocks containing the integers, ignoring the terabytes of text data. This reduces physical Disk IO by 99%.
+
+## 2. Massively Parallel Processing (MPP)
+Redshift is not one server; it is a cluster.
+A **Leader Node** receives your SQL query and mathematically compiles it into a highly optimized execution plan in C++. It then distributes this compiled code to a massive fleet of **Compute Nodes**. Every Compute Node analyzes its specific chunk of the data simultaneously (MPP). The Leader Node aggregates the mathematical results and returns the answer in seconds, rather than days.
+
+</TechnologyTemplate>

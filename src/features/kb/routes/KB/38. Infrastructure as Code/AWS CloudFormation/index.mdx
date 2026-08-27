@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="AWS CloudFormation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AWS CloudFormation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **AWS CloudFormation** is Amazon's native Infrastructure as Code service. It allows you to model your entire AWS infrastructure in a single text file (formatted in JSON or YAML).
 
@@ -14,23 +21,22 @@ When you submit a CloudFormation template to AWS, it creates a **Stack**. A Stac
 
 ## 1. CloudFormation vs Terraform
 
-<ComparisonTable 
-  headers={['Feature', 'AWS CloudFormation', 'Terraform']} 
-  rows={[
-    ['Scope', 'AWS only (mostly).', 'Cloud-agnostic (AWS, Azure, GCP, etc.).'],
-    ['Language', 'YAML / JSON.', 'HCL (HashiCorp Configuration Language).'],
-    ['State Management', 'AWS manages the state remotely and invisibly.', 'You must manage the `terraform.tfstate` file yourself (or use an S3 backend).'],
-    ['Execution Execution', 'Executed server-side by AWS.', 'Executed client-side from your laptop or CI/CD runner.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Feature', 'AWS CloudFormation', 'Terraform']} rows={[ ['Scope', 'AWS only (mostly).', 'Cloud-agnostic (AWS, Azure, GCP, etc.).'], ['Language', 'YAML / JSON.', 'HCL (HashiCorp Configuration Language).'], ['State Management', 'AWS manages the state remotely and invisibly.', 'You must manage the `terraform.tfstate` file yourself (or use an S3 backend).'], ['Execution Execution', 'Executed server-side by AWS.', 'Executed client-side from your laptop or CI/CD runner.'] ]} />
+
 
 ## 2. Drift Detection
 A common issue in IaC is "Drift"—when a developer manually logs into the AWS console and changes a security group rule, bypassing the IaC pipeline. The code no longer matches reality.
 
 CloudFormation has a native **Drift Detection** feature that compares the current stack template against the actual live AWS resources and highlights any manual changes that have occurred.
 
+
 <Callout icon="tip" title="AWS CDK">
+
+
 Because writing raw CloudFormation YAML can be incredibly tedious, Amazon released the **AWS CDK (Cloud Development Kit)**. CDK allows you to write infrastructure in TypeScript, Python, or Java, which then compiles down into standard CloudFormation YAML.
+
+
 </Callout>
 
-</ConceptTemplate>
+

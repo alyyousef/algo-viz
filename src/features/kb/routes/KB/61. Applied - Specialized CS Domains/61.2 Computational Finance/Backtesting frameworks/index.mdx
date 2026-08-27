@@ -4,14 +4,26 @@ description: Software environments that allow traders to test a trading strategy
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Backtesting Frameworks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Backtesting Frameworks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before a Quant deploys an algorithm with real money, they must mathematically prove it works on the past 5 years of historical data.
 
+
 <Callout icon="warning" title="The Illusion of Success">
+
+
   **Backtesting Frameworks** (like Backtrader or Zipline) simulate the exchange. However, writing a biological backtester is incredibly dangerous.
-  
+
   If the simulation mathematically allows the algorithm to "peek" 1 millisecond into the future (Look-ahead Bias), or assumes the algorithm could have bought 10,000 shares without physically moving the price of the stock (Slippage/Market Impact), the backtest will mathematically show a 500% profit, but the live algorithm will instantly lose millions of dollars.
+
+
 </Callout>
 
-</ConceptTemplate>
+

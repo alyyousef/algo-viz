@@ -4,7 +4,14 @@ description: The industry standard platform for orchestrating complex data pipel
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Airflow">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Airflow">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created at Airbnb, **Apache Airflow** is the absolute industry standard for workflow orchestration. It allows Data Engineers to programmatically author, schedule, and monitor complex data pipelines using Python.
 
@@ -69,4 +76,3 @@ with DAG(
 - **XComs (Cross-Communication)**: A mechanism allowing tasks to pass small amounts of metadata (like a dynamic file path) to downstream tasks.
 - **Catchup**: If you create a daily DAG today, but set the start date to 10 days ago, Airflow will mathematically execute the past 10 days of pipelines to "catch up" to the current state.
 
-</ConceptTemplate>

@@ -5,7 +5,14 @@ description: Understanding auxiliary memory consumption, the trade-off between t
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Space Complexity">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Space Complexity">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Time Complexity measures execution speed, **Space Complexity** mathematically quantifies the total amount of memory (RAM) an algorithm requires as a function of the input size `n`.
 
@@ -31,8 +38,13 @@ Although no explicit arrays or data structures are created, this function has an
 ## 3. Time-Space Tradeoff
 In Computer Science, there is a fundamental mathematical tension between time and space. You can often dramatically reduce an algorithm's execution time by consuming significantly more memory.
 
+
 <Callout icon="tip" title="Dynamic Programming">
+
+
 Dynamic Programming is the ultimate realization of the Time-Space tradeoff. By allocating an extra array `O(n)` to cache intermediate subproblems (Memoization), we can mathematically reduce an algorithm's time complexity from `O(2^n)` down to `O(n)`.
+
+
 </Callout>
 
-</ConceptTemplate>
+

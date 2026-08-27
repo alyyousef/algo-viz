@@ -4,13 +4,20 @@ description: The CPython interpreter, the GIL, and the historically chaotic land
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Python Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Python Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Python is the undisputed king of Data Science, Artificial Intelligence, and rapid scripting. However, its core architecture and dependency management are notoriously complex.
 
 ## 1. CPython and the GIL
 When people say "Python," they are almost always referring to **CPython**, the reference implementation of the language written in C.
-CPython relies on the **GIL (Global Interpreter Lock)**. The GIL is a mathematical mutex that prevents multiple native threads from executing Python bytecodes at once. 
+CPython relies on the **GIL (Global Interpreter Lock)**. The GIL is a mathematical mutex that prevents multiple native threads from executing Python bytecodes at once.
 This means Python is effectively single-threaded. If you spawn 8 threads on an 8-core CPU to do heavy math, they will lock each other out and run sequentially. (To achieve true parallelism in Python, you must use **Multiprocessing**, which spawns entirely separate OS processes).
 
 ## 2. The Dependency Management Chaos
@@ -27,4 +34,3 @@ Data Science libraries (like NumPy and TensorFlow) rely on massive, complex C++ 
 ### Poetry (The Modern Standard)
 `requirements.txt` is heavily flawed because it doesn't lock sub-dependencies. **Poetry** is the modern solution. It introduces a `pyproject.toml` file and a strict `poetry.lock` file, providing a robust, deterministic build system similar to `npm` or `yarn`.
 
-</ConceptTemplate>

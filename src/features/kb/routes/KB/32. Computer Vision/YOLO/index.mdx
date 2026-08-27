@@ -6,27 +6,27 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 <TechnologyTemplate title="YOLO (You Only Look Once)">
 
-YOLO is a state-of-the-art, real-time object detection system. Before YOLO, object detection algorithms (like R-CNN) were painfully slow because they applied classifiers to hundreds of different regions in an image one by one. 
+YOLO is a state-of-the-art, real-time object detection system. Before YOLO, object detection algorithms (like R-CNN) were painfully slow because they applied classifiers to hundreds of different regions in an image one by one.
 
 YOLO revolutionized the field by framing object detection as a single regression problem, looking at the entire image **only once** to predict bounding boxes and class probabilities simultaneously.
 
+
 <Callout icon="tip" title="Blazing Fast">
+
+
   Because it processes the image in a single pass through a neural network, YOLO can easily process 45 to 150 frames per second (FPS), making it the gold standard for real-time video processing like self-driving cars and security cameras.
+
+
 </Callout>
+
 
 ## How YOLO works
 
 Instead of sliding a window across the image, YOLO divides the input image into an **S × S grid**.
 
-<ComparisonTable 
-  headers={['Step', 'Action']}
-  rows={[
-    ['1. Gridding', 'The image is split into a grid (e.g., 7x7). If the center of an object falls into a grid cell, that grid cell is responsible for detecting that object.'],
-    ['2. Bounding Boxes', 'Each grid cell predicts a fixed number of Bounding Boxes (x, y, width, height) and a Confidence Score that the box actually contains an object.'],
-    ['3. Class Prediction', 'Simultaneously, each grid cell predicts the probability of the object class (e.g., Dog, Car, Pedestrian).'],
-    ['4. Non-Max Suppression', 'YOLO often predicts multiple overlapping boxes for the same object. Non-Max Suppression cleans this up by only keeping the box with the highest confidence.']
-  ]}
-/>
+
+<ComparisonTable headers={['Step', 'Action']} rows={[ ['1. Gridding', 'The image is split into a grid (e.g., 7x7). If the center of an object falls into a grid cell, that grid cell is responsible for detecting that object.'], ['2. Bounding Boxes', 'Each grid cell predicts a fixed number of Bounding Boxes (x, y, width, height) and a Confidence Score that the box actually contains an object.'], ['3. Class Prediction', 'Simultaneously, each grid cell predicts the probability of the object class (e.g., Dog, Car, Pedestrian).'], ['4. Non-Max Suppression', 'YOLO often predicts multiple overlapping boxes for the same object. Non-Max Suppression cleans this up by only keeping the box with the highest confidence.'] ]} />
+
 
 ## Image Classification vs Object Detection
 
@@ -38,19 +38,19 @@ Instead of sliding a window across the image, YOLO divides the input image into 
 <ArchitectureDiagram chart={`
 graph LR
   Input[Input Image\n(Street Scene)]
-  
+
   Grid[Divide into\nSxS Grid]
-  
+
   subgraph Single Neural Network Pass
     Bbox[Predict Bounding Boxes\n& Confidence]
     Class[Predict Class\nProbabilities]
   end
-  
+
   Combine[Combine Boxes & Classes]
   NMS[Non-Max Suppression\n(Remove Duplicates)]
-  
+
   Output[Final Bounding Boxes\ndrawn on image]
-  
+
   Input --> Grid
   Grid --> Bbox
   Grid --> Class

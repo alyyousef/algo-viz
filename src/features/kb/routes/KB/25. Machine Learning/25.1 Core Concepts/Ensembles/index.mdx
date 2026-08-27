@@ -4,25 +4,32 @@ description: The mathematical strategy of combining multiple weak machine learni
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ensembles">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ensembles">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 "The Wisdom of the Crowd." If you ask one person to guess the weight of a cow, they will be wildly wrong. If you ask 1,000 people and mathematically average their answers, the result is astonishingly accurate.
 
 **Ensemble Learning** is the application of this concept to Machine Learning. It mathematically combines multiple models to drastically reduce Variance and Bias.
 
 ## 1. Bagging (Bootstrap Aggregating)
-Bagging mathematically reduces **Variance** (Overfitting). 
+Bagging mathematically reduces **Variance** (Overfitting).
 The most famous bagging algorithm is the **Random Forest**.
 
 If you train one massive Decision Tree, it will overfit and memorize the noise.
-Instead, Bagging takes the training dataset and mathematically generates 1,000 new datasets using **Bootstrapping** (sampling rows *with replacement*). It trains 1,000 separate, shallow Decision Trees independently on these 1,000 different datasets. 
+Instead, Bagging takes the training dataset and mathematically generates 1,000 new datasets using **Bootstrapping** (sampling rows *with replacement*). It trains 1,000 separate, shallow Decision Trees independently on these 1,000 different datasets.
 When making a prediction, all 1,000 trees vote. The mathematical average of their votes is the final answer. Because they all overfit in slightly different ways, their errors mathematically cancel each other out.
 
 ## 2. Boosting
-Boosting mathematically reduces **Bias** (Underfitting). 
+Boosting mathematically reduces **Bias** (Underfitting).
 Algorithms like **XGBoost** or **Gradient Boosting**.
 
-Instead of training 1,000 trees independently in parallel, Boosting trains trees sequentially. 
+Instead of training 1,000 trees independently in parallel, Boosting trains trees sequentially.
 1. Tree 1 is incredibly weak and makes terrible predictions.
 2. The algorithm mathematically calculates exactly which rows Tree 1 got wrong.
 3. Tree 2 is trained, but the algorithm mathematically forces Tree 2 to focus entirely on the rows that Tree 1 failed on.
@@ -33,4 +40,3 @@ By chaining hundreds of weak models sequentially, the ensemble mathematically fo
 Stacking is the mathematical process of combining completely different types of models (e.g., combining a Neural Network, an SVM, and a Random Forest).
 You train all 3 base models to make predictions. Then, you train a *Meta-Model* (usually a Logistic Regression) that mathematically learns how to weight the predictions of the 3 base models. (e.g., "The Meta-Model learns that the Neural Network is always right about images of Cats, but the SVM is better at Dogs, so it dynamically adjusts their voting power").
 
-</ConceptTemplate>

@@ -1,8 +1,32 @@
+---
+title: Expect
+description: A specialized automation language designed specifically to mathematically interact with programs that demand human interaction.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Expect">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Expect">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1990 by Don Libes as an extension to the Tcl scripting language, Expect solves a very specific, historically frustrating mathematical problem: automating interactive command-line programs.
 
-</ConceptTemplate>
+## 1. Automating the Un-Automatable
+Many Unix tools (like `ssh`, `ftp`, or `passwd`) are mathematically designed to prevent automation. They refuse to read passwords from a piped text file; they mathematically demand that a human physically type on a keyboard (by directly reading the TTY terminal device).
+Expect mathematically creates a fake, virtual terminal (a PTY). The target program believes it is talking to a human.
+
+## 2. The Dialogue Loop
+Expect scripts are written as a mathematical dialogue:
+```expect
+spawn ssh user@server
+expect "password:"
+send "my_secret_password\r"
+expect "$"
+send "reboot\r"
+```
+The script mathematically waits for the exact string ("password:"), simulates the human typing the password, waits for the prompt ("$"), and executes a command. Before modern configuration management tools like Ansible existed, Expect was the absolute backbone of automated server administration.
+

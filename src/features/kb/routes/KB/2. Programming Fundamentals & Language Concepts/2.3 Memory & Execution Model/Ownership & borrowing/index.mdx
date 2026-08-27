@@ -1,8 +1,31 @@
+---
+title: Ownership and Borrowing
+description: Rust's revolutionary mathematical model for ensuring complete memory safety and thread safety without the overhead of a Garbage Collector.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ownership & borrowing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ownership and Borrowing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Introduced by Rust, Ownership is a set of strict mathematical rules enforced at Compile-Time that govern how memory is managed, completely eliminating data races and use-after-free bugs.
 
-</ConceptTemplate>
+## 1. The Three Rules of Ownership
+1. Each value in memory mathematically has a single variable called its **Owner**.
+2. There can only be exactly one Owner at a time.
+3. When the Owner goes out of scope, the memory is mathematically instantly dropped (freed).
+If you have `let s1 = String::from("hello");` and you write `let s2 = s1;`, the compiler does not copy the string. It mathematically transfers Ownership to `s2`. If you try to use `s1` on the next line, the compiler mathematically halts and throws an error, preventing you from ever having two pointers trying to free the same memory block (Double-Free Bug).
+
+## 2. Borrowing
+Because transferring ownership constantly is annoying, Rust allows **Borrowing** via References (`&`).
+You can mathematically borrow data according to strict rules:
+- You can have infinite immutable borrows (Read-Only pointers) simultaneously.
+- You can have exactly ONE mutable borrow (Write pointer) at a time.
+- You mathematically cannot have a mutable borrow AND an immutable borrow at the same time.
+This guarantees that no thread can ever mathematically mutate a variable while another thread is trying to read it, completely eliminating Data Races at compile time.
+

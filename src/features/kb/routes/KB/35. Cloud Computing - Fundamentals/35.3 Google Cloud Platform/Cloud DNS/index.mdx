@@ -1,0 +1,24 @@
+---
+title: Google Cloud DNS
+description: A highly available, scalable Domain Name System (DNS) service mathematically engineered by Google to translate human-readable domain names into IP addresses globally with a 100% SLA.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud DNS"
+  subtitle="Global Domain Routing"
+  tags={['GCP', 'Networking', 'DNS', 'Global']}
+>
+
+If a hacker takes down your DNS provider, your entire company mathematically ceases to exist on the internet, even if your servers are running perfectly. Cloud DNS leverages the exact same global infrastructure that keeps Google.com online.
+
+## 1. The 100% Mathematical SLA
+Because DNS is the absolute bedrock of internet routing, Cloud DNS provides a mathematically binding **100% Service Level Agreement (SLA)**.
+Google guarantees the service will never go offline. It achieves this by heavily replicating your DNS Zone file (the list of your A Records, CNAMEs, and MX Records) across a massive, globally distributed network of Anycast name servers. When a user queries `yourcompany.com`, the query is automatically routed to the closest surviving name server, ensuring sub-millisecond resolution times regardless of regional internet outages.
+
+## 2. Private vs. Public Zones
+Cloud DNS is not just for the public internet; it is crucial for internal VPC networking.
+- **Public Zones**: Translates `yourcompany.com` to a Public IP address for the world to see.
+- **Private Zones**: You can create a Private DNS Zone exclusively for your internal GCP Virtual Private Cloud (VPC). You can mathematically map `database.internal` to Private IP `10.0.0.5`. This record is physically invisible to the public internet. Only Virtual Machines residing strictly inside that specific VPC can resolve the name, providing massive internal security and simplifying microservice communication.
+
+</TechnologyTemplate>

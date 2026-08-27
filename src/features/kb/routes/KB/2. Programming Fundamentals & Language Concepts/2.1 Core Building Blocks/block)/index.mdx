@@ -1,8 +1,24 @@
+---
+title: Blocks and Scoping
+description: The fundamental mathematical concept of grouping statements together and how compilers calculate the lifespan and visibility of variables.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="block)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Blocks and Scoping">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In computer science, a Block (often denoted by curly braces `{}` or indentation) is a lexical structure that mathematically groups a sequence of statements together into a single compound statement.
 
-</ConceptTemplate>
+## 1. The Mathematical Boundary
+Blocks create mathematical boundaries for the compiler. If an `if` statement evaluates to true, the compiler must know exactly which instructions to execute. By wrapping 10 instructions in a block, the compiler mathematically treats all 10 instructions as a single, atomic execution unit tied to that condition.
+
+## 2. Lexical Scoping
+Blocks fundamentally define **Scope**—the mathematical visibility and lifespan of a variable in memory.
+When a compiler encounters a new block, it mathematically pushes a new frame onto the Stack. Any variable created inside that block (Local Scope) is mathematically bound to that frame. When the block ends, the compiler pops the frame, and the memory is instantly destroyed. This prevents a variable named `index` in one `for` loop from mathematically corrupting a variable named `index` in another function.
+

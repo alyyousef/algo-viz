@@ -1,8 +1,29 @@
+---
+title: Model Registries
+description: The central, version-controlled MLOps repository that mathematically stores, tags, and governs the lifecycle state of trained Machine Learning models as they transition from experimentation to production.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model registries">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Registries">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Model Registry is the Git Repository for compiled Neural Networks. You do not deploy a model by emailing a `.pt` file. You push it to a Registry, which cryptographically secures it and manages its deployment state.
 
-</ConceptTemplate>
+## 1. Lifecycle Governance
+A Registry (like MLflow Model Registry or AWS SageMaker Registry) defines strict mathematical boundaries for models.
+When a model is uploaded, it is versioned (e.g., `FraudNet-v14`) and placed in a specific **State**:
+- **Staging**: The model is locked in a test environment, undergoing mathematical shadow-testing and security audits.
+- **Production**: The model is actively serving live API traffic.
+- **Archived**: The model is deprecated but cryptographically retained for legal compliance and rollback capability.
+By forcing all models through this lifecycle, the Registry prevents a Data Scientist from accidentally deploying untested experimental weights directly to live servers.
+
+## 2. Dependency and Lineage Tracking
+A raw model file is mathematically dangerous without its lineage.
+The Registry strictly binds the model to its metadata. If you inspect `FraudNet-v14` in the Registry, it will tell you exactly which Git commit trained it, the exact SHA-256 hash of the DVC dataset used, and the exact Python library versions required to run it. This mathematical lineage is legally required in many industries (like finance and healthcare) to prove exactly how and why a model was built.
+

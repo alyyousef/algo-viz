@@ -1,0 +1,36 @@
+---
+title: Analysis of Variance (ANOVA)
+description: "A statistical method used to test differences between three or more group means simultaneously, analyzing whether the variance between groups is greater than the variance within them."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Analysis of Variance (ANOVA)"
+  subtitle="Comparing Multiple Groups"
+  tags={['Mathematics', 'Statistics', 'Data Science', 'Testing']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
+
+If you want to know if Version B of a website is better than Version A, you use a standard T-Test. But what if you are A/B testing 5 different versions of a website simultaneously? If you run 10 separate T-Tests comparing every combination, the statistical probability of a False Positive skyrockets (The Multiple Comparisons Problem).
+To solve this, statisticians use **ANOVA**.
+
+## 1. The Core Concept
+ANOVA mathematically asks one question: *Is the difference BETWEEN the groups significantly larger than the random noise WITHIN the groups?*
+If the average conversion rate of the 5 website versions is wildly different, but the daily traffic is also fluctuating insanely (high internal variance), ANOVA will mathematically conclude that the differences are just random noise.
+
+## 2. The F-Statistic
+ANOVA outputs an **F-Statistic**, calculated as Variance Between Groups / Variance Within Groups
+If F is approx 1, groups are identical.
+If F is gg 1, variance is massive.
+
+## 3. Post-Hoc Testing
+ANOVA only tells you that *at least one* group is different, but it doesn't tell you which one. If the ANOVA is statistically significant, data scientists then run strict "Post-Hoc" tests (like Tukey's HSD) to mathematically isolate exactly which versions beat the others, without inflating the False Positive rate.
+
+
+\n

@@ -4,7 +4,14 @@ description: The complex data structures the OS uses to turn a massive, flat arr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Filesystem Structure">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Filesystem Structure">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A Hard Drive or SSD is incredibly dumb. It has no concept of "Folders", "Files", or "Images". To the hardware, a 1 Terabyte SSD is just a massive, flat array of 1 Trillion magnetic blocks. You can ask the SSD for "Block #500", and it will return 4 Kilobytes of raw binary data.
 
@@ -19,8 +26,13 @@ When you format a drive with a filesystem, the OS divides the physical drive int
 3. **The Inode Table**: A massive database storing the metadata (permissions, file size, creation date) for every single file on the drive.
 4. **The Data Blocks**: The vast majority of the drive, where the actual binary content of your photos, videos, and text files is stored.
 
+
 <Callout icon="success" title="Everything is a Tree">
+
+
   In modern filesystems, directories (folders) are not special magical entities. A directory is simply a standard file that contains a list of text mappings. It contains rows of data saying: *"The file named 'vacation.jpg' is located at Inode #5092"*.
+
+
 </Callout>
 
-</ConceptTemplate>
+

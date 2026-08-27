@@ -8,9 +8,15 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Self-Attention is the core mathematical mechanism that powers the Transformer architecture and, by extension, all modern Large Language Models (LLMs). It allows a model to weigh the importance of different words in an input sequence when encoding a specific word.
 
+
 <Callout icon="info" title="Context is Everything">
+
+
   Consider the sentences: "The bank of the river" and "The bank on the corner." The word "bank" means entirely different things. Self-attention allows the model to look at "river" or "corner" to contextualize and adjust the mathematical representation of the word "bank."
+
+
 </Callout>
+
 
 ## How it Works: The QKV System
 
@@ -44,7 +50,7 @@ graph TD
 
 ## Multi-Head Attention
 
-Instead of performing a single self-attention function, Transformers use **Multi-Head Attention**. 
+Instead of performing a single self-attention function, Transformers use **Multi-Head Attention**.
 
 The Q, K, and V vectors are split into multiple "heads" (e.g., 8 or 12 heads), and attention is computed independently for each. This allows different heads to learn to focus on different linguistic phenomena simultaneously—for example, one head might track pronouns referring to nouns, while another tracks adjectives modifying subjects. The results from all heads are then concatenated back together.
 

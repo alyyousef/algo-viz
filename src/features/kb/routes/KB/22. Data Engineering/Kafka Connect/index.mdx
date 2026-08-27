@@ -4,7 +4,14 @@ description: The mathematical framework for streaming data reliably between Apac
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kafka Connect">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kafka Connect">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a Data Engineer needs to stream every single UPDATE from a PostgreSQL database into Apache Kafka, and then stream those Kafka events into an Elasticsearch cluster, writing custom Python consumers/producers is a terrible idea. Custom scripts fail at handling network partitions, retries, and offset management.
 
@@ -20,12 +27,11 @@ Kafka Connect operates entirely outside of your application code. It is a standa
 The most powerful and prevalent use of Kafka Connect is CDC.
 If you simply write a Source Connector that queries `SELECT * FROM users WHERE updated_at > NOW()` every 5 seconds, you will mathematically crush the database CPU, and you will miss any rows that were updated and then deleted within those 5 seconds.
 
-**Debezium** is an industry-standard suite of Kafka Connectors that solves this mathematically. 
-Instead of running SQL queries, Debezium hooks directly into the database's internal **Transaction Log** (the WAL in Postgres, or the Binlog in MySQL). 
+**Debezium** is an industry-standard suite of Kafka Connectors that solves this mathematically.
+Instead of running SQL queries, Debezium hooks directly into the database's internal **Transaction Log** (the WAL in Postgres, or the Binlog in MySQL).
 Every time a row changes on disk, Debezium instantly streams an event to Kafka. It mathematically guarantees that absolutely zero database changes are ever missed, and it puts almost zero load on the database CPU.
 
 ## 3. Distributed Fault Tolerance
-Because Kafka Connect runs as a distributed cluster, it mathematically inherits Kafka's resilience. 
+Because Kafka Connect runs as a distributed cluster, it mathematically inherits Kafka's resilience.
 If a Kafka Connect Worker node crashes while streaming 100,000 events to Snowflake, the cluster instantly detects the failure. It mathematically reassigns the Sink Connector to a surviving Worker node, retrieves the exact Kafka Offset where it left off, and resumes streaming without dropping or duplicating a single row.
 
-</ConceptTemplate>

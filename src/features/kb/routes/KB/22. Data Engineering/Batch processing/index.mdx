@@ -4,7 +4,14 @@ description: The traditional data engineering paradigm of processing massive vol
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Batch Processing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Batch Processing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Data Engineering is fundamentally about moving and crunching data. **Batch Processing** is the strategy of waiting for data to pile up over a period of time, and then processing all of it together in one massive, scheduled job.
 
@@ -18,9 +25,8 @@ If an e-commerce site processes 100,000 orders a day, a batch process might run 
 
 ## 2. The Great Delay
 
-The primary flaw of batch processing is latency. 
+The primary flaw of batch processing is latency.
 If the CEO asks to see the live sales dashboard at 3:00 PM, the dashboard is completely wrong. It only shows data up until 2:00 AM the previous night, because the next batch job hasn't run yet.
 
 Batch processing is perfect for payroll, end-of-month reporting, and training machine learning models—tasks where immediate, real-time data is not required. For tasks that require instantaneous updates (like fraud detection on a credit card swipe), engineers must use **Stream Processing**.
 
-</ConceptTemplate>

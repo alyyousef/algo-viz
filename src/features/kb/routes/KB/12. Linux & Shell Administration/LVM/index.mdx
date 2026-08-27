@@ -4,7 +4,14 @@ description: An advanced storage framework that abstracts physical hard drives, 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LVM (Logical Volume Manager)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LVM (Logical Volume Manager)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Traditionally, when you install Linux, you format a physical hard drive into fixed partitions (e.g., a 50GB `/` partition and a 100GB `/home` partition). If `/` runs out of space, resizing it physically on the spinning disk is a dangerous, complicated nightmare requiring downtime.
 
@@ -18,11 +25,16 @@ LVM works by stacking three virtual concepts on top of each other:
 2. **Volume Groups (VG)**: You group multiple Physical Volumes together into a single, massive pool of storage. (e.g., combining two 1TB drives into a 2TB "StoragePool").
 3. **Logical Volumes (LV)**: You carve out virtual "partitions" from the Volume Group. The OS formats these LVs (e.g., as EXT4) and mounts them.
 
+
 <Callout icon="success" title="The Magic of Dynamic Resizing">
+
+
   If your database partition (an LV) runs out of space, you do not need to reboot. You simply physically plug a new hard drive into the server, add it to the Volume Group (VG), and run `lvextend` to dynamically grow the database LV into the new space while the server is actively running.
+
+
 </Callout>
+
 
 ## Snapshots
 Because LVM intercepts all read/write commands, it supports instantaneous **Snapshots**. You can take a snapshot of a 1TB database Logical Volume in milliseconds. LVM will freeze the state, and any new writes to the database will simply be redirected to a new block of storage (Copy-on-Write), allowing for perfect, zero-downtime backups.
 
-</ConceptTemplate>

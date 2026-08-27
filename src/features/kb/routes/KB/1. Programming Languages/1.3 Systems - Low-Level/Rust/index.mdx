@@ -1,8 +1,28 @@
+---
+title: Rust
+description: The revolutionary systems language that mathematically guarantees memory safety and thread safety without a garbage collector.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rust">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rust">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Graydon Hoare at Mozilla in 2010, Rust has fundamentally altered the trajectory of systems programming. It is the first language in history to offer the raw, bare-metal speed of C++ while mathematically guaranteeing that your program cannot have memory leaks, use-after-free bugs, or data races.
 
-</ConceptTemplate>
+## 1. The Borrow Checker
+Rust achieves memory safety through a mathematical concept called **Ownership**.
+- Every piece of memory has exactly one "owner" variable.
+- When the owner goes out of scope, the memory is instantly freed (no Garbage Collector).
+- You can "borrow" access to that memory using References (`&`).
+
+The compiler's **Borrow Checker** mathematically analyzes your code at compile time. It enforces a strict rule: You can have *many* read-only references to a piece of data, OR *exactly one* mutable (writeable) reference, but never both at the same time. If your code breaks this mathematical law, it will not compile.
+
+## 2. Fearless Concurrency
+Because the Borrow Checker mathematically prevents multiple threads from mutating the same data simultaneously, Data Races (the hardest bugs in computer science to fix) are physically impossible to write in safe Rust. This allows developers to write massively concurrent, multi-threaded servers with total confidence.
+

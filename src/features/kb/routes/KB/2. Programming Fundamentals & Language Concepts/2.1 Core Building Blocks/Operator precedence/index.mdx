@@ -1,8 +1,27 @@
+---
+title: Operator Precedence
+description: The strict mathematical ruleset compilers use to determine the order in which operators are evaluated in complex expressions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Operator precedence">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Operator Precedence">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a compiler encounters a mathematical expression like `3 + 4 * 5`, it cannot simply evaluate it left-to-right (which would yield 35). It must mathematically adhere to Operator Precedence.
 
-</ConceptTemplate>
+## 1. The Precedence Table
+Every programming language mathematically defines a rigid Precedence Table.
+Typically, multiplication (`*`) has higher mathematical precedence than addition (`+`), so the compiler calculates `4 * 5` first.
+Parentheses (`()`) have the absolute highest mathematical precedence. They physically alter the Abstract Syntax Tree (AST), forcing the compiler to evaluate the inner nodes before the outer nodes.
+
+## 2. Associativity
+If two operators have the exact same precedence, the compiler uses **Associativity** to break the tie.
+- **Left-to-Right**: Mathematical operators (`-`, `/`) are evaluated left-to-right. `10 - 5 - 2` is mathematically `(10 - 5) - 2 = 3`.
+- **Right-to-Left**: Assignment operators (`=`) are evaluated right-to-left. In C, `a = b = 5` mathematically means `b = 5` evaluates first, returning 5, which is then assigned to `a`.
+

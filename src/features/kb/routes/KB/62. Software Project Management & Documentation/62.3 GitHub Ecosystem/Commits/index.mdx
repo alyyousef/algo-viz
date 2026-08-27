@@ -4,10 +4,16 @@ description: An individual change to a file (or set of files) in a Git repositor
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Commits">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Commits">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Commit** is a mathematical snapshot of your code.
 
 When you type `git commit -m "Fix login bug"`, Git mathematically calculates a SHA-1 hash of the exact state of all your files. This creates a permanent, immutable biological save point. If you accidentally delete a critical file 3 weeks later, you can mathematically time-travel back to any previous commit hash and restore the project instantly.
 
-</ConceptTemplate>

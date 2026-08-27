@@ -4,9 +4,16 @@ description: A vast, low-cost repository that stores massive amounts of raw, uns
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data Lakes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Lakes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A Data Warehouse is rigid. Before you can put data into a warehouse, you must define a strict schema (tables and columns) and clean the data. This is expensive and time-consuming. 
+A Data Warehouse is rigid. Before you can put data into a warehouse, you must define a strict schema (tables and columns) and clean the data. This is expensive and time-consuming.
 
 A **Data Lake** flips this paradigm. It operates on the philosophy of **"Store everything now, figure out the schema later (Schema-on-Read)."**
 
@@ -24,8 +31,13 @@ Because object storage costs pennies per gigabyte, companies can afford to keep 
 Data Warehouses are built for Business Analysts writing SQL. Data Lakes are built for Data Scientists writing Python.
 A Data Scientist training a neural network needs raw, unfiltered data. If the data goes through an ETL pipeline into a warehouse, subtle outliers or "messy" data points are often cleaned or deleted—destroying the exact nuances the AI needs to learn from. The Data Lake preserves the raw reality of the data.
 
+
 <Callout icon="warning" title="The Data Swamp">
+
+
   Because there is no schema enforcement, a Data Lake can quickly turn into a **Data Swamp**. If engineers dump thousands of files into S3 without strict naming conventions, metadata tagging, or governance, the data becomes completely unsearchable and useless. Finding a specific log file in a Data Swamp is impossible.
+
+
 </Callout>
 
-</ConceptTemplate>
+

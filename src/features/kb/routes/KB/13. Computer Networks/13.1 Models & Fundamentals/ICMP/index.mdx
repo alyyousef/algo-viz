@@ -4,9 +4,16 @@ description: A core Layer 3 protocol used specifically for diagnostic reporting,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ICMP (Internet Control Message Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ICMP (Internet Control Message Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When a router encounters a problem (like a destination being unreachable, or an IP packet's TTL expiring), it needs a way to report the error back to the sender. It cannot use TCP or UDP, because those are Layer 4. 
+When a router encounters a problem (like a destination being unreachable, or an IP packet's TTL expiring), it needs a way to report the error back to the sender. It cannot use TCP or UDP, because those are Layer 4.
 
 It uses **ICMP**, which operates firmly at **Layer 3**, right alongside IP. ICMP is the diagnostic messaging system of the Internet.
 
@@ -20,13 +27,18 @@ By timing how long it took the reply to return, you measure Network Latency.
 ## Traceroute (Time Exceeded)
 
 The `traceroute` command uses ICMP to map the exact path a packet takes across the globe.
-1. It sends a packet to Google, but deliberately sets the IP TTL to **1**. 
+1. It sends a packet to Google, but deliberately sets the IP TTL to **1**.
 2. The very first Router it hits subtracts 1 (TTL becomes 0), drops the packet, and sends back an **ICMP Type 11 (Time Exceeded)** error. Now you know the IP of the first router!
 3. It sends a second packet with a TTL of **2**. It passes the first router, hits the second router, dies, and returns an ICMP error. Now you know the second router!
 4. It repeats this until the packet finally reaches Google.
 
+
 <Callout icon="info" title="Firewall Blocking">
+
+
   Historically, hackers used automated ICMP Pings to scan the internet and map out vulnerable corporate networks. Because of this, it is standard practice today for enterprise firewalls to aggressively drop and ignore all incoming ICMP packets. This is why you can often successfully load a company's website (via TCP Port 443) even though `ping` says the server is dead.
+
+
 </Callout>
 
-</ConceptTemplate>
+

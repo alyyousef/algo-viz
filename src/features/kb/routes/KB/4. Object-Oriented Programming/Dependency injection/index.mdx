@@ -1,8 +1,39 @@
+---
+title: Dependency Injection (DI)
+description: A software design pattern where an object receives its dependencies (other objects it requires to function) from an external framework or constructor, rather than creating them internally, ensuring mathematical decoupling.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dependency injection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Dependency Injection (DI)"
+  subtitle="Mathematical Decoupling of State"
+  tags={['OOP', 'Design Patterns', 'Architecture', 'Testing']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a `Car` class mathematically instantiates an `Engine` class inside its own constructor (`this.engine = new Engine()`), the `Car` is permanently, rigidly coupled to that specific `Engine`. You can never test the `Car` with a fake `MockEngine`.
 
-</ConceptTemplate>
+## 1. Passing Dependencies In
+Dependency Injection (DI) mathematically reverses this control. The `Car` does not create the engine; the engine is *injected* into it from the outside.
+```java
+public class Car {
+    private Engine engine;
+
+    // Dependency Injection via Constructor
+    public Car(Engine externalEngine) {
+        this.engine = externalEngine;
+    }
+}
+```
+Because the dependency is injected, the `Car` no longer cares *how* the engine is created. During production, you inject a `V8Engine`. During automated testing, you inject a `MockEngine` that mathematically always returns "running = true" without actually burning CPU cycles.
+
+## 2. DI Frameworks (IoC Containers)
+In large enterprise applications (like Java Spring or Angular), manually injecting dependencies across 1,000 classes is a mathematical nightmare.
+These ecosystems use **Inversion of Control (IoC) Containers**. You simply annotate the class (e.g., `@Inject`). When the application starts, the DI Framework mathematically analyzes the entire graph of dependencies, instantiates the `Engine`, and automatically injects it into the `Car`, abstracting away the mathematical complexity of object creation.
+

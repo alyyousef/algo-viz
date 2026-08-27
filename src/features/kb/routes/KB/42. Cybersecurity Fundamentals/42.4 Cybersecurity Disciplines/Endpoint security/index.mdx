@@ -4,25 +4,32 @@ description: The practice of securing end-user devices such as desktops, laptops
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Endpoint Security">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Endpoint Security">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Endpoint** is any physical device that connects to the corporate network. It is almost always the weakest link in the mathematical security chain because it is operated by a human who might click on a phishing email.
 
 Historically, Endpoint Security just meant installing basic Antivirus software. Today, because malware mutates so rapidly, signature-based Antivirus is largely obsolete. It has been replaced by Endpoint Detection and Response (EDR).
 
+
 <Callout icon="info" title="EDR vs Antivirus">
+
+
   Traditional Antivirus relies on mathematical signatures (comparing a file\'s hash to a list of known bad hashes). **EDR** (like CrowdStrike or SentinelOne) relies on behavioral analysis. Even if a file has never been seen before in history, the EDR will block it if it behaves maliciously (e.g., trying to silently encrypt the "My Documents" folder).
+
+
 </Callout>
+
 
 ## Core Capabilities of EDR
 
-<ComparisonTable 
-  headers={['Capability', 'Description']}
-  rows={[
-    ['Continuous Monitoring', 'The EDR agent mathematically records every process spawned, every registry key changed, and every network connection made by the endpoint.'],
-    ['Automated Mitigation', 'If malicious behavior is detected, the EDR can automatically kill the process, quarantine the file, and mathematically isolate the laptop from the rest of the network.'],
-    ['Threat Hunting', 'Allows SOC analysts to remotely query the mathematical state of thousands of endpoints simultaneously (e.g., "Show me every laptop that currently has a process named `mimikatz.exe` running").']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Capability', 'Description']} rows={[ ['Continuous Monitoring', 'The EDR agent mathematically records every process spawned, every registry key changed, and every network connection made by the endpoint.'], ['Automated Mitigation', 'If malicious behavior is detected, the EDR can automatically kill the process, quarantine the file, and mathematically isolate the laptop from the rest of the network.'], ['Threat Hunting', 'Allows SOC analysts to remotely query the mathematical state of thousands of endpoints simultaneously (e.g., "Show me every laptop that currently has a process named `mimikatz.exe` running").'] ]} />
+
+

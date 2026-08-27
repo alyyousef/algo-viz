@@ -1,8 +1,26 @@
+---
+title: Solidity
+description: The undisputed king of Web3, an object-oriented language created specifically to write smart contracts on the Ethereum Virtual Machine (EVM).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Solidity">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Solidity">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Gavin Wood in 2014, Solidity is the language that gave birth to Decentralized Finance (DeFi) and NFTs. It is statically typed, object-oriented, and heavily influenced by C++ and JavaScript.
 
-</ConceptTemplate>
+## 1. The EVM Environment
+Solidity is mathematically constrained by the Ethereum Virtual Machine (EVM).
+In standard programming, memory is cheap. In Solidity, every single mathematical operation (addition, memory allocation, reading from disk) costs a specific amount of "Gas," which translates to physical money (Ether) paid by the user.
+Therefore, Solidity developers must constantly optimize their mathematical logic. For example, storing a boolean in a `uint256` instead of a `uint8` might cost the user an extra $5 every time the function is called.
+
+## 2. The Dark Forest of Security
+Because Solidity is Turing-complete and handles billions of dollars, it is the most hostile programming environment on earth.
+If a developer fails to follow the Checks-Effects-Interactions mathematical pattern, a hacker can use a "Reentrancy Attack"—calling a function to withdraw money, and before the contract updates its balance, the hacker's contract mathematically calls the withdraw function again, draining the entire protocol in a single transaction.
+

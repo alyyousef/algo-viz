@@ -1,0 +1,24 @@
+---
+title: Google Cloud Firestore
+description: A highly flexible, scalable NoSQL document database designed for massive mobile and web applications, featuring real-time mathematical synchronization and offline support.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Firestore"
+  subtitle="Real-Time NoSQL Database"
+  tags={['GCP', 'Database', 'NoSQL', 'Firebase']}
+>
+
+Firestore (the evolution of Firebase Realtime Database and Cloud Datastore) is a NoSQL document database. It does not use tables or rows; it uses **Collections** and **Documents** (JSON objects).
+
+## 1. Real-Time Listeners
+Standard databases require the frontend application to constantly "poll" (make repeated API calls) to see if data has changed, which is mathematically inefficient and drains mobile batteries.
+Firestore uses real-time WebSockets. The frontend developer attaches a **Listener** to a specific Document or Query. When a backend server updates that Document, Firestore's global network mathematically pushes the exact JSON change directly to the mobile device in milliseconds. This is the architectural foundation of collaborative apps (like Google Docs) and real-time chat applications.
+
+## 2. Shallow Queries and Indexing
+In a poorly designed NoSQL database, querying a document downloads all its nested sub-collections, mathematically destroying network bandwidth.
+Firestore enforces **Shallow Queries**. If you fetch a User document, it does *not* fetch the user's massive "Messages" sub-collection unless you explicitly ask for it.
+Furthermore, Firestore automatically creates a mathematical index for every single field in every document by default. This guarantees that query performance scales with the size of the *result set*, not the size of the *dataset*. Searching for 10 users takes the exact same mathematical amount of time whether the database has 100 users or 100 billion users.
+
+</TechnologyTemplate>

@@ -4,7 +4,14 @@ description: A revolutionary Parameter-Efficient Fine-Tuning (PEFT) technique th
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LoRA (Low-Rank Adaptation)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LoRA (Low-Rank Adaptation)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you want to fine-tune a 70 Billion parameter Llama 3 model to write like Shakespeare, the traditional method (Full Fine-Tuning) requires updating all 70 billion mathematical weights. This requires a massive cluster of expensive GPUs and terabytes of VRAM just to store the optimizer states.
 
@@ -22,11 +29,16 @@ Instead of changing the original, massive matrices of the base model, LoRA intro
 ## 2. The Benefits of LoRA
 
 - **Extreme Hardware Efficiency**: You can fine-tune a 7B model on a single 16GB GPU (like an RTX 4080) instead of an $80,000 A100 server.
-- **Tiny File Sizes**: A fully fine-tuned 70B model requires a 140 GB file. A LoRA adapter file is often less than 100 Megabytes. 
+- **Tiny File Sizes**: A fully fine-tuned 70B model requires a 140 GB file. A LoRA adapter file is often less than 100 Megabytes.
 - **Modular Swapping**: Because the base model remains frozen and untouched, you can load the massive base model into RAM once, and instantly hot-swap tiny 100MB LoRA adapters on the fly depending on the user's request (e.g., swapping a "Coding LoRA" for a "Medical LoRA" in milliseconds).
 
+
 <Callout icon="tip" title="QLoRA">
+
+
   **QLoRA (Quantized LoRA)** takes this efficiency one step further. It quantizes (crushes) the massive frozen base model down to 4-bit precision, drastically reducing the RAM required to hold it, while training a slightly higher-precision LoRA adapter on top of it. This is the absolute standard for home-brew AI training.
+
+
 </Callout>
 
-</ConceptTemplate>
+

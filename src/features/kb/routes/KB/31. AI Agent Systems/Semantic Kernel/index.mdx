@@ -1,8 +1,25 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Semantic Kernel
+description: Microsoft's highly structured, enterprise-grade SDK for integrating Large Language Models into C# and Python, treating AI capabilities as mathematically standard software functions.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Semantic Kernel">
+<TechnologyTemplate
+  title="Semantic Kernel"
+  subtitle="Enterprise LLM Orchestration"
+  tags={['AI', 'Microsoft', 'C#', 'Framework']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+LangChain is built for rapid Python prototyping. Semantic Kernel is built by Microsoft for enterprise, strictly typed, mathematically robust integration into legacy software (like .NET).
 
-</ConceptTemplate>
+## 1. Plugins and Semantic Functions
+In Semantic Kernel, an LLM Prompt is not just a string; it is mathematically wrapped into a **Semantic Function**.
+You define a Prompt in a text file, and you define a standard C# function (e.g., `GetDatabaseRecord()`). Both are mathematically bound together into a **Plugin**.
+To the C# developer, calling the LLM looks exactly like calling a standard, strictly typed C# method. The mathematical complexity of the HTTP API call, the JSON parsing, and the token management is entirely abstracted away by the Kernel.
+
+## 2. The Planner
+Semantic Kernel contains a powerful mathematical engine called **The Planner**.
+You give the Planner a Goal ("Send an email summarizing yesterday's sales").
+The Planner mathematically analyzes the entire repository of registered Plugins. It autonomously deduces that it needs to chain the C# `GetSales()` plugin into the Semantic `SummarizeText()` plugin, and finally into the C# `SendEmail()` plugin. It generates the Execution Graph and runs it, turning the static C# backend into an autonomous AI Agent.
+
+</TechnologyTemplate>

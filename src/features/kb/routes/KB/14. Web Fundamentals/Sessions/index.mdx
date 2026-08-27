@@ -4,9 +4,16 @@ description: The backend architecture used to securely store user state data, ut
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sessions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sessions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While you *could* store a user's entire shopping cart or account balance directly inside a Cookie, that is a catastrophic security disaster. 
+While you *could* store a user's entire shopping cart or account balance directly inside a Cookie, that is a catastrophic security disaster.
 Because the Cookie lives on the user's computer, the user can easily open Chrome DevTools, edit the cookie, and change their account balance from $5 to $5,000,000.
 
 To solve this, we use **Sessions**.
@@ -22,4 +29,3 @@ When Alice clicks "Checkout," her browser sends the Cookie containing the ID. Th
 
 Because the user only possesses the randomized ID pointer, they cannot mathematically alter the data stored in the backend database.
 
-</ConceptTemplate>

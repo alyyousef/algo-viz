@@ -4,7 +4,14 @@ description: The architectural shift driven by React to mathematically scope sty
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scoped CSS (Modules & CSS-in-JS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Scoped CSS (Modules & CSS-in-JS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The greatest architectural flaw of standard CSS is that everything operates in a single, global namespace.
 If Developer A writes `.card { padding: 20px; }` on the homepage, and Developer B writes `.card { padding: 50px; }` on the dashboard, the entire application will catastrophically explode due to a global cascade collision.
@@ -44,4 +51,3 @@ export const App = () => <StyledButton primary>Save</StyledButton>
 **The Architectural Advantage**: You have absolute mathematical access to Javascript variables. You can pass React state or props directly into the CSS logic.
 **The Architectural Flaw**: The browser has to download, parse, and execute heavy Javascript to mathematically generate the CSS at runtime, which drastically hurts performance and Time-To-Interactive (TTI) compared to static CSS files.
 
-</ConceptTemplate>

@@ -1,8 +1,26 @@
+---
+title: Category Theory (Functors)
+description: A highly abstract branch of mathematics that formalizes the structure and relationships between different mathematical spaces, forming the deep theoretical foundation of Functional Programming.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Category theory basics (functors">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Category Theory (Functors)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Category Theory is the "mathematics of mathematics." In Functional Programming (like Haskell), it provides the absolute theoretical framework for how data and functions interact.
 
-</ConceptTemplate>
+## 1. Categories and Morphisms
+In Category Theory, a **Category** consists of "Objects" and "Morphisms" (arrows between objects).
+In programming, the Objects are **Types** (like `Int` or `String`), and the Morphisms are **Functions** (a function that converts an `Int` to a `String`). The fundamental mathematical law is Composition: if you have a function $A \rightarrow B$ and a function $B \rightarrow C$, you are mathematically guaranteed to be able to compose them into a new function $A \rightarrow C$.
+
+## 2. Functors (The Mapping Interface)
+A **Functor** is a mathematical mapping between two different Categories that perfectly preserves their structure.
+In programming, a Functor is any Type that implements the `map()` function (like an Array, or a Promise).
+If you have a function that converts an `Int` to a `String`, and you have an `Array<Int>`, you cannot pass the Array into the function directly (Type Error). The Functor (Array) mathematically "lifts" the function inside itself, applies it to the internal elements, and returns an `Array<String>`, perfectly preserving the structural geometry of the Array.
+

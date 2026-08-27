@@ -4,14 +4,26 @@ description: A computer data storage architecture that manages data as objects, 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Object Storage">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Object Storage">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Object Storage** (like AWS S3) abandons the concept of "Folders" and "Hard Drives" entirely.
 
+
 <Callout icon="success" title="The Flat Hierarchy">
+
+
   Every file (an Object) is stored in a mathematically flat, infinite bucket. Instead of a file path (`C:/photos/cat.jpg`), the object is given a unique mathematical ID and attached metadata.
-  
+
   Because there is no biological folder hierarchy to traverse, Object Storage scales to literally Exabytes of data. It is accessed via HTTP REST APIs (`GET /bucket/cat.jpg`). It is terrible for running databases, but mathematically perfect for storing billions of Netflix videos or Spotify songs.
+
+
 </Callout>
 
-</ConceptTemplate>
+

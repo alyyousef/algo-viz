@@ -4,9 +4,16 @@ description: The architectural practice of using tags that accurately describe t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Semantic HTML & ARIA">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Semantic HTML & ARIA">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Before HTML5, web developers suffered from **"div soup"**. Entire websites were built using generic `<div>` elements for the header, the navigation, the footer, and the buttons. 
+Before HTML5, web developers suffered from **"div soup"**. Entire websites were built using generic `<div>` elements for the header, the navigation, the footer, and the buttons.
 
 While a `<div>` can be visually styled with CSS to *look* like a button, it mathematically *is not* a button. This completely destroys the experience for blind users relying on Screen Readers, and destroys SEO because Googlebot cannot understand the structure of the page.
 
@@ -25,4 +32,3 @@ In these cases, you use **ARIA attributes** to mathematically describe the compo
 - `aria-expanded="true"`: Announces that the dropdown menu is currently open.
 - `role="dialog"`: Tells the screen reader that the current `<div>` is actually a modal popup that traps keyboard focus.
 
-</ConceptTemplate>

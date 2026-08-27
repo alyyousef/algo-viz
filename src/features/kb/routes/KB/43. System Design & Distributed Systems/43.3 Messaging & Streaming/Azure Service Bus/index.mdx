@@ -1,8 +1,32 @@
+---
+title: Azure Service Bus
+description: "A fully managed, highly reliable enterprise message broker in Microsoft Azure, providing complex Pub/Sub routing, strict ordering, and ACID-compliant transactional messaging for decoupling mission-critical microservices."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Azure Service Bus">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Azure Service Bus"
+  subtitle="The Enterprise Cloud Broker"
+  tags={['System Design', 'Azure', 'Messaging', 'Enterprise']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Azure Event Hubs is designed for massive, high-throughput Big Data streams (like Kafka), **Azure Service Bus** is designed for high-value, complex enterprise messaging (like RabbitMQ or ActiveMQ).
 
-</ConceptTemplate>
+## 1. High-Value vs High-Volume
+Use Event Hubs for telemetry (`Temperature=72`). If you lose one message out of 10 million, the math averages out.
+Use Service Bus for financial transactions (`Transfer $5,000`). If you lose one message, the business mathematically fails.
+Service Bus provides deep mathematical guarantees:
+- **Strict FIFO Ordering**: Guarantees messages are processed in the exact mathematical order they were sent.
+- **Dead-Letter Queues (DLQ)**: If a message repeatedly causes the consumer to crash (a "poison pill"), Service Bus mathematically quarantines the message in a DLQ for human inspection, rather than letting it block the queue.
+
+## 2. Advanced Routing (Topics and Subscriptions)
+Unlike AWS (which forces you to glue SNS to SQS for fan-out), Azure Service Bus mathematically combines them into a single entity: Topics and Subscriptions.
+A publisher sends a message to a Topic. Multiple Subscriptions pull from that Topic. Crucially, Subscriptions can have mathematical **SQL Filters**. You can route messages where `Amount > 10000` to the "Fraud Detection" subscription, and all others to the standard "Processing" subscription, moving complex routing logic out of your code and into the cloud infrastructure.
+

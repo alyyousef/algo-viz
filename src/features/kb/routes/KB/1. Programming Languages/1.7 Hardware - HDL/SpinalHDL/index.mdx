@@ -1,8 +1,24 @@
+---
+title: SpinalHDL
+description: A modern, highly expressive hardware description language embedded in Scala, designed as a direct competitor and evolution of Chisel.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SpinalHDL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SpinalHDL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+SpinalHDL, like Chisel, is a Domain-Specific Language mathematically embedded in Scala for designing hardware. It was created by Charles Papon to address some of the architectural frustrations hardware engineers experienced with Chisel.
 
-</ConceptTemplate>
+## 1. Stronger Typing and Verification
+While both use Scala, SpinalHDL mathematically enforces a much stricter type system than early versions of Chisel.
+In Verilog, if you accidentally connect a 32-bit wire to a 16-bit wire, the compiler might silently truncate the data, causing a catastrophic mathematical bug in the physical silicon. SpinalHDL performs rigorous, static mathematical checks during the Scala execution phase, completely preventing bit-width mismatches and clock domain crossing errors before the Verilog is ever generated.
+
+## 2. The VexRiscv Processor
+SpinalHDL's crowning achievement is the **VexRiscv** project—an award-winning, 32-bit RISC-V CPU designed entirely in SpinalHDL. The CPU is implemented as a mathematical framework of "Plugins." If you want to add a hardware multiplier or an instruction cache to the CPU, you just enable the plugin in Scala. SpinalHDL mathematically calculates the new pipeline routing and instantly generates a completely custom, highly optimized CPU core.
+

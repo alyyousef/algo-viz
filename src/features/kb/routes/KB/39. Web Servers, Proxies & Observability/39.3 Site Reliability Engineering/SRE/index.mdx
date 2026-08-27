@@ -1,8 +1,30 @@
+---
+title: SRE (Site Reliability Engineering)
+description: A software engineering approach to IT operations, originally pioneered by Google, that uses algorithms, coding, and mathematical metrics to manage massive, complex systems more reliably than traditional system administration.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SRE">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="SRE (Site Reliability Engineering)"
+  subtitle="Operations as Software Engineering"
+  tags={['SRE', 'Operations', 'DevOps', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Google VP Ben Treynor Sloss famously defined SRE as: *"What happens when you ask a software engineer to design an operations team."*
 
-</ConceptTemplate>
+## 1. Replacing Manual Labor with Code
+Traditional System Administrators ("SysAdmins") solve problems manually. If a server is full, they SSH into it and delete logs.
+Site Reliability Engineers solve problems using software. If a server is full, they write a Python script that mathematically monitors disk space and automatically provisions a larger EBS volume via the AWS API before the disk ever reaches 100%. The core mathematical goal of SRE is the relentless elimination of **Toil** (repetitive, manual, non-creative operational work).
+
+## 2. The Core Mathematical Tenets
+SRE replaces subjective operational arguments with objective mathematics:
+- **SLIs/SLOs/Error Budgets**: Engineers cannot argue about whether a system is "stable enough" to push a new feature. They look at the Error Budget. If the budget is > 0, deploy. If the budget is &lt; 0, freeze. The math dictates the action.
+- **Monitoring vs Observability**: SREs don't just set up pings to see if a server is online. They mathematically instrument the application code to track latency distributions (P99, P95) and error rates across highly distributed microservice topologies.
+

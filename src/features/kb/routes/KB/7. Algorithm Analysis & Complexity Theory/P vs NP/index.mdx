@@ -5,9 +5,16 @@ description: The most famous unsolved problem in Computer Science and Mathematic
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="P vs NP Problem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="P vs NP Problem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The **P vs NP problem** is the absolute holy grail of theoretical computer science. It asks a profound philosophical and mathematical question: 
+The **P vs NP problem** is the absolute holy grail of theoretical computer science. It asks a profound philosophical and mathematical question:
 
 *If a solution to a problem can be easily **verified** by a computer, can the solution also be easily **discovered** by a computer?*
 
@@ -23,23 +30,34 @@ Examples of problems in **P**:
 **NP** stands for **Nondeterministic Polynomial Time**.
 This class contains all mathematical problems where, if you are *given a proposed solution*, you can efficiently **verify** if it is correct in polynomial time.
 
+
 <Callout icon="info" title="Important Misconception">
+
+
 NP does NOT mean "Non-Polynomial". NP simply means you can verify the answer efficiently. By definition, every problem in P is also in NP, because if you can *solve* it efficiently, you can certainly *verify* it efficiently.
+
+
 </Callout>
+
 
 Examples of problems in **NP**:
 - **Sudoku**: Solving a massive 100x100 Sudoku puzzle is computationally horrifying. But if someone hands you a completed grid, you can verify it is correct instantly.
 - **The Traveling Salesman Problem (Decision Version)**: "Is there a route connecting these 50 cities that is shorter than 1,000 miles?" If I hand you a route, you can verify its length instantly.
 
 ## 3. The Core Question: Does P = NP?
-The $1,000,000 question asks: **Are there problems in NP that are strictly NOT in P?** 
+The $1,000,000 question asks: **Are there problems in NP that are strictly NOT in P?**
 If P = NP, it mathematically means that for every problem where we can easily *verify* an answer, there exists a hidden, highly efficient algorithm to *find* the answer.
 
+
 <Callout icon="warning" title="The Consequences of P = NP">
+
+
 If a brilliant mathematician proves tomorrow that P = NP, the world changes instantly.
 All modern cryptography (RSA, AES) relies on the assumption that factoring large prime numbers is hard to solve but easy to verify. If P = NP, encryption is mathematically broken, crashing the global financial system. However, we could also efficiently solve cancer protein folding and optimal logistics.
+
+
 </Callout>
+
 
 The vast majority of computer scientists mathematically assume that **P ≠ NP**, meaning some problems are intrinsically hard to solve.
 
-</ConceptTemplate>

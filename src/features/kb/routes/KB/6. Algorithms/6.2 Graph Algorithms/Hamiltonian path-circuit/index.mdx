@@ -1,8 +1,30 @@
+---
+title: Hamiltonian Path & Circuit
+description: "A mathematical path in an undirected or directed graph that visits every single vertex exactly once, contrasting with an Eulerian path which visits every edge exactly once."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hamiltonian path/circuit">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Hamiltonian Path & Circuit"
+  subtitle="The Traveling Salesperson's Nightmare"
+  tags={['Algorithms', 'Graphs', 'NP-Complete', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Eulerian Paths (visiting every edge once) are mathematically trivial to solve in O(V+E) time. Hamiltonian Paths (visiting every *vertex* exactly once) are mathematically a nightmare.
 
-</ConceptTemplate>
+## 1. The Mathematical Complexity
+Determining whether a Hamiltonian Path or Circuit even *exists* in a general graph is strictly **NP-Complete**.
+Unlike the Eulerian problem (where you just look for Even/Odd edge counts), there is no simple mathematical formula to check for a Hamiltonian Path. The computer is forced to use a backtracking algorithm (DFS) to brute-force all possible permutations of vertex visits, resulting in a catastrophic worst-case Time Complexity of **O(N!)**.
+
+## 2. The Traveling Salesperson Problem (TSP)
+The Hamiltonian Circuit is the mathematical foundation of the most famous problem in computer science: The Traveling Salesperson Problem.
+In a Hamiltonian Circuit, you just want to find *any* path that visits every city once and returns home.
+In TSP, the edges have "weights" (distances), and you want to find the Hamiltonian Circuit with the mathematically *shortest total distance*. Because standard Hamiltonian Circuits are already NP-Complete, TSP is NP-Hard, forcing routing companies (like FedEx and Uber) to rely on heuristic approximation algorithms rather than seeking perfect mathematical answers.
+

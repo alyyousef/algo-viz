@@ -1,8 +1,27 @@
+---
+title: Concept Drift
+description: A fatal MLOps phenomenon where the fundamental mathematical relationship between the input features ($X$) and the target variable ($y$) secretly changes in the real world, causing model accuracy to silently plummet.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Concept drift">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Concept Drift">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Unlike traditional software, Machine Learning models physically degrade over time. The code doesn't break, but the world changes.
 
-</ConceptTemplate>
+## 1. The Breaking of the Equation
+In supervised learning, the model learns $P(y|X)$ (the mathematical probability of $y$ given $X$).
+**Concept Drift** occurs when $P(y|X)$ changes in reality, but the frozen Neural Network weights do not know it.
+*Example*: You train a Spam Filter. You teach it that the word "Crypto" ($X$) means Spam ($y = 1$). A year later, a legitimate national bank launches a "Crypto" account. Now, the word "Crypto" means Safe ($y = 0$).
+The data ($X$) didn't change. But the *meaning* (the Concept) of the data flipped entirely. The model will begin aggressively deleting legitimate bank emails.
+
+## 2. Detection and Retraining
+Concept drift is incredibly dangerous because it does not throw an error code; the API still returns a 200 OK. The model is just confidently wrong.
+To fix it, MLOps teams implement **Continuous Evaluation**. They siphon 1% of the model's live predictions, hand them to human labelers to determine the Ground Truth, and mathematically calculate the live F1 Score. If the live accuracy drops below a statistical threshold, an automated pipeline triggers, pulling the last 30 days of fresh data to fundamentally retrain and update the mathematical weights of the network.
+

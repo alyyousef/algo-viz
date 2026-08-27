@@ -4,7 +4,7 @@ description: A future web standard and JavaScript API for accelerated graphics a
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="WebGPU"
   subtitle="The future of graphics in the browser"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/WebGPU_logo.svg/512px-WebGPU_logo.svg.png"
@@ -19,15 +19,21 @@ Historically, if you wanted 3D graphics in a web browser, you used **WebGL**. Ho
 
 **WebGPU** is the massive, industry-wide standard created to fix this.
 
+
 <Callout icon="success" title="The Universal Wrapper">
-  Because Apple only allows Metal, and Windows relies on DirectX, WebGPU acts as a mathematical translation layer. 
-  
+
+
+  Because Apple only allows Metal, and Windows relies on DirectX, WebGPU acts as a mathematical translation layer.
+
   You write your WebGPU code in the browser once. If the user is on a Mac, Chrome translates the WebGPU math into Metal. If they are on Windows, Chrome translates it into DirectX 12. If they are on Android, it translates into Vulkan.
+
+
 </Callout>
+
 
 ## Compute Shaders
 
-The most important feature of WebGPU is the introduction of **Compute Shaders** to the web. 
+The most important feature of WebGPU is the introduction of **Compute Shaders** to the web.
 Compute shaders allow JavaScript developers to hijack the GPU to run massive, highly parallel mathematics (like Artificial Intelligence matrices, physics simulations, or crypto hashing) that have absolutely nothing to do with rendering 3D graphics.
 
 </TechnologyTemplate>

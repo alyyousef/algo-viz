@@ -1,8 +1,34 @@
+---
+title: Android vs iOS
+description: "A comprehensive architectural and philosophical comparison between the world's two dominant mobile operating systems: Google's open-source Android and Apple's closed-ecosystem iOS."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Android vs iOS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Android vs iOS"
+  subtitle="The Mobile Ecosystem War"
+  tags={['Comparison', 'Mobile', 'Android', 'iOS', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Android and iOS power over 99% of the world's smartphones. While they provide similar end-user experiences, their underlying software architectures, programming languages, and philosophical approaches to ecosystem control are fundamentally opposed.
 
-</ConceptTemplate>
+## 1. Architectural Philosophy
+- **Android**: An open-source operating system based on the Linux kernel (AOSP). It is designed to be highly customizable, allowing hardware manufacturers (Samsung, Xiaomi) to heavily modify the UI and system behaviors. Apps are traditionally written in Java or Kotlin and compiled to bytecode running on the Android Runtime (ART), allowing the exact same app to run on vastly different hardware architectures.
+- **iOS**: A proprietary, closed-source operating system based on Darwin (Unix). It is strictly controlled by Apple, resulting in a highly uniform, locked-down ecosystem. Apps are written in Swift or Objective-C and compiled directly to raw, native ARM machine code, mathematically guaranteeing maximum hardware optimization since Apple designs both the silicon and the OS.
+
+## 2. Development Ecosystem
+| Feature | Android | iOS |
+| :--- | :--- | :--- |
+| **Primary Languages** | Kotlin, Java | Swift, Objective-C |
+| **IDE** | Android Studio (IntelliJ) | Xcode |
+| **UI Framework (Modern)** | Jetpack Compose | SwiftUI |
+| **App Distribution** | Google Play, Sideloading, 3rd Party Stores | Apple App Store (Sideloading highly restricted) |
+| **Hardware Target** | Thousands of vastly different devices | A strict, known subset of Apple devices |
+

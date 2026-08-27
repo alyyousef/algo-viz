@@ -1,8 +1,32 @@
+---
+title: F# (Fsharp)
+description: A mature, strongly typed, functional-first programming language running on the .NET ecosystem, heavily inspired by OCaml.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="F#">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="F# (Fsharp)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by Don Syme at Microsoft Research in 2005, F# (Fsharp) is the functional counterpart to C# within the .NET ecosystem. It brings the mathematical rigor and type safety of ML-family languages (like OCaml) into the enterprise world of Microsoft.
 
-</ConceptTemplate>
+## 1. Type Inference and Discriminated Unions
+Unlike C#, where you must mathematically declare every type (`List<String> x = ...`), F# uses Hindley-Milner type inference. The compiler mathematically deduces the types automatically.
+F# excels at Domain-Driven Design via **Discriminated Unions**.
+Instead of building complex class hierarchies for a Payment system, you mathematically define states:
+```fsharp
+type Payment =
+  | Cash of amount: decimal
+  | CreditCard of number: string * exp: string
+```
+When you write a switch statement (pattern match) against `Payment`, the compiler mathematically guarantees you handle every possible case, eliminating entire classes of business logic bugs.
+
+## 2. Data Providers
+F# invented **Type Providers**. In other languages, if you want to query a JSON API or a SQL database, you must manually write classes to represent the data.
+An F# Type Provider mathematically reaches out to the SQL database or JSON file *at compile time*, analyzes the schema, and automatically generates strongly-typed objects in your IDE.
+

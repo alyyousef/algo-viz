@@ -1,8 +1,33 @@
+---
+title: Average Case
+description: "A mathematical framework for analyzing the expected performance of an algorithm over all possible inputs, heavily utilizing probability theory and expected values."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Average case">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Average Case Analysis"
+  subtitle="Expected Value in Algorithms"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Probability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Worst-Case (Big O) analysis guarantees the absolute maximum time an algorithm will take, it is often mathematically pessimistic. **Average Case** analysis provides the *expected* time complexity by averaging the cost over every single possible input, weighted by the probability of that input occurring.
 
-</ConceptTemplate>
+## 1. The Mathematical Definition
+If an algorithm takes time $T(I)$ for a specific input $I$, and the probability of $I$ occurring is $P(I)$, the Average Case Time Complexity is the mathematical Expected Value:
+$E[T] = \sum_{I} P(I) \cdot T(I)$
+
+## 2. Example: Quicksort
+Quicksort is the most famous example of the difference between Worst-Case and Average-Case.
+- **Worst-Case**: $O(N^2)$. If the array is already perfectly sorted, and you pick the last element as the pivot, Quicksort degrades into a mathematically disastrous $O(N^2)$ algorithm.
+- **Average-Case**: $O(N \log N)$. If we assume all $N!$ permutations of the array are equally likely, the math proves that the pivot will, on average, split the array roughly in the middle. The probability of hitting the worst-case consistently is so infinitesimally small that the Expected Value mathematically collapses to $O(N \log N)$.
+
+## 3. Why It Is Difficult
+To perform Average-Case analysis, a mathematician must make assumptions about the probability distribution of the inputs (usually assuming a **Uniform Distribution** where all inputs are equally likely). If this assumption is wrong (e.g., in the real world, data is often already partially sorted), the mathematical average case completely breaks down. This is why engineers prefer Worst-Case bounds for mission-critical systems.
+

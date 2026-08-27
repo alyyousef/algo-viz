@@ -4,10 +4,16 @@ description: A product family of productivity software, collaboration and cloud-
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Microsoft 365 (Office 365)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microsoft 365 (Office 365)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Microsoft 365** mathematically murdered the on-premise Exchange Server.
 
 Instead of running biological servers in a basement, the corporation mathematically rents Exchange, Teams, SharePoint, and Office (Word/Excel) entirely from Microsoft's Azure Cloud. To maintain security, the corporation biologically syncs their local on-premise Active Directory to Azure Active Directory (Entra ID), allowing employees to use their standard local password to mathematically log into the cloud.
 
-</ConceptTemplate>

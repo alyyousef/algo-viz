@@ -4,10 +4,17 @@ description: The highly reliable, connection-oriented Layer 4 protocol that guar
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TCP (Transmission Control Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="TCP (Transmission Control Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The Internet Protocol (IP) is completely unreliable; it frequently drops packets if routers get congested. 
-**TCP (Transmission Control Protocol)** sits on top of IP at Layer 4 (Transport). Its sole purpose is to provide an ironclad guarantee: if an application sends a file, the destination will receive the file perfectly, with zero missing bytes, and in the exact correct order. 
+The Internet Protocol (IP) is completely unreliable; it frequently drops packets if routers get congested.
+**TCP (Transmission Control Protocol)** sits on top of IP at Layer 4 (Transport). Its sole purpose is to provide an ironclad guarantee: if an application sends a file, the destination will receive the file perfectly, with zero missing bytes, and in the exact correct order.
 
 TCP powers HTTP/HTTPS, SSH, FTP, and Email (SMTP)—applications where a single missing byte of data corrupts the entire file.
 
@@ -20,8 +27,8 @@ Because TCP is **Connection-Oriented**, it refuses to send a single byte of data
 
 ## 2. Guaranteed Delivery and Sequencing
 
-When you download a 10MB image, TCP slices it into thousands of small segments. 
-Because IP routes packets dynamically, Segment 5 might arrive *before* Segment 2. 
+When you download a 10MB image, TCP slices it into thousands of small segments.
+Because IP routes packets dynamically, Segment 5 might arrive *before* Segment 2.
 - TCP assigns a **Sequence Number** to every segment. The receiving computer holds the segments in a buffer and mathematically reassembles them in perfect order before showing the image.
 - **Acknowledgements**: For every segment received, the receiver must send an "ACK" back to the sender. If the sender does not receive an ACK within a few milliseconds, it assumes the packet was dropped by a router and **automatically retransmits it**.
 
@@ -31,8 +38,13 @@ TCP is highly polite to the network.
 - **Flow Control (Windowing)**: The receiver tells the sender exactly how much RAM buffer space it has left. If the receiver's CPU is overwhelmed, it shrinks the "Window", forcing the sender to slow down so it doesn't crash the receiver.
 - **Congestion Control**: If the sender detects that packets are being dropped (meaning the internet routers in the middle are congested), it will aggressively throttle its own transmission speed to alleviate the global internet traffic jam.
 
+
 <Callout icon="warning" title="The Overhead Cost">
+
+
   TCP's absolute reliability comes at a massive cost in speed. The 3-way handshake adds latency before data even starts flowing, and the constant ACKs and retransmissions require significant overhead. For real-time applications where speed is more important than perfect accuracy (like video calling), developers use UDP instead.
+
+
 </Callout>
 
-</ConceptTemplate>
+

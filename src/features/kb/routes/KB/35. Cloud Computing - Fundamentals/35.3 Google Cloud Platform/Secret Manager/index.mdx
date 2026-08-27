@@ -1,0 +1,23 @@
+---
+title: Google Secret Manager
+description: A highly secure, globally replicated vault designed to mathematically protect, store, and manage access to sensitive API keys, database passwords, and cryptographic certificates in GCP.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Secret Manager"
+  subtitle="The Cryptographic Credential Vault"
+  tags={['GCP', 'Security', 'Encryption', 'Secrets']}
+>
+
+Secret Manager mathematically decouples sensitive credentials from application code. Instead of storing a database password in a Git repository or an environment variable (where it can be dumped by a hacker), you store it in Secret Manager.
+
+## 1. Immutable Secret Versions
+When you create a Secret (e.g., `DB_PASSWORD`), you do not just update its value; you mathematically append a **Version**.
+If you update the password, it becomes Version 2. Version 1 is not deleted; it is retained (unless explicitly destroyed). This mathematical immutability allows for instant, perfect rollbacks. If a developer deploys Version 2 of a password to Production, and the database rejects it, the developer can instantly instruct the API to revert to Version 1, restoring connectivity in seconds without manual intervention.
+
+## 2. Principle of Least Privilege
+Secret Manager is deeply integrated with GCP IAM.
+You do not grant a Virtual Machine access to "all secrets." You write a strict mathematical IAM policy: *"The Service Account attached to the Billing VM is mathematically authorized to read EXACTLY `projects/123/secrets/BillingAPIKey/versions/latest`."* If the Billing VM is compromised by a hacker, the hacker cannot mathematically read the `DatabasePassword` secret, completely halting lateral movement within the cloud environment.
+
+</TechnologyTemplate>

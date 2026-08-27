@@ -4,7 +4,14 @@ description: The core mathematical C++ engines responsible for parsing HTML/CSS,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Browser Rendering Engines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Browser Rendering Engines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a server replies with an HTTP payload containing raw HTML text, your monitor cannot display text. It can only display colored pixels.
 The **Rendering Engine** is the massive C++ program responsible for converting that text into pixels.
@@ -25,4 +32,3 @@ To paint pixels, the engine must execute the **Critical Rendering Path**:
 5. **Paint**: Fills the pixels with colors, shadows, and text.
 6. **Composite**: If elements overlap (using `z-index` or animations), the engine sends the layers to the GPU to be composited together at 60 frames per second.
 
-</ConceptTemplate>

@@ -1,0 +1,27 @@
+---
+title: AWS Key Management Service (KMS)
+description: A managed, mathematically rigorous cryptographic service that allows developers to create, rotate, and strictly control the encryption keys used to protect data across the entire AWS ecosystem.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Key Management Service (KMS)"
+  subtitle="The Cryptographic Core"
+  tags={['AWS', 'Security', 'Encryption', 'Cryptography']}
+>
+
+Encrypting data in a database is useless if the encryption key is stored in the exact same database. KMS physically isolates the mathematical keys into highly secure, tamper-proof Hardware Security Modules (HSMs) that even AWS employees cannot extract.
+
+## 1. Envelope Encryption
+AWS services do not send 500GB of S3 data to KMS to be encrypted; that would instantly break the network. They use **Envelope Encryption**.
+1. KMS generates a massive Master Key (CMK) that never leaves the hardware.
+2. S3 asks KMS for a Data Key. KMS generates a random Data Key, mathematically encrypts a copy of it using the Master Key, and gives both to S3.
+3. S3 uses the raw Data Key to rapidly mathematically encrypt the 500GB file locally.
+4. S3 deletes the raw Data Key from its RAM, and saves the *Encrypted Data Key* next to the file (the Envelope).
+To read the file, S3 must send the Encrypted Data Key back to KMS to be mathematically decrypted, which means KMS retains absolute cryptographic control over who can read the data.
+
+## 2. Cryptographic Access Control
+Because every decryption requires an API call to KMS, you can write mathematical IAM policies on the Key itself.
+You can decree: *"The Database Administrator is allowed to backup the database, but their IAM User is strictly Denied from calling `kms:Decrypt`."* The Admin can safely copy the files, but the data is mathematically unreadable to them.
+
+</TechnologyTemplate>

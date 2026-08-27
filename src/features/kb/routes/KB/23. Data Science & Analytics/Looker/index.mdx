@@ -1,8 +1,22 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Looker
+description: An enterprise Business Intelligence platform acquired by Google, famous for its proprietary LookML language that mathematically models raw SQL data for visualization.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Looker">
+<TechnologyTemplate
+  title="Looker"
+  subtitle="Enterprise BI and Data Modeling"
+  tags={['BI', 'Data Visualization', 'SQL', 'GCP']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Looker is not just a dashboarding tool; it is a mathematical semantic layer that sits between the Data Warehouse and the Business Users.
 
-</ConceptTemplate>
+## 1. The LookML Semantic Layer
+In traditional BI, every time an executive wants a dashboard, an analyst writes a massive, custom SQL query. This creates mathematical chaos, as two analysts might write slightly different SQL to calculate "Total Revenue," resulting in conflicting reports.
+Looker forces engineers to use **LookML**. LookML mathematically defines exactly how tables join and exactly how metrics are calculated in a centralized, version-controlled repository. When a user clicks a button to generate a chart, Looker mathematically compiles the LookML into highly optimized SQL and executes it against the Data Warehouse. This guarantees absolute mathematical consistency across the entire company.
+
+## 2. In-Database Architecture
+Unlike Tableau, which often extracts data into its own proprietary memory engine, Looker operates mathematically in-place. It never extracts the data. It mathematically pushes all the complex aggregations down into the underlying Data Warehouse (like Snowflake or BigQuery). This makes Looker mathematically capable of querying Petabytes of data in real-time, limited only by the horsepower of the Warehouse itself.
+
+</TechnologyTemplate>

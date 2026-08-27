@@ -4,10 +4,16 @@ description: A set of software development practices that create an independentl
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reproducible Builds">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reproducible Builds">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you download Open Source code and biologically compile it, and the author compiles the exact same code, the resulting binary `.exe` files will mathematically have different hashes.
 
 Why? Because the compiler injects biological metadata (like the exact timestamp of the compile, or the specific OS path). This is a security nightmare, because you mathematically cannot verify if the author's binary matches the Open Source code. **Reproducible Builds** strips all non-deterministic biological variables from the compiler, mathematically guaranteeing that the exact same source code will *always* produce the exact same binary hash, bit-for-bit.
 
-</ConceptTemplate>

@@ -1,8 +1,49 @@
+---
+title: Calculus (Derivatives)
+description: "The mathematical study of continuous change, where the Derivative calculates the exact, instantaneous rate at which a function is changing at any given infinitesimally small point."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Calculus (derivatives">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Derivatives"
+  subtitle="The Mathematics of Instantaneous Change"
+  tags={['Mathematics', 'Calculus', 'Machine Learning', 'Optimization']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Calculus is the mathematics of continuous change. While algebra can tell you how far a car traveled in an hour (average speed), the **Derivative** can tell you the exact speed of the car at a specific, frozen microsecond in time (instantaneous speed).
 
-</ConceptTemplate>
+## 1. The Concept of the Limit
+Before Isaac Newton and Gottfried Leibniz, calculating the slope of a curve at a single point was impossible (you need two points to calculate a slope, $\frac{y_2 - y_1}{x_2 - x_1}$). If you use the same point twice, you divide by zero, mathematically destroying the universe.
+Calculus invented the **Limit**. You take two points, and mathematically push them infinitesimally close to each other, infinitely approaching zero distance without ever *actually* reaching zero.
+
+## 2. The Derivative ($dy/dx$)
+The derivative of a function $f(x)$, written as $f'(x)$ or $\frac{dy}{dx}$, represents the exact slope of the tangent line to the function at point $x$.
+- If $f(x)$ is your Position over time.
+- $f'(x)$ (the First Derivative) is your Velocity (how fast position changes).
+- $f''(x)$ (the Second Derivative) is your Acceleration (how fast velocity changes).
+
+
+<Callout type="success" title="The Power Rule">
+
+
+  The most common algebraic shortcut in calculus is the Power Rule. To find the derivative of $x^n$, you multiply by the exponent and subtract one from the exponent.
+  $\frac{d}{dx} x^n = n x^{n-1}$
+  (e.g., The derivative of $x^3$ is $3x^2$).
+
+
+</Callout>
+
+
+## 3. Why Computer Science Cares (Machine Learning)
+In Neural Networks, an AI's "Loss Function" is a massive mathematical curve representing how wrong the AI is. The goal is to reach the absolute lowest point (the minimum loss).
+To find the bottom, the AI calculates the **Derivative** of the loss function. The derivative gives the exact slope (gradient) of the curve at that specific point. By taking a small step in the exact opposite direction of the slope, the AI mathematically walks down the hill. This algorithm is called **Gradient Descent**, and it is the entire mathematical engine of modern AI training.
+
+\n

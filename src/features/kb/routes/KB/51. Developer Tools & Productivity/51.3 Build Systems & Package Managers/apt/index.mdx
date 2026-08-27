@@ -4,7 +4,7 @@ description: A free software user interface that works with core libraries to ha
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="APT"
   subtitle="The heart of Debian & Ubuntu"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bash_Logo_Colored.svg/512px-Bash_Logo_Colored.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Before APT, Linux users mathematically had to download `.deb` binaries and manually install them. If a `.deb` required an older version of `libc`, the installation would crash (Dependency Hell).
 
+
 <Callout icon="info" title="Dependency Resolution">
-  APT completely automated this. 
-  
+
+
+  APT completely automated this.
+
   When you run `apt install nginx`, APT connects to canonical's massive global repositories, mathematically calculates every single low-level C library that Nginx requires, downloads them all, and installs them in the mathematically correct order.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

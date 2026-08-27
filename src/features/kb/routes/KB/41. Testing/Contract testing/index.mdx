@@ -1,8 +1,32 @@
+---
+title: Contract Testing
+description: "A specialized mathematical testing methodology used in Microservice architectures to verify that two separate services (a consumer and a provider) have a shared understanding of the API payload structure."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Contract testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Contract Testing"
+  subtitle="Preventing Microservice Integration Failures"
+  tags={['Testing', 'Microservices', 'API', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a Microservice architecture, Team A builds the UI (Consumer) and Team B builds the API (Provider).
+If Team B renames the JSON field `firstName` to `first_name`, their internal unit tests will pass perfectly. But the moment they deploy, the UI built by Team A will mathematically crash.
 
-</ConceptTemplate>
+## 1. The Danger of End-to-End (E2E) Tests
+Traditionally, teams caught this via E2E testing (spinning up both microservices and testing them together). However, E2E tests are mathematically slow, flaky, and require complex database state management.
+
+## 2. The Consumer-Driven Contract
+**Contract Testing** (using tools like Pact) solves this mathematically without needing E2E tests.
+1. The UI (Consumer) writes a mathematical "Contract": *"I expect the API to return `{ firstName: string }`."*
+2. This Contract is physically saved as a JSON file and uploaded to a central Broker.
+3. During Team B's CI/CD pipeline, the Pact tool downloads the Contract, mocks the UI, and mathematically forces the API (Provider) to fulfill the contract.
+If the API fails to provide `firstName`, Team B's CI pipeline fails instantly, mathematically preventing them from deploying the breaking change, all without ever actually spinning up the UI service.
+

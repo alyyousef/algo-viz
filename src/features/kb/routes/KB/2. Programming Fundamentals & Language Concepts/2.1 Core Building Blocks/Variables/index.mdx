@@ -1,8 +1,28 @@
+---
+title: Variables
+description: Named mathematical abstractions that point to physical memory locations, allowing developers to store, retrieve, and manipulate data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Variables">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Variables">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+At the absolute lowest level of computer science, there are no variables, only raw physical RAM addresses (e.g., `0x7FFF5FBFF8C0`). A Variable is a mathematical abstraction provided by the compiler, allowing humans to assign a readable name to that physical address.
 
-</ConceptTemplate>
+## 1. Declaration vs Initialization
+There is a strict mathematical difference between the two:
+- **Declaration** (`int x;`): Mathematically instructs the compiler to reserve 4 bytes of memory on the Stack. In languages like C, this memory is *uninitialized*. It contains whatever garbage electrons were left behind by the previous program that used that RAM block.
+- **Initialization** (`x = 0;`): The first time a value is mathematically written into that reserved memory block, overwriting the garbage data.
+
+## 2. L-values and R-values
+When you write an assignment statement `x = y;`, the compiler mathematically treats `x` and `y` completely differently.
+- `x` is the **L-value** (Left value). The compiler mathematically evaluates `x` to find its **physical memory address** so it knows *where* to write data.
+- `y` is the **R-value** (Right value). The compiler mathematically evaluates `y` to read its **actual data contents**.
+You cannot write `5 = x;` because `5` is a literal; it does not have a mathematically mutable memory address (it is not a valid L-value).
+

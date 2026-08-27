@@ -1,8 +1,26 @@
+---
+title: Text-to-Video
+description: The frontier of Generative AI, requiring networks to mathematically master both 2D spatial coherence (like an image) and strict 3D temporal physics across thousands of sequential frames.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Text-to-video">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Text-to-Video">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Generating a single image is mathematically hard. Generating a 10-second video at 30 FPS requires generating 300 images that mathematically obey the laws of physics over time.
 
-</ConceptTemplate>
+## 1. Temporal Consistency
+If you ask an image generator to draw "A dog running" 300 times, you will get 300 completely different breeds of dogs in different locations.
+Text-to-Video models (like OpenAI's Sora or Runway Gen-2) introduce **Temporal Attention Layers**.
+When the network is mathematically generating Frame 45, it is explicitly calculating mathematical connections back to Frame 44, Frame 10, and Frame 1. This forces the AI to mathematically remember the specific geometry of the dog it drew in Frame 1, ensuring the fur pattern and lighting remain flawlessly consistent as the dog moves through 3D space.
+
+## 2. Spacetime Patches
+Sora revolutionized video generation by treating video not as a sequence of frames, but as a single mathematical block of "Spacetime."
+It mathematically chops the entire 10-second video into 3D cubes (Spacetime Patches), containing width, height, and time duration. By training a massive Diffusion Transformer on these 3D patches, the AI mathematically learns the physics of the real world (e.g., gravity, occlusion, fluid dynamics) without ever being explicitly programmed with a physics engine.
+

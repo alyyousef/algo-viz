@@ -1,8 +1,32 @@
+---
+title: String Matching
+description: "The overarching class of mathematical algorithms tasked with finding one or more occurrences of a specific pattern string within a larger text string."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="String matching">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="String Matching"
+  subtitle="The Search for Text"
+  tags={['Algorithms', 'Strings', 'Fundamentals', 'Search']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+String matching (or String Searching) is one of the most heavily researched domains in computer science, forming the backbone of text editors, database queries, web search engines, and DNA sequencing.
 
-</ConceptTemplate>
+## 1. The Naive Approach
+The mathematical baseline is the Naive String Matcher.
+It aligns the Pattern (length M) at index 0 of the Text (length N). If they match, it returns the index. If they mismatch, it shifts the Pattern exactly 1 character to the right and tries again.
+Worst-case Time Complexity: **O(N * M)**. (e.g., Searching for "AAAAAB" inside a text of 1 million "A"s).
+
+## 2. The Advanced Algorithms
+To mathematically break the O(N * M) barrier, computer scientists developed highly specialized algorithms that pre-process either the Pattern or the Text:
+- **KMP Algorithm**: Pre-processes the Pattern (O(M)) to know exactly how far to skip forward when a mismatch occurs. Total Time: O(N + M).
+- **Boyer-Moore**: Pre-processes the Pattern (O(M)) to search right-to-left, mathematically skipping over characters that don't exist in the pattern. Best Case: O(N / M).
+- **Suffix Trees / Suffix Arrays**: Pre-processes the massive *Text* (O(N)). Once built, you can search for *any* pattern of length M in exactly O(M) time, regardless of how massive the text is. This is the mathematical foundation of Google Search.
+

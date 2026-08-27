@@ -1,8 +1,26 @@
+---
+title: Zig
+description: A brilliant, modern, memory-safe replacement for C that abandons hidden control flow and macros for pure, compile-time execution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zig">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zig">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Andrew Kelley in 2015, Zig is a low-level systems programming language designed to replace C. While Rust focuses on mathematical safety via the Borrow Checker, Zig focuses on absolute mathematical clarity, manual memory management, and cross-compilation perfection.
 
-</ConceptTemplate>
+## 1. No Hidden Control Flow
+In C++, a simple mathematical statement like `a = b + c` might secretly invoke a massive operator overload function that allocates memory and throws exceptions.
+In Zig, there is **zero hidden control flow**. There are no exceptions, no operator overloading, and no hidden memory allocations. If memory needs to be allocated, you must mathematically pass an Allocator object into the function. This makes reading a Zig codebase incredibly predictable; what you see is exactly what the CPU executes.
+
+## 2. Comptime
+Zig mathematically abandons the concept of Macros. Instead, it introduced **Comptime**.
+If you want to write a Generic function (e.g., an array that can hold Ints or Strings), you just write a normal Zig function that takes a Type as an argument, and you tag it with the `comptime` keyword.
+The Zig compiler executes this standard logic *during compilation*, calculating the types and generating the specific binary code. You use the exact same mathematical syntax for runtime logic as you do for compile-time metaprogramming.
+

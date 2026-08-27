@@ -4,7 +4,14 @@ description: A paradigm of Machine Learning where agents mathematically learn to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reinforcement Learning (Overview)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reinforcement Learning (Overview)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Supervised Learning teaches an AI to recognize a picture of a car. **Reinforcement Learning (RL)** teaches the AI how to physically *drive* the car. It is the closest mathematical approximation to how biological brains learn through trial and error.
 
@@ -18,7 +25,7 @@ The AI's singular mathematical objective is to maximize the cumulative reward ov
 
 ## 2. Exploration vs. Exploitation
 A critical mathematical dilemma in RL.
-If the AI discovers that walking to the right yields +10 points, it might greedily exploit that knowledge, walking to the right forever. But if it never jumps, it will never discover the hidden pipe that yields +10,000 points. 
+If the AI discovers that walking to the right yields +10 points, it might greedily exploit that knowledge, walking to the right forever. But if it never jumps, it will never discover the hidden pipe that yields +10,000 points.
 The algorithm must mathematically balance **Exploitation** (using known good strategies) with **Exploration** (taking random, suboptimal actions in hopes of discovering a massive future payoff).
 
 ## 3. Deep Reinforcement Learning (AlphaGo)
@@ -26,4 +33,3 @@ Historically, RL algorithms (like Q-Learning) mathematically memorized the exact
 
 In 2016, DeepMind combined Deep Learning with RL to create **AlphaGo**. Instead of a lookup table, it used a massive Deep Neural Network to mathematically estimate the value of the board state. By playing millions of games against clones of itself (Self-Play), the AI discovered mathematical strategies completely alien to humanity, decisively defeating the human world champion of Go.
 
-</ConceptTemplate>

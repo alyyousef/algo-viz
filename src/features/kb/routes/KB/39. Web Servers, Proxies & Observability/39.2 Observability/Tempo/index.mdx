@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Tempo
+description: A massive-scale, highly cost-effective distributed tracing backend developed by Grafana, mathematically engineered to store billions of traces in cheap object storage without requiring a complex database.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Tempo">
+<TechnologyTemplate
+  title="Tempo"
+  subtitle="High-Volume Distributed Tracing"
+  tags={['Observability', 'Tracing', 'Grafana', 'Cost Optimization']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional distributed tracing backends (like Jaeger using Cassandra or Elasticsearch) face a severe mathematical problem at scale: indexing billions of traces is incredibly expensive. Most traces are of successful, fast requests that nobody will ever look at, making indexing them a waste of money.
 
-</ConceptTemplate>
+## 1. The Key-Value Object Store Architecture
+Grafana Tempo uses a mathematically brilliant cost-saving architecture: **It does not index traces.**
+Instead of a complex database, Tempo writes the raw trace data directly to cheap, slow Object Storage (like AWS S3 or Google Cloud Storage) using a simple Key-Value format where the **Key** is the Trace ID.
+
+## 2. The Discovery Workflow
+Because Tempo doesn't index traces, you cannot query it by saying *"Show me all slow traces."*
+Tempo is mathematically designed to be used *in conjunction* with Logs (Loki) or Metrics (Prometheus).
+An engineer sees a spike in the Error Metric in Prometheus. They click the error, which links to an Error Log in Loki. The Error Log mathematically contains the Trace ID (e.g., `T-1234`). The engineer copies the Trace ID and pastes it into Tempo. Tempo performs a mathematically instant O(1) lookup in AWS S3 to retrieve that exact trace. This workflow reduces storage costs by 90% while preserving perfect observability.
+
+</TechnologyTemplate>

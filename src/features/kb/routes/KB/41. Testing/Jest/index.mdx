@@ -1,8 +1,28 @@
+---
+title: Jest
+description: "A massively popular, zero-configuration JavaScript testing framework developed by Facebook, featuring a mathematically isolated parallel runner, built-in assertion libraries, and native snapshot testing."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Jest">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Jest"
+  subtitle="The Standard for JavaScript Testing"
+  tags={['Testing', 'JavaScript', 'React', 'Tooling']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Jest, JavaScript developers had to manually glue together 5 different libraries to write a unit test (Mocha for the runner, Chai for assertions, Sinon for mocking, Istanbul for coverage).
 
-</ConceptTemplate>
+## 1. Zero Configuration
+Facebook built Jest to be an all-in-one, zero-configuration framework. You install `jest`, and it mathematically includes the runner, the expect assertions (`expect(a).toBe(b)`), the mocking engine (`jest.fn()`), and code coverage metrics right out of the box.
+
+## 2. Parallel Isolation and Snapshots
+- **Mathematical Isolation**: Jest spawns a separate worker process for every test file. If Test A mathematically pollutes the global `window` object, Test B is completely unaffected because it runs in a separate isolated OS process.
+- **Snapshot Testing**: The most famous feature of Jest. When testing a React UI component, asserting that exactly 15 DIVs were rendered is tedious. Instead, Jest renders the HTML and mathematically saves it as a text string in a `.snap` file. On the next test run, it re-renders the component and performs a mathematical string-diff against the snapshot. If the HTML changed, the test fails, forcing the developer to confirm the UI alteration.
+

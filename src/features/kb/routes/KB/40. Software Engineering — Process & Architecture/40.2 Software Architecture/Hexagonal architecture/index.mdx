@@ -1,8 +1,32 @@
+---
+title: Hexagonal Architecture
+description: Also known as "Ports and Adapters," an architectural pattern designed by Alistair Cockburn that mathematically isolates core domain logic from external agents by routing all input and output through strict interface contracts.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hexagonal architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Hexagonal Architecture (Ports & Adapters)"
+  subtitle="Isolating the Core Domain"
+  tags={['Architecture', 'Design Patterns', 'Clean Code', 'DDD']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Hexagonal Architecture is the mathematical predecessor to (and largely synonymous with) Clean Architecture. It solves the exact same problem: preventing external UI and Database code from bleeding into pure business logic.
 
-</ConceptTemplate>
+## 1. The Core and the Ports
+At the center of the hexagon is the pure mathematical domain logic (e.g., Java code that calculates interest rates). This code has zero dependencies.
+To communicate with the outside world, the core defines **Ports** (which are mathematically just Interfaces in Java/C#).
+- A **Driving Port** defines how the outside world can send commands *into* the core (e.g., an `IOrderService` interface).
+- A **Driven Port** defines how the core asks the outside world for data (e.g., an `IOrderRepository` interface).
+
+## 2. The Adapters
+The outside edge of the hexagon consists of **Adapters**.
+An HTTP REST Controller is a Driving Adapter; it parses JSON and mathematically calls the Driving Port.
+A PostgreSQL class is a Driven Adapter; it implements the Driven Port interface and executes SQL. Because the Core mathematically only knows about Ports, you can swap the REST Adapter for a gRPC Adapter, or the PostgreSQL Adapter for a MongoDB Adapter, without changing a single line of the core domain logic.
+

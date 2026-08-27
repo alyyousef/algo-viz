@@ -4,18 +4,30 @@ description: Software that draws text and images on the screen.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rendering Engines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rendering Engines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you download an HTML file, it is just mathematically raw text. How does that text biologically become a physical, clickable button on your screen?
 
 The **Rendering Engine** is the architectural heart of the browser responsible for the "Critical Rendering Path".
 
+
 <Callout icon="tip" title="The Critical Rendering Path">
+
+
   1. **Parse HTML:** It converts HTML string into a physical memory tree called the **DOM** (Document Object Model).
   2. **Parse CSS:** It converts CSS strings into the **CSSOM** (CSS Object Model).
   3. **Render Tree:** It mathematically combines the DOM and CSSOM to calculate exactly which elements are visible.
   4. **Layout (Reflow):** It calculates the exact X/Y pixel coordinates of every node.
   5. **Paint:** It physically draws the pixels onto the computer monitor.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,7 +4,14 @@ description: The foundational mathematical grid that explicitly breaks down the 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Confusion Matrix">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Confusion Matrix">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a model has 90% accuracy, you know it got 10% wrong. But *how* did it get them wrong? Did it hallucinate diseases that didn't exist, or did it miss diseases that did exist?
 The **Confusion Matrix** is a strict $N \times N$ mathematical grid that exposes the exact topology of the errors.
@@ -27,7 +34,6 @@ Mathematically, an error is an error. In the real world, the costs are heavily a
 
 ## 3. Multi-Class Confusion Matrix
 If you are classifying 10 types of animals, the matrix is $10 \times 10$.
-The perfect model is a mathematically solid diagonal line of massive numbers from top-left to bottom-right (meaning all predictions matched the true labels). 
+The perfect model is a mathematically solid diagonal line of massive numbers from top-left to bottom-right (meaning all predictions matched the true labels).
 If the model is confusing "Dogs" and "Wolves", you will mathematically see a massive cluster of numbers at the intersection of the Dog row and the Wolf column, instantly highlighting exactly which two classes the Neural Network is struggling to differentiate.
 
-</ConceptTemplate>

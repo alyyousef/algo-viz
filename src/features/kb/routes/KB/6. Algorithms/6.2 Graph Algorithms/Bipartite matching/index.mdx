@@ -1,8 +1,32 @@
+---
+title: Bipartite Matching
+description: "A fundamental mathematical algorithm used to find the maximum possible number of non-sharing pairings between two distinct sets in a bipartite graph, solving problems like job assignments or marriage."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bipartite matching">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bipartite Matching"
+  subtitle="The Maximum Pairing Problem"
+  tags={['Algorithms', 'Graphs', 'Matching', 'Flow']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine a bipartite graph: Set A contains 5 Taxi Drivers, and Set B contains 5 Passengers. Edges exist if a driver is willing to take a specific passenger. What is the mathematical maximum number of rides that can occur simultaneously without double-booking a driver or passenger?
 
-</ConceptTemplate>
+## 1. Maximum Bipartite Matching
+This is mathematically solved using an augmenting path algorithm.
+1. Start with an empty matching.
+2. Pick an unmatched Driver. Use DFS to find a path to an unmatched Passenger.
+3. If the path traverses an already-matched Driver/Passenger, the algorithm mathematically "flips" the edges along the path (an Augmenting Path). This effectively unassigns an old pairing to make room for two new pairings, increasing the total match count by 1.
+4. Repeat until no more augmenting paths exist.
+
+## 2. Reduction to Max Flow
+Modern computer science rarely implements the augmenting path algorithm directly. Instead, Bipartite Matching is mathematically reduced to a **Maximum Flow** problem (solved by Ford-Fulkerson or Dinic's).
+You mathematically create a "Super Source" node connected to all Drivers, and a "Super Sink" node connected to all Passengers. You assign a capacity of `1` to every edge in the graph. The Maximum Flow from Source to Sink mathematically equals the Maximum Bipartite Matching.
+

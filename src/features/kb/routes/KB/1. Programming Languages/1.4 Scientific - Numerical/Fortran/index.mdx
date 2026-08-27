@@ -1,8 +1,25 @@
+---
+title: Fortran
+description: The oldest high-level programming language in existence, remaining the undisputed king of high-performance supercomputing and physics simulations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fortran">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Fortran">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by John Backus at IBM in 1957, Fortran (Formula Translation) was the very first high-level programming language. Astonishingly, nearly 70 years later, it remains the most mathematically efficient language in the world for complex array mathematics and physics simulations.
 
-</ConceptTemplate>
+## 1. The Mathematical Compiler
+Why is Fortran still faster than C++ at math?
+In C, pointers can "alias" (two pointers might point to the exact same memory address). Because of this mathematical uncertainty, a C compiler cannot always aggressively optimize array loops using CPU vectorization (SIMD).
+Fortran mathematically assumes that all array inputs to a function are completely independent in memory (No Aliasing). Because the compiler knows this mathematical truth, it can automatically reorganize and vectorize millions of floating-point calculations across CPU cores with a level of efficiency that C and C++ compilers can only dream of.
+
+## 2. Modern Supercomputing
+Modern Fortran (Fortran 2003/2008/2018) is not the archaic ALL-CAPS punchcard language of the 1960s. It supports Object-Oriented programming, strict typing, and native mathematical abstractions for multidimensional arrays. It is the language currently running the most complex climate simulations, fluid dynamics, and nuclear physics models on the world's fastest supercomputers.
+

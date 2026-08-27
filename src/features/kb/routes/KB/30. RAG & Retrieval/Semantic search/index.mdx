@@ -1,8 +1,25 @@
+---
+title: Semantic Search
+description: A search paradigm that abandons exact character matching in favor of mathematically mapping the intent and contextual meaning of a user's query against an embedded Latent Space.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Semantic search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Semantic Search">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you search a traditional SQL database for "places to get coffee," and the database only contains the phrase "cafe," SQL returns 0 results. Semantic Search returns the cafe immediately because it understands the math of language.
 
-</ConceptTemplate>
+## 1. Mapping Intent to Geometry
+Semantic Search is entirely reliant on Neural Networks (Transformers).
+During ingestion, every document is passed through an Embedding Model, stripping away the ASCII characters and extracting pure mathematical meaning. This meaning is plotted as a coordinate in a 1,536-dimensional universe.
+When a user types "places to get coffee," the system does not look for those words. It converts the query into a coordinate. Because the Neural Network was trained on billions of human conversations, it mathematically places the coordinate for the query exactly next to the coordinate for "cafe."
+
+## 2. Overcoming the Vocabulary Gap
+The primary architectural goal of Semantic Search is to solve the **Vocabulary Gap**—the mathematical reality that the person asking the question rarely uses the exact same terminology as the person who wrote the answer. By abstracting language into pure geometric space, Semantic Search makes systems incredibly resilient to typos, synonyms, and drastically different phrasings.
+

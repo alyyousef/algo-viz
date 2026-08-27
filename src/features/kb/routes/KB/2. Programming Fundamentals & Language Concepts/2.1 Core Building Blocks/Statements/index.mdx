@@ -1,8 +1,27 @@
+---
+title: Statements
+description: The fundamental imperative units of code that instruct the CPU to perform an action, modify state, or control the flow of execution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Statements">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Statements">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In imperative programming theory, a **Statement** is a command that *does* something. Unlike an Expression (which mathematically evaluates to a value), a Statement's sole purpose is to produce a mathematical **Side Effect**.
 
-</ConceptTemplate>
+## 1. Types of Statements
+- **Declaration Statements** (`int x;`): Instructs the compiler to mathematically allocate memory on the Stack. It does not return a value.
+- **Assignment Statements** (`x = 5;`): Mathematically mutates a block of memory.
+- **Control Flow Statements** (`if (x > 5) { ... }`): Mathematically alters the CPU's Instruction Pointer, causing execution to jump to a different memory address.
+
+## 2. The Statement Terminator
+Because Compilers read code as a single massive stream of text, they need a mathematical way to know where one statement ends and the next begins.
+In C, Java, and Rust, the **Semicolon** (`;`) is the strict mathematical terminator.
+In Python and modern JavaScript (via Automatic Semicolon Insertion - ASI), the **Newline** character (`\n`) acts as the terminator. ASI is mathematically dangerous because if you break a line improperly, the compiler might implicitly insert a terminator where you didn't intend, mathematically altering the logic of your code.
+

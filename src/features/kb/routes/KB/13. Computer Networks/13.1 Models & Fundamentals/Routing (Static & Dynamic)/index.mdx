@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="IP Routing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IP Routing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a router receives an IP packet, it looks at the Destination IP, looks at its internal **Routing Table**, and forwards the packet out the correct physical port. But how does a router mathematically build that routing table? How does a router in Tokyo know the exact path to a server in London?
 
@@ -24,23 +31,24 @@ Dynamic protocols are mathematically divided into two categories:
 ### A. Interior Gateway Protocols (IGP)
 Used *inside* a single organization's network (an Autonomous System, like Google's internal data center or a university campus).
 
-<ComparisonTable 
-  headers={['Protocol', 'Algorithm', 'Mechanism']} 
-  rows={[
-    ['OSPF (Open Shortest Path First)', 'Dijkstra’s Algorithm (Link-State)', 'Every router mathematically builds a complete 3D map of the entire network topology. They calculate the absolute shortest path based on Link Cost (bandwidth). A 10Gbps fiber link mathematically costs less than a 100Mbps copper link.'],
-    ['EIGRP (Enhanced Interior Gateway Routing Protocol)', 'DUAL Algorithm (Distance-Vector)', 'Cisco proprietary (mostly). Routers only know what their direct neighbors tell them. They calculate metrics based on a complex mathematical formula involving Bandwidth and Delay. Extremely fast convergence when a link fails.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Protocol', 'Algorithm', 'Mechanism']} rows={[ ['OSPF (Open Shortest Path First)', 'Dijkstra’s Algorithm (Link-State)', 'Every router mathematically builds a complete 3D map of the entire network topology. They calculate the absolute shortest path based on Link Cost (bandwidth). A 10Gbps fiber link mathematically costs less than a 100Mbps copper link.'], ['EIGRP (Enhanced Interior Gateway Routing Protocol)', 'DUAL Algorithm (Distance-Vector)', 'Cisco proprietary (mostly). Routers only know what their direct neighbors tell them. They calculate metrics based on a complex mathematical formula involving Bandwidth and Delay. Extremely fast convergence when a link fails.'] ]} />
+
 
 ### B. Exterior Gateway Protocols (EGP)
 Used *between* different organizations. This is the protocol that mathematically glues the global internet together.
 
-**BGP (Border Gateway Protocol)**: 
+**BGP (Border Gateway Protocol)**:
 BGP is the only EGP in use today. When Comcast's network connects to AT&T's network, they use BGP.
-Unlike OSPF which calculates the fastest path based on link speed, BGP is a **Path-Vector** protocol. It mathematically calculates the path based on *business policies* and *AS-Path length* (the number of different companies the packet must hop through). 
+Unlike OSPF which calculates the fastest path based on link speed, BGP is a **Path-Vector** protocol. It mathematically calculates the path based on *business policies* and *AS-Path length* (the number of different companies the packet must hop through).
+
 
 <Callout icon="warning" title="BGP Hijacking">
+
+
 Like ARP, BGP was built on trust. If a telecom in Russia accidentally (or maliciously) broadcasts a BGP message claiming, *"I am the absolute best mathematical route to YouTube's IP addresses,"* the global internet routers will blindly believe it and instantly reroute 100% of global YouTube traffic into a Russian data center blackhole. This has happened multiple times, bringing down massive sections of the internet.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,9 +4,16 @@ description: The most advanced mathematical metric for evaluating Recommender Sy
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NDCG (Normalized Discounted Cumulative Gain)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NDCG (Normalized Discounted Cumulative Gain)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When evaluating a search engine (like Google) or a Recommender System (like Netflix), it is not enough to simply ask "Are these movies relevant?" (Precision). You must mathematically ask: "Are the *most* relevant movies at the absolute top of the list?" 
+When evaluating a search engine (like Google) or a Recommender System (like Netflix), it is not enough to simply ask "Are these movies relevant?" (Precision). You must mathematically ask: "Are the *most* relevant movies at the absolute top of the list?"
 **NDCG** is the mathematical standard for evaluating ranked lists with graded relevance.
 
 ## 1. Graded Relevance (CG)
@@ -23,7 +30,7 @@ Unlike MAP (Mean Average Precision) which assumes relevance is binary (1 or 0), 
 **Discounted Cumulative Gain (DCG)** introduces a mathematical penalty based on the Rank (position) in the list.
 $DCG = \sum \frac{relevance_i}{log_2(i + 1)}$
 
-By dividing the relevance by the mathematical logarithm of its rank ($i$), the algorithm brutally discounts items found lower in the list. 
+By dividing the relevance by the mathematical logarithm of its rank ($i$), the algorithm brutally discounts items found lower in the list.
 If a perfectly relevant movie (score 3) is at Rank 1, its value is barely touched. If that same movie is buried at Rank 10, the logarithmic denominator mathematically crushes its value down to almost nothing.
 
 ## 3. Normalization (NDCG)
@@ -31,4 +38,3 @@ If one user searches for "Star Wars" (which has 10 highly relevant movies) and a
 
 **Normalized DCG** calculates the *Ideal DCG (IDCG)* by manually sorting the results into perfect descending order [3, 3, 2, 1, 0] and calculating the DCG of that perfect list. It then divides the model's actual DCG by the IDCG, resulting in a perfect, standardized mathematical metric between 0.0 and 1.0 that can be averaged across millions of diverse users.
 
-</ConceptTemplate>

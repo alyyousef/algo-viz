@@ -1,8 +1,26 @@
+---
+title: Model-Based Reinforcement Learning
+description: A highly data-efficient paradigm where the Agent mathematically deduces the internal physics engine of the Environment, allowing it to simulate and plan actions in its own imagination.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model-based RL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model-Based Reinforcement Learning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Model-Free RL (like DQN or PPO), the Agent is blindly reacting. It has to crash a car 10,000 times to learn that walls are solid. In Model-Based RL, the Agent builds a mathematical simulation of the wall in its mind, and realizes it will crash without ever touching the steering wheel.
 
-</ConceptTemplate>
+## 1. Learning the Dynamics Model
+The Agent trains a completely separate Neural Network called the **Dynamics Model**.
+Instead of predicting Rewards, this network predicts Physics. You give it State 1 and Action A, and it must mathematically output exactly what State 2 will look like.
+Once the Dynamics Model is accurate, the Agent possesses a mathematical clone of the Environment's physics engine inside its own memory.
+
+## 2. Planning by Hallucination (Dyna)
+Because the Agent now has the physics engine in its head, it stops interacting with the real world (which is slow and expensive).
+It enters a massive, high-speed mathematical loop of **Hallucination** (or "Planning"). It uses algorithms like Monte Carlo Tree Search (MCTS) to simulate millions of possible futures entirely inside the Neural Network's memory. AlphaZero (the chess AI) is the ultimate example of this. It mathematically simulates millions of possible chess games in its head before moving a single physical piece on the board. This makes Model-Based RL astronomically more data-efficient than Model-Free RL.
+

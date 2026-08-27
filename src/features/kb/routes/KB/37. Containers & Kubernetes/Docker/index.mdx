@@ -8,22 +8,22 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Docker is a platform for developers and sysadmins to build, run, and share applications with containers. The use of containers to deploy applications is called containerization. Containers are not new, but their use for easily deploying applications was heavily popularized by Docker.
 
+
 <Callout icon="info" title="Containers vs Virtual Machines">
+
+
   A Virtual Machine includes the App, the Binaries, AND a massive 10GB Guest Operating System (Windows/Ubuntu).
-  
+
   A Docker Container shares the host machine's OS kernel. It only includes the App and its exact dependencies. It boots in 50 milliseconds and is usually under 100MB.
+
+
 </Callout>
+
 
 ## Key Concepts
 
-<ComparisonTable 
-  headers={['Concept', 'Description']}
-  rows={[
-    ['Dockerfile', 'A simple text file containing the instructions to build a Docker Image. (e.g., `FROM node:18`, `COPY . .`)'],
-    ['Image', 'A read-only, frozen snapshot of your application and its dependencies. It is the blueprint.'],
-    ['Container', 'A running instance of an Image. You can run 50 identical containers from 1 Image.'],
-    ['Docker Hub', 'The public registry where developers upload and download pre-built images (like npm, but for entire operating environments).']
-  ]}
-/>
+
+<ComparisonTable headers={['Concept', 'Description']} rows={[ ['Dockerfile', 'A simple text file containing the instructions to build a Docker Image. (e.g., `FROM node:18`, `COPY . .`)'], ['Image', 'A read-only, frozen snapshot of your application and its dependencies. It is the blueprint.'], ['Container', 'A running instance of an Image. You can run 50 identical containers from 1 Image.'], ['Docker Hub', 'The public registry where developers upload and download pre-built images (like npm, but for entire operating environments).'] ]} />
+
 
 </TechnologyTemplate>

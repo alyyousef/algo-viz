@@ -4,7 +4,7 @@ description: A flexible framework for writing robot software, providing OS-like 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="ROS (Robot Operating System)"
   subtitle="The absolute backbone of global robotics"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Ros_logo.svg/512px-Ros_logo.svg.png"
@@ -19,20 +19,26 @@ Before 2007, if a university wanted to build a robot, they spent 3 years writing
 
 **ROS** completely destroyed this paradigm. It provided a universal mathematical standard. If you buy a Hokuyo LiDAR today, you just type `apt-get install ros-hokuyo-node`. It instantly works and begins publishing standardized mathematical LaserScan data.
 
+
 <Callout icon="success" title="The Node Architecture">
+
+
   ROS heavily utilizes a highly decoupled, distributed architecture.
-  
+
   A robot is composed of dozens of independent **Nodes** (Python or C++ processes).
   - The `camera_node` talks to the physical USB port and publishes a video stream to the `/camera/image` Topic.
   - The `vision_node` subscribes to the image, runs OpenCV, and publishes bounding boxes to `/objects`.
   - The `navigation_node` subscribes to `/objects` and drives the motors.
-  
+
   If the `vision_node` crashes, the `camera_node` keeps running perfectly.
+
+
 </Callout>
+
 
 ## The Master Node (roscore)
 
-ROS 1 was built entirely around a single, centralized mathematical server called **roscore**. 
+ROS 1 was built entirely around a single, centralized mathematical server called **roscore**.
 When a Node boots up, it pings roscore and says, *"I want to publish to /camera/image."* If roscore crashes, the entire robot instantly dies because the nodes cannot discover each other. This single point of failure made ROS 1 incredible for universities, but illegal for commercial self-driving cars.
 
 </TechnologyTemplate>

@@ -4,16 +4,28 @@ description: The process of rendering web pages directly in the browser using Ja
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Client-Side Rendering (CSR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Client-Side Rendering (CSR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the modern React/Vue era, **Client-Side Rendering** became the default architectural paradigm for Single Page Applications (SPAs).
 
 When a user navigates to a CSR website, the server does not send them a populated HTML document. It mathematically sends them a completely blank HTML file containing only a single `<div id="root"></div>` and a massive `<script src="bundle.js">` tag.
 
+
 <Callout icon="warning" title="The Performance Trade-off">
+
+
   **Pros:** Once the JS bundle is downloaded, navigating between pages is mathematically instantaneous because the browser never has to request a new HTML file from the server.
-  
+
   **Cons:** The initial page load (LCP) is biologically terrible. The user stares at a blank white screen until the massive JavaScript bundle physically finishes downloading, parsing, and executing in the V8 engine to construct the DOM from scratch.
+
+
 </Callout>
 
-</ConceptTemplate>
+

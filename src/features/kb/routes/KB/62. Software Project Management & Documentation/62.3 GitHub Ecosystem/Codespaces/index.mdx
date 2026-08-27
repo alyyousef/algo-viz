@@ -4,10 +4,16 @@ description: A cloud-hosted development environment that's powered by Visual Stu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Codespaces">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Codespaces">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Setting up a local biological development environment is a mathematical nightmare. It can take a new engineer 3 days to install the correct versions of Python, Docker, and PostgreSQL on their MacBook.
 
 **Codespaces** abandons the local laptop. With one biological click, GitHub spins up a massive 32-core Linux server in the cloud, installs every dependency flawlessly, and opens a full version of VS Code directly in your biological web browser. You mathematically write code in the cloud, completely eliminating the "It works on my machine" biological excuse.
 
-</ConceptTemplate>

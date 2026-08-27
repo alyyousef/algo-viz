@@ -1,8 +1,28 @@
+---
+title: LLM Evaluation Pipelines
+description: The rigorous LLMOps methodology of mathematically scoring the subjective, generative text outputs of Large Language Models against standardized datasets to measure alignment, accuracy, and hallucination rates.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LLM evaluation pipelines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LLM Evaluation Pipelines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional ML, evaluating a model is easy: if it predicts 1 and the answer is 1, the math is correct. In LLMs, the model predicts a paragraph of text. Mathematically scoring a paragraph is incredibly difficult.
 
-</ConceptTemplate>
+## 1. Static Benchmarks vs. Golden Datasets
+To know if an LLM update broke the system, you must run it through a Pipeline.
+- **Static Benchmarks (MMLU, HumanEval)**: Standardized academic tests. Useful for foundational models, but useless for business applications.
+- **Golden Datasets**: MLOps teams curate 1,000 highly specific, perfect Q&A pairs (e.g., 1,000 exact legal questions and their perfect legal answers). Every time the Prompt or the LLM is updated, the Pipeline mathematically forces the LLM to answer all 1,000 questions.
+
+## 2. LLM-as-a-Judge
+How do you grade the 1,000 answers? Human grading takes weeks.
+The industry standard is **LLM-as-a-Judge**. The Pipeline takes the Model's Answer, the Golden Answer, and feeds both into a massive, highly capable model (like GPT-4).
+GPT-4 is mathematically instructed: *"Score the Model's Answer from 1 to 5 based on its factual alignment with the Golden Answer. Ignore stylistic differences."*
+This automated mathematical scoring allows engineers to rapidly iterate on prompts and RAG architectures, getting a quantified score of the system's accuracy in minutes instead of months.
+

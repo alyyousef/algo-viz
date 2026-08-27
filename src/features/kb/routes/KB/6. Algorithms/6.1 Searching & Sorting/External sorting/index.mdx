@@ -1,8 +1,32 @@
+---
+title: External Sorting
+description: "A class of sorting algorithms that can handle massive amounts of data that do not fit into a computer's main memory (RAM), mathematically relying on auxiliary storage like hard drives and a K-way merge process."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="External sorting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="External Sorting"
+  subtitle="Sorting Beyond the Limits of RAM"
+  tags={['Algorithms', 'Sorting', 'Big Data', 'Memory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a 100-Gigabyte log file that you need to sort by timestamp, but your server only has 8 Gigabytes of RAM, a standard Quicksort will mathematically crash the server with an OutOfMemory (OOM) error.
 
-</ConceptTemplate>
+## 1. The Chunking Phase
+External Sorting solves this by mathematically chunking the data.
+1. The CPU reads the first 8GB of the file into RAM.
+2. It uses a fast in-memory algorithm (like Quicksort) to sort just those 8GB.
+3. It mathematically writes the sorted 8GB back to the hard drive as a temporary file (`chunk1.tmp`).
+4. It repeats this process until the 100GB file is split into thirteen 8GB sorted temporary files.
+
+## 2. The K-Way Merge Phase
+Now, the CPU mathematically opens 13 file pointers, one for each chunk.
+It reads the *first element* from each of the 13 chunks into RAM (using almost zero memory). It mathematically compares those 13 elements, picks the absolute smallest one, writes it to the final `output.txt` file, and advances the pointer of the chunk that won. This K-way merge mathematically guarantees the final 100GB file is perfectly sorted while utilizing only a tiny fraction of the system's RAM.
+

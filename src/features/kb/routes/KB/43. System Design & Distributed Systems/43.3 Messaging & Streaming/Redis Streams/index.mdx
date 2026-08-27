@@ -4,7 +4,7 @@ description: A data type that models a log data structure in Redis, providing a 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Redis Streams"
   subtitle="The lightweight alternative to Apache Kafka"
   logoUrl="https://upload.wikimedia.org/wikipedia/en/6/6b/Redis_Logo.svg"
@@ -17,9 +17,15 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 If you are already using Redis for caching, and you need an Event Stream, deploying a massive Java-based Apache Kafka cluster is often severe overkill. Redis Streams provides 80% of Kafka's functionality with 1% of the operational complexity.
 
+
 <Callout icon="tip" title="In-Memory Speed">
+
+
   Because Redis Streams lives entirely in RAM (though it can be persisted to disk via RDB/AOF), it is mathematically faster than Kafka for small-to-medium datasets, routinely achieving sub-millisecond read/write latency.
+
+
 </Callout>
+
 
 ## Core Features
 

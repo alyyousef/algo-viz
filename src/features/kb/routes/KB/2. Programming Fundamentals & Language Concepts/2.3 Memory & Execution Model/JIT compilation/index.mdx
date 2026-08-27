@@ -1,8 +1,26 @@
+---
+title: Just-In-Time (JIT) Compilation
+description: A hybrid execution model that mathematically observes interpreted code running and dynamically compiles "hot" paths into native machine code on the fly.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JIT compilation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Just-In-Time (JIT) Compilation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+JIT Compilation is the mathematical engine behind the V8 JavaScript Engine and the Java Virtual Machine. It attempts to mathematically combine the portability of Interpretation with the raw speed of AOT Compilation.
 
-</ConceptTemplate>
+## 1. The Tiered Execution Model
+When a JavaScript program starts, the V8 engine does not compile it. It runs it through a fast Interpreter (Ignition) so the program starts instantly.
+As the program runs, a Profiler mathematically tracks which functions are called the most (the "Hot" paths).
+If a `for` loop runs 50,000 times, the JIT Compiler (TurboFan) mathematically intervenes in the background. It takes the Bytecode for that loop, compiles it down to highly optimized Native Machine Code, and physically hot-swaps the memory pointer. The 50,001st iteration of the loop executes at bare-metal C++ speed.
+
+## 2. Deoptimization
+Because JavaScript is dynamically typed, the JIT Compiler has to make mathematical assumptions. It assumes, "This loop has only ever seen Integers, so I will compile it to native Integer addition."
+If, on the 60,000th iteration, you suddenly pass a String into that loop, the compiled Machine Code mathematically fails. The V8 Engine instantly performs a **Deoptimization (Bailout)**. It throws away the compiled Machine Code and mathematically falls back to the slow Interpreter to safely handle the String addition.
+

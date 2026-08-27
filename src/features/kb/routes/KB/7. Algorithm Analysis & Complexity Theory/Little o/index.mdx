@@ -1,8 +1,41 @@
+---
+title: Little o
+description: "A strict asymptotic notation used in mathematics to define a function that grows strictly and definitively slower than another, completely removing the possibility of them growing at the same rate."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Little o">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Little o Notation"
+  subtitle="Strict Asymptotic Upper Bounds"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Calculus']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Big O ($O$), a function is allowed to grow at the *same* rate as the bound. (e.g., $N^2$ is technically $O(N^2)$).
+**Little o ($o$)** is the mathematically strict version. It defines an upper bound that is absolutely, definitively larger. The algorithm must scale **strictly slower** than the bound.
 
-</ConceptTemplate>
+## 1. The Formal Mathematical Definition (Using Limits)
+Let $f(n)$ and $g(n)$ be functions. We say $f(n) = o(g(n))$ if and only if:
+$\lim_{n \to \infty} \frac{f(n)}{g(n)} = 0$
+
+In plain English: As $N$ approaches infinity, $g(n)$ becomes so unfathomably larger than $f(n)$ that the fraction collapses to exactly zero.
+
+## 2. Examples
+- **$2N = o(N^2)$**: True. As $N$ goes to infinity, $2N / N^2 = 2/N$, which converges to $0$. Linear time is strictly slower than quadratic time.
+- **$N^2 = o(N^2)$**: False. The limit of $N^2 / N^2$ is 1, not 0. They grow at the exact same rate. (This is why Big O is used more often; it allows for tight bounds. Little o forbids them).
+- **$N \log N = o(N^2)$**: True. By L'Hôpital's rule, the limit converges to 0.
+
+## 3. The Analogy to Real Numbers
+If Asymptotic Notations were inequality symbols:
+- **Big O ($O$)** is equivalent to $\le$ (Less than or equal to).
+- **Big Omega ($\Omega$)** is equivalent to $\ge$ (Greater than or equal to).
+- **Big Theta ($\Theta$)** is equivalent to $=$ (Exactly equal to).
+- **Little o ($o$)** is equivalent to $<$ (Strictly less than).
+- **Little omega ($\omega$)** is equivalent to $>$ (Strictly greater than).
+

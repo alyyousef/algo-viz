@@ -1,8 +1,26 @@
+---
+title: Logic Programming
+description: A paradigm where programs are constructed purely of formal mathematical logic axioms and facts, allowing an inference engine to automatically deduce the answers to complex queries.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Logic programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Logic Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Logic Programming (epitomized by Prolog) is the precursor to modern AI. It treats the computer not as a calculator, but as a formal mathematical theorem prover.
 
-</ConceptTemplate>
+## 1. Facts and Rules
+You do not write functions; you mathematically define a Knowledge Base using Formal Logic (Horn Clauses).
+1. **Facts**: Absolute mathematical truths. `parent(john, mary).` (John is the parent of Mary).
+2. **Rules**: Conditional mathematical logic. `grandparent(X, Y) :- parent(X, Z), parent(Z, Y).` (X is the grandparent of Y IF X is the parent of Z AND Z is the parent of Y).
+
+## 2. The Inference Engine
+Once the Knowledge Base is defined, you ask a Query: `?- grandparent(john, alice).`
+The Prolog Inference Engine uses a mathematical algorithm called **Resolution** and **Unification**. It searches its database of Facts, binds variables to specific values, and attempts to mathematically prove the statement. If it hits a dead end, it uses automated Backtracking to try a different logical path. The engine physically deduces the answer based purely on the provided axioms, without the developer ever writing a step-by-step algorithm.
+

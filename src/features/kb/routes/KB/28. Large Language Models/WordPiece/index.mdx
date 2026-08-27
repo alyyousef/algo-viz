@@ -4,15 +4,28 @@ description: The subword tokenization algorithm popularized by Google's BERT.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="WordPiece Tokenization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="WordPiece Tokenization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Language models do not read human text; they process arrays of numbers (Tokens). Before text enters the neural network, it must be chopped into pieces and converted into IDs. 
+Language models do not read human text; they process arrays of numbers (Tokens). Before text enters the neural network, it must be chopped into pieces and converted into IDs.
 
 WordPiece is a subword tokenization algorithm developed by Google for voice search and famously used in BERT. It strikes a balance between character-level (too long) and word-level (too many out-of-vocabulary words).
 
+
 <Callout icon="info" title="The Subword Advantage">
+
+
   If the model sees the word "unhappiness", it might split it into `un`, `##happi`, and `##ness`. This allows the model to mathematically understand the prefix "un-" across thousands of different words, vastly improving generalization.
+
+
 </Callout>
+
 
 ## How WordPiece Works
 
@@ -21,4 +34,3 @@ WordPiece is a subword tokenization algorithm developed by Google for voice sear
 3. **The Math:** Unlike BPE (which merges the absolute most frequent pairs), WordPiece merges the pair that maximizes the mathematical likelihood of the training data.
 4. **Prefixing:** Subwords that do not start a word are prefixed with `##` to indicate they are a continuation.
 
-</ConceptTemplate>

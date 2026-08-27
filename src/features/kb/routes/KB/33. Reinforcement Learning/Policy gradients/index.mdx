@@ -1,8 +1,27 @@
+---
+title: Policy Gradients
+description: A direct optimization algorithm in Reinforcement Learning that mathematically adjusts the weights of a neural network to increase the probability of actions that yield high long-term rewards.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Policy gradients">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Policy Gradients">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Value-based methods (like Q-Learning) are mathematically incapable of handling Continuous Action Spaces (like outputting a precise steering angle of 42.7 degrees). Policy Gradients solve this by optimizing the Policy directly without caring about Q-Values.
 
-</ConceptTemplate>
+## 1. The REINFORCE Algorithm
+The foundational mathematical theorem is the **Policy Gradient Theorem**.
+It defines a Loss Function based on the Expected Return.
+The algorithm, REINFORCE, plays a full episode of a game. If the agent wins, the total reward $R$ is positive. The mathematical algorithm calculates the Gradient (the derivative) of every single action taken during that winning game and multiplies it by $R$. This physically forces the Neural Network's weights to increase the probability of taking those exact same actions in the future.
+
+## 2. The High Variance Problem
+Pure Policy Gradients suffer from a fatal mathematical flaw: Massive Variance.
+Because REINFORCE waits until the end of the episode to apply the math, a single bad action can ruin an otherwise perfect 1,000-step trajectory. The network is mathematically punished for the 999 good actions because the final score was negative.
+This chaotic math makes training incredibly unstable, forcing researchers to invent **Actor-Critic** methods, where a "Critic" network evaluates the agent at *every single step*, replacing the noisy end-of-episode reward with a stable, step-by-step mathematical Advantage score.
+

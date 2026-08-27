@@ -4,17 +4,24 @@ description: The era of massive, pre-built CSS frameworks that provided ready-to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Component Frameworks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Component Frameworks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Before modern CSS Grid and Flexbox were universally supported, building a responsive layout was a mathematically horrifying experience involving `float: left;` and clearing hacks. 
+Before modern CSS Grid and Flexbox were universally supported, building a responsive layout was a mathematically horrifying experience involving `float: left;` and clearing hacks.
 
 To standardize web development, massive Component-Based CSS Frameworks emerged.
 
 ## Bootstrap (The King of the 2010s)
-Created by Twitter, Bootstrap was the most influential CSS framework in history. It provided a mathematically perfect **12-Column Responsive Grid System**. 
+Created by Twitter, Bootstrap was the most influential CSS framework in history. It provided a mathematically perfect **12-Column Responsive Grid System**.
 By simply applying classes like `col-md-6`, a developer could instantly create a complex layout that automatically stacked vertically on mobile phones.
 
-Bootstrap also provided a massive suite of pre-designed components: Navbar, Modals, Cards, and Buttons. 
+Bootstrap also provided a massive suite of pre-designed components: Navbar, Modals, Cards, and Buttons.
 ```html
 <button class="btn btn-primary">Save Changes</button>
 ```
@@ -30,4 +37,3 @@ A modern alternative that arrived later. Unlike Bootstrap (which historically re
 ## The Modern Decline
 Today, component frameworks have massively declined. The 12-column grid is now natively solvable in 3 lines of pure CSS Grid. Furthermore, companies prefer building their own custom Design Systems using React/Vue components styled with Tailwind CSS, rather than fighting against Bootstrap's opinionated defaults.
 
-</ConceptTemplate>

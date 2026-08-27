@@ -1,8 +1,27 @@
+---
+title: Video Generation
+description: The overarching field of AI that synthesizes moving imagery, encompassing Text-to-Video, Image-to-Video, and the algorithmic mathematical modeling of temporal fluid dynamics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Video generation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Video Generation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Video Generation encompasses a wide array of mathematical approaches beyond just Text-to-Video, focusing heavily on manipulating existing frames and predicting future temporal states.
 
-</ConceptTemplate>
+## 1. Image-to-Video (Animation)
+A more controllable workflow than Text-to-Video is Image-to-Video.
+The user provides a perfectly composed starting image (Frame 1). The AI's mathematical job is purely temporal prediction: "Given this exact physical state, what do the physics look like in Frame 2?"
+By providing motion vectors (e.g., mathematically telling the AI "Pan the camera left" or "Add wind to the hair"), the AI calculates the optical flow and animates the still image with mathematically accurate fluid dynamics (like rippling water or flickering fire).
+
+## 2. Frame Interpolation
+Video Generation is also used to mathematically upscale frame rates.
+If you have a 30 FPS video, and you want 60 FPS slow-motion, standard software just duplicates the frames (resulting in stutter).
+AI Frame Interpolation reads Frame 1 and Frame 2, and mathematically calculates the physical motion vector of every single pixel. It then synthesizes a brand new Frame 1.5, placing the moving objects at the exact mathematical midpoint between the two frames, resulting in flawlessly smooth artificial slow-motion.
+

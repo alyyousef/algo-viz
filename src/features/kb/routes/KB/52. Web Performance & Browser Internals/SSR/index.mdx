@@ -4,16 +4,28 @@ description: The ability of an application to contribute by displaying the web-p
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Server-Side Rendering (SSR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Server-Side Rendering (SSR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 To solve the biological nightmare of the CSR "blank white screen", frameworks like Next.js introduced modern **Server-Side Rendering**.
 
 Instead of making the user's laptop execute the React code, a Node.js server physically executes the React components on the backend. The server mathematically calculates the final HTML string and sends a fully-formed, visually complete HTML document directly to the browser.
 
+
 <Callout icon="success" title="The SEO Advantage">
-  Because the browser receives raw, populated HTML immediately, the **First Contentful Paint (FCP)** is mathematically instantaneous. 
-  
+
+
+  Because the browser receives raw, populated HTML immediately, the **First Contentful Paint (FCP)** is mathematically instantaneous.
+
   Furthermore, Google's SEO web crawlers (which historically struggled to execute heavy JavaScript) can easily read the raw HTML text, dramatically improving Search Engine indexing.
+
+
 </Callout>
 
-</ConceptTemplate>
+

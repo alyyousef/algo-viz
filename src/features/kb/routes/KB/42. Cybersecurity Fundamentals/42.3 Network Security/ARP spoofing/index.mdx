@@ -4,30 +4,37 @@ description: A Man-in-the-Middle attack where a malicious actor sends falsified 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ARP Spoofing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ARP Spoofing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-On a local network (like office WiFi), computers do not communicate using IP addresses; they mathematically use hardware MAC addresses. 
+On a local network (like office WiFi), computers do not communicate using IP addresses; they mathematically use hardware MAC addresses.
 
 The **Address Resolution Protocol (ARP)** is how a computer asks the network: "Who has IP address 192.168.1.1? Please reply with your MAC address."
 
 Because ARP was designed in the 1980s, it has absolutely zero mathematical authentication. Anyone can lie.
 
+
 <Callout icon="error" title="The Poisoning Process">
+
+
   In an **ARP Spoofing** attack, the hacker's computer constantly shouts false ARP replies into the network:
   1. It tells the Victim: "I am the Router" (so the victim sends their web traffic to the hacker).
   2. It tells the Router: "I am the Victim" (so the router sends the web replies to the hacker).
   The hacker is now a perfect Man-in-the-Middle.
+
+
 </Callout>
+
 
 ## Mitigation Strategies
 
-<ComparisonTable 
-  headers={['Strategy', 'Description']}
-  rows={[
-    ['Dynamic ARP Inspection (DAI)', 'A security feature built into enterprise network switches. The switch mathematically maintains a secure database of valid IP-to-MAC bindings and instantly drops any spoofed ARP packets.'],
-    ['Static ARP Entries', 'Hardcoding the router\'s MAC address into the operating system\'s ARP cache. Mathematically secure, but impossible to manage at scale.'],
-    ['VPN / TLS', 'While it doesn\'t stop the spoofing itself, enforcing end-to-end encryption mathematically ensures that even if the attacker intercepts the traffic, they cannot read or alter it.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Strategy', 'Description']} rows={[ ['Dynamic ARP Inspection (DAI)', 'A security feature built into enterprise network switches. The switch mathematically maintains a secure database of valid IP-to-MAC bindings and instantly drops any spoofed ARP packets.'], ['Static ARP Entries', 'Hardcoding the router\'s MAC address into the operating system\'s ARP cache. Mathematically secure, but impossible to manage at scale.'], ['VPN / TLS', 'While it doesn\'t stop the spoofing itself, enforcing end-to-end encryption mathematically ensures that even if the attacker intercepts the traffic, they cannot read or alter it.'] ]} />
+
+

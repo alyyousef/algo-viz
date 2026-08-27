@@ -4,21 +4,33 @@ description: Computer software that provides an approximate simulation of certai
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Physics Engines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Physics Engines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you stack 10 digital boxes on top of each other, calculating the exact mathematical friction, gravity, and resting force required to ensure they don't visually sink into each other or violently explode is incredibly difficult. 
+If you stack 10 digital boxes on top of each other, calculating the exact mathematical friction, gravity, and resting force required to ensure they don't visually sink into each other or violently explode is incredibly difficult.
 
 Game developers do not write this math themselves. They use a **Physics Engine**.
 
+
 <Callout icon="warning" title="Continuous vs Discrete Collision">
+
+
   - **Discrete Collision:** The engine checks for collisions once per frame. If a bullet is traveling 2,000 mph, in Frame 1 it is in front of the wall, and in Frame 2 it is behind the wall. The engine never mathematically detects the collision, and the bullet ghosts through the wall.
   - **Continuous Collision Detection (CCD):** The engine mathematically sweeps the bullet's entire trajectory over the frame, calculating the exact microsecond it intersected the wall geometry. Brutally expensive on the CPU, but required for fast-moving objects.
+
+
 </Callout>
+
 
 ## Rigid Body Dynamics
 
-The vast majority of game physics is **Rigid Body**. The engine mathematically assumes the object is made of unbreakable titanium. It calculates mass, center of gravity, and torque, but the object cannot bend or dent. 
+The vast majority of game physics is **Rigid Body**. The engine mathematically assumes the object is made of unbreakable titanium. It calculates mass, center of gravity, and torque, but the object cannot bend or dent.
 
 Simulating **Soft Body Dynamics** (jello, cloth, or a car physically denting) requires massive finite-element mathematics and is usually only utilized in highly specialized simulation games (like *BeamNG.drive*).
 
-</ConceptTemplate>

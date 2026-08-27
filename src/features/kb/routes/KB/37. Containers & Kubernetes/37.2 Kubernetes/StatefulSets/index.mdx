@@ -1,8 +1,30 @@
+---
+title: StatefulSets
+description: A specialized Kubernetes workload controller mathematically designed to manage the deployment, scaling, and rigid identity of stateful applications (like databases) that require persistent storage and strict ordering.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="StatefulSets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="StatefulSets"
+  subtitle="Managing Stateful Architectures"
+  tags={['Kubernetes', 'Workloads', 'Architecture', 'Databases']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you deploy a web server using a `Deployment`, the Pods are mathematically identical and interchangeable. They get random hash names (e.g., `web-8f7b...`). If you try to deploy a MongoDB cluster this way, it will catastrophically fail, because database nodes rely on strict mathematical identity to know who is the Primary and who is the Replica.
 
-</ConceptTemplate>
+## 1. Sticky Identity
+A `StatefulSet` provides strict mathematical identity.
+Instead of random hashes, Pods are named sequentially: `mongo-0`, `mongo-1`, `mongo-2`.
+If the physical Node hosting `mongo-1` dies, Kubernetes will spin up a new Pod on a different Node, but it will mathematically force the new Pod to inherit the exact name `mongo-1` and the exact internal DNS address. The MongoDB cluster mathematically recognizes the new Pod as the resurrected Node 1, preventing data split-brain scenarios.
+
+## 2. Persistent Storage Binding
+In a Deployment, all Pods share the same PVC. In a StatefulSet, each Pod is mathematically bound to its own exclusive PersistentVolume.
+`mongo-0` writes to Volume A. `mongo-1` writes to Volume B. If `mongo-1` dies and is resurrected, the StatefulSet controller mathematically guarantees that the new `mongo-1` Pod is re-attached to the exact same Volume B, ensuring zero data loss during high-availability failovers.
+

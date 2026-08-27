@@ -4,20 +4,33 @@ description: The electrical signals used by peripherals to instantly grab the CP
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hardware Interrupts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hardware Interrupts">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you type a key on your keyboard, how does the CPU know you pressed it? 
+If you type a key on your keyboard, how does the CPU know you pressed it?
 Historically, computers used **Polling**. The CPU would constantly run a loop asking: "Keyboard, did you press a key? No. Keyboard, did you press a key? No." This wasted massive amounts of processing power.
 
 Modern architectures use **Hardware Interrupts**. The CPU completely ignores the keyboard. But when you press a key, the keyboard sends an electrical jolt down a specific wire on the motherboard directly into the CPU.
 
+
 <Callout icon="warning" title="The Fire Alarm">
+
+
   An interrupt is exactly like a fire alarm in a classroom. The teacher (CPU) doesn't constantly ask if there is a fire. They teach the lesson (execute programs) completely oblivious to the alarm. But the instant the alarm rings (Interrupt), the teacher immediately stops talking, bookmarks the page, and executes the evacuation protocol.
+
+
 </Callout>
+
 
 ## The Interrupt Lifecycle
 
-1. **The Signal (IRQ)**: A device (Network Card, GPU, Keyboard) pulls an Interrupt Request line high. 
+1. **The Signal (IRQ)**: A device (Network Card, GPU, Keyboard) pulls an Interrupt Request line high.
 2. **Context Switch**: The CPU finishes its current instruction. It then takes all of its internal Registers (the exact state of the current program) and pushes them onto the system Stack in RAM to save them.
 3. **Interrupt Vector Table (IVT)**: The CPU looks up an ID number sent by the device (e.g., ID 33 for Keyboard) in the IVT. This table points to the exact memory address of the OS driver code required to handle this specific hardware.
 4. **ISR (Interrupt Service Routine)**: The CPU jumps to that OS code and executes it (e.g., reading the letter 'A' from the USB controller).
@@ -25,8 +38,7 @@ Modern architectures use **Hardware Interrupts**. The CPU completely ignores the
 
 ## Software Interrupts (Traps)
 
-Interrupts aren't just for hardware. Software can trigger them intentionally using specific assembly instructions (like \`INT 0x80\` or \`SYSCALL\`). 
+Interrupts aren't just for hardware. Software can trigger them intentionally using specific assembly instructions (like \`INT 0x80\` or \`SYSCALL\`).
 
 This is the fundamental mechanism of the **System Call**. A user-mode program (like Google Chrome) is physically barred from accessing the hard drive. If Chrome wants to save a file, it triggers a Software Interrupt. The CPU instantly switches into highly privileged Kernel Mode, executes the secure OS file-saving routine, and then returns control back to Chrome.
 
-</ConceptTemplate>

@@ -1,8 +1,27 @@
+---
+title: C++
+description: The immensely powerful, complex, multi-paradigm successor to C, dominating high-performance applications like game engines and high-frequency trading.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="C++">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="C++">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Bjarne Stroustrup in 1979 as "C with Classes," C++ is one of the most widely used and most complex programming languages in the world. Its core mathematical philosophy is **Zero-Overhead Abstractions**: you can write high-level, elegant code, and the compiler mathematically guarantees it runs just as fast as hand-written C.
 
-</ConceptTemplate>
+## 1. Multi-Paradigm Power
+While C is strictly procedural, C++ allows you to mix and match paradigms mathematically:
+- **Procedural**: You can write pure C code in C++.
+- **Object-Oriented**: It supports full inheritance, polymorphism, and virtual functions.
+- **Generic Programming**: Using **Templates**, you can mathematically instruct the compiler to generate heavily optimized code for different types at compile time, eliminating runtime overhead.
+
+## 2. Manual Memory Management (RAII)
+Unlike Java (which uses a Garbage Collector) or Rust (which uses a Borrow Checker), C++ assumes the programmer is mathematically infallible.
+You must manually allocate (`new`) and deallocate (`delete`) memory. However, modern C++ (C++11 and later) heavily relies on **RAII (Resource Acquisition Is Initialization)** and Smart Pointers (`std::unique_ptr`). RAII mathematically binds the lifespan of physical memory to the scope of a stack variable. When the variable goes out of scope, the destructor is mathematically guaranteed to run, automatically freeing the memory and preventing leaks.
+

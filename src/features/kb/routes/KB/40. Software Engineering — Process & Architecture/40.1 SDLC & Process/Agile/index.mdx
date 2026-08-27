@@ -1,8 +1,32 @@
+---
+title: Agile
+description: An iterative, empirical methodology for software development that mathematically prioritizes rapid, continuous delivery of working software over massive, upfront theoretical planning phases.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agile">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Agile Methodology"
+  subtitle="Iterative Empirical Development"
+  tags={['Process', 'SDLC', 'Project Management', 'Agile']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 1990s, software was built using the **Waterfall** methodology: 1 year of writing architectural documentation, followed by 1 year of coding. By the time the software shipped in Year 2, the market had completely changed, making the software mathematically useless. Agile was created to stop this financial waste.
 
-</ConceptTemplate>
+## 1. The Agile Manifesto (2001)
+Agile is not a specific mathematical process; it is a philosophy defined by the Agile Manifesto. It dictates four core values:
+1. **Individuals and interactions** over processes and tools.
+2. **Working software** over comprehensive documentation.
+3. **Customer collaboration** over contract negotiation.
+4. **Responding to change** over following a plan.
+
+## 2. The Iterative Loop
+Instead of building a massive software system in one monolithic 2-year block, Agile mathematically fractures the development into short, distinct time boxes (called **Sprints** in Scrum), usually lasting 2 weeks.
+At the end of the 2-week Sprint, the engineering team *must* deliver a mathematically functional, tested piece of software to the customer. The customer provides immediate feedback. If the customer hates it, the company has only wasted 2 weeks of engineering time, rather than 2 years.
+

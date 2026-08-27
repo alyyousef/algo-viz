@@ -5,10 +5,17 @@ description: "A dynamic, open-source programming language with a focus on simpli
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Ruby"
   icon="gem"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created by Yukihiro "Matz" Matsumoto in 1995, **Ruby** is a dynamic, interpreted, purely object-oriented programming language. Matz explicitly designed Ruby to prioritize **"Developer Happiness"** above all else—valuing human readability and joy over raw machine performance.
 
@@ -47,8 +54,13 @@ dev.code
 end
 ```
 
+
 <Callout icon="tip" title="The Magic of Ruby">
+
+
 Ruby is famous for its Metaprogramming (code that writes code). This allows frameworks like Rails to feel like "magic" (e.g., dynamically generating database query methods based on the names of your database columns at runtime).
+
+
 </Callout>
 
-</ConceptTemplate>
+

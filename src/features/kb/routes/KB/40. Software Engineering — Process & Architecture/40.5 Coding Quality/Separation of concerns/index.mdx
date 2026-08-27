@@ -1,8 +1,32 @@
+---
+title: Separation of Concerns (SoC)
+description: "A foundational architectural principle that mathematically mandates partitioning a computer program into distinct sections, such that each section addresses a separate and specific domain of functionality."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Separation of concerns">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Separation of Concerns (SoC)"
+  subtitle="The Principle of Isolation"
+  tags={['Process', 'Clean Code', 'Architecture', 'Design Principles']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an HTML file contains raw JavaScript logic embedded in the `<button onclick="...">` tags, and raw CSS embedded in `style="..."` tags, it mathematically violates the Separation of Concerns.
 
-</ConceptTemplate>
+## 1. Architectural Partitioning
+SoC is the mathematical driving force behind almost all modern architectural patterns (Layered Architecture, MVC, Microservices).
+- The CSS file is mathematically responsible *only* for presentation.
+- The HTML file is mathematically responsible *only* for structure.
+- The JavaScript file is mathematically responsible *only* for behavior.
+By mathematically isolating these concerns, the graphic designer can rewrite the CSS file without any risk of accidentally introducing a logical bug in the JavaScript payment processing code.
+
+## 2. Micro-Level Separation (SRP)
+At the macro level, SoC creates entire isolated layers (e.g., keeping SQL out of the UI layer).
+At the micro level, SoC is synonymous with the **Single Responsibility Principle (SRP)**. If a single class parses a CSV file and also saves the data to the database, it is blending two mathematically distinct concerns (Data Parsing vs Data Storage). The engineer must split them to achieve true architectural separation.
+

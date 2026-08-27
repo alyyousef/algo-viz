@@ -4,9 +4,16 @@ description: A dynamic, linear data structure where elements are scattered acros
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Singly Linked Lists">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Singly Linked Lists">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Unlike Arrays, which require a single block of contiguous memory, a **Linked List** allows data to be scattered randomly across RAM. 
+Unlike Arrays, which require a single block of contiguous memory, a **Linked List** allows data to be scattered randomly across RAM.
 
 Each element in a linked list is a **Node**. A node contains two things:
 1. **The Data**: The actual value being stored (e.g., the number 42).
@@ -18,16 +25,21 @@ The very first node is tracked by a variable called the `Head`. The final node's
 
 Because nodes are connected by pointers, Linked Lists completely flip the performance characteristics of Arrays:
 
-- **Inserts/Deletes are Fast ($O(1)$)**: If you want to insert a new node in the middle of a linked list, you do not need to physically shift thousands of elements. You simply update two pointers to "wire in" the new node. 
-- **Lookups are Slow ($O(N)$)**: You cannot mathematically jump to index 500. Because the memory is scattered, the only way to find the 500th element is to start at the `Head` and follow the pointers, one by one, 500 times. 
+- **Inserts/Deletes are Fast ($O(1)$)**: If you want to insert a new node in the middle of a linked list, you do not need to physically shift thousands of elements. You simply update two pointers to "wire in" the new node.
+- **Lookups are Slow ($O(N)$)**: You cannot mathematically jump to index 500. Because the memory is scattered, the only way to find the 500th element is to start at the `Head` and follow the pointers, one by one, 500 times.
 
 ## 2. Memory Overhead
 
-Linked lists are significantly less memory-efficient than arrays. If you store 1 million 32-bit integers in an array, it takes exactly 4MB of RAM. 
+Linked lists are significantly less memory-efficient than arrays. If you store 1 million 32-bit integers in an array, it takes exactly 4MB of RAM.
 If you store them in a Singly Linked List on a 64-bit machine, every integer requires an additional 64-bit pointer. This triples your memory usage (4MB for data + 8MB for pointers = 12MB).
 
+
 <Callout icon="info" title="Doubly Linked Lists">
+
+
   A Singly Linked List only points forward. If you are at Node 50, you cannot go backwards to Node 49. A **Doubly Linked List** adds a second `Prev` pointer to every node, allowing bi-directional traversal at the cost of even more memory overhead.
+
+
 </Callout>
 
-</ConceptTemplate>
+

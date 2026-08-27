@@ -1,8 +1,26 @@
+---
+title: 3D Vision
+description: The advanced branch of Computer Vision that mathematically reconstructs three-dimensional geometric space and volume from flat, two-dimensional pixel arrays.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="3D vision">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="3D Vision">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard camera crushes the 3D real world into a flat 2D matrix of pixels. 3D Vision uses advanced mathematics to reconstruct the lost Z-axis (Depth), essential for autonomous driving and robotics.
 
-</ConceptTemplate>
+## 1. Stereovision and Disparity
+Humans have two eyes. By calculating the slight visual difference (Disparity) between the left eye and right eye, our brains mathematically calculate depth.
+Stereo cameras do the exact same thing. By applying **Epipolar Geometry**, the algorithm mathematically compares the left pixel array with the right pixel array. If a pixel shifts drastically between the two images, the algorithm mathematically proves the object is very close to the lens. This generates a **Depth Map**, where pixel intensity represents physical distance.
+
+## 2. LiDAR and Point Clouds
+Cameras rely on light and can fail in shadows. LiDAR (Light Detection and Ranging) physically shoots lasers at the world.
+It measures the exact physical time it takes for the photon to bounce back (Time of Flight). This generates a **Point Cloud**: a massive mathematical array of millions of exact $(X, Y, Z)$ coordinates.
+To process this, Neural Networks cannot use standard 2D Convolutions. They must use specialized architectures like **PointNet**, which are mathematically designed to consume unordered, chaotic arrays of 3D coordinates to detect objects (like "Pedestrian" or "Stop Sign") with absolute spatial precision.
+

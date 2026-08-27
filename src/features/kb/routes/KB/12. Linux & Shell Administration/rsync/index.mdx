@@ -4,7 +4,14 @@ description: The legendary, ultra-efficient file synchronization tool used for m
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="rsync">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="rsync">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you need to copy a 50GB database file to a remote server, you can use `scp`. However, if the connection drops at 49GB, you have to start the entire transfer over from zero.
 
@@ -12,12 +19,12 @@ If you need to copy a 50GB database file to a remote server, you can use `scp`. 
 
 ## The Delta Algorithm
 
-If you use `rsync` to copy a 50GB file, and then you change a single 10-line text string inside that file, running `rsync` again will **not** transfer 50GB. 
+If you use `rsync` to copy a 50GB file, and then you change a single 10-line text string inside that file, running `rsync` again will **not** transfer 50GB.
 It mathematically compares the local file to the remote file, calculates exactly which byte blocks changed, and transfers *only those tiny changes* over the network, taking 3 seconds instead of 3 hours.
 
 ## Basic Syntax
 
-`rsync` usually operates over a standard encrypted SSH tunnel. 
+`rsync` usually operates over a standard encrypted SSH tunnel.
 
 ```bash
 # Sync local website files to a remote server
@@ -29,10 +36,15 @@ rsync -avz --delete ./public_html/ root@192.168.1.50:/var/www/html/
 - **-z (Compress)**: Compresses the data on the fly during network transit.
 - **--delete**: This is the "Mirror" flag. If you delete an image from your local laptop, this flag tells `rsync` to explicitly delete that same image on the remote server to ensure they are perfectly identical.
 
+
 <Callout icon="warning" title="The Trailing Slash">
-  In `rsync`, the trailing slash is incredibly important. 
+
+
+  In `rsync`, the trailing slash is incredibly important.
   `rsync -a ./folder /dest` will copy the entire folder itself into the destination.
   `rsync -a ./folder/ /dest` (WITH the slash) means "copy the *contents* of this folder" into the destination.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,14 +4,21 @@ description: A high-level JavaScript API for processing, synthesizing, and routi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Web Audio API">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Web Audio API">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you just want to play an MP3 file, the standard HTML `<audio>` tag is perfectly sufficient. 
+If you just want to play an MP3 file, the standard HTML `<audio>` tag is perfectly sufficient.
 But if you want to build a fully-functional DJ mixing board, a piano synthesizer, or a 3D spatial audio engine for a video game, you must use the **Web Audio API**.
 
 ## The Audio Routing Graph
 
-The Web Audio API is built around the concept of an **Audio Context** and a routing graph. 
+The Web Audio API is built around the concept of an **Audio Context** and a routing graph.
 You create nodes, configure them, and wire them together (just like plugging physical guitar pedals into an amplifier).
 
 1. **Source Nodes**: The origin of the sound. This can be an MP3 file, a live microphone feed via WebRTC, or a mathematical oscillator generating a Sine wave.
@@ -22,7 +29,6 @@ You create nodes, configure them, and wire them together (just like plugging phy
 3. **Destination Node**: You finally route the signal to the `audioContext.destination`, which connects to the user's physical speakers.
 
 ## AudioWorklets
-Historically, audio processing was done on the main JavaScript thread. If the webpage was busy calculating React state, the audio would stutter and crackle. 
+Historically, audio processing was done on the main JavaScript thread. If the webpage was busy calculating React state, the audio would stutter and crackle.
 Modern Web Audio uses **AudioWorklets**—allowing you to run complex custom audio DSP (Digital Signal Processing) code in a dedicated, isolated background thread, guaranteeing zero-latency, glitch-free audio synthesis.
 
-</ConceptTemplate>

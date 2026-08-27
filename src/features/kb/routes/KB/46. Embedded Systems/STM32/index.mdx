@@ -4,7 +4,7 @@ description: A family of 32-bit microcontroller integrated circuits by STMicroel
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="STM32"
   subtitle="The professional industry standard"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/STM32_Logo.svg/512px-STM32_Logo.svg.png"
@@ -17,15 +17,21 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 While hobbyists use Arduino and ESP32, professional engineers designing drones, 3D printers, medical devices, and smartwatches mathematically default to the **STM32**.
 
+
 <Callout icon="tip" title="The Hardware Abstraction Layer (HAL)">
-  STMicroelectronics provides a massive C library called the **HAL (Hardware Abstraction Layer)**. 
-  
+
+
+  STMicroelectronics provides a massive C library called the **HAL (Hardware Abstraction Layer)**.
+
   Instead of writing raw hexadecimal memory addresses (`*0x40020000 = 1`), engineers write `HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET)`. It is mathematically vastly faster than Arduino, but much safer and easier to read than raw Bare-Metal C.
+
+
 </Callout>
+
 
 ## The CubeMX Revolution
 
-Configuring the internal clock tree of an ARM Cortex-M processor requires complex mathematics. To make this easier, ST created **STM32CubeMX**, a GUI software tool. 
+Configuring the internal clock tree of an ARM Cortex-M processor requires complex mathematics. To make this easier, ST created **STM32CubeMX**, a GUI software tool.
 
 Engineers visually click on the pins of the chip they want to use (e.g., "Pin 4 is I2C, Pin 5 is PWM"). The GUI mathematically calculates the clock speeds and automatically generates thousands of lines of boilerplate Bare-Metal C code, instantly ready for the engineer to add their custom logic.
 

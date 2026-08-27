@@ -1,0 +1,24 @@
+---
+title: Google Cloud SQL
+description: A fully managed relational database service for MySQL, PostgreSQL, and SQL Server, abstracting away database administration while providing automated mathematical replication and failover.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud SQL"
+  subtitle="Managed Relational Databases"
+  tags={['GCP', 'Database', 'SQL', 'Managed']}
+>
+
+Cloud SQL is GCP's direct answer to AWS RDS. It provides a mathematically sound, fully managed environment for traditional relational databases, handling the grueling OS-level patching, backups, and network security automatically.
+
+## 1. High Availability (HA) Mathematics
+For production workloads, a single database is a single point of failure.
+When you enable **High Availability** in Cloud SQL, Google provisions a Primary instance in Zone A and a Standby instance in Zone B.
+They use **Synchronous Replication**. When your API executes a SQL `INSERT`, the Primary database mathematically intercepts the storage block and fires it over the fiber network to the Standby. The Primary *will not* return a success message to your API until the Standby has physically confirmed the data is safely written to its own disk, mathematically guaranteeing zero data loss.
+
+## 2. Read Replicas
+If you have a massive reporting dashboard that runs complex `SELECT` queries, it can starve the Primary database of CPU, causing live API inserts to fail.
+Cloud SQL allows you to create **Read Replicas**. These use **Asynchronous Replication**. The Primary sends a stream of changes to the Replica in the background. You mathematically route all the heavy reporting traffic to the Replica, completely offloading the read-stress from the Primary and ensuring your production API remains blisteringly fast.
+
+</TechnologyTemplate>

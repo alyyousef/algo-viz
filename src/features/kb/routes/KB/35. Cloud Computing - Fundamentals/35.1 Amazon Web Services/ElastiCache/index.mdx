@@ -1,0 +1,24 @@
+---
+title: Amazon ElastiCache
+description: A fully managed, sub-millisecond in-memory data store service that seamlessly deploys and scales open-source Redis and Memcached engines to mathematically accelerate application performance.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon ElastiCache"
+  subtitle="Managed Redis and Memcached"
+  tags={['AWS', 'Database', 'Cache', 'Redis']}
+>
+
+Reading a user's profile from a Postgres database on a hard drive takes 10 milliseconds. If you have 100,000 users requesting their profile simultaneously, the hard drive will physically melt. ElastiCache intercepts these requests and serves them from RAM in 0.5 milliseconds.
+
+## 1. The Mathematical Power of RAM
+ElastiCache is physically constrained to the Random Access Memory (RAM) of the server. There are no hard drives.
+When a web server queries the database for the "Top 10 Leaderboard", it mathematically calculates the result and stores the final HTML/JSON inside ElastiCache (using a Key like `leaderboard_html`). The next 10,000 users who request the page do not touch the database. The web server checks ElastiCache, finds the Key, and mathematically streams the bytes directly from RAM back to the user at the speed of light.
+
+## 2. Redis vs. Memcached
+ElastiCache offers two engines:
+- **Memcached**: A pure, mathematically simple key-value store. It only handles strings. It is multi-threaded and incredibly fast, but if the server reboots, all data is instantly erased.
+- **Redis**: A highly advanced data structure server. It mathematically supports Lists, Sets, and Sorted Sets (allowing you to build the Leaderboard directly inside the cache). Crucially, Redis supports **Persistence** (taking snapshots to disk) and **Replication** (copying RAM to a backup node), guaranteeing that a server crash does not destroy your cache.
+
+</TechnologyTemplate>

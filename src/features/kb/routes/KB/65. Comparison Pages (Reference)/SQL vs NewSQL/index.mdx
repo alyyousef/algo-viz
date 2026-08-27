@@ -1,8 +1,30 @@
+---
+title: SQL vs NewSQL
+description: "An architectural overview of Database evolution, explaining how NewSQL systems like Google Spanner mathematically combine the strict ACID guarantees of traditional SQL with the massive horizontal scalability of NoSQL."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SQL vs NewSQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="SQL vs NewSQL"
+  subtitle="The Holy Grail of Databases"
+  tags={['Comparison', 'Databases', 'Architecture', 'Data Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For a decade, the database world was forced into a strict mathematical tradeoff (known as the CAP Theorem). You could either have perfect consistency (SQL) or massive horizontal scale (NoSQL). NewSQL is the attempt to mathematically achieve both.
 
-</ConceptTemplate>
+## 1. Traditional SQL (PostgreSQL, MySQL)
+- **Architecture**: Single-Master. All write operations must mathematically funnel through a single primary server to guarantee ACID consistency.
+- **The Problem**: If your database reaches 50 Terabytes, you cannot just add another server to share the write load. You must physically buy a single, unimaginably expensive supercomputer (Vertical Scaling), or build incredibly brittle application-level sharding logic.
+
+## 2. NewSQL (Google Spanner, CockroachDB)
+- **Architecture**: Distributed Relational. NewSQL databases look exactly like Postgres to the developer (you write standard SQL with JOINs and Transactions), but underneath, the data is automatically split and replicated across hundreds of servers globally.
+- **The Breakthrough**: True ACID consistency across multiple servers requires mathematical guarantees about Time. Google Spanner mathematically solved this by physically installing GPS receivers and Atomic Clocks (TrueTime) in every single data center on earth, guaranteeing that Server A and Server B mathematically agree on the exact microsecond a transaction occurred.
+- **The Verdict**: NewSQL is the holy grail. It provides the infinite horizontal scale of MongoDB while maintaining the mathematically perfect relational integrity of PostgreSQL.
+

@@ -1,0 +1,26 @@
+---
+title: AWS Route Tables
+description: The mathematical navigation system within an AWS VPC that explicitly dictates exactly where network traffic should be forwarded when it leaves a specific subnet.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Route Tables"
+  subtitle="VPC Traffic Navigation"
+  tags={['AWS', 'Networking', 'VPC', 'Routing']}
+>
+
+When an EC2 server in Subnet A tries to talk to a database in Subnet B, the network packets do not magically know where to go. They hit the subnet's router, which mathematically consults the Route Table.
+
+## 1. The Local Route
+Every Route Table in a VPC mathematically contains an un-deletable **Local Route**.
+If your VPC is `10.0.0.0/16`, the Local Route explicitly states: *"If a packet is destined for any IP starting with 10.0., route it internally within this VPC."*
+This mathematical absolute guarantees that every subnet inside a VPC can ping every other subnet inside the same VPC by default, assuming Security Groups allow it.
+
+## 2. Defining Public vs. Private
+The Route Table is the absolute mathematical definition of whether a Subnet is Public or Private.
+- **Public Subnet**: The Route Table contains a rule: *"If destination is `0.0.0.0/0` (the internet), target the Internet Gateway (igw-123)."*
+- **Private Subnet**: The Route Table does *not* contain a route to the IGW. It might contain a route targeting a NAT Gateway (nat-456) for secure outbound access, or it might have no internet route at all.
+If you place a web server in a subnet that lacks a Route Table entry for the Internet Gateway, it is mathematically impossible for the internet to reach that server.
+
+</TechnologyTemplate>

@@ -4,16 +4,28 @@ description: The latency experienced when a serverless function is invoked after
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cold Starts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cold Starts">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The biological flaw of Serverless computing is the **Cold Start**.
 
-When a function scales to zero, the physical container is destroyed. When a new user hits the API, the cloud provider must mathematically provision a new container, download the code, boot the Node.js or Java runtime, and execute the function. 
+When a function scales to zero, the physical container is destroyed. When a new user hits the API, the cloud provider must mathematically provision a new container, download the code, boot the Node.js or Java runtime, and execute the function.
+
 
 <Callout icon="warning" title="The Latency Penalty">
+
+
   This provisioning process takes time. For a lightweight Go or Node.js function, a cold start might add 300 milliseconds of latency. But for a heavy Java Spring Boot function, a cold start can mathematically freeze the user's API request for up to 5 full seconds.
-  
+
   Once the container is warm, subsequent requests execute in 10ms. To combat cold starts, engineers mathematically configure "Provisioned Concurrency" (paying a small fee to keep a few containers permanently warm), completely negating the original point of Serverless.
+
+
 </Callout>
 
-</ConceptTemplate>
+

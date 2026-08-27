@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="The CIA Triad">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The CIA Triad">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **CIA Triad** is the bedrock of all cybersecurity policy and system design. Every security control, encryption algorithm, and firewall rule is ultimately designed to enforce one or more of these three pillars.
 
@@ -27,18 +34,17 @@ Availability ensures that systems, networks, and data are strictly available and
 - **Threat**: Distributed Denial of Service (DDoS) attacks, ransomware, hardware failures, power outages.
 - **Controls**: Load Balancing, Redundancy/Failover (Multi-AZ architecture), Backups/Disaster Recovery plans, Web Application Firewalls (WAF).
 
-<ComparisonTable 
-  headers={['Pillar', 'Primary Goal', 'Classic Attack', 'Classic Defense']} 
-  rows={[
-    ['Confidentiality', 'Prevent unauthorized reading', 'Data Exfiltration / Sniffing', 'Encryption / Access Control'],
-    ['Integrity', 'Prevent unauthorized modification', 'Data Tampering / Injection', 'Hashing / Digital Signatures'],
-    ['Availability', 'Prevent unauthorized withholding', 'DDoS / Ransomware', 'Redundancy / Backups']
-  ]} 
-/>
+
+<ComparisonTable headers={['Pillar', 'Primary Goal', 'Classic Attack', 'Classic Defense']} rows={[ ['Confidentiality', 'Prevent unauthorized reading', 'Data Exfiltration / Sniffing', 'Encryption / Access Control'], ['Integrity', 'Prevent unauthorized modification', 'Data Tampering / Injection', 'Hashing / Digital Signatures'], ['Availability', 'Prevent unauthorized withholding', 'DDoS / Ransomware', 'Redundancy / Backups'] ]} />
+
 
 <Callout icon="warning" title="The Trade-off Triangle">
-In system design, optimizing heavily for one pillar often sacrifices another. 
+
+
+In system design, optimizing heavily for one pillar often sacrifices another.
 For example, enforcing extreme **Confidentiality** (requiring 3 forms of MFA, hardware keys, and VPNs just to log in) severely impacts **Availability** (if a user loses their hardware key, they are permanently locked out of their own data).
+
+
 </Callout>
 
-</ConceptTemplate>
+

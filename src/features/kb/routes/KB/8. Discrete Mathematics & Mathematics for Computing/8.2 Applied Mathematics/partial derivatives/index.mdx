@@ -1,8 +1,36 @@
+---
+title: Partial Derivatives
+description: "The mathematical calculation of the rate of change in a multi-dimensional function by freezing all variables except one, isolating specific directional slopes."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="partial derivatives">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Partial Derivatives"
+  subtitle="Isolating Dimensional Change"
+  tags={['Mathematics', 'Calculus', 'Machine Learning']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In standard calculus, the derivative $\frac{dy}{dx}$ tells you exactly how much $y$ changes when you slightly push $x$. But if you have a function with a million inputs, pushing one input affects the output, but so do the other 999,999. A **Partial Derivative** mathematically isolates that one single input.
 
-</ConceptTemplate>
+## 1. The Mechanics
+Let's say you have a function modeling the altitude of a mountain: $f(x, y) = x^2 + 3xy + y^2$.
+To find the partial derivative with respect to $x$ (written as $\frac{\partial f}{\partial x}$), you mathematically pretend that $y$ is just a static, boring constant number (like 5).
+- $\frac{\partial}{\partial x} (x^2) = 2x$
+- $\frac{\partial}{\partial x} (3xy) = 3y$ (because $3y$ is treated as a constant attached to $x$)
+- $\frac{\partial}{\partial x} (y^2) = 0$ (because the derivative of any constant is zero).
+So, $\frac{\partial f}{\partial x} = 2x + 3y$.
+
+## 2. Geometric Meaning
+Geometrically, this represents slicing the 3D mountain perfectly along the X-axis, ignoring the Y-axis completely. It tells you exactly how steep the mountain is *if and only if* you walk strictly due East, taking zero steps North or South.
+
+## 3. The Bedrock of AI
+In a neural network, the "Loss" is a massive mathematical function of thousands of "Weights" (variables). To train the AI, the computer must know exactly how tweaking Weight #42 will change the Loss. It calculates the **Partial Derivative** of the Loss with respect to Weight #42, freezing all other weights. It does this for every single weight in the network simultaneously.
+
+\n

@@ -1,8 +1,26 @@
+---
+title: Concurrent Programming
+description: The architectural paradigm of structuring a program into mathematically independent tasks that can execute out-of-order or in partial overlap without altering the final correct outcome.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Concurrent programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Concurrent Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Concurrency is often confused with Parallelism. Parallelism is a hardware physical state (two CPU cores executing math at the exact same physical millisecond). Concurrency is a software architecture state (structuring code so it *could* be executed in parallel).
 
-</ConceptTemplate>
+## 1. Non-Deterministic Execution
+In a sequential program, Step A mathematically finishes before Step B starts. The execution order is Deterministic (100% predictable).
+In a Concurrent program, Task A and Task B are spawned simultaneously. It is mathematically impossible to predict which one will finish first, because it depends entirely on the Operating System's thread scheduler and hardware interrupts. The developer must mathematically design the architecture to guarantee the correct result regardless of the execution order (Non-Determinism).
+
+## 2. The Shared State Problem
+The fundamental mathematical nightmare of Concurrency is Shared Mutable State.
+If Task A and Task B are executing concurrently and both mathematically try to add `1` to a shared global variable `X`, a Data Race occurs. They might both read `X` as 5, both calculate 6, and both write 6 back to RAM. Mathematically, `X` should be 7, but data corruption occurred.
+Concurrent programming relies heavily on synchronization primitives (Mutexes, Semaphores, Atomic Variables) or alternative paradigms (Actor Model, pure Functional Programming) to mathematically prevent these race conditions.
+

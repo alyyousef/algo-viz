@@ -1,8 +1,30 @@
+---
+title: DRY (Don't Repeat Yourself)
+description: "A foundational principle of software development mathematically dictating that every piece of knowledge or logic must have a single, unambiguous, authoritative representation within a system."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DRY">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="DRY (Don't Repeat Yourself)"
+  subtitle="The Single Source of Truth"
+  tags={['Process', 'Clean Code', 'Design Principles', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If the mathematical logic to calculate Sales Tax exists in both the `ShoppingCart` class and the `InvoiceGenerator` class, the codebase has mathematically violated DRY.
 
-</ConceptTemplate>
+## 1. The Maintenance Nightmare
+When the government changes the Sales Tax rate from 5% to 6%, the developer will search the codebase, find the `ShoppingCart` file, and update the math.
+Because the developer mathematically does not know the `InvoiceGenerator` also contains a copy of the logic, they will fail to update it. Tomorrow, the company will mathematically overcharge the customer on the UI, but generate an invoice with a different number, causing an accounting disaster.
+
+## 2. WET (Write Everything Twice)
+The opposite of DRY is WET (Write Everything Twice, or We Enjoy Typing).
+To fix a DRY violation, the engineer must mathematically extract the duplicated logic into a single, authoritative location (e.g., a `TaxCalculator` service) and inject it into both the Cart and the Invoice.
+However, engineers must be careful of **Premature Abstraction**. If two pieces of code look identical today, but serve fundamentally different business domains, merging them mathematically couples two unrelated domains (a violation of Bounded Contexts). As the rule goes: *"A little duplication is cheaper than the wrong abstraction."*
+

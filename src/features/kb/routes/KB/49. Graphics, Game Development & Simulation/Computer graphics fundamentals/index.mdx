@@ -4,15 +4,28 @@ description: The core mathematical principles and physics used to generate digit
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Computer Graphics Fundamentals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Computer Graphics Fundamentals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A computer monitor is just a massive 2D grid of millions of tiny LED lights (pixels). **Computer Graphics** is the brutal mathematical process of calculating exactly what color each of those millions of pixels should be, 60 times every single second, to simulate a 3D universe.
 
+
 <Callout icon="info" title="The Primitive: The Triangle">
-  In 3D graphics, there are no spheres. There are no curved surfaces. 
-  
+
+
+  In 3D graphics, there are no spheres. There are no curved surfaces.
+
   Every 3D model (whether it is a low-poly tree or an incredibly realistic human face) is mathematically constructed entirely out of flat **Triangles** (Polygons). A triangle is the absolute perfect mathematical shape because it is physically impossible for a triangle to bend; its three vertices are guaranteed to be perfectly planar.
+
+
 </Callout>
+
 
 ## The Mathematics of the Camera
 
@@ -21,4 +34,3 @@ To render a 3D world onto a 2D screen, the GPU uses heavy linear algebra (Matrix
 2. **View Matrix:** Moves the entire world relative to the Camera (if the camera moves forward, the math actually pulls the entire world backward).
 3. **Projection Matrix:** Mathematically squashes the 3D coordinates into a 2D plane, applying perspective (objects further away become mathematically smaller).
 
-</ConceptTemplate>

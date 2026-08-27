@@ -4,7 +4,14 @@ description: The computational subfield focused on mathematically calculating a 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AI Planning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AI Planning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In classical AI, an agent cannot act randomly. If a robotic arm needs to assemble a car engine, it must mathematically calculate the exact sequence of 5,000 movements required before it even moves its first actuator. This is the domain of **Automated Planning**.
 
@@ -19,13 +26,12 @@ To plan, the AI must mathematically represent the universe.
 
 ## 2. The Planning Algorithm (STRIPS / PDDL)
 The AI uses languages like **PDDL (Planning Domain Definition Language)** to define the world.
-The Planning Engine mathematically searches through the massive tree of possible actions. It realizes it cannot execute *Grab(Bolt)* because the precondition (Robot is at 5,5) is false. Therefore, it mathematically works backward, realizing it must first insert a *Move(0,0 -> 5,5)* action into the sequence. 
+The Planning Engine mathematically searches through the massive tree of possible actions. It realizes it cannot execute *Grab(Bolt)* because the precondition (Robot is at 5,5) is false. Therefore, it mathematically works backward, realizing it must first insert a *Move(0,0 -> 5,5)* action into the sequence.
 Once the entire sequence is mathematically proven to reach the goal state, the plan is executed.
 
 ## 3. Real-World Complexity
 Classical planning works perfectly in a deterministic, observable environment (like Chess).
-However, the real world is chaotic. A human might step in front of the robotic arm. 
+However, the real world is chaotic. A human might step in front of the robotic arm.
 
 Modern AI Planning utilizes **MDPs (Markov Decision Processes)**. Instead of calculating a single fragile sequence of steps, an MDP mathematically calculates a **Policy**. The Policy dictates the mathematically optimal action for the robot to take *regardless* of what state it accidentally ends up in, allowing it to dynamically recover from real-world chaos.
 
-</ConceptTemplate>

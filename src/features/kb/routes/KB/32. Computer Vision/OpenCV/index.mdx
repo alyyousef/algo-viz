@@ -1,8 +1,25 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: OpenCV (Open Source Computer Vision Library)
+description: The industry-standard, highly optimized C++ mathematical library that provides the foundational algorithms for real-time image processing, camera calibration, and classic computer vision.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="OpenCV">
+<TechnologyTemplate
+  title="OpenCV"
+  subtitle="The Standard Library of Vision"
+  tags={['Computer Vision', 'C++', 'Python', 'Library']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While PyTorch and TensorFlow handle the Neural Networks, OpenCV handles the raw physics of the image. It is the mathematical plumbing underlying almost every computer vision application in existence.
 
-</ConceptTemplate>
+## 1. Matrix Operations (cv::Mat)
+The foundational mathematical object in OpenCV is the **Mat** (Matrix).
+An image is not a file; it is an $N$-dimensional array of bytes. OpenCV provides hyper-optimized, hardware-accelerated (SIMD/CUDA) functions to physically manipulate this matrix.
+If you need to rotate a 4K image 90 degrees, you do not write a `for` loop in Python (it would take seconds). You call `cv2.rotate()`, which drops down to C++ and executes the affine transformation mathematics in milliseconds.
+
+## 2. Camera Calibration and Physics
+OpenCV provides the core mathematical equations for physical camera optics.
+Every physical camera lens has geometric distortion (fisheye effect). If you use a distorted camera for autonomous driving, the math calculating the distance to a pedestrian will be fatally wrong.
+OpenCV uses the **Checkerboard Algorithm**. You show the camera a perfectly square checkerboard. OpenCV mathematically measures the physical warping of the squares in the pixels, calculates a massive **Distortion Matrix**, and applies a mathematical transformation to physically un-warp every future frame coming out of that lens in real-time.
+
+</TechnologyTemplate>

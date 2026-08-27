@@ -4,25 +4,32 @@ description: The proactive and reactive defense of an organization's digital ass
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Blue Teaming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Blue Teaming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If the Red Team are the ethical hackers simulating the attack, the **Blue Team** are the internal security professionals tasked with detecting, mitigating, and stopping them.
 
 Blue Teaming is a broad discipline that encompasses almost all defensive cybersecurity operations, from configuring firewalls and managing the SOC, to conducting forensic investigations after a breach.
 
+
 <Callout icon="info" title="The Blue Team Disadvantage">
+
+
   The Blue Team plays an inherently asymmetrical game. The defender must perfectly secure thousands of servers, laptops, and employees every single day. The attacker only needs to find one single mathematical vulnerability, or trick one single employee into clicking a link, to win.
+
+
 </Callout>
+
 
 ## Core Blue Team Responsibilities
 
-<ComparisonTable 
-  headers={['Responsibility', 'Description']}
-  rows={[
-    ['Log Analysis & SIEM', 'Constantly tuning the SIEM to aggregate logs from across the enterprise, creating mathematical alerts that flag anomalous behavior without drowning analysts in false positives.'],
-    ['Vulnerability Management', 'Running automated scanners (like Nessus) to find unpatched software, and coordinating with the IT department to deploy patches before hackers can exploit them.'],
-    ['Incident Response', 'When the alarms go off, the Blue Team executes the containment and eradication strategies to mathematically eject the attackers from the network.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Responsibility', 'Description']} rows={[ ['Log Analysis & SIEM', 'Constantly tuning the SIEM to aggregate logs from across the enterprise, creating mathematical alerts that flag anomalous behavior without drowning analysts in false positives.'], ['Vulnerability Management', 'Running automated scanners (like Nessus) to find unpatched software, and coordinating with the IT department to deploy patches before hackers can exploit them.'], ['Incident Response', 'When the alarms go off, the Blue Team executes the containment and eradication strategies to mathematically eject the attackers from the network.'] ]} />
+
+

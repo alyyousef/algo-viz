@@ -4,13 +4,20 @@ description: The historical giants that completely shaped the architectural patt
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ruby & PHP Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ruby & PHP Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While they are often considered "legacy" by modern Javascript developers, Ruby and PHP fundamentally invented the architectural patterns used by every framework today, and PHP still powers over 70% of all websites on the internet (largely due to WordPress).
 
 ## 1. Ruby on Rails
-Created by David Heinemeier Hansson (DHH). **Rails** is arguably the most influential web framework in history. 
-It popularized the **MVC (Model-View-Controller)** pattern and heavily pushed **"Convention over Configuration"**. It proved that developer happiness and rapid prototyping were more important than raw mathematical execution speed. 
+Created by David Heinemeier Hansson (DHH). **Rails** is arguably the most influential web framework in history.
+It popularized the **MVC (Model-View-Controller)** pattern and heavily pushed **"Convention over Configuration"**. It proved that developer happiness and rapid prototyping were more important than raw mathematical execution speed.
 Massive companies like GitHub, Shopify, and Airbnb were all originally built on Ruby on Rails. Even today, if you need to build a massive startup SaaS application with a single developer in 30 days, Rails is often the best choice.
 
 ## The PHP Renaissance
@@ -22,4 +29,3 @@ Created by Taylor Otwell, Laravel is the "Ruby on Rails of PHP". It is an absolu
 ### 2. Symfony
 A highly modular, strictly architected PHP framework. While Laravel is optimized for developer experience, Symfony is optimized for massive enterprise scale. In fact, many of Laravel's core internal components are actually just Symfony packages running under the hood.
 
-</ConceptTemplate>

@@ -1,8 +1,30 @@
+---
+title: Azure Event Hubs
+description: "A highly scalable data streaming platform and event ingestion service in Microsoft Azure, mathematically capable of receiving and processing millions of events per second, designed as Microsoft's equivalent to Apache Kafka."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Azure Event Hubs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Azure Event Hubs"
+  subtitle="Massive Scale Event Ingestion"
+  tags={['System Design', 'Azure', 'Streaming', 'Big Data']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are building an IoT architecture with 10 million smart thermostats sending temperature data every second, a standard message queue (like Azure Service Bus or AWS SQS) will mathematically collapse under the load.
 
-</ConceptTemplate>
+## 1. The Append-Only Log
+Event Hubs is not a Message Broker; it is a **Stream Processing Platform** (architecturally identical to Kafka).
+Instead of tracking which specific consumer read which specific message (which requires massive database locks), Event Hubs is a simple, distributed, append-only log.
+When 10 million thermostats send data, Event Hubs mathematically blasts the data onto disk sequentially across multiple partitions. It does not delete the data when read; the data stays on disk for a configured retention period (e.g., 7 days).
+
+## 2. Consumer Checkpointing
+Because the data is not deleted, the mathematical responsibility shifts to the Consumer.
+The Consumer must keep track of its own "Offset" (the index number of the last message it read). If the Consumer crashes at offset 5,000, it restarts, reads its local checkpoint, and mathematically asks Event Hubs: *"Give me everything from offset 5,001."* This allows multiple different analytics teams to mathematically replay the exact same stream of data from the beginning of time.
+

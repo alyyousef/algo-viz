@@ -4,10 +4,16 @@ description: Microsoft Exchange Server is a mail server and calendaring server d
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Microsoft Exchange">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microsoft Exchange">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Exchange** is the mathematical engine behind corporate email.
 
 Historically, corporations ran massive physical Exchange Servers in their biological basements. It mathematically integrated perfectly with Active Directory and handled all SMTP routing, calendaring, and contact syncing. Managing an on-premise Exchange server was considered one of the most biologically stressful jobs in IT due to mathematical database corruption and constant security zero-days.
 
-</ConceptTemplate>

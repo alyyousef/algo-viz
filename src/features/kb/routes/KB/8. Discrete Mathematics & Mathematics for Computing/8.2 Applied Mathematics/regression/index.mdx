@@ -1,8 +1,52 @@
+---
+title: Regression Analysis
+description: "The mathematical modeling of relationships between variables, allowing us to predict continuous numerical outputs based on given input data."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="regression">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Regression Analysis"
+  subtitle="Predicting the Future with Math"
+  tags={['Mathematics', 'Statistics', 'Machine Learning', 'Data Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Classification is the math of categorizing data ("Is this a Cat or a Dog?"), **Regression** is the math of predicting continuous, infinite numerical values ("How much will this house sell for?").
 
-</ConceptTemplate>
+## 1. Simple Linear Regression
+The most basic form of regression draws a straight line of "best fit" through a scatterplot of data. The equation is the classic algebraic line:
+$y = mx + b$
+- $y$: The dependent variable you want to predict (e.g., House Price).
+- $x$: The independent variable you know (e.g., Square Footage).
+- $m$: The slope of the line (how much price increases per square foot).
+- $b$: The y-intercept (base price).
+
+## 2. Ordinary Least Squares (OLS)
+How does an algorithm mathematically know where to draw the perfect line? It uses **Ordinary Least Squares**.
+For any given line, the algorithm measures the vertical distance between the line and every single actual data point. These distances are the "Errors" (or Residuals).
+The algorithm squares every error (to make them positive and penalize big misses), adds them up, and uses calculus to find the exact line that produces the absolute minimum possible sum.
+
+
+<Callout type="warning" title="Correlation vs Causation">
+
+
+  A regression model might find a perfectly mathematical line showing that as Ice Cream sales increase, Shark Attacks increase. The math is 100% correct. But regression cannot prove causation (the hidden variable is Summer Heat). Relying blindly on regression coefficients without domain knowledge is incredibly dangerous.
+
+
+</Callout>
+
+
+## 3. Multiple Regression
+In the real world, you don't predict a house price just on square footage. You use bedrooms, zip code, and age.
+Multiple Regression expands the equation into higher dimensions:
+$y = m_1x_1 + m_2x_2 + m_3x_3 + b$
+This creates a multi-dimensional mathematical plane of best fit, which is the foundational starting point for almost all predictive Machine Learning models.
+
+\n

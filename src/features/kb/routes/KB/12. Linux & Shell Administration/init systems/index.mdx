@@ -4,16 +4,23 @@ description: The absolute first process (PID 1) that the Linux kernel launches, 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Init Systems">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Init Systems">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you turn on a Linux server, the BIOS loads the Bootloader, the Bootloader loads the Kernel, and the Kernel initializes the CPU and RAM.
 
-Once the hardware is ready, the Kernel launches exactly one single user-space program: **The Init System**. 
+Once the hardware is ready, the Kernel launches exactly one single user-space program: **The Init System**.
 The Init system is assigned **PID 1**, and its job is to launch every other background service (Networking, SSH, Web Servers, Desktop GUIs) required to make the OS usable.
 
 ## SysVinit (The Old Guard)
 
-For decades, Linux used **SysVinit** (System V). 
+For decades, Linux used **SysVinit** (System V).
 SysVinit used a series of bash scripts stored in `/etc/init.d/`. It booted the system sequentially, one script at a time. If the networking script took 10 seconds to start, the SSH script had to wait 10 seconds before it could run. This made booting incredibly slow.
 
 ## systemd (The Modern Standard)
@@ -25,8 +32,13 @@ In the 2010s, the Linux ecosystem underwent a massive, highly controversial shif
 - **Unit Files**: Instead of messy bash scripts, services are defined using strict, declarative `.service` files.
 - **Process Tracking**: `systemd` uses cgroups to track processes. If a web server crashes, `systemd` knows immediately and can automatically restart it.
 
+
 <Callout icon="warning" title="The systemd Controversy">
+
+
   `systemd` was heavily criticized by Unix purists because it violates the "Unix Philosophy" (Do one thing and do it well). `systemd` swallowed the init system, system logging (journald), cron jobs (systemd-timers), and network management (systemd-networkd) into one massive, complex monolith. Despite the arguments, `systemd` won the war and is the default on almost all major distributions today.
+
+
 </Callout>
 
-</ConceptTemplate>
+

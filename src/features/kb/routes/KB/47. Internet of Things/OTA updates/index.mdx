@@ -4,15 +4,28 @@ description: The wireless delivery of new software, firmware, or other data to m
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Over-The-Air (OTA) Updates">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Over-The-Air (OTA) Updates">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If an engineer discovers a critical security vulnerability in the C code of an IoT door lock, the company mathematically cannot recall 500,000 door locks. They must wirelessly beam a new `.bin` firmware file directly into the physical Flash memory of every lock in the world. 
+If an engineer discovers a critical security vulnerability in the C code of an IoT door lock, the company mathematically cannot recall 500,000 door locks. They must wirelessly beam a new `.bin` firmware file directly into the physical Flash memory of every lock in the world.
 
 This is an **Over-The-Air (OTA) Update**.
 
+
 <Callout icon="error" title="The Brick Risk">
+
+
   OTA is the most mathematically dangerous operation in embedded systems. If a door lock is downloading the new firmware over Wi-Fi and the homeowner's router crashes halfway through, the firmware file is mathematically corrupted. If the device tries to boot corrupted firmware, it becomes a permanent "brick," physically destroying the device forever.
+
+
 </Callout>
+
 
 ## The A/B Partition Architecture
 
@@ -24,4 +37,3 @@ To prevent bricking, all modern, professional IoT devices mathematically divide 
 4. The Bootloader is mathematically instructed to boot from Partition B on the next restart.
 5. If Partition B immediately crashes upon boot, the Bootloader automatically detects the failure and physically rolls back to Partition A, saving the device from destruction.
 
-</ConceptTemplate>

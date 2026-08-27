@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Semaphores">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Semaphores">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Invented by Edsger W. Dijkstra in 1965, a **Semaphore** is a synchronization primitive. While a Mutex strictly protects a *single* resource (0 or 1), a Semaphore protects a *finite pool* of resources using a mathematical counter (N).
 
@@ -19,24 +26,24 @@ It has two atomic operations (historically named by Dijkstra as P and V):
 
 ## 2. Mutex vs Semaphore
 
-<ComparisonTable 
-  headers={['Property', 'Mutex', 'Semaphore']} 
-  rows={[
-    ['Capacity', 'Strictly binary (0 or 1). Protects a single resource.', 'Can be initialized to any number N. Protects a pool of resources.'],
-    ['Ownership', 'Strict Ownership. The thread that locked the Mutex is the ONLY thread allowed to unlock it.', 'No Ownership. Thread A can call `wait()`, and Thread B can completely independently call `signal()` to wake it up.'],
-    ['Primary Use Case', 'Preventing Race Conditions on shared variables.', 'Signaling between threads (Producer-Consumer problems).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Property', 'Mutex', 'Semaphore']} rows={[ ['Capacity', 'Strictly binary (0 or 1). Protects a single resource.', 'Can be initialized to any number N. Protects a pool of resources.'], ['Ownership', 'Strict Ownership. The thread that locked the Mutex is the ONLY thread allowed to unlock it.', 'No Ownership. Thread A can call `wait()`, and Thread B can completely independently call `signal()` to wake it up.'], ['Primary Use Case', 'Preventing Race Conditions on shared variables.', 'Signaling between threads (Producer-Consumer problems).'] ]} />
+
 
 ## 3. The Producer-Consumer Problem
 Semaphores are the mathematical backbone of Producer-Consumer architectures (like Thread Pools or Job Queues).
 - You initialize a Semaphore to 0.
 - 10 Worker Threads call `wait()`. Because it is 0, they all freeze.
-- A Master Thread receives a web request. It puts the job in a queue and calls `signal()`. 
+- A Master Thread receives a web request. It puts the job in a queue and calls `signal()`.
 - The Semaphore hits 1. The OS instantly wakes up exactly one Worker Thread, who takes the job.
 
+
 <Callout icon="info" title="Binary Semaphores">
+
+
 If you initialize a Semaphore to exactly 1, it acts very similarly to a Mutex. However, because it lacks strict Ownership, it is still architecturally different. You should never use a Semaphore to protect a simple shared variable; always use a Mutex.
+
+
 </Callout>
 
-</ConceptTemplate>
+

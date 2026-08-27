@@ -1,8 +1,27 @@
+---
+title: Exploratory Data Analysis (EDA)
+description: The initial, mathematically open-ended phase of Data Science where analysts use statistical summaries and visualizations to discover hidden patterns in raw data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Exploratory data analysis (EDA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Exploratory Data Analysis (EDA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before a Data Scientist attempts to train a complex Machine Learning model, they must deeply understand the mathematical topology of the dataset. This is EDA.
 
-</ConceptTemplate>
+## 1. Statistical Profiling
+The first step of EDA is generating a mathematical profile of every single column.
+For numerical columns, the scientist calculates the **Summary Statistics**: Mean, Median, Standard Deviation, Min, Max, and Quartiles.
+If the Mean is 50, but the Max is 9,000,000, the scientist instantly knows the data is mathematically skewed and contains extreme outliers that will destroy a standard regression model.
+
+## 2. Correlation Matrices
+To understand relationships, scientists generate a mathematically massive grid called a **Correlation Matrix**.
+It compares every column against every other column, generating a Pearson Correlation Coefficient (a number between -1 and 1).
+If "Square Footage" and "House Price" have a correlation of 0.95, they are mathematically nearly identical in terms of predictive power. If two input columns have a 0.99 correlation with *each other* (Multicollinearity), the scientist will mathematically drop one of them, because feeding redundant data into a Machine Learning model causes mathematical instability.
+

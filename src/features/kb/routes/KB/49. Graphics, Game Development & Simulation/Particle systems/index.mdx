@@ -4,22 +4,34 @@ description: A technique in game physics and computer graphics that uses a large
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Particle Systems">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Particle Systems">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 How do you mathematically render fire, smoke, rain, or a massive explosion?
 
 You cannot build a 3D model of fire. It has no solid geometry. Instead, graphics engines use **Particle Systems**.
 
+
 <Callout icon="tip" title="The Billboard Trick">
-  A Particle System is a massive mathematical emitter that spawns 10,000 tiny 2D images (Sprites) of smoke per second. 
-  
+
+
+  A Particle System is a massive mathematical emitter that spawns 10,000 tiny 2D images (Sprites) of smoke per second.
+
   Because 3D math is expensive, these 10,000 images are usually rendered as **Billboards**. The GPU mathematically forces the 2D image to permanently rotate and face the Camera perfectly, no matter where the player is standing. It creates a flawless optical illusion of volumetric 3D smoke using almost zero GPU geometry.
+
+
 </Callout>
+
 
 ## GPU Compute Particles
 
-Historically, the CPU had to calculate the physics (gravity, wind, lifetime) for all 10,000 particles, which bottlenecked the system. 
+Historically, the CPU had to calculate the physics (gravity, wind, lifetime) for all 10,000 particles, which bottlenecked the system.
 
 Modern AAA games (like *Returnal*) use **GPU Compute Particles** (Niagara in Unreal Engine). The engine offloads the entire particle simulation to the GPU Compute Shaders. Because the GPU has 5,000 cores, it can mathematically calculate physics and collisions for **10 million particles** simultaneously, creating terrifyingly realistic fluid and spark simulations.
 
-</ConceptTemplate>

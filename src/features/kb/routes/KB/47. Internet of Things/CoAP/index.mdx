@@ -4,22 +4,34 @@ description: A specialized web transfer protocol for use with constrained nodes 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CoAP (Constrained Application Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CoAP (Constrained Application Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While MQTT uses the Pub/Sub architecture, many web developers vastly prefer the traditional HTTP REST architecture (`GET`, `POST`, `PUT`, `DELETE`). 
+While MQTT uses the Pub/Sub architecture, many web developers vastly prefer the traditional HTTP REST architecture (`GET`, `POST`, `PUT`, `DELETE`).
 
 **CoAP** was created to mathematically shrink the entire HTTP REST paradigm down to a size that can run on a microscopic IoT device.
 
+
 <Callout icon="info" title="UDP over TCP">
+
+
   HTTP and MQTT mathematically rely on **TCP**. TCP requires a massive, complex 3-way handshake to establish a connection, which drains precious battery life.
-  
+
   CoAP mathematically runs entirely over **UDP**. UDP is connectionless. A CoAP sensor simply wakes up, fires a tiny UDP packet containing a `POST` request into the void of the internet, and instantly goes back to deep sleep.
+
+
 </Callout>
+
 
 ## The Binary Translation
 
-Standard HTTP uses heavy, plain-text strings (`Content-Type: application/json`). CoAP mathematically translates these HTTP concepts into raw, highly compressed binary headers. 
+Standard HTTP uses heavy, plain-text strings (`Content-Type: application/json`). CoAP mathematically translates these HTTP concepts into raw, highly compressed binary headers.
 
 A full CoAP request (including the REST method, the URI path, and the payload) can mathematically fit inside a single, tiny 10-byte packet.
 
-</ConceptTemplate>

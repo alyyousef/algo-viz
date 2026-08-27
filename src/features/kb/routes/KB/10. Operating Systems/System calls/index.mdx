@@ -5,7 +5,14 @@ description: The highly secure, hardware-enforced mathematical bridge that allow
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="System Calls (Syscalls)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="System Calls (Syscalls)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Modern CPUs physically enforce two modes of operation:
 1. **User Mode (Ring 3)**: Unprivileged. Chrome, Spotify, and your Python scripts run here. They cannot access the hard drive, the network card, or memory outside their sandbox.
@@ -14,7 +21,7 @@ Modern CPUs physically enforce two modes of operation:
 If your Python script wants to read a file from the SSD, it is mathematically incapable of doing it. It must ask the OS Kernel to do it on its behalf. This request is a **System Call**.
 
 ## 1. The Trap Instruction
-A System Call is not a standard function call. A user program cannot simply jump into Kernel memory (the MMU would block it and crash the program). 
+A System Call is not a standard function call. A user program cannot simply jump into Kernel memory (the MMU would block it and crash the program).
 Instead, the program executes a special hardware CPU instruction called a **Trap** (or Software Interrupt).
 
 1. The program places the ID of the specific Syscall (e.g., `read()` is ID 0 in Linux) into a specific CPU register.
@@ -24,11 +31,16 @@ Instead, the program executes a special hardware CPU instruction called a **Trap
 
 ## 2. The Performance Cost
 Because a System Call triggers hardware-level context switching, privilege escalation, and security checks, it is incredibly slow compared to a normal function call.
-If your code calls `console.log()` or `printf()` one million times in a loop, it will trigger one million Syscalls (`write()`), catastrophically destroying performance. 
+If your code calls `console.log()` or `printf()` one million times in a loop, it will trigger one million Syscalls (`write()`), catastrophically destroying performance.
 This is why all standard libraries (like libc) heavily **Buffer** their I/O. They wait until they have a large chunk of text, and then issue a single Syscall to print it all at once.
 
+
 <Callout icon="tip" title="Bypassing the Kernel">
+
+
 In extreme high-performance environments (like High-Frequency Trading or Massive Network Routers), the latency of Syscalls is unacceptable. Advanced architectures use **Kernel Bypass** technologies (like DPDK), directly mapping the physical network card memory into User Space, completely eliminating the OS from the critical path.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -5,7 +5,14 @@ description: "A testing technique where the output of a component is captured an
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Snapshot Testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Snapshot Testing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Traditional assertions verify specific values (e.g., `expect(title).toBe('Hello')`). **Snapshot Testing** is a much broader technique primarily used in Frontend development (React, Vue) to ensure UI components do not change unexpectedly.
 
@@ -23,8 +30,13 @@ If the test fails, the developer must inspect the diff.
 ## 3. Visual Regression Testing
 While standard snapshot testing compares HTML/JSON strings, **Visual Snapshot Testing** compares actual pixels. Tools like Percy or Cypress take screenshots of a webpage rendered in a headless browser and use image-comparison algorithms to detect if a specific div shifted by 2 pixels to the left.
 
+
 <Callout icon="warning" title="Snapshot Fatigue">
+
+
 Because snapshots capture *everything*, they are incredibly brittle. Changing a global wrapper component might cause 500 snapshot tests to fail simultaneously. Developers often suffer from "Snapshot Fatigue," where they blindly press "Update Snapshots" without actually reviewing the diff, entirely defeating the purpose of the test.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -5,7 +5,14 @@ description: The next generation of cryptographic algorithms designed to resist 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="Post-Quantum Cryptography (PQC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Post-Quantum Cryptography (PQC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Currently, the entire internet (HTTPS, banking, VPNs, blockchains) is secured by asymmetric algorithms like **RSA** and **ECC**. These algorithms rely on mathematical problems (like prime factorization and elliptic curve logarithms) that are practically impossible for classical supercomputers to solve.
 
@@ -14,8 +21,8 @@ However, a sufficiently powerful **Quantum Computer** running **Shor's Algorithm
 ## 1. The Threat: Shor's and Grover's Algorithms
 
 - **Shor's Algorithm**: A quantum algorithm that solves Prime Factorization and Discrete Logarithms exponentially faster than classical computers. It utterly destroys all currently deployed Asymmetric Encryption (RSA, Diffie-Hellman, ECC).
-- **Grover's Algorithm**: A quantum search algorithm that quadraticly speeds up brute-force attacks against Symmetric Encryption (like AES) and Hash Functions (like SHA-256). 
-  - *The Fix for Grover's*: Simply double the key size. AES-128 is vulnerable, but AES-256 is mathematically completely immune to quantum computers. 
+- **Grover's Algorithm**: A quantum search algorithm that quadraticly speeds up brute-force attacks against Symmetric Encryption (like AES) and Hash Functions (like SHA-256).
+  - *The Fix for Grover's*: Simply double the key size. AES-128 is vulnerable, but AES-256 is mathematically completely immune to quantum computers.
 
 ## 2. The NIST Standardization
 
@@ -30,9 +37,14 @@ The absolute core of the new PQC era. It relies on the "Learning With Errors" (L
 Relies entirely on the proven security of cryptographic hash functions rather than algebraic math.
 - **SLH-DSA (formerly SPHINCS+)**: A backup Digital Signature standard. It produces massive signature files (kilobytes in size) and is slow, but its mathematical security is ironclad and deeply understood.
 
+
 <Callout icon="warning" title="Harvest Now, Decrypt Later">
-  Why are tech giants like Apple (iMessage PQ3) and Google (Chrome TLS) deploying PQC *today*, even though quantum computers don't exist yet? 
+
+
+  Why are tech giants like Apple (iMessage PQ3) and Google (Chrome TLS) deploying PQC *today*, even though quantum computers don't exist yet?
   Because nation-state intelligence agencies are currently vacuuming up and storing petabytes of encrypted internet traffic. They are simply waiting 10 years until they build a quantum computer to retroactively decrypt all the state secrets they harvested today. You must deploy PQC before the data is intercepted.
+
+
 </Callout>
 
-</ConceptTemplate>
+

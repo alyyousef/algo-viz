@@ -1,8 +1,29 @@
+---
+title: Documentation
+description: The mathematical and architectural translation of raw source code intent into human-readable formats, critical for preventing tribal knowledge silos and ensuring the long-term maintainability of enterprise software systems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Documentation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Documentation"
+  subtitle="The Preservation of Intent"
+  tags={['Process', 'Architecture', 'Clean Code', 'Knowledge Management']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Source code mathematically describes *how* a system works. Documentation is the only mechanism that explains *why* the system was built that way. Without the "why," future engineers will mathematically destroy the architecture trying to fix it.
 
-</ConceptTemplate>
+## 1. The Architecture Decision Record (ADR)
+In modern software engineering, the most critical piece of documentation is the **ADR (Architecture Decision Record)**.
+When a team decides to use PostgreSQL instead of MongoDB, they write a 1-page markdown document explaining the mathematical reasoning, the alternatives considered, and the date. Two years later, when a new Senior Engineer asks *"Why didn't we use MongoDB?"*, they read the ADR. This prevents the team from endlessly debating solved problems and mathematically preserves the historical context of the system.
+
+## 2. Docs-as-Code
+Historically, documentation was written in MS Word and stored in a dusty SharePoint drive where it immediately became obsolete.
+Modern teams use **Docs-as-Code**. Documentation is written in Markdown (or AsciiDoc) and committed directly into the Git repository alongside the source code. If a developer alters the API logic in a Pull Request but fails to update the corresponding Markdown file, the Code Reviewer mathematically rejects the PR, ensuring the documentation and the code evolve synchronously.
+

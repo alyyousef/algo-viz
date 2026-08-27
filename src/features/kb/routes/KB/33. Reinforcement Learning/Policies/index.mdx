@@ -1,8 +1,26 @@
+---
+title: Policies
+description: The mathematical brain of a Reinforcement Learning agent, representing a formal mapping from environmental states to a probability distribution of physical actions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Policies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Policies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Policy ($\pi$) is the ultimate output of any Reinforcement Learning algorithm. It is the mathematical rulebook the Agent follows to survive in its Environment.
 
-</ConceptTemplate>
+## 1. Deterministic vs. Stochastic Policies
+- **Deterministic Policy ($\pi(s) = a$)**: If the Agent is in State $S$, it mathematically outputs exactly one Action $A$, 100% of the time. (e.g., If the traffic light is Red, press the Brake). This is common in Q-Learning.
+- **Stochastic Policy ($\pi(a|s) = P$)**: The Agent mathematically outputs a Probability Distribution. (e.g., If the light is Yellow: Brake = 80%, Accelerate = 20%). The Agent rolls a mathematical dice to choose. Stochastic policies are critical for adversarial games (like Poker) where being 100% predictable means you will mathematically lose.
+
+## 2. Policy Optimization
+How do you create a good Policy?
+- **Indirectly (Value-Based)**: You train a Neural Network to calculate the Q-Value (the score) of every action. The Policy is simply a mathematical wrapper that says "Always pick the action with the highest Q-Value."
+- **Directly (Policy Gradient)**: You do not calculate Q-Values. You train a Neural Network to directly output the probabilities of the actions. The Loss Function mathematically increases the probability of actions that led to high rewards and decreases the probability of actions that led to punishment.
+

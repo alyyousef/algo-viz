@@ -1,8 +1,31 @@
+---
+title: Monorepos vs Polyrepos
+description: A fundamental architectural debate concerning whether an organization's entire suite of diverse software projects should be housed in a single massive Git repository or split into hundreds of independent repositories.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Monorepos vs polyrepos">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Monorepos vs Polyrepos"
+  subtitle="Repository Architecture at Scale"
+  tags={['Version Control', 'Architecture', 'Git', 'Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How a company organizes its code physically dictates its engineering culture. If a company has a frontend app, an iOS app, and 50 backend microservices, how many Git repositories should exist?
 
-</ConceptTemplate>
+## 1. The Polyrepo Approach
+The Polyrepo (Multi-repo) approach creates **one repository per project** (e.g., 52 total repositories).
+- **Pros**: Strict mathematical isolation. A developer working on the iOS app pulls a tiny 50MB repository. The CI/CD pipelines are incredibly simple because a change in the backend repo only triggers the backend build.
+- **Cons**: Dependency hell. If 10 microservices share a common authentication library, and you update that library, you must mathematically open 10 separate Pull Requests across 10 repositories to update the version numbers.
+
+## 2. The Monorepo Approach
+Pioneered by Google, Facebook, and Twitter, the Monorepo houses **every project in the entire company in a single, massive repository**.
+- **Pros**: Atomic cross-project commits. You can update the shared authentication library and update all 10 microservices in a *single mathematical commit*. If the CI tests pass, you are mathematically guaranteed that the entire company's codebase is compatible.
+- **Cons**: Extreme scale issues. Google's Monorepo is terabytes in size. Standard Git mathematically breaks at this scale. A Monorepo requires massive investment in specialized build systems (like Bazel) that can mathematically determine exactly which subsets of the massive repo need to be recompiled when a single file changes.
+

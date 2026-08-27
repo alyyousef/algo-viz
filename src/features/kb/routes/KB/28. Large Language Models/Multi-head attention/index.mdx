@@ -4,15 +4,28 @@ description: The mechanism allowing Transformers to simultaneously focus on diff
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-Head Attention">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Head Attention">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a Transformer only had a single Self-Attention mechanism, it would only be able to focus on one relationship at a time. For example, it might figure out the grammatical structure of a sentence, but completely miss the emotional sentiment.
 
 Multi-Head Attention solves this by running multiple self-attention mechanisms (called "Heads") completely in parallel.
 
+
 <Callout icon="info" title="The Specialization of Heads">
+
+
   During training, the heads naturally specialize without human intervention. Researchers have found that in a given layer, one head might track pronouns to their subjects, another head might look for negative sentiment words, and another head might purely track punctuation.
+
+
 </Callout>
+
 
 ## How it works mathematically
 
@@ -21,4 +34,3 @@ Multi-Head Attention solves this by running multiple self-attention mechanisms (
 3. The resulting vectors from all heads are concatenated together.
 4. The concatenated vector is multiplied by a final weight matrix to mix the information together before passing it to the feedforward layer.
 
-</ConceptTemplate>

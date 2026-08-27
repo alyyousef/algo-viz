@@ -1,8 +1,27 @@
+---
+title: Generators and Coroutines
+description: Functions that can mathematically pause their own execution, yield control back to the caller, and resume later from the exact same state.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Generators/coroutines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Generators & Coroutines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard functions are strictly mathematical: they start at the top, run to the bottom, and are destroyed.
+Generators and Coroutines mathematically break this rule. They can **pause** execution in the middle of their logic, yield a value to the caller, and **resume** later, picking up exactly where they left off.
 
-</ConceptTemplate>
+## 1. The Yield Keyword
+In Python or JavaScript, you create a Generator using the `yield` keyword.
+When the CPU hits `yield 5`, it does not destroy the function's Stack Frame. It mathematically freezes the entire state of the function (all its local variables and the exact line number it is on), moves it to the Heap to prevent it from being overwritten, and returns `5` to the caller. When the caller invokes `next()`, the CPU mathematically thaws the function, jumping back to the exact line immediately following the `yield`.
+
+## 2. Infinite Sequences
+Generators are mathematically vital for handling massive datasets.
+If you need to calculate the first 10 Billion Fibonacci numbers, returning them in a standard Array would require Terabytes of RAM, crashing the computer.
+A Generator mathematically calculates one number, yields it, and pauses. The caller prints it, and asks for the next. The Generator only ever uses a few bytes of RAM, allowing developers to mathematically model infinite mathematical sequences and process massive files line-by-line efficiently.
+

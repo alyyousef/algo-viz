@@ -1,8 +1,31 @@
+---
+title: Jenkins vs GitHub Actions
+description: "A comparison of Continuous Integration (CI/CD) pipelines, contrasting the absolute customizable power of a self-hosted Jenkins server with the frictionless, cloud-native YAML automation of GitHub Actions."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Jenkins vs GitHub Actions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Jenkins vs GitHub Actions"
+  subtitle="The Evolution of CI/CD"
+  tags={['Comparison', 'DevOps', 'CI/CD', 'Automation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Continuous Integration and Deployment (CI/CD) automates the mathematical process of testing, building, and deploying code every time a developer pushes a commit.
 
-</ConceptTemplate>
+## 1. Jenkins (The Self-Hosted Behemoth)
+- **Architecture**: A massive Java application you must physically install and maintain on your own Linux server. You write pipelines using Groovy scripting.
+- **Pros**: Absolute, mathematically infinite customization. There are thousands of plugins for every obscure enterprise tool on earth. Because you own the server, there are no cloud billing limits on build minutes.
+- **Cons**: "Jenkins is a full-time job." Managing the JVM, updating plugins (which constantly break), and securing the server requires a dedicated DevOps engineer.
+
+## 2. GitHub Actions (The Cloud-Native Standard)
+- **Architecture**: Deeply integrated directly into the GitHub UI. You write pipelines using simple `.yaml` files in your repository, and GitHub mathematically provisions temporary cloud servers (Runners) to execute them.
+- **Pros**: Frictionless. Zero server maintenance. A massive marketplace of pre-built "Actions" (e.g., `uses: actions/setup-node@v3`) allows you to build complex pipelines in minutes instead of weeks.
+- **Cons**: You pay by the minute for GitHub's cloud runners (though you can attach your own self-hosted runners if needed). Vendor lock-in is mathematically absolute; you cannot easily migrate GitHub Actions YAML to GitLab.
+

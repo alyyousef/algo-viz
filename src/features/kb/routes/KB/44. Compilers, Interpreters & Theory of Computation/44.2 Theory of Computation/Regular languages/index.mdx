@@ -4,15 +4,28 @@ description: A formal language that can be expressed using a regular expression,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Regular Languages">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Regular Languages">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the mathematical hierarchy of formal languages (the Chomsky Hierarchy), **Regular Languages** are the weakest and simplest class of languages.
 
 A language is mathematically "Regular" if and only if it can be perfectly processed by a **Finite Automaton** (a machine with zero memory).
 
+
 <Callout icon="warning" title="The Regex Trap">
+
+
   Software engineers use Regular Expressions (Regex) every day. But mathematically, you cannot parse HTML using a Regular Expression. HTML allows infinite nesting (`<div><div>...</div></div>`). Because Regular Languages have no memory, they mathematically cannot track the depth of nesting.
+
+
 </Callout>
+
 
 ## Real-World Applications
 
@@ -22,4 +35,3 @@ They are used exclusively for **Lexical Analysis**. When a compiler groups raw c
 
 *Note: Modern PCRE (Perl Compatible Regular Expressions) in languages like Python or JS have mathematically "cheated" by adding features like backreferences. Therefore, modern software Regex is actually mathematically more powerful than true academic "Regular Languages".*
 
-</ConceptTemplate>

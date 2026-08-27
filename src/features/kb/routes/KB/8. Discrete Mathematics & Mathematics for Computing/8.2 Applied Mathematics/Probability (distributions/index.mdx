@@ -1,8 +1,32 @@
+---
+title: Probability Distributions
+description: "Mathematical functions that describe the likelihood of all possible outcomes of a random event, forming the foundation of statistics and probabilistic algorithms."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Probability (distributions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Probability Distributions"
+  subtitle="Mapping the Shape of Randomness"
+  tags={['Mathematics', 'Probability', 'Statistics', 'Data Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Probability Distribution** is a mathematical formula that provides the exact probabilities of occurrence for different possible outcomes in an experiment.
 
-</ConceptTemplate>
+## 1. Discrete vs Continuous
+- **Discrete Distributions**: Used when outcomes are distinct and countable (e.g., rolling a dice, the number of emails received in an hour). The probabilities of all possible outcomes must perfectly sum up to 1.0.
+- **Continuous Distributions**: Used when outcomes can be any value within a range (e.g., human height, the exact time a server request takes). Because there are infinite possible decimals, the probability of hitting one *exact* number (like 5.000000...) is mathematically 0. Instead, you calculate the probability of a range using the Integral (area under the curve).
+
+## 2. Common Distributions
+- **Uniform Distribution**: Every outcome is equally likely (like a fair dice roll or `Math.random()`).
+- **Binomial Distribution**: Models the number of successes in a fixed number of independent Yes/No trials (e.g., flipping a coin 10 times).
+- **Poisson Distribution**: Models the number of events occurring in a fixed interval of time (e.g., how many database crashes happen per month).
+- **Normal (Gaussian) Distribution**: The famous "Bell Curve". Models continuous data that clusters around a mean. Due to the Central Limit Theorem, almost all random noise in the universe naturally forms a Normal Distribution.
+
+\n

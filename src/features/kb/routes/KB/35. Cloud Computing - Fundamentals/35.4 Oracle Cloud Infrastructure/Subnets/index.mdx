@@ -1,0 +1,24 @@
+---
+title: OCI Subnets
+description: The fundamental mathematical divisions of a Virtual Cloud Network (VCN), defining specific IP address ranges and routing characteristics to isolate different layers of an application architecture.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Subnets"
+  subtitle="Logical Network Segmentation"
+  tags={['OCI', 'Networking', 'VCN', 'IP Addressing']}
+>
+
+A Virtual Cloud Network (VCN) is a massive block of IP addresses (e.g., `10.0.0.0/16`, which contains 65,536 IPs). You cannot deploy servers directly into a VCN. You must mathematically chop the VCN into smaller, manageable chunks called **Subnets**.
+
+## 1. Regional vs. AD-Specific
+Historically, a Subnet was mathematically bound to a single physical building (an Availability Domain). If AD 1 burned down, the Subnet died.
+Modern OCI uses **Regional Subnets**. You carve out a chunk of IPs (e.g., `10.0.1.0/24`). This Subnet mathematically spans all 3 Availability Domains in the Region simultaneously. You can place Web Server 1 in AD 1, and Web Server 2 in AD 2, and they will both pull IP addresses from the exact same Subnet, massively simplifying routing and firewall management.
+
+## 2. Public vs. Private
+When you create a Subnet, you must make a strict, permanent mathematical declaration: is it Public or Private?
+- **Public Subnet**: Virtual Machines placed here are mathematically allowed to receive Public IP addresses from Oracle. They can talk directly to the internet (if an Internet Gateway is attached).
+- **Private Subnet**: Virtual Machines placed here are mathematically forbidden from ever receiving a Public IP address. Even if an administrator tries to assign one via the API, the OCI Control Plane will mathematically reject the request. This provides a hard, physical security boundary for sensitive databases.
+
+</TechnologyTemplate>

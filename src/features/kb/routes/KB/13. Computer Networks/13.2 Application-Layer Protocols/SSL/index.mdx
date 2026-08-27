@@ -4,21 +4,33 @@ description: The original, now heavily deprecated cryptographic protocol created
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SSL (Secure Sockets Layer)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SSL (Secure Sockets Layer)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In 1995, as the web began to support e-commerce (like Amazon), it became obvious that sending credit card numbers over plain-text HTTP was a disaster. 
+In 1995, as the web began to support e-commerce (like Amazon), it became obvious that sending credit card numbers over plain-text HTTP was a disaster.
 
 Netscape Communications (the creators of the first major web browser) invented **SSL (Secure Sockets Layer)** to encrypt web traffic.
 
 ## The Death of SSL
 
-SSL went through three major versions (SSL 1.0, 2.0, and 3.0). 
-However, by the late 2010s, massive mathematical flaws and cryptographic vulnerabilities (like the POODLE attack) were discovered in the core architecture of SSL. 
+SSL went through three major versions (SSL 1.0, 2.0, and 3.0).
+However, by the late 2010s, massive mathematical flaws and cryptographic vulnerabilities (like the POODLE attack) were discovered in the core architecture of SSL.
 
 Because the flaws were unfixable, the global internet security community officially deprecated and banned all versions of SSL.
 
+
 <Callout icon="warning" title="Nomenclature Confusion">
+
+
   Today, **zero servers on the internet use SSL**. It is completely dead. It was entirely replaced by the newer **TLS** protocol. However, because "SSL" was the standard term for 20 years, the entire industry still incorrectly uses the term. When you buy an "SSL Certificate" today, you are actually buying a TLS Certificate.
+
+
 </Callout>
 
-</ConceptTemplate>
+

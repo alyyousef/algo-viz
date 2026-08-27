@@ -1,8 +1,30 @@
+---
+title: Agentic Workflows
+description: Advanced architectural patterns where LLMs are not just passive text generators, but active decision-makers that can mathematically route tasks, use tools, and loop autonomously.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agentic workflows">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Agentic Workflows">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you ask a standard LLM to "deploy my website," it simply prints out a list of instructions. In an Agentic Workflow, the LLM physically executes the deployment.
 
-</ConceptTemplate>
+## 1. The ReAct Pattern (Reason + Act)
+The foundational mathematical pattern for Agents is **ReAct**.
+The Agent operates in a mathematically strict loop:
+1. **Thought**: The LLM analyzes the current state and reasons about what to do next.
+2. **Action**: The LLM outputs a specific, parseable command (like `call_function("search_web", "AWS deployment")`).
+3. **Observation**: The system physically executes the command and feeds the raw mathematical output back into the LLM's context window.
+The loop mathematically repeats until the LLM determines the overarching goal has been achieved.
+
+## 2. Multi-Agent Orchestration
+Advanced systems (like AutoGen or CrewAI) do not rely on a single Agent. They mathematically partition the logic.
+You spawn a "Researcher Agent" (prompted to be skeptical and thorough) and a "Coder Agent" (prompted to write optimized Python).
+The Orchestrator mathematically routes data between them. The Coder writes the code, hands it to the Researcher, who physically runs it, observes a crash, and hands the error log back to the Coder. This multi-agent debate mathematically reduces Hallucinations and dramatically increases complex task success rates.
+

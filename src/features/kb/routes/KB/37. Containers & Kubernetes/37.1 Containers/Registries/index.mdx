@@ -1,8 +1,30 @@
+---
+title: Container Registries
+description: Highly available storage and distribution systems mathematically designed to host, version, and securely deliver OCI-compliant container image layers to cloud infrastructure globally.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Registries">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Container Registries"
+  subtitle="The Hubs of Immutable Artifacts"
+  tags={['Containers', 'Storage', 'Distribution', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A CI/CD pipeline compiles source code into a mathematical OCI container image. Before Kubernetes can run that image, it must be uploaded to a secure, highly-available storage system known as a Container Registry.
 
-</ConceptTemplate>
+## 1. Public vs. Private Registries
+While **Docker Hub** is the world's default public registry for open-source images, enterprises mathematically mandate private registries to protect proprietary code.
+Major cloud providers offer integrated private registries: **AWS ECR** (Elastic Container Registry), **Google GCR/Artifact Registry**, and **Azure ACR**. When a Kubernetes cluster on AWS needs to scale up, it mathematically requests the image from ECR, ensuring the gigabytes of data never leave the private AWS fiber-optic network.
+
+## 2. Advanced Mathematical Features
+Modern registries are not just dumb storage buckets; they are active security platforms.
+- **Vulnerability Scanning**: When an image is pushed, the registry mathematically decompresses the layers and scans the binaries against known CVE databases, physically blocking the deployment if a critical vulnerability is found.
+- **Image Signing (Notary)**: Registries use cryptographic mathematics to sign images. A Kubernetes cluster can be configured to mathematically reject any image that was not cryptographically signed by an authorized senior engineer, preventing supply-chain attacks.
+

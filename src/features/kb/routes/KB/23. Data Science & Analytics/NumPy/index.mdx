@@ -4,7 +4,14 @@ description: The absolute foundational mathematical library of the Python data s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NumPy (Numerical Python)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NumPy (Numerical Python)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Python is a fantastic language, but it is dynamically typed and mathematically slow. If you write a standard Python `for` loop to multiply 10 million integers, it will take several seconds.
 
@@ -36,4 +43,3 @@ If you multiply a massive 100x100 matrix by a scalar `5`, NumPy mathematically "
 
 Almost every single Data Science library (Pandas, Scikit-Learn, TensorFlow, PyTorch) mathematically builds directly on top of NumPy's underlying C-architecture.
 
-</ConceptTemplate>

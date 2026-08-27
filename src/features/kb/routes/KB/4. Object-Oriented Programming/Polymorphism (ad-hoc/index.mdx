@@ -8,19 +8,19 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 In programming languages and type theory, polymorphism is the provision of a single interface to entities of different types, or the use of a single symbol to represent multiple different types.
 
+
 <Callout icon="tip" title="The Power of Interfaces">
+
+
   If you have an array of `IShape` objects, you can loop through the array and call `.draw()` on every item. The `Circle` object will draw a circle, and the `Square` object will draw a square. The calling code doesn't need to know what specific shape it is dealing with.
+
+
 </Callout>
+
 
 ## Types of Polymorphism
 
-<ComparisonTable 
-  headers={['Type', 'Description']}
-  rows={[
-    ['Subtype (Runtime)', 'Method Overriding. A child class replaces the implementation of a parent class method.'],
-    ['Ad-hoc (Compile-time)', 'Method Overloading. Having three functions named `add()`, but one takes ints, one takes floats, one takes strings.'],
-    ['Parametric', 'Generics. Writing a single `List<T>` class that works for any type T.']
-  ]}
-/>
+
+<ComparisonTable headers={['Type', 'Description']} rows={[ ['Subtype (Runtime)', 'Method Overriding. A child class replaces the implementation of a parent class method.'], ['Ad-hoc (Compile-time)', 'Method Overloading. Having three functions named `add()`, but one takes ints, one takes floats, one takes strings.'], ['Parametric', 'Generics. Writing a single `List<T> ` class that works for any type T.'] ]} />
 
 </TechnologyTemplate>

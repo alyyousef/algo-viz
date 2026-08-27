@@ -1,8 +1,26 @@
+---
+title: Workflow Orchestration
+description: The architectural discipline of mathematically modeling, monitoring, and executing complex, long-running logic sequences across multiple AI Agents and standard APIs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Workflow orchestration">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Workflow Orchestration">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have a pipeline that requires 5 different Agents, 3 API calls, and a human approval step, you cannot just write a giant Python `while` loop. If the script crashes at step 4, you lose all progress. You need Workflow Orchestration.
 
-</ConceptTemplate>
+## 1. Directed Acyclic Graphs (DAGs)
+Tools like Temporal, Apache Airflow, or LangGraph map the entire AI process as a mathematical **Directed Graph**.
+Each Agent or Tool is a Node. The Workflow Orchestrator mathematically guarantees that Node B will not execute until Node A has successfully completed.
+Crucially, the Orchestrator maintains **State**. If the server physically catches on fire while Node C is running, when the server reboots, the Orchestrator mathematically resumes the workflow exactly at Node C, preventing you from having to re-run and pay for the expensive LLM calls from Nodes A and B.
+
+## 2. Human-in-the-Loop (HITL)
+Orchestration frameworks natively support mathematical "Pause" states.
+An Agent might draft a legal contract (Node 1). The Orchestrator mathematically pauses execution and sends a Slack message to a human. The workflow sleeps indefinitely. When the human clicks "Approve", the Orchestrator wakes up and passes the State to Node 2 (Email the contract). This allows fully deterministic, safe orchestration of non-deterministic AI models in enterprise environments.
+

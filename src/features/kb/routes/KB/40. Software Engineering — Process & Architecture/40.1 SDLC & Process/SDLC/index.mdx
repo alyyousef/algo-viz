@@ -1,8 +1,34 @@
+---
+title: SDLC (Software Development Life Cycle)
+description: The overarching mathematical framework and structured methodology used by organizations to plan, create, test, deploy, and maintain high-quality software systems, encompassing all phases from inception to retirement.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SDLC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="SDLC (Software Development Life Cycle)"
+  subtitle="The Macro Engineering Framework"
+  tags={['Process', 'SDLC', 'Architecture', 'Management']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing code is just one small phase of software engineering. The SDLC provides the complete mathematical blueprint for managing a software asset from the moment it is an idea until the day it is deleted.
 
-</ConceptTemplate>
+## 1. The Core Mathematical Phases
+Regardless of whether an organization uses Waterfall, Agile, or DevOps, the SDLC mathematically requires the following phases:
+1. **Planning & Requirements**: Calculating the mathematical ROI, gathering stakeholder needs, and defining the scope.
+2. **Design**: Creating the architectural blueprints (UML, Database Schemas, API contracts).
+3. **Implementation (Coding)**: Translating the mathematical design into physical source code.
+4. **Testing**: Mathematically proving the code works (Unit, Integration, Security).
+5. **Deployment**: Orchestrating the release to the physical production servers.
+6. **Maintenance**: Monitoring, patching, and paying down technical debt.
+
+## 2. The Evolution of the Cycle
+In the 1990s, the SDLC was linear (Waterfall). Phase 3 could not begin until Phase 2 was mathematically 100% complete.
+In the modern era, the SDLC is an infinite, rapid loop (DevOps/CI-CD). A developer can traverse the entire SDLC—from gathering a small requirement, to coding it, testing it, and deploying it to 10 million users—in a single afternoon, mathematically maximizing business agility.
+

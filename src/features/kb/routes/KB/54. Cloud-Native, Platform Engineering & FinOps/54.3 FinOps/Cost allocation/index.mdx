@@ -4,16 +4,28 @@ description: The process of assigning incurred cloud costs to the specific busin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cost Allocation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cost Allocation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Once a strict Tagging Strategy is implemented, the finance team can perform **Cost Allocation**.
 
-Cost allocation is the mathematical process of dividing the massive aggregate AWS invoice and biologically charging the individual departments (marketing, engineering, sales) against their internal budgets. 
+Cost allocation is the mathematical process of dividing the massive aggregate AWS invoice and biologically charging the individual departments (marketing, engineering, sales) against their internal budgets.
+
 
 <Callout icon="info" title="The Shared Resources Problem">
-  Cost allocation is mathematically easy for isolated EC2 servers (just look at the tag). 
-  
+
+
+  Cost allocation is mathematically easy for isolated EC2 servers (just look at the tag).
+
   However, it becomes incredibly difficult for **Shared Resources** like a massive Kubernetes cluster. If 5 different teams run microservices on the same 10 EC2 nodes, who pays the bill? FinOps tools must mathematically hook into the K8s API, measure the exact CPU and RAM usage of each team's specific containers, and allocate the fractional cost of the underlying EC2 nodes accordingly.
+
+
 </Callout>
 
-</ConceptTemplate>
+

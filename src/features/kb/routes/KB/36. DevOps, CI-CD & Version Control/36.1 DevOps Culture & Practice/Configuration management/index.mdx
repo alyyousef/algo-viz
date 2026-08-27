@@ -1,8 +1,30 @@
+---
+title: Configuration Management
+description: The systematic engineering practice of maintaining computer systems, servers, and software in a desired, mathematically consistent state using infrastructure-as-code tools like Ansible, Chef, or Puppet.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Configuration management">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Configuration Management"
+  subtitle="Enforcing System State"
+  tags={['DevOps', 'Infrastructure', 'Automation', 'State']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an administrator manually SSHes into a server to edit an Nginx configuration file, that server becomes a "Snowflake"—a unique, mathematically untrackable entity. If that server dies, it is impossible to perfectly recreate it. Configuration Management solves this.
 
-</ConceptTemplate>
+## 1. Declarative Desired State
+Configuration Management tools (like Ansible, Puppet, and Chef) use code to define a **Desired State**.
+You write a mathematical declaration in YAML or Ruby: *"The Nginx package MUST be installed. The file `/etc/nginx.conf` MUST exactly match this template. The Nginx service MUST be running."*
+You store this code in Git. When the tool runs against 100 servers, it mathematically evaluates each server's current state. If a server is missing Nginx, the tool installs it. If the server already has Nginx running, the tool mathematically does nothing (Idempotency).
+
+## 2. Eliminating Configuration Drift
+Over time, servers experience **Configuration Drift** (e.g., a developer logs in and temporarily disables a firewall rule but forgets to turn it back on).
+Configuration Management tools run continuously in the background (or on a cron schedule). If they detect that the actual state of the server has mathematically drifted away from the Git repository's defined state, they aggressively revert the unauthorized changes, ensuring 100% mathematical compliance across the entire fleet.
+

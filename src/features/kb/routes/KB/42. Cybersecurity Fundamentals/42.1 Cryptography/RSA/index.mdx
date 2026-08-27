@@ -5,7 +5,14 @@ description: The original and most widely deployed Public-Key cryptographic syst
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="RSA (Rivest-Shamir-Adleman)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RSA (Rivest-Shamir-Adleman)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Invented in 1977, **RSA** was the first practical implementation of Asymmetric (Public-Key) Cryptography. For over 40 years, it has been the absolute backbone of internet security, responsible for securing SSL/TLS certificates, PGP emails, and secure SSH connections.
 
@@ -14,9 +21,9 @@ Invented in 1977, **RSA** was the first practical implementation of Asymmetric (
 RSA is based on a mathematically elegant Trapdoor Function.
 It is extremely easy for a computer to take two massive prime numbers and multiply them together. It is practically impossible for a computer to take the massive resulting number and figure out which two prime numbers created it.
 
-1. **Key Generation**: 
+1. **Key Generation**:
    - Pick two randomly generated, gigantic prime numbers (e.g., $p$ and $q$, each hundreds of digits long).
-   - Multiply them together to create the Modulus ($n = p \times q$). 
+   - Multiply them together to create the Modulus ($n = p \times q$).
    - Through Euler's Totient Function, calculate an exponent ($e$) for the Public Key, and an exponent ($d$) for the Private Key.
 2. **The Public Key**: The numbers $(n, e)$. Handed to the world.
 3. **The Private Key**: The numbers $(n, d)$. Kept strictly secret.
@@ -32,8 +39,13 @@ RSA relies entirely on modular exponentiation.
 
 The math is perfectly symmetrical. You can also use it in reverse for **Digital Signatures**: encrypt a document hash with the Private Key ($d$), and anyone in the world can verify it using the Public Key ($e$).
 
+
 <Callout icon="warning" title="The Death of RSA">
+
+
   While foundational, RSA is slowly being phased out of modern systems in favor of **ECC (Elliptic Curve Cryptography)**. Because computers are getting faster at factoring primes, RSA keys have had to grow to massive, bloated sizes (2048-bit or 4096-bit) to remain secure, which slows down TLS handshakes. Furthermore, a future Quantum Computer running Shor's Algorithm will effortlessly crack RSA's prime factorization in hours.
+
+
 </Callout>
 
-</ConceptTemplate>
+

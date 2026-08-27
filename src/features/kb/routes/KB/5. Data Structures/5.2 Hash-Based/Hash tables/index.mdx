@@ -4,11 +4,18 @@ description: The ultimate key-value data structure, providing magical O(1) avera
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hash Tables (Hash Maps / Dictionaries)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hash Tables (Hash Maps / Dictionaries)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you want to find an employee's salary using their ID number, an Array forces you to check every single element ($O(N)$). If the data is sorted, Binary Search gets it down to $O(\log N)$. 
+If you want to find an employee's salary using their ID number, an Array forces you to check every single element ($O(N)$). If the data is sorted, Binary Search gets it down to $O(\log N)$.
 
-A **Hash Table** allows you to find the exact salary in **$O(1)$ constant time**, regardless of whether the company has 10 employees or 10 million. 
+A **Hash Table** allows you to find the exact salary in **$O(1)$ constant time**, regardless of whether the company has 10 employees or 10 million.
 
 ## 1. How It Works (The Hash Function)
 
@@ -26,11 +33,16 @@ When you want to look up Alice later, you don't search the array. You just hash 
 What happens if the hash function calculates Index 4 for "Alice", but later calculates Index 4 for "Bob" as well? This is a **Collision**.
 
 You cannot put two items in the same array slot. Hash Tables handle collisions using two main strategies:
-- **Chaining**: Index 4 stops holding a raw value, and instead holds a Linked List. Both Alice and Bob are appended to the linked list at Index 4. 
+- **Chaining**: Index 4 stops holding a raw value, and instead holds a Linked List. Both Alice and Bob are appended to the linked list at Index 4.
 - **Open Addressing**: If Index 4 is taken, the algorithm simply probes forward (checking Index 5, then Index 6) until it finds an empty slot for Bob.
 
+
 <Callout icon="error" title="Worst-Case Complexity">
-  While Hash Tables are famous for $O(1)$ lookups, if you use a terrible hash function that puts *every single item* into the exact same array slot (a 100% collision rate), the Hash Table degrades into a single massive Linked List, resulting in a catastrophic $O(N)$ lookup time. 
+
+
+  While Hash Tables are famous for $O(1)$ lookups, if you use a terrible hash function that puts *every single item* into the exact same array slot (a 100% collision rate), the Hash Table degrades into a single massive Linked List, resulting in a catastrophic $O(N)$ lookup time.
+
+
 </Callout>
 
-</ConceptTemplate>
+

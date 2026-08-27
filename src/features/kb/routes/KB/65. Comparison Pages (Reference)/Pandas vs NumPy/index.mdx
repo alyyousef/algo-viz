@@ -1,8 +1,32 @@
+---
+title: Pandas vs NumPy
+description: "A comparison of Python's two foundational Data Science libraries, contrasting NumPy's raw mathematical N-dimensional arrays with Pandas' high-level, human-readable DataFrame architecture."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pandas vs NumPy">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Pandas vs NumPy"
+  subtitle="Raw Math vs Data Manipulation"
+  tags={['Comparison', 'Python', 'Data Science', 'Data Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While both are built on C extensions for maximum speed, they serve mathematically distinct purposes in a Data Scientist's workflow. (In fact, Pandas is physically built *on top* of NumPy).
 
-</ConceptTemplate>
+## 1. NumPy (Numerical Python)
+- **Data Structure**: The **ndarray**. A hyper-efficient, multidimensional array (matrix) that mathematically holds exactly *one* data type (e.g., all 64-bit floats).
+- **Use Case**: Raw Mathematics. Matrix multiplication, linear algebra, Fourier transforms, and preparing tensors for Neural Networks.
+- **Interface**: Extremely low-level. You index by integer (e.g., `matrix[5, 2]`).
+
+## 2. Pandas
+- **Data Structure**: The **DataFrame**. A 2D table designed to mimic a SQL database or an Excel spreadsheet.
+- **Use Case**: Data Cleaning and Exploration (ETL).
+- **Superpower**: Heterogeneous Data. Column A can be Integers, Column B can be Strings, and Column C can be Dates. Pandas provides massive, SQL-like mathematical operations (GROUP BY, JOIN, Pivot Tables, filling missing `NaN` values) that would take hundreds of lines of code to implement manually in NumPy.
+- **The Workflow**: A Data Scientist uses Pandas to load the messy CSV, clean the strings, handle missing dates, and filter the rows. Once the data is perfect, they extract the raw values into a NumPy array and feed it into a Machine Learning model.
+

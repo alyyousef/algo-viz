@@ -1,8 +1,32 @@
+---
+title: Shellsort
+description: "A highly optimized variation of Insertion Sort that mathematically allows the exchange of items that are far apart, drastically reducing the time required to move small elements to the beginning of the array."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Shell sort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Shellsort"
+  subtitle="Bridging the Gap"
+  tags={['Algorithms', 'Sorting', 'Performance', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Donald Shell in 1959, Shellsort mathematically solves the primary flaw of Insertion Sort. In standard Insertion Sort, if the smallest number is at the very end of the array, it must be shifted one single space at a time, resulting in O(N²) operations.
 
-</ConceptTemplate>
+## 1. The Mathematical Gap
+Shellsort introduces the concept of a **Gap**.
+Instead of comparing adjacent elements (gap = 1), it might start with a gap of 4.
+It compares index 0 with index 4, and swaps them if necessary. Then index 1 with index 5.
+This allows a small number at the end of the array to mathematically "leap" massive distances towards the front of the array in a single swap.
+
+## 2. Gap Sequences
+After the array is "4-sorted", the algorithm mathematically shrinks the gap (e.g., to 2), and performs another pass.
+Finally, it sets the gap to 1 (which is mathematically identical to standard Insertion Sort). However, because the massive leaps have already moved the elements roughly into place, the final Insertion Sort executes at blistering speed.
+The Time Complexity heavily depends on the mathematical "Gap Sequence" chosen (e.g., Knuth's sequence, Sedgewick's sequence), but it generally averages around **O(N^1.5)**.
+

@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Azure Pipelines
+description: A cloud-hosted CI/CD orchestration service by Microsoft Azure, capable of building, testing, and deploying any language to any cloud or on-premises environment using mathematically robust YAML configurations.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Azure Pipelines">
+<TechnologyTemplate
+  title="Azure Pipelines"
+  subtitle="Microsoft's Enterprise CI/CD Engine"
+  tags={['DevOps', 'Azure', 'CI/CD', 'Platform']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Part of the Azure DevOps suite, Azure Pipelines is a massive, enterprise-grade orchestration engine. Unlike AWS CodePipeline (which is deeply tied to AWS), Azure Pipelines is mathematically agnostic—it is heavily used to deploy Linux containers to AWS and Google Cloud.
 
-</ConceptTemplate>
+## 1. Cross-Platform Agent Architecture
+When a pipeline runs, it requires a physical machine (an Agent) to compile the code.
+Azure Pipelines provides a massive pool of Microsoft-hosted mathematical agents covering Windows, macOS, and Linux. This is highly unique; if you are building an iOS app, Azure Pipelines automatically provisions a pristine macOS server in the cloud, compiles your Swift code, signs it, and mathematically destroys the server when finished, requiring zero Apple hardware management from the DevOps team.
+
+## 2. Advanced Multi-Stage YAML
+Enterprise deployments are not simple scripts; they are complex mathematical graphs.
+Azure Pipelines uses `azure-pipelines.yml` to define multi-stage deployments. It natively supports mathematical **Manual Approval Gates**. For example, code can automatically build, test, and deploy to Staging. The pipeline then mathematically halts, sending an email to the QA Director. The pipeline will physically wait (for up to 30 days) for the Director to click "Approve" in the Azure dashboard before continuing the deployment graph to the Production environment.
+
+</TechnologyTemplate>

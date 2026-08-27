@@ -4,10 +4,16 @@ description: The mathematical process of determining the fair value of an option
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Options Pricing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Options Pricing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Black-Scholes is famous, it makes strict mathematical assumptions (like assuming volatility is constant, which is biologically false).
 
 Modern **Options Pricing** involves massive computational power. Quants write C++ programs to mathematically solve complex Partial Differential Equations (PDEs) or use Binomial Tree algorithms to calculate the price of "Exotic Options" (contracts with insane biological rules, like "The payoff depends on the average price over the last 30 days, but only if the price never dropped below $50").
 
-</ConceptTemplate>

@@ -1,8 +1,32 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Fluentd
+description: A highly extensible, open-source data collector mathematically designed to unify logging infrastructure, transforming wildly different log formats into a standardized JSON structure for centralized analysis.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Fluentd">
+<TechnologyTemplate
+  title="Fluentd"
+  subtitle="The Unified Logging Hub"
+  tags={['Observability', 'Logging', 'Data Pipeline', 'CNCF']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Fluentd (a CNCF graduated project), logging was a mathematical nightmare. Nginx logs are plain text. MySQL logs are multi-line. Custom app logs are CSV. A central database cannot mathematically query this chaos.
 
-</ConceptTemplate>
+## 1. The Unified JSON Layer
+Fluentd operates on a strict mathematical principle: **Everything must become JSON.**
+You deploy Fluentd as a central aggregator. It ingests the raw Nginx text logs and uses Regular Expressions (Regex) to mathematically parse them into structured JSON.
+```json
+{
+  "time": "1422490582",
+  "remote_addr": "192.168.0.1",
+  "method": "GET",
+  "path": "/"
+}
+```
+Once mathematically converted into JSON, the data can be easily shipped to any storage backend (MongoDB, Elasticsearch, Hadoop) and queried instantly.
+
+## 2. The Plugin Ecosystem
+Fluentd is written in C and Ruby, and its power lies in its mathematical extensibility.
+It features over 1,000 community-built plugins. It can mathematically ingest data from syslog, TCP, or HTTP. It can filter, anonymize, and buffer the data, and then route it to over 50 different destinations, acting as the ultimate mathematical router for telemetry data in complex enterprise environments.
+
+</TechnologyTemplate>

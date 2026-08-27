@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="gRPC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="gRPC">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While REST and GraphQL are the standards for external APIs (frontend-to-backend), **gRPC** has become the industry standard for internal, backend-to-backend microservice communication.
 
@@ -15,7 +22,7 @@ gRPC is a modern evolution of the classic **RPC (Remote Procedure Call)** model,
 ## 1. Protocol Buffers (Protobuf)
 REST uses JSON. JSON is a text-based format that is human-readable but slow to parse and large over the wire.
 
-gRPC uses **Protocol Buffers (Protobuf)**, a strictly typed, binary serialization format. 
+gRPC uses **Protocol Buffers (Protobuf)**, a strictly typed, binary serialization format.
 1. You define your API schema and data types in a `.proto` text file.
 2. The Protobuf compiler automatically generates the client and server code in 10+ languages (Java, Go, Python, Node.js).
 3. The data is serialized into tiny, lightning-fast binary payloads before being sent over the network.
@@ -28,18 +35,16 @@ gRPC is built strictly on top of HTTP/2. This provides massive performance benef
 
 ## 3. gRPC vs REST
 
-<ComparisonTable 
-  headers={['Feature', 'REST (JSON)', 'gRPC (Protobuf)']} 
-  rows={[
-    ['Payload Format', 'Text (JSON) - Slow to parse, large size.', 'Binary - Extremely fast serialization, compact size.'],
-    ['Contract / Schema', 'Optional (OpenAPI/Swagger).', 'Strictly enforced by `.proto` files. Generates SDKs automatically.'],
-    ['Transport Protocol', 'Usually HTTP/1.1.', 'Strictly HTTP/2.'],
-    ['Best Use Case', 'Public-facing APIs, Browser clients.', 'Internal microservice-to-microservice communication.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Feature', 'REST (JSON)', 'gRPC (Protobuf)']} rows={[ ['Payload Format', 'Text (JSON) - Slow to parse, large size.', 'Binary - Extremely fast serialization, compact size.'], ['Contract / Schema', 'Optional (OpenAPI/Swagger).', 'Strictly enforced by `.proto` files. Generates SDKs automatically.'], ['Transport Protocol', 'Usually HTTP/1.1.', 'Strictly HTTP/2.'], ['Best Use Case', 'Public-facing APIs, Browser clients.', 'Internal microservice-to-microservice communication.'] ]} />
+
 
 <Callout icon="info" title="Browser Support">
+
+
 Standard gRPC uses HTTP/2 features that web browsers do not fully expose to JavaScript. Therefore, you cannot easily use gRPC directly from a React frontend without setting up a translation proxy (like **gRPC-Web** or Envoy).
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,25 +4,32 @@ description: The analysis of data regarding malicious actors to understand their
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cyber Threat Intelligence (CTI)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cyber Threat Intelligence (CTI)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Defending a network blindly is mathematically impossible; there are infinite ways an attacker could breach a system. **Cyber Threat Intelligence (CTI)** focuses on gathering information about *who* is attacking, *why* they are attacking, and exactly *how* they operate.
 
 By understanding the enemy, an organization can proactively configure their firewalls and Endpoint Detection and Response (EDR) systems to block specific attack vectors before the hackers even launch them.
 
+
 <Callout icon="success" title="Indicators of Compromise (IoCs)">
+
+
   The most immediate output of CTI is IoCs. These are mathematically concrete artifacts like known malicious IP addresses, MD5 hashes of malware files, or specific domain names. CTI feeds push these IoCs to firewalls to automatically block traffic.
+
+
 </Callout>
+
 
 ## Levels of Intelligence
 
-<ComparisonTable 
-  headers={['Level', 'Audience', 'Description']}
-  rows={[
-    ['Tactical', 'SOC Analysts & Firewalls', 'Highly technical, short-lived data. Includes IP addresses, file hashes, and malicious URLs. Used for immediate, automated blocking.'],
-    ['Operational', 'Incident Responders', 'Information on specific attacker methodologies and campaigns. Focuses on the "TTPs" (Tactics, Techniques, and Procedures).'],
-    ['Strategic', 'C-Suite & Board', 'High-level analysis of broad trends, financial impacts, and geopolitical motivations (e.g., "State-sponsored actors are targeting healthcare supply chains").']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Level', 'Audience', 'Description']} rows={[ ['Tactical', 'SOC Analysts & Firewalls', 'Highly technical, short-lived data. Includes IP addresses, file hashes, and malicious URLs. Used for immediate, automated blocking.'], ['Operational', 'Incident Responders', 'Information on specific attacker methodologies and campaigns. Focuses on the "TTPs" (Tactics, Techniques, and Procedures).'], ['Strategic', 'C-Suite & Board', 'High-level analysis of broad trends, financial impacts, and geopolitical motivations (e.g., "State-sponsored actors are targeting healthcare supply chains").'] ]} />
+
+

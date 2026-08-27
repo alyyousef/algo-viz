@@ -4,16 +4,28 @@ description: A term commonly used in the JavaScript context for dead-code elimin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tree Shaking">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tree Shaking">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Imagine you import the massive `lodash` utility library, which contains 300 different mathematical functions. But in your code, you only actually use one function: `lodash.debounce()`.
 
 If your bundler includes the entire 300-function library in your final `bundle.js`, you are wasting massive amounts of bandwidth.
 
+
 <Callout icon="info" title="Dead-Code Elimination">
-  **Tree Shaking** is a mathematical static analysis technique. 
-  
+
+
+  **Tree Shaking** is a mathematical static analysis technique.
+
   Modern bundlers (like Rollup and Vite) treat your codebase like a physical tree. They "shake" the tree. Because you used ES6 `import { debounce } from 'lodash'`, the bundler mathematically maps the exact execution path. It realizes the other 299 functions are biologically unreachable (dead code) and physically deletes them from the final compiled bundle.
+
+
 </Callout>
 
-</ConceptTemplate>
+

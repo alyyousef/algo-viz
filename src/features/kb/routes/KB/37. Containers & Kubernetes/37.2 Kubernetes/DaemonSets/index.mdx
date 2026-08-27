@@ -1,8 +1,31 @@
+---
+title: DaemonSets
+description: A specialized Kubernetes workload controller mathematically engineered to ensure that exactly one copy of a specific Pod runs on every single Worker Node in the cluster.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DaemonSets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="DaemonSets"
+  subtitle="Node-Level Guaranteed Execution"
+  tags={['Kubernetes', 'Workloads', 'Architecture', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A `Deployment` schedules Pods randomly; if you ask for 3 Pods on a 10-Node cluster, 7 Nodes will have zero Pods, and 1 Node might have all 3. A `DaemonSet` changes this mathematical logic entirely.
 
-</ConceptTemplate>
+## 1. The Mathematical Guarantee
+A DaemonSet mathematically guarantees that **one (and only one) Pod** will run on every single Node in the cluster.
+If your cluster has 1,000 Worker Nodes, the DaemonSet controller will instantly schedule exactly 1,000 Pods. If the Auto-Scaler adds 50 new physical servers to the cluster to handle high traffic, the DaemonSet controller mathematically detects the new Nodes and automatically deploys the Pod to them before they are allowed to accept normal workloads.
+
+## 2. Infrastructure Use Cases
+DaemonSets are not used for web applications. They are strictly used for infrastructure-level, background mathematical processes that require access to the physical host:
+- **Log Aggregation**: Running a Fluentd or Promtail agent on every Node to scrape the raw text logs from all other containers and forward them to Elasticsearch.
+- **Monitoring**: Running a Prometheus Node Exporter on every Node to gather physical CPU/RAM metrics.
+- **Networking**: The CNI (Container Network Interface) plugins (like Calico or Cilium) run as DaemonSets to manage the iptables and eBPF routing rules directly on the host kernel.
+

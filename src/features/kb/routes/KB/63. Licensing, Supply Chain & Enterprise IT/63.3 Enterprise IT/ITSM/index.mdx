@@ -4,10 +4,16 @@ description: Information Technology Service Management are the activities that a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ITSM">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ITSM">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**ITSM** is the biological implementation of ITIL. 
+**ITSM** is the biological implementation of ITIL.
 
 If an employee's biological laptop breaks, they mathematically submit an ITSM "Incident Ticket". If the company needs to buy 50 new laptops, they submit an ITSM "Service Request". ITSM is the mathematical software layer that tracks the SLAs (Service Level Agreements), ensuring that the biological Help Desk mathematically resolves the ticket within 4 hours.
 
-</ConceptTemplate>

@@ -1,0 +1,25 @@
+---
+title: Google Cloud Run
+description: A groundbreaking, fully managed serverless platform that mathematically orchestrates and auto-scales stateless Docker containers, charging strictly by the millisecond of execution.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Run"
+  subtitle="Serverless Docker Containers"
+  tags={['GCP', 'Serverless', 'Containers', 'Compute']}
+>
+
+Cloud Functions are great for tiny scripts, but terrible for complex APIs. Kubernetes (GKE) is great for complex APIs, but requires massive administrative overhead. Cloud Run is the mathematical perfection of both: You give it a Docker container, and Google scales it like a serverless function.
+
+## 1. The Knative Abstraction
+Under the hood, Cloud Run is powered by **Knative**, an open-source Kubernetes extension.
+However, you never see the Kubernetes cluster. You simply execute `gcloud run deploy --image my-api`.
+Google provisions the container, binds an SSL certificate, and provides a public HTTPS URL. The true mathematical power is concurrency. Unlike AWS Lambda (where 1 request = 1 container), a single Cloud Run container can mathematically handle up to 1,000 concurrent HTTP requests simultaneously. This drastically reduces the number of cold starts and makes Cloud Run significantly cheaper for high-traffic web APIs.
+
+## 2. Scale to Zero
+Cloud Run is purely serverless.
+If your API receives zero HTTP requests at 3:00 AM, Cloud Run mathematically terminates all containers. Your billing drops to exactly $0.00.
+The millisecond a user hits the URL, Cloud Run intercepts the packet, instantly boots the Docker container, processes the request, and returns the response. For developers who want the flexibility of Docker but refuse to pay for idle EC2/Compute Engine servers, Cloud Run is widely considered the most advanced serverless architecture in the cloud industry.
+
+</TechnologyTemplate>

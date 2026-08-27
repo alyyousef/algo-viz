@@ -4,20 +4,27 @@ description: The mathematical architecture that allows Node.js to handle tens of
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Event Loop">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Event Loop">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Historically, backend languages like Java and PHP used a **Multi-Threaded Architecture**. 
-When a user connects to a Java server, the OS allocates an entire CPU Thread (and ~2MB of RAM) exclusively to that user. If the user's request asks the database for data, the thread sits completely blocked (sleeping) for 50 milliseconds while waiting for the hard drive. 
+Historically, backend languages like Java and PHP used a **Multi-Threaded Architecture**.
+When a user connects to a Java server, the OS allocates an entire CPU Thread (and ~2MB of RAM) exclusively to that user. If the user's request asks the database for data, the thread sits completely blocked (sleeping) for 50 milliseconds while waiting for the hard drive.
 If 10,000 users connect simultaneously, the server needs 10,000 threads and 20GB of RAM just to sit around waiting for database responses. The server crashes.
 
 ## The Node.js Revolution
 Node.js fundamentally changed backend engineering by utilizing a **Single-Threaded, Non-Blocking, Asynchronous I/O** architecture.
 
-Node.js only has exactly ONE main thread. 
+Node.js only has exactly ONE main thread.
 When User A requests data from the database, Node.js does not wait. It instantly offloads that network/database task to the Operating System (via a C++ library called **libuv**), registers a Javascript callback function, and immediately moves on to serve User B on the exact same thread.
 
 ## The Architecture of the Loop
-When the OS finishes the database query, it places the callback function into the **Task Queue**. 
+When the OS finishes the database query, it places the callback function into the **Task Queue**.
 
 The **Event Loop** is a continuously spinning C++ while-loop. Its only job is to check: "Is the main Javascript thread empty? If yes, take the next callback from the Task Queue and execute it."
 
@@ -33,4 +40,3 @@ The Event Loop is mathematically divided into strict phases that execute in orde
 ### The Fatal Flaw: CPU Bound Tasks
 Because there is only one thread, if you execute heavy Javascript mathematics (like parsing a massive 50MB JSON file or calculating a prime number), you will block the Event Loop. While that math is calculating, the server is mathematically incapable of answering any incoming HTTP requests, effectively freezing the entire application for all users. (This is solved by offloading CPU work to Worker Threads).
 
-</ConceptTemplate>

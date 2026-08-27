@@ -4,14 +4,26 @@ description: A permissive free software license originating at the Massachusetts
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The MIT License">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The MIT License">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you write Open Source code, you must legally attach a license. The **MIT License** is the absolute biological gold standard of modern software.
 
+
 <Callout icon="success" title="Do Whatever You Want">
-  The MIT License is terrifyingly simple and **Permissive**. 
-  
+
+
+  The MIT License is terrifyingly simple and **Permissive**.
+
   It mathematically translates to: *"You can do absolutely anything you want with this code. You can modify it, you can sell it, you can use it in proprietary software. The only biological rule is that you must include my original copyright notice, and you mathematically cannot sue me if the code breaks."* Almost the entire JavaScript NPM ecosystem runs on the MIT License.
+
+
 </Callout>
 
-</ConceptTemplate>
+

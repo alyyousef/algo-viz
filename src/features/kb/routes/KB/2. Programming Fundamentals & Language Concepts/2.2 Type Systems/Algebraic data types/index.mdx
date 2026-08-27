@@ -1,8 +1,28 @@
+---
+title: Algebraic Data Types (ADTs)
+description: A deeply mathematical type system feature that allows developers to precisely model complex data using Sum Types and Product Types.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Algebraic data types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Algebraic Data Types (ADTs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Algebraic Data Types (ADTs) are a cornerstone of functional programming languages (Haskell, Rust, OCaml, Swift). They allow you to mathematically model data exactly as it exists in reality, making "invalid states unrepresentable."
 
-</ConceptTemplate>
+## 1. Product Types (AND)
+A Product Type is the mathematical combination of multiple types. If you have a `Struct User { age: Int, active: Bool }`, it is a Product Type.
+Why "Product"? Mathematically, the total number of possible states is the *product* of its fields.
+If `age` has 256 states (an 8-bit int), and `active` has 2 states (true/false), the `User` struct mathematically has 256 * 2 = 512 possible states in memory.
+
+## 2. Sum Types (OR)
+A Sum Type (often implemented as an Enum with associated data) allows a value to be exactly *one* of several distinct types.
+In Rust: `enum Result { Success(String), Error(Int) }`.
+Why "Sum"? The total number of mathematical states is the *sum* of its variants.
+If a function returns a `Result`, it is mathematically impossible for it to return both a Success string AND an Error integer simultaneously. It is one OR the other. This completely eliminates the need for Null pointers, forcing the compiler to mathematically verify that you have handled both the Success and Error states explicitly.
+

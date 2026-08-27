@@ -4,14 +4,21 @@ description: The revolutionary subfield of Deep Learning focused on mathematical
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Generative AI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Generative AI">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Traditional AI is **Discriminative**. You show it a picture of a dog, and it mathematically discriminates (draws a boundary) to output the label "Dog". 
+Traditional AI is **Discriminative**. You show it a picture of a dog, and it mathematically discriminates (draws a boundary) to output the label "Dog".
 
 **Generative AI** is fundamentally different. It does not output labels; it mathematically models the entire probability distribution of the dataset to *create* an entirely new, synthetic picture of a dog that has never existed in the real world.
 
 ## 1. Text Generation (LLMs)
-Large Language Models (like ChatGPT) are Generative AI. 
+Large Language Models (like ChatGPT) are Generative AI.
 They do not possess a database of answers. They are mathematically trained on the entire internet to simply play "Autocomplete". Given the prompt *"The capital of France is"*, the LLM mathematically calculates the probability of the next word. It determines that "Paris" has a 99% probability, and generates it. By predicting one word at a time, it can generate flawless poetry and complex software code.
 
 ## 2. Image Generation (Diffusion Models)
@@ -26,4 +33,3 @@ Diffusion is a brilliant mathematical concept derived from thermodynamics:
 ## 3. The Impact and Hallucinations
 Because Generative AI is mathematically based on probability, not facts, it is fundamentally prone to **Hallucination**. If you ask it a legal question, it will generate a highly plausible, beautifully written legal citation that is completely fabricated, because those words had a high mathematical probability of being placed next to each other in that context. Solving hallucination (via RAG and grounding) is the current frontier of Generative AI.
 
-</ConceptTemplate>

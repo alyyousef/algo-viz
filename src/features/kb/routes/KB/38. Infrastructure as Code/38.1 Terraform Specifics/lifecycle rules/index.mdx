@@ -1,8 +1,35 @@
+---
+title: Lifecycle Rules
+description: A specialized configuration block within Terraform resources that allows engineers to mathematically override the default creation, update, and destruction behaviors of the Terraform engine.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="lifecycle rules">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Lifecycle Rules"
+  subtitle="Overriding the Engine"
+  tags={['Terraform', 'Configuration', 'State Management', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+By default, Terraform's mathematical algorithm for updating infrastructure is: **Destroy First, Then Recreate**. If you change the operating system image of an EC2 server, Terraform will delete the live server, and then build the new one. In production, this causes mathematical downtime.
 
-</ConceptTemplate>
+## 1. create_before_destroy
+You can override this by injecting a `lifecycle` block into the resource.
+```hcl
+lifecycle {
+  create_before_destroy = true
+}
+```
+When Terraform detects a destructive change, it mathematically reverses its algorithm. It provisions the brand new server *first*. Once the new server is confirmed healthy, it mathematically re-routes the load balancer, and *then* deletes the old server. This achieves mathematically zero-downtime infrastructure replacements.
+
+## 2. prevent_destroy and ignore_changes
+Two other critical mathematical overrides exist:
+- `prevent_destroy = true`: If a junior engineer accidentally removes the Production Database resource from the code, Terraform will attempt to delete it. This lifecycle rule mathematically causes the `terraform plan` command to throw a fatal error, physically preventing the deletion.
+- `ignore_changes = [tags]`: If an external system (like a billing script) dynamically updates the tags on a resource, Terraform will detect a mathematical divergence and try to revert the tags. This rule tells Terraform to mathematically ignore specific fields during the diff calculation.
+

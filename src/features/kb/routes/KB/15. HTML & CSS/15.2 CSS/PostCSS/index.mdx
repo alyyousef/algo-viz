@@ -4,9 +4,16 @@ description: A powerful Javascript-based tool that mathematically transforms CSS
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PostCSS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PostCSS">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Unlike Sass or Less, **PostCSS is not a preprocessor or a language.** You do not write "PostCSS syntax." 
+Unlike Sass or Less, **PostCSS is not a preprocessor or a language.** You do not write "PostCSS syntax."
 Instead, PostCSS is a Javascript tool that parses standard CSS into an Abstract Syntax Tree (AST), allows plugins to mathematically modify the AST, and then strings it back into CSS.
 
 Because of this, PostCSS is often referred to as the **"Babel of CSS"**.
@@ -16,7 +23,7 @@ Because of this, PostCSS is often referred to as the **"Babel of CSS"**.
 The true power of PostCSS comes entirely from its massive plugin ecosystem.
 
 ### Autoprefixer
-This is the most famous and widely used PostCSS plugin in the world. 
+This is the most famous and widely used PostCSS plugin in the world.
 Historically, if a developer wanted to use a cutting-edge CSS feature (like Flexbox or Grid), they had to manually write "Vendor Prefixes" to support older browsers (e.g., `-webkit-`, `-moz-`).
 
 Autoprefixer completely automates this. You write pure, standard, futuristic CSS. Autoprefixer mathematically analyzes your code, checks the `caniuse.com` database, and automatically injects exactly the right vendor prefixes required for your specific browser target list.
@@ -36,4 +43,3 @@ Autoprefixer completely automates this. You write pure, standard, futuristic CSS
 ### Tailwind CSS
 Tailwind CSS itself is actually just a massive PostCSS plugin! When you write `@tailwind utilities;`, the Tailwind PostCSS plugin scans all your HTML files, mathematically generates only the utility classes you actually used, and injects them into the final CSS file.
 
-</ConceptTemplate>

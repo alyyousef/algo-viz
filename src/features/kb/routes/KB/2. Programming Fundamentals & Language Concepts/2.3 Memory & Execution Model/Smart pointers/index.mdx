@@ -1,8 +1,25 @@
+---
+title: Smart Pointers
+description: Wrapper objects that act like raw memory pointers but mathematically guarantee deterministic memory cleanup using RAII principles.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Smart pointers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Smart Pointers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In modern C++ and Rust, developers are mathematically discouraged from ever using raw pointers (`*`) and `malloc/new`. Instead, they use Smart Pointers, which are standard Classes that mathematically overload the dereference operator (`->`) but automatically handle memory management.
 
-</ConceptTemplate>
+## 1. Unique Pointers (std::unique_ptr)
+A `unique_ptr` enforces the mathematical concept of strict Ownership.
+It allocates the data on the Heap, but the pointer object itself lives on the Stack. Because it mathematically cannot be copied (the copy constructor is physically deleted), only one owner exists. When the `unique_ptr` goes out of scope, its Destructor is called (RAII), and it automatically calls `delete` on the Heap memory. It provides 100% memory safety with absolutely zero runtime overhead compared to a raw pointer.
+
+## 2. Shared Pointers (std::shared_ptr)
+A `shared_ptr` implements automated Reference Counting.
+When it is created, it allocates the data on the Heap, and it mathematically allocates a tiny Control Block next to it containing a thread-safe atomic counter. You can safely pass copies of the `shared_ptr` across 10 different CPU threads. Each copy increments the atomic counter. As the threads finish and their local pointers go out of scope, the counter decrements. The mathematically absolute last pointer to be destroyed reduces the counter to 0 and automatically frees the Heap memory.
+

@@ -4,7 +4,7 @@ description: A series of small single-board computers developed in the UK to pro
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Raspberry Pi"
   subtitle="The bridge between Embedded and Desktop"
   logoUrl="https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/Raspberry_Pi_Logo.svg/512px-Raspberry_Pi_Logo.svg.png"
@@ -15,13 +15,19 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://www.raspberrypi.org/"
 >
 
-The Raspberry Pi mathematically blurred the line between the Desktop world and the Embedded world. 
+The Raspberry Pi mathematically blurred the line between the Desktop world and the Embedded world.
 
 It is powerful enough to plug into a 4K monitor, run a graphical desktop, and browse the web (because it runs a full Linux OS like Debian). However, it also exposes a 40-pin **GPIO Header** directly on the board.
 
+
 <Callout icon="warning" title="Not Real-Time">
+
+
   Because the Pi runs a standard Linux kernel, it is mathematically **NOT Deterministic**. You can easily write a Python script on the Pi to blink an LED, but if you try to control a high-speed CNC laser cutter, the Linux kernel might mathematically decide to pause your Python script for 10 milliseconds to download a background update, physically ruining the laser cut.
+
+
 </Callout>
+
 
 ## Python First
 

@@ -1,8 +1,31 @@
+---
+title: Specification Pattern
+description: A Domain-Driven Design pattern that mathematically encapsulates a piece of domain knowledge into a single, highly reusable Boolean logic object, determining whether another object satisfies a specific criteria.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Specification pattern">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Specification Pattern"
+  subtitle="Encapsulating Boolean Logic"
+  tags={['Design Patterns', 'DDD', 'Architecture', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a bank requires that a user is "Eligible for a Loan," the rules might be: `creditScore > 700 AND income > 50000 AND (not bankrupt)`.
+If you write this massive `if` statement directly inside the `LoanService`, and then you need the exact same logic in the `MarketingService`, you will mathematically duplicate the rules. If the bank lowers the credit score requirement to 650, you must find and update it in 15 different files.
 
-</ConceptTemplate>
+## 1. The Specification Object
+The Specification pattern extracts this boolean logic into a standalone mathematical Object.
+You create a class called `IsEligibleForLoanSpec` that implements a single method: `isSatisfiedBy(User u)` returning a Boolean.
+
+## 2. Chainable Logic
+Because the rules are now Objects, they can be mathematically chained using Composite Specifications (AND, OR, NOT).
+You can write: `var isEligible = new HighCreditSpec().and(new HighIncomeSpec()).and(new NotBankruptSpec().not());`
+The Business Logic simply executes: `if (isEligible.isSatisfiedBy(user))`. The complex mathematical rules are perfectly centralized, highly testable, and instantly reusable across the entire architecture.
+

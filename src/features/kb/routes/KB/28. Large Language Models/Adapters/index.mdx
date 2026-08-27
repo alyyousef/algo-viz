@@ -4,15 +4,28 @@ description: Small modular neural network blocks inserted into pre-trained LLMs 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Adapters">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Adapters">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Adapters are the foundational concept behind Parameter-Efficient Fine-Tuning (PEFT). Instead of mathematically updating the billions of weights in a massive foundation model to teach it a new task, you freeze the base model entirely. 
+Adapters are the foundational concept behind Parameter-Efficient Fine-Tuning (PEFT). Instead of mathematically updating the billions of weights in a massive foundation model to teach it a new task, you freeze the base model entirely.
 
 You then insert tiny, trainable neural network modules—**Adapters**—between the existing layers of the Transformer.
 
+
 <Callout icon="success" title="Modular Intelligence">
+
+
   Because the base model remains frozen, you can train 50 different adapters for 50 different tasks (e.g., Medical Adapter, Legal Adapter, Python Adapter). During inference, you just load the 70B base model into VRAM once, and hot-swap the tiny 50MB adapters in milliseconds depending on the user\'s question.
+
+
 </Callout>
+
 
 ## Standard Adapter Architecture
 
@@ -25,4 +38,3 @@ The original adapter design (proposed by Houlsby et al.) uses a mathematical "bo
 
 This bottleneck forces the adapter to compress and learn only the most essential task-specific knowledge.
 
-</ConceptTemplate>

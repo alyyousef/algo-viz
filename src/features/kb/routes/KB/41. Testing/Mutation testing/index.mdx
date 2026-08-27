@@ -1,8 +1,35 @@
+---
+title: Mutation Testing
+description: "The ultimate mathematical validation of a test suite, where an automated tool intentionally injects bugs (mutations) into the source code to verify that the unit tests mathematically fail and catch the sabotage."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mutation testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Mutation Testing"
+  subtitle="Testing the Tests"
+  tags={['Testing', 'Advanced', 'Quality Assurance', 'Process']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+"Code Coverage" is mathematically a lie. A developer can write a Unit Test that executes every line of a function, achieving 100% Code Coverage, but forget to write a single `assert()` statement. The test is useless.
 
-</ConceptTemplate>
+## 1. Injecting Mathematical Mutants
+Mutation Testing solves this by mathematically sabotaging the source code.
+Tools like Stryker (JS) or PIT (Java) parse the code and create "Mutants".
+Original code: `if (age >= 18)`
+Mutant 1: `if (age > 18)`
+Mutant 2: `if (age &lt; 18)`
+Mutant 3: `if (true)`
+
+## 2. Surviving Mutants
+The tool mathematically compiles Mutant 1 and runs your Unit Test suite against it.
+- If your Unit Test fails (because it caught the bug), the Mutant is **Killed**. This is a good thing; your test suite works.
+- If your Unit Test passes (despite the code being mathematically broken), the Mutant **Survives**. This proves your test suite is weak and missing critical assertions.
+Mutation Testing is incredibly CPU-intensive (requiring thousands of compilations), but it is the absolute mathematical gold standard for software quality.
+

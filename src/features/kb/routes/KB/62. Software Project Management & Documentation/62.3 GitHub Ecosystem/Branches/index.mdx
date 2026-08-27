@@ -4,10 +4,16 @@ description: A pointer to a snapshot of your changes in Git, allowing you to iso
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Branches">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Branches">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you want to build a new feature, you do not mathematically edit the `main` codebase directly. If your code breaks, the biological production server will crash.
 
 Instead, you mathematically create a **Branch**. A branch is an exact biological clone of the codebase at a specific point in time. You can spend 3 weeks biologically writing messy, broken code on your `feature-login` branch. Because it is mathematically isolated, the `main` branch remains perfectly stable. Once your code is perfect, you mathematically merge the branch back into `main`.
 
-</ConceptTemplate>

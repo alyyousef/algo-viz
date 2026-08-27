@@ -1,8 +1,25 @@
+---
+title: Tcl
+description: The Tool Command Language, a highly embeddable, minimalist scripting language famous for its association with the Tk graphical toolkit.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tcl">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tcl (Tool Command Language)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by John Ousterhout in 1988, Tcl (pronounced "Tickle") is a dynamic scripting language. It was explicitly designed not to be a standalone language, but rather a tiny, highly portable C library that could be mathematically embedded into other applications to give them scripting capabilities.
 
-</ConceptTemplate>
+## 1. Everything is a String
+Tcl's mathematical philosophy is extreme minimalism: **Everything is a string**.
+There are no distinct integers, floats, or objects in Tcl's syntax. The command `set x 5` mathematically creates a string "5". If you later do math on it (`expr $x + 2`), Tcl dynamically interprets the string as a number, performs the math, and returns the result as a string. This makes the language parser incredibly tiny and mathematically trivial to embed in C programs, network routers (like Cisco IOS), and hardware testing rigs.
+
+## 2. The Tk Toolkit
+Tcl is historically inseparable from **Tk**, the first truly cross-platform GUI toolkit.
+In the 1990s, writing a graphical window with a button required hundreds of lines of complex C code. With Tcl/Tk, you could mathematically generate a working graphical interface in three lines of code. It was so mathematically revolutionary that Python (Tkinter), Ruby, and Perl all adopted Tk as their standard GUI library.
+

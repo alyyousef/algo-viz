@@ -4,13 +4,26 @@ description: The dense, affordable memory technology used to build the main syst
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dynamic RAM (DRAM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dynamic RAM (DRAM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While SRAM is used for CPU caches, **DRAM (Dynamic Random Access Memory)** is the technology used for the main memory (the 16GB or 32GB RAM sticks slotted into your motherboard). 
+While SRAM is used for CPU caches, **DRAM (Dynamic Random Access Memory)** is the technology used for the main memory (the 16GB or 32GB RAM sticks slotted into your motherboard).
+
 
 <Callout icon="info" title="Why is it called 'Dynamic'?">
+
+
   DRAM is called Dynamic because the data literally leaks away in milliseconds. The hardware must dynamically "refresh" (re-read and re-write) every single bit of memory thousands of times per second to prevent data loss.
+
+
 </Callout>
+
 
 ## The Physical Architecture of DRAM
 
@@ -19,7 +32,7 @@ Unlike SRAM (which uses a massive 6-transistor circuit), a single bit of DRAM is
 - **The Capacitor**: A microscopic bucket that holds a tiny electrical charge. (Full = \`1\`, Empty = \`0\`).
 - **The Transistor**: A gate that lets the CPU check if the bucket is full or empty.
 
-Because it only uses 1 transistor, DRAM is incredibly dense. You can cram billions of them onto a single cheap silicon chip. 
+Because it only uses 1 transistor, DRAM is incredibly dense. You can cram billions of them onto a single cheap silicon chip.
 
 ### The Leaky Bucket Problem
 Capacitors are imperfect; the electrical charge slowly leaks out. Within 64 milliseconds, a full bucket (\`1\`) will leak enough electricity to look like an empty bucket (\`0\`), catastrophically corrupting the computer's memory.
@@ -31,4 +44,3 @@ Modern computers use a specific type of DRAM called **DDR SDRAM** (Double Data R
 - **Synchronous**: It is perfectly timed to the motherboard's clock signal.
 - **Double Data Rate**: Originally, data was only transferred when the clock signal ticked *up* (the rising edge). DDR memory engineers figured out how to transfer data on both the *rising* and *falling* edge of the clock signal, literally doubling the bandwidth without having to increase the physical clock frequency. (This is why DDR4-3200 actually runs at a physical clock of 1600 MHz).
 
-</ConceptTemplate>

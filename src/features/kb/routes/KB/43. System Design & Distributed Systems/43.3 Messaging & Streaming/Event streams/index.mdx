@@ -1,8 +1,33 @@
+---
+title: Event Streams
+description: "An architectural data paradigm where information is modeled as a continuous, mathematically unbounded sequence of immutable events ordered by time, rather than discrete rows in a static relational database."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Event streams">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Event Streams"
+  subtitle="Data in Constant Motion"
+  tags={['System Design', 'Streaming', 'Architecture', 'Data']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, software engineering treated data as static state. You query a database table, and it returns a mathematically finite set of rows representing the "current" state of the world.
 
-</ConceptTemplate>
+## 1. The Unbounded Log
+**Event Streaming** mathematically inverts this paradigm. Data is not a static pool; it is a river.
+Instead of storing `{ User: Alice, Balance: 100 }`, an Event Stream stores the immutable history of exactly how that state was reached:
+1. `UserCreated(Alice)`
+2. `Deposited(50)`
+3. `Deposited(50)`
+This stream of events is mathematically append-only and unbounded (it theoretically never ends).
+
+## 2. Stream Processing
+In a traditional architecture, a nightly batch job (like Hadoop) wakes up at 3:00 AM, queries the static database, and mathematically calculates the daily analytics.
+In an Event Streaming architecture (using Kafka, Flink, or Spark Streaming), the analytics engine mathematically processes the data *as it flows through the network in real-time*. When a user clicks a button, the event enters the stream, and the real-time analytics dashboard updates 10 milliseconds later, enabling instant fraud detection, live recommendations, and real-time algorithmic trading.
+

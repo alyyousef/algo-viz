@@ -4,16 +4,23 @@ description: An extreme short-range wireless technology requiring devices to be 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NFC (Near-Field Communication)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NFC (Near-Field Communication)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**NFC** is an evolution of RFID technology. 
-While Bluetooth has a range of 30 feet, NFC has an intentional, physical maximum range of roughly **4 centimeters**. 
+**NFC** is an evolution of RFID technology.
+While Bluetooth has a range of 30 feet, NFC has an intentional, physical maximum range of roughly **4 centimeters**.
 
 You literally have to tap the devices together for the radio waves to successfully connect.
 
 ## Why such a short range?
 
-The 4-centimeter limitation is not a flaw; it is the defining security feature. 
+The 4-centimeter limitation is not a flaw; it is the defining security feature.
 NFC is the global standard for Apple Pay and Google Wallet. If NFC had a range of 30 feet, a hacker sitting at a coffee shop table could passively deduct money from the smartphone in your pocket. Because the range is 4 centimeters, physical proximity guarantees user intent.
 
 ## Active vs Passive Modes
@@ -22,4 +29,3 @@ NFC operates at a very low frequency (13.56 MHz). It supports two modes:
 1. **Active Mode**: Both devices have batteries (e.g., tapping two smartphones together to share a photo).
 2. **Passive Mode (Magnetic Induction)**: This is how contactless credit cards work. A plastic credit card has no battery. The payment terminal generates a strong magnetic field. When you hold the card near the terminal, the magnetic field physically induces a tiny electrical current inside the copper coil of the credit card, temporarily powering on the card's microchip just long enough for it to transmit your payment details back to the terminal.
 
-</ConceptTemplate>

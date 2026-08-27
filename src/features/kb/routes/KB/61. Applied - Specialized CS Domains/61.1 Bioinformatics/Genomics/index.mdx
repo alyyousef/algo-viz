@@ -4,10 +4,16 @@ description: An interdisciplinary field of biology focusing on the structure, fu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Genomics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Genomics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A genome is an organism's complete set of DNA. Human DNA contains roughly 3 billion base pairs (A, C, G, T).
 
 Mathematically, a human genome is a 3-Gigabyte text file written in a 4-letter alphabet. **Genomics** is the computer science of storing, analyzing, and querying these massive text files. It involves finding "bugs" in the code (genetic mutations) that cause biological diseases, and comparing the text files of different humans to understand genetic diversity.
 
-</ConceptTemplate>

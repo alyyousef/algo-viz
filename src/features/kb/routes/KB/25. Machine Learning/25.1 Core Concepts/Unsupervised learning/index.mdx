@@ -4,13 +4,20 @@ description: A paradigm where algorithms mathematically deduce hidden structures
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Unsupervised Learning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Unsupervised Learning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In **Unsupervised Learning**, the dataset consists entirely of inputs ($X$). There are mathematically zero target outputs ($Y$) or labels provided by humans. The algorithm is left entirely alone to mathematically discover the hidden structure of the data.
 
 ## 1. Clustering
 The most prominent mathematical task in Unsupervised Learning.
-You feed the algorithm a database of 1 million customer purchasing records. You do not tell the algorithm anything about the customers. 
+You feed the algorithm a database of 1 million customer purchasing records. You do not tell the algorithm anything about the customers.
 The algorithm (e.g., K-Means) mathematically calculates the high-dimensional distance between all users. It discovers that the users mathematically cluster into three distinct groups. A human later analyzes the clusters and realizes the algorithm successfully grouped "Budget Shoppers", "Luxury Shoppers", and "Bulk Buyers" entirely on its own.
 
 ## 2. Dimensionality Reduction
@@ -21,4 +28,3 @@ Unsupervised learning is the absolute mathematical core of cybersecurity and fra
 Because fraudulent transactions are incredibly rare, there are often no labeled examples to train a Supervised model on.
 Instead, an Unsupervised algorithm (like Isolation Forests) mathematically models the "normal" behavior of a credit card based on millions of transactions. If a new transaction mathematically falls severely outside that normal distribution, the algorithm instantly flags it as an **Anomaly**, even though it was never explicitly taught what fraud looks like.
 
-</ConceptTemplate>

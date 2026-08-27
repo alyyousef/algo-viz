@@ -4,7 +4,14 @@ description: The critical capability allowing an LLM to reliably trigger externa
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Function Calling (Tool Use)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Function Calling (Tool Use)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standalone Large Language Model is trapped in a box. It cannot browse the internet, check the weather, book a flight, or query a live SQL database. It only knows what was in its training data.
 
@@ -20,12 +27,17 @@ A standalone Large Language Model is trapped in a box. It cannot browse the inte
 
 ## 2. Why is this revolutionary?
 
-Before native Function Calling, developers had to use aggressive Prompt Engineering (like ReAct) to beg the model to output parsable strings, which frequently failed. 
+Before native Function Calling, developers had to use aggressive Prompt Engineering (like ReAct) to beg the model to output parsable strings, which frequently failed.
 
 Modern models (like GPT-4 and Claude 3.5 Sonnet) are explicitly **Fine-Tuned for Tool Use**. They have been rigorously trained to understand JSON schemas, flawlessly extract variables from user requests, and halt their generation perfectly when an external tool is required.
 
+
 <Callout icon="warning" title="Security Risks (Prompt Injection)">
+
+
   Giving an LLM the ability to execute tools is highly dangerous if the tools have destructive power (like `delete_database_row()` or `send_email()`). A malicious user can execute a Prompt Injection attack, tricking the LLM into calling your internal APIs to delete data. Always keep a "Human in the Loop" for destructive functions.
+
+
 </Callout>
 
-</ConceptTemplate>
+

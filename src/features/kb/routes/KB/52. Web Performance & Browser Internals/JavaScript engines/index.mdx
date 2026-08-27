@@ -4,16 +4,28 @@ description: A software component that executes JavaScript code.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JavaScript Engines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JavaScript Engines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While the **Rendering Engine** (Blink/WebKit) handles the DOM and CSS, the **JavaScript Engine** is mathematically responsible for executing `console.log` and `fetch()`.
 
 In the 1990s, JS engines were simple **Interpreters**. They read the code line-by-line and executed it slowly. This was biologically fine when JS was only used for form validation.
 
+
 <Callout icon="warning" title="JIT Compilation">
+
+
   Modern JavaScript Engines (like V8) are **Just-In-Time (JIT) Compilers**.
-  
+
   They do not just interpret the code. As the code is running, a mathematical "Profiler" watches the functions. If a function is called 10,000 times, the engine dynamically compiles that specific function into raw, hyper-optimized machine code directly in RAM, achieving execution speeds rivaling C++.
+
+
 </Callout>
 
-</ConceptTemplate>
+

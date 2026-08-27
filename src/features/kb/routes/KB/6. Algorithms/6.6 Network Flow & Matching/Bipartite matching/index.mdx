@@ -1,8 +1,32 @@
+---
+title: Bipartite Matching
+description: "A graph theory algorithm that pairs vertices from two disjoint sets such that no two edges share a vertex, mathematically solving problems like assigning N workers to M jobs for maximum efficiency."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bipartite matching">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bipartite Matching"
+  subtitle="The Assignment Problem"
+  tags={['Algorithms', 'Graph Theory', 'Network Flow', 'Optimization']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A **Bipartite Graph** is a graph whose vertices can be mathematically divided into two independent sets, U and V, such that every edge connects a vertex in U to one in V. (e.g., Set U = Workers, Set V = Jobs. Edges represent "Worker X is capable of doing Job Y").
+A **Matching** is a subset of edges where no two edges share the same vertex. (Nobody is assigned two jobs, and no job has two workers).
 
-</ConceptTemplate>
+## 1. Maximum Bipartite Matching
+The most common problem is finding the *Maximum* Matching (assigning the maximum possible number of workers to jobs).
+This can be mathematically transformed into a Network Flow problem!
+You create a "Super Source" node connected to all Workers, and a "Super Sink" node connected to all Jobs, with all edge capacities set to 1. By running a standard Max-Flow algorithm (like Ford-Fulkerson or Dinic's), the resulting maximum flow is mathematically exactly equal to the Maximum Bipartite Matching.
+
+## 2. Hopcroft-Karp Algorithm
+While you can use generic Network Flow, the **Hopcroft-Karp Algorithm** is specifically designed for Bipartite Matching.
+Instead of finding one augmenting path at a time, Hopcroft-Karp uses BFS to mathematically find a maximal set of *shortest* augmenting paths simultaneously, then uses DFS to apply them.
+Time Complexity: **O(E √V)**, making it strictly faster than standard Ford-Fulkerson (O(V * E)) for bipartite graphs.
+

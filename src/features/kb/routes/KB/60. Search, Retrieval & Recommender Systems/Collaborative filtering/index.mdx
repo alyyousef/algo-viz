@@ -4,14 +4,26 @@ description: A method of making automatic predictions (filtering) about the inte
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Collaborative Filtering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Collaborative Filtering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Collaborative Filtering** is the mathematical algorithm that made Amazon and Netflix famous. It powers the *"People who bought this also bought..."* feature.
 
+
 <Callout icon="success" title="The Wisdom of Crowds">
-  Crucially, Collaborative Filtering knows biologically *nothing* about the items themselves. 
-  
+
+
+  Crucially, Collaborative Filtering knows biologically *nothing* about the items themselves.
+
   If User A likes Movie 1 and Movie 2, and User B likes Movie 1, the algorithm mathematically assumes User B will also like Movie 2. It doesn't know that the movies are Sci-Fi; it only looks at the mathematical overlap of human behavior.
+
+
 </Callout>
 
-</ConceptTemplate>
+

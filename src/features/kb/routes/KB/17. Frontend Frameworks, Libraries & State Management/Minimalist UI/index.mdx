@@ -4,12 +4,19 @@ description: The legacy of imperative DOM manipulation, and the modern rebellion
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Minimalist UI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Minimalist UI">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Not every website needs to be a 5MB React Single Page Application. If you are building a simple blog or an e-commerce landing page, shipping massive Javascript bundles is terrible for performance and SEO.
 
 ## 1. jQuery (The Historical King)
-In the late 2000s, Javascript was a nightmare. Every browser (Internet Explorer, Firefox, Chrome) implemented the DOM API differently. 
+In the late 2000s, Javascript was a nightmare. Every browser (Internet Explorer, Firefox, Chrome) implemented the DOM API differently.
 **jQuery** mathematically solved this by providing a unified, incredibly simple API wrapper.
 ```js
 // Selecting an element and fading it out
@@ -19,13 +26,13 @@ jQuery became the most widely used library in history. Today, it is largely obso
 
 ## 2. HTMX (The HTML Rebellion)
 Created by Carson Gross, **HTMX** is a rapidly growing philosophy that violently rejects the complexity of React.
-The core philosophy is: **HTML is already a great language, it's just missing features.** 
+The core philosophy is: **HTML is already a great language, it's just missing features.**
 
 Instead of writing massive Javascript fetch requests to update the DOM, HTMX allows you to do it directly in HTML attributes:
 ```html
-<button 
-  hx-post="/api/like-button" 
-  hx-target="#like-count" 
+<button
+  hx-post="/api/like-button"
+  hx-target="#like-count"
   hx-swap="innerHTML">
   Like
 </button>
@@ -44,4 +51,3 @@ Often paired with Tailwind CSS, Alpine.js brings the reactive power of Vue direc
 </div>
 ```
 
-</ConceptTemplate>

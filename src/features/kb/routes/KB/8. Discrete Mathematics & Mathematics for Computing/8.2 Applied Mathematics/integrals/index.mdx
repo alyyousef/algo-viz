@@ -1,8 +1,35 @@
+---
+title: Integrals
+description: "The mathematical process of continuous addition, accumulating infinitely thin slices of a function to calculate total areas, volumes, and accumulated change."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="integrals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Integrals"
+  subtitle="The Mathematics of Accumulation"
+  tags={['Mathematics', 'Calculus', 'Physics', 'Probability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If the Derivative mathematically breaks a function apart to find its instantaneous rate of change, the **Integral** is the exact opposite: it mathematically glues an infinite number of infinitesimally thin slices together to calculate a total accumulated amount.
 
-</ConceptTemplate>
+## 1. The Area Under the Curve
+The most intuitive visualization of an integral is finding the exact area underneath a curved, non-straight line.
+You cannot use standard geometry ($Width \times Height$) because the height is constantly curving.
+Instead, you chop the area into thousands of microscopic rectangles. As the width of the rectangles approaches zero (the Limit), the sum of their areas becomes mathematically perfect. This is the **Definite Integral**, written with the $\int$ symbol (an elongated S for "Sum").
+
+## 2. The Fundamental Theorem of Calculus
+In one of the most stunning, beautiful discoveries in human history, Newton and Leibniz realized that Integration and Differentiation (Derivatives) are exact mathematical opposites.
+If you have a function that calculates Velocity, the **Derivative** tells you the Acceleration. The **Integral** of that same Velocity function tells you the Total Distance Traveled. They perfectly reverse each other.
+
+## 3. Applications in Tech
+- **Probability Distributions**: In statistics and machine learning, Continuous Probability Density Functions (like a Bell Curve) use integrals to calculate the exact probability that an event will happen within a specific range.
+- **Physics Engines**: Video game engines use numerical integration (like Euler or Verlet integration) 60 times a second. They take the current forces (acceleration), integrate it to update the object's velocity, and integrate the velocity to update the object's position on the screen.
+
+\n

@@ -1,0 +1,24 @@
+---
+title: Amazon EventBridge
+description: A serverless, mathematically robust event bus that connects application components together using real-time data streams, enabling deeply decoupled, event-driven microservice architectures.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon EventBridge"
+  subtitle="The Serverless Event Bus"
+  tags={['AWS', 'Events', 'Integration', 'Serverless']}
+>
+
+In a monolithic application, if a user buys an item, the Order function directly calls the Shipping function. In a microservices architecture, direct API calls create massive, fragile dependencies. EventBridge mathematically decouples them.
+
+## 1. The Event Router
+When a user buys an item, the Order microservice does not talk to Shipping. It simply fires a JSON JSON object (the Event) into EventBridge: `{"detail-type": "OrderPlaced", "item": "Shoes"}`. The Order service's job is mathematically finished.
+EventBridge acts as the central router. Other microservices (Shipping, Billing, Analytics) create **Rules**.
+The Shipping service has a mathematical rule: *"If an event hits the bus with detail-type = 'OrderPlaced', route a copy of that JSON to me."* EventBridge mathematically duplicates the JSON and delivers it to every interested microservice simultaneously, ensuring no service ever needs to know the IP address or existence of any other service.
+
+## 2. Schema Registry and Transformation
+Because microservices are built by different teams, JSON formats can drift and break downstream consumers.
+EventBridge includes a **Schema Registry**. It mathematically inspects the JSON events flowing through the bus, infers the schema, and automatically generates TypeScript or Java code bindings. A developer can download these bindings to guarantee their code perfectly matches the mathematical structure of the event, completely eliminating `undefined` errors in production.
+
+</TechnologyTemplate>

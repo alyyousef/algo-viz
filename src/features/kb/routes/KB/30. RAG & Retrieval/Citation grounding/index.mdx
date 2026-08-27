@@ -1,8 +1,27 @@
+---
+title: Citation Grounding
+description: The architectural requirement in Retrieval-Augmented Generation (RAG) that mathematically forces the LLM to explicitly link its generated claims to the exact source documents provided.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Citation grounding">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Citation Grounding">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The primary purpose of RAG is to prevent Hallucinations. However, even if you provide an LLM with perfect context, it might still hallucinate a false answer. Citation Grounding forces mathematical accountability.
 
-</ConceptTemplate>
+## 1. Prompt Engineering for Grounding
+You must explicitly alter the System Prompt.
+Instead of "Answer the question," the mathematical instruction becomes: *"You must ONLY answer using the provided Context. If the context does not contain the answer, you must output 'I do not know'. For every claim you make, you must append a citation bracket [Doc X] pointing to the source."*
+By forcing the model to mathematically output the physical string `[Doc X]` immediately after a claim, it drastically reduces the probability path (the Softmax distribution) of generating an unverified hallucination.
+
+## 2. Post-Generation Verification
+Advanced RAG pipelines do not trust the LLM.
+They employ a secondary, smaller AI model (an Evaluator) to mathematically verify the grounding.
+The Evaluator takes the LLM's final answer, extracts the citation `[Doc 2]`, and mathematically compares the semantic meaning of the generated sentence against the original text of Doc 2 using Cross-Encoders (NLI - Natural Language Inference). If the Evaluator detects a mathematical contradiction between the generation and the source, the pipeline flags the answer as an ungrounded hallucination and refuses to show it to the user.
+

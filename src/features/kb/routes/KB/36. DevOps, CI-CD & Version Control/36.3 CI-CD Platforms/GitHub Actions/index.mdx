@@ -8,21 +8,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want.
 
+
 <Callout icon="success" title="Event-Driven Automation">
+
+
   Unlike traditional CI tools that only run when code is pushed, GitHub Actions can be triggered by *any* GitHub event. You can run a script when an Issue is opened, when a PR is labeled, or when a new release is drafted.
+
+
 </Callout>
+
 
 ## Core Concepts
 
-<ComparisonTable 
-  headers={['Concept', 'Description']}
-  rows={[
-    ['Workflow', 'A configurable automated process made up of one or more jobs. Defined in a YAML file in `.github/workflows/`.'],
-    ['Event', 'A specific activity in a repository that triggers a workflow run (e.g., `push`, `pull_request`, `schedule`).'],
-    ['Job', 'A set of steps in a workflow that execute on the same runner (server). Jobs run in parallel by default.'],
-    ['Step', 'An individual task that can run commands (like `npm test`) or use an Action.'],
-    ['Action', 'A reusable, standalone command that can be shared in the GitHub Marketplace (e.g., `actions/checkout@v3`).']
-  ]}
-/>
+
+<ComparisonTable headers={['Concept', 'Description']} rows={[ ['Workflow', 'A configurable automated process made up of one or more jobs. Defined in a YAML file in `.github/workflows/`.'], ['Event', 'A specific activity in a repository that triggers a workflow run (e.g., `push`, `pull_request`, `schedule`).'], ['Job', 'A set of steps in a workflow that execute on the same runner (server). Jobs run in parallel by default.'], ['Step', 'An individual task that can run commands (like `npm test`) or use an Action.'], ['Action', 'A reusable, standalone command that can be shared in the GitHub Marketplace (e.g., `actions/checkout@v3`).'] ]} />
+
 
 </TechnologyTemplate>

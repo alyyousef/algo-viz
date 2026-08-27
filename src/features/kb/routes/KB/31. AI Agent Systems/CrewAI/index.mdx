@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: CrewAI
+description: A high-level, production-ready framework for orchestrating role-based, multi-agent AI systems, utilizing explicit task delegation and hierarchical management structures.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="CrewAI">
+<TechnologyTemplate
+  title="CrewAI"
+  subtitle="Role-Based Multi-Agent Orchestration"
+  tags={['AI', 'Agents', 'CrewAI', 'Orchestration']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While AutoGen focuses on free-flowing conversation between Agents, CrewAI imposes strict, corporate-style mathematical hierarchies on the AI models to guarantee deterministic execution flows.
 
-</ConceptTemplate>
+## 1. Agents, Tasks, and Crews
+CrewAI relies on three fundamental mathematical primitives:
+1. **Agents**: LLMs defined by a strict Role, Goal, and Backstory (e.g., "Senior Data Analyst").
+2. **Tasks**: Explicit, mathematically constrained goals (e.g., "Analyze this CSV and output a summary").
+3. **Crew**: The overarching manager that binds Agents to Tasks.
+The Crew orchestrates execution. If the architecture is set to **Sequential**, Agent A mathematically *must* finish Task 1 before Agent B is allowed to begin Task 2, using Agent A's output as its input.
+
+## 2. Hierarchical Delegation
+In advanced configurations, CrewAI uses a **Manager Agent**.
+The User gives the Manager a massive goal. The Manager mathematically breaks the goal into sub-tasks and dynamically delegates them to the subordinate Agents based on their defined Roles. If a subordinate fails, the Manager mathematically reviews the error and re-assigns the task with corrected instructions, mimicking the logic of a human project manager.
+
+</TechnologyTemplate>

@@ -4,9 +4,16 @@ description: An extension of the CAP Theorem that addresses what tradeoffs distr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PACELC Theorem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PACELC Theorem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The CAP theorem proves that in the event of a network Partition (P), you must choose between Availability (A) or Consistency (C). 
+The CAP theorem proves that in the event of a network Partition (P), you must choose between Availability (A) or Consistency (C).
 However, network partitions are rare. What happens during normal operation? The **PACELC Theorem** extends CAP to explain the trade-offs systems make when the network is perfectly healthy.
 
 It is an acronym that reads:
@@ -25,4 +32,3 @@ When there is no network failure (Else), a distributed database must still make 
 - **MongoDB (PC/EC)**: If partitioned, favors Consistency (shuts down). Normally, favors Consistency over Latency.
 - **DynamoDB (PA/EL)**: The quintessential highly available, extremely fast, eventually consistent database.
 
-</ConceptTemplate>

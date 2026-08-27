@@ -1,0 +1,24 @@
+---
+title: OCI API Gateway
+description: A highly available, serverless network appliance in Oracle Cloud mathematically designed to route, secure, and rate-limit HTTP traffic before it reaches backend microservices or Oracle Functions.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI API Gateway"
+  subtitle="Secure Microservice Routing"
+  tags={['OCI', 'Networking', 'API', 'Security']}
+>
+
+If you have 50 microservices running on OCI (Oracle Cloud Infrastructure), you do not want 50 different public IP addresses exposed to the internet. API Gateway provides a single, mathematically secure point of entry.
+
+## 1. Request Routing and Transformation
+The API Gateway mathematically intercepts the incoming HTTP packet.
+If a user requests `api.com/v1/users`, the Gateway evaluates its mathematical routing table. It can route the traffic to a Virtual Machine, a Kubernetes Cluster (OKE), or trigger a serverless Oracle Function. Furthermore, it can mathematically transform the request on the fly. If an old client sends an XML payload, the API Gateway can execute a mathematical transformation policy to convert the XML into JSON before handing it to the modern backend microservice, eliminating the need to update the backend code.
+
+## 2. Rate Limiting and Authentication
+APIs must be protected from DDoS attacks and brute-force abuse.
+You can configure a mathematical **Rate Limit** policy on the Gateway: *"Limit IP Address X to exactly 10 requests per second."* If the user exceeds this, the Gateway instantly drops the packets and returns a `429 Too Many Requests` error.
+Additionally, the Gateway can integrate with Oracle Identity Cloud Service (IDCS). It mathematically verifies the cryptographic signature of the incoming JWT (JSON Web Token) at the edge. If the token is invalid, the request is destroyed before it ever touches your backend servers, saving massive amounts of compute.
+
+</TechnologyTemplate>

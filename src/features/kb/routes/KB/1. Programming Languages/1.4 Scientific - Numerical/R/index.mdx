@@ -1,8 +1,26 @@
+---
+title: R
+description: The absolute standard for statistical computing, data analysis, and breathtaking data visualization in academia and industry.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="R">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="R">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Ross Ihaka and Robert Gentleman in 1993, R is a programming language specifically designed by statisticians, for statisticians. It is the dominant language in bioinformatics, epidemiology, and data science.
 
-</ConceptTemplate>
+## 1. Dataframes and Vectorization
+Before Python had Pandas, R invented the modern **DataFrame**—a native mathematical structure representing a table of data (like Excel) built directly into the language.
+R is heavily vectorized. If you have a column of 10 million ages, you do not mathematically write a loop to calculate the mean. You simply type `mean(data$age)`. The R engine (written in C and Fortran) handles the memory and calculation instantly.
+
+## 2. The Tidyverse and ggplot2
+R's true power lies in its ecosystem, specifically the **Tidyverse**.
+The Tidyverse is a collection of mathematically cohesive packages (like `dplyr`) that introduced the "Pipe" operator (`%>%`), allowing data manipulation to be written as a clean, readable sequence of verbs.
+Furthermore, R possesses **ggplot2**, universally considered the most powerful data visualization library in the world. It is based on the mathematical "Grammar of Graphics," allowing users to map specific data variables directly to visual aesthetics (colors, shapes, axes) to generate publication-ready plots instantly.
+

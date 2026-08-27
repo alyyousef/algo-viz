@@ -5,7 +5,14 @@ description: "A sequence of local transactions used to maintain data consistency
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="The Saga Pattern">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Saga Pattern">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a monolith, if a user buys an item, you deduct inventory and charge their card within a single ACID database transaction. If the card declines, you issue an SQL `ROLLBACK`, and the inventory is perfectly restored.
 
@@ -22,12 +29,7 @@ If Step 1 (Deduct Inventory) succeeds, but Step 2 (Charge Card) fails, the Payme
 
 There are two ways to organize a Saga:
 
-<ComparisonTable 
-  headers={['Type', 'How it works', 'Pros & Cons']} 
-  rows={[
-    ['Choreography', 'Services listen to each other\'s events directly. (A decentralized dance).', 'Pro: No single point of failure. Con: Hard to track the overall status of the transaction.'],
-    ['Orchestration', 'A central "Orchestrator" service acts as a conductor, explicitly telling each service what to do via commands.', 'Pro: Complex workflows are easy to monitor and reason about. Con: The orchestrator is a single point of failure.']
-  ]} 
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Type', 'How it works', 'Pros & Cons']} rows={[ ['Choreography', 'Services listen to each other\'s events directly. (A decentralized dance).', 'Pro: No single point of failure. Con: Hard to track the overall status of the transaction.'], ['Orchestration', 'A central "Orchestrator" service acts as a conductor, explicitly telling each service what to do via commands.', 'Pro: Complex workflows are easy to monitor and reason about. Con: The orchestrator is a single point of failure.'] ]} />
+
+

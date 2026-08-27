@@ -1,8 +1,25 @@
+---
+title: Clarity
+description: A decidable, mathematically predictable smart contract language designed to bring decentralized logic directly to the Bitcoin blockchain.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Clarity">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Clarity">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by Stacks and Algorand, Clarity is a smart contract language explicitly designed to interact with Bitcoin. Its defining feature is a rigid, mathematical rejection of Turing completeness.
 
-</ConceptTemplate>
+## 1. Decidability over Completeness
+Solidity is Turing-complete. This means you can write a `while` loop that runs forever. Because of this, it is mathematically impossible to know exactly what a Solidity contract will do, or how much gas it will cost, until you actually execute it on the network.
+Clarity is mathematically **Decidable**. It intentionally removes unbounded loops and recursion. By sacrificing Turing completeness, Clarity mathematically guarantees that developers can analyze the code and know exactly what it will do, and exactly how much it will cost, before it is ever executed.
+
+## 2. Interpreted, Not Compiled
+When you deploy a Solidity contract, the compiler translates your readable code into unreadable bytecode, which is what actually lives on the blockchain. If a user wants to audit the contract, they have to trust the compiler wasn't compromised.
+Clarity is mathematically interpreted. The exact, human-readable source code you write is the exact text that is permanently etched into the blockchain. There is no compiler, mathematically eliminating a massive vector for software supply-chain attacks.
+

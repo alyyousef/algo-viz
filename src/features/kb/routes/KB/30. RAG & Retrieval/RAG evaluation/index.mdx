@@ -1,8 +1,27 @@
+---
+title: RAG Evaluation
+description: The rigorous, mathematical framework used to quantitatively measure the accuracy, relevance, and groundedness of a Retrieval-Augmented Generation pipeline.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RAG evaluation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RAG Evaluation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You cannot fix what you cannot measure. Because LLM outputs are non-deterministic text, you cannot write a simple `assertEquals()` unit test. RAG requires specialized mathematical evaluation frameworks (like Ragas or TruLens).
 
-</ConceptTemplate>
+## 1. The RAG Triad
+Every RAG system must be mathematically evaluated on three distinct axes:
+1. **Context Relevance**: Did the Vector Database retrieve the right documents? (Measures the math of the Embeddings).
+2. **Groundedness (Faithfulness)**: Did the LLM strictly obey the retrieved documents, or did it hallucinate? (Measures the prompt constraints).
+3. **Answer Relevance**: Did the final output actually answer the user's original question? (Measures the final LLM generation).
+
+## 2. LLM-as-a-Judge
+To calculate these scores, engineers use an incredibly powerful LLM (like GPT-4) as the automated judge.
+The Judge is given the User Prompt, the Retrieved Context, and the Final Answer. It is mathematically instructed to analyze them and output a strict integer from 1 to 5 for each axis of the Triad. By running a test dataset of 1,000 questions through the pipeline and averaging the Judge's scores, engineers can mathematically prove whether switching to a new Embedding Model or changing a Prompt actually improved the system.
+

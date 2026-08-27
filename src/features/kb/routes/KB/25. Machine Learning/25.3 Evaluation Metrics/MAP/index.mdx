@@ -4,9 +4,16 @@ description: The ultimate mathematical metric for evaluating Ranking algorithms,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MAP (Mean Average Precision)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="MAP (Mean Average Precision)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you search Google for "Machine Learning", you don't just care that Google found relevant documents; you care that the relevant documents are mathematically ordered at the very top of page 1, not buried on page 10. 
+If you search Google for "Machine Learning", you don't just care that Google found relevant documents; you care that the relevant documents are mathematically ordered at the very top of page 1, not buried on page 10.
 **Mean Average Precision (MAP)** is the industry standard for evaluating mathematical ranking order.
 
 ## 1. Precision at K (P@K)
@@ -16,8 +23,8 @@ If an algorithm outputs 10 search results, you mathematically calculate the Prec
 - **P@3**: Out of the top 3 results, how many are relevant? (If 2 are relevant, P@3 = 0.66)
 
 ## 2. Average Precision (AP)
-P@K is flawed because it ignores the internal order within the top $K$. 
-**Average Precision (AP)** mathematically fixes this. 
+P@K is flawed because it ignores the internal order within the top $K$.
+**Average Precision (AP)** mathematically fixes this.
 You calculate the P@K *only at the specific ranks where a relevant document was found*, and then average those precisions.
 
 Example: You return 5 documents. Ranks 1, 2, and 5 are relevant.
@@ -29,9 +36,8 @@ $AP = \frac{1.0 + 1.0 + 0.6}{3} = 0.86$
 If the algorithm returned the relevant documents at Ranks 3, 4, and 5 instead, the AP math would aggressively punish it, dropping the score significantly because the initial precisions (1/3, 2/4) are much lower.
 
 ## 3. Mean Average Precision (MAP)
-Average Precision (AP) evaluates a single Google search query. 
-**Mean Average Precision (MAP)** is simply the mathematical average of the AP scores across *all 10,000 user queries* in the dataset. 
+Average Precision (AP) evaluates a single Google search query.
+**Mean Average Precision (MAP)** is simply the mathematical average of the AP scores across *all 10,000 user queries* in the dataset.
 
 MAP mathematically guarantees that your Recommender System or Object Detection AI (like YOLO calculating the Intersection over Union of bounding boxes) is being ruthlessly optimized to push the absolute best predictions to the very top of the tensor array.
 
-</ConceptTemplate>

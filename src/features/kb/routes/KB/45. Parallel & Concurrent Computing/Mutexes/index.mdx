@@ -4,24 +4,36 @@ description: A synchronization primitive used to protect shared data structures 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mutexes (Mutual Exclusion)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mutexes (Mutual Exclusion)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Mutex** (Mutual Exclusion Object) is the most fundamental mathematical tool used to prevent Race Conditions.
 
 Think of a Mutex as a mathematical "Talking Stick" in a meeting. If there are 10 people in the room, only the person physically holding the Talking Stick is legally allowed to speak (modify the shared data).
 
+
 <Callout icon="success" title="How it solves the Race Condition">
+
+
   Thread 1 mathematically asks the OS: "Give me the Mutex." The OS hands it over. Thread 1 enters the Critical Section.
   Thread 2 mathematically asks the OS: "Give me the Mutex." The OS sees Thread 1 holds it, so the OS immediately mathematically puts Thread 2 to sleep (Suspended State).
   When Thread 1 is done, it releases the Mutex. The OS wakes Thread 2 up and hands it the Mutex.
+
+
 </Callout>
+
 
 ## The Mathematics of Mutexes
 
-Mutexes are typically provided directly by the Operating System Kernel (e.g., `pthread_mutex_t` in Linux). 
+Mutexes are typically provided directly by the Operating System Kernel (e.g., `pthread_mutex_t` in Linux).
 
-Because acquiring a Mutex requires a mathematical "System Call" into the OS Kernel, it is heavily penalized in terms of performance (often taking thousands of CPU cycles). 
+Because acquiring a Mutex requires a mathematical "System Call" into the OS Kernel, it is heavily penalized in terms of performance (often taking thousands of CPU cycles).
 
 Modern languages often use "Futexes" (Fast Userspace Mutexes), which mathematically attempt to lock the resource without involving the Kernel at all, only calling the Kernel if the resource is currently contested by another thread.
 
-</ConceptTemplate>

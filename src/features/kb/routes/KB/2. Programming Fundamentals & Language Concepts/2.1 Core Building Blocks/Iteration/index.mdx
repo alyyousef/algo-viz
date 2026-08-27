@@ -1,8 +1,25 @@
+---
+title: Iteration (Loops)
+description: The mathematical process of repeatedly executing a block of code until a specific logical condition is satisfied.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Iteration">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Iteration (Loops)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Iteration is one of the three core mathematical structures of programming (alongside Sequence and Selection). It allows a computer to perform repetitive tasks at superhuman speeds.
 
-</ConceptTemplate>
+## 1. Types of Iteration
+- **Definite Iteration (`for` loop)**: Used when the mathematical number of repetitions is known in advance (e.g., iterating through an array of 500 items). The loop explicitly manages an index variable, increments it, and checks a boundary condition on every cycle.
+- **Indefinite Iteration (`while` loop)**: Used when the number of repetitions is mathematically unknown. The loop relies on a dynamic boolean condition (e.g., `while (connection_is_open)`). If the programmer fails to write logic that eventually flips that condition to false, the program mathematically enters an Infinite Loop and locks up the CPU core forever.
+
+## 2. Tail-Call Optimization vs Iteration
+In purely functional languages (like Haskell), loops (`for/while`) mathematically do not exist because variables cannot be mutated (you cannot mathematically increment `i = i + 1`).
+Instead, these languages use **Recursion** (a function calling itself) to achieve iteration. To prevent the call stack from blowing up (Stack Overflow), the compiler uses **Tail-Call Optimization**, mathematically converting the recursive function calls directly into highly efficient Assembly `JUMP` instructions behind the scenes, mimicking a `while` loop at the hardware level.
+

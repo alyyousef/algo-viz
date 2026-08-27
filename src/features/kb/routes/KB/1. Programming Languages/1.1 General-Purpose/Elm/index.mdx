@@ -5,10 +5,17 @@ description: "A purely functional programming language that compiles to JavaScri
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Elm"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Elm** is a domain-specific programming language for creating web browser-based graphical user interfaces. It is purely functional, statically typed, and compiles to JavaScript.
 
@@ -51,8 +58,13 @@ view model =
     ]
 ```
 
+
 <Callout icon="warning" title="Adoption">
+
+
 While beloved by those who use it, Elm's strictness, steep learning curve (functional programming), and small ecosystem mean it has not achieved mainstream commercial adoption compared to React, Vue, or Angular.
+
+
 </Callout>
 
-</ConceptTemplate>
+

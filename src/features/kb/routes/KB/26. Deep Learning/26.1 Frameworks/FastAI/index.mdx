@@ -4,20 +4,26 @@ description: A pragmatic, top-down deep learning library built on PyTorch that d
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="FastAI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="FastAI">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Most AI frameworks (like PyTorch) require you to mathematically build everything from the ground up, forcing you to manually manage Learning Rates, Momentum, and GPU transfers. 
+Most AI frameworks (like PyTorch) require you to mathematically build everything from the ground up, forcing you to manually manage Learning Rates, Momentum, and GPU transfers.
 **FastAI** is a highly opinionated, top-down library built on top of PyTorch. It is designed to mathematically inject absolute state-of-the-art research techniques into your training loop automatically, allowing beginners to beat world-class Kaggle experts with 10 lines of code.
 
 ## 1. Sane Defaults
-If you train a Computer Vision model in PyTorch, you must mathematically guess the optimal Learning Rate, batch size, and weight decay. 
+If you train a Computer Vision model in PyTorch, you must mathematically guess the optimal Learning Rate, batch size, and weight decay.
 FastAI mathematically hardcodes the absolute best practices directly into the API. It automatically applies Data Augmentation, dynamically freezes and unfreezes layers during fine-tuning, and mathematically optimizes the loss function without the user ever writing a line of code.
 
 ## 2. The Learning Rate Finder
-One of FastAI's most famous contributions is the automated **Learning Rate Finder**. 
+One of FastAI's most famous contributions is the automated **Learning Rate Finder**.
 Before training begins, FastAI mathematically runs a mock-training loop, rapidly increasing the learning rate on every batch while tracking the loss. It plots a mathematical curve, allowing the Data Scientist to visually pinpoint the exact, scientifically perfect Learning Rate for their specific dataset before real training starts.
 
 ## 3. The One-Cycle Policy
 FastAI heavily popularized the **One-Cycle Policy**. Instead of slowly decaying the learning rate, it mathematically forces the learning rate to violently spike to a massive number early in training, before sharply crashing down to zero. This mathematical shockwave allows the model to instantly blast out of sharp local minima, famously allowing models to converge to state-of-the-art accuracies $10\times$ faster than standard training.
 
-</ConceptTemplate>

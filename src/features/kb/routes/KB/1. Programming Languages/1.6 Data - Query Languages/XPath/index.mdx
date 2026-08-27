@@ -1,8 +1,31 @@
+---
+title: XPath
+description: The XML Path Language, a World Wide Web Consortium standard for mathematically querying and navigating complex XML documents.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="XPath">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="XPath">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standardized by the W3C in 1999, XPath is a mathematical query language used to select nodes from an XML document. Before JSON dominated the internet, XML was the universal data transport format, and XPath was its query language.
 
-</ConceptTemplate>
+## 1. Tree Navigation
+An XML document is mathematically structured as a tree of nodes (Elements, Attributes, Text). XPath provides a concise syntax for traversing this tree, highly reminiscent of navigating a Unix file system.
+- `/` : Selects from the mathematical root node.
+- `//` : Selects nodes in the document from the current node that match the selection no matter where they are.
+- `@` : Selects attributes.
+
+```xpath
+//bookstore/book[price>35.00]/title
+```
+This mathematically reads as: "Find any bookstore anywhere in the document, find its books where the price is mathematically greater than 35.00, and return the title nodes."
+
+## 2. Integration with XSLT
+XPath is rarely used entirely on its own. It is the foundational mathematical engine behind **XSLT** (Extensible Stylesheet Language Transformations). A developer writes an XSLT script that uses XPath to mathematically find specific nodes in a source XML file, and then physically transforms them into a completely different format, like a rendered HTML webpage or a PDF document.
+

@@ -4,7 +4,14 @@ description: The industry initiative to replace expensive, proprietary hardware 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NFV (Network Function Virtualization)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NFV (Network Function Virtualization)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While SDN (Software-Defined Networking) focuses on centralizing the *routing* logic of switches, **NFV (Network Function Virtualization)** focuses on virtualizing *expensive network appliances*.
 
@@ -12,12 +19,11 @@ Historically, if a company needed a Firewall, a Load Balancer, and an Intrusion 
 
 ## The Shift to Software
 
-NFV eliminates the proprietary hardware. 
+NFV eliminates the proprietary hardware.
 
 Instead of buying a $50,000 physical Firewall box, a company buys a standard, cheap Dell x86 server (commodity hardware) running Linux. They then deploy the Firewall as a **Virtual Machine (VM) or Docker Container** (known as a VNF - Virtual Network Function).
 
 ## Extreme Elasticity
-Because network appliances are now just software containers, they can be scaled dynamically. 
+Because network appliances are now just software containers, they can be scaled dynamically.
 If a massive DDoS attack hits the network, the virtualization hypervisor can automatically spin up 10 additional Firewall VMs in seconds to absorb the traffic, and then delete them when the attack ends. This elasticity is the fundamental technology that makes modern Cloud Computing (AWS/Azure) possible.
 
-</ConceptTemplate>

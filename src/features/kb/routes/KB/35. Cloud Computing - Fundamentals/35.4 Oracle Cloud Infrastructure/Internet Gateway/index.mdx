@@ -1,0 +1,25 @@
+---
+title: OCI Internet Gateway
+description: A highly available, software-defined virtual router that mathematically bridges the gap between an isolated Oracle Virtual Cloud Network (VCN) and the public internet.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Internet Gateway"
+  subtitle="The Bridge to the Public Web"
+  tags={['OCI', 'Networking', 'Routing', 'Internet']}
+>
+
+When you create a Virtual Cloud Network (VCN) in OCI, it is completely mathematically isolated. It has no physical or logical connection to the outside world. An Internet Gateway provides the doorway to the public web.
+
+## 1. Network Address Translation (NAT)
+A Web Server running inside your VCN has a Private IP address (e.g., `10.0.0.5`). The global internet does not know how to route packets to a Private IP.
+When you assign a Public IP address to that Web Server, the server itself still only knows about `10.0.0.5`.
+The Internet Gateway sits at the edge of the VCN. When a packet leaves the Web Server destined for Google, the Gateway mathematically performs 1-to-1 NAT. It strips off the Private IP header, applies the Public IP header, and fires the packet onto the internet. When the response comes back, it mathematically reverses the process.
+
+## 2. Route Table Enforcement
+Simply attaching an Internet Gateway to a VCN does not give your servers internet access.
+You must mathematically authorize the traffic using a **Route Table**. You create a Route Table for the Web Server's Subnet and add a rule: *"If a packet is destined for `0.0.0.0/0` (anywhere on the internet), forward it to the Internet Gateway."*
+If a Subnet does *not* have this Route Table rule, it is mathematically defined as a **Private Subnet**. Even if you attach an Internet Gateway to the VCN, it is physically impossible for internet traffic to reach servers in that specific Private Subnet, guaranteeing deep architectural security.
+
+</TechnologyTemplate>

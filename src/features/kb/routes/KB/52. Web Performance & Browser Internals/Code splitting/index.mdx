@@ -4,16 +4,28 @@ description: The process of splitting code into various bundles which can then b
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Code Splitting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Code Splitting">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If your React application has 50 different routes (Dashboard, Settings, Profile), Webpack will biologically bundle all 50 routes into a single massive `bundle.js` file (e.g., 4MB). 
+If your React application has 50 different routes (Dashboard, Settings, Profile), Webpack will biologically bundle all 50 routes into a single massive `bundle.js` file (e.g., 4MB).
 
 If a user just wants to visit the Login page, they are mathematically forced to download the code for the Settings page, crippling the LCP metric.
 
+
 <Callout icon="success" title="Dynamic Imports">
+
+
   **Code Splitting** solves this. Using dynamic imports (`import('./Settings.js')`), the bundler mathematically slices the application into 50 separate, tiny `.js` files (chunks).
-  
+
   When the user visits the Login page, they only download `login-chunk.js` (50KB). The browser biologically loads it instantly. Only when they physically click the "Settings" link does the browser execute a network request to fetch `settings-chunk.js`.
+
+
 </Callout>
 
-</ConceptTemplate>
+

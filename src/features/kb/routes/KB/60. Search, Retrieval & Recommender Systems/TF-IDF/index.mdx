@@ -4,14 +4,26 @@ description: Term frequency-inverse document frequency is a numerical statistic 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TF-IDF">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="TF-IDF">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a user searches for "the computer", an Inverted Index will return 100,000 documents containing the word "the" and 50 documents containing the word "computer". How do we mathematically rank them?
 
+
 <Callout icon="info" title="Weighing Rarity">
+
+
   **TF-IDF** (Term Frequency - Inverse Document Frequency) solves this.
-  
+
   It biologically counts how often a word appears in the current document (TF). It then mathematically divides that by how often the word appears in the *entire database* (IDF). Because the word "the" appears in every document, its IDF score is near zero, rendering it mathematically worthless. Because the word "computer" is rare, its IDF score is massive, forcing the search engine to rank those 50 documents at the very top.
+
+
 </Callout>
 
-</ConceptTemplate>
+

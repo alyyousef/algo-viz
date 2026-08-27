@@ -4,14 +4,26 @@ description: An emulation of a computer system that provides the functionality o
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Virtual Machines (VMs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Virtual Machines (VMs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Virtual Machine** is a mathematical lie told to an Operating System.
 
+
 <Callout icon="info" title="Hardware Emulation">
-  The host computer mathematically creates a fake CPU, fake RAM, a fake Hard Drive, and a fake Network Card in software. 
-  
+
+
+  The host computer mathematically creates a fake CPU, fake RAM, a fake Hard Drive, and a fake Network Card in software.
+
   It then biologically installs a completely unmodified Guest Operating System (like Windows or Linux) onto this fake hardware. The Guest OS mathematically believes it is running on real silicon. This allows a single physical server to biologically run 50 different Windows and Linux servers simultaneously in complete isolation.
+
+
 </Callout>
 
-</ConceptTemplate>
+

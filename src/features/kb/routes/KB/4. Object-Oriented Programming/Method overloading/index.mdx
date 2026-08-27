@@ -1,8 +1,36 @@
+---
+title: Method Overloading
+description: A mathematical feature in strongly-typed programming languages allowing multiple methods to possess the exact same name within a single class, provided their parameter signatures are distinct.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Method overloading">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Method Overloading"
+  subtitle="Compile-Time Mathematical Polymorphism"
+  tags={['OOP', 'Polymorphism', 'Java', 'C++']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Method Overloading is a form of mathematical polymorphism resolved entirely at **Compile-Time** (Static Polymorphism).
 
-</ConceptTemplate>
+## 1. Distinct Mathematical Signatures
+The compiler mathematically identifies a method not just by its name (`print`), but by its **Signature** (Name + Parameter Types + Parameter Order).
+```java
+public class Printer {
+    public void print(String text) { ... }
+    public void print(int number) { ... }
+    public void print(String text, int count) { ... }
+}
+```
+To a human, these are three methods with the same name. To the compiler, these are three mathematically entirely different entities: `print_String`, `print_int`, and `print_String_int`.
+
+## 2. Compile-Time Resolution
+When the developer types `printer.print(5)`, the compiler mathematically analyzes the argument (`5` is an `int`).
+During compilation, it permanently wires that specific line of code to the `print(int number)` implementation. Unlike Method *Overriding* (which requires the CPU to determine which child class to call while the program is actually running), Overloading requires zero runtime overhead, making it mathematically highly efficient.
+

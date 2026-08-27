@@ -1,8 +1,31 @@
+---
+title: Chaos Engineering
+description: The disciplined, mathematical practice of intentionally injecting failures into a production system to empirically prove its resilience and identify hidden architectural weaknesses before they cause real-world outages.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Chaos engineering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Chaos Engineering"
+  subtitle="Empirical Resilience Testing"
+  tags={['SRE', 'Reliability', 'Testing', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Engineers often write retry logic and circuit breakers in their code, but until the database actually explodes in production, those safety mechanisms are purely theoretical. Chaos Engineering transforms theoretical resilience into mathematical proof.
 
-</ConceptTemplate>
+## 1. The Chaos Monkey
+The discipline was popularized by Netflix with their tool, **Chaos Monkey**.
+Chaos Monkey is a script that runs in production. Every hour, it mathematically selects a random AWS EC2 server and instantly terminates it.
+Because Netflix engineers know that their servers are constantly being murdered, they are mathematically forced to design their microservices to be entirely stateless and highly redundant. If the system survives Chaos Monkey without users noticing, the architecture is mathematically proven to be fault-tolerant.
+
+## 2. The Blast Radius
+Chaos Engineering is not random sabotage; it is the scientific method.
+You form a hypothesis: *"If the Redis cache dies, the application will fallback to the SQL database seamlessly."*
+You then run the experiment, but you must mathematically control the **Blast Radius**. You do not kill the production Redis cluster immediately. You route 1% of production traffic to an isolated cluster, kill that cluster, and observe the metrics. If the hypothesis fails, you abort the experiment instantly, mathematically limiting the damage to only 1% of users.
+

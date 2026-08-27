@@ -1,8 +1,28 @@
+---
+title: Reranking
+description: A computationally expensive, hyper-accurate post-retrieval process that mathematically re-evaluates the relevance of retrieved documents using a Cross-Encoder Neural Network.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reranking">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reranking">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Vector Databases (Bi-Encoders) are incredibly fast, but mathematically shallow. They can search 1 billion documents in 10 milliseconds, but they often return documents that are tangentially related but ultimately unhelpful. Reranking fixes this.
 
-</ConceptTemplate>
+## 1. Bi-Encoders vs. Cross-Encoders
+- **Bi-Encoder (Vector DB)**: Embeds the Question into a Vector. Embeds the Document into a Vector. Calculates the angle between them. Fast, but lacks deep linguistic understanding.
+- **Cross-Encoder (Reranker)**: Takes the physical text of the Question AND the physical text of the Document, concatenates them together (`Question [SEP] Document`), and feeds them simultaneously into a Transformer Neural Network. The Attention Mechanism mathematically calculates the relationship between every word in the question and every word in the document simultaneously. It is 10,000x slower, but mathematically perfect at understanding relevance.
+
+## 2. The Two-Stage Pipeline
+Because Cross-Encoders are too slow to run on 1 billion documents, production RAG uses a Two-Stage Pipeline.
+1. The Vector DB retrieves the Top 100 documents (Fast, low accuracy).
+2. Those 100 raw text documents are passed to the Reranker (Cross-Encoder).
+3. The Reranker mathematically scores them from 0.0 to 1.0 and resorts the list (Slow, high accuracy).
+The Top 5 documents are then extracted and fed to the LLM, guaranteeing the highest possible context quality.
+

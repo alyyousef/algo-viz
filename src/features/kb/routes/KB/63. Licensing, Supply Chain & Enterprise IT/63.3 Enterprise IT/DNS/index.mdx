@@ -4,10 +4,16 @@ description: The Domain Name System is a hierarchical and decentralized naming s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DNS in the Enterprise">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DNS in the Enterprise">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The global internet relies on public DNS, but a corporate office relies on **Internal DNS**.
 
 When an employee biologically types `intranet.corp.local` into their browser, public DNS mathematically has no idea what that is. Active Directory runs an internal DNS server. It mathematically resolves the private biological name to a private IP address (`10.0.0.5`). If the internal DNS server crashes, the entire corporate network biologically collapses, as no internal servers can mathematically find each other.
 
-</ConceptTemplate>

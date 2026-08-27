@@ -1,8 +1,32 @@
+---
+title: Layered Architecture
+description: The most traditional and widely used software architectural pattern, mathematically organizing code into distinct horizontal tiers (Presentation, Business, Data) to enforce a strict separation of concerns.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Layered architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Layered Architecture (N-Tier)"
+  subtitle="The Horizontal Stack"
+  tags={['Architecture', 'Design Patterns', 'Enterprise', 'Fundamentals']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Also known as N-Tier architecture, this is the default architectural pattern for almost all standard enterprise monolithic applications (like Ruby on Rails or Spring Boot).
 
-</ConceptTemplate>
+## 1. The Mathematical Tiers
+The application is physically and logically partitioned into horizontal layers:
+1. **Presentation Layer (UI/Controllers)**: Handles HTTP requests, HTML rendering, or JSON serialization.
+2. **Business Logic Layer (Services)**: Contains the core mathematical rules (e.g., "A user cannot withdraw more money than their balance").
+3. **Data Access Layer (Repositories/DAOs)**: Handles the raw SQL translation and TCP communication with the database.
+4. **Database Layer**: The actual physical SQL server.
+
+## 2. The Strict Dependency Rule
+The defining mathematical characteristic of Layered Architecture is the flow of dependency: **A layer can only depend on the layer immediately below it.**
+The Presentation Layer can call the Business Layer, but it is mathematically forbidden from calling the Data Access Layer directly. This strict separation of concerns ensures that a developer can completely rewrite the UI (Presentation) without accidentally breaking the database queries (Data Access).
+

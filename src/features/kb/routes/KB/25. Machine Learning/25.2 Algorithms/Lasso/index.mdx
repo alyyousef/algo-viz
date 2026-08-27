@@ -4,7 +4,14 @@ description: A variant of Linear Regression that mathematically utilizes an abso
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lasso Regression (L1)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lasso Regression (L1)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Lasso (Least Absolute Shrinkage and Selection Operator)** is a powerful Linear Regression algorithm designed to solve datasets that have massive amounts of irrelevant features, by applying L1 Regularisation.
 
@@ -18,14 +25,13 @@ $Loss = MSE + \lambda \sum |w_i|$
 ## 2. The Geometry of Feature Selection (Why weights go to zero)
 L2 Regularisation (Ridge) shrinks weights, but rarely to zero. L1 (Lasso) shrinks weights to *exactly* zero. Why? It is pure geometry.
 
-Imagine a 2D graph of the Loss Function. 
+Imagine a 2D graph of the Loss Function.
 - The L2 penalty is mathematically a smooth **Circle**. When the gradient descent optimizer expands to touch the circle, it usually hits the edge (meaning both $w_1$ and $w_2$ have non-zero values).
-- The L1 penalty is mathematically a sharp **Diamond** (because of the absolute value function). The diamond has sharp, pointed corners exactly on the axes. When the optimizer expands to touch the diamond, it almost mathematically always hits a sharp corner. 
+- The L1 penalty is mathematically a sharp **Diamond** (because of the absolute value function). The diamond has sharp, pointed corners exactly on the axes. When the optimizer expands to touch the diamond, it almost mathematically always hits a sharp corner.
 If it hits the corner on the $y$-axis, the $x$-coordinate is strictly $0.0$. The algorithm has mathematically deleted that feature.
 
 ## 3. Production Use Cases
-Lasso is absolutely vital in fields like Bioinformatics (Genomics). 
+Lasso is absolutely vital in fields like Bioinformatics (Genomics).
 If you are predicting a disease, you might have 50,000 columns (representing 50,000 genes), but only 100 patients. Standard regression mathematically crashes (infinite solutions).
 Lasso flawlessly handles this. The mathematical diamond penalty aggressively forces 49,990 genes to exactly 0.0, outputting a highly interpretable model that explicitly tells the doctors which 10 genes actually cause the disease.
 
-</ConceptTemplate>

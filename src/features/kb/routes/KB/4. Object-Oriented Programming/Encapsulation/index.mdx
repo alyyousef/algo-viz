@@ -8,19 +8,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 In object-oriented programming, encapsulation refers to the bundling of data with the methods that operate on that data, or the restricting of direct access to some of an object's components.
 
+
 <Callout icon="tip" title="Data Hiding">
+
+
   By making a class's variables `private` and forcing outside code to use `public` Getters and Setters, the class protects its internal state. A `BankAccount` class can throw an error in `setBalance(amount)` if the amount is negative, preventing invalid states.
+
+
 </Callout>
+
 
 ## Access Modifiers
 
-<ComparisonTable 
-  headers={['Modifier', 'Accessibility']}
-  rows={[
-    ['Public', 'Accessible from anywhere in the codebase.'],
-    ['Protected', 'Accessible only within the class itself, and by subclasses (children) that inherit from it.'],
-    ['Private', 'Accessible ONLY within the exact class where it is declared.']
-  ]}
-/>
+
+<ComparisonTable headers={['Modifier', 'Accessibility']} rows={[ ['Public', 'Accessible from anywhere in the codebase.'], ['Protected', 'Accessible only within the class itself, and by subclasses (children) that inherit from it.'], ['Private', 'Accessible ONLY within the exact class where it is declared.'] ]} />
+
 
 </TechnologyTemplate>

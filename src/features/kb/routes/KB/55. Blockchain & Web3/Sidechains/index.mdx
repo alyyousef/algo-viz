@@ -4,14 +4,26 @@ description: A separate blockchain that runs in parallel to mainnet and operates
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sidechains">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sidechains">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Sidechain** (like Polygon PoS) is often confused with a Layer 2, but it is mathematically fundamentally different.
 
+
 <Callout icon="warning" title="Independent Security">
+
+
   A True Layer 2 mathematically relies on Ethereum for its security. If the Layer 2 nodes all shut down, you can still mathematically extract your funds from Ethereum.
-  
+
   A Sidechain is biologically its own distinct blockchain. It has its own miners, its own consensus mechanism, and its own security model. It simply maintains a two-way "Bridge" to Ethereum. If the Sidechain gets hacked, your money is mathematically gone forever, regardless of how secure Ethereum is.
+
+
 </Callout>
 
-</ConceptTemplate>
+

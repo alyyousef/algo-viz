@@ -4,21 +4,27 @@ description: A terrifyingly complex integer-based tree structure that achieves m
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Van Emde Boas Trees (vEB Trees)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Van Emde Boas Trees (vEB Trees)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standard Binary Search Tree achieves $O(log N)$ performance, where $N$ is the number of elements currently stored. The **Van Emde Boas Tree** completely destroys this paradigm. It mathematically achieves **$O(log log M)$** performance, where $M$ is the maximum possible integer size.
 
 ## 1. The Mathematical Universe
-A vEB Tree mathematically forbids strings or floating-point numbers. It strictly only accepts integers from a fixed "Universe" (e.g., $0$ to $M-1$). 
+A vEB Tree mathematically forbids strings or floating-point numbers. It strictly only accepts integers from a fixed "Universe" (e.g., $0$ to $M-1$).
 Because it only cares about the maximum possible integer ($M$), the performance is completely unaffected by how many items you insert. You can insert 10 items or 10 Billion items; the lookup time mathematically remains identical.
 
 ## 2. O(log log M) Velocity
-$O(log log M)$ is an astronomically fast mathematical curve. 
-If your universe is all 32-bit integers ($M = 4,294,967,296$), the $log_2$ of $M$ is $32$. The $log_2$ of $32$ is **$5$**. 
+$O(log log M)$ is an astronomically fast mathematical curve.
+If your universe is all 32-bit integers ($M = 4,294,967,296$), the $log_2$ of $M$ is $32$. The $log_2$ of $32$ is **$5$**.
 A vEB tree mathematically guarantees it can find, insert, delete, or find the nearest neighbor of any 32-bit integer in the universe in a strict maximum of **$5$ CPU operations**. For 64-bit integers, it takes a maximum of exactly **$6$ operations**. It is virtually indistinguishable from $O(1)$ time.
 
 ## 3. Recursive Square Roots
-To achieve this, the vEB tree relies on mathematical recursion. A tree of size $M$ mathematically splits itself into $sqrt{M}$ smaller vEB trees, each of size $sqrt{M}$. 
+To achieve this, the vEB tree relies on mathematical recursion. A tree of size $M$ mathematically splits itself into $sqrt{M}$ smaller vEB trees, each of size $sqrt{M}$.
 When you search for a number, the algorithm splits the integer into its high bits and low bits. The high bits instantly tell it which sub-tree to enter, and the low bits tell it exactly where to look. Because the size of the mathematical universe is square-rooted at every single step, the recursion depth is staggeringly shallow.
 
-</ConceptTemplate>

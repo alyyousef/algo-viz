@@ -1,8 +1,35 @@
+---
+title: REST (Representational State Transfer)
+description: "An architectural style introduced by Roy Fielding in 2000 that defines a set of strict mathematical constraints for creating web services, emphasizing stateless communication, standard HTTP methods, and hypermedia."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="REST">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="REST (Representational State Transfer)"
+  subtitle="The Architecture of the Web"
+  tags={['API', 'REST', 'Web', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before REST, web services used SOAP and XML-RPC, which were mathematically complex, stateful, and ignored the underlying architecture of the internet (HTTP).
 
-</ConceptTemplate>
+## 1. The Resource Paradigm (Nouns)
+The fundamental mathematical unit of REST is the **Resource** (a Noun).
+Instead of writing an RPC endpoint like `/getUsers`, you define the Resource URL: `/users`.
+To perform actions on that Resource, you use the standard mathematical **HTTP Verbs**:
+- **GET `/users`**: Read a list of users.
+- **POST `/users`**: Create a new user.
+- **PUT `/users/1`**: Fully replace user 1.
+- **PATCH `/users/1`**: Partially update user 1.
+- **DELETE `/users/1`**: Remove user 1.
+
+## 2. The Stateless Constraint
+The most important architectural constraint of REST is **Statelessness**.
+The server is mathematically forbidden from storing any client state (like a Session ID) between requests. Every single HTTP request from the client must contain 100% of the mathematical information (like a JWT Authorization header) required for the server to understand and authorize the request. This constraint allows REST APIs to mathematically scale to infinity, because a load balancer can route Request 1 to Server A, and Request 2 to Server B, without the servers needing to share session memory.
+

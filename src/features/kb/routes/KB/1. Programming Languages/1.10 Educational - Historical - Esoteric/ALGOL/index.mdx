@@ -1,8 +1,36 @@
+---
+title: ALGOL
+description: One of the most influential programming languages in history, fundamentally shaping the syntax of nearly all modern imperative languages.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ALGOL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ALGOL (Algorithmic Language)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1958, ALGOL was mathematically designed by an international committee to be a universal language for scientific computing, aiming to replace Fortran. While it never achieved Fortran's commercial dominance, its architectural legacy is unmatched.
 
-</ConceptTemplate>
+## 1. The Father of Modern Syntax
+ALGOL 60 introduced the concept of **Block Structure**.
+It was the first language to use `begin` and `end` to mathematically scope variables to specific blocks of code. This direct lineage evolved into the curly braces `{}` used by C, Java, JavaScript, and Rust today.
+
+
+<Callout icon="info" title="Lexical Scoping">
+
+
+Before ALGOL, variables were often globally accessible, leading to catastrophic mathematical state errors in massive programs. ALGOL proved that variables should exist only within their strictly defined lexical block.
+
+
+</Callout>
+
+
+## 2. BNF (Backus-Naur Form)
+To define the incredibly complex syntax of ALGOL mathematically, John Backus and Peter Naur invented BNF.
+BNF is a formal mathematical notation used to describe context-free grammars. Today, essentially every single programming language compiler in existence uses a variant of BNF to parse source code.
+Without ALGOL, the modern science of compiler design would not exist.
+

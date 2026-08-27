@@ -4,9 +4,16 @@ description: A standardized JSON configuration file that instructs the mobile op
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Web Manifest">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Web Manifest">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A website is designed to be viewed inside a browser window, surrounded by back buttons, URL bars, and tabs. 
+A website is designed to be viewed inside a browser window, surrounded by back buttons, URL bars, and tabs.
 A Native App is designed to run in a standalone, immersive full-screen window.
 
 To make a PWA feel like a Native App, you provide a **Web Manifest** (usually named `manifest.json`).
@@ -37,4 +44,3 @@ The manifest tells the OS exactly how to "install" the web app onto the user's h
 - **Icons**: Provides the exact high-resolution PNGs the OS needs to create the icon on the iOS/Android home screen.
 - **Theme Color**: Controls the color of the OS status bar (where the battery and time are displayed) to match your brand.
 
-</ConceptTemplate>

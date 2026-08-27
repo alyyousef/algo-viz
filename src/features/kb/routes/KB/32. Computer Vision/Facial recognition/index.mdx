@@ -1,8 +1,29 @@
+---
+title: Facial Recognition
+description: A biometric AI technology that mathematically extracts the unique geometrical structure of a human face and maps it to a dense vector embedding for instantaneous, high-security identification.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Facial recognition">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Facial Recognition">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+You cannot just compare the pixels of Face A to Face B; shadows, glasses, or a slight turn of the head mathematically change every single pixel. Facial Recognition relies on extracting invariant geometric topology.
 
-</ConceptTemplate>
+## 1. The Face Embedding
+When an image is passed to a Facial Recognition network (like FaceNet), it first runs a fast detector to draw a bounding box around the face. It aligns the face (straightens the eyes).
+Then, a deep CNN mathematically compresses the physical structure of the face (the distance between the pupils, the depth of the eye sockets, the shape of the jawline) into a dense **128-dimensional Vector**. This vector is mathematically invariant to lighting or facial expressions.
+
+## 2. Triplet Loss Training
+How do you train a network to do this? You use **Triplet Loss**.
+During training, the network is fed three images simultaneously:
+1. **Anchor**: A picture of John.
+2. **Positive**: A different picture of John (different lighting).
+3. **Negative**: A picture of Bob.
+The mathematical Loss Function physically forces the network to adjust its weights so that the Distance between the Anchor Vector and the Positive Vector shrinks, while simultaneously forcing the Distance between the Anchor Vector and the Negative Vector to expand. In production, to unlock a phone, the system simply checks if the Cosine Similarity between the stored Vector and the camera Vector crosses a strict mathematical threshold (e.g., 0.95).
+

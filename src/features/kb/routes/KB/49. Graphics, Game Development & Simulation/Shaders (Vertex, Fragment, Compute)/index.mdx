@@ -4,22 +4,34 @@ description: A type of computer program that was originally used for shading but
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Shaders (Vertex, Fragment, Compute)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Shaders (Vertex, Fragment, Compute)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Shader** is a tiny, highly specialized C-like program (written in GLSL or HLSL) that does not run on the CPU. It is mathematically compiled and executed directly on the GPU.
 
 Because a GPU has 5,000 microscopic cores, the GPU can run 5,000 instances of a Shader simultaneously, in perfect mathematical parallel.
 
+
 <Callout icon="info" title="The Two Rendering Shaders">
+
+
   The standard rendering pipeline requires two specific shaders:
   1. **Vertex Shader:** Runs exactly once for every 3D point (vertex) in the model. Its only job is mathematical translation: calculating exactly where this 3D point lands on the 2D screen using Matrix Multiplication.
   2. **Fragment (Pixel) Shader:** Runs exactly once for every single pixel on the screen. Its job is to mathematically calculate the final color of that pixel (applying textures, calculating lighting dot-products, and casting shadows).
+
+
 </Callout>
+
 
 ## Compute Shaders
 
-Historically, GPUs could only render graphics. **Compute Shaders** mathematically broke this restriction. 
+Historically, GPUs could only render graphics. **Compute Shaders** mathematically broke this restriction.
 
 A Compute Shader has absolutely nothing to do with rendering a screen. It is a program that hijacks the GPU's 5,000 cores to run arbitrary mathematics. If you need to simulate 1 million particles of water flowing down a river, the CPU will crash. A Compute Shader calculates the physics for all 1 million particles simultaneously in 2 milliseconds.
 
-</ConceptTemplate>

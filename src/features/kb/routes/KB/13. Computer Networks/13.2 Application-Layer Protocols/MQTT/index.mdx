@@ -5,12 +5,19 @@ description: "Message Queuing Telemetry Transport, a lightweight, publish-subscr
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="MQTT"
   icon="wifi"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**MQTT** is the undisputed king protocol of the **Internet of Things (IoT)**. 
+**MQTT** is the undisputed king protocol of the **Internet of Things (IoT)**.
 
 When you have a smart thermostat, a fleet of delivery trucks, or 10,000 temperature sensors in a factory, HTTP is far too heavy. HTTP requires opening a connection, sending heavy headers, and keeping the connection alive. MQTT is designed to be incredibly lightweight, using minimal battery power and bandwidth over unstable networks (like 2G cellular or satellite).
 
@@ -30,8 +37,13 @@ MQTT allows devices to specify how critical a message is:
 - **QoS 1 (At least once)**: Guaranteed delivery, but the subscriber might receive duplicates.
 - **QoS 2 (Exactly once)**: Guaranteed delivery with no duplicates. Uses a 4-step handshake. Used for critical commands (e.g., "Unlock the front door").
 
+
 <Callout icon="tip" title="Last Will and Testament (LWT)">
+
+
 A brilliant feature of MQTT. When a sensor connects to the broker, it can register a "Last Will." If the sensor suddenly loses power and drops the TCP connection ungracefully, the broker will automatically publish the Last Will message (e.g., "Device Offline") to a topic, alerting the system that the sensor died.
+
+
 </Callout>
 
-</ConceptTemplate>
+

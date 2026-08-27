@@ -1,8 +1,30 @@
+---
+title: KISS (Keep It Simple, Stupid)
+description: "A design principle originating from the US Navy stating that systems work best when they are mathematically simple rather than complex, warning against over-engineering and premature optimization."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="KISS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="KISS (Keep It Simple, Stupid)"
+  subtitle="The War on Over-Engineering"
+  tags={['Process', 'Clean Code', 'Design Principles', 'Philosophy']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Junior engineers write complex code to prove they are smart. Senior engineers write mathematically simple code because they know they have to debug it at 3:00 AM on a Sunday.
 
-</ConceptTemplate>
+## 1. Premature Complexity
+If a startup needs a simple CRUD application for 50 internal employees, the mathematically correct solution is a Ruby on Rails monolith deployed to a single $10/month Heroku server.
+If an architect builds a 15-microservice Kubernetes cluster using Kafka and Cassandra to handle 50 users, they have mathematically violated KISS. They have introduced catastrophic "accidental complexity" that will bankrupt the engineering team's time.
+
+## 2. YAGNI (You Aren't Gonna Need It)
+KISS is closely tied to the YAGNI principle.
+Developers often write complex abstraction layers "just in case we need to support Oracle databases in the future."
+YAGNI dictates that you must mathematically assume you will *never* need it. Write the simplest possible code to solve today's exact problem. When the business requirement mathematically changes in two years, you refactor it then. Code should be easy to delete, not perfectly abstracted for futures that never arrive.
+

@@ -4,14 +4,26 @@ description: The basic unit of quantum information, analogous to the classical b
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Qubits (Quantum Bits)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Qubits (Quantum Bits)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In classical computer science, every piece of data is physically stored as a **Bit**. A bit is a deterministic, biological switch on a silicon chip. It is strictly `0` or `1`.
 
+
 <Callout icon="success" title="The Subatomic Switch">
+
+
   A **Qubit** (Quantum Bit) abandons deterministic silicon and uses actual subatomic particles (like a single electron, or a photon of light).
-  
+
   Because it obeys the terrifying laws of Quantum Mechanics, a Qubit is not strictly `0` or `1`. Due to **Superposition**, a Qubit can mathematically exist in a continuous state of *both 0 and 1 simultaneously* until it is physically observed. This allows a quantum computer to process an exponential number of mathematical possibilities at the exact same time.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,22 +4,34 @@ description: A mechanism where web browsers store copies of static assets locall
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Browser Caching">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Browser Caching">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The fastest mathematical network request is the one that never leaves the user's computer.
 
 **Browser Caching** is the first, and most powerful, layer of defense in System Design. By instructing Google Chrome or Safari to save a 5MB background image to the user's physical hard drive, you mathematically eliminate the bandwidth cost and the 100ms network latency for all future visits to your site.
 
+
 <Callout icon="tip" title="Cache-Control Headers">
+
+
   Browser caching is entirely controlled by mathematical HTTP Headers sent by your web server. The most important is `Cache-Control: max-age=31536000` (which tells the browser to keep the file on disk for exactly 1 year).
+
+
 </Callout>
+
 
 ## The Cache Busting Problem
 
 If you tell Chrome to cache `styles.css` for 1 year, and tomorrow you update the background color to blue, the user will mathematically still see the old red background because Chrome will refuse to ask the server for the new file.
 
-**Cache Busting** is the mathematical solution. Webpack or Vite automatically appends a cryptographic hash of the file's contents to the filename (e.g., `styles.ab12c9.css`). 
+**Cache Busting** is the mathematical solution. Webpack or Vite automatically appends a cryptographic hash of the file's contents to the filename (e.g., `styles.ab12c9.css`).
 
 When you change the CSS, the hash mathematically changes to `styles.x9z8b1.css`. The browser sees a completely new filename, realizes it isn't in the local cache, and downloads the fresh CSS file perfectly.
 
-</ConceptTemplate>

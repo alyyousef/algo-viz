@@ -4,9 +4,16 @@ description: The foundational mathematical algorithms that deterministically com
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hash Functions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hash Functions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A **Hash Function** is a strict mathematical algorithm that takes an input of absolutely any size (a 3-letter word, or a 50-Gigabyte 4K movie), violently scrambles it, and outputs a fixed-size integer or string (the Hash). 
+A **Hash Function** is a strict mathematical algorithm that takes an input of absolutely any size (a 3-letter word, or a 50-Gigabyte 4K movie), violently scrambles it, and outputs a fixed-size integer or string (the Hash).
 
 ## 1. The Three Mathematical Rules
 To be viable for Data Structures, a Hash Function must strictly obey three laws:
@@ -15,11 +22,10 @@ To be viable for Data Structures, a Hash Function must strictly obey three laws:
 3. **Avalanche Effect**: Changing a single microscopic bit in a 50GB file must mathematically completely destroy and scramble the final Hash, making it completely unrecognizable from the original.
 
 ## 2. Hash Tables (Non-Cryptographic)
-For data structures like Hash Maps, the algorithm does not need to be secure; it just needs to be incredibly fast. 
+For data structures like Hash Maps, the algorithm does not need to be secure; it just needs to be incredibly fast.
 Algorithms like **MurmurHash** or **CityHash** are heavily optimized to mathematically scramble strings into 32-bit integers in nanoseconds. This integer is then passed through a Modulo operator (`Hash % Array_Size`) to instantly calculate the exact memory array index where the data should be stored.
 
 ## 3. Cryptographic Hashes (SHA-256)
-If you are storing Passwords or generating Bitcoin, speed is actually your enemy (it makes brute-forcing easier). 
+If you are storing Passwords or generating Bitcoin, speed is actually your enemy (it makes brute-forcing easier).
 Cryptographic functions like **SHA-256** apply massive, mathematically irreversible algebraic transformations. It is mathematically impossible (even with every supercomputer on Earth) to take a SHA-256 Hash and reverse-engineer it back into the original password, making it the absolute foundation of global cybersecurity.
 
-</ConceptTemplate>

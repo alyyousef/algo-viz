@@ -4,15 +4,28 @@ description: A type of automaton that employs a stack data structure to recogniz
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pushdown Automata">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pushdown Automata">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A Finite Automaton is mathematically weak because it has no memory. It cannot count. 
+A Finite Automaton is mathematically weak because it has no memory. It cannot count.
 
-A **Pushdown Automaton (PDA)** is mathematically created by taking a Finite Automaton and giving it exactly one infinite strip of memory: a **Stack**. 
+A **Pushdown Automaton (PDA)** is mathematically created by taking a Finite Automaton and giving it exactly one infinite strip of memory: a **Stack**.
+
 
 <Callout icon="success" title="The Power to Count">
+
+
   With a Stack, a computer can mathematically solve the parentheses problem! When it reads an `(`, it pushes a token onto the Stack. When it reads a `)`, it pops a token off. If the string ends and the Stack is empty, the parentheses are perfectly balanced.
+
+
 </Callout>
+
 
 ## Mathematical Mechanics
 
@@ -23,4 +36,3 @@ At any given moment, a PDA mathematically decides its next move based on three t
 
 This mathematical architecture is exactly how **Parsers** in modern compilers (like GCC or V8) process nested code blocks (e.g., `if` statements inside `while` loops inside `functions`). Every programming language on Earth is mathematically designed to be parsed by a Pushdown Automaton.
 
-</ConceptTemplate>

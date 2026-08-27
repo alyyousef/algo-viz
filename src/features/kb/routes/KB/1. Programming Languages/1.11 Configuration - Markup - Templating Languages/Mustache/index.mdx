@@ -1,8 +1,26 @@
+---
+title: Mustache
+description: The original "logic-less" templating language that inspired Handlebars and fundamentally changed web UI architecture.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mustache">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mustache">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Mustache (named because the curly braces `{{ }}` look like a sideways mustache) is a web template system with implementations in Ruby, JavaScript, Python, C++, and almost every other major language.
 
-</ConceptTemplate>
+## 1. Absolute Logic-Less Design
+Mustache is mathematically stricter than Handlebars.
+In Handlebars, you can write custom Helpers to execute logic. Mustache explicitly forbids this.
+You cannot have `if/else` statements. You only have "Sections" (`{{#person}} ... {{/person}}`). If the `person` object is false or null, the section is not rendered. If it is an array, the section mathematically loops over the array.
+This forces the backend developer to pre-calculate every single boolean flag (e.g., `show_person_div`) before handing the data to Mustache.
+
+## 2. Architectural Impact
+By mathematically forcing developers to remove logic from the View layer, Mustache practically trained an entire generation of developers on the strict Model-View-Controller (MVC) paradigm, paving the way for modern state-driven frameworks like React and Vue.
+

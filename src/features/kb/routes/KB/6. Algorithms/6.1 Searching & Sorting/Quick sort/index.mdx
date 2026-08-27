@@ -8,20 +8,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Quick Sort is a highly efficient sorting algorithm and is based on partitioning of array of data into smaller arrays. A large array is partitioned into two arrays one of which holds values smaller than the specified value, say pivot, based on which the partition is made and another array holds values greater than the pivot value.
 
+
 <Callout icon="warning" title="The Worst Case">
+
+
   If you always pick the last element as the pivot, and the array is already sorted, Quick Sort degrades to O(n²). Modern implementations solve this by picking a random pivot or the median of three.
+
+
 </Callout>
+
 
 ## Time and Space Complexity
 
-<ComparisonTable 
-  headers={['Metric', 'Complexity', 'Explanation']}
-  rows={[
-    ['Time (Best/Avg)', 'O(n log n)', 'Usually much faster than Merge Sort in practice due to cache locality.'],
-    ['Time (Worst)', 'O(n²)', 'Happens if the pivot is always the smallest or largest element.'],
-    ['Space', 'O(log n)', 'In-place sorting, but requires stack space for recursive calls.'],
-    ['Stable?', 'No', 'Relative order of equal elements is not guaranteed.']
-  ]}
-/>
+
+<ComparisonTable headers={['Metric', 'Complexity', 'Explanation']} rows={[ ['Time (Best/Avg)', 'O(n log n)', 'Usually much faster than Merge Sort in practice due to cache locality.'], ['Time (Worst)', 'O(n²)', 'Happens if the pivot is always the smallest or largest element.'], ['Space', 'O(log n)', 'In-place sorting, but requires stack space for recursive calls.'], ['Stable?', 'No', 'Relative order of equal elements is not guaranteed.'] ]} />
+
 
 </TechnologyTemplate>

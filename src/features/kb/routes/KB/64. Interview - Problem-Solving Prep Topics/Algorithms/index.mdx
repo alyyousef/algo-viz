@@ -4,10 +4,16 @@ description: A finite sequence of rigorous instructions, typically used to solve
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Algorithms (Interview Prep)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Algorithms (Interview Prep)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a technical interview, **Algorithms** test your ability to mathematically manipulate data.
 
 You will almost never be asked to write a biological sorting algorithm from scratch. Instead, you are tested on algorithmic *application*. Can you recognize that a problem requires a Breadth-First Search (BFS) instead of a Depth-First Search (DFS)? Can you mathematically implement a Binary Search to turn an $O(N)$ lookup into an $O(\log N)$ lookup? The interviewer is watching how you biologically break a massive problem into atomic, algorithmic steps.
 
-</ConceptTemplate>

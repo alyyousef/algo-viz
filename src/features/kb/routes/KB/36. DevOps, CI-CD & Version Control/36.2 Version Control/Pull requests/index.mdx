@@ -1,8 +1,33 @@
+---
+title: Pull Requests
+description: A collaborative mechanism utilized in platforms like GitHub and GitLab that allows developers to propose mathematical code changes, initiate peer review, and run automated CI validation before merging.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pull requests">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Pull Requests (PRs)"
+  subtitle="The Gateway to the Mainline"
+  tags={['Version Control', 'Git', 'Collaboration', 'CI/CD']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Pull Request (known as a Merge Request in GitLab) is not a native Git command. It is a web-based, collaborative wrapper built on top of Git to enforce mathematical quality gates.
 
-</ConceptTemplate>
+## 1. The Collaborative Diff
+When a developer pushes a branch to GitHub, they open a PR.
+The PR mathematically calculates the exact diff between the developer's branch and the target `main` branch. It presents this diff in a human-readable web interface, allowing senior engineers to leave comments directly on specific lines of code.
+
+## 2. The Automated Quality Gate
+The greatest power of a PR is its role as a mathematical gatekeeper.
+When a PR is opened, Webhooks instantly notify the CI/CD pipeline (e.g., Jenkins). The pipeline runs unit tests and security scans against the proposed code.
+The branch is physically blocked from merging unless two mathematical conditions are met:
+1. The CI pipeline returns a `Success` exit code.
+2. A human reviewer clicks the `Approve` button.
+This mathematical lock prevents junior developers from accidentally destroying production by forcefully pushing broken code directly to the `main` branch.
+

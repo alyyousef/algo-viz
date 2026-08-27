@@ -4,18 +4,31 @@ description: The administration and monitoring of IoT devices to ensure they are
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Device Management">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Device Management">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Provisioning a device is only Day 1. **Device Management** is the mathematical reality of Day 2 to Day 3,650. 
+Provisioning a device is only Day 1. **Device Management** is the mathematical reality of Day 2 to Day 3,650.
 
-If you have a fleet of 500,000 electric scooters deployed across 100 cities, you mathematically cannot physically send a technician to check if a scooter's battery is dying or if its GPS module has crashed. 
+If you have a fleet of 500,000 electric scooters deployed across 100 cities, you mathematically cannot physically send a technician to check if a scooter's battery is dying or if its GPS module has crashed.
+
 
 <Callout icon="info" title="The Fleet Fleet Dashboard">
+
+
   Enterprise IoT architectures (like AWS IoT Core or Azure IoT Hub) provide massive Device Management dashboards. They mathematically track:
   - **Liveness:** Is the device online? (Tracked via MQTT Keep-Alive heartbeats).
   - **Telemetry:** What is the current state? (Battery level, CPU temperature).
   - **Commands:** The ability to execute a Remote Procedure Call (RPC) to force a specific scooter to physically lock its wheels.
+
+
 </Callout>
+
 
 ## The Shadow State (Device Twin)
 
@@ -23,4 +36,3 @@ What happens if you send a command to "Turn Off" a scooter, but the scooter is d
 
 IoT systems solve this using a **Device Shadow**. The Cloud mathematically stores a JSON document representing the *desired* state of the device. When the scooter finally exits the tunnel and reconnects to the internet, it reads its Shadow JSON, sees the desired state is "Off", and physically executes the command.
 
-</ConceptTemplate>

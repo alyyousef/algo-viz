@@ -4,23 +4,30 @@ description: The architectural innovations allowing modern LLMs to process milli
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Long-Context Techniques">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Long-Context Techniques">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The original Transformer was limited to processing 512 tokens at a time. Today, models like Gemini 1.5 Pro can process over 2,000,000 tokens simultaneously—enough to read the entire Harry Potter series, analyze an hour of video, or ingest an entire massive codebase in a single prompt.
 
+
 <Callout icon="warning" title="The Quadratic Bottleneck">
+
+
   Standard Self-Attention scales quadratically $O(N^2)$. If you double the context length, the compute and memory required quadruple. Therefore, reaching 1-million tokens requires profound mathematical and engineering breakthroughs.
+
+
 </Callout>
+
 
 ## Key Innovations
 
-<ComparisonTable 
-  headers={['Innovation', 'Description']}
-  rows={[
-    ['RoPE (Rotary Position Embedding)', 'A mathematical way to encode token positions that easily extrapolates to longer sequences than the model saw during training.'],
-    ['Ring Attention', 'Distributes the massive $O(N^2)$ attention calculation across a ring of multiple GPUs, allowing context windows to scale linearly with the number of GPUs you add.'],
-    ['KV Cache Quantization', 'Compressing the cached Key and Value matrices from 16-bit floats to 8-bit or 4-bit integers, drastically reducing the massive VRAM required to hold a 1-million token context.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Innovation', 'Description']} rows={[ ['RoPE (Rotary Position Embedding)', 'A mathematical way to encode token positions that easily extrapolates to longer sequences than the model saw during training.'], ['Ring Attention', 'Distributes the massive $O(N^2)$ attention calculation across a ring of multiple GPUs, allowing context windows to scale linearly with the number of GPUs you add.'], ['KV Cache Quantization', 'Compressing the cached Key and Value matrices from 16-bit floats to 8-bit or 4-bit integers, drastically reducing the massive VRAM required to hold a 1-million token context.'] ]} />
+
+

@@ -4,7 +4,14 @@ description: A strict LIFO (Last-In-First-Out) data structure used to track stat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stacks (LIFO)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Stacks (LIFO)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Stack** perfectly mimics a physical stack of dinner plates. If you want a plate, you must take the one directly off the top. You cannot pull a plate from the bottom without breaking the entire stack.
 
@@ -25,8 +32,13 @@ Stacks are the fundamental backbone of program execution and state management.
 2. **Undo/Redo Mechanisms**: Every action you take in a text editor is pushed onto a stack. When you hit Ctrl+Z, the editor pops the most recent action off the stack and reverses it.
 3. **Depth-First Search (DFS)**: The DFS algorithm uses a stack (either explicitly, or implicitly via recursion) to plunge as deep into a graph as possible before backtracking.
 
+
 <Callout icon="warning" title="Stack Overflow">
+
+
   The OS limits the physical RAM allocated to the Call Stack (often just a few megabytes). If you write a recursive function that never hits its base case, the CPU will continuously push new frames onto the stack until it physically runs out of memory, instantly crashing the program with a **Stack Overflow** error.
+
+
 </Callout>
 
-</ConceptTemplate>
+

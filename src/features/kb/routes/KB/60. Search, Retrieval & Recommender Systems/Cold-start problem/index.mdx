@@ -4,12 +4,18 @@ description: A potential problem in computer-based information systems which inv
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cold-Start Problem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cold-Start Problem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Cold-Start Problem** is the greatest biological nightmare of recommendation systems.
 
-If a completely new User signs up for Spotify, the Collaborative Filtering matrix is entirely blank. The system mathematically has absolutely zero behavioral data to generate recommendations. Similarly, if a creator uploads a brand new Video, it has zero views, so the system mathematically doesn't know who to show it to. 
+If a completely new User signs up for Spotify, the Collaborative Filtering matrix is entirely blank. The system mathematically has absolutely zero behavioral data to generate recommendations. Similarly, if a creator uploads a brand new Video, it has zero views, so the system mathematically doesn't know who to show it to.
 
 Systems must rely on biological hacks to survive cold-starts: asking the new user to pick 3 genres during onboarding, or using pure Content-Based Filtering to randomly push the new video to a small test audience to mathematically gather initial data.
 
-</ConceptTemplate>

@@ -4,7 +4,14 @@ description: A mathematical generalization of a Set that permits duplicate eleme
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multisets (Bags)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multisets (Bags)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A standard Set strictly destroys duplicates (inserting `"Apple"` five times results in exactly one `"Apple"`). A **Multiset** (also known as a Bag) is a data structure that allows duplicates, but mathematically compresses them by tracking their frequencies.
 
@@ -15,7 +22,7 @@ Instead of storing `["Apple", "Apple", "Apple"]` as a massive Array (which consu
 When you add another `"Apple"`, the Multiset instantly looks up the key in $O(1)$ time and mathematically increments the integer to $4$.
 
 ## 2. Fast Frequency Analytics
-Multisets are the absolute standard for generating rapid statistical distributions. If you scrape 10 million words from a Wikipedia article, dumping them into a Multiset mathematically generates a perfect word-frequency distribution in $O(N)$ time. 
+Multisets are the absolute standard for generating rapid statistical distributions. If you scrape 10 million words from a Wikipedia article, dumping them into a Multiset mathematically generates a perfect word-frequency distribution in $O(N)$ time.
 You can instantly query `count("the")` and receive the exact frequency in $O(1)$ time, a process that would take a standard Array $O(N)$ time to count manually.
 
 ## 3. Multiset Mathematics
@@ -23,4 +30,3 @@ Multisets support complex combinatorial logic:
 - **Sum**: Adding two Multisets together mathematically adds their frequencies. (`{A: 2} + {A: 3} = {A: 5}`)
 - **Intersection**: mathematically takes the *minimum* frequency of the shared elements. (`{A: 2} ∩ {A: 3} = {A: 2}`)
 
-</ConceptTemplate>

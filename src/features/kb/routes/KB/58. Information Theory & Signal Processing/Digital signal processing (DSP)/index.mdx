@@ -4,10 +4,16 @@ description: The use of digital processing, such as by computers or more special
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Digital Signal Processing (DSP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Digital Signal Processing (DSP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The biological world is analog. Sound waves, temperature, and light are continuous mathematical waves. Computers are digital; they only understand discrete `0`s and `1`s.
 
 **Digital Signal Processing (DSP)** is the mathematical discipline of converting analog reality into discrete numbers, performing extreme calculus on those numbers, and converting them back to analog reality. Every time you use biological Noise Cancellation on your AirPods, a DSP chip is mathematically analyzing the analog background noise and generating an inverted digital sound wave in real-time to cancel it out.
 
-</ConceptTemplate>

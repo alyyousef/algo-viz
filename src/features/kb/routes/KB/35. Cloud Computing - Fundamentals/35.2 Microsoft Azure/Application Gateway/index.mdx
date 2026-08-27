@@ -1,0 +1,25 @@
+---
+title: Azure Application Gateway
+description: A highly scalable, Layer 7 web traffic load balancer and Web Application Firewall (WAF) designed to mathematically route HTTP/HTTPS requests based on URL paths and headers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Application Gateway"
+  subtitle="Layer 7 Web Load Balancer"
+  tags={['Azure', 'Networking', 'Load Balancing', 'Security']}
+>
+
+A standard Load Balancer operates at Layer 4 (TCP/UDP), blindly forwarding packets based on IP addresses. Azure Application Gateway operates at Layer 7 (HTTP), meaning it mathematically understands the actual content of the web request.
+
+## 1. URL Path-Based Routing
+Because it understands HTTP, Application Gateway can mathematically route traffic based on the URL.
+- If a user requests `api.com/video/*`, the Gateway routes the traffic to a specific backend pool of heavy, GPU-optimized servers.
+- If a user requests `api.com/images/*`, it mathematically routes the traffic to a different pool of lightweight servers.
+This allows you to host dozens of distinct microservices behind a single, unified public IP address.
+
+## 2. Web Application Firewall (WAF)
+The Application Gateway is often the first line of defense against hackers.
+It includes an integrated WAF that mathematically inspects every incoming HTTP packet against the OWASP Top 10 threat rules. If a hacker attempts a SQL Injection (e.g., passing `' OR 1=1` in a URL parameter), the WAF mathematically detects the malicious string and instantly drops the connection, returning a 403 Forbidden before the packet ever reaches your vulnerable backend servers.
+
+</TechnologyTemplate>

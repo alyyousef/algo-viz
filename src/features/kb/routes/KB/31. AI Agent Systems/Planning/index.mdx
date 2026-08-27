@@ -1,8 +1,32 @@
+---
+title: Agent Planning
+description: The critical architectural phase where an autonomous AI mathematically decomposes a massive, ambiguous goal into a strict, executable Directed Acyclic Graph (DAG) of sub-tasks before taking any physical action.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Planning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Agent Planning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you tell an Agent to "Deploy a web server," and it immediately starts guessing bash commands, it will destroy the environment. Advanced Agents must mathematically *Plan* before they *Act*.
 
-</ConceptTemplate>
+## 1. Task Decomposition
+The foundational mathematical algorithm of Planning is Decomposition.
+The Agent is forced into a sandbox where it cannot execute tools. It must output a strict JSON array of Sub-Tasks.
+Goal: "Deploy web server."
+Plan:
+1. `Install Nginx`
+2. `Write index.html`
+3. `Configure port 80`
+4. `Start service`
+By mathematically forcing the LLM to generate the steps linearly, it shifts the neural network's Attention Mechanism. When executing step 3, the math is heavily influenced by the context of steps 1 and 2, drastically increasing logic accuracy.
+
+## 2. Tree of Thoughts (ToT)
+Standard planning is linear (Chain of Thought). Advanced planning uses the **Tree of Thoughts** mathematical topology.
+During the planning phase, the Agent mathematically generates *three different possible plans*. It then acts as an Evaluator, scoring each branch of the tree based on risk and efficiency. It prunes the bad branches and selects the mathematically optimal path before writing a single line of code, mimicking deep, System 2 human reasoning.
+

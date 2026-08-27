@@ -1,8 +1,37 @@
+---
+title: Law of Demeter
+description: A software design guideline, also known as the Principle of Least Knowledge, mathematically restricting how deeply objects are allowed to reach into the internal structures of other objects.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Law of Demeter">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Law of Demeter"
+  subtitle="The Principle of Least Knowledge"
+  tags={['OOP', 'Architecture', 'Clean Code', 'Encapsulation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Law of Demeter (LoD) mathematically dictates that an object should only talk to its immediate friends, and never to strangers.
 
-</ConceptTemplate>
+## 1. The Train Wreck Anti-Pattern
+A violation of the Law of Demeter is mathematically identifiable by "Train Wreck" code, characterized by multiple consecutive dot operations.
+```java
+// A mathematical violation of the Law of Demeter
+customer.getWallet().getMoney().subtract(10);
+```
+The calling code does not just know about the `Customer`. It possesses deep mathematical knowledge of the internal architecture of the customer (that they have a Wallet, and that the Wallet has a Money object). If the Customer switches from a Wallet to a Bank Account, the calling code mathematically shatters.
+
+## 2. Talk to Immediate Friends
+The Law of Demeter mathematically restricts method calls. A method `M` of an object `O` may only invoke the methods of:
+1. `O` itself.
+2. Parameters passed directly to `M`.
+3. Objects instantiated directly within `M`.
+4. Direct attributes (properties) of `O`.
+To fix the train wreck, you add a high-level abstraction: `customer.charge(10);`. The caller tells the customer what to do, and the customer handles the internal mathematical delegation to the wallet.
+

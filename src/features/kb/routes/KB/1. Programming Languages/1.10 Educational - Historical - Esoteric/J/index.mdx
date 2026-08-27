@@ -1,8 +1,29 @@
+---
+title: J
+description: An ultra-dense, array-oriented programming language designed as a modern, ASCII-only successor to APL.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="J">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="J">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Designed by Kenneth Iverson and Roger Hui in 1990, J is an array programming language. Iverson created it to solve the primary complaint about his earlier language, APL: APL required an entirely custom keyboard to type Greek/math symbols. J uses only standard ASCII characters.
 
-</ConceptTemplate>
+## 1. Tacit (Point-Free) Programming
+Like APL, J operates heavily on matrices and arrays without requiring loops.
+Furthermore, J highly encourages **Tacit Programming**. In tacit programming, you define mathematical functions without ever specifying the arguments (the variables). You define purely how functions combine together.
+
+## 2. The ASCII Digraphs
+To replace APL's symbols, J combines standard punctuation marks into digraphs.
+- `+/` : Sum an array (equivalent to APL's +/)
+- `#:` : Convert to binary
+- `i.` : Generate an array of integers
+
+While mathematically elegant for high-level statistics and data manipulation, it results in code that looks like line noise to C or Java programmers (e.g., `+/ i. 10` to sum numbers 0 through 9).
+

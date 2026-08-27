@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Kustomize
+description: A template-free, configuration management tool natively built into Kubernetes that uses mathematical patching and overlays to customize raw YAML files for different deployment environments.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Kustomize">
+<TechnologyTemplate
+  title="Kustomize"
+  subtitle="Patch-Based Configuration"
+  tags={['Kubernetes', 'Tooling', 'DevOps', 'Configuration']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Helm modifies YAML files by injecting variables via text templating (e.g., `{{ .Values.image }}`), which mathematically destroys the original YAML structure (making it unreadable to standard linters). Kustomize takes a fundamentally different, mathematically pure approach.
 
-</ConceptTemplate>
+## 1. The Overlay Architecture
+Kustomize relies on a **Base and Overlays** structure.
+You create a `base/` directory containing pure, standard, unmodified Kubernetes YAML files (the default architecture).
+You then create `overlays/prod/` and `overlays/dev/`. Inside `prod`, you write a `kustomization.yaml` file containing mathematical patches. For example: *"Take the Base deployment, and mathematically patch the replica count from 1 to 5."*
+
+## 2. Native Kubectl Integration
+Because Kustomize operates via mathematical patching (JSON Patch) rather than text templating, it guarantees that all files remain 100% valid YAML at all times.
+Kustomize was deemed so mathematically elegant that it was merged directly into the core Kubernetes CLI. You do not need to install a separate tool; you can simply run `kubectl apply -k ./overlays/prod`. The CLI will mathematically merge the base and the production patches in memory and apply the final configuration to the cluster instantly.
+
+</TechnologyTemplate>

@@ -5,14 +5,21 @@ description: A mathematically rigorous classifier that maximizes the geometric m
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Support Vector Machines (SVM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Support Vector Machines (SVM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Support Vector Machines (SVM)** are mathematically elegant models that find the optimal hyperplane to separate classes by maximizing the geometric margin.
 
 ## 1. The Maximum Margin Hyperplane
-Logistic Regression simply draws any line that separates the classes. SVM goes further: it mathematically guarantees finding the specific line that maximizes the distance (margin) to the nearest data points of both classes. 
+Logistic Regression simply draws any line that separates the classes. SVM goes further: it mathematically guarantees finding the specific line that maximizes the distance (margin) to the nearest data points of both classes.
 
-These closest data points are called the **Support Vectors**. 
+These closest data points are called the **Support Vectors**.
 Astonishingly, once the Support Vectors are identified, every other data point in the dataset could be deleted, and the exact same boundary would mathematically remain.
 
 ## 2. The Soft Margin (C Hyperparameter)
@@ -23,7 +30,7 @@ SVM introduces a slack variable (`ξ`) and a regularization hyperparameter **C**
 - **Low C**: Soft. The model prioritizes a wider margin, gracefully ignoring extreme outliers (Risk of Underfitting).
 
 ## 3. The Kernel Trick (Non-Linear Separability)
-If data is arranged in a concentric circle (e.g., Class A is an inner ring, Class B is an outer ring), no 2D line can separate them. 
+If data is arranged in a concentric circle (e.g., Class A is an inner ring, Class B is an outer ring), no 2D line can separate them.
 
 SVMs utilize the **Kernel Trick**. Mathematically, they project the 2D data into a highly complex 3D or Infinite-Dimensional space where the data *does* become linearly separable by a flat 2D plane. When projected back down to 2D, the boundary appears as a complex, non-linear circle.
 
@@ -32,8 +39,13 @@ SVMs utilize the **Kernel Trick**. Mathematically, they project the 2D data into
 - **Polynomial Kernel**: Projects data into `d`-dimensional space.
 - **RBF (Radial Basis Function)**: The most powerful kernel. Mathematically, it projects data into an *infinite-dimensional* space, measuring the distance from every point to every other point.
 
+
 <Callout icon="warning" title="Computational Complexity">
+
+
 SVMs are mathematically beautiful, but their runtime complexity is generally `O(n^2)` to `O(n^3)`. They are phenomenally effective on small, high-dimensional datasets (like text classification), but absolutely catastrophic on datasets with millions of rows.
+
+
 </Callout>
 
-</ConceptTemplate>
+

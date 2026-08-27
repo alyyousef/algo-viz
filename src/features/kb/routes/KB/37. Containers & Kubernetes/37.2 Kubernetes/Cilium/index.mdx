@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Cilium
+description: An advanced open-source software for transparently securing the network connectivity and load balancing between Kubernetes application workloads, mathematically powered by eBPF in the Linux kernel.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Cilium">
+<TechnologyTemplate
+  title="Cilium"
+  subtitle="eBPF-Powered Kubernetes Networking"
+  tags={['Kubernetes', 'Networking', 'Security', 'eBPF']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional Kubernetes networking (like Flannel or Calico) relies on IPTables, a legacy Linux firewall system that mathematically collapses under the weight of thousands of microservices, creating massive CPU overhead and latency.
 
-</ConceptTemplate>
+## 1. The eBPF Revolution
+Cilium completely bypasses IPTables using a revolutionary mathematical kernel technology called **eBPF (Extended Berkeley Packet Filter)**.
+eBPF allows developers to safely inject compiled, sandboxed programs directly into the Linux kernel without requiring a kernel reboot. Cilium injects mathematical networking logic at the lowest possible level. When Pod A sends a packet to Pod B, the kernel physically routes it in microseconds, resulting in unprecedented, near-hardware network performance for Kubernetes clusters.
+
+## 2. Layer 7 Security and Observability
+Because Cilium operates at the kernel level, it possesses total mathematical visibility into network traffic.
+Traditional firewalls block IPs and Ports (Layer 4). Cilium can mathematically inspect HTTP requests (Layer 7). An engineer can write a Cilium Network Policy that says: *"The Frontend Pod is mathematically allowed to issue HTTP GET requests to the `/api/users` endpoint on the Backend Pod, but if it issues an HTTP POST, immediately drop the packet."* This provides extreme, zero-trust security inside the cluster.
+
+</TechnologyTemplate>

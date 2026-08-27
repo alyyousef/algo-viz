@@ -1,8 +1,25 @@
+---
+title: ClojureScript
+description: A compiler for Clojure that targets JavaScript, bringing immutable data structures and functional programming to the frontend.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ClojureScript">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ClojureScript">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+ClojureScript is not a separate language; it is the Clojure compiler re-engineered to mathematically emit heavily optimized JavaScript instead of JVM bytecode. It allows developers to write robust, purely functional code that runs directly in the browser or on Node.js.
 
-</ConceptTemplate>
+## 1. The React Match Made in Heaven
+In the early days of React (JavaScript), developers struggled mathematically with state management (determining if a deep object had changed required slow, deep equality checks).
+ClojureScript solved this flawlessly. Because ClojureScript data structures are mathematically immutable, checking if a massive UI state object has changed is an `O(1)` operation (just comparing the memory pointers). This led to the creation of **Reagent** and **Om**, which were historically faster than raw React.
+
+## 2. Google Closure Compiler
+ClojureScript does not just emit raw JavaScript; it pipes it through the **Google Closure Compiler**.
+This is an industrial-grade JavaScript optimizer (used for Gmail and Google Maps) that mathematically analyzes the entire codebase, aggressively renames variables to single letters, and physically removes dead code (Tree Shaking) across the entire dependency graph, resulting in astonishingly small bundle sizes.
+

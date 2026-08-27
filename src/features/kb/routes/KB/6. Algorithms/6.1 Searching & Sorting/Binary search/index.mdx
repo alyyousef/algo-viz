@@ -8,9 +8,15 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Binary search is an extremely fast search algorithm that operates on **sorted** arrays. It works by repeatedly dividing in half the portion of the list that could contain the item, until you've narrowed down the possible locations to just one.
 
+
 <Callout icon="warning" title="Prerequisite: Sorting">
+
+
   Binary search ONLY works if the array is already sorted. If the array is unsorted, you must use Linear Search (O(n)) or sort it first (O(n log n)).
+
+
 </Callout>
+
 
 ## The Algorithm
 
@@ -21,14 +27,9 @@ Binary search is an extremely fast search algorithm that operates on **sorted** 
 
 ## Time Complexity
 
-<ComparisonTable 
-  headers={['Case', 'Time Complexity', 'Explanation']}
-  rows={[
-    ['Best Case', 'O(1)', 'The target is exactly in the middle on the very first check.'],
-    ['Average Case', 'O(log n)', 'The array is repeatedly halved.'],
-    ['Worst Case', 'O(log n)', 'The target is at the very ends of the array, or not present at all.']
-  ]}
-/>
+
+<ComparisonTable headers={['Case', 'Time Complexity', 'Explanation']} rows={[ ['Best Case', 'O(1)', 'The target is exactly in the middle on the very first check.'], ['Average Case', 'O(log n)', 'The array is repeatedly halved.'], ['Worst Case', 'O(log n)', 'The target is at the very ends of the array, or not present at all.'] ]} />
+
 
 ## Architecture
 
@@ -37,7 +38,7 @@ graph TD
   Start[Search for 7 in: 1, 3, 5, 7, 9, 11, 15]
   Mid1[Middle is 7? No, Middle is 7? Wait, length 7.\nMiddle is index 3 (value 7)]
   End[Found at index 3!]
-  
+
   Start --> Mid1
   Mid1 --> End
 `} />

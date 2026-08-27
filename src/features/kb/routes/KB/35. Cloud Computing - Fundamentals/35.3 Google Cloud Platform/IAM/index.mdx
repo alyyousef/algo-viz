@@ -1,0 +1,27 @@
+---
+title: Google Cloud IAM
+description: The unified Identity and Access Management system for GCP, mathematically defining who has what type of access to which specific cloud resources using roles and policies.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud IAM"
+  subtitle="Identity and Access Control"
+  tags={['GCP', 'Security', 'Identity', 'Governance']}
+>
+
+AWS IAM is notoriously complex, requiring developers to write massive, highly verbose JSON documents for every single resource. GCP IAM mathematically simplifies this by focusing on predefined Roles rather than granular JSON actions.
+
+## 1. Members, Roles, and Bindings
+GCP IAM operates on a strict mathematical trio:
+- **Member**: Who are you? (e.g., A Google Workspace user, a Service Account).
+- **Role**: What can you do? (e.g., `roles/storage.objectViewer`).
+- **Binding**: Applying the Role to the Member on a specific Resource.
+Instead of writing a custom JSON policy, you simply bind a pre-defined mathematical Role to a User. A "Service Account" acts exactly like an AWS IAM Role; it is a non-human identity that Virtual Machines or Cloud Functions assume to securely interact with other Google services without hardcoded passwords.
+
+## 2. The Resource Hierarchy
+Permissions in GCP flow strictly downward through a mathematical hierarchy:
+**Organization -> Folder -> Project -> Resource**
+If you grant a user the "Compute Admin" role at the **Folder** level, that mathematical permission cascades downwards. They automatically become a Compute Admin for every Project and every VM inside that Folder. This hierarchical inheritance mathematically eliminates the need to manually tag resources or write complex IAM boundaries, making enterprise governance vastly simpler than AWS.
+
+</TechnologyTemplate>

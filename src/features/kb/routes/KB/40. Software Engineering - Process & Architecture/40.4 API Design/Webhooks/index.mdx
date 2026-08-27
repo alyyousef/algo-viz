@@ -5,7 +5,14 @@ description: "User-defined HTTP callbacks used to enable real-time, event-driven
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Webhooks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Webhooks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Also known as "Reverse APIs", **Webhooks** are a way for an application to push real-time data to other applications when a specific event occurs.
 
@@ -24,15 +31,15 @@ To secure Webhooks, providers (like Stripe, GitHub, Slack) include a cryptograph
 // Example Express.js Webhook Handler
 app.post('/webhook', (req, res) => {
   const signature = req.headers['stripe-signature'];
-  
+
   try {
     // Cryptographically verify the payload is genuinely from Stripe
     const event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
-    
+
     if (event.type === 'payment_intent.succeeded') {
        fulfillOrder(event.data.object);
     }
-    
+
     // Always return a 200 OK immediately so Stripe knows you received it
     res.status(200).send();
   } catch (err) {
@@ -41,8 +48,13 @@ app.post('/webhook', (req, res) => {
 });
 ```
 
+
 <Callout icon="warning" title="Idempotency">
+
+
 Webhook providers often guarantee "at least once" delivery. If a network glitch occurs, Stripe might send you the exact same "Payment Successful" webhook twice. Your application logic must be **Idempotent**—it must be able to safely handle duplicate webhooks without shipping the product twice.
+
+
 </Callout>
 
-</ConceptTemplate>
+

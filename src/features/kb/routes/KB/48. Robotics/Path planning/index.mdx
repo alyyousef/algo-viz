@@ -4,20 +4,33 @@ description: A computational problem to find a sequence of valid configurations 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Path Planning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Path Planning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Once SLAM has successfully built a map of the room, and the robot knows it is at Coordinate A, how does it physically navigate to Coordinate B without hitting the couch?
 
 This is the mathematical domain of **Path Planning**.
 
+
 <Callout icon="success" title="Grid-Based Planning (A*)">
-  If the map is a 2D grid, the most famous algorithm is **A* (A-Star)**. 
+
+
+  If the map is a 2D grid, the most famous algorithm is **A* (A-Star)**.
   It mathematically explores the grid by calculating two numbers for every tile:
   1. `g(n)`: The exact cost to travel from the Start to this tile.
   2. `h(n)`: A mathematical heuristic (guess) of the straight-line distance from this tile to the Goal.
-  
+
   A* is guaranteed to find the absolute shortest path, but if the map is massive (e.g., a 10,000x10,000 grid), the math takes too long to compute.
+
+
 </Callout>
+
 
 ## Sampling-Based Planning (RRT)
 
@@ -25,4 +38,3 @@ If a robotic arm has 6 joints, its "Map" is a 6-Dimensional mathematical space. 
 
 Instead, robots use **RRT (Rapidly-exploring Random Trees)**. The algorithm mathematically throws random darts into the 6D space. It connects the valid darts together like branches on a tree until one branch accidentally hits the Goal. It does not find the *perfect* path, but it finds a *valid* path incredibly fast.
 
-</ConceptTemplate>

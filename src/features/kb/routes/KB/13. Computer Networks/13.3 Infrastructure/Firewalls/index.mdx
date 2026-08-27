@@ -4,23 +4,29 @@ description: The critical security appliances that sit at the perimeter of a net
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Firewalls">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Firewalls">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Firewall** is the bouncer at the door of your network. It inspects every single packet attempting to enter or leave, comparing it against a strict list of rules (Access Control Lists - ACLs) to decide whether to Allow or Drop the traffic.
 
 ## The Evolution of Firewalls
 
 ### 1. Packet Filtering (Stateless)
-The earliest firewalls simply looked at Layer 3 and Layer 4 headers. 
+The earliest firewalls simply looked at Layer 3 and Layer 4 headers.
 Rule: *"Drop all packets from IP 1.2.3.4"* or *"Drop all traffic to Port 22"*.
 They were incredibly fast but very stupid. They had no memory. They could easily be bypassed by hackers crafting fake packets.
 
 ### 2. Stateful Packet Inspection (SPI)
-Modern standard firewalls (like `iptables` or `ufw`) are **Stateful**. They possess RAM and track the "State" of every connection. 
+Modern standard firewalls (like `iptables` or `ufw`) are **Stateful**. They possess RAM and track the "State" of every connection.
 If your laptop inside the network reaches out to Google on Port 443, the firewall dynamically memorizes that outbound request. When Google replies 10 milliseconds later, the firewall checks its RAM, sees that your laptop explicitly requested the data, and allows it through. All unsolicited incoming traffic is dropped by default.
 
 ### 3. Next-Generation Firewalls (NGFW)
 Hackers realized they couldn't bypass the firewall on Port 22, so they started sending viruses through Port 443 (HTTPS), which the firewall was forced to leave open for web browsing.
 **NGFWs** (like Palo Alto or Fortinet) operate at **Layer 7**. They don't just look at IP addresses; they actually decrypt the HTTPS traffic in real-time, scan the payload for malware signatures, analyze the behavior, and re-encrypt it before passing it to the user.
 
-</ConceptTemplate>

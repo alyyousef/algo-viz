@@ -1,8 +1,30 @@
+---
+title: Feature Flags
+description: A software engineering technique that mathematically decouples code deployment from feature release by wrapping execution paths in dynamic toggles, enabling dark launches and instant kill switches.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Feature flags">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Feature Flags"
+  subtitle="Decoupling Deployment from Release"
+  tags={['DevOps', 'Engineering', 'Agile', 'Continuous Deployment']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Feature Flags, if a new checkout system was only 50% finished, it could not be merged into the `main` branch. It had to sit on a long-lived feature branch, eventually causing a catastrophic mathematical merge conflict.
 
-</ConceptTemplate>
+## 1. The Dynamic Toggle
+A Feature Flag (or Toggle) is simply a mathematical `if/else` block wrapping a new feature, controlled by an external service (like LaunchDarkly) or a database value.
+You merge the half-finished code into `main` today. You deploy it to Production today. But because the mathematical flag is set to `false`, the code is "dark"—it physically exists on the server but is never executed by a user request.
+
+## 2. Advanced Rollouts and Kill Switches
+Feature Flags provide immense mathematical control over risk:
+- **Canary Launches**: You can configure the flag so it evaluates to `true` only for internal employees, or only for 1% of randomized public traffic.
+- **The Instant Kill Switch**: If the new feature causes a 20% spike in database CPU, you do not need to write a rollback commit, wait for CI/CD, and deploy. You simply click a button in the Feature Flag dashboard to flip it to `false`. The code stops executing instantly, providing a mathematical sub-second rollback.
+

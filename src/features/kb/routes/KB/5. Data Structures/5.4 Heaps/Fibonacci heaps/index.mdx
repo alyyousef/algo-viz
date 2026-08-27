@@ -4,13 +4,26 @@ description: A collection of trees satisfying the minimum heap property, optimiz
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fibonacci Heaps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Fibonacci Heaps">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Fibonacci Heap** is a highly advanced data structure for priority queues. Invented by Michael L. Fredman and Robert E. Tarjan in 1984, it was specifically designed to improve the asymptotic running time of network optimization algorithms like Dijkstra's shortest path and Prim's minimum spanning tree.
 
+
 <Callout icon="warning" title="Theory vs. Practice">
+
+
   Fibonacci heaps are famous for having spectacular theoretical $O(1)$ time complexity for operations that take $O(\log n)$ in standard Binary Heaps. However, they are notoriously complex to code and have high constant-factor overhead (lots of pointers and memory management). In real-world software, simpler data structures (like standard Binary Heaps or Pairing Heaps) often run faster in practice.
+
+
 </Callout>
+
 
 ## Structure
 
@@ -25,20 +38,12 @@ The genius of the Fibonacci heap is its laziness. When you insert items, it does
 
 ## Time Complexity Comparison
 
-The primary reason Fibonacci Heaps exist is the **Decrease Key** operation. In Dijkstra's algorithm, you frequently find a shorter path to a node and need to decrease its distance in the priority queue. 
+The primary reason Fibonacci Heaps exist is the **Decrease Key** operation. In Dijkstra's algorithm, you frequently find a shorter path to a node and need to decrease its distance in the priority queue.
 A Binary Heap takes $O(\log n)$ to do this. A Fibonacci Heap does it in $O(1)$ amortized time, mathematically dropping Dijkstra's time complexity from $O(E \log V)$ down to $O(E + V \log V)$.
 
-<ComparisonTable 
-  headers={['Operation', 'Binary Heap (Worst-Case)', 'Fibonacci Heap (Amortized)']}
-  rows={[
-    ['Find Minimum', '$O(1)$', '$O(1)$'],
-    ['Insert', '$O(\log n)$', '$O(1)$'],
-    ['Decrease Key', '$O(\log n)$', '$O(1)$  ⭐'],
-    ['Merge (Meld)', '$O(n)$', '$O(1)$'],
-    ['Extract Min', '$O(\log n)$', '$O(\log n)$']
-  ]}
-/>
+
+<ComparisonTable headers={['Operation', 'Binary Heap (Worst-Case)', 'Fibonacci Heap (Amortized)']} rows={[ ['Find Minimum', '$O(1)$', '$O(1)$'], ['Insert', '$O(\log n)$', '$O(1)$'], ['Decrease Key', '$O(\log n)$', '$O(1)$ ⭐'], ['Merge (Meld)', '$O(n)$', '$O(1)$'], ['Extract Min', '$O(\log n)$', '$O(\log n)$'] ]} />
+
 
 *(Note: Amortized means that some individual operations might be very slow, but mathematically over a long sequence of operations, the average cost per operation is bounded to $O(1)$).*
 
-</ConceptTemplate>

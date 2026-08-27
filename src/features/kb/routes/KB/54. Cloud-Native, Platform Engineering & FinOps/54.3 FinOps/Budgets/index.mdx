@@ -4,17 +4,29 @@ description: Predefined financial thresholds set for cloud spending over a speci
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cloud Budgets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cloud Budgets">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the cloud, resources are theoretically infinite. If you don't constrain them, the mathematical spending potential is infinite.
 
 **Budgets** are the biological constraints placed on engineering teams.
 
+
 <Callout icon="tip" title="Proactive Constraints">
+
+
   A cloud budget is not just a spreadsheet; it is a mathematical rule configured directly in the cloud provider (e.g., AWS Budgets).
-  
+
   You can set a hard limit: *"Team Alpha is allowed $5,000 per month."*
   If Team Alpha provisions resources that mathematically project to exceed $5,000 by the 25th of the month, the cloud provider will automatically trigger a PagerDuty alert to the Engineering Manager, forcing them to halt deployments or shut down idle testing environments before the invoice is finalized.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,0 +1,23 @@
+---
+title: OCI Functions
+description: Oracle's serverless, event-driven compute platform, built on the open-source Fn Project, allowing developers to execute stateless code mathematically scaled by the cloud infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Functions"
+  subtitle="Serverless Event-Driven Compute"
+  tags={['OCI', 'Serverless', 'Compute', 'Functions']}
+>
+
+OCI Functions is Oracle's equivalent to AWS Lambda. It allows developers to deploy discrete blocks of code (Java, Python, Node.js) and pay exactly $0 until the code is actually triggered by a cloud event.
+
+## 1. The Fn Project Architecture
+Unlike AWS Lambda (which uses proprietary, closed-source hypervisors), OCI Functions is built entirely on the **open-source Fn Project**.
+Every OCI Function is mathematically just a Docker container under the hood. When you deploy a function, the OCI CLI packages your Python code into a Docker image and pushes it to the OCI Container Registry. When the function is triggered, OCI simply pulls the Docker image, boots it in a hyper-isolated micro-VM, executes it, and destroys it. Because it is standard Docker, you can run the exact same serverless function locally on your laptop for testing, completely preventing vendor lock-in.
+
+## 2. Event Integration and Triggers
+A Function requires a mathematical trigger.
+It natively integrates with OCI Events. You can define a rule: *"When a new CSV file is uploaded to an Object Storage Bucket, intercept the Event, route it to this specific Function, and mathematically parse the CSV into an Autonomous Database."* If 1,000 CSV files are uploaded in the same second, OCI Functions mathematically boots 1,000 parallel Docker containers, processes the files instantly, and scales back to zero, maximizing throughput and minimizing cost.
+
+</TechnologyTemplate>

@@ -1,8 +1,25 @@
+---
+title: Plutus (Haskell-Cardano)
+description: The purely functional, Haskell-based smart contract language driving the Cardano blockchain, utilizing the eUTXO model.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Plutus (Haskell/Cardano)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Plutus (Haskell-Cardano)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Plutus is the smart contract language for the Cardano blockchain. It is deeply mathematical because it is essentially a highly customized dialect of **Haskell**, a purely functional programming language.
 
-</ConceptTemplate>
+## 1. The eUTXO Model
+Ethereum uses an "Account" model (like a bank account where a global balance goes up and down). Cardano uses the **Extended Unspent Transaction Output (eUTXO)** model (like cash, where you hand a bartender a $20 bill and get a $10 bill back).
+Plutus mathematically governs these eUTXOs. A Plutus script is essentially a mathematical lock placed on a piece of digital cash. To spend the cash, a user must submit a transaction that mathematically satisfies the pure functional logic of the Plutus script.
+
+## 2. On-Chain and Off-Chain Unity
+Writing a decentralized application usually requires writing Solidity for the blockchain and Javascript for the frontend, causing a massive disconnect in types and logic.
+Plutus mathematically solves this. You write both the on-chain logic and the off-chain application logic in the exact same Haskell file. The Plutus compiler mathematically dissects the file, compiling the core logic into Plutus Core (to be stored on the blockchain) and compiling the rest into an executable application, ensuring mathematically perfect type safety across the entire application stack.
+

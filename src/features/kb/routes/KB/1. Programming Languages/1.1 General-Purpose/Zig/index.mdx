@@ -1,8 +1,39 @@
+---
+title: Zig
+description: A modern, low-level systems programming language designed to replace C by prioritizing simplicity, manual memory control, and compile-time execution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zig">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zig">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Zig is a drop-in replacement for C. Unlike Rust, which enforces memory safety via a mathematically strict compiler, Zig gives the developer absolute manual control over memory, but provides vastly superior tooling, error handling, and transparency compared to C.
 
-</ConceptTemplate>
+## 1. No Hidden Control Flow
+Zig's defining philosophy is absolute explicitness.
+- There are mathematically zero hidden memory allocations. Every function that requires memory MUST be explicitly passed an Allocator object.
+- There are no hidden control flows, no operator overloading, and no macros. If code looks like it calls a function, it calls exactly that function.
+
+## 2. Comptime: Compile-Time Execution
+Instead of using a clunky macro system like C++, Zig uses **comptime**.
+You can mathematically execute standard Zig code *during the compilation phase*. You can use standard loops and if-statements to generate types, parse strings, or mathematically calculate lookup tables before the program ever runs.
+
+
+<ComparisonTable headers={["Language", "Memory Allocation", "Metaprogramming", "C Interop"]} rows={[ ["Zig", "Explicit via Allocator", "Comptime Execution", "Native (Includes C compiler)"], ["C", "Implicit (malloc/free)", "Preprocessor Macros", "Native"], ["Rust", "Implicit but Checked", "Macros", "Requires FFI bindings"] ]} />
+
+
+<Callout icon="success" title="The Zig C Compiler">
+
+
+The Zig binary mathematically includes a fully functional, highly optimized C and C++ compiler. You can compile legacy C projects directly using `zig cc`, making it an incredible tool for cross-compilation.
+
+
+</Callout>
+
+

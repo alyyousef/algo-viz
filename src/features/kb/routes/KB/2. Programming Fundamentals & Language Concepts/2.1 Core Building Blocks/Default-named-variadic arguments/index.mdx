@@ -1,8 +1,25 @@
+---
+title: Function Arguments (Default, Named, Variadic)
+description: Advanced mathematical constructs for passing variable amounts of data flexibly and safely into functions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Default/named/variadic arguments">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Function Arguments (Default, Named, Variadic)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a function is called, the caller must mathematically map its local variables to the function's parameters. Modern languages provide advanced mathematical ways to handle this mapping.
 
-</ConceptTemplate>
+## 1. Default and Named Arguments
+- **Default Arguments**: `function connect(timeout = 5000)`. If the caller does not mathematically provide a value, the compiler automatically injects `5000` into the function's stack frame. This prevents crashing while maintaining backward compatibility.
+- **Named Arguments**: In languages like Python (`connect(port=80, host="localhost")`), the caller does not rely on the physical positional order of the parameters. The compiler mathematically maps the arguments by their explicit string names, massively reducing bugs caused by passing data in the wrong order.
+
+## 2. Variadic Arguments
+Sometimes you do not mathematically know how many arguments a function will receive (e.g., `console.log(a, b, c, ...)`).
+A Variadic function (using `...args` in JS, or `*args` in Python) instructs the compiler to dynamically allocate an Array or Tuple, pack all remaining arguments into that structure, and pass a single memory pointer to the function. In C (`printf`), this is mathematically dangerous because the compiler relies on the format string to calculate the memory size, leading to catastrophic buffer overflows if the string doesn't match the passed arguments.
+

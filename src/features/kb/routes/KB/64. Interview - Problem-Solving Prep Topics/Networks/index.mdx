@@ -4,10 +4,16 @@ description: A collection of computers, servers, mainframes, network devices, pe
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Networks (Interview Prep)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Networks (Interview Prep)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Interviewers often test your biological understanding of how the internet actually works.
 
 You may be asked the classic question: *"What mathematically happens when you type google.com into your browser?"* You must explain DNS resolution, the TCP 3-way handshake (`SYN, SYN-ACK, ACK`), TLS encryption negotiation, and HTTP request rendering. Understanding the OSI model mathematically proves you are not just a high-level framework developer.
 
-</ConceptTemplate>

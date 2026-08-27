@@ -1,8 +1,32 @@
+---
+title: Python vs R
+description: "A comparison of Data Science languages, contrasting R's absolute mathematical supremacy in pure statistical analysis with Python's versatility in Machine Learning and production deployment."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Python vs R">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Python vs R"
+  subtitle="General Purpose vs Pure Statistics"
+  tags={['Comparison', 'Data Science', 'Machine Learning', 'Statistics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Data Science ecosystem is mathematically split between Python (the general-purpose engineering language) and R (the dedicated statistical language).
 
-</ConceptTemplate>
+## 1. R (The Statistician's Language)
+- **History**: Built by statisticians, for statisticians.
+- **Superpower**: Unmatched mathematical analysis out of the box. R natively understands complex statistical distributions, hypothesis testing, and time-series analysis without needing 3rd-party libraries.
+- **Ecosystem**: **CRAN** (Comprehensive R Archive Network) contains over 10,000 highly specialized mathematical packages. **ggplot2** is widely considered the most beautiful and powerful data visualization library on earth.
+- **Limitation**: R is mathematically awful for general software engineering. You would not use R to build a REST API or a web scraper.
+
+## 2. Python (The Engineer's Language)
+- **History**: A general-purpose language that accidentally became the king of AI due to libraries like NumPy and Pandas.
+- **Superpower**: **Productionizing**. You can clean data in Pandas, train a Neural Network in PyTorch, and immediately wrap it in a FastAPI backend using the exact same language.
+- **The Verdict**: R mathematically dominates academia, bioinformatics, and pure statistical research. Python dominates Machine Learning, Deep Learning, and enterprise production environments.
+

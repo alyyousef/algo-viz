@@ -4,22 +4,34 @@ description: The modern standard for retrieving emails, designed to keep all mes
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IMAP (Internet Message Access Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IMAP (Internet Message Access Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Because SMTP can only *send* mail, you need a different protocol to *read* mail. Today, the absolute standard is **IMAP** (TCP Port 143, or Port 993 for encrypted IMAPS).
 
 ## The Synchronization Philosophy
 
-IMAP was designed for the modern world where a user owns a laptop, a smartphone, and a tablet. 
+IMAP was designed for the modern world where a user owns a laptop, a smartphone, and a tablet.
 
 When your iPhone uses IMAP to check your email, it does **not** download the emails and delete them from the server. Instead, IMAP acts as a synchronized remote control:
 - It downloads a temporary cache of the headers so you can see the inbox.
 - If you click an email on your phone, it streams the body from the server.
-- If you mark an email as "Read" on your phone, IMAP sends a command to the Server to mark it "Read" in the master database. 
+- If you mark an email as "Read" on your phone, IMAP sends a command to the Server to mark it "Read" in the master database.
 - When you open your laptop 5 minutes later, that email instantly shows as "Read" because both devices are looking at the exact same master server state.
 
+
 <Callout icon="info" title="Server Storage Requirements">
+
+
   Because IMAP fundamentally relies on leaving all emails permanently on the server, the email provider (like Google or Microsoft) must provide massive, multi-gigabyte hard drives for every single user. This is why enterprise email hosting is incredibly expensive.
+
+
 </Callout>
 
-</ConceptTemplate>
+

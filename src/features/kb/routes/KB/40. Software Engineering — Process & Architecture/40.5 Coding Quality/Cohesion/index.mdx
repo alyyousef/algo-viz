@@ -1,8 +1,31 @@
+---
+title: Cohesion
+description: "A mathematical measurement in software engineering describing the degree to which the elements inside a single module or class belong together and serve a single, well-defined purpose."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cohesion">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Cohesion"
+  subtitle="The Mathematical Strength of a Module"
+  tags={['Architecture', 'Clean Code', 'Design Principles', 'Metrics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In software architecture, the ultimate goal is **High Cohesion and Low Coupling**.
+Cohesion measures the internal mathematical gravity of a single file.
 
-</ConceptTemplate>
+## 1. High Cohesion
+A class has High Cohesion if every single method and variable mathematically revolves around the exact same physical concept.
+Imagine a `CreditCardValidator` class. It has three methods: `checkLength()`, `verifyLuhnAlgorithm()`, and `checkExpiration()`. All three methods mathematically act upon the exact same `cardNumber` state variable. This is highly cohesive. If the credit card rules change, the developer only modifies this one file.
+
+## 2. Low Cohesion (The Anti-Pattern)
+A class has Low Cohesion if it acts as a generic dumping ground.
+Imagine a `StringUtils` class containing `capitalize()`, `validateEmail()`, and `generateUUID()`. These methods have absolutely zero mathematical relation to each other. They do not share state.
+Worse is the "God Class" (e.g., `User`) that handles password hashing, database saving, and UI rendering. When a class has Low Cohesion, it has multiple reasons to change (violating the Single Responsibility Principle), making the codebase fragile.
+

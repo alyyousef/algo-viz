@@ -1,8 +1,27 @@
+---
+title: U-Net
+description: The most famous architecture in biomedical image segmentation, uniquely designed with symmetrical mathematical skip connections to output pixel-perfect masks even when trained on extremely tiny datasets.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="U-Net">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="U-Net">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented in 2015 for finding tumors in medical scans, U-Net revolutionized Semantic Segmentation. It proved that you can mathematically force a neural network to retain razor-sharp edge data during the decoding phase.
 
-</ConceptTemplate>
+## 1. The "U" Architecture
+The network is physically shaped like a "U".
+- **The Encoder (Left Side)**: The image goes down. It passes through Convolutions and Max Pooling. The spatial resolution shrinks (e.g., $512 \rightarrow 256 \rightarrow 128$), but the mathematical feature depth increases (it learns *what* the tumor looks like, but forgets *where* the edges are).
+- **The Decoder (Right Side)**: The image goes up. It uses Transposed Convolutions to mathematically blow the 128x128 image back up to 512x512.
+
+## 2. The Skip Connections
+If you just upscale the image on the Right Side, the tumor mask will be a blurry circle.
+U-Net's genius is the **Skip Connection**. It takes the high-resolution, razor-sharp edge data from the Left Side and mathematically concatenates it directly across the "U" to the corresponding layer on the Right Side.
+When the network is upscaling the mask, it is mathematically forced to look at the original, uncompressed physical edges of the image. This guarantees that the final generated segmentation mask conforms perfectly to the exact physical geometry of the cell or tumor.
+

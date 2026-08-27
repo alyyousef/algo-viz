@@ -1,8 +1,27 @@
+---
+title: Model Context Protocol (MCP)
+description: An emerging, standardized architectural protocol that allows LLMs to mathematically interface with external data sources and tools in a universally consistent, agnostic manner.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model Context Protocol (MCP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Context Protocol (MCP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, if you wanted an OpenAI Agent to read a Google Drive file, you had to write custom Python glue code. If you switched to Anthropic, you had to rewrite it. MCP standardizes this mathematically.
 
-</ConceptTemplate>
+## 1. The Client-Server Architecture
+MCP uses a strict Client-Server mathematical model.
+- **The LLM Application (Client)**: The Agent framework (like LangChain) implements the MCP Client protocol.
+- **The Data Source (Server)**: A developer builds an "MCP Server" that wraps Google Drive, exposing a standardized mathematical JSON-RPC interface.
+Because the communication protocol is mathematically standardized, any LLM that speaks MCP can instantly connect to any MCP Server in the world, perfectly decoupling the intelligence layer from the physical data layer.
+
+## 2. Dynamic Context Injection
+Instead of forcing the developer to manually fetch data and paste it into the prompt, MCP handles it natively.
+When the LLM decides it needs a file, it sends a standardized MCP mathematical payload to the Server. The Server retrieves the file, mathematically formats it into the exact Context format required by the LLM, and streams it back. This allows the Agent to dynamically, autonomously mount and unmount massive external databases in real-time without overflowing its context window.
+

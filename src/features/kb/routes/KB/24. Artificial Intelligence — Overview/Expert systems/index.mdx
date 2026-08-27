@@ -4,7 +4,14 @@ description: The dominant AI architecture of the 1980s, utilizing massive, hardc
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Expert Systems">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Expert Systems">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Long before Neural Networks could learn from data, the AI industry was dominated by **Expert Systems**. These systems did not "learn" anything; they were massive, rigidly coded databases of human knowledge, designed to simulate the decision-making ability of a human expert (like a doctor or a mechanic).
 
@@ -14,7 +21,7 @@ An Expert System is mathematically divided into two distinct components:
 ### The Knowledge Base
 A vast repository of facts and rules, manually extracted from human experts by "Knowledge Engineers".
 The rules were typically formatted in strict First-Order Logic (If-Then statements).
-- *Rule 1*: IF Engine_Starts = False AND Battery_Voltage < 12 THEN Issue = "Dead Battery"
+- *Rule 1*: IF Engine_Starts = False AND Battery_Voltage &lt; 12 THEN Issue = "Dead Battery"
 
 ### The Inference Engine
 The mathematical brain that processes the Knowledge Base.
@@ -32,4 +39,3 @@ Expert systems ultimately caused the Second AI Winter because they were incredib
 
 Today, strict rule-based Expert Systems have been almost entirely replaced by probabilistic Machine Learning models, though their rule-engine descendants still exist in modern business logic software.
 
-</ConceptTemplate>

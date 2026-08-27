@@ -1,8 +1,30 @@
+---
+title: ARM Assembly
+description: The specific, low-level machine instructions that mathematically power almost every smartphone and Apple Silicon device in the world.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ARM Assembly">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ARM Assembly">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+ARM (Advanced RISC Machines) Assembly is the low-level language representing the exact CPU instructions of the ARM architecture. While x86 dominates desktop PCs, ARM mathematically dominates mobile phones, embedded systems (Raspberry Pi), and modern Apple MacBooks (M1/M2 chips).
 
-</ConceptTemplate>
+## 1. The RISC Philosophy
+ARM uses a **Reduced Instruction Set Computer (RISC)** architecture.
+In x86 (CISC), a single assembly instruction might mathematically load data from RAM, add a number to it, and store it back into RAM.
+In ARM, instructions are mathematically restricted. To do the same operation, you must:
+1. `LDR` (Load Register): Move data from RAM to the CPU.
+2. `ADD` : Add the numbers inside the CPU registers.
+3. `STR` (Store Register): Move data from the CPU back to RAM.
+Because the instructions are so mathematically simple, the CPU die can be physically smaller, requiring significantly less electrical power, which is why ARM dominates battery-powered devices.
+
+## 2. Registers and Execution
+ARM provides a large, clean bank of 32-bit (or 64-bit in ARM64) registers (r0 through r15).
+Furthermore, classic ARM assembly includes **Conditional Execution**. Instead of writing complex Branch (if/else) instructions that disrupt the CPU pipeline, you can mathematically append conditions to any instruction. For example, `ADDEQ` means "Add these numbers, but *only* if the previous mathematical comparison was Equal." This vastly speeds up execution.
+

@@ -5,10 +5,17 @@ description: "The newest iteration of HTTP, which abandons TCP entirely in favor
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="HTTP/3 (QUIC)"
   icon="zap"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **HTTP/3** is a radical departure from its predecessors. For 30 years, HTTP has run on top of TCP. HTTP/3 throws TCP out the window and runs on top of **QUIC** (Quick UDP Internet Connections), a protocol originally developed by Google.
 
@@ -25,8 +32,13 @@ Establishing a secure HTTP/2 connection requires a TCP 3-way handshake, followed
 
 QUIC bakes TLS 1.3 directly into the protocol. A client can establish a secure connection and request the HTML file in a single round trip (1-RTT). For servers the client has visited before, it can send the request with zero round trips (0-RTT), resulting in instantaneous loading.
 
+
 <Callout icon="tip" title="Connection Migration">
+
+
 If you are watching a YouTube video on HTTP/2 (TCP) and walk out of your house, your phone switches from Wi-Fi to 5G. Your IP address changes, breaking the TCP connection, causing the video to buffer while it reconnects. QUIC uses a persistent "Connection ID" instead of relying on IP addresses. When you switch to 5G, the QUIC connection migrates seamlessly, and the video never stops.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -5,7 +5,14 @@ description: A mind-bending cryptographic protocol that allows a prover to mathe
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="Zero-Knowledge Proofs (ZKP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zero-Knowledge Proofs (ZKP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 One of the most profound paradoxes in cybersecurity: How do you prove to a bouncer that you are over 21 years old, without showing them your ID, your birthdate, your name, or your address?
 
@@ -19,14 +26,14 @@ Imagine a circular cave with a locked magic door at the back. Alice (the Prover)
 1. Bob waits outside. Alice walks into the cave and randomly chooses Path A or Path B to walk down, eventually stopping at the locked door.
 2. Bob walks to the entrance and shouts a command: "Come out of Path B!"
 3. If Alice actually knows the password, she can easily open the magic door and walk out of Path B, regardless of which path she originally entered.
-4. If Alice is lying, she has a 50% chance of being trapped and exposed. 
+4. If Alice is lying, she has a 50% chance of being trapped and exposed.
 
 They repeat this process 40 times. The mathematical probability of a liar getting lucky 40 times in a row is $0.5^{40}$ (practically zero). By the end, Bob is 100% convinced Alice knows the password, yet Alice never revealed the password to Bob.
 
 ## 2. Interactive vs. Non-Interactive (zk-SNARKs)
 
 - **Interactive ZKPs**: Like the cave, require the Verifier to constantly challenge the Prover in real-time. This is slow and requires both parties to be online.
-- **Non-Interactive ZKPs (zk-SNARKs / zk-STARKs)**: Through complex elliptic curve cryptography, the Prover can generate a single, tiny, mathematical "certificate of truth". The Verifier can instantly verify this certificate at any time without communicating with the Prover. 
+- **Non-Interactive ZKPs (zk-SNARKs / zk-STARKs)**: Through complex elliptic curve cryptography, the Prover can generate a single, tiny, mathematical "certificate of truth". The Verifier can instantly verify this certificate at any time without communicating with the Prover.
 
 ## 3. Real-World Applications
 
@@ -36,4 +43,3 @@ ZKPs are currently revolutionizing privacy and scalability in the Web3 and finan
 - **Ethereum zk-Rollups**: A Layer 2 network processes 10,000 transactions off-chain, and uses a single zk-SNARK proof to mathematically guarantee to the main Ethereum chain that all 10,000 transactions were valid, saving massive amounts of gas fees and processing time.
 - **Identity Verification**: In the future, you could generate a ZKP from your digital passport that proves your citizenship to a website, without giving the website your actual passport number or name.
 
-</ConceptTemplate>

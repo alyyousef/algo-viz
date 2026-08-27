@@ -1,8 +1,40 @@
+---
+title: Fakes
+description: "A specific type of Test Double in software engineering that mathematically implements a working, lightweight version of a dependency, bypassing the massive overhead of spinning up the real infrastructure."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fakes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Test Fakes"
+  subtitle="Working Implementations for Testing"
+  tags={['Testing', 'Unit Testing', 'Clean Code', 'Patterns']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When writing a Unit Test, you must mathematically isolate the code from external infrastructure like Databases or Stripe APIs. You use "Test Doubles" (Mocks, Stubs, or Fakes) to replace them.
 
-</ConceptTemplate>
+## 1. The Definition of a Fake
+A **Fake** is mathematically different from a Mock or a Stub.
+- A **Stub** is hardcoded to return a specific value (e.g., `return "Alice"`).
+- A **Fake** actually has working, logical code, but it takes a mathematically simpler shortcut.
+The most common example is an **In-Memory Database**.
+
+## 2. Example: InMemoryUserRepository
+If your application uses a `MySQLUserRepository` that takes 5 seconds to connect to AWS, your unit tests will be too slow.
+Instead, you implement a Fake: `InMemoryUserRepository`.
+```java
+class InMemoryUserRepository implements IUserRepository {
+    private List<User> database = new ArrayList<>();
+
+    public void save(User user) { database.add(user); }
+    public User getById(int id) { return database.get(id); }
+}
+```
+This is a Fake. It mathematically works exactly like the real database. You can save a user, query the user, and delete the user, but the data is just sitting in a simple RAM Array. It allows the Unit Tests to execute in 2 milliseconds without touching a real database.
+

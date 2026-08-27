@@ -1,8 +1,28 @@
+---
+title: Data-Oriented Design (DOD)
+description: A hyper-optimized paradigm that abandons Object-Oriented principles, structuring code entirely around the physical hardware constraints of CPU Caches and RAM architecture.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data-oriented programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data-Oriented Design (DOD)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Object-Oriented Programming (OOP) organizes code for human readability. Data-Oriented Design (DOD) organizes code for CPU readability. It is the dominant paradigm in high-performance video game engines (like Unity's ECS or Unreal).
 
-</ConceptTemplate>
+## 1. The CPU Cache Bottleneck
+Modern CPUs are mathematically 100x faster than RAM.
+To prevent the CPU from waiting for RAM, it pulls data in chunks (Cache Lines, usually 64 bytes).
+In OOP, an `Enemy` object contains its Position, Health, and AI State. If you want to move 1,000 enemies, the CPU pulls `Enemy 1` into the cache. It uses the Position, but ignores the Health and AI State. 66% of the Cache Line is mathematically wasted, forcing the CPU to constantly pause and fetch more RAM (Cache Miss).
+
+## 2. Arrays of Structures vs. Structures of Arrays
+DOD solves this by completely destroying the `Enemy` object.
+Instead of an Array of Enemies (AoS), it uses a Structure of Arrays (SoA).
+You create one massive, contiguous Array of `Positions` in RAM, and a separate Array of `Healths`.
+When the physics engine moves the enemies, it requests the `Positions` array. Because it is mathematically contiguous in RAM, the CPU Cache is filled with 100% pure Position data. The CPU mathematically executes the movement loop with zero Cache Misses, resulting in extreme, lock-step hardware performance.
+

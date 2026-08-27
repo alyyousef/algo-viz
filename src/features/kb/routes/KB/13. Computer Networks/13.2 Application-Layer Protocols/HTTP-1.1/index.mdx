@@ -5,10 +5,17 @@ description: "The classic, text-based hypermedia protocol that powered the growt
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="HTTP/1.1"
   icon="globe"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Released in 1997, **HTTP/1.1** is the protocol that defined the modern web. It is a text-based, application-layer protocol built on top of TCP. Whenever you request a web page, your browser sends an HTTP request to a server, and the server replies with an HTTP response.
 
@@ -21,8 +28,13 @@ Released in 1997, **HTTP/1.1** is the protocol that defined the modern web. It i
 ## The Head-of-Line Blocking Problem
 HTTP/1.1 suffers from **Head-of-Line (HoL) Blocking** at the application layer. While a TCP connection is persistent, requests must be fulfilled in order. If the browser asks for a massive 5MB image, it cannot ask for a tiny 2KB CSS file on the same TCP connection until the image finishes downloading. To bypass this, browsers traditionally opened 6 parallel TCP connections per domain.
 
+
 <Callout icon="info" title="Human Readable">
+
+
 One of the best things about HTTP/1.1 is that it is plain text. You can literally use Telnet to connect to a web server, manually type `GET / HTTP/1.1`, press enter twice, and read the raw HTML response.
+
+
 </Callout>
 
-</ConceptTemplate>
+

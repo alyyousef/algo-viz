@@ -4,17 +4,30 @@ description: The programmatic and mathematical systems used to interpolate betwe
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Animation Systems">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Animation Systems">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a movie, animation is just playing a static video file. In a video game, animation is highly dynamic and purely mathematical.
 
 If a player is running forward and suddenly presses "Attack," the engine mathematically cannot simply jump to Frame 1 of the Attack animation; the character's geometry will violently snap, breaking the physics.
 
+
 <Callout icon="info" title="Animation Blending">
-  Modern engines use **Blend Trees**. 
-  
+
+
+  Modern engines use **Blend Trees**.
+
   The engine mathematically interpolates (cross-fades) the skeletal rotations of the `Run` animation with the skeletal rotations of the `Attack` animation over exactly 0.2 seconds. This mathematical blending ensures the character smoothly transitions between states without any geometric snapping.
+
+
 </Callout>
+
 
 ## Inverse Kinematics (IK) in Animation
 
@@ -22,4 +35,3 @@ If a character walks up a flight of stairs, the pre-recorded walking animation a
 
 To fix this, the Animation System runs real-time **Inverse Kinematics (IK)**. It shoots a mathematical raycast from the foot down to the stair. It calculates the exact XYZ collision point, mathematically overrides the pre-recorded animation, and forces the ankle, knee, and hip joints to physically rest perfectly on the geometry of the stair.
 
-</ConceptTemplate>

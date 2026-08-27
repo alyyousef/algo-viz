@@ -1,8 +1,25 @@
+---
+title: Multimodal Models
+description: The next evolution of Artificial Intelligence, where a single, unified mathematical architecture can natively process and generate Text, Audio, Images, and Video simultaneously.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multimodal models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multimodal Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Humans are multimodal. We see a stop sign (vision), read the text (language), and hear a car horn (audio) simultaneously. Early AI was unimodal (text-only or image-only). Multimodal models mathematically combine these domains.
 
-</ConceptTemplate>
+## 1. The Universal Latent Space
+How can a Neural Network understand both a Shakespeare sonnet and a photograph of a cat?
+Through a **Universal Latent Space**. The model has a Text Encoder (which converts the sonnet into a math vector) and a Vision Encoder (which converts the cat into a math vector). Crucially, both vectors are mathematically projected into the *exact same* geometric space. This allows the core Transformer network to mathematically relate the pixel of a cat's ear directly to the word "feline," establishing deep cross-domain semantic understanding.
+
+## 2. Native Multimodality (GPT-4o / Gemini)
+Early multimodal systems were "stitched." If you gave it an image, a separate Image-to-Text model would write a description, and the LLM would read the text. This mathematically destroyed the nuance of the image.
+Native Multimodal models (like Google Gemini and GPT-4o) do not stitch. They ingest raw image tokens, raw audio waveforms, and raw text tokens directly into the same core mathematical Attention layers. This allows the model to analyze the emotional tone of a voice clip while simultaneously identifying objects in a live video feed.
+

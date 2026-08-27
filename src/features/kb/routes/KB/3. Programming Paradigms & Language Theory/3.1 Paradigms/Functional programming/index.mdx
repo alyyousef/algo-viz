@@ -4,16 +4,29 @@ description: A declarative programming paradigm where programs are constructed b
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Functional Programming (FP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Functional Programming (FP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Functional Programming (FP)** is a declarative paradigm that treats computation as the evaluation of mathematical functions. It strictly avoids changing state and mutating data. 
+**Functional Programming (FP)** is a declarative paradigm that treats computation as the evaluation of mathematical functions. It strictly avoids changing state and mutating data.
 
 While languages like Haskell, Lisp, and Clojure are pure functional languages, FP concepts have heavily influenced modern multi-paradigm languages like JavaScript, Rust, and Python.
 
+
 <Callout icon="success" title="The Antidote to Complexity">
-  In Object-Oriented programming, bugs usually occur because the "State" of an object is modified unpredictably by different parts of the system. 
+
+
+  In Object-Oriented programming, bugs usually occur because the "State" of an object is modified unpredictably by different parts of the system.
   Functional programming eliminates this class of bugs entirely by making State **Immutable**. If you can never change a variable once it is created, you can never have a race condition in a multi-threaded app!
+
+
 </Callout>
+
 
 ## Core Concepts
 
@@ -42,4 +55,3 @@ const updatedUser = { ...user, age: 26 }; // Creates a pure copy
 - **Strengths**: Code is incredibly predictable, highly testable (pure functions need no mock databases), and naturally thread-safe for parallel processing.
 - **Weaknesses**: Strict immutability means constantly copying massive arrays or objects in memory, which can lead to high memory usage and Garbage Collection pauses if the language engine isn't heavily optimized for it.
 
-</ConceptTemplate>

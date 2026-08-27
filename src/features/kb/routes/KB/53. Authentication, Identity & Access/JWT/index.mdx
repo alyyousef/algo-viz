@@ -4,22 +4,39 @@ description: A compact, URL-safe means of representing claims to be transferred 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JSON Web Tokens (JWT)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JSON Web Tokens (JWT)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 JWT is the mathematical solution to the scaling problem of Session-based Authentication. It is a **Stateless** authentication mechanism.
 
 Instead of the server storing the user's data in a Redis database, the server mathematically packages the data `{ userId: 123 }` into a JSON object, biologically signs it using a cryptographic Private Key, and gives it directly to the user.
 
+
 <Callout icon="success" title="The Cryptographic Signature">
+
+
   A JWT consists of 3 mathematical parts separated by dots: `Header.Payload.Signature`.
-  
-  When the user sends the JWT back to the server, the server does not need to check a database. It simply uses its cryptographic key to mathematically verify the `Signature`. If the signature is valid, the server biologically trusts the `Payload`. 
-  
+
+  When the user sends the JWT back to the server, the server does not need to check a database. It simply uses its cryptographic key to mathematically verify the `Signature`. If the signature is valid, the server biologically trusts the `Payload`.
+
   Because the server stores zero state in RAM, you can scale to 10,000 backend servers instantly.
+
+
 </Callout>
+
 
 <Callout icon="warning" title="The Invalidation Problem">
+
+
   Because JWTs are stateless, you mathematically cannot "delete" a JWT from the server to log a user out. Once a JWT is issued, it is valid until its mathematical expiration time (`exp`) is reached.
+
+
 </Callout>
 
-</ConceptTemplate>
+

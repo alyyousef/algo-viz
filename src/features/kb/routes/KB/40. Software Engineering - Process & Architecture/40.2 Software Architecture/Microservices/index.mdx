@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Microservices Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microservices Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, applications were built as **Monoliths**: a single, massive codebase containing all the UI logic, business logic, and database access code, compiled into a single executable and deployed to a single server.
 
@@ -14,15 +21,9 @@ Historically, applications were built as **Monoliths**: a single, massive codeba
 
 ## 1. Monolith vs Microservices
 
-<ComparisonTable 
-  headers={['Feature', 'Monolith', 'Microservices']} 
-  rows={[
-    ['Codebase', 'Single, unified repository.', 'Multiple repositories, one per service.'],
-    ['Deployment', 'Deploy the entire application at once.', 'Deploy individual services independently without downtime.'],
-    ['Scaling', 'Scale the entire application vertically or horizontally.', 'Scale only the specific services under heavy load (e.g., scale the Payment service 10x on Black Friday, leave the User Profile service alone).'],
-    ['Technology Stack', 'Forces a single language and framework across the board.', 'Each service can use the best tool for the job (e.g., Node.js for real-time chat, Python for AI, Go for high-throughput processing).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Feature', 'Monolith', 'Microservices']} rows={[ ['Codebase', 'Single, unified repository.', 'Multiple repositories, one per service.'], ['Deployment', 'Deploy the entire application at once.', 'Deploy individual services independently without downtime.'], ['Scaling', 'Scale the entire application vertically or horizontally.', 'Scale only the specific services under heavy load (e.g., scale the Payment service 10x on Black Friday, leave the User Profile service alone).'], ['Technology Stack', 'Forces a single language and framework across the board.', 'Each service can use the best tool for the job (e.g., Node.js for real-time chat, Python for AI, Go for high-throughput processing).'] ]} />
+
 
 ## 2. The Trade-offs
 
@@ -33,8 +34,13 @@ Instead of calling a function in memory (`calculateTax()`), you are now making a
 - **Distributed Tracing**: Figuring out where a request failed when it touches 7 different services.
 - **Eventual Consistency**: You can no longer use simple database ACID transactions across services. You must use complex patterns like Sagas.
 
+
 <Callout icon="warning" title="The Microservice Premium">
+
+
 Do not start with microservices. Martin Fowler coined the "Microservice Premium": the baseline overhead of infrastructure (Kubernetes, CI/CD, API Gateways) required to run microservices makes them much slower to build initially than a monolith. Start with a well-structured monolith and extract services only when organizational scaling demands it.
+
+
 </Callout>
 
-</ConceptTemplate>
+

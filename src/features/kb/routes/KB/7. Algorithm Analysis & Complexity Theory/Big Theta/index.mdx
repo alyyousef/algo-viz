@@ -1,8 +1,41 @@
+---
+title: Big Theta
+description: "The mathematical notation for a tight asymptotic bound, used when an algorithm's worst-case (Big O) and best-case (Big Omega) scale exactly the same way."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Big Theta">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Big Theta (Θ)"
+  subtitle="Tight Asymptotic Bounds"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Formal Logic']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In casual software engineering interviews, people often say "Big O" when they mathematically mean **Big Theta ($\Theta$)**. Big Theta is a **Tight Bound**, meaning the algorithm scales *exactly* at a specific rate—no faster, no slower.
 
-</ConceptTemplate>
+## 1. The Formal Mathematical Definition
+A function $f(n) = \Theta(g(n))$ if and only if it is mathematically bounded from both above and below.
+Specifically, $f(n)$ must be both $O(g(n))$ **AND** $\Omega(g(n))$.
+There must exist positive constants $c_1$, $c_2$, and $n_0$ such that:
+$c_1 \cdot g(n) \le f(n) \le c_2 \cdot g(n)$ for all $n \ge n_0$.
+
+In plain English: The algorithm is sandwiched mathematically between two constants of the exact same function.
+
+## 2. Examples of Tight Bounds
+Consider **Merge Sort**.
+- In the absolute worst case, Merge Sort takes $N \log N$ time. ($O(N \log N)$).
+- In the absolute best case (the array is already sorted), Merge Sort *still* recursively divides the array and merges it back together, taking $N \log N$ time. ($\Omega(N \log N)$).
+Because the ceiling and the floor are exactly the same, we can definitively state that Merge Sort runs in **$\Theta(N \log N)$** time. It is a tight bound.
+
+## 3. When Theta Fails
+Consider **Insertion Sort**.
+- Worst case (reversed array): $O(N^2)$
+- Best case (sorted array): $\Omega(N)$
+Because the ceiling ($N^2$) and the floor ($N$) are mathematically different, you **cannot** describe Insertion Sort using Big Theta. You must use Big O to describe its worst case and Big Omega to describe its best case.
+

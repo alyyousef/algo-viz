@@ -1,8 +1,33 @@
+---
+title: Smoke Testing
+description: "A preliminary, rapid testing phase that mathematically checks the absolute most critical functions of a software build, determining if the build is stable enough to proceed with further, rigorous testing."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Smoke testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Smoke Testing"
+  subtitle="Checking for Fire"
+  tags={['Testing', 'Quality Assurance', 'Process', 'Deployment']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The term comes from hardware engineering: if you plug in a new circuit board and it physically starts smoking, you immediately unplug it. You don't bother testing the individual capacitors.
 
-</ConceptTemplate>
+## 1. The Build Verification Test (BVT)
+In software, a Smoke Test is mathematically the absolute minimum set of automated tests executed immediately after a deployment.
+If you deploy a massive E-Commerce update, the Smoke Test executes exactly three mathematical paths:
+1. Can the app connect to the Database? (HTTP 200 on health check).
+2. Can a user log in?
+3. Can a user add an item to a cart?
+If *any* of these three tests fail, the build is instantly marked as "Broken".
+
+## 2. The Fail-Fast Strategy
+Smoke Testing is a mathematical "Fail-Fast" optimization.
+It prevents QA engineers from wasting 4 hours testing edge-cases on a build where the database connection string is broken. Smoke tests are usually automated in the CI/CD pipeline, taking less than 5 minutes to run, mathematically blocking terrible deployments from ever reaching the Staging environment.
+

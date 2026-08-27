@@ -5,10 +5,17 @@ description: "The fundamental engine of CSS layout, describing how elements take
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Box Model & Positioning"
   icon="square"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Everything in CSS is a box. Understanding the **CSS Box Model** is the absolute prerequisite to building any web layout.
 
@@ -20,9 +27,15 @@ From the inside out, every element consists of:
 3. **Border**: The structural edge of the element.
 4. **Margin**: Transparent space *outside* the element, pushing it away from other elements.
 
+
 <Callout icon="warning" title="box-sizing: border-box">
+
+
 By default, CSS uses `box-sizing: content-box`. If you set a width of 100px and add 20px padding, the box becomes 140px wide on the screen, breaking your layouts. Modern developers apply `box-sizing: border-box` globally so that padding and borders are absorbed into the declared width.
+
+
 </Callout>
+
 
 ## Positioning
 
@@ -33,4 +46,3 @@ The `position` property drastically alters how an element behaves within the doc
 - **fixed**: Ripped out of flow and positioned relative to the viewport. It stays on screen even when scrolling (e.g., sticky headers).
 - **sticky**: A hybrid. It acts `static` until you scroll past a certain threshold, at which point it acts `fixed`.
 
-</ConceptTemplate>

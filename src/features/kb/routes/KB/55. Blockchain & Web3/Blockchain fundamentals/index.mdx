@@ -4,16 +4,28 @@ description: A decentralized, distributed, and oftentimes public, digital ledger
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Blockchain Fundamentals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Blockchain Fundamentals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A Blockchain is mathematically nothing more than an incredibly inefficient, append-only Linked List.
 
 If it is so inefficient, why use it? Because it solves the mathematical problem of **Trust**.
 
+
 <Callout icon="info" title="The Byzantine Generals Problem">
+
+
   In a traditional database (like MySQL), the company that owns the server has absolute biological authority. They can mathematically edit your bank balance from $100 to $0 without your permission.
-  
+
   A Blockchain mathematically removes the central authority. The database is copied across 10,000 different physical computers (nodes) owned by strangers. If one stranger tries to maliciously alter your bank balance to $0, the other 9,999 computers mathematically vote to reject the fraudulent change.
+
+
 </Callout>
 
-</ConceptTemplate>
+

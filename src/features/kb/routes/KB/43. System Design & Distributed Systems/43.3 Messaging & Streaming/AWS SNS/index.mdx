@@ -1,8 +1,31 @@
+---
+title: AWS SNS (Simple Notification Service)
+description: "A fully managed, highly available Pub/Sub messaging service provided by Amazon Web Services, mathematically designed for pushing high-throughput messages to massive numbers of distributed subscribers."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AWS SNS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="AWS SNS (Simple Notification Service)"
+  subtitle="Cloud-Native Pub/Sub"
+  tags={['System Design', 'AWS', 'Messaging', 'Cloud']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a Microservice architecture, an "Order Service" needs to announce "Order Created" to the "Shipping Service", the "Email Service", and the "Inventory Service." If the Order Service calls them via synchronous HTTP REST APIs, it becomes mathematically tightly coupled to all three.
 
-</ConceptTemplate>
+## 1. The Pub/Sub Paradigm
+AWS SNS solves this using the Publish/Subscribe (Pub/Sub) pattern.
+The Order Service (Publisher) mathematically does not know who is listening. It simply publishes a single JSON message to an SNS "Topic" named `order_created`.
+The Shipping, Email, and Inventory services (Subscribers) have all mathematically attached themselves to that Topic. SNS instantly "fans out" the message, pushing a perfect mathematical clone of the message to all three services simultaneously.
+
+## 2. Fan-Out to SQS
+SNS is a "Push" mechanism. It attempts to mathematically push the message to the subscriber. If the Email Service is temporarily offline, the message might be lost.
+To prevent this, architects use the **SNS-to-SQS Fan-Out Pattern**.
+Instead of subscribing the microservices directly to SNS, you subscribe AWS SQS Queues to the SNS Topic. SNS pushes the message to the SQS Queues. The microservices then pull the messages from their respective queues at their own pace, mathematically guaranteeing 100% reliable delivery even if the microservices go offline.
+

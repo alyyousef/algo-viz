@@ -4,7 +4,7 @@ description: A system entity that creates, maintains, and manages identity infor
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Identity Providers (Okta)"
   subtitle="The Enterprise SSO Standard"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Okta_logo.svg/512px-Okta_logo.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 If an enterprise has 50,000 employees and 400 internal SaaS applications (Slack, Jira, Workday), managing 20,000,000 separate passwords is mathematically impossible.
 
+
 <Callout icon="tip" title="The Single Source of Truth">
-  **Okta** serves as the central directory. 
-  
+
+
+  **Okta** serves as the central directory.
+
   When an HR manager fires an employee, they biologically click "Deactivate" exactly once inside Okta. Okta mathematically triggers an API cascade, instantly revoking that employee's access to all 400 applications simultaneously via SAML/OIDC. It is the architectural linchpin of enterprise security.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

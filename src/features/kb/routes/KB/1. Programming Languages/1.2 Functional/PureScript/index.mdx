@@ -1,8 +1,25 @@
+---
+title: PureScript
+description: A strongly-typed, purely functional programming language that compiles to clean, readable JavaScript.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PureScript">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PureScript">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Phil Freeman, PureScript is heavily inspired by Haskell but specifically designed to target the JavaScript ecosystem (and later C++ and Erlang). It brings the mathematical rigor of purely functional programming to frontend development.
 
-</ConceptTemplate>
+## 1. Strict Evaluation
+Unlike Haskell, which uses Lazy Evaluation (where code mathematically isn't executed until its value is needed), PureScript uses **Strict (Eager) Evaluation**.
+Because JavaScript is strictly evaluated, this mathematical decision prevents the massive memory leaks and unpredictable performance spikes that often occur when compiling lazy languages to the browser.
+
+## 2. No Runtime
+Languages like Elm and ClojureScript ship a "Runtime" (a massive block of JavaScript code) to the browser to handle their specific data structures.
+PureScript was mathematically designed to compile into standard, idiomatic JavaScript without a heavy runtime. A PureScript record `{ name: "John" }` compiles directly into a native JavaScript object. This makes integrating PureScript into an existing React or Node.js codebase incredibly easy, as the generated code looks almost exactly like hand-written JavaScript.
+

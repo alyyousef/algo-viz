@@ -1,8 +1,29 @@
+---
+title: Multi-Armed Bandits
+description: The classic foundational mathematical problem of Reinforcement Learning focusing purely on the Exploration vs. Exploitation dilemma in an environment with no shifting states.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-armed bandits">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Armed Bandits">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine you are in a casino with 10 slot machines (One-Armed Bandits). You have 100 tokens. Each machine has a different, secret probability of paying out. How do you mathematically maximize your money?
 
-</ConceptTemplate>
+## 1. A Stateless Environment
+The Multi-Armed Bandit problem is the purest form of RL because it removes the concept of "State."
+Pulling Machine A does not mathematically alter the probability of Machine B. The environment never changes. The only problem the algorithm must solve is how to allocate its finite tokens to find the best machine (Exploration) while spending as many tokens as possible on that best machine (Exploitation).
+
+## 2. UCB (Upper Confidence Bound)
+While $\epsilon$-Greedy explores randomly, UCB explores mathematically.
+UCB keeps track of two things for every machine: the average payout, and the mathematical *uncertainty* (how many times it has been pulled).
+The algorithm calculates an equation: $Q_a + c \sqrt{\frac{\ln t}{N_a}}$
+- $Q_a$: The average payout (Exploitation).
+- $N_a$: The number of times pulled. (Because it is in the denominator, machines that have rarely been pulled get a massive mathematical bonus to their score).
+This formula physically forces the AI to eventually test every single machine, mathematically guaranteeing that it will never get permanently trapped at a mediocre slot machine.
+

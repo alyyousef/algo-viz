@@ -5,10 +5,17 @@ description: "CSS Custom Properties, providing dynamic, cascading variables nati
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Variables & Tokens"
   icon="code"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For years, developers had to use tools like Sass or LESS to use variables. Today, **CSS Custom Properties** (native CSS variables) are universally supported and are significantly more powerful because they exist in the browser at runtime.
 
@@ -51,8 +58,13 @@ body {
 }
 ```
 
+
 <Callout icon="tip" title="JavaScript Interaction">
+
+
 Because they exist in the DOM at runtime, JavaScript can read and write CSS variables effortlessly. This is how you implement dynamic drag-and-drop elements or scroll-linked animations: `element.style.setProperty('--mouse-x', event.clientX + 'px')`.
+
+
 </Callout>
 
-</ConceptTemplate>
+

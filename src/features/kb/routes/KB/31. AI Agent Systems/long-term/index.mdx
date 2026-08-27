@@ -1,8 +1,26 @@
+---
+title: Long-Term Memory (Agents)
+description: The architectural implementation of persistent Vector and Graph databases that mathematically allow an AI Agent to retain facts, user preferences, and contextual history across infinite sessions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="long-term">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Long-Term Memory">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An LLM is mathematically stateless (amnesic). The moment an API call finishes, it forgets everything. While Short-Term Memory handles the current conversation, Long-Term Memory ensures the Agent remembers the user across weeks or years.
 
-</ConceptTemplate>
+## 1. Vector Database Persistence
+The most common implementation is a persistent Vector Store.
+If a user tells the Agent, "I am a vegan," the Agent mathematically embeds that sentence into a Vector and permanently saves it.
+Three weeks later, the user says, "Find me a restaurant." Before answering, the Agent mathematically embeds the new query and searches its Long-Term Memory. It retrieves the "vegan" Vector, dynamically injects it into the System Prompt, and mathematically filters the restaurant search, simulating human-like persistent memory.
+
+## 2. Entity Consolidation (MemGPT)
+If a user says "I live in New York," and later says "I moved to Chicago," a dumb Vector Database will retrieve both conflicting facts.
+Advanced memory architectures (like MemGPT) treat Long-Term memory as a mathematically constrained OS Disk. The Agent has explicit Tools to `Memory.insert()`, `Memory.update()`, and `Memory.delete()`. The LLM mathematically reasons that the Chicago fact overwrites the New York fact, autonomously issuing a DELETE command to the database, ensuring its persistent memory remains logically consistent over time.
+

@@ -1,0 +1,25 @@
+---
+title: OCI Route Tables
+description: The mathematical routing brains of a Virtual Cloud Network (VCN), defining exactly how network packets travel from a Subnet to the internet, on-premise networks, or other cloud services.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Route Tables"
+  subtitle="Subnet Traffic Direction"
+  tags={['OCI', 'Networking', 'Routing', 'VCN']}
+>
+
+If a Virtual Machine tries to send a packet to Google (`8.8.8.8`), the packet reaches the edge of the Subnet and stops. The Subnet has no idea where the internet is. The Route Table provides the mathematical map.
+
+## 1. Destination and Target
+Every Subnet in OCI is attached to exactly one Route Table. The table contains mathematical rules structured as **Destination CIDR -> Target Gateway**.
+- **Rule 1:** `0.0.0.0/0` -> `Internet Gateway` (Routes all public internet traffic out the front door).
+- **Rule 2:** `192.168.1.0/24` -> `Dynamic Routing Gateway (DRG)` (Routes internal corporate traffic out the back door to the on-premise office via VPN).
+When a packet leaves a VM, the VCN mathematically evaluates the destination IP against the Route Table. It finds the most specific matching CIDR block and fires the packet to that exact Gateway.
+
+## 2. Private Routing
+The mathematical absence of a rule is a security feature.
+If you create a "Database Route Table" and do *not* include a rule for `0.0.0.0/0`, the Subnet is mathematically isolated from the internet. If a hacker somehow manages to ping the database, the database might try to reply, but the Route Table mathematically drops the packet because it has no mathematical instruction on how to route it back to the internet.
+
+</TechnologyTemplate>

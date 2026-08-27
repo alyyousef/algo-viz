@@ -4,7 +4,14 @@ description: The massive, heavily-architected, statically-typed titans that powe
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Java & C# Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Java & C# Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While startups and modern tech companies favor Node.js and Python, massive Fortune 500 corporations (Banks, Airlines, Insurance) rely almost exclusively on the rock-solid stability, extreme multithreaded performance, and strict Object-Oriented design of Java and C#.
 
@@ -20,4 +27,3 @@ However, Microsoft executed a massive architectural rewrite, releasing **.NET Co
 
 Coupled with C# (which is widely considered one of the best designed programming languages in existence, featuring LINQ and flawless Async/Await), ASP.NET Core is the ultimate choice for massive enterprise applications requiring extreme performance and strict Microsoft ecosystem integration.
 
-</ConceptTemplate>

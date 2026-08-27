@@ -1,8 +1,30 @@
+---
+title: SOLID Principles
+description: "An acronym representing five foundational mathematical principles of object-oriented class design, formulated by Robert C. Martin, aimed at making software architectures more understandable, flexible, and maintainable."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SOLID">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="SOLID Principles"
+  subtitle="The 5 Pillars of Object-Oriented Architecture"
+  tags={['Process', 'Clean Code', 'Architecture', 'Design Principles']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an engineer ignores SOLID, their codebase will mathematically degrade into "Spaghetti Code" where a single change to the UI breaks the database.
 
-</ConceptTemplate>
+## 1. SRP & OCP
+- **(S) Single Responsibility Principle**: A class must have exactly one mathematical reason to change. A `User` class should hold data; it should *not* contain the SQL query to save itself to the database (`UserRepository` should do that).
+- **(O) Open-Closed Principle**: Software entities must be mathematically *open for extension, but closed for modification*. If you need to add a "Bitcoin" payment method, you should mathematically create a new `BitcoinStrategy` class, not open the existing `PaymentProcessor` file and add another `if/else` statement.
+
+## 2. LSP, ISP & DIP
+- **(L) Liskov Substitution Principle**: A child class must be mathematically swappable with its parent class without breaking the program. If `Bird` has a `fly()` method, creating a `Penguin` class that extends `Bird` and throws a `CannotFlyException` mathematically violates LSP.
+- **(I) Interface Segregation Principle**: A client should never be forced to implement an interface it doesn't use. Instead of one massive `IWorker` interface with `work()` and `eat()`, split it into `IWorkable` and `IFeedable`, so a `Robot` class isn't forced to implement `eat()`.
+- **(D) Dependency Inversion Principle**: High-level modules must not mathematically depend on low-level modules; both should depend on abstractions (Interfaces). A `CheckoutService` must never instantiate a physical `MySQLDatabase`; it must depend on an abstract `IDatabase`.
+

@@ -1,8 +1,33 @@
+---
+title: Process vs Thread
+description: "A fundamental Operating System architecture comparison detailing the mathematical memory isolation of heavy Processes versus the shared-memory speed and synchronization danger of lightweight Threads."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Process vs thread">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Process vs Thread"
+  subtitle="Operating System Concurrency"
+  tags={['Comparison', 'Architecture', 'Systems', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a computer runs multiple tasks simultaneously, it mathematically divides the work using two distinct operating system abstractions: Processes and Threads.
 
-</ConceptTemplate>
+## 1. Process
+- **Definition**: An independent, heavy-weight program executing in RAM (e.g., opening a new instance of Google Chrome).
+- **Memory**: **Isolated**. The OS assigns every Process a completely unique, mathematical Virtual Memory space. Process A mathematically cannot read Process B's memory.
+- **Pros**: High Security and Stability. If Process A crashes, Process B is completely unaffected. (This is why Chrome runs every tab in a separate process).
+- **Cons**: High Overhead. Booting a Process takes significant time and RAM. Inter-Process Communication (IPC) is mathematically slow because data must be serialized and passed through the OS kernel.
+
+## 2. Thread
+- **Definition**: A lightweight unit of execution *inside* a Process. A single Process can contain 100 Threads.
+- **Memory**: **Shared**. All 100 Threads mathematically share the exact same Heap memory space, global variables, and open files.
+- **Pros**: Blisteringly fast to create. Communication between threads is instant, because they can physically read the exact same RAM addresses.
+- **Cons**: High Danger. If Thread 1 is writing to a variable, and Thread 2 tries to read it at the exact same mathematical picosecond, you get a **Race Condition**, crashing the entire Process. This requires complex mathematical Mutexes and Locks to synchronize.
+

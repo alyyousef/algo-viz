@@ -1,8 +1,26 @@
+---
+title: Data Drift (Covariate Shift)
+description: A silent MLOps failure where the statistical distribution of the live data being fed into a production model physically deviates from the distribution of the data it was originally trained on.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data drift">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Drift (Covariate Shift)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While *Concept Drift* means the rules of the world changed, **Data Drift** means the *inputs* of the world changed. The neural network's mathematical assumptions about the data are no longer valid.
 
-</ConceptTemplate>
+## 1. The Mathematical Shift ($P(X)$)
+In Data Drift, the distribution of the input features $P(X)$ changes.
+*Example*: You train a facial recognition model on high-resolution DSLR photos ($X$). You deploy it to production, but the client installs cheap, blurry 480p security cameras.
+The mathematical definition of a "face" hasn't changed (no Concept Drift), but the mathematical distribution of the pixel values ($X$) is radically different. The model, having never seen blurry pixels, outputs complete garbage.
+
+## 2. Statistical Detection (KL Divergence)
+You detect Data Drift before it destroys your business by continuously mathematically comparing the live data against the training dataset.
+MLOps tools use algorithms like the **Kolmogorov-Smirnov (K-S) Test** or **Kullback-Leibler (KL) Divergence** to calculate the distance between the two statistical distributions. If the live data's distribution drifts too far from the training baseline (e.g., the average age of users shifts from 25 to 65), the system fires a high-priority alert. The engineers must then gather the new data (the 480p images) and retrain the model to mathematically adapt to the new reality.
+

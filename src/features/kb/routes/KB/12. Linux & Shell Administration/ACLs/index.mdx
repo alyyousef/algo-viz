@@ -4,11 +4,18 @@ description: An advanced permission extension that allows fine-grained, per-user
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ACLs (Access Control Lists)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ACLs (Access Control Lists)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The classic Unix permission system (Owner, Group, Others) is incredibly fast and simple, but it is highly inflexible.
 
-Imagine you have a file owned by Alice. You want to give Bob *Read* access, and you want to give Charlie *Read/Write* access. 
+Imagine you have a file owned by Alice. You want to give Bob *Read* access, and you want to give Charlie *Read/Write* access.
 Under standard permissions, you cannot do this. A file can only have **one** owning Group. You would have to create complex, overlapping custom groups just to share one file.
 
 **Access Control Lists (ACLs)** solve this by allowing you to attach a list of specific users and their specific permissions directly to a single file.
@@ -20,11 +27,16 @@ When ACLs are enabled on a filesystem, you use two commands to manage them:
 1. **`getfacl <file>`**: Displays the ACLs on a file.
 2. **`setfacl -m u:charlie:rw <file>`**: Modifies the ACL. This specific command explicitly grants the user `charlie` read/write permissions to the file, regardless of what the standard Group/Other permissions are.
 
+
 <Callout icon="warning" title="The ACL Indicator">
+
+
   If you run `ls -l` on a file that has an ACL applied to it, you will see a tiny `+` symbol at the very end of the 10-character permission string (e.g., `-rw-r--r--+`). This plus sign is a critical warning to sysadmins that the standard permission string is lying to them, and they must run `getfacl` to see the real permissions.
+
+
 </Callout>
+
 
 ## Default ACLs on Directories
 A massive feature of ACLs is "Default ACLs" on directories. You can configure a directory so that any new file created inside it *automatically* inherits a specific ACL (e.g., "Any file created in the `/shared` folder automatically grants Read/Write to the QA Team"), entirely overriding the user's standard `umask`.
 
-</ConceptTemplate>

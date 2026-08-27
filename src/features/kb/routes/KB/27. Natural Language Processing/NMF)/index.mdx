@@ -1,8 +1,29 @@
+---
+title: Non-Negative Matrix Factorization (NMF)
+description: An advanced linear algebra technique used in NLP Topic Modeling to mathematically decompose a massive document matrix into constituent topics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NMF)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Non-Negative Matrix Factorization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have 10,000 news articles, how do you mathematically categorize them into "Sports," "Politics," and "Tech" without a human reading them? You use Topic Modeling algorithms like NMF.
 
-</ConceptTemplate>
+## 1. The Matrix Decomposition
+You start with a massive matrix $V$ (Documents x Words). Every cell is the frequency of a word in a document.
+NMF uses iterative mathematical optimization to split $V$ into two smaller matrices: $W$ and $H$.
+- $W$ (Documents x Topics): Mathematically shows how much of each Topic is inside each Document.
+- $H$ (Topics x Words): Mathematically shows which Words belong to which Topic.
+Crucially, $V \approx W \times H$.
+
+## 2. The Power of Non-Negativity
+Why use NMF instead of standard PCA (Principal Component Analysis)?
+PCA allows negative numbers. A topic could mathematically be defined as "0.5 * Ball - 0.2 * Government." Negative words make absolutely no sense in human linguistics.
+NMF mathematically forces all numbers in the matrices to be positive (Non-Negative). Therefore, a Topic is modeled purely as an additive combination of words (e.g., "0.8 * Goal + 0.5 * Penalty + 0.3 * Referee"). This mathematical constraint forces the algorithm to generate topics that are highly interpretable by human analysts.
+

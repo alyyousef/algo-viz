@@ -4,7 +4,7 @@ description: A machine-level, command-line package manager and installer for sof
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Chocolatey"
   subtitle="apt-get for Windows"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Chocolatey_icon.png/512px-Chocolatey_icon.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Before Chocolatey, provisioning a new Windows laptop required a developer to open Chrome, navigate to 20 different websites (Node.js, Git, VS Code, Python), download 20 MSIs, and manually execute them.
 
+
 <Callout icon="success" title="Silent Automation">
+
+
   With Chocolatey, a developer simply opens PowerShell as Administrator and types:
   `choco install nodejs git vscode python -y`
-  
+
   Chocolatey mathematically downloads the official installers, injects "silent install" flags to bypass all GUI prompts, and automatically maps the binaries into the system's `PATH` environment variable.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

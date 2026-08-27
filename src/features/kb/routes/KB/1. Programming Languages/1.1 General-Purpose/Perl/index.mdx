@@ -5,10 +5,17 @@ description: "The Swiss Army chainsaw of scripting languages, famous for its unm
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Perl"
   icon="terminal"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created by Larry Wall in 1987, **Perl** (Practical Extraction and Reporting Language) was originally designed as a Unix scripting language to make report processing easier. It quickly evolved into the "duct tape of the Internet" during the 1990s dot-com boom.
 
@@ -43,8 +50,13 @@ if ($text =~ /brown (\w+)/) {
 }
 ```
 
+
 <Callout icon="warning" title="Write-Only Language?">
+
+
 Because Perl allows developers to write incredibly dense, cryptic code using implicit variables (like `$_`), it earned a reputation as a "write-only" language—code that is easy to write but nearly impossible to read or maintain six months later. This complexity heavily contributed to developers fleeing to Python and Ruby in the 2000s.
+
+
 </Callout>
 
-</ConceptTemplate>
+

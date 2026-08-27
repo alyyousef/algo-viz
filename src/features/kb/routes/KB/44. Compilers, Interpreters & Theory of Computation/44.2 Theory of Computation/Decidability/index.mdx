@@ -4,15 +4,28 @@ description: The property of a formal system or logical problem wherein there ex
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Decidability">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Decidability">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Computability Theory, a problem is mathematically considered **Decidable** if it is possible to construct a Turing Machine that will always halt and return a correct YES or NO answer for every single possible input.
 
 If a problem might cause the Turing Machine to loop forever without ever finding the answer, the problem is mathematically **Undecidable**.
 
+
 <Callout icon="info" title="The Subset Relationship">
+
+
   The Halting Problem is the most famous example of an Undecidable problem. Alan Turing proved that no algorithm can reliably output YES or NO for every possible input program.
+
+
 </Callout>
+
 
 ## Semi-Decidability
 
@@ -24,4 +37,3 @@ For a Semi-Decidable problem:
 
 *Example: "Does the number 7 exist in the digits of Pi?" We can write a program to search Pi. If it finds a 7, it halts (YES). If Pi didn't contain a 7, our program would loop until the universe died.*
 
-</ConceptTemplate>

@@ -4,22 +4,34 @@ description: The process of breaking down a desired movement task into discrete 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Motion Planning & Trajectory Generation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Motion Planning & Trajectory Generation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Path Planning** mathematically draws a line on a map from Point A to Point B. But a line is just geometry. 
+**Path Planning** mathematically draws a line on a map from Point A to Point B. But a line is just geometry.
 
 **Motion Planning** takes that line and adds Time, Velocity, and Acceleration constraints. It answers the question: *"Exactly how fast should the wheels spin at millisecond 400 to follow this line without the robot physically tipping over?"*
 
+
 <Callout icon="tip" title="The Jerk Constraint">
-  In physics, the derivative of Acceleration is called **Jerk**. 
-  
+
+
+  In physics, the derivative of Acceleration is called **Jerk**.
+
   If a robot accelerates instantly from 0 to 10 mph, the Jerk is mathematically infinite. The robot's physical gears will violently grind and snap. Motion Planning algorithms mathematically generate smooth "S-Curve" velocity profiles to ensure that Acceleration ramps up slowly, keeping Jerk physically manageable.
+
+
 </Callout>
+
 
 ## Obstacle Avoidance (Local Planning)
 
-The global path plan says "Go down the hallway." But suddenly, a human steps into the hallway. 
+The global path plan says "Go down the hallway." But suddenly, a human steps into the hallway.
 
 The Local Motion Planner (like the **Dynamic Window Approach - DWA**) constantly runs at 20 Hz. It mathematically simulates 50 different arc-shaped trajectories the robot could drive in the next 1 second. It scores each trajectory (Penalizing driving near the human, rewarding driving toward the hallway goal), picks the best mathematical score, and executes it.
 
-</ConceptTemplate>

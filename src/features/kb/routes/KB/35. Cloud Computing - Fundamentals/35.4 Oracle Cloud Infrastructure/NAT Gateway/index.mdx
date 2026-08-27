@@ -1,0 +1,24 @@
+---
+title: OCI NAT Gateway
+description: A highly secure, managed networking appliance that mathematically allows Virtual Machines in private subnets to initiate outbound internet traffic without exposing them to inbound internet attacks.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI NAT Gateway"
+  subtitle="Secure Outbound Internet"
+  tags={['OCI', 'Networking', 'Security', 'Routing']}
+>
+
+If you place a Database Virtual Machine in a Private Subnet (with no Public IP address and no Internet Gateway), it is mathematically secure from internet hackers. However, if that Database needs to download a security patch from `ubuntu.com`, it is mathematically trapped. The NAT Gateway solves this.
+
+## 1. Outbound-Only State Machine
+A NAT (Network Address Translation) Gateway is fundamentally different from an Internet Gateway.
+An Internet Gateway is bidirectional. A NAT Gateway is mathematically **unidirectional** regarding connection initiation.
+When the Database tries to ping `ubuntu.com`, the traffic is routed to the NAT Gateway. The Gateway mathematically strips the Database's private IP, replaces it with the Gateway's own Public IP, and sends the request to the internet. When Ubuntu replies, the Gateway remembers the mathematical state of the connection and forwards the packet back to the Database.
+
+## 2. Dropping Unsolicited Traffic
+The mathematical security guarantee of a NAT Gateway lies in its state table.
+If a hacker on the internet attempts to initiate a brand-new connection directly to the NAT Gateway's Public IP, the Gateway consults its state table. Because no internal VM initiated that specific connection, the Gateway mathematically drops the packets instantly. This allows private backend servers to download patches and API updates while remaining physically impossible to reach from the outside world.
+
+</TechnologyTemplate>

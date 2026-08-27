@@ -1,8 +1,25 @@
+---
+title: Templates (C++)
+description: A highly advanced, Turing-complete metaprogramming feature in C++ that generates concrete code at compile-time based on type parameters.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Templates">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Templates (C++)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Java and C# use Generics, C++ uses **Templates**. They look similar syntactically (`template <typename T>`), but mathematically and fundamentally, they are completely different mechanisms.
 
-</ConceptTemplate>
+## 1. Compile-Time Code Generation
+A Template is not a real function or class; it is a mathematical *blueprint* for the compiler.
+When you write `vector<int>`, the C++ compiler reads the blueprint and physically writes a brand new, highly optimized class named `vector_int` into your source code before compiling it. If you use `vector<string>`, it generates `vector_string`. This process is called **Monomorphization**. It results in incredibly fast runtime performance because there is zero type-checking or casting at runtime, but it massively increases the size of the final compiled binary (Code Bloat).
+
+## 2. Turing Completeness
+Because C++ Templates can mathematically evaluate conditions (via SFINAE or Concepts) and recurse at compile-time, the Template system itself is **Turing Complete**.
+You can mathematically write a Template that calculates the 100th Fibonacci number. The C++ compiler will execute this logic *during compilation*, and the final binary will simply contain a hardcoded integer literal. The program will execute in 0 milliseconds, because all the mathematical computation occurred before the program even started.
+

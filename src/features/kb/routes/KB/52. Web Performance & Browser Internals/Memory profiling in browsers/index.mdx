@@ -4,16 +4,28 @@ description: The process of diagnosing memory leaks and understanding memory usa
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Memory Profiling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Memory Profiling">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 JavaScript uses **Garbage Collection**. If a variable is no longer mathematically reachable by the root application, the V8 engine automatically deletes it from RAM.
 
 However, if a React developer accidentally attaches an `addEventListener` to the `window` and forgets to call `removeEventListener` when the component unmounts, the DOM node is mathematically trapped in memory forever. This is a **Memory Leak**.
 
+
 <Callout icon="warning" title="Heap Snapshots">
-  To fix this, developers open Chrome DevTools, navigate to the **Memory** tab, and take a **Heap Snapshot**. 
-  
+
+
+  To fix this, developers open Chrome DevTools, navigate to the **Memory** tab, and take a **Heap Snapshot**.
+
   A Heap Snapshot mathematically freezes the V8 engine and dumps the exact byte-size of every single object, array, and DOM node currently in RAM. By comparing two snapshots over time, developers can biologically isolate exactly which variables are leaking.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,0 +1,24 @@
+---
+title: Google BigQuery
+description: Google's flagship, serverless, highly scalable enterprise data warehouse, mathematically engineered to execute SQL queries across petabytes of data in mere seconds.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google BigQuery"
+  subtitle="The Petabyte SQL Engine"
+  tags={['GCP', 'Database', 'Big Data', 'Serverless']}
+>
+
+BigQuery is not a standard relational database; it is a massively parallel, serverless analytics engine (OLAP). You do not provision servers, clusters, or memory. You simply throw a 5-Petabyte dataset at it, write a standard SQL query, and Google handles the underlying distributed mathematics.
+
+## 1. Dremel and Colossus
+BigQuery mathematically separates Compute from Storage to achieve its speed.
+- **Colossus (Storage)**: The data is stored in Google's global distributed file system in a highly compressed, columnar format (Capacitor).
+- **Dremel (Compute)**: When you hit "Run Query", the Dremel engine mathematically compiles your SQL into a massive execution tree. It instantly spins up thousands of hidden worker nodes. Each node scans a tiny, specific slice of the Colossus storage, performs the mathematical aggregation (e.g., `SUM()`), and passes the result back up the tree. You get the answer to a Petabyte query in 5 seconds.
+
+## 2. Serverless Economics
+With traditional Data Warehouses (like early AWS Redshift or on-premise Hadoop), you pay a massive hourly fee for the cluster to sit idle.
+BigQuery is purely **Serverless**. You pay exactly $0 for idle compute. You are billed purely on a mathematical metric: **Bytes Scanned**. If your query scans 1 Terabyte of data, you pay exactly $5.00. This forces data engineers to write mathematically efficient SQL (e.g., heavily utilizing partitioned tables to prevent accidental full-table scans that could cost hundreds of dollars).
+
+</TechnologyTemplate>

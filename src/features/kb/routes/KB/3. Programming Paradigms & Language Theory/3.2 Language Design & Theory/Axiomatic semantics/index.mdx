@@ -1,8 +1,27 @@
+---
+title: Axiomatic Semantics
+description: A highly rigorous branch of formal computer science that uses mathematical logic to prove the absolute, unassailable correctness of a computer program based on its preconditions and postconditions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Axiomatic semantics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Axiomatic Semantics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+How do you *prove*, with absolute mathematical certainty, that a program will not crash or produce the wrong answer? You cannot just run tests (testing only proves the presence of bugs, never their absence). You must use Axiomatic Semantics.
 
-</ConceptTemplate>
+## 1. Hoare Logic and Triples
+Invented by Tony Hoare, the foundation of this field is the **Hoare Triple**: `{P} C {Q}`.
+- `P` is the **Precondition**: A mathematical assertion of the system state before execution (e.g., `x > 0`).
+- `C` is the **Command**: The actual line of code (e.g., `y = x * 2`).
+- `Q` is the **Postcondition**: The mathematical assertion of the system state after execution (e.g., `y > 0`).
+
+## 2. Mathematical Proof of Correctness
+By chaining these Hoare Triples together across an entire function, computer scientists can physically treat the source code as a mathematical theorem.
+Using automated theorem provers, they mathematically deduce whether the final Postcondition is logically guaranteed by the initial Precondition. This level of mathematical rigor is incredibly difficult and time-consuming, so it is rarely used in standard web development. However, it is absolutely mandatory for life-critical software, such as the flight control systems on passenger jets or the operating systems of nuclear reactors.
+

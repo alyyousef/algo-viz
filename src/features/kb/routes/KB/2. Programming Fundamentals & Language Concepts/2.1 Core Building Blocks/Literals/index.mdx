@@ -1,8 +1,30 @@
+---
+title: Literals
+description: Raw, physical values directly embedded into the source code, mathematically representing themselves without relying on variable abstraction.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Literals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Literals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In programming, a Literal is a mathematical notation for representing a fixed, physical value directly within the source code.
 
-</ConceptTemplate>
+## 1. Variables vs Literals
+- `let age = 25;`
+In this statement, `age` is a Variable (a mathematical abstraction pointing to a location in RAM).
+`25` is an Integer Literal. It does not point to anything; it mathematically represents the raw value 25.
+
+## 2. Types of Literals
+Compilers are mathematically designed to instantly recognize different types of Literals based on syntax:
+- **Integer Literals**: `42`, `-10`, or `0xFF` (Hexadecimal).
+- **Floating-Point Literals**: `3.14` or `6.022e23` (Scientific notation).
+- **String Literals**: Mathematically enclosed in quotes (`"Hello"` or `'World'`). The compiler physically stores this exact string of bytes in a read-only section of the compiled binary file (the `.rodata` section in C/C++).
+- **Boolean Literals**: The explicit keywords `true` and `false`.
+When the CPU executes the code, it often does not need to fetch Literals from RAM. Advanced compilers will physically embed small Integer Literals directly inside the CPU's assembly instructions (Immediate Values), making mathematical execution nearly instantaneous.
+

@@ -1,0 +1,24 @@
+---
+title: Azure SQL Database
+description: Microsoft's flagship, fully managed Platform as a Service (PaaS) relational database engine, providing up-to-the-minute mathematically perfect backups and autonomous performance tuning for SQL Server.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure SQL Database"
+  subtitle="Managed SQL Server"
+  tags={['Azure', 'Database', 'SQL', 'PaaS']}
+>
+
+Running Microsoft SQL Server on a physical machine requires expensive licensing, OS patching, and grueling manual backup configurations. Azure SQL mathematically abstracts the entire server away; you simply purchase a logical Database.
+
+## 1. The DTU vs. vCore Models
+Azure mathematically prices database performance in two ways:
+- **DTU (Database Transaction Unit)**: A blended, mathematical abstraction combining CPU, RAM, and IOPS into a single number. A 100-DTU database is guaranteed to be exactly twice as fast as a 50-DTU database, completely hiding the underlying hardware from the developer.
+- **vCore**: For enterprises migrating massive workloads, you mathematically specify exactly how many CPUs and how much RAM you want, giving you granular control over hardware scaling.
+
+## 2. Point-in-Time Restore
+Azure SQL continuously takes mathematically rigorous backups of your transaction logs every 5 to 10 minutes.
+If a developer accidentally runs `DELETE FROM Users;` at exactly 2:14 PM and 32 seconds, ruining the production database, you do not restore from a generic nightly backup. You click a button in the Azure Portal and type `2:14:31 PM`. Azure mathematically replays the transaction logs and resurrects the database to the exact mathematical millisecond *before* the deletion occurred.
+
+</TechnologyTemplate>

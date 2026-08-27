@@ -4,23 +4,36 @@ description: A running instance of a program, heavily managed by the Linux kerne
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Processes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Processes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In Linux, a binary sitting on your hard drive (like `/bin/ls`) is just a static file. 
+In Linux, a binary sitting on your hard drive (like `/bin/ls`) is just a static file.
 When you execute that binary, the Kernel loads it into RAM and creates a **Process**.
 
 A Process is a living, breathing entity. The Kernel assigns it an isolated chunk of memory, tracks what files it has open, and decides exactly how many milliseconds of CPU time it gets per second.
 
 ## The Process ID (PID)
 
-Every single process is assigned a unique integer called a **PID (Process ID)**. 
-- **PID 1**: The very first process that starts when the computer boots (usually `systemd`). 
+Every single process is assigned a unique integer called a **PID (Process ID)**.
+- **PID 1**: The very first process that starts when the computer boots (usually `systemd`).
 - Every other process on the computer is a "Child" spawned by PID 1 (or by another child). If a Parent process is killed, all of its Children are usually killed as well.
 
+
 <Callout icon="info" title="Background vs Foreground">
-  If you run a script in the terminal, it runs in the "Foreground" and blocks you from typing anything else. 
+
+
+  If you run a script in the terminal, it runs in the "Foreground" and blocks you from typing anything else.
   If you append an ampersand (`&`) to the command (e.g., `./backup.sh &`), the Shell detaches the process, letting it run invisibly in the "Background" so you can keep using the terminal.
+
+
 </Callout>
+
 
 ## Managing Processes
 
@@ -29,4 +42,3 @@ Sysadmins constantly monitor and manipulate running processes:
 - `top` / `htop`: Provides a live, updating, interactive dashboard showing which processes are consuming the most CPU and RAM.
 - `kill <PID>`: Sends a software **Signal** (usually SIGTERM) to a process, politely asking it to save its data and shut down. `kill -9 <PID>` (SIGKILL) forces the kernel to instantly execute the process without warning.
 
-</ConceptTemplate>

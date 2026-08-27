@@ -5,15 +5,22 @@ description: "A new programming language designed for AI development, combining 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Mojo"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Released by Modular in 2023, **Mojo** is a programming language designed specifically for Artificial Intelligence and high-performance systems programming. It aims to be a strict superset of **Python** (like TypeScript is to JavaScript).
 
 ## The AI Hardware Problem
-Python is the undisputed king of AI. However, Python is incredibly slow and cannot natively interface with GPUs or specialized AI hardware (like TPUs). To fix this, AI libraries (PyTorch, TensorFlow) are actually written in complex C++ and CUDA, with Python just acting as a simple wrapper wrapper on top. 
+Python is the undisputed king of AI. However, Python is incredibly slow and cannot natively interface with GPUs or specialized AI hardware (like TPUs). To fix this, AI libraries (PyTorch, TensorFlow) are actually written in complex C++ and CUDA, with Python just acting as a simple wrapper wrapper on top.
 
 Mojo allows developers to write high-performance systems code (capable of interacting directly with hardware and SIMD registers) while maintaining Python's beloved syntax.
 
@@ -42,4 +49,3 @@ fn main():
     print(a * b) # Parallelized multiplication at the hardware level
 ```
 
-</ConceptTemplate>

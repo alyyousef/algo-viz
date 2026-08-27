@@ -1,0 +1,26 @@
+---
+title: Google Cloud Pub/Sub
+description: A globally distributed, mathematically durable messaging bus designed for asynchronous microservice decoupling and real-time streaming analytics at massive scale.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Pub/Sub"
+  subtitle="Global Message Brokering"
+  tags={['GCP', 'Messaging', 'Events', 'Streaming']}
+>
+
+Pub/Sub is Google's answer to both AWS SNS (broadcasting) and AWS SQS (queuing). It unifies these paradigms into a single, massively scalable mathematical architecture that requires zero provisioning.
+
+## 1. Topics and Subscriptions
+The architecture is mathematically elegant:
+- **Publishers** send messages to a **Topic**.
+- **Subscribers** receive messages from a **Subscription** attached to that Topic.
+If an IoT device publishes a temperature reading to the `SensorTopic`, Pub/Sub mathematically duplicates that message to every Subscription attached to the topic. The "Alerting Subscription" pushes the message instantly to a Cloud Function. The "Analytics Subscription" safely queues the message until a Dataflow batch job wakes up and pulls it. This completely decouples the producers from the consumers.
+
+## 2. At-Least-Once Delivery
+Pub/Sub mathematically guarantees **At-Least-Once Delivery**.
+When a Subscriber receives a message, the message is not deleted; it is temporarily hidden. The Subscriber must process the message and mathematically send an **Acknowledgement (ACK)** back to Pub/Sub.
+If the Subscriber crashes and fails to send the ACK before the deadline, Pub/Sub mathematically assumes the message was not processed and redelivers it. Because of distributed system realities, Pub/Sub might occasionally deliver the exact same message twice; therefore, downstream microservices *must* be mathematically idempotent (handling duplicates safely).
+
+</TechnologyTemplate>

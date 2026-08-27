@@ -8,9 +8,15 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 A digital certificate (or public key certificate) is an electronic document used to prove the ownership of a public key. The certificate includes information about the key, information about the identity of its owner, and the digital signature of an entity that has verified the certificate's contents (a Certificate Authority).
 
+
 <Callout icon="info" title="The Digital Passport">
+
+
   Think of a digital certificate like a passport. It contains your face (Public Key), your name and nationality (Identity Information), and it is stamped and sealed by a trusted government entity (the Certificate Authority).
+
+
 </Callout>
+
 
 ## The X.509 Standard
 
@@ -29,14 +35,9 @@ A standard X.509 certificate contains the following critical fields:
 
 When a company applies for a TLS/SSL certificate, the CA can perform different levels of background checks before signing it:
 
-<ComparisonTable 
-  headers={['Type', 'Acronym', 'Verification Level']}
-  rows={[
-    ['Domain Validation', 'DV', 'The CA only verifies that the applicant possesses technical control over the domain name (e.g., by asking them to place a specific file on the web server). Cheap, fast, fully automated.'],
-    ['Organization Validation', 'OV', 'The CA verifies domain ownership AND verifies the actual legal existence of the organization by checking government business registries. Provides moderate trust.'],
-    ['Extended Validation', 'EV', 'Requires a rigorous identity vetting process, including physical address checks and human phone calls. Used by banks and financial institutions for maximum trust.']
-  ]}
-/>
+
+<ComparisonTable headers={['Type', 'Acronym', 'Verification Level']} rows={[ ['Domain Validation', 'DV', 'The CA only verifies that the applicant possesses technical control over the domain name (e.g., by asking them to place a specific file on the web server). Cheap, fast, fully automated.'], ['Organization Validation', 'OV', 'The CA verifies domain ownership AND verifies the actual legal existence of the organization by checking government business registries. Provides moderate trust.'], ['Extended Validation', 'EV', 'Requires a rigorous identity vetting process, including physical address checks and human phone calls. Used by banks and financial institutions for maximum trust.'] ]} />
+
 
 ## Certificate Extensions (SAN)
 

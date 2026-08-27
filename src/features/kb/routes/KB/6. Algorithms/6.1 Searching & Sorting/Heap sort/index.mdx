@@ -1,8 +1,29 @@
+---
+title: Heapsort
+description: "A mathematically elegant, comparison-based sorting algorithm that utilizes a binary heap data structure to continuously extract the largest (or smallest) element, guaranteeing an O(N log N) worst-case time complexity."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Heap sort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Heapsort"
+  subtitle="Sorting via Priority Queues"
+  tags={['Algorithms', 'Sorting', 'Trees', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Quicksort is usually faster in practice, Quicksort has a mathematical Achilles' heel: its worst-case performance degrades to O(N²). Heapsort provides a mathematical guarantee that it will *never* degrade past O(N log N).
 
-</ConceptTemplate>
+## 1. Building the Heap (Heapify)
+The algorithm conceptually treats the flat array as a Complete Binary Tree.
+In Phase 1, it runs a mathematical `heapify()` function from the bottom up. This function mathematically guarantees that every parent node is larger than its children (creating a Max-Heap). This initial phase takes O(N) time. The absolute largest number in the array is now sitting at the root (index 0).
+
+## 2. Extract and Sift
+In Phase 2, the algorithm swaps the root (the largest number) with the very last element in the array, effectively locking that largest number into its final sorted position.
+Because the root is now a small number, the heap is mathematically violated. The algorithm executes a `siftDown()` operation to push the small number down the tree, taking O(log N) time, until the *second* largest number bubbles up to the root. It repeats this extraction N times, resulting in a perfectly sorted array in O(N log N) time, utilizing O(1) auxiliary space.
+

@@ -4,15 +4,28 @@ description: A tree representation of the abstract syntactic structure of source
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Abstract Syntax Tree (AST)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Abstract Syntax Tree (AST)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When the Compiler's Lexer breaks raw text (`let x = 5 + 5;`) into a flat array of Tokens, that array is mathematically useless for understanding the *logic* of the program because it lacks hierarchy.
 
 The Parser mathematically transforms the flat token array into an **Abstract Syntax Tree (AST)**. The AST is the central nervous system of modern compilers, interpreters, and developer tools (like ESLint and Prettier).
 
+
 <Callout icon="tip" title="Why is it 'Abstract'?">
+
+
   It is abstract because it mathematically strips away all syntax details that don't affect logic. Parentheses, semicolons, and commas exist only to help the human or the Parser. Once the AST is built, the structural hierarchy inherently represents the order of operations, so the parentheses are discarded.
+
+
 </Callout>
+
 
 ## The Structure of an AST
 
@@ -28,4 +41,3 @@ For the code `5 + (10 * 2)`, the AST looks mathematically like this:
 
 Because the AST is a mathematical tree, the Interpreter can execute the code using a simple post-order traversal (evaluate children first, then evaluate the parent).
 
-</ConceptTemplate>

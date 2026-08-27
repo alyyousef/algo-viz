@@ -4,19 +4,25 @@ description: A streamlined, highly efficient alternative to LSTMs that uses a re
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GRUs (Gated Recurrent Units)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GRUs (Gated Recurrent Units)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Before Transformers, sequential data (like text or stock prices) was processed by Recurrent Neural Networks (RNNs). However, basic RNNs suffered from the Vanishing Gradient problem and couldn't remember long-term dependencies. 
+Before Transformers, sequential data (like text or stock prices) was processed by Recurrent Neural Networks (RNNs). However, basic RNNs suffered from the Vanishing Gradient problem and couldn't remember long-term dependencies.
 LSTMs solved this using a complex cell state. **GRUs (Gated Recurrent Units)** are a mathematically streamlined, modern alternative that achieve the exact same performance with significantly less computational overhead.
 
 ## 1. The Mathematical Gates
 While an LSTM has three gates (Input, Output, Forget) and a separate Cell State, a GRU simplifies the architecture into just two gates and a single Hidden State:
 
 1. **The Update Gate**: Mathematically decides exactly how much of the past knowledge (the previous hidden state) should be passed along to the future. It acts as both the forget and input gate simultaneously.
-2. **The Reset Gate**: Mathematically decides exactly how much of the past knowledge should be entirely forgotten before analyzing the current input. 
+2. **The Reset Gate**: Mathematically decides exactly how much of the past knowledge should be entirely forgotten before analyzing the current input.
 
 ## 2. The Efficiency Advantage
-Because GRUs mathematically merge the Cell State and Hidden State into one vector, and reduce the gate count from 3 to 2, they have significantly fewer tensor operations and parameters than an LSTM. 
+Because GRUs mathematically merge the Cell State and Hidden State into one vector, and reduce the gate count from 3 to 2, they have significantly fewer tensor operations and parameters than an LSTM.
 This means a GRU trains vastly faster and requires less memory, making it the superior mathematical choice for smaller datasets or embedded systems where compute is strictly limited, while matching LSTM performance on almost all benchmarks.
 
-</ConceptTemplate>

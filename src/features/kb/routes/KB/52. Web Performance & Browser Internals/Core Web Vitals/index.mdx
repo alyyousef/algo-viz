@@ -4,19 +4,31 @@ description: An initiative by Google to provide unified guidance for quality sig
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Core Web Vitals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Core Web Vitals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In 2020, Google mathematically formalized exactly how a website's performance is measured by introducing **Core Web Vitals**. 
+In 2020, Google mathematically formalized exactly how a website's performance is measured by introducing **Core Web Vitals**.
 
 Google biologically punishes websites with poor Core Web Vitals by down-ranking them in the Google Search Engine, making web performance a critical financial requirement for businesses.
 
+
 <Callout icon="success" title="The Three Pillars">
+
+
   Core Web Vitals consists of three exact mathematical metrics:
   1. **LCP (Largest Contentful Paint):** Measures *Loading Speed* (How fast does the biggest image or text block appear?). Must be under 2.5s.
   2. **INP (Interaction to Next Paint):** Measures *Responsiveness* (If the user clicks a button, how fast does the UI visually update?). Must be under 200ms.
   3. **CLS (Cumulative Layout Shift):** Measures *Visual Stability* (Does an image load late and mathematically push the text down while the user is reading?). Must be under 0.1.
+
+
 </Callout>
+
 
 *(Note: INP officially replaced FID (First Input Delay) in March 2024).*
 
-</ConceptTemplate>

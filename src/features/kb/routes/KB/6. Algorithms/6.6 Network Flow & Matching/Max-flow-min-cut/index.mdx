@@ -1,8 +1,31 @@
+---
+title: Max-Flow Min-Cut Theorem
+description: "A foundational mathematical theorem in optimization stating that the maximum amount of flow passing from a source to a sink is exactly equal to the total weight of the edges in the minimum cut that separates them."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Max-flow/min-cut">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Max-Flow Min-Cut Theorem"
+  subtitle="The Duality of Networks"
+  tags={['Algorithms', 'Graph Theory', 'Network Flow', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The **Max-Flow Min-Cut Theorem** is one of the most beautiful and profound results in combinatorial optimization, establishing a perfect mathematical duality between two seemingly unrelated problems.
 
-</ConceptTemplate>
+## 1. The Two Problems
+- **The Max-Flow Problem**: Imagine a network of water pipes with different width capacities. How much total water can you push from the Source to the Sink per second?
+- **The Min-Cut Problem**: You are a saboteur. You want to sever pipes to completely disconnect the Source from the Sink. What is the mathematically cheapest set of pipes you can cut (minimum total capacity)?
+
+## 2. The Theorem
+The theorem states: **The Maximum Flow is exactly equal to the Minimum Cut.**
+If the maximum flow is 50 gallons/sec, then the absolute bottleneck of the network mathematically adds up to exactly 50 gallons/sec.
+This is incredibly powerful because if you solve one, you automatically solve the other!
+Many complex computer vision problems (like Image Segmentation, where you want to cut a subject out of a background) are mathematically modeled as Min-Cut problems, and are solved using highly optimized Max-Flow algorithms.
+

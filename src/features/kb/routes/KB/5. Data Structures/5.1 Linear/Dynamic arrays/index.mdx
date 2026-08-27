@@ -4,9 +4,16 @@ description: A smart wrapper around a static array that automatically resizes it
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dynamic Arrays (ArrayList, std::vector, list)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dynamic Arrays (ArrayList, std::vector, list)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A standard Array is fixed in size. If you allocate space for 10 items, you cannot add an 11th. 
+A standard Array is fixed in size. If you allocate space for 10 items, you cannot add an 11th.
 A **Dynamic Array** (known as `ArrayList` in Java, `std::vector` in C++, and simply `list` in Python) solves this by automatically managing memory reallocation behind the scenes.
 
 ## 1. How It Works (The Growth Factor)
@@ -22,13 +29,18 @@ When you append items, the `Size` increases. When `Size == Capacity`, the dynami
 
 ## 2. Amortized $O(1)$ Time Complexity
 
-Wait, if resizing requires copying every element, isn't appending an item $O(N)$? 
+Wait, if resizing requires copying every element, isn't appending an item $O(N)$?
 Yes, the *worst-case* append is $O(N)$. However, because the array doubles in size every time, these expensive resizes happen exponentially less frequently as the array grows.
 
 If you average out the cost of all the cheap $O(1)$ appends and the rare $O(N)$ resizes over time, the average cost per append mathematically approaches a constant time. This is called **Amortized $O(1)$** complexity.
 
+
 <Callout icon="warning" title="The Capacity Trap">
+
+
   If you know you are going to add 1 million items to a dynamic array, do not just blindly append them in a loop. The array will have to resize and copy memory roughly 20 times. Always pre-allocate the capacity if you know the final size in advance (e.g., `new ArrayList<>(1000000)`).
+
+
 </Callout>
 
-</ConceptTemplate>
+

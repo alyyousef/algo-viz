@@ -5,7 +5,14 @@ description: Differentiating the performance bounds of algorithms depending on t
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Worst, Average, and Best Case Analysis">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Worst, Average, and Best Case Analysis">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When defining the Time Complexity of an algorithm, citing a single Big O notation is often mathematically incomplete. An algorithm's execution time can drastically shift depending on the specific structure, sorting, or entropy of the input data.
 
@@ -29,9 +36,15 @@ The **Best Case** defines the absolute minimum execution time. The input is perf
 ## 3. Average Case (Big Theta - Θ)
 The **Average Case** applies probability theory to calculate the expected execution time across all possible valid mathematical permutations of the input. This is often the most realistic metric for scalable web architectures.
 
+
 <Callout icon="warning" title="The Quick Sort Paradox">
-**Quick Sort** is universally used in standard libraries (like V8 JavaScript) because its Average Case is a blazing fast `O(n log n)`. However, if you feed Quick Sort an array that is *already sorted* (and you pick a bad pivot), its mathematical Worst Case geometrically degrades into a catastrophic `O(n^2)`. 
+
+
+**Quick Sort** is universally used in standard libraries (like V8 JavaScript) because its Average Case is a blazing fast `O(n log n)`. However, if you feed Quick Sort an array that is *already sorted* (and you pick a bad pivot), its mathematical Worst Case geometrically degrades into a catastrophic `O(n^2)`.
+
+
 </Callout>
+
 
 ## 4. Amortized Analysis
 A special subset of Average Case is **Amortized Analysis**.
@@ -39,4 +52,3 @@ When appending an item to a Dynamic Array (like an ArrayList or a JavaScript Arr
 
 Amortized analysis mathematically proves that because this resizing happens so rarely, the `O(n)` penalty is dispersed (amortized) across all the cheap `O(1)` insertions, yielding an *amortized worst-case* of `O(1)`.
 
-</ConceptTemplate>

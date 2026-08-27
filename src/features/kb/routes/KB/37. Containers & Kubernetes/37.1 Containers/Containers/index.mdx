@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Containers (Linux Concepts)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Containers (Linux Concepts)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Docker existed, **Containers** were simply a set of native Linux kernel features designed to isolate processes from one another. A container is not a virtual machine; it is just a standard Linux process that has been tricked into thinking it is the only process running on the computer.
 
@@ -26,18 +33,16 @@ Control Groups (cgroups) restrict what a process can *use*.
 
 ## 2. Virtual Machines vs Containers
 
-<ComparisonTable 
-  headers={['Feature', 'Virtual Machines (VMs)', 'Containers']} 
-  rows={[
-    ['Architecture', 'Hypervisor running multiple full Guest OS kernels.', 'A single Host OS kernel shared among all containers.'],
-    ['Startup Time', 'Minutes (must boot the OS).', 'Milliseconds (just starting a process).'],
-    ['Size', 'Gigabytes (contains full OS).', 'Megabytes (contains only dependencies).'],
-    ['Isolation', 'Hardware-level isolation (very secure).', 'Process-level isolation (less secure, vulnerable to kernel exploits).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Feature', 'Virtual Machines (VMs)', 'Containers']} rows={[ ['Architecture', 'Hypervisor running multiple full Guest OS kernels.', 'A single Host OS kernel shared among all containers.'], ['Startup Time', 'Minutes (must boot the OS).', 'Milliseconds (just starting a process).'], ['Size', 'Gigabytes (contains full OS).', 'Megabytes (contains only dependencies).'], ['Isolation', 'Hardware-level isolation (very secure).', 'Process-level isolation (less secure, vulnerable to kernel exploits).'] ]} />
+
 
 <Callout icon="info" title="The Container Illusion">
+
+
 Because containers share the host's kernel, you cannot run a Windows container on a Linux host (without using a hidden Virtual Machine layer in between, which is exactly what Docker Desktop does on Mac/Windows).
+
+
 </Callout>
 
-</ConceptTemplate>
+

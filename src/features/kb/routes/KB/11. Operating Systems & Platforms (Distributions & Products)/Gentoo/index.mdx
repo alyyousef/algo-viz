@@ -4,9 +4,16 @@ description: A source-based Linux distribution where every single piece of softw
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gentoo Linux">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Gentoo Linux">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Gentoo** takes the difficulty of Arch Linux and multiplies it by ten. 
+**Gentoo** takes the difficulty of Arch Linux and multiplies it by ten.
 
 In almost all Linux distributions, when you install a web browser, you are downloading a pre-compiled binary file. In Gentoo, when you install a web browser, the package manager (Portage) downloads the raw C++ source code and forces your CPU to manually compile the entire browser from scratch.
 
@@ -16,10 +23,15 @@ Why would anyone do this? By compiling everything locally, Gentoo allows you to 
 
 If you are building a server with no monitor, you can set the `-X` and `-wayland` USE flags. When Gentoo compiles your software, it will physically strip out all graphical interface code from every single program, resulting in incredibly lightweight, secure, and hyper-optimized binaries that run 2% faster.
 
+
 <Callout icon="warning" title="The Compilation Tax">
+
+
   The downside to Gentoo is time. Installing a complex program like Firefox or Chromium on Gentoo might take 6 to 12 hours of your CPU running at 100% capacity just to compile the source code into a usable application.
+
+
 </Callout>
+
 
 Because of its extreme flexibility, Gentoo is often used as a base to build *other* operating systems, most notably **ChromeOS**.
 
-</ConceptTemplate>

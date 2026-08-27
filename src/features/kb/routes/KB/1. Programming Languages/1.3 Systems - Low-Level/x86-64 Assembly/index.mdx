@@ -1,8 +1,26 @@
+---
+title: x86-64 Assembly
+description: The 64-bit extension of x86 (created by AMD), resolving the severe memory and register limitations of the 32-bit era.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="x86-64 Assembly">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="x86-64 Assembly">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the early 2000s, computers were mathematically hitting the 4GB RAM limit of 32-bit addressing. Intel attempted to force the industry to a completely new architecture (Itanium), but AMD created **x86-64** (or AMD64)—a brilliant mathematical extension of the original x86 instruction set that provided 64-bit addressing while maintaining 100% backward compatibility with 32-bit software.
 
-</ConceptTemplate>
+## 1. Expanding the Architecture
+x86-64 mathematically fixed the two biggest problems with x86:
+1. **Memory Addressing**: The CPU registers were expanded from 32 bits to 64 bits (EAX became RAX), allowing the CPU to mathematically address up to 16 Exabytes of physical RAM.
+2. **Register Count**: AMD doubled the number of general-purpose registers from 8 to 16 (adding R8 through R15). This drastically reduced memory spilling, instantly making all compiled software run faster.
+
+## 2. The Calling Convention
+In 32-bit x86, when you called a function, you had to mathematically push all arguments onto the slow RAM stack.
+Because x86-64 has 16 registers, the standard calling convention was mathematically rewritten (System V AMD64 ABI). Now, the first 6 arguments to a function are passed entirely through the lightning-fast CPU registers (RDI, RSI, RDX, RCX, R8, R9), massively accelerating function call overhead across the entire operating system.
+

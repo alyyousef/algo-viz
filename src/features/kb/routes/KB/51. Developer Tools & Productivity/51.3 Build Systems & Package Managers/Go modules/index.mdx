@@ -4,22 +4,34 @@ description: The official dependency management system for the Go programming la
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Go modules">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Go modules">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For the first decade of Go's existence, its dependency management was mathematically terrifying. It relied on the `GOPATH`—a strict requirement that all code on a developer's laptop had to live in exactly one physical directory tree.
 
 **Go modules (vgo)** was introduced in Go 1.11 to finally bring modern dependency management to the language.
 
+
 <Callout icon="warning" title="Decentralized Versioning">
-  Unlike `npm` or `pip`, Go does not have a central registry server (like `npmjs.com`). 
-  
-  Go imports mathematically point directly to Git repositories: `import "github.com/google/uuid"`. 
-  
+
+
+  Unlike `npm` or `pip`, Go does not have a central registry server (like `npmjs.com`).
+
+  Go imports mathematically point directly to Git repositories: `import "github.com/google/uuid"`.
+
   When you run `go build`, the Go compiler physically connects to GitHub, downloads the tagged release, and calculates a strict cryptographic checksum saved in the `go.sum` file to prevent supply-chain attacks.
+
+
 </Callout>
+
 
 ## Minimal Version Selection (MVS)
 
 Go mathematically approaches dependency resolution differently than npm. Instead of upgrading packages to the absolute highest possible version, Go's **MVS** algorithm selects the *oldest* possible version that satisfies the requirements. This mathematical conservatism prevents unexpected breaking changes from silently destroying production builds.
 
-</ConceptTemplate>

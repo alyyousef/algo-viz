@@ -1,8 +1,31 @@
+---
+title: LaTeX
+description: A high-quality typesetting system mathematically designed for the production of technical and scientific documentation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LaTeX">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LaTeX">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed in the 1980s by Leslie Lamport (built on top of Donald Knuth's TeX), LaTeX is the undisputed global standard for publishing scientific, mathematical, and academic papers.
 
-</ConceptTemplate>
+## 1. What You See Is What You Mean
+Unlike Microsoft Word (a WYSIWYG editor where you format text visually), LaTeX is a WYSIWYM (What You See Is What You Mean) editor.
+You write plain text infused with commands.
+```latex
+The quadratic formula is given by:
+\begin{equation}
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+\end{equation}
+```
+You then run the LaTeX compiler, which mathematically calculates the optimal kerning, line breaks, and typographical spacing to generate a flawless PDF. The human focuses purely on the *structure* of the document; the compiler handles the *design*.
+
+## 2. Unmatched Mathematical Typesetting
+Word processors mathematically fail at complex equations. LaTeX was explicitly built by mathematicians to render equations perfectly. Its algorithms for calculating the bounding boxes of integrals and fractions are so mathematically superior that modern engines (like MathJax on the web) simply emulate LaTeX syntax.
+

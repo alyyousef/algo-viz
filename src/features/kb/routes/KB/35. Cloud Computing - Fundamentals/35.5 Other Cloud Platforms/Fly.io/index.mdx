@@ -1,0 +1,25 @@
+---
+title: Fly.io
+description: A modern application deployment platform that mathematically transforms standard Docker containers into globally distributed micro-VMs running at the physical edge of the internet.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Fly.io"
+  subtitle="Global Container Edge Deployment"
+  tags={['Cloud', 'PaaS', 'Containers', 'Edge']}
+>
+
+Standard clouds (AWS, GCP) force you to pick a region (e.g., US-East). If a user in Australia visits your app, they suffer 250ms of mathematical latency. Fly.io solves this by pushing compute to the edge.
+
+## 1. Firecracker Micro-VMs
+Fly.io uses AWS's open-source **Firecracker** hypervisor.
+You write a standard `Dockerfile` for your Python or Go application. You type `fly deploy`.
+Fly mathematically converts your Docker container into a hyper-isolated, ultra-fast Micro-VM. It then deploys this VM to physical servers spread across 30+ cities worldwide (e.g., Sydney, Tokyo, London).
+
+## 2. Anycast Routing and Global State
+Fly.io utilizes a massive **Anycast network**.
+Your app receives a single Public IP address. When a user in Sydney types your URL, the Anycast routing mathematically pulls their packet to the physical Fly server located in Sydney. If you have a Micro-VM running there, the user gets a 5ms response time.
+If the app needs a database, Fly natively integrates with SQLite (via LiteFS) or clustered PostgreSQL, allowing you to mathematically replicate read-only databases globally so the compute and the data are physically next to the user.
+
+</TechnologyTemplate>

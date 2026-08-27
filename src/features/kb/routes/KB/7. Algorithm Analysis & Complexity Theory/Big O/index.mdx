@@ -1,8 +1,42 @@
+---
+title: Big O Notation
+description: "The foundational mathematical notation of Computer Science, used to describe the asymptotic upper bound (worst-case scenario) of an algorithm's time or space complexity as the input approaches infinity."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Big O">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Big O Notation"
+  subtitle="Asymptotic Upper Bounds"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Fundamentals']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Big O ($O$) is the standard mathematical language used by software engineers to communicate how an algorithm scales. It strictly defines the **Asymptotic Upper Bound**—the absolute worst-case scenario as the input size $N$ becomes infinitely large.
 
-</ConceptTemplate>
+## 1. The Formal Mathematical Definition
+Let $f(n)$ and $g(n)$ be functions mapping positive integers to positive real numbers.
+We say $f(n) = O(g(n))$ if there exist positive constants $c$ and $n_0$ such that:
+$0 \le f(n) \le c \cdot g(n)$ for all $n \ge n_0$.
+
+In plain English: Past a certain point ($n_0$), the function $f(n)$ will **never** grow faster than $g(n)$ multiplied by some constant. $g(n)$ is the absolute ceiling.
+
+## 2. Dropping Constants and Lower Terms
+Because Big O is concerned with infinity, we mathematically drop all constants and non-dominant terms.
+If an algorithm takes exactly $5N^2 + 100N + 999$ operations, the Big O is simply **$O(N^2)$**.
+As $N$ approaches a billion, the $100N$ and the $999$ become mathematically microscopic, and the constant $5$ does not change the fundamental geometric shape of the curve.
+
+## 3. Common Time Complexities (Fastest to Slowest)
+1. **$O(1)$ - Constant**: Hash Map lookup. (Instant, regardless of size).
+2. **$O(\log N)$ - Logarithmic**: Binary Search. (Incredibly fast; 1 billion items takes 30 operations).
+3. **$O(N)$ - Linear**: Iterating through an array.
+4. **$O(N \log N)$ - Linearithmic**: Merge Sort, Heap Sort. (The fastest possible comparison sorts).
+5. **$O(N^2)$ - Quadratic**: Bubble Sort, 2D Matrix traversal. (Dangerous at scale).
+6. **$O(2^N)$ - Exponential**: Recursive Fibonacci. (Mathematically disastrous; 50 items will take years).
+7. **$O(N!)$ - Factorial**: Traveling Salesperson brute force. (Will outlast the universe).
+

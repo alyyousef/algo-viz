@@ -1,8 +1,32 @@
+---
+title: Maintenance
+description: The longest and most mathematically expensive phase of the Software Development Life Cycle, involving the continuous modification of a software product after delivery to correct faults, improve performance, or adapt to a changing environment.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Maintenance">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Software Maintenance"
+  subtitle="The Long-Term Cost of Code"
+  tags={['Process', 'SDLC', 'Engineering', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing the initial 100,000 lines of code for a new application accounts for roughly 20% of the total mathematical cost of the software. The remaining 80% of the cost is spent on **Maintenance** over the next decade.
 
-</ConceptTemplate>
+## 1. The Four Categories of Maintenance
+Maintenance is mathematically categorized into four distinct types:
+- **Corrective**: Fixing active mathematical defects (bugs) that users found in production.
+- **Adaptive**: Modifying the system to keep it mathematically compatible with a changing environment (e.g., upgrading from Python 2 to Python 3, or migrating to a new AWS region).
+- **Perfective**: Improving the mathematical performance, maintainability, or UX of the system without changing its core functional requirements (e.g., optimizing a slow SQL query).
+- **Preventive**: Refactoring legacy code to prevent future mathematical failures before they occur (e.g., paying down Technical Debt).
+
+## 2. The Maintenance Burden
+If software is written with poor architecture (e.g., violating SOLID principles, lacking automated tests, or using monolithic state), the mathematical cost of Adaptive and Perfective maintenance skyrockets.
+Eventually, the cost to modify a single line of code becomes so mathematically expensive that the business is forced to declare bankruptcy on the codebase and initiate a complete rewrite, highlighting why upfront architectural cleanliness is a financial imperative.
+

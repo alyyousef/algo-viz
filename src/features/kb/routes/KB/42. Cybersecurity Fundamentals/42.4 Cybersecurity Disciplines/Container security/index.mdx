@@ -4,25 +4,32 @@ description: The discipline of securing Docker containers, images, and the runti
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Container Security">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Container Security">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Kubernetes orchestrates anything, the fundamental building block is the **Container** (usually Docker). Containers package an application and all its mathematical dependencies into a single, portable image.
 
 Because containers share the host machine\'s operating system kernel, a vulnerability in a container can mathematically compromise the entire host if not properly secured.
 
+
 <Callout icon="warning" title="The Root Problem">
+
+
   The single most common container security failure is running the container process as the `root` user. If an attacker breaches the web app running inside the container, and the app is running as root, the attacker mathematically has root privileges. They can then execute a "container escape" to seize control of the underlying host server.
+
+
 </Callout>
+
 
 ## Key Security Practices
 
-<ComparisonTable 
-  headers={['Practice', 'Description']}
-  rows={[
-    ['Image Scanning', 'Using tools like Trivy or Clair to mathematically scan the `Dockerfile` and the base image (e.g., Ubuntu, Alpine) for known CVEs before the container is ever deployed.'],
-    ['Minimal Base Images', 'Instead of using a bloated 1GB Ubuntu image, developers should use "Distroless" or Alpine Linux images (5MB). Fewer installed packages mathematically reduces the attack surface.'],
-    ['Immutable Containers', 'A container should be read-only at runtime. If an attacker breaches the app, they cannot mathematically download malware or modify the application files because the filesystem is locked.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Practice', 'Description']} rows={[ ['Image Scanning', 'Using tools like Trivy or Clair to mathematically scan the `Dockerfile` and the base image (e.g., Ubuntu, Alpine) for known CVEs before the container is ever deployed.'], ['Minimal Base Images', 'Instead of using a bloated 1GB Ubuntu image, developers should use "Distroless" or Alpine Linux images (5MB). Fewer installed packages mathematically reduces the attack surface.'], ['Immutable Containers', 'A container should be read-only at runtime. If an attacker breaches the app, they cannot mathematically download malware or modify the application files because the filesystem is locked.'] ]} />
+
+

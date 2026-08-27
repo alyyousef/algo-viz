@@ -1,8 +1,25 @@
+---
+title: Verilog
+description: The foundational hardware description language that mathematically models electronic systems, widely used to design FPGAs and ASICs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Verilog">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Verilog">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1984 by Prabhu Goel and Phil Moorby, Verilog is a Hardware Description Language (HDL). It mathematically revolutionized the semiconductor industry by allowing engineers to design microchips by writing code, rather than physically drawing logic gates on massive sheets of paper.
 
-</ConceptTemplate>
+## 1. Concurrent Execution
+Standard programming languages (like C or Python) are mathematically sequential; line 1 executes, then line 2.
+Hardware is mathematically concurrent. If you have 100 logic gates on a chip, and electricity hits them, all 100 gates evaluate simultaneously.
+Verilog models this physical reality using `always` blocks and Continuous Assignments (`assign`). When you write Verilog code, you are not writing a script; you are mathematically describing parallel, independent blocks of physical transistors that all execute at the exact same time when the system clock ticks.
+
+## 2. Register-Transfer Level (RTL)
+Verilog is primarily used at the Register-Transfer Level. You do not define physical transistors. You mathematically define the flow of binary signals (0s and 1s) between hardware registers (Flip-Flops) and the logical operations performed on those signals (like AND, OR, ADD). A "Synthesis Tool" then mathematically reads your Verilog code and automatically maps it to physical, microscopic silicon transistors for a specific foundry (like TSMC).
+

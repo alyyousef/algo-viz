@@ -1,8 +1,25 @@
+---
+title: Event-Driven Programming
+description: A non-linear paradigm where the flow of the program is mathematically determined by external events (user clicks, network packets) rather than a rigid top-down sequence.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Event-driven programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Event-Driven Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you write a command-line script, it runs top-to-bottom and exits. A UI application or a Web Server cannot do this; it must mathematically wait in a state of suspended animation indefinitely.
 
-</ConceptTemplate>
+## 1. The Event Loop and Emitters
+The core architecture is the **Event Loop**. The main thread hits a mathematical `while(true)` loop and waits.
+When a user clicks a mouse, the Operating System generates an **Event Object**. It mathematically injects this object into the application's Event Queue. The Event Loop pulls the object, looks up which function (Event Handler / Callback) is mathematically bound to that specific event, and executes it.
+
+## 2. Inversion of Control
+Event-Driven programming relies on a mathematical concept called **Inversion of Control (IoC)** (the "Hollywood Principle: Don't call us, we'll call you").
+The developer does not write the `while` loop or explicitly check if the mouse is pressed. The framework (like React or Node.js) owns the core loop. The developer simply mathematically registers functions with the framework (`button.onClick(myFunction)`), handing absolute control of the execution flow over to the underlying architectural engine.
+

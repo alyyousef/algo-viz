@@ -4,18 +4,31 @@ description: The mathematical concept allowing neural networks to focus on speci
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Attention Mechanisms">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Attention Mechanisms">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Attention mechanisms were originally introduced to solve the bottleneck problem in sequence-to-sequence RNNs (like language translation). Instead of trying to compress an entire sentence into a single fixed-length vector, Attention allows the decoder to "look back" at specific, relevant words in the input sentence while generating each translated word.
 
+
 <Callout icon="info" title="The Query, Key, Value Model">
+
+
   Modern attention (especially in Transformers) uses the **QKV database abstraction**:
   - **Query (Q):** What I am currently looking for.
   - **Key (K):** What I have to offer.
   - **Value (V):** The actual content.
-  
+
   The mathematical similarity (dot product) between a Query and all Keys determines how much "Attention" is paid to the corresponding Values.
+
+
 </Callout>
+
 
 ## Scaled Dot-Product Attention
 The mathematical core of Transformer attention is defined as:
@@ -27,4 +40,3 @@ $Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$
 3. We apply a $softmax$ function to turn the scores into probabilities (summing to 1).
 4. We multiply by $V$ to get the final weighted representation.
 
-</ConceptTemplate>

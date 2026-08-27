@@ -1,8 +1,43 @@
+---
+title: Template Method Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically defines the skeleton of an algorithm in a base superclass, allowing child subclasses to override specific steps of the algorithm without changing its overall structure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Template Method">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Template Method Pattern"
+  subtitle="The Inverted Mathematical Skeleton"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Inheritance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine you have two classes: `DataMinerPDF` and `DataMinerCSV`.
+Both algorithms follow the exact same mathematical skeleton:
+1. Open File.
+2. Extract Data (Different logic).
+3. Analyze Data (Same logic).
+4. Close File.
 
-</ConceptTemplate>
+## 1. The Abstract Skeleton
+If you duplicate this 4-step workflow in both classes, you violate DRY (Don't Repeat Yourself).
+Instead, you create an abstract base class `DataMiner`. Inside it, you write the **Template Method**:
+```java
+public final void mineData() {
+    openFile();
+    extractData(); // Abstract method!
+    analyzeData();
+    closeFile();
+}
+```
+The `mineData()` method is marked `final`; child classes are mathematically forbidden from overriding the core 4-step sequence.
+
+## 2. The Hollywood Principle
+The child class (`DataMinerPDF`) mathematically inherits the base class, but it only implements the specific `extractData()` method.
+This follows the **Hollywood Principle**: *"Don't call us, we'll call you."* The child class does not control the execution flow. The parent class mathematically orchestrates the algorithm and calls down to the child class's specific implementation exactly when needed.
+

@@ -1,0 +1,26 @@
+---
+title: OCI Vault (Key Management Service)
+description: A highly secure, mathematically impenetrable cryptographic appliance powered by physical Hardware Security Modules (HSMs) used to manage encryption keys and sensitive secrets in Oracle Cloud.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Vault"
+  subtitle="Cryptographic Key Management"
+  tags={['OCI', 'Security', 'Encryption', 'KMS']}
+>
+
+By default, every Block Volume and Object Storage Bucket in OCI is encrypted using keys managed by Oracle. However, strict government and financial compliance laws demand that the customer, not Oracle, mathematically controls the encryption keys.
+
+## 1. Hardware Security Modules (HSMs)
+OCI Vault allows you to create **Master Encryption Keys (MEKs)**.
+These keys are not stored on standard hard drives. They are mathematically generated and permanently trapped inside physical, tamper-evident Hardware Security Modules (HSMs) meeting FIPS 140-2 Level 3 certification.
+If an Oracle employee physically walks into the data center and attempts to pry open the HSM server to steal your key, the hardware mathematically detects the physical intrusion and instantly zeroes out (destroys) the silicon, guaranteeing absolute cryptographic security.
+
+## 2. Envelope Encryption
+OCI Vault uses mathematical **Envelope Encryption**.
+When you encrypt a 10TB database, OCI does not send 10TB of data to the Vault.
+The database generates a small Data Encryption Key (DEK). It mathematically encrypts the 10TB of data with the DEK.
+The database then sends the DEK to the OCI Vault. The HSM encrypts the DEK using your Master Encryption Key, and sends the encrypted DEK back to the database to be stored on disk. To read the data, the database must mathematically reverse this entire process. If you delete your Master Key in OCI Vault, the entire 10TB database is mathematically instantly permanently destroyed (Crypto-shredding), because the DEK can never be decrypted again.
+
+</TechnologyTemplate>

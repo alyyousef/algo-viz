@@ -4,7 +4,14 @@ description: A massively powerful compressed trie containing all the suffixes of
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Suffix Trees">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Suffix Trees">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you want to search a massive $3$-Billion letter DNA sequence for a specific $10$-letter pattern, scanning the string from left to right takes millions of CPU cycles. A **Suffix Tree** is a massive, pre-computed data structure that mathematically answers substring queries in $O(M)$ time, where $M$ is simply the length of your search pattern, completely ignoring the massive $3$-Billion letter length of the original string.
 
@@ -18,7 +25,7 @@ A Suffix Tree mathematically breaks a string (like `"BANANA$"`) into every possi
 - `"A$"`
 - `"$"` (The mathematical terminator)
 
-It then inserts every single one of these strings into a highly compressed Trie. 
+It then inserts every single one of these strings into a highly compressed Trie.
 
 ## 2. O(M) Pattern Matching
 To check if the word `"NAN"` exists inside `"BANANA"`, you do not search the original string. You simply walk down the Suffix Tree looking for the path `N -> A -> N`. Because the depth of the tree only matters up to the length of your query ($M = 3$), the search is mathematically guaranteed to finish in exactly $O(M)$ time, which is practically instantaneous.
@@ -26,4 +33,3 @@ To check if the word `"NAN"` exists inside `"BANANA"`, you do not search the ori
 ## 3. Ukkonen's Algorithm
 The biggest barrier to Suffix Trees was their construction time. Generating all suffixes of a length $N$ string takes $O(N^2)$ time. In 1995, Esko Ukkonen mathematically revolutionized the field by inventing a terrifyingly complex algorithm that builds the entire Suffix Tree in strict, linear **$O(N)$ time**.
 
-</ConceptTemplate>

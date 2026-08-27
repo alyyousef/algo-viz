@@ -4,27 +4,32 @@ description: A computer processor that incorporates the functions of a central p
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Microprocessors (MPU)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microprocessors (MPU)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While the terms are often confused by beginners, a **Microprocessor (MPU)** is mathematically and architecturally distinct from a Microcontroller (MCU).
 
 An MPU is the brain. It is the raw CPU (like an Intel Core i9 or an Apple M3).
 
+
 <Callout icon="warning" title="The Missing Pieces">
+
+
   Crucially, an MPU *cannot function on its own*. It contains zero RAM and zero Flash Storage. To build a system with an MPU, an engineer must mathematically wire it on a motherboard to external DDR4 RAM chips, an external NVMe SSD, and external networking chips.
+
+
 </Callout>
+
 
 ## MPU vs MCU in Embedded Systems
 
-<ComparisonTable 
-  headers={['Feature', 'Microcontroller (MCU)', 'Microprocessor (MPU)']}
-  rows={[
-    ['Components', 'CPU, RAM, Flash, Peripherals ALL on one chip.', 'Raw CPU only. Requires external RAM and Storage chips.'],
-    ['Power', 'Extremely low power (can run on a coin battery for years).', 'High power (requires heat sinks and large batteries).'],
-    ['Clock Speed', 'Slow (~16 MHz to 200 MHz).', 'Fast (~1 GHz to 5 GHz).'],
-    ['Operating System', 'None (Bare-Metal) or tiny RTOS (FreeRTOS).', 'Runs full OS (Linux, Windows, Android).'],
-    ['Examples', 'Arduino (ATmega328P), STM32, ESP32.', 'Raspberry Pi (Broadcom BCM2711), Intel Core, AMD Ryzen.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Feature', 'Microcontroller (MCU)', 'Microprocessor (MPU)']} rows={[ ['Components', 'CPU, RAM, Flash, Peripherals ALL on one chip.', 'Raw CPU only. Requires external RAM and Storage chips.'], ['Power', 'Extremely low power (can run on a coin battery for years).', 'High power (requires heat sinks and large batteries).'], ['Clock Speed', 'Slow (~16 MHz to 200 MHz).', 'Fast (~1 GHz to 5 GHz).'], ['Operating System', 'None (Bare-Metal) or tiny RTOS (FreeRTOS).', 'Runs full OS (Linux, Windows, Android).'], ['Examples', 'Arduino (ATmega328P), STM32, ESP32.', 'Raspberry Pi (Broadcom BCM2711), Intel Core, AMD Ryzen.'] ]} />
+
+

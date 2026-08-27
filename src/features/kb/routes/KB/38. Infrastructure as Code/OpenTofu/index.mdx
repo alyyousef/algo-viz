@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: OpenTofu
+description: A direct, open-source fork of HashiCorp Terraform, mathematically created and maintained by the Linux Foundation in response to HashiCorp's transition from an open-source to a restrictive Business Source License.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="OpenTofu">
+<TechnologyTemplate
+  title="OpenTofu"
+  subtitle="The Open-Source Fork of Terraform"
+  tags={['Infrastructure as Code', 'Open Source', 'Terraform', 'Linux Foundation']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For nearly a decade, Terraform was the open-source darling of the DevOps world. In 2023, HashiCorp mathematically altered the software license of Terraform from the open-source Mozilla Public License (MPL) to the restrictive Business Source License (BSL), legally preventing competitors from offering Terraform as a hosted service.
 
-</ConceptTemplate>
+## 1. The Linux Foundation Fork
+In response to this mathematical shift in licensing, a massive coalition of DevOps companies (including Gruntwork, Spacelift, and env0) immediately forked the last open-source version of the Terraform codebase (v1.5.5).
+They donated the codebase to the Linux Foundation, officially naming it **OpenTofu**. OpenTofu is mathematically guaranteed to remain truly open-source forever.
+
+## 2. Drop-in Replacement
+The primary mathematical directive of the OpenTofu engineering team is absolute backwards compatibility.
+For a DevOps engineer, migrating from Terraform to OpenTofu is a mathematically trivial operation. OpenTofu uses the exact same HCL syntax, reads the exact same `terraform.tfstate` files, and utilizes the exact same provider plugins (like the AWS and Azure providers). A developer simply uninstalls the `terraform` CLI binary, installs the `tofu` CLI binary, and continues deploying infrastructure with zero code modifications.
+
+</TechnologyTemplate>

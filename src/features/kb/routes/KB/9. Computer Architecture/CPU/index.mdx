@@ -4,13 +4,26 @@ description: The primary component of a computer that acts as its "brain," respo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Central Processing Unit (CPU)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Central Processing Unit (CPU)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Central Processing Unit (CPU)** is the electronic circuitry that executes instructions comprising a computer program. Often referred to as the "brain" of the computer, the CPU performs basic arithmetic, logic, controlling, and input/output (I/O) operations specified by the instructions in the program.
 
+
 <Callout icon="info" title="The Instruction Cycle">
+
+
   The fundamental operation of most CPUs, regardless of the physical form they take, is to execute a sequence of stored instructions. This sequence is executed in a continuous loop called the **Fetch-Decode-Execute** cycle.
+
+
 </Callout>
+
 
 ## Core Components
 
@@ -22,7 +35,7 @@ While modern multi-core processors are incredibly complex, a traditional CPU is 
 
 ## Clock Speed
 
-The CPU's operation is synchronized by a central **Clock**. Every tick of the clock allows the CPU to perform one fundamental step of the Fetch-Decode-Execute cycle. 
+The CPU's operation is synchronized by a central **Clock**. Every tick of the clock allows the CPU to perform one fundamental step of the Fetch-Decode-Execute cycle.
 
 Clock speed is measured in Hertz (Hz). A modern CPU running at **4.0 GHz** (Gigahertz) is ticking **4 billion times per second**. While a higher clock speed generally implies a faster CPU, the amount of work completed per tick (Instructions Per Clock, IPC) is equally important when comparing different architectures.
 
@@ -30,4 +43,3 @@ Clock speed is measured in Hertz (Hz). A modern CPU running at **4.0 GHz** (Giga
 
 In modern computing, the CPU is so incomprehensibly fast that it spends a massive percentage of its time simply waiting for data to arrive from the main memory (RAM). To solve this, engineers introduced **Caches** (L1, L2, L3) — layers of fast, expensive SRAM placed physically closer to the CPU cores to feed them data as quickly as possible.
 
-</ConceptTemplate>

@@ -4,15 +4,28 @@ description: A vulnerability where users are able to access data or perform acti
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Broken Access Control">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Broken Access Control">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-According to the OWASP Top 10 (2021), **Broken Access Control** is the single most critical and common vulnerability on the internet. 
+According to the OWASP Top 10 (2021), **Broken Access Control** is the single most critical and common vulnerability on the internet.
 
 While *Authentication* proves who you are, *Authorization* (Access Control) dictates what you are allowed to do. If the web server mathematically fails to enforce these boundaries, a standard user might be able to view another user's private data, or worse, execute Administrator-level commands.
 
+
 <Callout icon="tip" title="Insecure Direct Object Reference (IDOR)">
+
+
   The most famous form of Broken Access Control is IDOR. Imagine you log into your bank and the URL is `bank.com/account?id=1234`. What happens if you mathematically change the URL to `id=1235`? If the server just blindly serves the data without checking if YOU own account 1235, that is a critical IDOR vulnerability.
+
+
 </Callout>
+
 
 ## Prevention Strategies
 
@@ -20,4 +33,3 @@ While *Authentication* proves who you are, *Authorization* (Access Control) dict
 2. **Server-Side Enforcement:** Never trust the client. Even if you hide the "Delete User" button in the React frontend, an attacker can mathematically craft the API request using Postman. The backend API must verify permissions on every single request.
 3. **Use UUIDs instead of Integers:** If database IDs are sequential integers (1, 2, 3), they are easily guessable. If they are random UUIDs (`550e8400-e29b-41d4-a716-446655440000`), it is mathematically impossible for an attacker to guess another user's ID to attempt an IDOR attack.
 
-</ConceptTemplate>

@@ -4,10 +4,16 @@ description: A line of enterprise resource planning and customer relationship ma
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Microsoft Dynamics 365">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microsoft Dynamics 365">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Dynamics 365** is Microsoft's mathematical answer to both SAP (ERP) and Salesforce (CRM).
 
 While SAP mathematically targets massive Fortune 100 conglomerates, Dynamics biologically dominates the "Mid-Market" (companies with 500 to 5,000 employees). Its biological killer feature is mathematical integration: it integrates perfectly with the company's existing Active Directory, Teams, and Office 365 licenses, allowing a salesperson to mathematically update an ERP invoice directly from their biological Microsoft Outlook inbox.
 
-</ConceptTemplate>

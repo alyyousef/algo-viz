@@ -1,8 +1,40 @@
+---
+title: Modular Arithmetic
+description: "The mathematics of 'clock arithmetic', where numbers wrap around after reaching a certain limit, serving as the absolute foundation for cryptography, hashing, and pseudo-random number generation."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Modular arithmetic">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Modular Arithmetic"
+  subtitle="The Mathematics of Wrapping Around"
+  tags={['Mathematics', 'Discrete Math', 'Number Theory', 'Cryptography']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In standard arithmetic, numbers grow infinitely. In **Modular Arithmetic**, numbers wrap around in a circle upon reaching a specific threshold called the Modulus. It is the mathematical engine behind all modern cybersecurity.
 
-</ConceptTemplate>
+## 1. The Concept (Clock Math)
+If it is currently 10:00 AM, and you add 5 hours, it is not 15:00 AM. The clock "wraps around" at 12, so the answer is 3:00 PM.
+Mathematically, we write this as:
+$10 + 5 \equiv 3 \pmod{12}$
+(15 is "congruent" to 3, modulo 12).
+
+The modulo operator (`%` in most programming languages) mathematically yields the **Remainder** of a division operation. $15 / 12$ leaves a remainder of $3$.
+
+## 2. Cryptographic Properties
+Modular arithmetic is heavily used in cryptography because it acts as a mathematically perfect **One-Way Function**.
+- In standard math, if I tell you $X \times 7 = 35$, you can instantly divide to find $X = 5$.
+- In modular math, if I tell you $X \times 7 \equiv 2 \pmod{11}$, finding $X$ is significantly harder (it's 5, because $35 / 11$ leaves a remainder of 2).
+- When the modulus is a 2048-bit prime number, reversing modular exponentiation ($X^e \equiv C \pmod N$) becomes the **Discrete Logarithm Problem**. There is no known fast algorithm in the universe to reverse it, which is exactly why RSA Encryption is secure.
+
+## 3. Hash Tables
+Every Hash Table (Dictionaries in Python, HashMaps in Java) relies on modular arithmetic to map infinite data into a finite array.
+If you have an array of size $M$, and a Hash Function generates a massive integer $H$ for a string, the exact array index is mathematically assigned using:
+$Index = H \pmod M$
+

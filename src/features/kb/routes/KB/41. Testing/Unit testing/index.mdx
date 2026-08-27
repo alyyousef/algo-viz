@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Unit Testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Unit Testing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Unit Testing** forms the foundation of the testing pyramid. The goal is to validate that each individual, isolated "unit" of code (usually a function or a method) performs exactly as expected under various conditions.
 
@@ -24,10 +31,10 @@ test('calculates total with tax', () => {
   // Arrange
   const subtotal = 100;
   const taxRate = 0.1;
-  
+
   // Act
   const total = calculateTotal(subtotal, taxRate);
-  
+
   // Assert
   expect(total).toBe(110);
 });
@@ -39,17 +46,17 @@ test('calculates total with tax', () => {
 - **Refactoring Confidence**: You can aggressively refactor the internal implementation of a class, knowing the tests will catch any regressions in behavior.
 
 ## 3. Limitations
-<ComparisonTable 
-  headers={['What Unit Tests Do Well', 'What Unit Tests CANNOT Do']} 
-  rows={[
-    ['Catch off-by-one errors in logic.', 'Catch integration issues between two different microservices.'],
-    ['Verify edge cases (e.g., passing null or negative numbers).', 'Verify that a database query is syntactically valid.'],
-    ['Run in milliseconds in a CI pipeline.', 'Ensure the UI looks correct in a browser.']
-  ]} 
-/>
+
+
+<ComparisonTable headers={['What Unit Tests Do Well', 'What Unit Tests CANNOT Do']} rows={[ ['Catch off-by-one errors in logic.', 'Catch integration issues between two different microservices.'], ['Verify edge cases (e.g., passing null or negative numbers).', 'Verify that a database query is syntactically valid.'], ['Run in milliseconds in a CI pipeline.', 'Ensure the UI looks correct in a browser.'] ]} />
+
 
 <Callout icon="tip" title="Test Coverage">
+
+
 While achieving 100% Code Coverage is a noble goal, it often leads to writing low-value tests just to satisfy a metric. Aim for 80% coverage, focusing strictly on complex business logic and domain rules, while ignoring trivial getters/setters.
+
+
 </Callout>
 
-</ConceptTemplate>
+

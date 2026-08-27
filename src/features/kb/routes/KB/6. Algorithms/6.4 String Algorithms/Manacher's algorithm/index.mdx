@@ -1,8 +1,33 @@
+---
+title: Manacher's Algorithm
+description: "A brilliant linear-time algorithm designed specifically to find the longest palindromic substring within a given string in strict O(N) time, mathematically bypassing the quadratic time of center-expansion."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Manacher's algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Manacher's Algorithm"
+  subtitle="The Longest Palindromic Substring"
+  tags={['Algorithms', 'Strings', 'Palindromes', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Palindrome is a string that reads the same forwards and backwards (e.g., "RACECAR").
+If you want to find the longest palindrome inside a massive text, a naive "Expand Around Center" approach checks every single character and expands outwards, taking mathematically **O(N²)** time.
 
-</ConceptTemplate>
+## 1. The Even-Length Problem
+Palindromes can have an odd length (`R-A-C-E-C-A-R`, center is 'E') or an even length (`A-B-B-A`, center is between the B's).
+Manacher's algorithm solves this by mathematically inserting a unique delimiter (like `#`) between every single character: `#A#B#B#A#`. Now, mathematically, *all* palindromes are odd-length, making the logic perfectly uniform.
+
+## 2. Exploiting Palindromic Symmetry
+The core genius of Manacher's is its mathematical exploitation of symmetry.
+Imagine you have already found a massive palindrome from index 10 to 50 (Center = 30).
+You are now calculating the palindrome at index 35.
+Because index 35 is mathematically the "mirror image" of index 25 (relative to the center 30), Manacher's mathematically looks at the answer it previously calculated for index 25. If the palindrome at index 25 has length 5, the palindrome at index 35 is mathematically *guaranteed* to have at least length 5!
+By copying the mirrored answers and only calculating the physical boundaries of the main palindrome, the algorithm never calculates the same character twice, completing in exactly **O(N)** time.
+

@@ -4,16 +4,28 @@ description: Servers that simulate the behavior of real APIs for testing and dev
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Mock Servers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mock Servers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If the Frontend team is hired to build a React dashboard, but the Backend team hasn't written the database code yet, the Frontend team is biologically blocked. 
+If the Frontend team is hired to build a React dashboard, but the Backend team hasn't written the database code yet, the Frontend team is biologically blocked.
 
 **Mock Servers** mathematically unblock them.
 
+
 <Callout icon="tip" title="Simulating the Backend">
-  A Mock Server (like **JSON Server** or **WireMock**) mathematically intercepts HTTP requests and returns fake, static JSON data. 
-  
+
+
+  A Mock Server (like **JSON Server** or **WireMock**) mathematically intercepts HTTP requests and returns fake, static JSON data.
+
   The Frontend developer configures their React app to point to `localhost:4000`. When they request `/users`, the Mock Server instantly replies with a fake array of users. The React developer can build the entire UI, pagination, and state management. When the real backend is finally finished 3 weeks later, the developer simply changes the URL to the real server, and the app mathematically works perfectly.
+
+
 </Callout>
 
-</ConceptTemplate>
+

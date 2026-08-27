@@ -1,0 +1,24 @@
+---
+title: Amazon Route 53
+description: A highly available, globally distributed Domain Name System (DNS) web service designed to mathematically route end users to internet applications based on complex geographic and health-check algorithms.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Route 53"
+  subtitle="The Global DNS Router"
+  tags={['AWS', 'Networking', 'DNS', 'Global']}
+>
+
+DNS is the phonebook of the internet (translating `google.com` to `142.250.190.46`). If your DNS server goes down, your entire company vanishes from the internet. Route 53 is the only AWS service backed by a mathematical **100% SLA** (Service Level Agreement). AWS guarantees it will never go offline.
+
+## 1. Advanced Routing Algorithms
+Route 53 does not just blindly return an IP address. It executes mathematical routing policies at the edge of the internet:
+- **Latency-Based Routing**: If a user in London asks for the IP of your server, Route 53 mathematically calculates the millisecond latency between London and your US-East server vs. your EU-West server, and instantly hands the user the IP of the fastest server.
+- **Geolocation Routing**: You can mathematically decree: *"If a user's IP is located in Germany, strictly route them to the Frankfurt data center to comply with GDPR data laws."*
+
+## 2. Health Checks and Failover
+Route 53 continuously pings your web servers every 10 seconds.
+If your primary server in New York crashes and fails 3 consecutive health checks, Route 53's mathematical state machine triggers an **Active-Passive Failover**. It instantly stops returning the New York IP address to the internet, and begins returning the IP address of your backup server in California. Global internet traffic is seamlessly routed away from the burning data center before most users even notice an error.
+
+</TechnologyTemplate>

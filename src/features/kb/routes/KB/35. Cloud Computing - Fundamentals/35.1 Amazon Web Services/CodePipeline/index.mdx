@@ -1,0 +1,27 @@
+---
+title: AWS CodePipeline
+description: A fully managed Continuous Delivery (CD) orchestration service that automatically models, visualizes, and mathematically executes the exact steps required to release software from Git to Production.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS CodePipeline"
+  subtitle="The CI/CD Orchestrator"
+  tags={['AWS', 'CI/CD', 'DevOps', 'Pipelines']}
+>
+
+CodeBuild compiles the code, but it does not orchestrate the release. CodePipeline is the overarching State Machine that defines the absolute physical flow of code from a developer's laptop to a live production server.
+
+## 1. The Pipeline Stages
+A Pipeline is mathematically divided into Stages, and each Stage contains Actions.
+1. **Source Stage**: The pipeline detects a new Git push in GitHub or CodeCommit. It mathematically extracts the ZIP file of the code.
+2. **Build Stage**: It passes the ZIP to CodeBuild. CodeBuild runs the tests and outputs a compiled Docker Image.
+3. **Staging/Deploy Stage**: It passes the Docker Image to ECS or EKS to deploy to a private testing environment.
+4. **Manual Approval Stage**: The pipeline physically halts. It sends an email to a QA Manager. The mathematical state machine will not proceed until a human clicks "Approve."
+5. **Production Stage**: It mathematically executes a safe, rolling deployment to the live user-facing servers.
+
+## 2. Artifact Passing
+The stages do not talk to each other directly. They communicate via an S3 Bucket.
+When the Source stage finishes, it writes the raw code to S3 (an Artifact). The Build stage downloads that Artifact, compiles it, and writes the Output Artifact to S3. This decoupled mathematical architecture ensures that if the Production deployment fails, you do not need to recompile the code; the pipeline simply grabs the exact Output Artifact from the Build stage and tries again.
+
+</TechnologyTemplate>

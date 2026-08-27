@@ -1,8 +1,44 @@
+---
+title: GCD and LCM
+description: "The fundamental mathematical concepts of the Greatest Common Divisor and Least Common Multiple, featuring the Euclidean Algorithm, which forms the bedrock of RSA encryption."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GCD/LCM">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="GCD and LCM"
+  subtitle="Number Theory Fundamentals"
+  tags={['Mathematics', 'Discrete Math', 'Algorithms', 'Number Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Greatest Common Divisor (GCD) and Least Common Multiple (LCM) are the pillars of Number Theory, universally required for cryptography, modular arithmetic, and distributed system clock synchronization.
 
-</ConceptTemplate>
+## 1. GCD (Greatest Common Divisor)
+The GCD of two integers $a$ and $b$ is the largest positive integer that mathematically divides both numbers with exactly zero remainder.
+- Example: $GCD(12, 18) = 6$.
+
+### The Euclidean Algorithm
+Finding the GCD by manually listing factors is $O(N)$. In 300 BC, Euclid invented a blisteringly fast $O(\log(\min(a, b)))$ algorithm based on the mathematical theorem that $GCD(a, b) = GCD(b, a \pmod b)$.
+```python
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+```
+This single, mathematically beautiful loop is the engine that drives modern cryptography.
+
+## 2. LCM (Least Common Multiple)
+The LCM is the smallest positive integer that is a perfect multiple of both $a$ and $b$.
+- Example: $LCM(4, 6) = 12$.
+- **The Mathematical Link**: You never calculate the LCM directly. It is mathematically proven that $LCM(a, b) = \frac{|a \cdot b|}{GCD(a, b)}$. You use the blazing-fast Euclidean algorithm to find the GCD, and instantly compute the LCM.
+
+## 3. Co-Primes and RSA Encryption
+If $GCD(a, b) = 1$, the numbers are mathematically **Co-Prime** (they share no common factors other than 1).
+The entire architecture of **RSA Public-Key Encryption** (which secures all HTTPS internet traffic) relies on generating two massive prime numbers and ensuring that the public encryption key $e$ is mathematically co-prime to a specific calculated value (Euler's Totient). The Euclidean Algorithm is used to mathematically generate and verify these keys.
+

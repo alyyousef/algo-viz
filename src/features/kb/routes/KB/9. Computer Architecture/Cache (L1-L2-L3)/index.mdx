@@ -4,25 +4,38 @@ description: The high-speed memory hierarchy designed to bridge the massive spee
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CPU Cache (L1, L2, L3)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CPU Cache (L1, L2, L3)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Over the last three decades, CPU speeds increased exponentially (following Moore's Law), but RAM speeds did not keep up. 
+Over the last three decades, CPU speeds increased exponentially (following Moore's Law), but RAM speeds did not keep up.
 
-Today, a CPU takes about **1 nanosecond** to execute an instruction. However, fetching data from Main Memory (RAM) takes roughly **100 nanoseconds**. If the CPU had to wait for RAM on every single instruction, it would spend 99% of its life doing absolutely nothing. 
+Today, a CPU takes about **1 nanosecond** to execute an instruction. However, fetching data from Main Memory (RAM) takes roughly **100 nanoseconds**. If the CPU had to wait for RAM on every single instruction, it would spend 99% of its life doing absolutely nothing.
 To solve this "Memory Wall," engineers introduced the **Cache Hierarchy**.
 
+
 <Callout icon="info" title="The Desk Analogy">
+
+
   - **Registers**: What you are currently holding in your hands (instant).
   - **L1/L2 Cache**: Papers sitting on your desk (fast, but limited space).
   - **RAM**: A filing cabinet across the room (slow, but holds thousands of papers).
   - **Hard Drive**: A warehouse across town (massive, but takes days to retrieve).
+
+
 </Callout>
+
 
 ## The Cache Hierarchy
 
 Caches are made of SRAM (Static RAM), which is incredibly fast but physically massive and incredibly expensive, meaning we can only fit a tiny amount on the CPU die. Modern CPUs use a tiered approach:
 
-1. **L1 Cache (Level 1)**: 
+1. **L1 Cache (Level 1)**:
    - **Size**: ~64 KB per core.
    - **Speed**: ~1-2 nanoseconds (instant).
    - **Location**: Physically integrated directly inside the execution core. Often split into L1i (Instruction Cache) and L1d (Data Cache).
@@ -47,4 +60,3 @@ Caches are highly predictive, relying on two computer science principles:
 1. **Temporal Locality**: If a program accesses a variable \`x\`, it is highly likely it will access \`x\` again very soon (e.g., a counter in a \`for\` loop).
 2. **Spatial Locality**: If a program accesses memory address \`1000\`, it is highly likely it will access address \`1001\` immediately after (e.g., iterating through an Array). Therefore, when a CPU suffers a Cache Miss for address \`1000\`, it doesn't just pull 1 byte from RAM; it pulls an entire 64-byte "Cache Line," pre-fetching the surrounding data for free.
 
-</ConceptTemplate>

@@ -4,9 +4,16 @@ description: The strictly structured HTML architecture used for displaying compl
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tables & Tabular Data">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tables & Tabular Data">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In the late 1990s, before CSS was powerful, developers used massive, nested `<table>` elements to build entire website layouts. This was a dark era. 
+In the late 1990s, before CSS was powerful, developers used massive, nested `<table>` elements to build entire website layouts. This was a dark era.
 
 Today, you must **never** use tables for layout. Tables are strictly reserved for their mathematical purpose: displaying highly-structured, two-dimensional tabular data (like a spreadsheet or a pricing tier comparison).
 
@@ -22,7 +29,6 @@ Tables require a very specific, nested hierarchy of tags to be semantically vali
 6. `<td>` (Table Data): Defines a standard data cell.
 
 ## Accessibility Importance
-If you build a table using CSS Grid and thousands of `<div>` elements, a blind user's Screen Reader will just read a massive, confusing list of random numbers. 
+If you build a table using CSS Grid and thousands of `<div>` elements, a blind user's Screen Reader will just read a massive, confusing list of random numbers.
 By using genuine `<th>` and `<td>` tags, the Screen Reader can mathematically map the data, announcing: *"Column: Price, Row: Pro Tier, Value: $99/mo"*.
 
-</ConceptTemplate>

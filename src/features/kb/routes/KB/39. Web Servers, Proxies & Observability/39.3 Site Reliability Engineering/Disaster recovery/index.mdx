@@ -1,8 +1,29 @@
+---
+title: Disaster Recovery
+description: The mathematical frameworks and predefined procedures an organization uses to restore critical IT infrastructure and data following a catastrophic event, such as a datacenter fire, earthquake, or ransomware attack.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Disaster recovery">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Disaster Recovery (DR)"
+  subtitle="Catastrophic Failure Mitigation"
+  tags={['SRE', 'Architecture', 'Security', 'Compliance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+High Availability (HA) protects against a single server dying. Disaster Recovery (DR) is the mathematical plan for what happens when an entire AWS Region (e.g., `us-east-1`) is physically destroyed by a hurricane.
 
-</ConceptTemplate>
+## 1. RPO (Recovery Point Objective)
+RPO is a mathematical measurement of **allowable data loss**.
+If your database backups run once every 24 hours (at midnight), and the datacenter burns down at 11:59 PM, you have mathematically lost 23 hours and 59 minutes of customer data. If the business dictates an RPO of 5 minutes, you cannot use daily backups. You are mathematically forced to implement asynchronous database replication to a geographically distant datacenter.
+
+## 2. RTO (Recovery Time Objective)
+RTO is a mathematical measurement of **allowable downtime**.
+If the datacenter burns down, how long does it take to spin up new servers in Europe and point DNS to them? If the business dictates an RTO of 15 minutes, you cannot manually click buttons in the AWS console. You are mathematically forced to use Infrastructure as Code (Terraform) and fully automated CI/CD pipelines to instantly recreate the entire architecture in a new region.
+

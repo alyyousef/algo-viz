@@ -1,8 +1,26 @@
+---
+title: Dynamic Linking
+description: A modularity technique where external libraries are mathematically mapped into a program's memory space at runtime, rather than being hardcoded into the executable.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="dynamic)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dynamic Linking">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a program uses an external library (like OpenGL), the compiler does not have to physically embed the library's machine code inside your final binary. It can use Dynamic Linking.
 
-</ConceptTemplate>
+## 1. Shared Libraries (.dll / .so)
+A Dynamic Library (`.dll` on Windows, `.so` on Linux) is a compiled binary containing functions that sit independently on the hard drive.
+When you compile your program dynamically, the compiler leaves mathematical "stubs" inside your binary. It essentially writes: "When the program reaches this point, ask the Operating System to find `opengl32.dll`, load it into RAM, and jump to its memory address."
+
+## 2. Memory De-duplication
+Dynamic Linking provides massive mathematical efficiency at the OS level.
+If 50 different applications on your computer all use the standard C library (`libc`), Static Linking would physically embed 50 copies of `libc` in your RAM, wasting gigabytes of space.
+With Dynamic Linking, the OS loads `libc.so` into physical RAM exactly once. It then mathematically maps that single physical memory address into the Virtual Memory space of all 50 running applications simultaneously, saving massive amounts of physical RAM.
+

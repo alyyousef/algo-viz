@@ -1,8 +1,24 @@
+---
+title: Carbon
+description: An experimental systems programming language developed by Google, explicitly designed as the experimental successor to C++.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Carbon">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Carbon">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Announced by Google in 2022, Carbon is an experimental systems programming language. While Rust is often viewed as the successor to C++, migrating a massive, 30-year-old C++ codebase to Rust is mathematically impossible due to the completely different memory models (Borrow Checker vs Pointers). Carbon is designed specifically for **bi-directional interoperability** with C++.
 
-</ConceptTemplate>
+## 1. Seamless C++ Interop
+Unlike Rust, where calling C++ code requires complex FFI (Foreign Function Interface) bindings, Carbon mathematically understands C++.
+You can write a Carbon file, `#include` a C++ header, and instantiate a C++ object directly in Carbon syntax. You can also write a C++ file, include a Carbon header, and call Carbon functions. This allows massive tech companies (like Google) to mathematically migrate millions of lines of code file-by-file without ever stopping production.
+
+## 2. Fixing C++ Debt
+Carbon mathematically abandons 40 years of C/C++ technical debt. It removes archaic header files, replaces them with a modern module system, introduces a much safer macro system, and defaults to memory-safe patterns while still allowing raw, unchecked pointers when maximum performance is required.
+

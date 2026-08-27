@@ -1,8 +1,27 @@
+---
+title: Option / Maybe Types
+description: A mathematically rigorous alternative to Null pointers, forcing developers to explicitly handle the absence of a value at compile-time.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Option/Maybe types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Option / Maybe Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Tony Hoare famously called his invention of the Null Pointer his "Billion-Dollar Mistake." If a function can mathematically return Null, but the compiler does not force you to check for it, your program will eventually crash with a Null Reference Exception. Option types solve this.
 
-</ConceptTemplate>
+## 1. The Mathematical Wrapper
+An `Option<T>` (or `Maybe<T>` in Haskell) is an Algebraic Data Type (an Enum).
+It mathematically has exactly two states:
+1. `Some(T)`: The box contains a physical value of type T.
+2. `None`: The box is empty.
+
+## 2. Forcing Exhaustive Checks
+If a function returns `Option<User>`, you do not physically have a `User`. You have a Box.
+You cannot mathematically call `box.getName()`. The compiler will block you. You must write a `match` or `if-let` statement to explicitly open the box. The compiler forces you to mathematically write the logic for *both* the `Some` state and the `None` state before it allows the code to compile. This mathematically eradicates Null Reference Exceptions from the entire codebase (a key feature of Rust and Swift).
+

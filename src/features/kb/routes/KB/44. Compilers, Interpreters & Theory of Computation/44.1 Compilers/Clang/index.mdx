@@ -4,7 +4,7 @@ description: A compiler front end for the C, C++, Objective-C, and Objective-C++
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Clang"
   subtitle="The modern, modular C++ compiler"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Clang_logo.svg/512px-Clang_logo.svg.png"
@@ -19,9 +19,15 @@ For 20 years, GCC held a mathematical monopoly over C/C++ compilation. However, 
 
 Apple created **Clang** specifically to solve this. Clang is designed as a set of highly modular, mathematically strict C++ libraries.
 
+
 <Callout icon="success" title="World-Class Diagnostics">
+
+
   Because Clang retains the exact mathematical structure of the original source code in its AST (unlike GCC, which historically stripped it early), Clang became famous for producing highly human-readable error messages. If you miss a semicolon, Clang doesn't just crash; it mathematically points to the exact column in the code where the semicolon should be.
+
+
 </Callout>
+
 
 ## The Clang Ecosystem
 

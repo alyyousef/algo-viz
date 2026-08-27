@@ -4,7 +4,14 @@ description: AWS's massively parallel processing (MPP) Data Warehouse, the histo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Amazon Redshift">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Amazon Redshift">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Snowflake and BigQuery dominated the market, **Amazon Redshift** mathematically pioneered the Cloud Data Warehouse revolution. It proved that companies could rent petabyte-scale analytical databases by the hour instead of spending $10 million on physical Teradata server racks.
 
@@ -17,13 +24,12 @@ Redshift is a heavily modified fork of PostgreSQL 8.0, mathematically engineered
 ## 2. The Storage Bottleneck
 Historically, Redshift physically coupled Compute and Storage. If you needed to store 100 Terabytes of data, you had to buy 20 Compute nodes, even if you only ran 1 query a day. This was mathematically expensive.
 
-When Snowflake launched, it decimated Redshift by decoupling Storage (S3) from Compute (EC2), allowing infinite scaling. 
+When Snowflake launched, it decimated Redshift by decoupling Storage (S3) from Compute (EC2), allowing infinite scaling.
 In response, AWS engineered **Redshift RA3 Nodes (Managed Storage)**. Today, modern Redshift mathematically decouples the architecture. Data is stored cheaply on S3, and the RA3 compute nodes use massive NVMe SSDs to dynamically cache the hottest data locally, competing directly with Snowflake's architecture.
 
 ## 3. Redshift Spectrum
 Before Redshift decoupled its storage, AWS created **Redshift Spectrum**.
-Spectrum allows you to mathematically query raw Parquet/ORC files sitting in an S3 Data Lake directly from the Redshift SQL console. 
+Spectrum allows you to mathematically query raw Parquet/ORC files sitting in an S3 Data Lake directly from the Redshift SQL console.
 
 It dynamically spins up thousands of invisible, serverless compute nodes in the background to execute the S3 scan, and mathematically joins that raw Data Lake data with your highly-structured Redshift tables in a single SQL query. This was Amazon's first major step toward the Lakehouse architecture.
 
-</ConceptTemplate>

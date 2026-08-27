@@ -4,22 +4,34 @@ description: The industry-leading SIEM platform that turns massive amounts of ma
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Splunk">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Splunk">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a modern enterprise, you have thousands of servers, firewalls, and applications generating gigabytes of log files every minute. If a hacker breaches your network, the evidence is in those logs, but finding it manually is impossible.
 
 **Splunk** is a Security Information and Event Management (SIEM) system. It ingests massive amounts of raw, unstructured machine data, indexes it mathematically, and makes it instantly searchable.
 
+
 <Callout icon="info" title="The Search Processing Language (SPL)">
+
+
   Splunk uses its own proprietary query language called SPL. It allows security analysts to pipe commands together mathematically, similar to Unix bash. (e.g., `index=firewall action=blocked | stats count by src_ip | sort - count`)
+
+
 </Callout>
+
 
 ## Splunk in the SOC
 
-In a Security Operations Center (SOC), Splunk is the central nervous system. 
+In a Security Operations Center (SOC), Splunk is the central nervous system.
 
 1. **Ingestion:** Universal Forwarders installed on endpoints constantly stream logs to the Splunk Indexers.
 2. **Correlation:** Splunk Enterprise Security mathematically correlates events. (e.g., "User Bob failed login 50 times from Russia, and 2 seconds later successfully logged in from New York.")
 3. **Alerting:** It generates automated alerts for the incident response team to investigate the anomalous behavior.
 
-</ConceptTemplate>

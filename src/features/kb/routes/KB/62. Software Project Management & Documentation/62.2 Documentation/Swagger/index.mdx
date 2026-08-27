@@ -4,10 +4,16 @@ description: A suite of tools for API developers from SmartBear Software, built 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Swagger UI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Swagger UI">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Swagger** is the biological toolset that renders the mathematical OpenAPI specification.
 
 When you navigate to a company's API documentation and see a beautiful, interactive web page where you can actually biologically click an "Execute" button to send real HTTP requests directly from the browser, you are looking at **Swagger UI**. It mathematically parses the `openapi.yaml` file and dynamically renders the HTML interface, making API exploration biologically effortless for developers.
 
-</ConceptTemplate>

@@ -4,24 +4,32 @@ description: A vulnerability where an attacker tricks the server into making an 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Server-Side Request Forgery (SSRF)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Server-Side Request Forgery (SSRF)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Modern web applications frequently need to fetch data from other URLs (e.g., fetching a profile picture from a URL the user provides). 
+Modern web applications frequently need to fetch data from other URLs (e.g., fetching a profile picture from a URL the user provides).
 
 If the application does not mathematically validate the user's URL before fetching it, an attacker can supply an internal IP address (like `http://127.0.0.1` or `http://localhost/admin`). The server will dutifully make the request. Because the request is mathematically originating from *the server itself*, it bypasses the firewall and can access internal-only admin panels.
 
+
 <Callout icon="warning" title="The Capital One Breach">
+
+
   The infamous 2019 Capital One breach, which exposed 100 million credit card applications, was executed via SSRF. The attacker exploited an SSRF vulnerability to query the AWS internal metadata service (`http://169.254.169.254`), which mathematically returned the master IAM credentials for the server.
+
+
 </Callout>
+
 
 ## Types of SSRF
 
-<ComparisonTable 
-  headers={['Type', 'Description']}
-  rows={[
-    ['In-Band SSRF', 'The attacker provides a URL, the server makes the request, and returns the full HTTP response back to the attacker on the screen (e.g., returning the contents of the internal admin dashboard).'],
-    ['Blind SSRF', 'The server makes the request, but does NOT return the result to the attacker. The attacker must mathematically infer if the port is open by timing how long the server takes to respond.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Type', 'Description']} rows={[ ['In-Band SSRF', 'The attacker provides a URL, the server makes the request, and returns the full HTTP response back to the attacker on the screen (e.g., returning the contents of the internal admin dashboard).'], ['Blind SSRF', 'The server makes the request, but does NOT return the result to the attacker. The attacker must mathematically infer if the port is open by timing how long the server takes to respond.'] ]} />
+
+

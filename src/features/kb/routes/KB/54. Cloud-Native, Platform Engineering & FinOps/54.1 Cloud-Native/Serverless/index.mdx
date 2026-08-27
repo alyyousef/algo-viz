@@ -4,18 +4,30 @@ description: A cloud-computing execution model in which the cloud provider dynam
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Serverless Computing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Serverless Computing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In a standard Kubernetes cluster, you are paying AWS $500/month for the physical EC2 servers, even if your traffic drops to zero at 3:00 AM. 
+In a standard Kubernetes cluster, you are paying AWS $500/month for the physical EC2 servers, even if your traffic drops to zero at 3:00 AM.
 
 **Serverless** (like AWS Lambda) mathematically eliminates idle server costs.
 
+
 <Callout icon="tip" title="Scale-to-Zero Architecture">
+
+
   In a Serverless architecture, you do not provision a server. You upload a ZIP file containing a single JavaScript function to AWS.
-  
-  When a user hits your API, AWS mathematically spins up a micro-container in 50 milliseconds, executes your function, returns the HTTP response, and instantly destroys the container. 
-  
+
+  When a user hits your API, AWS mathematically spins up a micro-container in 50 milliseconds, executes your function, returns the HTTP response, and instantly destroys the container.
+
   You are biologically billed *by the millisecond* of CPU execution. If you get 0 visitors, your AWS bill is mathematically $0.00.
+
+
 </Callout>
 
-</ConceptTemplate>
+

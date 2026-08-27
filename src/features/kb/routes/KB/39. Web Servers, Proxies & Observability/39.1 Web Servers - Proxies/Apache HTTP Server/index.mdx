@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Apache HTTP Server
+description: The historically dominant, open-source web server mathematically engineered around a process-driven, modular architecture that defined the early era of the World Wide Web.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Apache HTTP Server">
+<TechnologyTemplate
+  title="Apache HTTP Server"
+  subtitle="The Foundation of the Early Web"
+  tags={['Web Servers', 'HTTP', 'Legacy', 'Architecture']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1995, Apache was the absolute mathematical king of the internet for two decades. It was the "A" in the famous LAMP stack (Linux, Apache, MySQL, PHP).
 
-</ConceptTemplate>
+## 1. Process-Driven Architecture
+Apache's original mathematical architecture is fundamentally different from modern servers like Nginx.
+Apache uses a **Multi-Processing Module (MPM)**. In its traditional `prefork` mode, Apache mathematically spawns a brand new, dedicated OS process (or thread) for *every single incoming HTTP connection*.
+If 1,000 users visit the website simultaneously, Apache spawns 1,000 heavy Linux processes. If each process consumes 20MB of RAM, the server mathematically requires 20GB of RAM just to keep the connections open, leading to catastrophic memory exhaustion under heavy load (the infamous "C10k problem").
+
+## 2. The .htaccess File
+Apache's greatest strength (and mathematical weakness) was its extreme flexibility, specifically the `.htaccess` file.
+This allowed developers in a shared hosting environment to mathematically override global server configurations (like URL rewriting or password protection) on a per-directory basis without restarting the server. However, this mathematically forced Apache to scan the hard drive for a `.htaccess` file on every single HTTP request, creating massive disk I/O latency that modern asynchronous servers eliminated.
+
+</TechnologyTemplate>

@@ -4,31 +4,43 @@ description: The specific memory management scheme used by operating systems to 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Paging">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Paging">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In the early days of Virtual Memory, operating systems would allocate entire contiguous blocks of physical RAM to a program. If a program needed 10MB of memory, the OS would find a 10MB continuous open space in RAM and give it to the program. 
+In the early days of Virtual Memory, operating systems would allocate entire contiguous blocks of physical RAM to a program. If a program needed 10MB of memory, the OS would find a 10MB continuous open space in RAM and give it to the program.
 
-This caused a fatal issue called **External Fragmentation**. Over time, as programs opened and closed, RAM became a swiss-cheese of empty holes and occupied blocks. You might have 50MB of RAM free in total, but because it is split into dozens of tiny 1MB holes, you cannot launch a new program that requires a 10MB block. 
+This caused a fatal issue called **External Fragmentation**. Over time, as programs opened and closed, RAM became a swiss-cheese of empty holes and occupied blocks. You might have 50MB of RAM free in total, but because it is split into dozens of tiny 1MB holes, you cannot launch a new program that requires a 10MB block.
 
 **Paging** solves external fragmentation completely.
 
+
 <Callout icon="success" title="The Fixed-Size Solution">
-  Instead of allocating variable-sized blocks, Paging violently chops both Virtual Memory and Physical RAM into strict, identical, fixed-size chunks (usually **4 Kilobytes**). 
+
+
+  Instead of allocating variable-sized blocks, Paging violently chops both Virtual Memory and Physical RAM into strict, identical, fixed-size chunks (usually **4 Kilobytes**).
   - A chunk of Virtual Memory is called a **Page**.
   - A chunk of Physical RAM is called a **Frame**.
+
+
 </Callout>
+
 
 ## How Paging Works
 
-When a program asks for 10MB of memory, the OS doesn't look for a 10MB hole. It simply grabs 2,500 arbitrary, scattered 4KB Frames from anywhere in physical RAM. 
+When a program asks for 10MB of memory, the OS doesn't look for a 10MB hole. It simply grabs 2,500 arbitrary, scattered 4KB Frames from anywhere in physical RAM.
 
-The OS maintains a massive **Page Table** in memory. This table acts as a translation dictionary. It maps the program's contiguous Virtual Pages to the completely scattered Physical Frames. 
+The OS maintains a massive **Page Table** in memory. This table acts as a translation dictionary. It maps the program's contiguous Virtual Pages to the completely scattered Physical Frames.
 
 Because the hardware's MMU (Memory Management Unit) translates the addresses on the fly, the program believes it has one perfectly continuous 10MB block of memory, when in reality, its data is scattered like confetti across the physical silicon chips.
 
 ## Page Faults and Swapping
 
-Paging is what makes modern multitasking possible. Because memory is broken into 4KB pages, the OS doesn't have to load an entire program into RAM to run it. 
+Paging is what makes modern multitasking possible. Because memory is broken into 4KB pages, the OS doesn't have to load an entire program into RAM to run it.
 It can load just the first few pages of a video game into RAM and start executing. If the CPU tries to access a page that hasn't been loaded yet, the MMU triggers a **Page Fault** (a hardware interrupt). The OS pauses the game, fetches that specific 4KB page from the SSD, places it in a RAM frame, updates the Page Table, and resumes the game seamlessly.
 
-</ConceptTemplate>

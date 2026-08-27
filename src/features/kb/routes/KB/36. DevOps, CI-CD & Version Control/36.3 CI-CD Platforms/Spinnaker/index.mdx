@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Spinnaker
+description: An open-source, multi-cloud continuous delivery platform originally created by Netflix, mathematically designed to execute complex, high-velocity deployments across thousands of servers safely.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Spinnaker">
+<TechnologyTemplate
+  title="Spinnaker"
+  subtitle="Enterprise Multi-Cloud Delivery"
+  tags={['DevOps', 'Continuous Delivery', 'Netflix', 'Cloud']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Jenkins is mathematically excellent at Continuous *Integration* (compiling and testing code). Spinnaker (built by Netflix) was designed because Jenkins is mathematically terrible at Continuous *Deployment* (managing live cloud infrastructure).
 
-</ConceptTemplate>
+## 1. The Multi-Cloud Abstraction
+Netflix needed to mathematically deploy applications across AWS, Google Cloud, and Kubernetes simultaneously.
+Spinnaker provides a unified mathematical abstraction layer over all major cloud providers. A developer creates a pipeline that says *"Deploy this Docker image."* Spinnaker automatically translates that command into the specific API calls required by AWS EC2, GCP Compute Engine, or Kubernetes, entirely decoupling the deployment logic from the underlying cloud provider.
+
+## 2. Advanced Deployment Strategies
+Spinnaker is mathematically engineered for release safety.
+It natively understands **Canary Deployments**. You can configure a Spinnaker pipeline to route 2% of traffic to a new release. Spinnaker will mathematically hook into your Prometheus monitoring system, analyze the HTTP 500 error rate for 30 minutes, and if the mathematical baseline is breached, it will automatically roll back the deployment and destroy the new servers without human intervention.
+
+</TechnologyTemplate>

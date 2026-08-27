@@ -4,28 +4,34 @@ description: The enterprise strategy of utilizing pre-built, highly-accessible U
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Component Libraries & Storybook">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Component Libraries & Storybook">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Building a fully accessible, keyboard-navigable Dropdown or Date Picker from scratch is mathematically incredibly difficult. It requires strict adherence to complex W3C ARIA specifications. 
+Building a fully accessible, keyboard-navigable Dropdown or Date Picker from scratch is mathematically incredibly difficult. It requires strict adherence to complex W3C ARIA specifications.
 Instead of wasting thousands of hours reinventing the wheel, companies use Component Libraries.
 
 ## Headless UI vs Styled UI
 
 ### 1. Styled Libraries (Material UI, Ant Design)
-These libraries ship massive amounts of pre-written CSS. 
-**Material UI (MUI)** is the most widely used React library in the world. It provides thousands of components that strictly adhere to Google's Material Design specification. 
+These libraries ship massive amounts of pre-written CSS.
+**Material UI (MUI)** is the most widely used React library in the world. It provides thousands of components that strictly adhere to Google's Material Design specification.
 **The Flaw**: It is notoriously difficult to customize. Overriding MUI's internal CSS often requires ugly specificity hacks, resulting in every app looking exactly like a Google product.
 
 ### 2. Headless UI (Radix, HeadlessUI, Ark)
 The modern architectural revolution. A Headless library provides the raw JavaScript logic, state management, and strict ARIA accessibility required for a complex component (like an Accordion), but ships **Zero CSS**.
-You are mathematically forced to write your own CSS (usually Tailwind) to style it. This guarantees that your application remains 100% uniquely branded while benefiting from flawless accessibility logic. 
+You are mathematically forced to write your own CSS (usually Tailwind) to style it. This guarantees that your application remains 100% uniquely branded while benefiting from flawless accessibility logic.
 
 **Shadcn UI** is the current industry pinnacle of this. It uses Radix under the hood, but instead of installing it as an NPM package, you literally copy and paste the raw React code into your project, giving you absolute ownership over the component.
 
 ## Storybook (Component Isolation)
 In a massive enterprise codebase with 500 components, developers often struggle to find existing buttons, leading to duplicated code.
 
-**Storybook** is an isolated Sandbox environment that runs completely separately from your main application. 
+**Storybook** is an isolated Sandbox environment that runs completely separately from your main application.
 It mathematically renders a catalog of every single UI component in your system, allowing designers and developers to visually click, hover, and test the components without needing to navigate through a complex login flow in the actual app.
 
-</ConceptTemplate>

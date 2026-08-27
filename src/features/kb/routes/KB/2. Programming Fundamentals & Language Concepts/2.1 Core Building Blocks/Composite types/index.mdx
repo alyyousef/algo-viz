@@ -1,8 +1,26 @@
+---
+title: Composite Types
+description: Complex data structures formed by mathematically combining primitive types into larger, cohesive memory blocks like Structs, Arrays, and Tuples.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Composite types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Composite Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In computer science, primitive types (integers, booleans, floats) are the mathematical atoms of memory. Composite types are the molecules—structures created by mathematically combining multiple primitives.
 
-</ConceptTemplate>
+## 1. Records (Structs)
+A Record (or Struct in C/Rust) mathematically groups related variables of *different* types under a single name.
+If you have a `User`, they have a `name` (String) and an `age` (Integer).
+Instead of passing two separate variables around, a Struct mathematically forces the compiler to allocate the String and the Integer physically next to each other in RAM. When you pass the `User` to a function, you are mathematically passing a single memory pointer that the compiler knows how to safely offset to read the underlying data.
+
+## 2. Arrays and Tuples
+- **Arrays**: Mathematically group elements of the *same* type. Because every element is the exact same byte size, the CPU can mathematically calculate the exact physical RAM address of `array[5000]` instantly via pointer arithmetic (Base Address + (5000 * Element Size)).
+- **Tuples**: Mathematically group a fixed number of elements of *different* types. They are heavily used in functional languages (like Haskell or Python) to mathematically return multiple distinct values from a single function without the overhead of declaring a formal Struct.
+

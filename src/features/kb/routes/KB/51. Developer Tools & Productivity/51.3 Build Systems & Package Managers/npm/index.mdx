@@ -4,7 +4,7 @@ description: The default package manager for the JavaScript runtime environment 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="npm"
   subtitle="The largest software registry in human history"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Npm-logo.svg/512px-Npm-logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Before npm, if you wanted to use jQuery, you mathematically had to go to the jQuery website, download a `.js` file, put it in your folder, and link it in an HTML `<script>` tag. If jQuery updated, you had to manually do it again.
 
+
 <Callout icon="success" title="The package.json Revolution">
-  npm introduced the `package.json` file. 
-  
+
+
+  npm introduced the `package.json` file.
+
   You simply run `npm install express`. npm connects to the global registry, mathematically downloads the Express library into the `node_modules` folder, and automatically resolves and downloads every single nested dependency that Express relies on.
+
+
 </Callout>
+
 
 ## The node_modules Black Hole
 

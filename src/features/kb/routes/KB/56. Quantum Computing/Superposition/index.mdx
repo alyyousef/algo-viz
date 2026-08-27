@@ -4,14 +4,26 @@ description: A fundamental principle of quantum mechanics stating that, much lik
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Superposition">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Superposition">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a classical computer has 3 bits, it can hold exactly 1 state at a time (e.g., `101`). To explore all 8 possible combinations (`000`, `001`... `111`), the computer must biologically calculate them one by one.
 
+
 <Callout icon="warning" title="Exponential Parallelism">
+
+
   Due to **Superposition**, 3 Qubits mathematically hold *all 8 states simultaneously*.
-  
+
   If you have 300 Qubits in superposition, they hold $2^{300}$ states simultaneously. That number is mathematically larger than the number of atoms in the entire observable universe. A quantum computer calculates all $2^{300}$ states in a single biological operation, shattering the physical limits of classical computing.
+
+
 </Callout>
 
-</ConceptTemplate>
+

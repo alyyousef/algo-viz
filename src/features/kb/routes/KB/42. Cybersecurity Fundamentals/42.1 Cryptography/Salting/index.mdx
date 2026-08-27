@@ -5,15 +5,22 @@ description: A fundamental defense mechanism in password security that neutraliz
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="Cryptographic Salting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cryptographic Salting">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A naive authentication system stores user passwords by running them through a hashing algorithm (like SHA-256). 
+A naive authentication system stores user passwords by running them through a hashing algorithm (like SHA-256).
 The fatal flaw is that hashing algorithms are deterministic. If Alice and Bob both use the terrible password `password123`, their database rows will contain the exact same cryptographic hash:
 `ef92b778bafe771e89245b89ea114...`
 
 ## 1. The Threat: Rainbow Tables
 
-Because humans are notoriously predictable, hackers don't waste time trying to crack hashes during a breach. They prepare years in advance. 
+Because humans are notoriously predictable, hackers don't waste time trying to crack hashes during a breach. They prepare years in advance.
 A **Rainbow Table** is a massive, multi-terabyte pre-computed database. The hacker runs the top 100 million most common passwords through SHA-256 and stores the mappings.
 When they hack your database, they don't do any math. They just run a simple SQL `JOIN` against their Rainbow Table, instantly decrypting 70% of your users' passwords in a fraction of a second.
 
@@ -27,9 +34,15 @@ Instead of hashing the password directly:
 3. The server hashes the resulting, highly complex string.
 4. The server stores **both** the Hash and the plaintext Salt in the database row.
 
+
 <Callout icon="success" title="Destroying the Rainbow">
+
+
   Salting completely neutralizes Rainbow Tables. Even if a user's password is "123456", the resulting hashed string is completely unique to the universe because of the random salt. The hacker's pre-computed tables are entirely useless, forcing them to painfully brute-force every single user account one at a time.
+
+
 </Callout>
+
 
 ## 3. Salt vs. Pepper
 
@@ -37,4 +50,3 @@ While a **Salt** is unique per user and stored plainly in the database, a **Pepp
 
 If a hacker exploits a SQL Injection vulnerability to steal the user table, they get the hashes and the salts, but they cannot crack them because they do not have access to the application server's secret Pepper.
 
-</ConceptTemplate>

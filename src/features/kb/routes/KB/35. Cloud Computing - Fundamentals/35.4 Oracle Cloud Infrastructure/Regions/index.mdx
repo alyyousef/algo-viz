@@ -1,0 +1,23 @@
+---
+title: OCI Regions
+description: The highest-level physical and geographical architecture of Oracle Cloud, representing distinct, entirely isolated data center clusters spread across the globe.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Regions"
+  subtitle="Global Geographical Isolation"
+  tags={['OCI', 'Architecture', 'Infrastructure', 'Global']}
+>
+
+When you deploy a Virtual Machine in OCI, you must choose a **Region** (e.g., US East - Ashburn, or UK South - London). A Region is a specific geographical area that contains one or more Availability Domains.
+
+## 1. Mathematical Isolation
+Regions are mathematically and physically isolated from one another.
+They do not share power grids, network backbones, or regional control planes. If a massive natural disaster completely destroys the Ashburn region, the London region is mathematically unaffected and remains 100% operational. This is the foundation of Disaster Recovery (DR). Cloud architects mathematically duplicate their infrastructure across two Regions so that if one fails entirely, the global DNS can instantly route traffic to the surviving Region.
+
+## 2. Data Sovereignty and Compliance
+Regions enforce strict mathematical **Data Sovereignty**.
+If a German bank stores its customer data in the Frankfurt Region, Oracle mathematically guarantees that the data physically rests on hard drives inside the borders of Germany. It will not be replicated to the US or the UK unless explicitly configured by the customer. This physical architecture is required to comply with strict international privacy laws like GDPR, ensuring the data never mathematically crosses restricted national borders.
+
+</TechnologyTemplate>

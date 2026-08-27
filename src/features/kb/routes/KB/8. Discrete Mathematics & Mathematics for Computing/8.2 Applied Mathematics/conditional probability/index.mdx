@@ -1,8 +1,36 @@
+---
+title: Conditional Probability
+description: "The mathematical calculation of the likelihood of an event occurring, given that another specific event has already occurred, updating our beliefs with new data."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="conditional probability">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Conditional Probability"
+  subtitle="Updating Beliefs with Evidence"
+  tags={['Mathematics', 'Probability', 'Statistics', 'Machine Learning']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the real world, events do not happen in isolated vacuums. **Conditional Probability** is the measure of the probability of an event ($A$) occurring, *given* that another event ($B$) has already occurred. It is mathematically written as $P(A | B)$.
 
-</ConceptTemplate>
+## 1. The Formula
+The formula for conditional probability restricts the "universe" of possibilities down strictly to the times when $B$ occurred.
+$P(A | B) = \frac{P(A \cap B)}{P(B)}$
+(The probability of both happening, divided by the probability of B).
+
+## 2. Independent Events
+If $A$ and $B$ are completely independent (like two separate coin flips), knowing $B$ provides absolutely zero new mathematical information about $A$.
+Therefore, if independent: $P(A | B) = P(A)$.
+
+## 3. Application: Spam Filtering
+Conditional probability is the bedrock of **Naive Bayes Classifiers**, the original algorithm for email spam filters.
+The algorithm calculates: $P(Spam | \text{Contains the word "Viagra"})$.
+By analyzing thousands of historical emails, it mathematically determines the conditional probability that an email is spam *given* the presence of specific words.
+
+\n

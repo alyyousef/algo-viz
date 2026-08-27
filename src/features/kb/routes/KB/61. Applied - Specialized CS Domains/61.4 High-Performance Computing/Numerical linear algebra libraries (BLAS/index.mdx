@@ -4,14 +4,26 @@ description: A specification that prescribes a set of low-level routines for per
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="BLAS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="BLAS">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Almost all Scientific Computing, Physics Simulations, and modern Artificial Intelligence mathematically boils down to one simple operation: **Matrix Multiplication**.
 
+
 <Callout icon="warning" title="The Hardware Baseline">
-  **BLAS** is the biological bedrock of computation. 
-  
+
+
+  **BLAS** is the biological bedrock of computation.
+
   It is a specification for the lowest-level linear algebra routines. Hardware vendors (like Intel, AMD, and NVIDIA) mathematically hand-write their own hyper-optimized BLAS libraries in raw assembly code to perfectly match the cache sizes and vector registers of their physical silicon chips. When you write `import numpy as np; np.dot(A, B)` in Python, Python is biologically doing zero math; it is just handing the data down to the C/Assembly BLAS library.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,19 +4,32 @@ description: The incredibly fast, highly expensive memory technology used exclus
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Static RAM (SRAM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Static RAM (SRAM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **SRAM (Static Random Access Memory)** is the fastest memory technology that exists in modern computing. Because of its incredible speed, it is the exclusive technology used to build the L1, L2, and L3 caches directly onto the CPU die.
 
+
 <Callout icon="info" title="Why is it called 'Static'?">
+
+
   It is called Static because as long as electricity is flowing into the chip, the memory perfectly holds its state indefinitely. It never needs to be refreshed. (However, it is still *volatile*, meaning it loses all data the moment the computer is turned off).
+
+
 </Callout>
+
 
 ## The Physical Architecture of SRAM
 
-The reason SRAM is so fast is due to its physical transistor design. A single bit of SRAM (one 1 or 0) is built using a **Flip-Flop circuit**. 
+The reason SRAM is so fast is due to its physical transistor design. A single bit of SRAM (one 1 or 0) is built using a **Flip-Flop circuit**.
 
-A standard SRAM cell requires **Six Transistors (6T)**. 
+A standard SRAM cell requires **Six Transistors (6T)**.
 - Four transistors are wired in a cross-coupled inverter loop that continuously feeds electricity back into itself, permanently locking the circuit into a 1 or a 0 state.
 - Two transistors act as gates to read or write the data.
 
@@ -24,10 +37,9 @@ Because the data is held purely in active logic gates, reading from SRAM is effe
 
 ## The Drawback: Density and Cost
 
-If SRAM is so fast, why isn't our 16 GB main memory built out of SRAM? 
+If SRAM is so fast, why isn't our 16 GB main memory built out of SRAM?
 
-Because an SRAM cell requires 6 transistors to store a single bit, it is physically massive. It takes up enormous amounts of physical silicon area on the chip. 
+Because an SRAM cell requires 6 transistors to store a single bit, it is physically massive. It takes up enormous amounts of physical silicon area on the chip.
 - Main memory requires billions of bits. Building 16 GB of SRAM would require a motherboard the size of a pizza box and would cost tens of thousands of dollars.
 - For this reason, CPU manufacturers can only fit a few megabytes of SRAM (the L3 Cache) onto the processor die before the chip becomes too large to manufacture.
 
-</ConceptTemplate>

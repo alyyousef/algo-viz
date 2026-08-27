@@ -1,8 +1,30 @@
+---
+title: Bag of Words (BoW)
+description: A foundational, mathematical NLP technique that completely ignores grammar and word order, treating a document simply as an unordered collection of word frequencies.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bag of words">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bag of Words">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In order for a computer to analyze text, words must be mathematically converted into numbers. "Bag of Words" is the simplest algorithm to achieve this.
 
-</ConceptTemplate>
+## 1. The Mathematical Vocabulary
+If you have three sentences:
+1. "The dog ran."
+2. "The cat ran."
+3. "The dog and the cat."
+The algorithm first mathematically extracts the **Vocabulary** (every unique word): `["The", "dog", "ran", "cat", "and"]`.
+
+## 2. The Vectorization Process
+Next, the algorithm mathematically converts every sentence into a Vector (an array of numbers) by simply counting how many times each Vocabulary word appears in the sentence.
+- Sentence 1 becomes: `[1, 1, 1, 0, 0]`
+- Sentence 3 becomes: `[2, 1, 0, 1, 1]`
+Because it physically ignores the order of the words, "The dog bit the man" and "The man bit the dog" will generate the exact same mathematical vector. Despite this massive structural flaw, BoW is highly effective for basic tasks like spam filtering, where the mere presence of the word "Viagra" is mathematically more important than the grammatical structure of the sentence.
+

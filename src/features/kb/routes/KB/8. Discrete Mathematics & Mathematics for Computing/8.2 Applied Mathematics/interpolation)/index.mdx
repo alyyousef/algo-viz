@@ -1,8 +1,36 @@
+---
+title: Interpolation
+description: "Mathematical algorithms used to construct new, continuous data points perfectly within the range of a discrete set of known data points."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="interpolation)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Interpolation"
+  subtitle="Connecting the Dots Mathematically"
+  tags={['Mathematics', 'Algorithms', 'Graphics', 'Data Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have 5 known data points, **Interpolation** is the mathematical process of figuring out exactly what the data looks like *between* those points. (Unlike Extrapolation, which guesses what happens *outside* the known points).
 
-</ConceptTemplate>
+## 1. Linear Interpolation (Lerp)
+The simplest method: drawing a perfectly straight line between Point A and Point B.
+If you know it's 50 degrees at 1:00 PM, and 60 degrees at 2:00 PM, Linear Interpolation guesses it was exactly 55 degrees at 1:30 PM.
+In game development, the `Lerp(start, end, time)` function is used constantly to smoothly move a camera or character from one coordinate to another over time.
+
+## 2. Polynomial Interpolation
+Straight lines are jagged. If you have $N$ points, you can use algebra (like Lagrange Polynomials) to mathematically construct a single polynomial equation of degree $N-1$ that curves perfectly through every single point.
+However, for large datasets, high-degree polynomials suffer from **Runge's Phenomenon**—the math violently oscillates and explodes at the edges of the dataset, making the curve totally useless.
+
+## 3. Spline Interpolation (B-Splines & Bezier Curves)
+To avoid the mathematical explosions of massive polynomials, computer graphics use **Splines**.
+Instead of one massive equation, the computer connects the points with hundreds of tiny, low-degree polynomials (usually cubic, $x^3$), mathematically forcing the joints where they meet to have matching derivatives. This ensures the line is perfectly, butter-smooth.
+This is the exact mathematics behind Vector Graphics (SVGs), Adobe Illustrator, and 3D modeling (NURBS).
+
+\n

@@ -4,7 +4,14 @@ description: An advanced NLP evaluation metric designed to mathematically solve 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="METEOR">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="METEOR">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **METEOR (Metric for Evaluation of Translation with Explicit ORdering)** was engineered specifically to address the catastrophic mathematical failures of the BLEU score. Where BLEU acts like a rigid, mindless string-matching algorithm, METEOR attempts to mathematically inject linguistic intelligence into the evaluation.
 
@@ -12,7 +19,7 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 BLEU relies entirely on exact string overlap.
 - Reference: "The cat is furious."
 - AI Output: "The feline is angry."
-BLEU mathematically gives this a score of 0.0, because none of the nouns or adjectives match exactly. 
+BLEU mathematically gives this a score of 0.0, because none of the nouns or adjectives match exactly.
 
 ## 2. The METEOR Alignment Pipeline
 METEOR solves this by mathematically calculating a **Monolingual Alignment** between the AI's output and the reference text. It attempts to map every word in the output to a word in the reference, using a 3-stage fallback pipeline:
@@ -21,8 +28,7 @@ METEOR solves this by mathematically calculating a **Monolingual Alignment** bet
 3. **Synonym Match**: If stemming fails, it mathematically queries the **WordNet** lexical database. It discovers that "feline" is an explicit synonym for "cat", and "angry" is a synonym for "furious", establishing a perfect mathematical alignment.
 
 ## 3. Precision, Recall, and the Chunk Penalty
-Once the words are aligned, METEOR mathematically calculates Precision and Recall. Unlike BLEU (which is heavily biased toward Precision), METEOR uses a Harmonic Mean that heavily mathematically weights **Recall** (typically 9x more than Precision). 
+Once the words are aligned, METEOR mathematically calculates Precision and Recall. Unlike BLEU (which is heavily biased toward Precision), METEOR uses a Harmonic Mean that heavily mathematically weights **Recall** (typically 9x more than Precision).
 
 Finally, it applies a **Fragmentation Penalty**. If the AI output the exact correct words, but they were completely out of order (high fragmentation into tiny chunks), METEOR mathematically punishes the score, ensuring that the grammatical structure and fluency of the sentence are strictly enforced.
 
-</ConceptTemplate>

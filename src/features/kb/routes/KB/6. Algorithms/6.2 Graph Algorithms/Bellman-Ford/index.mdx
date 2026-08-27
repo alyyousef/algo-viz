@@ -5,15 +5,22 @@ description: The mathematical failsafe for shortest-path problems, capable of ha
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Bellman-Ford Algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bellman-Ford Algorithm">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a graph contains **Negative Edge Weights** (e.g., representing a financial transaction where you make money instead of spending it), Dijkstra's Algorithm mathematically collapses. The **Bellman-Ford Algorithm** is specifically designed to solve this.
 
 ## 1. The Relaxation Principle
-Instead of using a clever Priority Queue, Bellman-Ford uses a mathematical brute-force technique called **Edge Relaxation**. 
+Instead of using a clever Priority Queue, Bellman-Ford uses a mathematical brute-force technique called **Edge Relaxation**.
 
 To "relax" an edge `(u, v)` means to mathematically check if traveling through `u` provides a shorter path to `v` than the currently known path.
-`If Distance(u) + Weight(u, v) < Distance(v), then update Distance(v).`
+`If Distance(u) + Weight(u, v) &lt; Distance(v), then update Distance(v).`
 
 ## 2. The Mathematical Proof of V-1
 The algorithm is shockingly simple:
@@ -21,18 +28,23 @@ The algorithm is shockingly simple:
 2. Loop exactly **`V - 1`** times (where V is the total number of Vertices/Nodes in the graph).
 3. Inside the loop, mathematically **relax every single edge** in the entire graph.
 
-Why `V - 1`? 
+Why `V - 1`?
 Mathematically, the longest possible path in a graph without traversing in a circle (a cycle) can only contain at most `V - 1` edges. If you relax all edges `V - 1` times, you mathematically guarantee that the absolute shortest path has successfully propagated to every single node.
 
 ## 3. Detecting Negative Cycles
 A Negative Cycle is a loop in the graph where the total weight is negative. If you drive around this loop infinitely, your total cost approaches Negative Infinity. If a Negative Cycle exists, the concept of a "Shortest Path" mathematically ceases to exist.
 
 Bellman-Ford can detect this:
-After running the `V - 1` loops, run the loop exactly **one more time**. 
+After running the `V - 1` loops, run the loop exactly **one more time**.
 If any edge can *still* be mathematically relaxed, you have absolutely proven that a Negative Cycle exists in the graph.
 
+
 <Callout icon="warning" title="Time Complexity">
+
+
 Because it brute-forces every edge repeatedly, Bellman-Ford is catastrophically slow. Its mathematical time complexity is **`O(V * E)`**. On a dense graph, this approaches `O(V^3)`. Only use Bellman-Ford if you absolutely know you have negative edge weights; otherwise, always use Dijkstra.
+
+
 </Callout>
 
-</ConceptTemplate>
+

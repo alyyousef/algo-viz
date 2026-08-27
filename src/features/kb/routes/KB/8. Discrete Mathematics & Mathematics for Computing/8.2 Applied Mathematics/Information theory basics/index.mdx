@@ -1,8 +1,47 @@
+---
+title: Information Theory
+description: "The mathematical study of the quantification, storage, and communication of digital data, founded by Claude Shannon in 1948, establishing the absolute physical limits of data compression and network bandwidth."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Information theory basics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Information Theory"
+  subtitle="The Mathematics of Data"
+  tags={['Mathematics', 'Computer Science', 'Networking', 'Compression']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In 1948, Claude Shannon published a paper that single-handedly invented the digital age. He proved that "Information" is not an abstract human concept—it is a mathematically quantifiable physical property, measured in **Bits**.
 
-</ConceptTemplate>
+## 1. Shannon Entropy ($H$)
+Entropy is the mathematical measure of uncertainty, surprise, or "unpredictability" in a dataset.
+If a coin is double-headed, flipping it provides 0 bits of information (you already knew the outcome, there is no surprise). If a coin is perfectly fair, flipping it provides exactly 1 Bit of mathematical entropy.
+
+The equation for Entropy is:
+$H(X) = - \sum P(x) \log_2 P(x)$
+
+
+<Callout type="warning" title="The Limit of Compression">
+
+
+  Shannon's Source Coding Theorem mathematically proves that **Entropy is the absolute minimum limit of lossless data compression**. If a 10MB text file has a mathematical Entropy of 3MB, it is physically impossible to compress that file below 3MB without destroying data. Algorithms like ZIP and GZIP simply try to push files as close to their Shannon Entropy limit as possible.
+
+
+</Callout>
+
+
+## 2. The Noisy-Channel Coding Theorem
+If you send a Wi-Fi signal through a wall, noise will flip some 1s to 0s. How do you guarantee perfectly accurate downloads?
+Shannon proved that every communication channel has a mathematical speed limit, called the **Channel Capacity**. He proved that as long as your data transmission rate is below this capacity limit, it is mathematically guaranteed that you can design Error-Correcting Codes (adding redundant bits) to achieve 100% error-free communication, no matter how noisy the environment is.
+
+## 3. Impact
+Information Theory is why we can compress 4K video (H.264), why we can transmit error-free data from the Voyager space probe 15 billion miles away, and why deep learning models minimize "Cross-Entropy Loss" to learn optimally.
+
+\n

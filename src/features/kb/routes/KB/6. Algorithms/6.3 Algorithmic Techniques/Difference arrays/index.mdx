@@ -1,8 +1,31 @@
+---
+title: Difference Arrays
+description: "A mathematical array manipulation technique used to perform multiple range addition or subtraction updates on an array in strictly O(1) time per update."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Difference arrays">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Difference Arrays"
+  subtitle="O(1) Range Updates"
+  tags={['Algorithms', 'Techniques', 'Arrays', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you have an array of 100,000 zeroes, and a user commands: *"Add 5 to all indices from index 10 to index 90,000"*, a standard loop mathematically requires 90,000 operations (O(N)). If the user issues 1,000 of these commands, the Time Complexity degrades to a catastrophic O(N * Q).
 
-</ConceptTemplate>
+## 1. The Mathematical Derivative
+Instead of updating the actual array, you create a **Difference Array**, which stores the mathematical difference between adjacent elements (`diff[i] = A[i] - A[i-1]`).
+To add 5 to the range [10, 90000], you perform exactly **two** mathematical operations in O(1) time:
+1. `diff[10] += 5` (This tells the system that starting at index 10, the values jump up by 5).
+2. `diff[90001] -= 5` (This tells the system that after index 90,000, the "jump" is canceled out).
+
+## 2. The Prefix Sum Rebirth
+After you process all 1,000 range updates in blazing fast O(1) time each, you must convert the Difference Array back into the actual array.
+This is done mathematically by calculating the **Prefix Sum** of the Difference Array. As you sweep from left to right adding the values, the "+5" at index 10 mathematically cascades across the array, inflating all values by 5, until it hits the "-5" at index 90001, which mathematically cancels the cascade.
+

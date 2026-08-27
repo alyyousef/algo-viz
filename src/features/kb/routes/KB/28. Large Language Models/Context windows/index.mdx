@@ -4,23 +4,36 @@ description: The absolute cognitive limit of an LLM, defining the maximum number
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Context Windows">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Context Windows">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An LLM does not have long-term memory. It does not "remember" you from yesterday. Every time you send a message, the entire chat history must be bundled up and sent to the model so it understands the context of the conversation.
 
-The **Context Window** is the maximum physical capacity of tokens (words/sub-words) that the LLM's architecture can process in a single request. 
+The **Context Window** is the maximum physical capacity of tokens (words/sub-words) that the LLM's architecture can process in a single request.
 
 ## 1. The Quadratic Cost of Context
 
 Why didn't early models like GPT-3 have massive context windows? Because the core mechanism of the Transformer architecture (**Self-Attention**) scales *quadratically*.
-If you double the context window, the computational power (and RAM) required to process it doesn't double; it quadruples. 
+If you double the context window, the computational power (and RAM) required to process it doesn't double; it quadruples.
 
 - A 4,000 token context window requires X amount of VRAM.
 - A 128,000 token context window requires roughly 1,024 times more VRAM to compute the attention matrix.
 
+
 <Callout icon="warning" title="Lost in the Middle">
+
+
   Even if a model advertises a massive 200,000 token context window, they often suffer from the "Lost in the Middle" phenomenon. Research shows that LLMs accurately retrieve information from the very beginning and the very end of a massive prompt, but severely degrade and hallucinate when trying to pull facts buried in the exact middle of the context window.
+
+
 </Callout>
+
 
 ## 2. Modern Expansions
 
@@ -31,4 +44,3 @@ Through architectural breakthroughs (like FlashAttention, Ring Attention, and Ro
 
 When a conversation exceeds the context window, the oldest messages must be permanently truncated (deleted) from the prompt, causing the LLM to instantly "forget" the beginning of the conversation.
 
-</ConceptTemplate>

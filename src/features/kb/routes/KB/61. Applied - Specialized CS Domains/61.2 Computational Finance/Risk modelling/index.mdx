@@ -4,10 +4,16 @@ description: The use of formal econometric techniques to determine the aggregate
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Risk Modelling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Risk Modelling">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 2008, the global financial system collapsed because the **Risk Models** were biologically wrong.
 
 Banks use computer science to mathematically calculate "Value at Risk" (VaR)—the maximum amount of money they could theoretically lose in a single day. Risk Modelling involves mathematically combining the volatility of thousands of different assets and, crucially, calculating their *correlation*. If the model incorrectly assumes that Housing Prices in Florida have 0% correlation with Housing Prices in Nevada, the bank will mathematically believe it is safe, right up until the moment it goes biologically bankrupt.
 
-</ConceptTemplate>

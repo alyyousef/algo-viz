@@ -4,15 +4,28 @@ description: A web security vulnerability that allows an attacker to read arbitr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Directory Traversal (Path Traversal)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Directory Traversal (Path Traversal)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Web servers are mathematically designed to only serve files from a specific, public folder (the "web root", like `/var/www/html`).
 
 A **Directory Traversal** vulnerability occurs when a developer writes code that takes user input to construct a file path, but fails to properly sanitize the input. By injecting "dot-dot-slash" (`../`) sequences, the attacker can mathematically command the server to traverse *up* and out of the web root, accessing private operating system files.
 
+
 <Callout icon="tip" title="The Classic Payload">
+
+
   If a website loads an image via `website.com/loadImage?file=logo.png`, an attacker will mathematically manipulate the URL to: `website.com/loadImage?file=../../../../etc/passwd`. If vulnerable, the server will travel up 4 directories to the root of the Linux filesystem, read the sensitive password file, and return it to the attacker's browser.
+
+
 </Callout>
+
 
 ## Mitigation Strategies
 
@@ -20,4 +33,3 @@ A **Directory Traversal** vulnerability occurs when a developer writes code that
 2. **Whitelist Valid Files:** If the user must select a file (e.g., choosing a language file), strictly mathematically map their input to an internal hardcoded array (e.g., `1 = en.txt`, `2 = fr.txt`) rather than accepting a raw filename.
 3. **Use Safe Path APIs:** Modern backend languages have built-in APIs (like `path.basename()` in Node.js) that mathematically strip out directory traversal characters (`../`) before the filesystem attempts to read the file.
 
-</ConceptTemplate>

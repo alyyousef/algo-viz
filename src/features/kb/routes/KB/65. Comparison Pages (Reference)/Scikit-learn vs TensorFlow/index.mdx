@@ -1,8 +1,31 @@
+---
+title: Scikit-learn vs TensorFlow
+description: "A comparison of Machine Learning libraries, delineating the absolute boundary between traditional, mathematically elegant statistical models (Scikit-Learn) and massive, GPU-accelerated Neural Networks (TensorFlow)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scikit-learn vs TensorFlow">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Scikit-learn vs TensorFlow"
+  subtitle="Traditional ML vs Deep Learning"
+  tags={['Comparison', 'Machine Learning', 'AI', 'Data Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A common mistake for beginners is attempting to solve every problem with a Neural Network. In reality, traditional Machine Learning is often mathematically superior for standard tabular data.
 
-</ConceptTemplate>
+## 1. Scikit-learn (Traditional Machine Learning)
+- **Algorithms**: Random Forests, Support Vector Machines (SVM), Logistic Regression, K-Means Clustering, PCA.
+- **Use Case**: **Tabular Data** (CSVs, SQL databases). If you are trying to predict house prices based on Square Footage and Zip Code, Scikit-learn is the mathematically correct tool.
+- **Performance**: Extremely fast to train on a standard CPU. Models are highly interpretable (you can mathematically explain exactly *why* a Random Forest denied a loan).
+
+## 2. TensorFlow / PyTorch (Deep Learning)
+- **Algorithms**: Deep Neural Networks, Convolutional Networks (CNNs), Transformers (LLMs).
+- **Use Case**: **Unstructured Data** (Images, Audio, Raw Text). If you are building a self-driving car vision system or ChatGPT, traditional algorithms mathematically fail. You *must* use Deep Learning.
+- **Performance**: Requires massive datasets (millions of examples) and expensive GPUs to train. The resulting models are mathematical "Black Boxes"; it is nearly impossible to explain exactly why a neural network made a specific decision.
+

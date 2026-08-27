@@ -8,23 +8,23 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Long Short-Term Memory (LSTM) networks are a special kind of Recurrent Neural Network (RNN), capable of learning long-term dependencies. They were introduced by Hochreiter and Schmidhuber in 1997 to explicitly address the vanishing gradient problem that plagues standard RNNs.
 
+
 <Callout icon="success" title="The Highway for Gradients">
+
+
   LSTMs solve the vanishing gradient problem by introducing a "cell state" that runs straight down the entire chain, with only minor linear interactions. It acts like a conveyor belt, making it very easy for information (and gradients) to flow along it unchanged.
+
+
 </Callout>
+
 
 ## The Architecture of an LSTM
 
 While a standard RNN has a single neural network layer (like a tanh layer) in its repeating module, an LSTM has a more complex structure with four interacting layers, often referred to as "gates."
 
-<ComparisonTable 
-  headers={['Gate', 'Purpose', 'Activation']}
-  rows={[
-    ['Forget Gate', 'Decides what information to throw away from the cell state.', 'Sigmoid (outputs 0 to 1)'],
-    ['Input Gate', 'Decides which values from the input will be used to update the memory state.', 'Sigmoid & Tanh'],
-    ['Cell State Update', 'Calculates the new candidate values and updates the main cell state.', 'Linear Addition'],
-    ['Output Gate', 'Decides what the next hidden state should be, based on the cell state.', 'Sigmoid & Tanh']
-  ]}
-/>
+
+<ComparisonTable headers={['Gate', 'Purpose', 'Activation']} rows={[ ['Forget Gate', 'Decides what information to throw away from the cell state.', 'Sigmoid (outputs 0 to 1)'], ['Input Gate', 'Decides which values from the input will be used to update the memory state.', 'Sigmoid & Tanh'], ['Cell State Update', 'Calculates the new candidate values and updates the main cell state.', 'Linear Addition'], ['Output Gate', 'Decides what the next hidden state should be, based on the cell state.', 'Sigmoid & Tanh'] ]} />
+
 
 ### 1. The Forget Gate
 The first step is deciding what information to discard. It looks at the previous hidden state $h_{t-1}$ and the current input $x_t$, and outputs a number between 0 and 1 for each number in the cell state $C_{t-1}$. A 1 means "keep completely," and a 0 means "get rid of completely."
@@ -35,8 +35,14 @@ Next, it decides what new information to store. A sigmoid layer (the "input gate
 ### 3. The Output Gate
 Finally, it decides what to output. The output is based on the cell state, but filtered. A sigmoid layer decides what parts of the cell state make it to the output, and the cell state is pushed through a tanh to normalize values between -1 and 1.
 
+
 <Callout icon="tip" title="GRUs vs LSTMs">
+
+
   Gated Recurrent Units (GRUs) are a popular variation of LSTMs. They combine the forget and input gates into a single "update gate" and merge the cell state and hidden state. This makes them simpler to implement and faster to train than LSTMs, often with similar performance.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

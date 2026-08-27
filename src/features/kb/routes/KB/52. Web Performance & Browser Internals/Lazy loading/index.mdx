@@ -4,16 +4,28 @@ description: The practice of delaying load or initialization of resources or obj
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lazy Loading">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lazy Loading">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a user visits your homepage, and you have an Image Gallery mathematically located at the absolute bottom of the page (10,000 pixels down), why should the browser download those images immediately?
 
 **Lazy Loading** is the architectural practice of deferring the mathematical execution or downloading of resources until the user physically scrolls them into the Viewport.
 
+
 <Callout icon="tip" title="Native HTML Lazy Loading">
-  Historically, developers had to write complex Intersection Observer JavaScript to achieve this. 
-  
+
+
+  Historically, developers had to write complex Intersection Observer JavaScript to achieve this.
+
   Today, it is built directly into the Chromium/WebKit rendering engines. You simply add `<img src="heavy.png" loading="lazy" />`. The browser mathematically calculates the scroll position and only opens the network connection when the image is about to biologically enter the screen.
+
+
 </Callout>
 
-</ConceptTemplate>
+

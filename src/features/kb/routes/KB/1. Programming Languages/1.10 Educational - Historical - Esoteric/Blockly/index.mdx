@@ -1,8 +1,26 @@
+---
+title: Blockly
+description: A visual, block-based programming language and library created by Google, designed to teach programming concepts to beginners.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Blockly">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Blockly">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Google, Blockly is not a standalone application, but rather a client-side JavaScript library for adding a visual, block-based code editor to web and mobile apps. It is the underlying technology powering massive educational platforms like Code.org and MIT Scratch (3.0+).
 
-</ConceptTemplate>
+## 1. Visual Syntax
+Instead of typing text, users drag and drop interlocking graphical blocks to construct programs.
+Because the blocks are designed like puzzle pieces, it is mathematically impossible for a user to make a syntax error (e.g., trying to place a string block into a math block). This eliminates the frustration of missed semicolons, allowing beginners to focus entirely on logic.
+
+## 2. Code Generation
+Unlike Scratch, which executes the blocks directly in its own engine, Blockly is fundamentally a **code generator**.
+It can take a visual tree of blocks and mathematically compile them down into completely valid JavaScript, Python, PHP, Lua, or Dart code.
+This provides a crucial bridge for students, allowing them to visually construct logic and immediately see the equivalent text-based syntax.
+

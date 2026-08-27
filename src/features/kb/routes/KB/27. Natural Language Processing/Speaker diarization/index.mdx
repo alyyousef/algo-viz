@@ -1,8 +1,25 @@
+---
+title: Speaker Diarization
+description: The advanced audio-processing algorithm that mathematically answers the question "Who spoke when?" by clustering audio segments based on unique human vocal biometrics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Speaker diarization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Speaker Diarization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you pass a 1-hour audio recording of a board meeting into a Speech-to-Text engine, you get a massive block of text. To be useful, the text must be mathematically split and assigned to Speaker 1, Speaker 2, etc. This is Diarization.
 
-</ConceptTemplate>
+## 1. Acoustic Feature Extraction
+The algorithm does not care what words are being spoken; it only cares about the physical physics of the voice.
+It breaks the audio into tiny 20-millisecond frames. For each frame, it mathematically calculates the **Mel-Frequency Cepstral Coefficients (MFCCs)**. These coefficients are a mathematical representation of the physical shape of the speaker's vocal tract.
+
+## 2. Clustering (The i-Vector)
+Once the audio is converted into thousands of mathematical vectors, the algorithm uses unsupervised clustering (like Gaussian Mixture Models or K-Means).
+It mathematically groups the vectors. If 400 frames map to a very similar vocal tract shape, the algorithm clusters them and labels them "Speaker A." If the vocal tract shape mathematically shifts, it creates a new cluster "Speaker B." It then overlays these clusters onto a timeline, generating a precise mathematical log of exactly when each person started and stopped speaking.
+

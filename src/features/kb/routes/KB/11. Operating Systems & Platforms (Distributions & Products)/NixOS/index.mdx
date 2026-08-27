@@ -4,7 +4,14 @@ description: A wildly innovative, declarative operating system where the entire 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NixOS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NixOS">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **NixOS** is not just another Linux distribution; it is a fundamental rethinking of how operating systems should work. It applies the concepts of Functional Programming to operating system management.
 
@@ -22,12 +29,17 @@ services.nginx.enable = true;
 
 When you run `nixos-rebuild switch`, the Nix package manager reads that file and mathematically generates the *exact* OS state described. Nothing else exists.
 
+
 <Callout icon="success" title="Generations and Rollbacks">
-  Because packages in NixOS are stored in isolated, cryptographically hashed directories (e.g., `/nix/store/a5b8...-firefox-110`) rather than a global `/usr/bin` folder, the OS physically cannot suffer from Dependency Hell. 
+
+
+  Because packages in NixOS are stored in isolated, cryptographically hashed directories (e.g., `/nix/store/a5b8...-firefox-110`) rather than a global `/usr/bin` folder, the OS physically cannot suffer from Dependency Hell.
   Every time you change the config file, NixOS creates a new "Generation". If the new configuration breaks your computer, you simply reboot into Generation 4, and your OS is mathematically identical to how it was yesterday.
+
+
 </Callout>
+
 
 ## The Learning Curve
 While NixOS is arguably the most robust Linux distribution ever created, its learning curve is notoriously vertical. Users must learn the completely custom, highly complex **Nix language** to do even simple tasks.
 
-</ConceptTemplate>

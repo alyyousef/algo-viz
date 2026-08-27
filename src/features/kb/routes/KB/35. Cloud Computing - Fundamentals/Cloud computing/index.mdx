@@ -4,9 +4,16 @@ description: The delivery of computing services—including servers, storage, da
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cloud Computing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cloud Computing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Historically, if a company wanted to launch a website, they had to physically purchase a $10,000 server, plug it into the wall, install an operating system, and hire a systems administrator to keep it from catching fire. 
+Historically, if a company wanted to launch a website, they had to physically purchase a $10,000 server, plug it into the wall, install an operating system, and hire a systems administrator to keep it from catching fire.
 
 **Cloud Computing** is the practice of renting those servers from massive tech companies (like Amazon, Microsoft, or Google) instead of buying them yourself.
 
@@ -22,4 +29,3 @@ Historically, if a company wanted to launch a website, they had to physically pu
 - **Private Cloud**: A cloud environment dedicated entirely to one single organization, usually maintained on-site behind a corporate firewall. Extremely expensive, but required by some banks and governments.
 - **Hybrid Cloud**: A combination of both. A bank might run its highly sensitive database on a Private Cloud, but run its front-end web servers on the Public Cloud to handle traffic spikes.
 
-</ConceptTemplate>

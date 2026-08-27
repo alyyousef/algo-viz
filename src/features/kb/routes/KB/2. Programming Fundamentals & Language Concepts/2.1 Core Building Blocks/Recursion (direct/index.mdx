@@ -1,8 +1,26 @@
+---
+title: Direct Recursion
+description: A mathematical programming technique where a function calls itself to break down a massive problem into identical, smaller sub-problems.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Recursion (direct">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Direct Recursion">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Direct Recursion occurs when a function mathematically invokes its own definition within its own body.
 
-</ConceptTemplate>
+## 1. The Two Mathematical Rules
+For a recursive function to be mathematically sound (and not crash the computer), it must have two things:
+1. **The Base Case**: A mathematical condition that stops the recursion. (e.g., `if (n <= 1) return 1;`).
+2. **The Recursive Step**: The function must mathematically alter the state (e.g., `n - 1`) and pass the new state into itself, mathematically guaranteeing that it will eventually hit the Base Case.
+
+## 2. The Call Stack Overhead
+Recursion is mathematically elegant (it is how trees and graphs are naturally traversed), but it is physically expensive.
+Every time a function calls itself, the CPU must mathematically allocate a brand new Stack Frame in RAM to hold the local variables for that specific invocation. If you recursively calculate the factorial of 10,000, you will mathematically generate 10,000 stacked frames in memory. The operating system will detect that you have exhausted the memory allocated for the Stack and mathematically terminate the program with a **Stack Overflow Error**.
+

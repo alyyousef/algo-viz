@@ -1,8 +1,26 @@
+---
+title: Vision Transformers (ViT)
+description: A paradigm-shifting architecture that proved the Transformer—originally designed for natural language—can mathematically dominate Convolutional Neural Networks (CNNs) in pure Computer Vision tasks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Vision Transformers (ViT)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vision Transformers (ViT)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For a decade, CNNs (ResNet, VGG) were the undisputed kings of vision. They mathematically forced the AI to look at localized patches (convolutions). Vision Transformers destroyed this assumption, proving that massive Attention mechanisms are superior.
 
-</ConceptTemplate>
+## 1. Patches as Words (Tokens)
+A Transformer expects a sequence of words (Tokens). You cannot feed it a sequence of 3 million pixels; the $O(N^2)$ mathematical complexity of the Attention mechanism will instantly exhaust all VRAM.
+ViT solves this by mathematically chopping the image into a grid of 16x16 pixel squares (**Patches**).
+It flattens each $16 \times 16$ patch into a 1D Vector, exactly as if it were a word in a sentence. It then feeds this sequence of Patches directly into a standard NLP Transformer.
+
+## 2. Global vs. Local Receptive Fields
+A CNN is mathematically nearsighted. A filter only looks at a 3x3 grid. To understand that a dog's head is connected to a dog's tail, the CNN must stack 50 layers to mathematically widen its "Receptive Field."
+A Vision Transformer has a **Global Receptive Field** from Layer 1. The mathematical Attention mechanism immediately calculates the relationship between Patch 1 (top left corner) and Patch 256 (bottom right corner). This allows ViT to learn global spatial patterns much faster. However, because ViT lacks the hardcoded "inductive bias" of a CNN, it requires astronomically more data (hundreds of millions of images) to mathematically deduce the basic physics of the visual world.
+

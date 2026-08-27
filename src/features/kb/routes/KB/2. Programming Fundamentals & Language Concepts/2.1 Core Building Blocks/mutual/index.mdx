@@ -1,8 +1,36 @@
+---
+title: Mutual Recursion
+description: A complex mathematical pattern where two or more functions recurse by calling each other in an alternating cycle.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="mutual">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Mutual Recursion">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard recursion occurs when Function A mathematically calls Function A.
+**Mutual Recursion** occurs when Function A calls Function B, and Function B calls Function A, creating an alternating mathematical cycle.
 
-</ConceptTemplate>
+## 1. State Machine Modeling
+Mutual recursion is mathematically elegant for modeling State Machines.
+For example, determining if a number is even or odd without using the modulo operator:
+```javascript
+function isEven(n) {
+  if (n === 0) return true;
+  return isOdd(n - 1);
+}
+function isOdd(n) {
+  if (n === 0) return false;
+  return isEven(n - 1);
+}
+```
+The mathematical state bounces back and forth between the two functions until the base case is reached.
+
+## 2. The Stack Overflow Danger
+Mutual recursion is mathematically dangerous in languages that do not support Tail-Call Optimization (like Java or Python). Because Function A cannot mathematically finish until Function B finishes, and Function B cannot finish until Function A finishes, the Call Stack grows exponentially with every bounce. If you pass `10000` into `isEven`, the compiler will mathematically blow up the Stack and crash the program.
+

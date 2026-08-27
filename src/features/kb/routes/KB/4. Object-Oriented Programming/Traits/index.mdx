@@ -1,8 +1,38 @@
+---
+title: Traits
+description: A structural feature in languages like Scala and Rust that mathematically resolves the multiple inheritance problem by allowing isolated bundles of behavior to be securely composed into a class without traditional inheritance.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Traits">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Traits"
+  subtitle="Safe Mathematical Composition"
+  tags={['OOP', 'Scala', 'Rust', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Languages like Java outlawed Multiple Inheritance to avoid the Diamond Problem, replacing it with Interfaces. However, Interfaces mathematically cannot contain state (variables), which forces developers to duplicate code across multiple classes. Traits were invented to solve this exact architectural gap.
 
-</ConceptTemplate>
+## 1. Behavior and State
+A Trait is mathematically similar to a Mixin, but with stricter compiler enforcement.
+Unlike a Java Interface, a Trait in Scala or Rust can contain fully implemented methods *and* state variables.
+```scala
+trait Logger {
+  var logCount = 0 // State
+  def log(msg: String): Unit = { // Behavior
+    println(s"[$logCount] $msg")
+    logCount += 1
+  }
+}
+```
+
+## 2. Linearization (Solving the Diamond Problem)
+If a class mixes in two Traits that both have a `log()` method, how does the compiler mathematically avoid the Diamond Problem?
+Languages that use Traits use an algorithm called **Linearization**. The compiler mathematically analyzes the order in which the Traits were mixed into the class (e.g., `class User extends Entity with Logger with Auditor`) and mathematically flattens them into a strict, linear hierarchy. If a conflict occurs, the compiler deterministically chooses the implementation from the right-most Trait, eliminating ambiguity.
+

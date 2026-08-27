@@ -4,25 +4,32 @@ description: The holy grail of cryptography that allows computers to perform mat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Homomorphic Encryption">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Homomorphic Encryption">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In traditional systems, data is encrypted at rest (on the hard drive) and in transit (over TLS). However, if a cloud provider needs to calculate the average salary of your employees, you must provide them the key to decrypt the data into RAM, exposing it to potential hackers or malicious cloud admins.
 
-**Homomorphic Encryption** is a revolutionary mathematical scheme that allows a computer to perform calculations directly on ciphertext. 
+**Homomorphic Encryption** is a revolutionary mathematical scheme that allows a computer to perform calculations directly on ciphertext.
+
 
 <Callout icon="success" title="The Magic of FHE">
+
+
   If $E(x)$ is the encryption function, Fully Homomorphic Encryption (FHE) guarantees that $E(2) + E(3) = E(5)$. You send encrypted numbers to the cloud, the cloud does complex math on the gibberish, and sends gibberish back. Only you, holding the private key, can decrypt the result to see the final answer. The cloud never sees your data.
+
+
 </Callout>
+
 
 ## The Performance Bottleneck
 
-<ComparisonTable 
-  headers={['Type', 'Capability', 'Performance']}
-  rows={[
-    ['Partially Homomorphic', 'Can perform ONLY addition OR ONLY multiplication, but not both.', 'Very fast. RSA is inherently partially homomorphic for multiplication.'],
-    ['Somewhat Homomorphic', 'Can perform both addition and multiplication, but only for a limited number of mathematical operations before the "noise" destroys the data.', 'Moderate speed, heavily researched.'],
-    ['Fully Homomorphic (FHE)', 'Can evaluate an infinite number of operations, allowing any arbitrary computer program to run on encrypted data.', 'Astronomically slow. Currently, FHE operations can be 10,000x to 1,000,000x slower than plaintext operations, limiting practical use.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Type', 'Capability', 'Performance']} rows={[ ['Partially Homomorphic', 'Can perform ONLY addition OR ONLY multiplication, but not both.', 'Very fast. RSA is inherently partially homomorphic for multiplication.'], ['Somewhat Homomorphic', 'Can perform both addition and multiplication, but only for a limited number of mathematical operations before the "noise" destroys the data.', 'Moderate speed, heavily researched.'], ['Fully Homomorphic (FHE)', 'Can evaluate an infinite number of operations, allowing any arbitrary computer program to run on encrypted data.', 'Astronomically slow. Currently, FHE operations can be 10,000x to 1,000,000x slower than plaintext operations, limiting practical use.'] ]} />
+
+

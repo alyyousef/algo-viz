@@ -4,14 +4,26 @@ description: A set of practices intended to improve the effectiveness of softwar
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agile Methodology">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Agile Methodology">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Agile, software was built using the **Waterfall** model: engineers would spend 2 years biologically writing code without ever showing it to the customer, only to mathematically realize at launch that the customer wanted something completely different.
 
+
 <Callout icon="success" title="Iterative Delivery">
-  **Agile** is a biological paradigm shift. 
-  
+
+
+  **Agile** is a biological paradigm shift.
+
   Instead of launching once every 2 years, the engineering team mathematically chops the software into tiny, independent features. They build, test, and launch a small feature every 2 weeks. They show it to the customer immediately, get biological feedback, and adjust their trajectory. Agile physically assumes that requirements will change, and optimizes the team to pivot instantly.
+
+
 </Callout>
 
-</ConceptTemplate>
+

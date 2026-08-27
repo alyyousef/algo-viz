@@ -1,0 +1,29 @@
+---
+title: Azure Storage Accounts
+description: The foundational mathematical container in Azure that groups together Blob, File, Queue, and Table storage under a single unified API endpoint and billing structure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Storage Accounts"
+  subtitle="The Unified Data Container"
+  tags={['Azure', 'Storage', 'Infrastructure']}
+>
+
+In AWS, S3 and EFS are completely separate services. In Azure, a **Storage Account** is a single, unified mathematical namespace that houses four distinct storage paradigms simultaneously.
+
+## 1. The Four Storage Pillars
+When you create a Storage Account (e.g., `mystorage`), Azure generates four unique API endpoints:
+- **Blob** (`mystorage.blob.core.windows.net`): Massive unstructured object storage (like AWS S3).
+- **File** (`mystorage.file.core.windows.net`): SMB network shares for mounting drives to Windows/Linux.
+- **Queue** (`mystorage.queue.core.windows.net`): Simple, lightweight messaging queues.
+- **Table** (`mystorage.table.core.windows.net`): A massive, schema-less NoSQL Key/Value store (the predecessor to Cosmos DB).
+By grouping these together, an administrator can apply a single IAM policy or network firewall rule mathematically across all four services at once.
+
+## 2. Redundancy Mathematics
+Storage Accounts provide strict mathematical guarantees against physical hardware failure:
+- **LRS (Locally Redundant Storage)**: 3 exact copies of your data within a single data center.
+- **ZRS (Zone-Redundant Storage)**: 3 copies spread across 3 entirely different data centers in the same city.
+- **GRS (Geo-Redundant Storage)**: 3 copies in your primary region, and another 3 copies asynchronously replicated to a secondary region 500 miles away (e.g., East US and West US). If a hurricane destroys the entire East Coast, your data survives mathematically on the West Coast.
+
+</TechnologyTemplate>

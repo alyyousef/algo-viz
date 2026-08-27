@@ -5,7 +5,14 @@ description: "The platform and toolset that popularized containerization by prov
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Docker">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Docker">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Linux had container features (LXC) for years, they were extremely difficult to use. In 2013, **Docker** revolutionized the software industry by introducing a user-friendly abstraction layer, a standard image format, and a centralized registry (Docker Hub).
 
@@ -22,8 +29,13 @@ Docker became so dominant that the industry feared a monopoly. In response, Dock
 
 Today, a "Docker image" is actually an "OCI image". This means you don't even need Docker to run them—you can use alternative OCI-compliant tools like **Podman** or **Buildah**.
 
+
 <Callout icon="tip" title="Docker Desktop vs Docker Engine">
+
+
 **Docker Engine** is the free, open-source daemon that runs natively on Linux. **Docker Desktop** is a proprietary GUI application for Mac and Windows that spins up a hidden Linux VM to run the Docker Engine.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,24 +4,32 @@ description: A caching pattern where the application writes data only to the cac
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Write-Back Cache (Write-Behind)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Write-Back Cache (Write-Behind)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If your application needs to handle 100,000 `UPDATE` queries per second, even a massive PostgreSQL cluster will physically melt. Hard drives cannot mathematically spin fast enough to record that many transactions.
 
 The **Write-Back** (or Write-Behind) pattern is the ultimate mathematical solution for extreme write-heavy workloads.
 
+
 <Callout icon="warning" title="Dangerous but Blazing Fast">
+
+
   In Write-Back, the application writes data *only* to the Cache (Redis), and immediately returns "Success" to the user. Later, an asynchronous background worker mathematically "flushes" the changed data from the Cache into the permanent Database.
+
+
 </Callout>
+
 
 ## Mathematical Trade-Offs
 
-<ComparisonTable 
-  headers={['Pros', 'Cons']}
-  rows={[
-    ['Infinite Write Throughput. Writing to RAM takes ~0.1ms. You can mathematically accept massive spikes of traffic without crashing your DB.', 'Data Loss Risk. If the Redis server loses power *before* the background worker flushes the data to the DB, the data is mathematically gone forever.'],
-    ['Database Batching. Instead of sending 10,000 individual `UPDATE` statements to the DB, the worker can mathematically combine them into a single, highly efficient bulk query.', 'Extreme Complexity. Building a robust system that tracks exactly which cache keys are "dirty" (unflushed) and safely moving them to the DB is mathematically difficult.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Pros', 'Cons']} rows={[ ['Infinite Write Throughput. Writing to RAM takes ~0.1ms. You can mathematically accept massive spikes of traffic without crashing your DB.', 'Data Loss Risk. If the Redis server loses power *before* the background worker flushes the data to the DB, the data is mathematically gone forever.'], ['Database Batching. Instead of sending 10,000 individual `UPDATE` statements to the DB, the worker can mathematically combine them into a single, highly efficient bulk query.', 'Extreme Complexity. Building a robust system that tracks exactly which cache keys are "dirty" (unflushed) and safely moving them to the DB is mathematically difficult.'] ]} />
+
+

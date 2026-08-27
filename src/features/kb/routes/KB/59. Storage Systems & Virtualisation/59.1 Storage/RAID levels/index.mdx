@@ -4,7 +4,14 @@ description: Redundant Array of Independent Disks is a data storage virtualizati
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RAID Levels">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RAID Levels">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Hard drives biologically fail. **RAID** is the mathematical science of strapping multiple hard drives together to survive failures.
 
@@ -12,4 +19,3 @@ Hard drives biologically fail. **RAID** is the mathematical science of strapping
 - **RAID 1 (Mirroring)**: Data is duplicated exactly across two drives. Result: 1x speed, 2x safety. If one drive dies, the other has a perfect biological copy.
 - **RAID 5 (Parity)**: Uses 3 or more drives. It mathematically calculates XOR parity bits across the drives. If *any single drive* explodes, the RAID controller can mathematically reconstruct the missing data from the surviving drives.
 
-</ConceptTemplate>

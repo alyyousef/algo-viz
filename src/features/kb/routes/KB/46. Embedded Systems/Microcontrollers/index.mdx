@@ -4,26 +4,38 @@ description: A small computer on a single integrated circuit containing a proces
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Microcontrollers (MCU)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microcontrollers (MCU)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Microcontroller (MCU)** is essentially an entire computer squeezed onto a single, microscopic piece of silicon, designed for a highly specific, low-power task.
 
 When you push a button on your microwave, the 32-bit CPU inside your laptop doesn't wake up to turn on the light. The microwave uses a $0.50 Microcontroller.
 
+
 <Callout icon="info" title="The System on a Chip (SoC)">
+
+
   Unlike a desktop PC (where the CPU, RAM, and Hard Drive are separate physical chips on a massive motherboard), an MCU contains all three strictly baked into the same piece of silicon:
   - **The Core:** A tiny, weak CPU (often running at just 16 MHz).
   - **The RAM:** Microscopic working memory (often 2KB to 32KB).
   - **The Flash:** Microscopic non-volatile storage for the code (often 32KB to 256KB).
   - **Peripherals:** Built-in hardware to talk to sensors (I2C, SPI, ADC).
+
+
 </Callout>
+
 
 ## Extreme Constraints
 
-Writing software for an MCU is entirely different from writing Web or Desktop software. 
-- You usually do not have an Operating System. 
-- You mathematically cannot allocate 1 Megabyte of RAM because the chip physically only has 8 Kilobytes. 
-- If you write an infinite loop that crashes, you cannot just "Task Manager" kill it; the user physically has to unplug the microwave from the wall. 
+Writing software for an MCU is entirely different from writing Web or Desktop software.
+- You usually do not have an Operating System.
+- You mathematically cannot allocate 1 Megabyte of RAM because the chip physically only has 8 Kilobytes.
+- If you write an infinite loop that crashes, you cannot just "Task Manager" kill it; the user physically has to unplug the microwave from the wall.
 - Therefore, MCU software (Firmware) is typically written in raw **C or C++**, heavily optimized for byte-perfect memory management.
 
-</ConceptTemplate>

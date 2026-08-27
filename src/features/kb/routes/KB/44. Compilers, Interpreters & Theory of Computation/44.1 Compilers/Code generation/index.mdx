@@ -4,15 +4,28 @@ description: The final phase of a compiler that converts the optimized intermedi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Code Generation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Code Generation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Once the compiler has Lexed, Parsed, Analyzed, and mathematically Optimized the code, it must translate that abstract mathematical structure into the brutal reality of physical silicon.
 
 The **Code Generator** translates the Intermediate Representation (IR) into the target language—whether that is x86 Assembly for an Intel CPU, ARM64 Assembly for an Apple Silicon chip, or WebAssembly for a browser.
 
+
 <Callout icon="warning" title="Register Allocation">
+
+
   The hardest mathematical problem in Code Generation is **Register Allocation**. A CPU only has a tiny number of ultra-fast physical memory slots (Registers), e.g., 16 on x86-64. If your program uses 100 variables simultaneously, the Code Generator must mathematically calculate which variables get to live in the fast Registers, and which get "spilled" to the slower RAM.
+
+
 </Callout>
+
 
 ## The Translation Process
 
@@ -26,4 +39,3 @@ The Code Generator must physically map this to the CPU architecture:
 
 *Note: In languages like Java or C#, the Code Generator targets an imaginary CPU (the JVM or CLR), outputting Bytecode instead of physical Assembly.*
 
-</ConceptTemplate>

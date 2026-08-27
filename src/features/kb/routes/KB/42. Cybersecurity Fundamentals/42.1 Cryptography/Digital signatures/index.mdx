@@ -5,7 +5,14 @@ description: The cryptographic mechanism that guarantees the authenticity, integ
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-<ConceptTemplate title="Digital Signatures">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Digital Signatures">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Digital Signature** is the mathematical equivalent of a handwritten signature or a wax seal on an envelope. It uses Public-Key Cryptography to prove that a message originated from a specific person and that the message was not tampered with during transit.
 
@@ -31,16 +38,21 @@ Alice wants to send a signed contract to Bob.
 ### Step 2: Verification (The Receiver)
 1. Bob receives the document and the signature.
 2. Bob runs the document through the exact same Hashing Algorithm (SHA-256) to generate his own Hash.
-3. Bob uses Alice's publically available **Public Key** to **decrypt** the Digital Signature. 
+3. Bob uses Alice's publically available **Public Key** to **decrypt** the Digital Signature.
 4. Bob compares the Hash he generated with the Hash he just decrypted. If they are a 100% perfect match, the signature is valid.
 
+
 <Callout icon="info" title="Why Hash first?">
+
+
   Asymmetric encryption (like RSA) is mathematically incredibly slow and has strict data size limits. You cannot encrypt a 500-page PDF using a Private Key. By hashing the PDF into a tiny 256-bit string first, the cryptography only has to encrypt the hash, taking milliseconds rather than hours.
+
+
 </Callout>
+
 
 ## 3. Real-World Applications
 
 - **HTTPS / SSL Certificates**: When you visit your bank's website, your browser verifies a Digital Signature from a Certificate Authority (like DigiCert) to ensure the server actually belongs to the bank.
 - **Software Binaries**: When you download an iOS update or a Windows `.exe`, the operating system verifies Apple's or Microsoft's digital signature to ensure a hacker didn't inject malware into the download.
 
-</ConceptTemplate>

@@ -4,7 +4,14 @@ description: The architectural patterns required to capture complex user input s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Forms & Validation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Forms & Validation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Building forms in modern SPAs is notoriously difficult. You must track the value of 20 different text inputs, run Regex validation in real-time, display localized error messages, and handle loading states—all without completely destroying the app's performance.
 
@@ -12,8 +19,8 @@ Building forms in modern SPAs is notoriously difficult. You must track the value
 In standard React, developers build "Controlled Forms". Every time a user types a single character in the password field, React updates the State, which forces the *entire massive form component* to re-render. If you type 10 characters, the form re-renders 10 times. On a complex form with heavy UI, this causes massive keystroke latency.
 
 ## React Hook Form (The Uncontrolled Revolution)
-React Hook Form mathematically solved this performance crisis. 
-Instead of tracking every keystroke in React State, it uses **Uncontrolled Components**. It registers a standard HTML input using a Javascript `ref`. 
+React Hook Form mathematically solved this performance crisis.
+Instead of tracking every keystroke in React State, it uses **Uncontrolled Components**. It registers a standard HTML input using a Javascript `ref`.
 
 When the user types, the DOM updates natively, but React does *not* re-render. The values are mathematically extracted directly from the DOM only when the form is actually submitted. This drastically reduces re-renders to near-zero.
 
@@ -34,4 +41,3 @@ Historically the most popular form library in React. It heavily popularized the 
 ## Schema Validation (Zod)
 Instead of writing manual IF-statements for validation, the industry utilizes **Zod** (a TypeScript-first schema validation library). You mathematically define the exact shape of your data, and tools like React Hook Form natively integrate with Zod to enforce the rules.
 
-</ConceptTemplate>

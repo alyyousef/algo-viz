@@ -4,14 +4,26 @@ description: A class of data compression algorithms that allows the original dat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lossless Compression">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lossless Compression">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you compress an Excel spreadsheet or a compiled `.exe` program into a ZIP file, you must use **Lossless Compression**.
 
+
 <Callout icon="tip" title="Perfect Reconstruction">
+
+
   Lossless compression mathematically guarantees that when you unzip the file, the resulting data will be biologically identical to the original data, down to the exact `0` and `1`.
-  
+
   If you lose a single bit of an Excel spreadsheet, the entire file is mathematically corrupted. Lossless algorithms (like ZIP, GZIP, or FLAC) exploit Shannon Entropy to remove redundancy without destroying any actual Information Content.
+
+
 </Callout>
 
-</ConceptTemplate>
+

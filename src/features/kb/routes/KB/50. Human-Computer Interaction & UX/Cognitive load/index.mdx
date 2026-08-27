@@ -4,16 +4,29 @@ description: The total amount of mental effort being used in the working memory,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cognitive Load">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cognitive Load">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The human brain is a biological CPU. Its RAM (Working Memory) is mathematically incredibly limited. The average human can only hold about **7 (plus or minus 2)** discrete items in their working memory at one time.
 
-**Cognitive Load** is the amount of mathematical processing power a software interface demands from the user's brain. 
+**Cognitive Load** is the amount of mathematical processing power a software interface demands from the user's brain.
+
 
 <Callout icon="error" title="Intrinsic vs Extraneous Load">
+
+
   - **Intrinsic Load:** The unavoidable mental effort required to do the task. (e.g., filing your taxes is intrinsically complex. The math cannot be removed).
   - **Extraneous Load:** The completely unnecessary mental effort caused by terrible UI design. (e.g., forcing the user to memorize a 16-digit account number on Page 1, because Page 2 requires them to type it in). Good UX mathematically minimizes Extraneous Load to zero.
+
+
 </Callout>
+
 
 ## Hick's Law
 
@@ -21,4 +34,3 @@ The human brain is a biological CPU. Its RAM (Working Memory) is mathematically 
 
 If a TV remote has 50 buttons, the user's cognitive load spikes, and they freeze. If you hide 45 of those buttons in an on-screen menu, leaving only the 5 essential buttons on the physical remote (like the Apple TV remote), you mathematically reduce cognitive load and increase usability.
 
-</ConceptTemplate>

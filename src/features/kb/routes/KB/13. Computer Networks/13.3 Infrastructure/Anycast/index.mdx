@@ -4,23 +4,29 @@ description: A brilliant BGP routing methodology where a single IP address is sh
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Anycast Routing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Anycast Routing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In traditional networking (Unicast), exactly one IP address belongs to exactly one server in one physical location. 
+In traditional networking (Unicast), exactly one IP address belongs to exactly one server in one physical location.
 
 **Anycast** breaks this rule entirely. With Anycast, you can deploy 100 identical servers across 100 different countries, and assign **the exact same Public IP address to all 100 of them.**
 
 ## How It Works (BGP Magic)
 
-If 100 servers all have the IP `8.8.8.8`, how does the internet know where to send your packet? 
+If 100 servers all have the IP `8.8.8.8`, how does the internet know where to send your packet?
 
-Anycast relies on **BGP (Border Gateway Protocol)**. All 100 servers broadcast a BGP route to the global internet, claiming they own `8.8.8.8`. 
-When your laptop in Tokyo sends a packet to `8.8.8.8`, the BGP routers on the internet calculate the mathematically shortest path. The routers automatically send your packet to the server in Tokyo, completely ignoring the other 99 servers. 
+Anycast relies on **BGP (Border Gateway Protocol)**. All 100 servers broadcast a BGP route to the global internet, claiming they own `8.8.8.8`.
+When your laptop in Tokyo sends a packet to `8.8.8.8`, the BGP routers on the internet calculate the mathematically shortest path. The routers automatically send your packet to the server in Tokyo, completely ignoring the other 99 servers.
 When a user in London pings `8.8.8.8`, their routers automatically send the packet to the server in London.
 
 ## The Ultimate DDoS Defense
 
-Anycast is the primary technology used by CDNs (like Cloudflare) and Root DNS servers to survive massive DDoS attacks. 
+Anycast is the primary technology used by CDNs (like Cloudflare) and Root DNS servers to survive massive DDoS attacks.
 If a massive botnet of hacked IoT cameras in Asia launches a 500 Gbps attack against an Anycast IP, the BGP routing protocol naturally traps all the malicious Asian traffic and forces it to hit the Asian servers. The servers in Europe and America remain completely untouched and online, effectively slicing the massive global DDoS attack into tiny, localized, manageable pieces.
 
-</ConceptTemplate>

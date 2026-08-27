@@ -4,15 +4,28 @@ description: A programming paradigm based on the concept of "objects", which con
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Object-Oriented Programming (OOP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Object-Oriented Programming (OOP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Object-Oriented Programming (OOP)** is the dominant programming paradigm in the enterprise software industry (popularized by Java, C++, and C#). 
+**Object-Oriented Programming (OOP)** is the dominant programming paradigm in the enterprise software industry (popularized by Java, C++, and C#).
 
 Unlike Procedural programming, which separates data from logic, OOP organizes software design around **Objects**—entities that bundle both the state (data/attributes) and the behavior (functions/methods) into a single cohesive unit.
 
+
 <Callout icon="info" title="Modeling the Real World">
+
+
   OOP attempts to map code to real-world concepts. If you are building a banking app, you create a `BankAccount` Class. This class holds the data (`balance`) and the logic (`deposit()`, `withdraw()`). You cannot access the balance directly; you must interact with the object's methods.
+
+
 </Callout>
+
 
 ## The Four Pillars of OOP
 
@@ -26,4 +39,3 @@ Unlike Procedural programming, which separates data from logic, OOP organizes so
 - **Strengths**: Exceptional for organizing massive, complex codebases (millions of lines of code) maintained by huge teams. It enforces modularity and code reuse.
 - **Weaknesses**: OOP can lead to over-engineering. Codebases often suffer from the "Gorilla Banana" problem (where to get a reusable banana, you must also inherit the gorilla holding it, and the entire jungle). It also introduces significant performance overhead due to pointer chasing and virtual method dispatches.
 
-</ConceptTemplate>

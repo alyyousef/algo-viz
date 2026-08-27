@@ -4,15 +4,28 @@ description: The rate of production or the rate at which something is processed 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Throughput">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Throughput">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In System Design, **Throughput** is the mathematical measurement of how much actual work a system can complete in a given time period.
 
 For a web server, it is typically measured in **Requests Per Second (RPS)** or **Queries Per Second (QPS)**. For a data pipeline, it is measured in megabytes or gigabytes per second.
 
+
 <Callout icon="info" title="The Highway Analogy">
+
+
   If Latency is the speed a single car travels down a highway, Throughput is the total number of cars that can pass through the tollbooth every minute. You can mathematically increase Throughput without improving Latency simply by adding more lanes to the highway (Horizontal Scaling).
+
+
 </Callout>
+
 
 ## Optimizing Throughput
 
@@ -22,4 +35,3 @@ If a system's throughput is hitting a mathematical ceiling, engineers typically 
 2. **Batching:** Sending 1,000 individual `INSERT` statements to a database over the network will bottleneck throughput due to network overhead. Sending one single `INSERT` statement containing 1,000 rows mathematically maximizes network efficiency.
 3. **Asynchronous I/O:** Using non-blocking architectures (like Node.js or Golang routines) ensures the CPU does not sit idle while waiting for network responses, allowing it to process thousands of other requests concurrently.
 
-</ConceptTemplate>

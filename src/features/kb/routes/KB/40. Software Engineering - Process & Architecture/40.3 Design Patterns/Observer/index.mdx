@@ -5,7 +5,14 @@ description: "A behavioral design pattern that lets you define a subscription me
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Observer Pattern">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Observer Pattern">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Observer Pattern** (also known as Pub/Sub) establishes a one-to-many relationship between a **Subject** (the state holder) and multiple **Observers** (the listeners). When the Subject changes state, all registered Observers are automatically notified and updated.
 
@@ -60,11 +67,16 @@ station.subscribe(phone);
 station.subscribe(new WindowDisplay());
 
 // Automatically triggers updates on both displays
-station.setTemperature(25); 
+station.setTemperature(25);
 ```
 
+
 <Callout icon="info" title="Frontend Frameworks">
+
+
 If you have used React (`useEffect`), Vue, or RxJS, you are using advanced variations of the Observer pattern. The UI components are "Observers" that subscribe to changes in the Application State (the "Subject").
+
+
 </Callout>
 
-</ConceptTemplate>
+

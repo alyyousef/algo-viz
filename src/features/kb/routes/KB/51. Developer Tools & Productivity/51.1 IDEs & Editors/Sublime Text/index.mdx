@@ -1,8 +1,29 @@
+---
+title: Sublime Text
+description: "A proprietary, lightning-fast cross-platform text editor that revolutionized modern coding in the 2010s by introducing mathematical multi-cursor editing, a distraction-free UI, and a powerful Python API."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sublime Text">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Sublime Text"
+  subtitle="The Speed King of Editors"
+  tags={['Editor', 'Tooling', 'Productivity', 'C++']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before VS Code existed, Sublime Text mathematically dominated the web development industry. Built entirely in C++ with a custom UI toolkit, it is renowned for its blistering, sub-millisecond mathematical rendering speed.
 
-</ConceptTemplate>
+## 1. Multiple Selections
+Sublime Text's greatest contribution to software engineering was popularizing **Multiple Selections (Multi-Cursor Editing)**.
+Instead of writing a complex Regex find-and-replace, a developer can hold `Ctrl` and click in 15 different places on the screen, mathematically spawning 15 independent blinking cursors. Typing one word instantly injects the text into all 15 locations simultaneously, drastically increasing editing speed.
+
+## 2. The Command Palette
+Sublime Text also popularized the **Command Palette** (`Ctrl+Shift+P`).
+Instead of mathematically digging through 10 layers of mouse menus to find "Toggle Word Wrap", the developer opens the Command Palette and types "wrap". The fuzzy-search algorithm mathematically finds the command instantly. This paradigm was so successful it was later copied by VS Code, Atom, and modern OS interfaces (like macOS Spotlight).
+

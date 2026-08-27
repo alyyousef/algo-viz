@@ -5,10 +5,17 @@ description: "A high-level, high-performance dynamic programming language specif
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Julia"
   icon="activity"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Julia**, first released in 2012, was created to solve the "Two-Language Problem" in data science and scientific computing.
 
@@ -41,11 +48,16 @@ end
 A = [1 2; 3 4]
 B = [5, 6]
 # Mathematical solving of linear systems (Ax = B)
-x = A \ B 
+x = A \ B
 ```
 
+
 <Callout icon="tip" title="Use Cases">
+
+
 Julia is highly popular in climate modeling, bioinformatics, macroeconomics, and computational physics. However, Python still dominates machine learning purely due to the overwhelming momentum of frameworks like PyTorch and TensorFlow.
+
+
 </Callout>
 
-</ConceptTemplate>
+

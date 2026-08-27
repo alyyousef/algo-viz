@@ -1,8 +1,29 @@
+---
+title: Git Hooks
+description: Automated, custom shell scripts that mathematically trigger at specific phases of the Git execution lifecycle (e.g., pre-commit, pre-push) to enforce local quality standards and prevent bad code from leaving a developer's machine.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Git hooks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Git Hooks"
+  subtitle="Local Automated Enforcement"
+  tags={['Version Control', 'Git', 'Automation', 'Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While a CI server protects the remote `main` branch, it wastes time and compute resources if a developer pushes code with obvious syntax errors. Git Hooks move mathematical validation left, executing directly on the developer's laptop before the code is ever pushed.
 
-</ConceptTemplate>
+## 1. The Pre-Commit Hook
+When a developer types `git commit`, the Git engine mathematically pauses and looks for an executable script in the `.git/hooks/pre-commit` directory.
+If this script exists, Git executes it. A standard pre-commit hook will run a Linter (like ESLint or Prettier) and a code formatter. If the script exits with a mathematical error code (e.g., `exit 1` because a variable is undefined), Git physically aborts the commit process. The developer is mathematically prevented from committing broken code to their local history.
+
+## 2. Security and Secret Scanning
+A common use case for the **pre-push hook** is secret scanning.
+Before the code is transmitted to GitHub, the hook uses regex to mathematically scan the code diff for AWS Access Keys or database passwords. If a human accidentally committed a secret, the hook catches it and aborts the push, preventing a catastrophic mathematical security breach before the data ever touches the internet.
+

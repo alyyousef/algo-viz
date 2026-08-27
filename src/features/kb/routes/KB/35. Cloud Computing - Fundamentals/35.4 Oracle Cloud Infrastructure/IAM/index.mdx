@@ -1,0 +1,27 @@
+---
+title: OCI Identity and Access Management (IAM)
+description: The mathematical security foundation of Oracle Cloud, utilizing strict human-readable policies to dictate exactly which users and groups can manage specific resources within compartmentalized boundaries.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Identity and Access Management (IAM)"
+  subtitle="Cloud Security Governance"
+  tags={['OCI', 'Security', 'Identity', 'Governance']}
+>
+
+Without IAM, anyone with the cloud console URL could delete your entire corporate database. OCI IAM is the mathematical gatekeeper that authenticates identities and authorizes their actions.
+
+## 1. Human-Readable Policies
+In AWS, IAM policies are written in massive, nested, mathematically complex JSON objects that are notoriously difficult to read.
+OCI took a fundamentally different architectural approach. OCI Policies are written in a **human-readable, SQL-like syntax**.
+```sql
+Allow group 'Database_Admins' to manage autonomous-database in compartment 'Production'
+```
+This statement is mathematically parsed by the OCI authorization engine. It clearly defines the Subject (the group), the Verbs (manage), the Resource (autonomous-database), and the Location (compartment). This drastically reduces the cognitive load on security auditors trying to prove exactly who has access to what.
+
+## 2. The Identity Domains Evolution
+Historically, OCI had two separate identity systems: OCI IAM (for raw cloud resources like VMs) and Oracle Identity Cloud Service (IDCS, for human SaaS applications like ERPs).
+Oracle mathematically merged these into **Identity Domains**. A single Identity Domain now provides full enterprise SSO (Single Sign-On), MFA (Multi-Factor Authentication), and user lifecycle management. If an employee is terminated in the HR system, their Identity Domain account is disabled, and they instantly, mathematically lose access to both their corporate email and their OCI Virtual Machines simultaneously.
+
+</TechnologyTemplate>

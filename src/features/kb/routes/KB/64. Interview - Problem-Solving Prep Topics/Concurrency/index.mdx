@@ -4,10 +4,16 @@ description: The ability of different parts or units of a program, algorithm, or
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Concurrency (Interview Prep)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Concurrency (Interview Prep)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Concurrency** is the mathematical nightmare of multithreaded programming.
 
 In an interview, you may be asked to design a thread-safe Singleton or a multi-threaded web scraper. You must biologically identify Race Conditions, and mathematically solve them using Mutexes (Locks), Semaphores, or atomic variables. More importantly, you must prove you can avoid **Deadlocks** (where Thread A holds Lock 1 waiting for Lock 2, while Thread B holds Lock 2 waiting for Lock 1, freezing the program forever).
 
-</ConceptTemplate>

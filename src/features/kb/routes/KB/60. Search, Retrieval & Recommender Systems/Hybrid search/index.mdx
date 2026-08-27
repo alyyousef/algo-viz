@@ -4,12 +4,18 @@ description: A search strategy that combines traditional keyword-based (lexical)
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hybrid Search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hybrid Search">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Neither BM25 nor Vector Search is mathematically perfect. 
+Neither BM25 nor Vector Search is mathematically perfect.
 - BM25 fails if the user biologically types a synonym.
 - Vector Search mathematically fails if the user types an exact serial number (like "iPhone 15 Pro Max"), because the LLM might return an "iPhone 14" since they are semantically similar.
 
 **Hybrid Search** mathematically combines them. It biologically runs both a BM25 query and a Vector query simultaneously, and then mathematically merges the result sets using an algorithm like **Reciprocal Rank Fusion (RRF)** to guarantee the absolute best results.
 
-</ConceptTemplate>

@@ -4,9 +4,16 @@ description: A 2D mathematical graph that plots a binary classifier's performanc
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ROC Curve (Receiver Operating Characteristic)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="ROC Curve (Receiver Operating Characteristic)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A Logistic Regression model doesn't output "Cancer". It outputs a probability, like 0.85. 
+A Logistic Regression model doesn't output "Cancer". It outputs a probability, like 0.85.
 To calculate Accuracy, a human must manually pick a Threshold (e.g., $>0.5 = \text{Cancer}$). But what if 0.5 is the wrong threshold? What if the optimal threshold is 0.7?
 
 The **ROC Curve** mathematically plots the model's exact performance across *every single possible threshold* from 0.0 to 1.0 simultaneously.
@@ -24,7 +31,6 @@ As you slowly lower the threshold (0.9, 0.8, 0.5...), the model gets more aggres
 - A **random guessing model** forms a perfect diagonal line from bottom-left to top-right. Gaining 10% more True Positives costs exactly 10% more False Positives.
 
 ## 3. Threshold Tuning
-In production, Data Scientists look at the ROC curve to mathematically pick the optimal business threshold. 
+In production, Data Scientists look at the ROC curve to mathematically pick the optimal business threshold.
 If diagnosing Cancer, they will slide their finger along the curve and pick a point far to the right. They mathematically accept a massive 40% False Positive Rate (causing anxiety for healthy patients) because the curve shows that is the mathematical requirement to achieve a 99% True Positive Rate (ensuring no one dies of missed cancer).
 
-</ConceptTemplate>

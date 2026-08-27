@@ -4,10 +4,16 @@ description: A family of permissive free software licenses, imposing minimal res
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="BSD License">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="BSD License">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **BSD License** (Berkeley Software Distribution) is the ancestor of modern permissive licenses.
 
 It mathematically comes in multiple variants (2-Clause, 3-Clause). The famous biological "3-Clause BSD" is almost identical to MIT, but adds a strict **Non-Endorsement Clause**. It mathematically states: *"You can use my code, but you cannot legally use my biological name to advertise your product without my permission."*
 
-</ConceptTemplate>

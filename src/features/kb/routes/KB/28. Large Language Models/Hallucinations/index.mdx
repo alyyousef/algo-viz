@@ -4,9 +4,16 @@ description: The phenomenon where an LLM confidently generates completely false,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hallucinations">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hallucinations">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The most dangerous flaw of Large Language Models is their propensity to **Hallucinate**. 
+The most dangerous flaw of Large Language Models is their propensity to **Hallucinate**.
 Because an LLM is not a database of facts, but a probabilistic engine predicting the next statistically likely word, it does not actually "know" what is true. It only knows what sounds plausible.
 
 If you ask an LLM for a biography of a fake historical figure, it will not say "I don't know." It will confidently invent dates, battles, and fake book citations that sound perfectly academic.
@@ -25,8 +32,13 @@ You cannot completely eliminate hallucinations in a pure LLM. You must build arc
 2. **Temperature Control**: Setting the `temperature` parameter to $0.0$ removes all randomness from the word selection, forcing the model to pick the absolute highest-probability token every time, reducing creative fabrications.
 3. **Chain-of-Thought**: Forcing the model to write out its logic step-by-step prevents it from instantly jumping to a statistically likely, but logically impossible, conclusion.
 
+
 <Callout icon="error" title="The Danger of Confidence">
+
+
   Unlike humans, who usually use tentative language when they are guessing ("I think it might be..."), LLMs are inherently designed to sound authoritative. A hallucination is dangerous specifically because the grammar, tone, and formatting are flawless, easily tricking humans into trusting the output.
+
+
 </Callout>
 
-</ConceptTemplate>
+

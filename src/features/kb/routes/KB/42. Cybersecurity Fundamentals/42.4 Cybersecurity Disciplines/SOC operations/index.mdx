@@ -4,25 +4,32 @@ description: The centralized function within an organization employing people, p
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SOC Operations (Security Operations Center)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SOC Operations (Security Operations Center)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A Security Operations Center (SOC) is the central command post for a company\'s cybersecurity defenses. It operates 24/7/365, ingesting millions of data points from firewalls, endpoint agents, and network traffic to actively hunt for and stop cyberattacks in real time.
 
+
 <Callout icon="tip" title="The Triage Problem">
+
+
   The biggest challenge in a modern SOC is "Alert Fatigue." A SIEM (like Splunk) might generate 10,000 security alerts per day. If human analysts have to check every single one, they will burn out and miss the actual attack. Effective SOC operations rely heavily on SOAR (Security Orchestration, Automation, and Response) to mathematically filter out the noise.
+
+
 </Callout>
+
 
 ## The SOC Tier System
 
 SOC Analysts are traditionally divided into tiers based on expertise and responsibility:
 
-<ComparisonTable 
-  headers={['Tier', 'Title', 'Responsibilities']}
-  rows={[
-    ['Tier 1', 'Triage Analyst', 'The front lines. Monitors the SIEM dashboard, reviews the initial alerts, and determines if it is a false positive or a real threat. If real, they escalate to Tier 2.'],
-    ['Tier 2', 'Incident Responder', 'Performs deep mathematical analysis on escalated alerts. They identify the scope of the attack, the systems affected, and execute the initial containment strategy (e.g., disconnecting a server).'],
-    ['Tier 3', 'Threat Hunter', 'Proactively searches the network for advanced, hidden threats that bypassed the automated SIEM alerts. Often involves reverse engineering malware and developing new detection rules.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Tier', 'Title', 'Responsibilities']} rows={[ ['Tier 1', 'Triage Analyst', 'The front lines. Monitors the SIEM dashboard, reviews the initial alerts, and determines if it is a false positive or a real threat. If real, they escalate to Tier 2.'], ['Tier 2', 'Incident Responder', 'Performs deep mathematical analysis on escalated alerts. They identify the scope of the attack, the systems affected, and execute the initial containment strategy (e.g., disconnecting a server).'], ['Tier 3', 'Threat Hunter', 'Proactively searches the network for advanced, hidden threats that bypassed the automated SIEM alerts. Often involves reverse engineering malware and developing new detection rules.'] ]} />
+
+

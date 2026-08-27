@@ -1,8 +1,25 @@
+---
+title: Abstractive Summarization
+description: A mathematically complex AI technique where a Neural Network actually comprehends a document and generates a brand new, human-like summary from scratch.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="abstractive)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Abstractive Summarization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Natural Language Processing (NLP), there are two ways to summarize text. Extractive Summarization simply highlights and copies the most important sentences. Abstractive Summarization is mathematically far more advanced.
 
-</ConceptTemplate>
+## 1. Mathematical Comprehension
+Abstractive Summarization does not copy text. It uses massive Transformer architectures (like GPT or T5).
+The model mathematically reads the entire document and compresses the conceptual meaning into a high-dimensional mathematical vector (the Latent Space). It then mathematically decodes that vector, generating entirely brand new sentences, using vocabulary and phrasing that did not physically exist in the original document. It is mathematically simulating human reading comprehension.
+
+## 2. The Hallucination Problem
+Because the Neural Network is mathematically generating new text based on probability distributions, it suffers from **Hallucinations**.
+If the mathematical probabilities skew slightly, the model might generate a summary that includes facts that are completely contradictory to the original text. Solving this mathematical alignment problem is one of the most critical ongoing research areas in modern Artificial Intelligence.
+

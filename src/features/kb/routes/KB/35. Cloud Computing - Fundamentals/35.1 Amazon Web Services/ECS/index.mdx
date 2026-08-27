@@ -1,0 +1,24 @@
+---
+title: Amazon Elastic Container Service (ECS)
+description: A highly scalable, fully managed container orchestration service that allows developers to easily run, stop, and mathematically manage Docker containers on a cluster of virtual servers.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Elastic Container Service (ECS)"
+  subtitle="AWS-Native Container Orchestration"
+  tags={['AWS', 'Containers', 'Docker', 'Compute']}
+>
+
+Running one Docker container is easy. Running 500 Docker containers across 50 EC2 instances, handling their networking, load balancing, and mathematically ensuring that if a container crashes, it is instantly rebooted, requires an Orchestrator.
+
+## 1. Task Definitions and Services
+In ECS, you do not interact with individual containers. You write a **Task Definition** (a JSON file).
+The Task Definition mathematically declares: *"I need 1 Nginx container (port 80) and 1 Node.js container (port 3000) running together, sharing 2GB of RAM."*
+You then give this Task Definition to an **ECS Service**. You instruct the Service: *"Mathematically guarantee that exactly 50 copies of this Task are running at all times."* The ECS Control Plane continuously monitors the cluster. If an EC2 server dies and takes down 5 Tasks, ECS instantly detects the mathematical imbalance and spins up 5 new Tasks on the surviving servers to restore the desired state.
+
+## 2. Deep AWS Integration
+Unlike Kubernetes (which is cloud-agnostic and incredibly complex), ECS is mathematically hardwired directly into the AWS ecosystem.
+It integrates seamlessly with the Application Load Balancer (ALB). When ECS boots a new container on a random port, it automatically registers that exact IP and Port with the ALB. It integrates natively with IAM, allowing you to assign a specific IAM Role directly to a single Docker container, guaranteeing zero-trust security without managing complex Kubernetes secrets.
+
+</TechnologyTemplate>

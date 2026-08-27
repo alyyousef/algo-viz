@@ -4,10 +4,16 @@ description: A strategic plan that defines a goal or desired outcome and include
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Product Roadmaps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Product Roadmaps">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A **Roadmap** is a high-level biological map of the future. 
+A **Roadmap** is a high-level biological map of the future.
 
 It does not contain mathematical User Stories or specific Story Points. It contains massive Epics scheduled across Quarters (Q1, Q2, Q3). The biological goal of the roadmap is to align the Engineering team with the Sales and Marketing teams. It allows Marketing to mathematically know that "The New AI Feature" will be ready in Q3, so they can biologically begin preparing ad campaigns 6 months in advance.
 
-</ConceptTemplate>

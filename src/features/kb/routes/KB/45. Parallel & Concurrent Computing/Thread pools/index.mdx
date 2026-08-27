@@ -4,15 +4,28 @@ description: A software design pattern for achieving concurrency of execution in
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Thread Pools">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Thread Pools">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Creating a brand new Thread is mathematically faster than creating a Process, but it is not "free". It requires the OS to allocate a new Call Stack (usually 1MB-8MB of RAM) and perform expensive mathematical kernel-level scheduling.
 
 If a web server created a brand new Thread for every incoming HTTP request, and 10,000 requests hit simultaneously, the server would instantly run out of RAM and crash (10,000 * 8MB = 80GB of RAM just for stacks!).
 
+
 <Callout icon="tip" title="The Thread Pool Pattern">
+
+
   A **Thread Pool** solves this by mathematically pre-allocating a fixed number of Threads (e.g., exactly 100) when the server boots up. These threads sit in an infinite `while` loop, waiting for tasks.
+
+
 </Callout>
+
 
 ## How the Pool Mathematically Works
 
@@ -22,4 +35,3 @@ If a web server created a brand new Thread for every incoming HTTP request, and 
 
 If 10,000 requests hit the server, the Queue fills up to 10,000, but the OS only ever manages 100 actual Threads. The server mathematically protects its own RAM, guaranteeing it will not crash (though requests at the back of the queue will experience higher latency).
 
-</ConceptTemplate>

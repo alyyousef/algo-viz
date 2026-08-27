@@ -1,8 +1,42 @@
+---
+title: Composition Over Inheritance
+description: A fundamental software design principle advocating that polymorphic behavior and code reuse should be achieved by assembling smaller, decoupled objects (Composition) rather than building deep, rigid parent-child class hierarchies (Inheritance).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Composition over inheritance">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Composition Over Inheritance"
+  subtitle="The Antidote to the Gorilla-Banana Problem"
+  tags={['OOP', 'Design Patterns', 'Architecture', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the 1990s, Inheritance was viewed as the ultimate mathematical solution to code reuse. By the 2010s, the industry realized that deep inheritance trees cause catastrophic architectural rigidity.
 
-</ConceptTemplate>
+## 1. The Gorilla-Banana Problem
+Inheritance forces you to inherit the *entire* mathematical history of a parent class.
+As Joe Armstrong (creator of Erlang) famously said: *"You wanted a banana but what you got was a gorilla holding the banana and the entire jungle."*
+If you have a `Bird` class with a `fly()` method, and you inherit to make an `Ostrich`, your Ostrich mathematically inherits the ability to fly, which is logically incorrect. You are now forced to override `fly()` and throw an Exception, breaking the Liskov Substitution Principle.
+
+## 2. The Composition Solution
+The principle of "Composition Over Inheritance" solves this by building behavior from Lego blocks.
+Instead of inheriting `Bird`, you compose objects based on what they *do*, not what they *are*.
+```java
+public class Ostrich {
+    private WalkingBehavior walker;
+    // An Ostrich HAS-A WalkingBehavior, it does not HAVE-A FlyingBehavior
+}
+
+public class Eagle {
+    private WalkingBehavior walker;
+    private FlyingBehavior flyer;
+}
+```
+By using Composition, you mathematically inject only the exact behaviors required. The architecture remains flat, modular, and highly testable, completely avoiding the rigid biological taxonomies of Inheritance.
+

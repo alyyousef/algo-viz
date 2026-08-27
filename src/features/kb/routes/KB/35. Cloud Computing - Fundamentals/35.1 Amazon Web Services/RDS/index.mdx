@@ -1,0 +1,24 @@
+---
+title: Amazon Relational Database Service (RDS)
+description: A managed database service that abstracts away the grueling OS-level administration of running traditional SQL engines, providing automated backups, patching, and mathematically rigorous Multi-AZ high availability.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Relational Database Service (RDS)"
+  subtitle="Managed SQL Databases"
+  tags={['AWS', 'Database', 'SQL', 'Managed']}
+>
+
+You can manually install PostgreSQL on an EC2 server. But if the physical server motherboard fries at 2:00 AM, your database is gone, and the company halts. RDS mathematically automates the disaster recovery process.
+
+## 1. Multi-AZ Deployments (High Availability)
+When you enable **Multi-AZ** on an RDS database, AWS physically provisions two EC2 servers in two entirely separate data centers (Availability Zones).
+One is the Primary; one is the Standby.
+When your application writes a row of SQL data to the Primary, RDS uses **Synchronous Storage Replication**. It mathematically intercepts the storage block and fires a copy over a dedicated fiber line to the Standby. The database does not acknowledge the "Write Success" to your application until *both* data centers have safely committed the bytes to disk.
+
+## 2. Automated Failover
+If a backhoe cuts the fiber optic cable to the Primary data center, the Primary database drops offline.
+The RDS Control Plane detects this mathematical failure. Within 60 seconds, it executes an **Automated Failover**. It mathematically rewires the internal AWS DNS record so that the database endpoint URL instantly points to the Standby database (which has a mathematically perfect, up-to-the-millisecond copy of the data). The application experiences a 60-second hiccup, reconnects, and continues operating without human intervention.
+
+</TechnologyTemplate>

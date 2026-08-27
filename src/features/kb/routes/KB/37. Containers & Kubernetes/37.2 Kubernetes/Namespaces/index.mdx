@@ -1,8 +1,30 @@
+---
+title: Namespaces (Kubernetes)
+description: A logical mechanism in Kubernetes used to mathematically partition a single physical cluster into multiple virtual sub-clusters, providing scope for naming, resource quotas, and access control.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Namespaces">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Namespaces (Kubernetes)"
+  subtitle="Virtual Cluster Partitioning"
+  tags={['Kubernetes', 'Architecture', 'Organization', 'Security']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Do not confuse Kubernetes Namespaces with Linux kernel namespaces. In Kubernetes, a Namespace is a purely logical, mathematical boundary within the etcd database.
 
-</ConceptTemplate>
+## 1. Logical Isolation
+If a company has a single 100-node Kubernetes cluster, they don't want the Frontend team and the Backend team accidentally deleting each other's Deployments.
+The cluster administrator creates a `frontend` namespace and a `backend` namespace. These namespaces act as mathematical walls for object names. The Frontend team can create a Pod named `api-server` in their namespace, and the Backend team can simultaneously create a Pod named `api-server` in their namespace. The Kubernetes API server considers them mathematically distinct objects, eliminating naming collisions.
+
+## 2. Quotas and Security
+Namespaces are the foundational boundary for cluster governance.
+- **Resource Quotas**: An administrator can mathematically enforce that the `frontend` namespace is never allowed to consume more than 50GB of RAM across all its Pods.
+- **RBAC**: Security policies are tied to Namespaces. A junior developer can be mathematically granted root access to the `dev` namespace, while being entirely cryptographically locked out of the `prod` namespace.
+

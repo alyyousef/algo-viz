@@ -1,8 +1,25 @@
+---
+title: Chisel
+description: An open-source hardware construction language embedded in Scala, famously used to design the revolutionary RISC-V processors at UC Berkeley.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Chisel">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Chisel">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Chisel (Constructing Hardware In a Scala Embedded Language) was developed at UC Berkeley. It is not a standalone compiler; it is a Domain-Specific Language (DSL) mathematically embedded entirely within Scala.
 
-</ConceptTemplate>
+## 1. Hardware Generation, Not Description
+Traditional HDLs (Verilog/VHDL) are Hardware *Description* Languages. You mathematically describe the exact logic gates you want.
+Chisel is a Hardware *Construction* Language. You write a Scala program that, when executed, mathematically generates the hardware description (which is then compiled to Verilog).
+Because it is Scala, you have the full power of Object-Oriented and Functional programming. You can write a Scala `for` loop that mathematically generates 64 distinct Arithmetic Logic Units (ALUs) and wires them together dynamically, something that would take thousands of lines of copy-pasting in Verilog.
+
+## 2. The RISC-V Connection
+Chisel is most famous for being the language used to design the open-source **RISC-V** architecture at UC Berkeley (specifically the Rocket Chip generator). Because Chisel is mathematically so expressive, the Berkeley team was able to write an entire CPU generator that allows a user to dynamically specify cache sizes and pipeline stages, and the Chisel script will instantly compile a custom silicon design.
+

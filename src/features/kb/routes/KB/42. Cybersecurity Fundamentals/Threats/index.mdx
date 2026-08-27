@@ -4,30 +4,36 @@ description: Any circumstance or event with the potential to adversely impact or
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cybersecurity Threats">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cybersecurity Threats">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the lexicon of cybersecurity, terms like "Threat," "Vulnerability," and "Risk" are often used interchangeably by laymen, but they have distinct mathematical definitions.
 
 A **Threat** is *what* you are defending against. It is the external actor or event that possesses the intent and capability to cause harm. A threat exploits a vulnerability to cause a negative impact.
 
+
 <Callout icon="warning" title="The Threat Equation">
+
+
   Risk = Threat × Vulnerability × Impact
-  
+
   If there is a massive Threat (a hurricane), but you have zero Vulnerability (your datacenter is in a bunker in Ohio), your Risk is zero. If you have a massive Vulnerability (a zero-day flaw in your web server), but zero Threat (the server is completely disconnected from the internet), your Risk is also zero.
+
+
 </Callout>
+
 
 ## Categorization of Threat Actors
 
 Threat actors are typically categorized by their motivation, funding, and mathematical sophistication:
 
-<ComparisonTable 
-  headers={['Threat Actor', 'Motivation', 'Sophistication Level']}
-  rows={[
-    ['Script Kiddies', 'Notoriety, boredom, vandalism.', 'Low. They do not write their own code; they mathematically blindly run tools downloaded from the internet (like Low Orbit Ion Cannon).'],
-    ['Hacktivists', 'Political or social change. (e.g., Anonymous).', 'Medium. Usually rely on massive DDoS attacks or website defacement to embarrass a target.'],
-    ['Cybercriminals', 'Financial gain.', 'High. Highly organized syndicates running Ransomware-as-a-Service (RaaS) operations, pulling in billions of dollars.'],
-    ['Advanced Persistent Threats (APTs)', 'Espionage, intellectual property theft, cyberwarfare.', 'Extreme. State-sponsored hackers (e.g., NSA, Fancy Bear). They have unlimited funding, develop their own mathematical zero-days, and can remain hidden in a network for years.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Threat Actor', 'Motivation', 'Sophistication Level']} rows={[ ['Script Kiddies', 'Notoriety, boredom, vandalism.', 'Low. They do not write their own code; they mathematically blindly run tools downloaded from the internet (like Low Orbit Ion Cannon).'], ['Hacktivists', 'Political or social change. (e.g., Anonymous).', 'Medium. Usually rely on massive DDoS attacks or website defacement to embarrass a target.'], ['Cybercriminals', 'Financial gain.', 'High. Highly organized syndicates running Ransomware-as-a-Service (RaaS) operations, pulling in billions of dollars.'], ['Advanced Persistent Threats (APTs)', 'Espionage, intellectual property theft, cyberwarfare.', 'Extreme. State-sponsored hackers (e.g., NSA, Fancy Bear). They have unlimited funding, develop their own mathematical zero-days, and can remain hidden in a network for years.'] ]} />
+
+

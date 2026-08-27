@@ -4,7 +4,14 @@ description: A classic activation function that mathematically squashes any real
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sigmoid Activation Function">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sigmoid Activation Function">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the early days of Deep Learning, the **Sigmoid** function was the absolute standard activation function. Because it creates a beautiful, smooth "S-curve" that mathematically squashes any input to a value between $0$ and $1$, it was considered the perfect mathematical representation of a biological neuron firing (or not firing).
 
@@ -18,8 +25,7 @@ $sigma(x) = rac{1}{1 + e^{-x}}$
 This makes Sigmoid the absolute mathematical standard for the final layer of a **Binary Classification** model (e.g., outputting an 85% probability that an email is Spam).
 
 ## 2. The Fatal Flaw (Vanishing Gradients)
-While perfect for the final output layer, Sigmoid is mathematically catastrophic when used in the hidden layers of a Deep Neural Network. 
-Look at the edges of the S-curve. If the input is $+10$, the curve is perfectly flat. The mathematical derivative (the slope) of a flat line is exactly $0$. 
+While perfect for the final output layer, Sigmoid is mathematically catastrophic when used in the hidden layers of a Deep Neural Network.
+Look at the edges of the S-curve. If the input is $+10$, the curve is perfectly flat. The mathematical derivative (the slope) of a flat line is exactly $0$.
 During Backpropagation, Gradient Descent relies on multiplying these derivatives together. If the derivative is $0$ (or near $0$), the mathematical signal is instantly crushed to absolute zero. The network completely stops learning. This is the **Vanishing Gradient Problem**, and it is the exact reason ReLU replaced Sigmoid in hidden layers.
 
-</ConceptTemplate>

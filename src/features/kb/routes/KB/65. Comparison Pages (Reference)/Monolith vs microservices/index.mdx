@@ -8,20 +8,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 The debate between Monolithic and Microservices architecture is one of the most consequential decisions a software team will make.
 
+
 <Callout icon="tip" title="The Majestic Monolith">
+
+
   Many of the world's most successful startups (Shopify, StackOverflow, early Instagram) were built as Monoliths. A well-structured, modular Monolith is vastly superior to a poorly designed, tightly-coupled Microservice architecture (often called a "Distributed Monolith").
+
+
 </Callout>
+
 
 ## Detailed Comparison
 
-<ComparisonTable 
-  headers={['Aspect', 'Monolithic Architecture', 'Microservices Architecture']}
-  rows={[
-    ['Codebase', 'A single, unified codebase containing all features.', 'Dozens or hundreds of small, isolated codebases.'],
-    ['Deployment', 'Deploying means copying the entire app to the server. Very simple.', 'Requires complex orchestration (Kubernetes, CI/CD pipelines).'],
-    ['Scaling', 'Scale the entire app by running it on a bigger server (Vertical).', 'Scale only the bottlenecked services (e.g., spin up 100 Image Processing containers, but keep 1 User container).'],
-    ['Team Structure', 'Best for small teams (1-20 engineers).', 'Best for massive organizations where independent teams need autonomy.']
-  ]}
-/>
+
+<ComparisonTable headers={['Aspect', 'Monolithic Architecture', 'Microservices Architecture']} rows={[ ['Codebase', 'A single, unified codebase containing all features.', 'Dozens or hundreds of small, isolated codebases.'], ['Deployment', 'Deploying means copying the entire app to the server. Very simple.', 'Requires complex orchestration (Kubernetes, CI/CD pipelines).'], ['Scaling', 'Scale the entire app by running it on a bigger server (Vertical).', 'Scale only the bottlenecked services (e.g., spin up 100 Image Processing containers, but keep 1 User container).'], ['Team Structure', 'Best for small teams (1-20 engineers).', 'Best for massive organizations where independent teams need autonomy.'] ]} />
+
 
 </TechnologyTemplate>

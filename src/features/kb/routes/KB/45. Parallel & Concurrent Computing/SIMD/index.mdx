@@ -4,15 +4,28 @@ description: A class of parallel computers in Flynn's taxonomy that describes co
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Single Instruction, Multiple Data (SIMD)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Single Instruction, Multiple Data (SIMD)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When we think of Parallel Computing, we usually think of Threads (Multiple Instructions, Multiple Data). Thread 1 calculates AI, Thread 2 plays Audio.
 
-**SIMD** is a completely different, mathematically devastating form of parallelism baked directly into physical CPU hardware (e.g., Intel AVX-512, ARM Neon). 
+**SIMD** is a completely different, mathematically devastating form of parallelism baked directly into physical CPU hardware (e.g., Intel AVX-512, ARM Neon).
+
 
 <Callout icon="tip" title="The Vector Processor">
+
+
   Instead of spawning a software thread, a SIMD instruction mathematically forces the physical CPU ALU to grab a massive array of numbers (a Vector) and apply a single mathematical operation to ALL of them in a single clock cycle.
+
+
 </Callout>
+
 
 ## The Mathematical Speedup
 
@@ -23,4 +36,3 @@ Imagine you are rendering a video game, and you need to increase the brightness 
 
 The algorithm is mathematically accelerated by 16x without ever spawning a single background thread or dealing with Mutexes.
 
-</ConceptTemplate>

@@ -4,7 +4,7 @@ description: A static code analysis tool for identifying problematic patterns fo
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="ESLint"
   subtitle="The absolute standard for JavaScript quality"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/ESLint_logo.svg/512px-ESLint_logo.svg.png"
@@ -15,14 +15,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://eslint.org/"
 >
 
-JavaScript is a notoriously forgiving language. It allows you to mathematically compare a String to an Array without throwing an error. 
+JavaScript is a notoriously forgiving language. It allows you to mathematically compare a String to an Array without throwing an error.
 
 ESLint solves this by enforcing strict rules. If you attempt to use the `==` operator instead of the strict `===` operator, ESLint will mathematically throw an error in your CI/CD pipeline, physically preventing the code from merging to production.
 
+
 <Callout icon="tip" title="Plugin Architecture">
-  ESLint's true power is its extensibility. 
-  
+
+
+  ESLint's true power is its extensibility.
+
   React developers install `eslint-plugin-react-hooks`. If a developer accidentally puts a `useEffect` hook inside an `if` statement (which mathematically breaks React's render cycle), ESLint detects it instantly and throws a fatal error before the code even runs.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

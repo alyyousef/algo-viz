@@ -1,8 +1,32 @@
+---
+title: Radix Sort
+description: "A non-comparative sorting algorithm that sorts data with integer keys by mathematically grouping keys by the individual digits which share the same significant position and value."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Radix sort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Radix Sort"
+  subtitle="Sorting by Digits"
+  tags={['Algorithms', 'Sorting', 'Mathematics', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Like Counting Sort, Radix Sort mathematically bypasses the O(N log N) barrier by completely avoiding direct `a &lt; b` comparisons. It is heavily used for sorting massive datasets of fixed-length integers (like Social Security Numbers or IP addresses).
 
-</ConceptTemplate>
+## 1. The Least Significant Digit (LSD)
+Imagine sorting: `[170, 045, 075, 090, 802, 024, 002, 066]`.
+Radix Sort mathematically processes the numbers one digit column at a time, starting from the rightmost digit (the ones place).
+1. **Pass 1 (Ones Place)**: It groups the numbers by their last digit. (170 and 090 go into Bucket 0. 802 and 002 go into Bucket 2). It flattens the buckets.
+2. **Pass 2 (Tens Place)**: It groups the new list by the middle digit.
+3. **Pass 3 (Hundreds Place)**: It groups the list by the first digit.
+
+## 2. Mathematical Performance
+Because it uses Counting Sort as a subroutine for each column, it mathematically sorts the array without comparing the whole numbers.
+The Time Complexity is **O(d * (N + b))**, where **d** is the number of digits (3 in the example above) and **b** is the base (10 for decimal). If the number of digits is small, Radix Sort mathematically executes in strictly linear O(N) time, completely destroying Quicksort in benchmark speed.
+

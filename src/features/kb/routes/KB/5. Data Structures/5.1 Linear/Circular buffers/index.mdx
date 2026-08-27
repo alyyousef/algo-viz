@@ -4,23 +4,29 @@ description: A fixed-size array that mathematically treats memory as if it were 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Circular Buffers (Ring Buffers)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Circular Buffers (Ring Buffers)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Circular Buffer** (or Ring Buffer) is a brilliant mathematical illusion. It is physically just a standard, fixed-size contiguous Array. However, using two pointers (Head and Tail) and the mathematical Modulo operator, it tricks algorithms into believing the memory wraps around continuously in an infinite circle.
 
 ## 1. The Modulo Mathematics
-If you have an Array of size $5$ (indices $0$ to $4$), and the Tail pointer reaches index $4$, the Array is physically full. 
-If you pop an element from the Head (index $0$), index $0$ is now physically empty, but standard Queues mathematically cannot wrap backwards to use it. 
-A Circular Buffer uses Modulo arithmetic: `Next_Index = (Current_Index + 1) % Capacity`. 
+If you have an Array of size $5$ (indices $0$ to $4$), and the Tail pointer reaches index $4$, the Array is physically full.
+If you pop an element from the Head (index $0$), index $0$ is now physically empty, but standard Queues mathematically cannot wrap backwards to use it.
+A Circular Buffer uses Modulo arithmetic: `Next_Index = (Current_Index + 1) % Capacity`.
 When the Tail is at $4$, `(4 + 1) % 5 = 0`. The Tail pointer mathematically snaps back to index $0$, safely overwriting or filling the newly freed physical memory at the start of the Array.
 
 ## 2. The Overwrite Protocol
 Circular Buffers are highly specialized because their size is strictly fixed. If the Tail mathematically catches up to the Head (the buffer is 100% full), it must make a rigid architectural decision:
 - **Block**: Force the producer to wait until the consumer pops an element.
-- **Overwrite**: Mathematically crush the oldest data (the Head) to make room for the newest data. 
+- **Overwrite**: Mathematically crush the oldest data (the Head) to make room for the newest data.
 
 ## 3. Hardware I/O & Streaming
-Because they require zero dynamic memory allocation and offer mathematically perfect $O(1)$ operations with zero Cache Misses, Circular Buffers are the absolute standard for low-level systems. 
+Because they require zero dynamic memory allocation and offer mathematically perfect $O(1)$ operations with zero Cache Misses, Circular Buffers are the absolute standard for low-level systems.
 When your keyboard sends keystrokes to the OS, or when Netflix streams a chunk of video to your GPU, the data is pushed directly into a blazing-fast hardware Circular Buffer to handle the asynchronous speed difference between the network and the processor.
 
-</ConceptTemplate>

@@ -1,8 +1,30 @@
+---
+title: Controller Manager
+description: A core component of the Kubernetes Control Plane that runs continuous mathematical reconciliation loops, ensuring the physical state of the cluster permanently matches the desired declarative state.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Controller Manager">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Controller Manager"
+  subtitle="The Relentless Enforcer"
+  tags={['Kubernetes', 'Control Plane', 'Architecture', 'Automation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Kubernetes is a declarative system. You do not tell Kubernetes *how* to deploy 5 Pods; you mathematically declare that you *want* 5 Pods. The **kube-controller-manager** is the engine that makes that desire a physical reality.
 
-</ConceptTemplate>
+## 1. The Reconciliation Loop
+The Controller Manager is a daemon that embeds several distinct mathematical control loops (e.g., the ReplicaSet Controller, the Node Controller).
+These controllers operate on a simple mathematical formula: **Current State vs. Desired State**.
+If a developer creates a Deployment requesting 3 replicas of an app, the Desired State is 3. The ReplicaSet Controller checks the Current State (0). It mathematically calculates the diff, and issues commands to the API server to create 3 Pods.
+
+## 2. Relentless Self-Healing
+The loop never stops. It runs continuously, thousands of times a minute.
+If a Worker Node physically loses power, the 3 Pods running on it die. The Current State drops to 0. The ReplicaSet Controller instantly detects the mathematical divergence from the Desired State (3). Without any human intervention, the Controller Manager mathematically commands the Scheduler to spin up 3 brand new Pods on the surviving Worker Nodes, ensuring the application remains highly available.
+

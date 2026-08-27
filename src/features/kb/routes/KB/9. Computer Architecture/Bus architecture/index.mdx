@@ -4,13 +4,26 @@ description: The physical communication system (wires and protocols) that transf
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bus Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bus Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A CPU is useless if it cannot talk to RAM, the hard drive, or the graphics card. In computer architecture, a **Bus** is simply a shared electrical communication pathway consisting of multiple parallel wires.
 
+
 <Callout icon="info" title="Why 'Bus'?">
+
+
   The term comes from the Latin *omnibus* (meaning "for all"). Just like a city bus carries multiple passengers along a shared route, a computer bus carries data for multiple different hardware components along a shared set of electrical wires.
+
+
 </Callout>
+
 
 ## The System Bus
 
@@ -24,7 +37,6 @@ Historically, the CPU communicated with the rest of the motherboard via the **Sy
 
 For decades, buses were physically **shared**. The CPU, the RAM, and the PCI slots were all spliced into the exact same physical wires. Only one device could talk at a time, requiring a "Bus Arbiter" to manage traffic.
 
-Because shared buses suffered from massive electrical interference at high frequencies (limiting clock speeds), modern architectures moved to **Point-to-Point topologies**. 
+Because shared buses suffered from massive electrical interference at high frequencies (limiting clock speeds), modern architectures moved to **Point-to-Point topologies**.
 Today, PCIe (Peripheral Component Interconnect Express) and QPI (QuickPath Interconnect) use dedicated, high-speed serial links between components, completely eliminating the shared-wire bottlenecks of the 1990s.
 
-</ConceptTemplate>

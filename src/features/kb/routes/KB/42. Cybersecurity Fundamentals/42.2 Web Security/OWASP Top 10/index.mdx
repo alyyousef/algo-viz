@@ -4,15 +4,28 @@ description: The industry-standard awareness document outlining the most critica
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OWASP Top 10">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OWASP Top 10">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The Open Worldwide Application Security Project (OWASP) is a nonprofit foundation dedicated to software security. Their flagship publication, the **OWASP Top 10**, is universally recognized as the canonical list of the most dangerous and prevalent web application vulnerabilities.
 
 It is updated every few years (most recently in 2021) based on massive amounts of data collected from cybersecurity firms worldwide.
 
+
 <Callout icon="warning" title="The Regulatory Standard">
+
+
   The OWASP Top 10 is not just advice; it is a regulatory benchmark. Frameworks like PCI-DSS explicitly mandate that developers be trained on the OWASP Top 10 and that applications are mathematically tested against these specific vulnerabilities before going to production.
+
+
 </Callout>
+
 
 ## The 2021 Top 10 List
 
@@ -27,4 +40,3 @@ It is updated every few years (most recently in 2021) based on massive amounts o
 9. **A09: Security Logging and Monitoring Failures:** Not logging critical events, allowing attackers to remain hidden.
 10. **A10: Server-Side Request Forgery (SSRF):** Forcing the server to make arbitrary HTTP requests on the attacker's behalf.
 
-</ConceptTemplate>

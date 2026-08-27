@@ -4,7 +4,7 @@ description: A globally distributed reverse proxy that secures, protects and acc
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="ngrok"
   subtitle="The ultimate localhost tunnel"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Ngrok_logo.svg/512px-Ngrok_logo.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 If you are developing a Node.js server on `localhost:3000`, and you want your client in another country to see it, you cannot send them `localhost:3000` (that is biologically their own computer). You normally have to deploy to AWS.
 
+
 <Callout icon="success" title="The Reverse Proxy Tunnel">
+
+
   You simply run: `ngrok http 3000`
-  
+
   ngrok mathematically connects to its central cloud servers and generates a public URL (e.g., `https://xyz.ngrok.app`). When the client clicks that URL, the ngrok cloud server mathematically tunnels the HTTP traffic directly through your firewall, into your laptop, and hits your Node server. It is the absolute standard tool for testing Webhooks (like Stripe or Twilio) that mathematically require a public internet URL to send payloads to.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

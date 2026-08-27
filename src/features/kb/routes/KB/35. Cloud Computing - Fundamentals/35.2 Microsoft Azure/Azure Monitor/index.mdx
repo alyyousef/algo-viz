@@ -1,0 +1,24 @@
+---
+title: Azure Monitor
+description: The comprehensive mathematical telemetry and observability platform for Azure, aggregating metrics and logs from every cloud resource into a centralized, queryable analytics workspace.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Monitor"
+  subtitle="Full-Stack Cloud Telemetry"
+  tags={['Azure', 'Monitoring', 'Logs', 'Metrics']}
+>
+
+If an application crashes, the error could be in the frontend JavaScript, the backend C# API, the SQL Database, or the underlying Virtual Machine. Azure Monitor is the single mathematical pane of glass that ingests telemetry from all of them to find the root cause.
+
+## 1. Metrics vs. Logs
+Azure Monitor mathematically splits the world into two data types:
+- **Metrics**: Numerical values recorded at specific intervals (e.g., CPU% = 80 at 12:00PM). These are highly optimized for near real-time alerting. If a metric crosses a mathematical threshold, Azure Monitor triggers an Action Group to SMS an engineer.
+- **Logs**: Massive streams of unstructured or JSON text (e.g., Apache access logs). These are routed into a **Log Analytics Workspace**.
+
+## 2. Log Analytics and KQL
+The true mathematical power of Azure Monitor is the Log Analytics Workspace, powered by the **Kusto Query Language (KQL)**.
+If you have 10,000 servers generating 5 Terabytes of logs a day, searching them with standard tools is impossible. KQL is a highly optimized, columnar query language. You can mathematically pipe data: *"Take the 5TB of raw logs | filter where EventType == 'Error' | summarize the count by ServerIP | render a timechart."* Azure mathematically executes this query across terabytes of data in seconds, providing instant visibility into distributed system failures.
+
+</TechnologyTemplate>

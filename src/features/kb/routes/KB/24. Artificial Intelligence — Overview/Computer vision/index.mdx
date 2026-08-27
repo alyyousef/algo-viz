@@ -4,14 +4,21 @@ description: The foundational AI discipline of mathematically extracting high-le
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Computer Vision (Overview)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Computer Vision (Overview)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 To a computer, an image is not a picture of a cat; it is a massive 2D matrix of numbers representing pixel intensities (0-255). **Computer Vision** is the mathematical discipline of teaching an algorithm to extract spatial meaning from those matrices.
 
 ## 1. Classical Computer Vision
 Before Deep Learning, Computer Vision required Data Scientists to manually construct mathematical filters to find features.
 - **Edge Detection (Sobel Filters)**: Mathematically dragging a 3x3 matrix over an image to calculate the gradient (the sudden change in pixel intensity), which perfectly isolates the sharp edges of objects.
-- **SIFT (Scale-Invariant Feature Transform)**: A brilliant algorithm that mathematically identifies "keypoints" on an object (like the corners of a book) that remain identical even if the image is rotated, scaled, or darkened. 
+- **SIFT (Scale-Invariant Feature Transform)**: A brilliant algorithm that mathematically identifies "keypoints" on an object (like the corners of a book) that remain identical even if the image is rotated, scaled, or darkened.
 These manual features were then fed into classical Machine Learning algorithms like Support Vector Machines (SVMs) to classify the image.
 
 ## 2. The Deep Learning Revolution (CNNs)
@@ -27,4 +34,3 @@ Instead of a human manually writing a math formula to detect an edge, a CNN init
 - **Object Detection**: "Where are the dogs in this image?" (Draws mathematical Bounding Boxes around every dog, outputting X/Y coordinates).
 - **Semantic Segmentation**: The most complex task. It mathematically classifies *every single pixel* in the image. (e.g., Pixels 1-500 are "Road", Pixels 501-900 are "Pedestrian"). This is the absolute foundation of self-driving cars.
 
-</ConceptTemplate>

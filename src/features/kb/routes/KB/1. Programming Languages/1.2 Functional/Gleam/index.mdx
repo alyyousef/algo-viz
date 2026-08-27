@@ -1,8 +1,24 @@
+---
+title: Gleam
+description: A friendly, statically typed functional language that compiles to both Erlang (BEAM) and JavaScript.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Gleam">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Gleam">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Louis Pilfold, Gleam is a modern, rapidly growing functional programming language designed to bring rigorous static typing to the legendary Erlang Virtual Machine (BEAM).
 
-</ConceptTemplate>
+## 1. Static Typing for the BEAM
+Historically, the Erlang ecosystem (Erlang and Elixir) is dynamically typed. This provides immense flexibility but leads to mathematical uncertainty at runtime (e.g., passing a String to a function that expects an Integer).
+Gleam provides a mathematically sound, Hindley-Milner static type system (similar to Elm or Rust). It mathematically guarantees at compile-time that data structures match, but it still compiles down to standard BEAM bytecode, allowing developers to utilize Erlang's massive concurrency and "let it crash" Supervisor trees with total type safety.
+
+## 2. Omnipresent Compilation
+Because Gleam is designed with a very clean, C-style syntax (removing the archaic syntax of Erlang), the compiler team was able to easily mathematically target multiple backends. Gleam can compile to BEAM for massive backend scalability, and it can also compile to raw JavaScript, allowing developers to share their purely functional, statically typed business logic perfectly between the server and the browser.
+

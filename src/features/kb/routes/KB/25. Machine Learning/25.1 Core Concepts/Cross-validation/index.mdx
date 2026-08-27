@@ -4,10 +4,17 @@ description: A rigorous mathematical resampling procedure used to evaluate machi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cross-Validation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cross-Validation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you have 1,000 rows of data, the standard practice is to randomly split it: 80% for Training, 20% for Testing. 
-However, what if you get mathematically "lucky"? What if the random split puts all the easy-to-predict rows into the 20% Test set? Your model will report 99% accuracy, you will deploy it, and it will immediately fail in production. 
+If you have 1,000 rows of data, the standard practice is to randomly split it: 80% for Training, 20% for Testing.
+However, what if you get mathematically "lucky"? What if the random split puts all the easy-to-predict rows into the 20% Test set? Your model will report 99% accuracy, you will deploy it, and it will immediately fail in production.
 
 **Cross-Validation (CV)** mathematically eliminates this risk.
 
@@ -22,14 +29,13 @@ If $K=5$:
 5. You mathematically average the 5 accuracy scores to get the true, unbiased performance of the model.
 
 ## 2. Stratified K-Fold
-In Classification, standard K-Fold can mathematically destroy a model if the data is imbalanced. 
+In Classification, standard K-Fold can mathematically destroy a model if the data is imbalanced.
 If 90% of patients are Healthy and 10% have Cancer, a random Fold 5 might accidentally contain 0 Cancer patients. The model will test flawlessly by just guessing "Healthy".
 
 **Stratified K-Fold** mathematically forces the split. It guarantees that every single one of the 5 Folds maintains the exact 90/10 ratio of the original dataset, ensuring the mathematical integrity of the test.
 
 ## 3. Leave-One-Out Cross-Validation (LOOCV)
 If your dataset is incredibly tiny (e.g., only 50 rows of a rare disease), splitting off 20% leaves you with almost no data to train on.
-In LOOCV, $K$ is mathematically set to the exact number of rows in the dataset ($K=50$). 
+In LOOCV, $K$ is mathematically set to the exact number of rows in the dataset ($K=50$).
 The model trains on 49 rows and tests on 1 row. It loops 50 times. It maximizes the training data, but is computationally catastrophic for massive datasets.
 
-</ConceptTemplate>

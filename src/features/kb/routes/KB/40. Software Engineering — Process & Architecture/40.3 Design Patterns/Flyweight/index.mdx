@@ -1,8 +1,31 @@
+---
+title: Flyweight Pattern
+description: A Structural Design Pattern from the Gang of Four (GoF) that minimizes RAM usage by mathematically sharing as much data as possible with similar objects, crucial when dealing with massive quantities of objects.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Flyweight">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Flyweight Pattern"
+  subtitle="Mathematical Memory Compression"
+  tags={['Design Patterns', 'Structural', 'GoF', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are building a video game forest with 1 million `Tree` objects, and each object contains an 8MB 3D mesh for the leaves and a 2MB texture for the bark, allocating 1 million trees requires 10 Terabytes of RAM. The computer will mathematically crash instantly.
 
-</ConceptTemplate>
+## 1. Intrinsic vs Extrinsic State
+The Flyweight pattern mathematically divides object state into two categories:
+- **Intrinsic State**: Data that is constant across all objects. (e.g., The 8MB 3D mesh and 2MB texture of an Oak Tree).
+- **Extrinsic State**: Data that is unique to each object. (e.g., The X, Y coordinates and current health of *this specific* tree).
+
+## 2. The Shared Reference
+Instead of storing the heavy Intrinsic State inside the `Tree` object, you mathematically extract it into a single `TreeModel` object. You only instantiate exactly *one* `TreeModel` in RAM (10MB).
+The 1 million `Tree` objects now only store their Extrinsic State (X, Y coordinates = 16 bytes) and a lightweight memory pointer (8 bytes) to the shared `TreeModel`.
+The total RAM usage drops from 10 Terabytes to mathematically less than 30 Megabytes, making the game playable.
+

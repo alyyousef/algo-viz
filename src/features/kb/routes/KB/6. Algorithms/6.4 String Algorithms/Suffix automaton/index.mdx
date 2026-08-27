@@ -1,8 +1,33 @@
+---
+title: Suffix Automaton
+description: "A powerful, mathematically elegant deterministic finite automaton (DFA) that represents all possible substrings of a given string in an incredibly compact, linear-size data structure."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Suffix automaton">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Suffix Automaton"
+  subtitle="The Ultimate Substring Machine"
+  tags={['Algorithms', 'Strings', 'Automata', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Suffix Trie mathematically stores every single substring of a text. However, a Suffix Trie for a string of length N contains **O(N²)** nodes. For a 1-megabyte text file, the Trie would mathematically consume 1 Terabyte of RAM.
 
-</ConceptTemplate>
+## 1. The Directed Acyclic Word Graph (DAWG)
+A **Suffix Automaton** (also known as a DAWG) mathematically compresses the Suffix Trie into a strict **O(N)** size by merging equivalent states.
+It mathematically guarantees that for a string of length N, the automaton will contain at most **2N - 1 states** and **3N - 4 transitions (edges)**.
+This means you can represent all 500 billion possible substrings of a 1-million-character string using only a few million nodes in RAM.
+
+## 2. Mathematical Power
+The Suffix Automaton is built mathematically online (character by character) in exactly **O(N)** time.
+Once built, it is infinitely more powerful than KMP or Boyer-Moore. It can solve practically any string problem in optimal time:
+- "Does this word exist?" -> Traverse the automaton. O(Word Length).
+- "How many times does this word appear?" -> Precompute node weights. O(Word Length).
+- "Find the Longest Common Substring of two texts" -> Build automaton for Text A, trace Text B through it. O(Length of Text B).
+

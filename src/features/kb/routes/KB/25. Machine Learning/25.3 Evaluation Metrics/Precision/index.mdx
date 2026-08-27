@@ -4,7 +4,14 @@ description: A critical mathematical classification metric measuring the absolut
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Precision">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Precision">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In binary classification, Accuracy is dangerously misleading on imbalanced datasets. **Precision** isolates a highly specific mathematical question: *"Out of all the times the model screamed 'Positive!', how many times was it actually right?"*
 
@@ -21,8 +28,7 @@ You must mathematically force your model to optimize for Precision when the busi
 - **Death Penalty AI**: If an AI predicts if someone is guilty of murder, a False Positive means executing an innocent person. The model must theoretically have 100% Precision.
 
 ## 3. The Tradeoff with Recall
-In Machine Learning, Precision and Recall are mathematically locked in a see-saw. 
-A model outputs probabilities (e.g., 0.85). If you want to increase Precision, you mathematically raise the decision threshold (e.g., "Only predict 'Spam' if you are 99% sure"). 
+In Machine Learning, Precision and Recall are mathematically locked in a see-saw.
+A model outputs probabilities (e.g., 0.85). If you want to increase Precision, you mathematically raise the decision threshold (e.g., "Only predict 'Spam' if you are 99% sure").
 Because the model is now extremely conservative, the few times it does predict Spam, it will be absolutely correct (High Precision). However, it will now miss thousands of obvious 90% spam emails, meaning its Recall mathematically plunges to near zero.
 
-</ConceptTemplate>

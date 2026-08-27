@@ -4,22 +4,28 @@ description: The global infrastructure utilizing orbital spacecraft to bounce RF
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Satellite Communications">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Satellite Communications">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you are on a cargo ship in the middle of the Pacific Ocean, there are no cellular towers and no fiber optic cables. Your only option for internet is to point an antenna directly up into space.
 
 ## Geosynchronous Earth Orbit (GEO)
 
-Historically, satellite internet (like HughesNet) used **GEO satellites**. 
+Historically, satellite internet (like HughesNet) used **GEO satellites**.
 These satellites are placed exactly 35,786 kilometers above the equator. At this precise altitude, the satellite orbits the Earth at the exact same speed the Earth rotates. From the ground, the satellite appears completely stationary in the sky, meaning you can bolt a satellite dish to your roof and never move it.
 
 **The Flaw**: Light travels fast, but 35,000 km is a massive distance. The signal has to go up to space, down to the ISP, up to space, and back to your house. This introduces a mandatory, physics-bound **latency of 600+ milliseconds**. Browsing the web feels sluggish, and multiplayer gaming is completely impossible.
 
 ## Low Earth Orbit (LEO) & Starlink
 
-To solve the latency problem, companies like SpaceX (Starlink) deploy massive constellations of satellites into **LEO (Low Earth Orbit)**, only 500 kilometers above the Earth. 
+To solve the latency problem, companies like SpaceX (Starlink) deploy massive constellations of satellites into **LEO (Low Earth Orbit)**, only 500 kilometers above the Earth.
 
-Because they are so close, the latency drops to an incredible **20-40 milliseconds**, rivaling landline fiber optics. 
+Because they are so close, the latency drops to an incredible **20-40 milliseconds**, rivaling landline fiber optics.
 **The Flaw**: Because they are so low, they do not match the Earth's rotation. They fly across the sky at 17,000 mph, crossing from horizon to horizon in 4 minutes. A Starlink dish on your roof uses a complex "Phased Array" antenna to electronically track the satellite across the sky, instantly handing off the connection to the next satellite as soon as the first one disappears over the horizon.
 
-</ConceptTemplate>

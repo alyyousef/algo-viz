@@ -4,11 +4,18 @@ description: "A creational design pattern that provides an interface for creatin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Factory Method Pattern">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Factory Method Pattern">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When writing clean code, calling the `new` keyword directly inside your business logic tightly couples your code to specific concrete classes. 
+When writing clean code, calling the `new` keyword directly inside your business logic tightly couples your code to specific concrete classes.
 
-The **Factory Method** solves this by replacing direct object construction calls with calls to a special "factory" method. 
+The **Factory Method** solves this by replacing direct object construction calls with calls to a special "factory" method.
 
 ## 1. The Problem
 Imagine a logistics application. Initially, it only handles truck delivery.
@@ -17,7 +24,7 @@ Imagine a logistics application. Initially, it only handles truck delivery.
 class LogisticsApp {
   planDelivery() {
     // Tightly coupled to the concrete Truck class!
-    const vehicle = new Truck(); 
+    const vehicle = new Truck();
     vehicle.deliver();
   }
 }
@@ -70,4 +77,3 @@ class SeaLogistics extends Logistics {
 
 By isolating the creation logic into specific Factory classes, adding a new transportation method (e.g., `AirLogistics` returning a `Plane`) requires zero changes to the existing business logic.
 
-</ConceptTemplate>

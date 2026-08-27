@@ -4,19 +4,31 @@ description: A tree in which every leaf node is labelled with the cryptographic 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Merkle Trees">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Merkle Trees">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A single Bitcoin block might contain 4,000 transactions. How does a node mathematically verify that Transaction #238 is valid without biologically downloading all 4,000 transactions?
 
 They use a **Merkle Tree**.
 
+
 <Callout icon="info" title="The Root Hash">
+
+
   A Merkle Tree is a mathematical binary tree of hashes.
   1. You hash every transaction individually (the leaves).
   2. You combine Hash 1 and Hash 2, and hash them together.
   3. You repeat this all the way up the tree until you get a single, 64-character **Merkle Root**.
-  
+
   This Root is stored in the Block Header. To prove Transaction #238 is valid, you only need to download 12 specific hashes (the mathematical path up the tree) instead of all 4,000 transactions. This mathematically enables **Lightweight Wallets** on mobile phones.
+
+
 </Callout>
 
-</ConceptTemplate>
+

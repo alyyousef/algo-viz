@@ -4,25 +4,37 @@ description: The enterprise-grade variant of Windows, dominating corporate IT in
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Windows Server">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Windows Server">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While Linux absolutely dominates the global internet infrastructure (web servers, databases, cloud computing), **Windows Server** completely dominates internal corporate IT networks. 
+While Linux absolutely dominates the global internet infrastructure (web servers, databases, cloud computing), **Windows Server** completely dominates internal corporate IT networks.
 
 If you walk into a Fortune 500 company, a hospital, or a university, the network managing the employees' laptops is almost certainly powered by Windows Server.
 
 ## The Power of Active Directory
 
-The killer feature of Windows Server is **Active Directory (AD)**. 
+The killer feature of Windows Server is **Active Directory (AD)**.
 
 Active Directory is a massive, centralized database that stores information about every single user, computer, and printer in a corporation. When an employee sits down at a random laptop in the office and logs in, that laptop talks directly to the Windows Server to cryptographically verify their password and permissions.
 
+
 <Callout icon="info" title="Group Policy Objects (GPO)">
+
+
   Combined with AD, Windows Server offers **Group Policy**. This allows a single System Administrator to push out a rule from a central server to 10,000 laptops simultaneously. (e.g., "Force the desktop wallpaper to be the company logo", or "Disable USB ports to prevent data theft"). This level of centralized, out-of-the-box management is extremely difficult to replicate on Linux.
+
+
 </Callout>
+
 
 ## Server Core
 
-Historically, Windows Servers were mocked by Linux admins because they required a full graphical user interface (GUI) to manage, wasting precious RAM. 
+Historically, Windows Servers were mocked by Linux admins because they required a full graphical user interface (GUI) to manage, wasting precious RAM.
 Microsoft fixed this by introducing **Windows Server Core**—a stripped-down installation option that boots directly to a command prompt. It is managed entirely via the powerful, object-oriented **PowerShell** scripting language.
 
-</ConceptTemplate>

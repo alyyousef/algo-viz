@@ -1,8 +1,26 @@
+---
+title: Smalltalk
+description: A radically pure object-oriented programming language and environment created at Xerox PARC that shaped modern computing.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Smalltalk">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Smalltalk">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed at Xerox PARC by Alan Kay, Dan Ingalls, and Adele Goldberg in the 1970s, Smalltalk took the concepts invented by Simula and pushed them to their absolute mathematical limit.
 
-</ConceptTemplate>
+## 1. Pure Object Orientation
+In languages like Java, there are "primitive" types (`int`, `boolean`) that are not objects.
+In Smalltalk, **everything is an object**. Numbers are objects. Classes are objects. Even the `if` statement is not a language keyword; it is a method mathematically invoked on a Boolean object.
+Instead of calling functions, Smalltalk objects communicate exclusively by passing messages.
+
+## 2. The Live Environment
+Smalltalk is not just a language; it is a "living" Graphical User Interface.
+When you code in Smalltalk, you do not write a text file, compile it, and run it. You modify objects mathematically in real-time while the program is running. You can inspect memory, change class definitions, and rewrite the debugger itself without ever restarting the system. It fundamentally inspired the MVC (Model-View-Controller) architecture and modern IDEs.
+

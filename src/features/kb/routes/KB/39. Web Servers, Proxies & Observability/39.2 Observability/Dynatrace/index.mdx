@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Dynatrace
+description: A premier, AI-powered enterprise observability platform mathematically engineered for massive scale, providing automatic full-stack topology mapping and deterministic root-cause analysis.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Dynatrace">
+<TechnologyTemplate
+  title="Dynatrace"
+  subtitle="AI-Driven Enterprise Observability"
+  tags={['Observability', 'Monitoring', 'Enterprise', 'AI']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While tools like Prometheus require engineers to manually write complex mathematical alert queries (PromQL) and manually instrument code, Dynatrace is designed to be mathematically autonomous.
 
-</ConceptTemplate>
+## 1. The OneAgent and PurePath
+A DevOps team installs a single mathematical binary, the **OneAgent**, onto a host server.
+Without a single line of code modification, the OneAgent mathematically injects itself into running Java, Node, or Python processes at the OS level. It utilizes **PurePath** technology to automatically capture distributed traces. It mathematically maps the entire topology of the infrastructure—drawing a live graph showing exactly which microservices are talking to which databases.
+
+## 2. Deterministic AI (Davis)
+Other monitoring tools use correlation (e.g., "CPU spiked at the same time errors spiked, so they might be related"). Dynatrace's AI engine (Davis) uses **Deterministic Causality**.
+Because Dynatrace possesses the exact mathematical dependency graph, if a database slows down, Davis doesn't just alert that the database is slow. It traces the mathematical graph backward, instantly generating an alert that says: *"The Checkout microservice is failing because of a slow query on the Orders database, which was mathematically caused by a code deployment made 3 minutes ago by User X."*
+
+</TechnologyTemplate>

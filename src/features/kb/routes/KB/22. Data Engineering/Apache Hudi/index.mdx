@@ -4,7 +4,14 @@ description: A modern Table Format that brings ACID transactions and massive upd
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Hudi">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Hudi">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In legacy Data Lakes (like AWS S3 storing raw Parquet files), modifying existing data is mathematically catastrophic. If a user deletes their account (GDPR compliance), you cannot simply run a SQL `DELETE` query. You must write a massive Spark job to read a 10GB Parquet file, filter out the single user, and rewrite the entire 10GB file.
 
@@ -33,4 +40,3 @@ Hudi mathematically optimizes disk I/O by offering two distinct storage formats,
 ## 3. The Ecosystem
 Hudi is one of the three major titans in the modern "Lakehouse" architecture, fiercely competing with **Apache Iceberg** and **Delta Lake**. AWS heavily adopted Hudi early on, deeply integrating it into Amazon EMR and Amazon Athena.
 
-</ConceptTemplate>

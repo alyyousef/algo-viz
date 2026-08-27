@@ -1,8 +1,26 @@
+---
+title: Literate Programming
+description: A paradigm invented by Donald Knuth where code is embedded within a human-readable narrative essay, completely reversing the traditional priority of code over documentation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Literate programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Literate Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional programming, you write raw code and occasionally sprinkle in a `// comment`. Donald Knuth (creator of TeX) argued this was mathematically backward. Humans should not have to read machine code; machines should extract code from human literature.
 
-</ConceptTemplate>
+## 1. Weaving and Tangling
+A Literate Program is fundamentally a beautifully formatted essay (written in LaTeX or Markdown) explaining the mathematical logic of the software, interspersed with tiny blocks of actual code.
+A specialized compiler performs two distinct mathematical tasks:
+- **Weaving**: It extracts the text and formatting, generating a stunning PDF document for humans to read.
+- **Tangling**: It mathematically extracts just the code blocks, reordering and assembling them into a standard, compilable source file for the CPU to execute.
+
+## 2. The Legacy: Jupyter Notebooks
+While true Literate Programming (as Knuth designed it) never became the industry standard for software engineering, its underlying mathematical philosophy birthed the **Jupyter Notebook**. Data Scientists write rich Markdown explanations of their mathematical models, directly interspersed with executable Python cells, creating a unified, executable scientific document.
+

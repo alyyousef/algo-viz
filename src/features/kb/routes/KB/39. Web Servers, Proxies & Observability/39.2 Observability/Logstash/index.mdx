@@ -1,8 +1,25 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Logstash
+description: A heavy, Java-based server-side data processing pipeline that ingests data from a multitude of sources simultaneously, mathematically transforms it, and sends it to a "stash" like Elasticsearch.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Logstash">
+<TechnologyTemplate
+  title="Logstash"
+  subtitle="The Heavyweight Data Pipeline"
+  tags={['Observability', 'Logging', 'Data Pipeline', 'Elastic']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Logstash is the "L" in the famous **ELK stack** (Elasticsearch, Logstash, Kibana). It is the mathematical workhorse responsible for taking chaotic, unstructured data from the outside world and perfectly formatting it for Elasticsearch.
 
-</ConceptTemplate>
+## 1. The Pipeline Architecture
+A Logstash configuration is mathematically divided into three phases:
+1. **Inputs**: "Where is the data coming from?" (e.g., listening on a TCP port for Filebeat, pulling from a Kafka queue, or querying an AWS S3 bucket).
+2. **Filters**: "How do we mathematically alter the data?" (e.g., parsing raw Nginx text into JSON, translating an IP address into physical GPS coordinates using a GeoIP database).
+3. **Outputs**: "Where does the data go?" (e.g., indexing it into Elasticsearch, or forwarding it to a Slack channel).
+
+## 2. Grok and Mathematical Parsing
+Logstash's most famous feature is the **Grok filter**.
+Grok is a massive library of pre-compiled Regular Expressions (Regex). Instead of writing a 100-character, mathematically unreadable Regex string to parse an Apache log, a developer simply writes `%{COMBINEDAPACHELOG}`. Logstash mathematically applies the underlying Regex, instantly structuring the chaotic text into clean, queryable JSON fields, making the data highly valuable for analytics.
+
+</TechnologyTemplate>

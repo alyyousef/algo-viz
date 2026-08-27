@@ -4,14 +4,26 @@ description: The study of the process of converting a continuous-time signal int
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sampling Theory (Nyquist-Shannon)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sampling Theory (Nyquist-Shannon)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you sing a biological note into a microphone, the computer must take "snapshots" (Samples) of the sound wave to convert it to digital data. How many snapshots per second do you mathematically need to capture the song perfectly?
 
+
 <Callout icon="info" title="The Nyquist-Shannon Theorem">
+
+
   The Nyquist-Shannon Sampling Theorem states that you must mathematically sample the wave at a rate **at least twice as high as the highest frequency** you want to capture.
-  
+
   The biological limit of human hearing is roughly 20,000 Hertz. Therefore, to perfectly capture all audio a human can physically hear, CDs are mathematically designed to sample at 44,100 snapshots per second (44.1 kHz). Any higher sampling rate is biologically useless to the human ear.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,29 @@
+---
+title: Q-Learning
+description: A seminal, model-free Reinforcement Learning algorithm that uses the Bellman Equation to mathematically map the optimal future value of taking a specific action in a specific state.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Q-learning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Q-Learning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Q-Learning is an Off-Policy, Value-Based algorithm. The Agent does not learn a Policy directly; it learns a **Q-Table**, a massive spreadsheet where Rows are States, Columns are Actions, and the Cells are Q-Values (the maximum expected future score).
 
-</ConceptTemplate>
+## 1. The Bellman Equation
+The entire algorithm is powered by one mathematical formula: The Bellman Equation.
+When an Agent takes an action, it receives a Reward ($R$) and transitions to a new State ($S'$).
+How does it update the Q-Value of the action it just took?
+$Q(S, A) \leftarrow Q(S, A) + \alpha [R + \gamma \max Q(S', a) - Q(S, A)]$
+The math translates to: "Take my old Q-Value. Look at the new State I just landed in. Find the absolute best possible action in that new State ($\max Q$). Add the immediate Reward ($R$). Use a Learning Rate ($\alpha$) to slowly pull my old Q-Value toward this new, more accurate total."
+
+## 2. Off-Policy Learning
+Q-Learning is mathematically **Off-Policy**.
+The equation uses $\max Q(S', a)$ to update itself. It assumes that in the future, the Agent will behave perfectly and always take the maximum action. However, during training, the Agent is actually using $\epsilon$-Greedy (taking random, suboptimal actions).
+This mathematical decoupling means the Agent can watch a drunk human play a video game terribly, but still mathematically calculate the perfect Q-Values for how to play the game optimally.
+

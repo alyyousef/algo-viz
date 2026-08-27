@@ -4,14 +4,26 @@ description: A solid-state storage device that uses integrated circuit assemblie
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SSD (Solid-State Drive)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SSD (Solid-State Drive)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Unlike an HDD, an **SSD** contains absolutely zero moving parts. It is pure silicon logic.
 
+
 <Callout icon="success" title="Flash Memory & Electrons">
-  SSDs use NAND flash memory. They store `0`s and `1`s by biologically trapping electrons inside microscopic floating-gate transistors. 
-  
+
+
+  SSDs use NAND flash memory. They store `0`s and `1`s by biologically trapping electrons inside microscopic floating-gate transistors.
+
   Because reading data only requires moving electrons (which travel near the speed of light), an SSD mathematically destroys an HDD in random read/write latency, turning millisecond delays into microsecond delays. The biological tradeoff is that floating gates degrade over time; an SSD will physically die after a certain number of Terabytes are written to it.
+
+
 </Callout>
 
-</ConceptTemplate>
+

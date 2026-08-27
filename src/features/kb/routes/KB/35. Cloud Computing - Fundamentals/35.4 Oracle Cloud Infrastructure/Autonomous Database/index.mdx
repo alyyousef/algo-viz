@@ -1,0 +1,25 @@
+---
+title: Oracle Autonomous Database
+description: Oracle's flagship, self-driving cloud database service that utilizes advanced machine learning to mathematically automate tuning, patching, and scaling without human intervention.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Oracle Autonomous Database"
+  subtitle="The Self-Driving Database"
+  tags={['OCI', 'Database', 'SQL', 'Autonomous']}
+>
+
+Traditionally, Oracle Databases required an army of highly paid Database Administrators (DBAs) to mathematically tune indexes, allocate memory, and apply security patches. The Autonomous Database uses Machine Learning to replace the DBA.
+
+## 1. Self-Tuning and Self-Securing
+The Autonomous Database continuously monitors its own mathematical performance.
+If it detects that a specific `SELECT` query is running slowly, the internal AI mathematically analyzes the execution plan, automatically creates the necessary Index to speed up the query, and tests it. If the index works, it keeps it; if not, it drops it.
+Furthermore, it is **Self-Securing**. The moment Oracle releases a critical security patch, the Autonomous Database mathematically applies the patch to itself in the background with zero downtime, guaranteeing protection against zero-day exploits without waiting for human approval.
+
+## 2. ATP vs. ADW
+Oracle mathematically optimizes the Autonomous Database into two distinct architectures based on the workload:
+- **Autonomous Transaction Processing (ATP)**: Mathematically optimized for OLTP (Online Transaction Processing). It is designed to handle millions of tiny, rapid read/write operations (e.g., e-commerce checkouts) utilizing row-based caching.
+- **Autonomous Data Warehouse (ADW)**: Mathematically optimized for OLAP (Online Analytical Processing). It uses columnar storage and massively parallel processing to scan billions of rows for complex BI reporting, completely ignoring rapid, single-row inserts.
+
+</TechnologyTemplate>

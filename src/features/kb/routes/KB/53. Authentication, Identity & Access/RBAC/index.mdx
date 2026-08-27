@@ -4,16 +4,28 @@ description: A policy-neutral access-control mechanism defined around roles and 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Role-Based Access Control (RBAC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Role-Based Access Control (RBAC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Once a user is Authenticated (we know who they are), we must mathematically calculate their **Authorization** (what are they allowed to do?).
 
 **RBAC** is the industry standard for mapping permissions.
 
+
 <Callout icon="info" title="The Role Abstraction">
-  Instead of mathematically assigning 50 individual permissions to Alice (e.g., `can_read_db`, `can_delete_user`), you create a **Role** called `Admin`. 
-  
+
+
+  Instead of mathematically assigning 50 individual permissions to Alice (e.g., `can_read_db`, `can_delete_user`), you create a **Role** called `Admin`.
+
   You assign the 50 permissions to the `Admin` role. Then, you biologically assign Alice the role of `Admin`. If Alice leaves the company, you just remove her from the role, instantly revoking all 50 permissions. It mathematically prevents security oversights by utilizing group theory.
+
+
 </Callout>
 
-</ConceptTemplate>
+

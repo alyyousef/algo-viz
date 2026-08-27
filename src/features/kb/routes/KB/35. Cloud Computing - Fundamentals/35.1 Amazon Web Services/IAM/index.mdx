@@ -1,30 +1,26 @@
 ---
-title: AWS IAM (Identity and Access Management)
-description: The absolute core security service in AWS, dictating exactly who or what is allowed to perform specific actions on specific resources.
+title: AWS Identity and Access Management (IAM)
+description: The absolute foundational security system of AWS, mathematically defining exactly who (Authentication) is allowed to do exactly what (Authorization) to any cloud resource.
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="AWS IAM (Identity and Access Management)">
+<TechnologyTemplate
+  title="AWS Identity and Access Management (IAM)"
+  subtitle="The Security Bedrock of AWS"
+  tags={['AWS', 'Security', 'Identity', 'Governance']}
+>
 
-**IAM** is the overarching security umbrella of AWS. Every single API call made in AWS—whether it's launching an EC2 instance, reading an S3 file, or deleting a database—must pass through IAM for authorization. 
+If you have a server without IAM, anyone on the internet can delete it. IAM is the mathematical barrier that stands between your cloud infrastructure and the public.
 
-If IAM is misconfigured, your entire cloud infrastructure will be compromised.
+## 1. Users, Groups, and Roles
+IAM entities are mathematically distinct:
+- **IAM Users**: Long-term credentials (Access Keys) given to physical humans or CI/CD pipelines. Highly dangerous if leaked.
+- **IAM Groups**: A logical collection of Users (e.g., "Developers"). You attach permissions to the Group, and the Users mathematically inherit them.
+- **IAM Roles**: The most secure entity. Roles do not have permanent passwords. An EC2 server mathematically *assumes* a Role, and AWS generates temporary, cryptographically signed credentials that expire in 1 hour. If a hacker steals them, they are useless by the time they try to use them.
 
-## 1. Users, Groups, and Policies
+## 2. JSON Policies and Explicit Deny
+Permissions are strictly defined in JSON documents called **Policies**.
+An IAM Policy contains an Effect (Allow/Deny), an Action (e.g., `s3:DeleteObject`), and a Resource (e.g., `arn:aws:s3:::my-bucket/*`).
+IAM evaluation math is absolute: **Default Deny**. If a permission is not explicitly Allowed, it is denied. However, an **Explicit Deny** overrides everything. Even if an Administrator User has a policy saying "Allow Everything", if a secondary policy says "Deny S3 Delete", the Deny mathematically wins, and the action is blocked.
 
-- **IAM Users**: Represents a physical human being (or an external application) that needs to log in to AWS.
-- **IAM Policies**: JSON documents that explicitly define permissions. For example, a policy might say: *"Allow the `s3:PutObject` action, but only on the bucket named `production-backups`."*
-- **IAM Groups**: Instead of attaching policies to 50 individual developers, you create a `Developers` Group, attach the policy to the group, and place the users inside it.
-
-## 2. The Principle of Least Privilege
-
-The golden rule of IAM is **Least Privilege**. You must give a user the absolute bare minimum permissions required to do their job, and nothing more. If a developer only needs to read from S3, you must explicitly deny them the ability to write to S3 or launch expensive EC2 servers.
-
-## 3. IAM Roles (For Machines)
-
-It is a catastrophic security vulnerability to hardcode AWS API Keys (Access Key ID and Secret Key) inside your application code to allow your EC2 instance to talk to S3. If the code is leaked to GitHub, hackers will steal the keys.
-
-Instead, you use **IAM Roles**. 
-A Role is an identity that an AWS Service (like an EC2 instance or a Lambda function) can temporarily "assume". You attach the Role directly to the EC2 server. The server can now securely talk to S3 without a single hardcoded password existing anywhere in your codebase.
-
-</ConceptTemplate>
+</TechnologyTemplate>

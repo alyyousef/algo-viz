@@ -1,0 +1,25 @@
+---
+title: Azure Subnets
+description: The logical, mathematical segmentation of an Azure Virtual Network (VNet) used to isolate resources, enforce strict security perimeters, and control the flow of IP traffic.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Subnets"
+  subtitle="Network Segmentation"
+  tags={['Azure', 'Networking', 'VNet', 'Security']}
+>
+
+You cannot deploy a Virtual Machine directly into a Virtual Network (VNet). You must deploy it into a Subnet—a mathematically defined, smaller slice of the VNet's IP address space.
+
+## 1. CIDR Slicing
+If your VNet is defined as `10.0.0.0/16` (65,536 IPs), you mathematically carve it into Subnets.
+- Web Subnet: `10.0.1.0/24` (256 IPs)
+- Database Subnet: `10.0.2.0/24` (256 IPs)
+Unlike AWS (where subnets are strictly tied to a single physical Availability Zone), Azure Subnets **span the entire region**. A single Azure Subnet can contain VMs physically located in Zone 1, Zone 2, and Zone 3 simultaneously. This drastically simplifies the mathematical complexity of high-availability network design compared to AWS.
+
+## 2. Subnet Delegation
+Some managed Azure PaaS services (like Azure App Service or Azure PostgreSQL) require strict control over their network environment.
+Azure uses **Subnet Delegation**. You mathematically hand over absolute control of a specific Subnet to the Azure PaaS service. You cannot deploy your own VMs into a delegated subnet; the Azure software hypervisor assumes total control over that IP space, injecting its managed servers directly into your private network while maintaining strict isolation.
+
+</TechnologyTemplate>

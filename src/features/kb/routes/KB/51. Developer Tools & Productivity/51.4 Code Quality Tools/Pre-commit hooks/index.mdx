@@ -4,16 +4,28 @@ description: Scripts executed by Git before a commit is finalized to enforce cod
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pre-commit hooks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pre-commit hooks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a team configures ESLint and Prettier, but a junior developer forgets to run them before typing `git commit`, the broken code mathematically enters the repository.
 
 **Pre-commit hooks** solve this.
 
+
 <Callout icon="success" title="The Git Checkpoint">
-  Git has a physical, hidden directory (`.git/hooks`). 
-  
+
+
+  Git has a physical, hidden directory (`.git/hooks`).
+
   Tools like **Husky** or **pre-commit** mathematically inject a script into this folder. When a developer types `git commit`, Git physically pauses. It runs the linter and the formatter. If the linter finds an error, the script throws an exit code of `1`, and Git biologically aborts the commit, physically forcing the developer to fix the code before it can be saved.
+
+
 </Callout>
 
-</ConceptTemplate>
+

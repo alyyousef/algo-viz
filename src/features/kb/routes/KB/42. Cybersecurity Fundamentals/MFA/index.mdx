@@ -4,27 +4,34 @@ description: An authentication method that requires the user to provide two or m
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-Factor Authentication (MFA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Factor Authentication (MFA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Because humans are mathematically terrible at choosing passwords, and hackers routinely steal them via phishing or massive database breaches, a password alone is no longer considered secure.
 
 **Multi-Factor Authentication (MFA)** requires the user to present mathematically distinct pieces of evidence from at least two different categories (Knowledge, Possession, Inherence).
 
+
 <Callout icon="success" title="The Effectiveness of MFA">
+
+
   According to Microsoft, enforcing MFA mathematically blocks 99.9% of all automated account compromise attacks. Even if a hacker has your password, they cannot log in without also physically stealing your phone.
+
+
 </Callout>
+
 
 ## The Hierarchy of MFA Security
 
 Not all MFA is created equal. Some methods are mathematically stronger than others:
 
-<ComparisonTable 
-  headers={['Method', 'Security Level', 'Vulnerabilities']}
-  rows={[
-    ['SMS Text Messages', 'Low', 'Highly vulnerable to SIM Swapping attacks (where the hacker tricks the telecom company into porting your phone number to their SIM card).'],
-    ['Authenticator Apps (TOTP)', 'Medium', 'Apps like Google Authenticator mathematically generate a 6-digit code every 30 seconds. Vulnerable to advanced phishing (Adversary-in-the-Middle), where the fake website asks the user to type in the 6-digit code.'],
-    ['Hardware Security Keys (FIDO2)', 'Maximum', 'Physical USB keys like a YubiKey. They mathematically bind the authentication challenge to the specific TLS certificate of the website. They are cryptographically immune to phishing.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Method', 'Security Level', 'Vulnerabilities']} rows={[ ['SMS Text Messages', 'Low', 'Highly vulnerable to SIM Swapping attacks (where the hacker tricks the telecom company into porting your phone number to their SIM card).'], ['Authenticator Apps (TOTP)', 'Medium', 'Apps like Google Authenticator mathematically generate a 6-digit code every 30 seconds. Vulnerable to advanced phishing (Adversary-in-the-Middle), where the fake website asks the user to type in the 6-digit code.'], ['Hardware Security Keys (FIDO2)', 'Maximum', 'Physical USB keys like a YubiKey. They mathematically bind the authentication challenge to the specific TLS certificate of the website. They are cryptographically immune to phishing.'] ]} />
+
+

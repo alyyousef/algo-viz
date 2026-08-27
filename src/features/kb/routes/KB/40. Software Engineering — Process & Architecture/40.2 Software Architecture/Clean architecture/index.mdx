@@ -1,8 +1,33 @@
+---
+title: Clean Architecture
+description: A software architectural philosophy created by "Uncle Bob" Martin that mathematically decouples the core business logic from external frameworks, databases, and user interfaces using a strict dependency rule.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Clean architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Clean Architecture"
+  subtitle="The Framework-Agnostic Core"
+  tags={['Architecture', 'Design Patterns', 'SOLID', 'Clean Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard web application, developers often write SQL database queries directly inside the HTTP routing controller. This mathematically binds the business logic to both the Web Framework (Spring/Express) and the Database (MySQL).
 
-</ConceptTemplate>
+## 1. The Concentric Circles
+Clean Architecture visualizes the system as mathematical concentric circles:
+- **Entities (Center)**: Pure business rules (e.g., calculating interest on a loan). Mathematically ignorant of everything else.
+- **Use Cases**: Application-specific rules (e.g., "Transfer Money").
+- **Interface Adapters**: Controllers and Presenters.
+- **Frameworks & Drivers (Outer)**: The Database, the UI, the Web Framework.
+
+## 2. The Dependency Rule
+The single most important mathematical rule of Clean Architecture is the **Dependency Rule**: *Source code dependencies must only point inward, toward higher-level policies.*
+An Entity (inner circle) mathematically cannot import or know about a Database (outer circle).
+To make this work, the architect relies heavily on the **Dependency Inversion Principle (DIP)**. The Use Case defines an interface (e.g., `IUserRepository`). The outer Database layer implements that interface. The core business logic remains perfectly mathematically isolated, meaning you can swap the UI from a Web App to a CLI, and swap the database from MySQL to Mongo, without touching a single line of business logic.
+

@@ -4,10 +4,17 @@ description: A suite of native browser APIs allowing developers to create custom
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Web Components & Shadow DOM">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Web Components & Shadow DOM">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-React, Vue, and Angular became wildly popular because they introduced the concept of **Component-Based Architecture**. 
-However, the W3C recognized that component architecture shouldn't require downloading a 100KB JavaScript framework. It should be built natively into the browser. 
+React, Vue, and Angular became wildly popular because they introduced the concept of **Component-Based Architecture**.
+However, the W3C recognized that component architecture shouldn't require downloading a 100KB JavaScript framework. It should be built natively into the browser.
 
 This resulted in **Web Components**.
 
@@ -28,4 +35,3 @@ The **Shadow DOM** solves this by creating a hidden, completely isolated DOM tre
 
 This is exactly how the native `<video>` tag works—the play buttons and volume sliders are actually hidden inside a Shadow DOM!
 
-</ConceptTemplate>

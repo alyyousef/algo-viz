@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Zipkin
+description: A pioneering distributed tracing system developed by Twitter, mathematically designed to gather timing data needed to troubleshoot latency problems in microservice architectures.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Zipkin">
+<TechnologyTemplate
+  title="Zipkin"
+  subtitle="The First-Generation Tracing System"
+  tags={['Observability', 'Tracing', 'Java', 'Legacy']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Jaeger existed, Twitter faced the mathematical nightmare of debugging latency across hundreds of Java microservices. In 2012, based on the famous Google Dapper paper, Twitter open-sourced Zipkin.
 
-</ConceptTemplate>
+## 1. The B3 Propagation Standard
+Zipkin's most lasting mathematical contribution to the industry was the **B3 Propagation Specification**.
+To mathematically trace a request across network boundaries, the Trace ID must be passed in the HTTP headers. Zipkin standardized the `X-B3-TraceId`, `X-B3-SpanId`, and `X-B3-Sampled` headers. Even modern systems that do not use the Zipkin backend still heavily rely on the B3 mathematical header format to propagate context between microservices.
+
+## 2. Sampling and Mathematical Overhead
+If Twitter traced every single HTTP request, the tracing backend would mathematically require more servers than the actual application.
+Zipkin solved this using **Sampling**. The first service to receive a request (e.g., the API Gateway) mathematically flips a weighted coin (e.g., a 1% sample rate). If the coin lands on heads, it sets `X-B3-Sampled: 1`. Every downstream service respects this flag. This mathematical sampling ensures that the tracing infrastructure only processes 1% of total traffic, providing enough statistical data to find bottlenecks without overloading the network.
+
+</TechnologyTemplate>

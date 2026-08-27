@@ -4,9 +4,16 @@ description: The mathematical governance layer for streaming architectures, ensu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Schema Registries">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Schema Registries">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In a massively decoupled microservice architecture using Apache Kafka, a Producer (e.g., the Billing Service) emits JSON events, and 50 different Consumers read them. 
+In a massively decoupled microservice architecture using Apache Kafka, a Producer (e.g., the Billing Service) emits JSON events, and 50 different Consumers read them.
 If a junior engineer at the Billing Service decides to rename the JSON key from `customer_id` to `client_id`, the 50 downstream microservices will instantly crash, causing a catastrophic company-wide outage.
 
 The **Schema Registry** mathematically prevents this by enforcing strict Data Contracts.
@@ -14,7 +21,7 @@ The **Schema Registry** mathematically prevents this by enforcing strict Data Co
 ## 1. The Mathematical Enforcement
 A Schema Registry (like the Confluent Schema Registry) is a standalone web server that stores versions of schemas (typically written in **Apache Avro**, Protobuf, or JSON Schema).
 
-1. **The Contract**: The Billing Service mathematically registers a schema defining exactly what fields must exist (e.g., `customer_id` must be an integer). 
+1. **The Contract**: The Billing Service mathematically registers a schema defining exactly what fields must exist (e.g., `customer_id` must be an integer).
 2. **The Serialization**: When the Billing Service tries to send a message to Kafka, its Kafka Client automatically contacts the Registry. The Registry mathematically verifies that the payload perfectly matches the schema.
 3. **The Rejection**: If the payload contains `client_id` instead, the Schema Registry mathematically rejects the payload, throwing an exception *before* the corrupted data is ever written to Kafka.
 
@@ -26,4 +33,3 @@ Software evolves, so schemas must change. The Schema Registry mathematically gov
 
 If a developer attempts to make a breaking change (e.g., changing `age` from an Integer to a String), the Schema Registry mathematically blocks the deployment, forcing the organization to negotiate a safe migration path. It is the ultimate guardian of streaming data integrity.
 
-</ConceptTemplate>

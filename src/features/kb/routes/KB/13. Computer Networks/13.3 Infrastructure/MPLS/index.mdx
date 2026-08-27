@@ -4,7 +4,14 @@ description: A highly reliable, enterprise-grade telecommunications routing tech
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MPLS (Multiprotocol Label Switching)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="MPLS (Multiprotocol Label Switching)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In standard IP routing, every single time a packet hits a router, the router must stop, open the IP header, look at the Destination IP, query its massive BGP routing table (which contains a million entries), and calculate the next hop. This CPU-heavy lookup occurs at every single router across the globe.
 
@@ -12,14 +19,13 @@ To speed this up for massive corporate networks, telecoms invented **MPLS**.
 
 ## Layer 2.5 (The Label Header)
 
-MPLS operates between Layer 2 (Data Link) and Layer 3 (Network). 
+MPLS operates between Layer 2 (Data Link) and Layer 3 (Network).
 
 When a packet enters an MPLS network (from a corporate office), the first router injects a tiny, simple **Label** into the packet.
-As the packet traverses the telecom provider's backbone, the internal routers completely ignore the complex IP address. They only look at the simple Label. 
-The routers maintain microscopic "Label Forwarding Tables" that tell them exactly which physical port to blast the packet out of. 
+As the packet traverses the telecom provider's backbone, the internal routers completely ignore the complex IP address. They only look at the simple Label.
+The routers maintain microscopic "Label Forwarding Tables" that tell them exactly which physical port to blast the packet out of.
 
 ## The Quality of Service (QoS) Benefit
-While standard IP routing is faster today than it was in the 90s, MPLS remains popular because it provides flawless **Quality of Service (QoS)**. 
+While standard IP routing is faster today than it was in the 90s, MPLS remains popular because it provides flawless **Quality of Service (QoS)**.
 Because the telecom controls the physical MPLS backbone, they can mathematically guarantee that your encrypted VoIP phone calls (Label A) are prioritized over employee Netflix traffic (Label B), guaranteeing zero jitter or latency across continents.
 
-</ConceptTemplate>

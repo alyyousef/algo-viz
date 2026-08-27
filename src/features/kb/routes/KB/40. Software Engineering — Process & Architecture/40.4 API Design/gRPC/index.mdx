@@ -1,8 +1,29 @@
+---
+title: gRPC
+description: A high-performance, open-source universal RPC framework developed by Google that uses HTTP/2 and Protocol Buffers to mathematically compress data and accelerate communication between distributed Microservices.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="gRPC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="gRPC"
+  subtitle="High-Performance Microservice Communication"
+  tags={['API', 'gRPC', 'Microservices', 'Networking']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While REST/JSON is perfect for Web Browsers, it is mathematically terrible for internal Microservice communication. JSON is a heavy, uncompressed string format that requires massive CPU cycles to serialize and deserialize.
 
-</ConceptTemplate>
+## 1. Protocol Buffers (Protobuf)
+gRPC uses **Protocol Buffers** instead of JSON.
+The developer writes a `.proto` file mathematically defining the exact types and methods. The gRPC compiler reads this file and automatically generates the physical code for both the Client and Server in Java, Go, Python, etc.
+When the Microservice sends data, it does not send the string `"firstName": "Alice"`. It mathematically compresses the data into a dense, binary stream. This reduces network payload size by 50-80% and increases CPU parsing speed by 10x compared to JSON.
+
+## 2. HTTP/2 and Streaming
+gRPC mathematically requires HTTP/2. Unlike HTTP/1.1 (which requires opening a new TCP connection for every request), HTTP/2 multiplexes thousands of concurrent requests over a single persistent TCP connection. This allows gRPC to mathematically support bi-directional, real-time streaming data between servers, making it the dominant protocol for modern cloud-native Microservices.
+

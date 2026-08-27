@@ -4,9 +4,16 @@ description: An ingenious, tree-based unsupervised algorithm mathematically opti
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Isolation Forest">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Isolation Forest">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Most anomaly detection algorithms (like Autoencoders or One-Class SVMs) attempt to mathematically profile "normal" data, and flag anything that doesn't fit. 
+Most anomaly detection algorithms (like Autoencoders or One-Class SVMs) attempt to mathematically profile "normal" data, and flag anything that doesn't fit.
 
 **Isolation Forests** completely invert the mathematical paradigm. They do not care about normal data. They are explicitly mathematically designed to actively target and isolate the anomalies directly.
 
@@ -30,4 +37,3 @@ The anomaly score is mathematically derived directly from the Path Length.
 
 Because it relies purely on random splits and does not calculate distance matrices, Isolation Forest has an incredibly fast $O(N)$ time complexity, making it the absolute industry standard for anomaly detection on massive real-time streams (like credit card fraud).
 
-</ConceptTemplate>

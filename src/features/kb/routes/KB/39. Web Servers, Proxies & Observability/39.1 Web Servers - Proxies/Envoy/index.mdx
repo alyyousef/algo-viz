@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Envoy
+description: A high-performance C++ distributed proxy designed by Lyft specifically for cloud-native microservices, mathematically abstracting the network to provide unified observability and traffic control.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Envoy">
+<TechnologyTemplate
+  title="Envoy"
+  subtitle="The Cloud-Native Proxy"
+  tags={['Proxies', 'Networking', 'Microservices', 'Architecture']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Nginx and HAProxy were designed in the era of static servers. Envoy (donated to the CNCF by Lyft) was mathematically engineered from the ground up for the chaotic, highly dynamic era of Kubernetes microservices.
 
-</ConceptTemplate>
+## 1. The Universal Data Plane
+In a microservice architecture, Envoy is typically deployed as a **Sidecar** (one Envoy proxy running directly next to every single application container).
+This mathematically forms a "Data Plane." The application never talks to the network directly; it only talks to its local Envoy proxy via `localhost`. Envoy mathematically handles all the complex distributed systems logic: mutual TLS (mTLS) encryption, automatic retries, exponential backoffs, and circuit breaking.
+
+## 2. API-Driven Configuration
+Nginx requires you to write a static `nginx.conf` file and mathematically reload the process (`nginx -s reload`) to apply changes, which drops connections.
+Envoy mathematically solved this by dropping static files entirely. Envoy is configured dynamically via a highly advanced gRPC API (the **xDS API**). A central Control Plane (like Istio) continuously streams mathematical routing updates directly into Envoy's memory in real-time. Envoy dynamically alters its routing tables without ever dropping a single active HTTP connection.
+
+</TechnologyTemplate>

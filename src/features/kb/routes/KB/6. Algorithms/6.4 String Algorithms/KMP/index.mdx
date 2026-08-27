@@ -1,8 +1,31 @@
+---
+title: KMP Algorithm
+description: "The Knuth-Morris-Pratt algorithm is a linear-time string searching algorithm that mathematically bypasses redundant character comparisons by precomputing a Longest Prefix Suffix (LPS) array."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="KMP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="KMP Algorithm"
+  subtitle="String Searching without Backtracking"
+  tags={['Algorithms', 'Strings', 'Mathematics', 'Performance']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a naive string search, if you are looking for "ABCABD" inside "ABCABCABCABD", and you fail at the last letter 'D', you must mathematically start all over from the 2nd character of the text. This backtracking leads to a worst-case Time Complexity of O(N * M).
 
-</ConceptTemplate>
+## 1. The LPS Array (Pi Table)
+The KMP algorithm mathematically eliminates backtracking. It guarantees that the text pointer *never* moves backward.
+It achieves this by precomputing an LPS (Longest Prefix Suffix) array for the search pattern.
+The LPS mathematically analyzes the pattern for symmetry. For the pattern "ABCA", the LPS notes that the prefix "A" is identical to the suffix "A".
+
+## 2. Skipping the Redundancy
+If the search fails at the 'D' in "ABCABD", the algorithm does not reset.
+It mathematically checks the LPS array. The LPS array says: *"You just matched 'ABCA' before failing. I know mathematically that the 'A' at the end of that match can act as the 'A' at the start of a new match."*
+The algorithm instantly shifts the pattern forward, maintaining its place in the massive text block. Because the text pointer only ever moves to the right, the search is mathematically guaranteed to finish in strictly **O(N + M)** time.
+

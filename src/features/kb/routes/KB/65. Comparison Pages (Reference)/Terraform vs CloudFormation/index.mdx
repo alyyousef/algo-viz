@@ -1,8 +1,33 @@
+---
+title: Terraform vs CloudFormation
+description: "An architectural comparison of Cloud provisioning tools, contrasting AWS's native, JSON/YAML-based CloudFormation with HashiCorp's cloud-agnostic, HCL-driven Terraform."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Terraform vs CloudFormation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Terraform vs CloudFormation"
+  subtitle="The Battle for Infrastructure as Code"
+  tags={['Comparison', 'DevOps', 'AWS', 'Cloud']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If your company uses AWS, you mathematically must choose one of these two declarative Infrastructure as Code (IaC) tools to manage your cloud resources.
 
-</ConceptTemplate>
+## 1. AWS CloudFormation
+- **Architecture**: Native, proprietary AWS service.
+- **Mechanism**: You write massive templates in JSON or YAML. You upload them directly to the AWS API, and AWS's internal engine handles the mathematical provisioning.
+- **Pros**: It is deeply integrated into AWS. There is zero state file for you to manage (AWS manages the state internally). It natively supports automatic rollback if a deployment mathematically fails halfway through.
+- **Cons**: It is strictly locked to AWS. You cannot use CloudFormation to provision a Datadog dashboard or a Cloudflare DNS record. Writing raw YAML for complex logic is mathematically painful.
+
+## 2. Terraform (HashiCorp)
+- **Architecture**: Open-source, cloud-agnostic CLI tool.
+- **Mechanism**: You write code using HCL (HashiCorp Configuration Language), which supports loops, variables, and modules far better than YAML. Terraform mathematically calculates a "Plan" locally, and then makes API calls.
+- **Pros**: **Providers**. Terraform can mathematically manage AWS, GCP, Azure, GitHub repositories, and PagerDuty schedules all in the exact same codebase. It is the undisputed industry standard.
+- **Cons**: You must manually manage the `terraform.tfstate` file (usually storing it in an S3 bucket with a DynamoDB lock), which can become corrupted if multiple engineers try to deploy simultaneously without proper locking.
+

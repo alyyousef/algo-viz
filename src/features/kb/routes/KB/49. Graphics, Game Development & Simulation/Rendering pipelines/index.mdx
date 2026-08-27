@@ -4,22 +4,34 @@ description: The sequence of steps that a graphics API takes to transform 3D dat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rendering Pipelines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rendering Pipelines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 You cannot just throw a 3D model at a GPU. The GPU requires the data to flow through a very strict, highly optimized mathematical assembly line called the **Rendering Pipeline**.
 
+
 <Callout icon="warning" title="Forward vs Deferred Rendering">
+
+
   If you have a city with 1,000 streetlights, calculating the physics for 1,000 lights on every single pixel will instantly crash the GPU.
-  
+
   - **Forward Rendering:** The legacy pipeline. It loops through every object, and for every object, loops through every light. Highly inefficient if there are more than 4 lights in the scene.
   - **Deferred Rendering:** The modern AAA pipeline. It renders all the 3D geometry *first* into massive, invisible textures (G-Buffers) without any light. Then, as a final 2D post-processing step, it calculates the lighting for the entire screen at once. This mathematically decouples the geometry from the lighting, allowing a game to render 10,000 lights simultaneously at 60 FPS.
+
+
 </Callout>
+
 
 ## The Draw Call Bottleneck
 
-The biggest enemy of a rendering pipeline is the **Draw Call**. 
-A Draw Call is when the CPU commands the GPU to render an object. Because the CPU and GPU are physically separate chips, sending a command takes time. 
+The biggest enemy of a rendering pipeline is the **Draw Call**.
+A Draw Call is when the CPU commands the GPU to render an object. Because the CPU and GPU are physically separate chips, sending a command takes time.
 
 If you have a forest with 10,000 trees, sending 10,000 individual Draw Calls will completely bottleneck the CPU, causing the game to lag. Modern engines use **Instancing**—sending 1 single Draw Call that says, *"Here is the math for 1 tree, and here is an array of 10,000 XYZ coordinates. Draw them all yourself."*
 
-</ConceptTemplate>

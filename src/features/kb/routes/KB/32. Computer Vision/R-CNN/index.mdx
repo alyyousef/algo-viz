@@ -1,8 +1,27 @@
+---
+title: R-CNN (Region-Based Convolutional Neural Networks)
+description: The seminal 2014 architecture that birthed modern Deep Learning Object Detection by mathematically combining traditional region proposals with the feature-extracting power of Convolutional Networks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="R-CNN">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="R-CNN (Region-Based CNN)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before R-CNN, object detection relied on terrible, hand-coded features (like HOG or SIFT). R-CNN proved that Neural Networks could dominate spatial object detection, though its original mathematical implementation was incredibly slow.
 
-</ConceptTemplate>
+## 1. The Two-Stage Architecture
+R-CNN physically separated the problem into two distinct mathematical steps:
+1. **Region Proposal**: It used a traditional, non-AI algorithm (Selective Search) to mathematically analyze the pixels and group them by color and texture, proposing 2,000 bounding boxes where an object *might* exist.
+2. **Feature Extraction & Classification**: The system physically cropped those 2,000 boxes out of the image, resized them to a uniform square, and fed every single one independently through a massive Convolutional Neural Network to extract features, finally using an SVM to classify them.
+
+## 2. The Mathematical Bottleneck
+R-CNN was accurate, but it was a computational nightmare.
+Because it mathematically forced 2,000 independent crops through a massive CNN, it required 2,000 separate forward passes for a *single image*. It took nearly a minute to process one frame.
+This architectural flaw led directly to the invention of Fast R-CNN and Faster R-CNN, which solved the bottleneck by mathematically running the CNN *once* on the entire image, and then extracting the 2,000 regions from the resulting feature map, reducing the mathematical redundant computation to zero.
+

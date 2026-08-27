@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Tableau
+description: The industry-leading Business Intelligence and Data Visualization software, renowned for its highly intuitive, drag-and-drop mathematical interface.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Dashboarding (Tableau">
+<TechnologyTemplate
+  title="Tableau"
+  subtitle="Interactive Data Visualization"
+  tags={['BI', 'Analytics', 'Visualization']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Tableau abstracts the complex mathematics of Data Visualization behind a fluid, drag-and-drop interface, allowing non-technical analysts to explore massive datasets visually.
 
-</ConceptTemplate>
+## 1. VizQL (Visual Query Language)
+Under the hood, Tableau is powered by a proprietary mathematical translation engine called **VizQL**.
+When an analyst drags a "Region" pill onto the Columns shelf and a "Sales" pill onto the Rows shelf, VizQL instantly mathematically translates that physical UI action into highly optimized SQL (or MDX). It sends the query to the database, receives the aggregated numbers, and mathematically renders the geometry (bars, maps, scatter plots) in milliseconds.
+
+## 2. The Hyper Data Engine
+While Tableau can query databases live, doing complex mathematics on slow SQL servers is painful.
+Tableau solved this by inventing **Hyper**, an incredibly fast, proprietary, in-memory mathematical database. Analysts can mathematically extract billions of rows from their slow SQL server and compress them into a `.hyper` file. The Hyper engine loads this directly into the server's RAM, allowing executives to filter and pivot massive dashboards in absolute real-time without ever hitting the production database.
+
+</TechnologyTemplate>

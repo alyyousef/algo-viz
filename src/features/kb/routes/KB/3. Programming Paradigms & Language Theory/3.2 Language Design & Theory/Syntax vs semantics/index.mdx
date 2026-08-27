@@ -1,8 +1,27 @@
+---
+title: Syntax vs. Semantics
+description: The fundamental dichotomy in language theory separating the physical spelling and grammar of a program (Syntax) from its actual mathematical meaning and execution behavior (Semantics).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Syntax vs semantics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Syntax vs. Semantics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A program can be syntactically perfect and semantically catastrophic. Understanding the mathematical difference between the two is the foundation of writing a compiler.
 
-</ConceptTemplate>
+## 1. Syntax (The Grammar)
+Syntax is purely structural. It is the mathematical rules defining which characters are allowed to follow other characters (defined by BNF Grammars).
+The sentence: *"The purple math ate a silent car"* is syntactically perfect English. It has a Subject, Verb, and Object. A compiler's **Parser** will successfully read this and build an Abstract Syntax Tree (AST) with zero errors.
+
+## 2. Semantics (The Meaning)
+Semantics is the actual logic. The sentence above is semantically meaningless.
+In programming, `String x = 5 / 0;` is syntactically flawless (Type Variable = Expression). However, the **Semantic Analyzer** in the compiler will instantly reject it for two mathematical reasons:
+1. **Static Semantics (Compile-Time)**: You cannot assign an Integer result to a String variable (Type Mismatch).
+2. **Dynamic Semantics (Run-Time)**: You cannot mathematically divide by Zero (State Violation). Syntax dictates *how* you write it; Semantics dictates *what* it actually does to the CPU.
+

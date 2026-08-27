@@ -1,8 +1,32 @@
+---
+title: Blue-Green Deployment
+description: A mathematically safe release strategy that utilizes two identical production environments to guarantee zero-downtime deployments and instant, perfect rollbacks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Blue-green deployment">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Blue-Green Deployment"
+  subtitle="Zero-Downtime Release Strategy"
+  tags={['DevOps', 'Deployment', 'Architecture', 'Safety']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Historically, deploying new code meant taking the server offline for 10 minutes, resulting in mathematical downtime. Blue-Green deployment completely eliminates this by doubling the physical infrastructure during the release window.
 
-</ConceptTemplate>
+## 1. The Dual-Environment Architecture
+You maintain two exact, mathematically identical production environments: **Blue** (currently live) and **Green** (idle).
+When version 2.0 of your application is ready, you deploy it entirely to the Green environment. Green is completely isolated; no public users can reach it.
+Your QA engineers run mathematical integration and smoke tests against the Green environment to ensure version 2.0 functions perfectly against the live database.
+
+## 2. The Atomic Router Switch
+Once Green is verified, the deployment is executed not by moving code, but by modifying the **Load Balancer**.
+You mathematically flip the Load Balancer routing rules to instantly point 100% of public internet traffic to the Green environment.
+- The downtime is mathematically **zero milliseconds**.
+- If a catastrophic bug is discovered 5 minutes later, you do not write a revert commit. You simply flip the Load Balancer back to Blue. Because Blue is still running version 1.0 completely untouched, the rollback is instantaneous and mathematically guaranteed to succeed.
+

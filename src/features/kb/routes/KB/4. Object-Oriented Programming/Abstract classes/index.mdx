@@ -1,8 +1,39 @@
+---
+title: Abstract Classes
+description: A foundational Object-Oriented Programming concept defining a class that cannot be instantiated itself, serving as a strict mathematical blueprint that forces child classes to implement specific behaviors.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Abstract classes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Abstract Classes"
+  subtitle="The Incomplete Blueprint"
+  tags={['OOP', 'Architecture', 'Java', 'C++']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are building a physics engine, you might have an entity called `Shape`. It makes mathematical sense to ask a `Circle` or a `Square` to calculate its area. It makes zero mathematical sense to ask a generic `Shape` to calculate its area, because a generic shape has no defined geometry.
 
-</ConceptTemplate>
+## 1. Preventing Instantiation
+An Abstract Class solves this by mathematically forbidding instantiation.
+```java
+public abstract class Shape {
+    // Abstract method: No body, forces children to implement
+    public abstract double calculateArea();
+
+    // Concrete method: Already implemented, shared by all children
+    public void printLabel() {
+        System.out.println("I am a shape.");
+    }
+}
+```
+If a developer types `new Shape()`, the compiler mathematically blocks it. You cannot create a pure `Shape`.
+
+## 2. The Contract of Implementation
+When a developer creates a `Circle` class and extends `Shape`, they are signing a mathematical contract. The compiler will refuse to compile the `Circle` class unless the developer provides a concrete implementation for the `calculateArea()` method. This guarantees that any object that claims to be a `Shape` mathematically possesses the ability to calculate its area.
+

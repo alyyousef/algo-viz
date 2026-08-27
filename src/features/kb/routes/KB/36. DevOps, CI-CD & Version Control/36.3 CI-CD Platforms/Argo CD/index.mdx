@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Argo CD
+description: A declarative, GitOps-based continuous delivery tool specifically engineered for Kubernetes, mathematically automating the deployment of applications by reconciling cluster state with Git repositories.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Argo CD">
+<TechnologyTemplate
+  title="Argo CD"
+  subtitle="The GitOps Engine for Kubernetes"
+  tags={['DevOps', 'Kubernetes', 'GitOps', 'CI/CD']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional CI/CD tools (like Jenkins) push deployments by executing commands against external servers. Argo CD flips this mathematical model; it lives *inside* the Kubernetes cluster and pulls configuration from Git.
 
-</ConceptTemplate>
+## 1. The Mathematical Reconciliation Loop
+Argo CD is the physical manifestation of the **GitOps** philosophy.
+An engineer stores Kubernetes YAML manifests (or Helm charts) in a Git repository. Argo CD continuously polls this repository. It mathematically calculates the diff between the Desired State (the code in Git) and the Live State (what is actually running in the cluster).
+If a developer merges a PR changing a deployment from 3 replicas to 5, Argo CD detects the "OutOfSync" mathematical state. It automatically executes a synchronization loop, scaling the pods in Kubernetes to exactly match the Git repository, requiring zero external scripts or API tokens in the CI pipeline.
+
+## 2. Self-Healing Infrastructure
+Because Argo CD is a constant mathematical loop, it protects against manual interference.
+If a rogue SysAdmin manually runs `kubectl delete deployment frontend` directly on the cluster, Argo CD instantly detects that the Live State no longer matches the Git state. Within seconds, it mathematically self-heals, recreating the frontend deployment automatically to enforce compliance with the Git source of truth.
+
+</TechnologyTemplate>

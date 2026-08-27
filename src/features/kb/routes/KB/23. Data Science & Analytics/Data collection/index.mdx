@@ -1,8 +1,25 @@
+---
+title: Data Collection
+description: The systematic architectural process of gathering massive, raw datasets from distributed sources into a centralized, mathematically analyzable storage system.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data collection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Collection">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before any mathematical analysis can begin, the data must be physically acquired. In modern architecture, this involves ingesting Terabytes or Petabytes of data per day.
 
-</ConceptTemplate>
+## 1. Batch vs. Streaming Ingestion
+- **Batch Processing**: The legacy method. Once a night, a script wakes up, runs a massive SQL query against the production database, and physically copies 10 million rows into the Data Warehouse.
+- **Streaming (Real-Time)**: The modern approach (using Apache Kafka or AWS Kinesis). Every time a user clicks a button, a tiny mathematical Event is instantly fired into a Message Broker. The Data Warehouse mathematically ingests these events in real-time, allowing Data Scientists to analyze user behavior within milliseconds of it happening.
+
+## 2. The Data Lake
+When data is collected, it is often unstructured (raw JSON, server logs, images, audio files).
+You cannot mathematically store this in a rigid SQL database. Instead, the raw data is dumped into a **Data Lake** (like AWS S3). A Data Lake is an incredibly cheap, mathematically infinite object storage system. It acts as the absolute source of truth. Later, ETL pipelines will pull this raw data, mathematically transform it, and load it into a structured Data Warehouse for actual analysis.
+

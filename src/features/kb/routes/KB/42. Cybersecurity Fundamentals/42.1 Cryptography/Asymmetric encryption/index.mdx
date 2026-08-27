@@ -5,8 +5,14 @@ description: The foundational cryptography protocol that utilizes mathematically
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-
-<ConceptTemplate title="Asymmetric Encryption">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Asymmetric Encryption">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the early days of cryptography, Alice and Bob had to share the exact same secret key to encrypt and decrypt messages (Symmetric Encryption). The fatal flaw was the **Key Distribution Problem**: how do you securely send the secret key to someone across an unsecured internet without a hacker stealing it?
 
@@ -17,9 +23,15 @@ In the early days of cryptography, Alice and Bob had to share the exact same sec
 - **Public Key**: Handed out to everyone in the world. It can only **encrypt** data or **verify** signatures.
 - **Private Key**: Kept absolutely secret. It can only **decrypt** data or **create** signatures.
 
+
 <Callout icon="tip" title="The Padlock Analogy">
+
+
   Think of the Public Key as an open padlock that you distribute to anyone. Anyone can put their data in a box and snap your padlock shut (encrypt). However, once the padlock is closed, even the person who closed it cannot open it. Only you hold the physical key (the Private Key) that can unlock it (decrypt).
+
+
 </Callout>
+
 
 ## 2. Core Workflows
 
@@ -40,18 +52,16 @@ If Alice wants to prove she wrote a message:
 
 ## 3. Asymmetric vs. Symmetric
 
-<ComparisonTable 
-  headers={['Feature', 'Asymmetric Encryption', 'Symmetric Encryption']} 
-  rows={[
-    ['Keys', 'Two (Public and Private)', 'One (Shared Secret)'],
-    ['Speed', 'Extremely Slow (Heavy Math)', 'Extremely Fast (Bitwise operations)'],
-    ['Primary Use Case', 'Key Exchange, Digital Signatures (RSA, ECC)', 'Bulk Data Encryption (AES, ChaCha20)'],
-    ['Key Exchange Problem', 'Solved (Public keys are public)', 'Fatal (Must securely share the key)']
-  ]} 
-/>
+
+<ComparisonTable headers={['Feature', 'Asymmetric Encryption', 'Symmetric Encryption']} rows={[ ['Keys', 'Two (Public and Private)', 'One (Shared Secret)'], ['Speed', 'Extremely Slow (Heavy Math)', 'Extremely Fast (Bitwise operations)'], ['Primary Use Case', 'Key Exchange, Digital Signatures (RSA, ECC)', 'Bulk Data Encryption (AES, ChaCha20)'], ['Key Exchange Problem', 'Solved (Public keys are public)', 'Fatal (Must securely share the key)'] ]} />
+
 
 <Callout icon="warning" title="The Hybrid Approach (TLS)">
+
+
   Because Asymmetric encryption is incredibly slow, the modern internet (HTTPS/TLS) uses a **Hybrid System**. It uses Asymmetric Encryption (like RSA) purely to securely exchange a temporary Symmetric Key. Once both sides have the Symmetric Key, they switch to Symmetric Encryption (like AES) for the rest of the web session to stream data at high speeds.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,36 @@
+---
+title: Partial Differential Equations (PDEs)
+description: "Advanced mathematical equations involving multivariable functions and their partial derivatives, fundamentally used to simulate fluid dynamics, heat transfer, and quantum mechanics."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PDEs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Partial Differential Equations"
+  subtitle="The Math of Spacetime and Simulation"
+  tags={['Mathematics', 'Calculus', 'Physics', 'Simulation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While an Ordinary Differential Equation (ODE) deals with functions of a *single* variable (like how a pendulum swings over time), a **Partial Differential Equation (PDE)** deals with functions of *multiple* variables (like how heat spreads across a 3D metal plate over time).
 
-</ConceptTemplate>
+## 1. The Core Concept
+A PDE contains unknown multivariable functions and their partial derivatives. They are the mathematical language used to describe almost all continuous physical phenomena in the universe.
+- **The Heat Equation**: Describes how temperature distributes over space and time.
+- **The Wave Equation**: Describes the propagation of light and sound waves.
+- **The Navier-Stokes Equations**: Describes the exact flow of fluids (water, air).
+
+## 2. Why Are They So Hard?
+Unlike basic algebra, there is no single algorithmic way to perfectly solve most real-world PDEs. In fact, proving that a smooth, mathematical solution even *exists* for the 3D Navier-Stokes equations is a $1,000,000 Millennium Prize problem.
+Because they are so mathematically chaotic, humans cannot solve them by hand.
+
+## 3. Computational Fluid Dynamics (CFD)
+Because PDEs cannot be solved algebraically, computer scientists use **Numerical Methods** to approximate them.
+Instead of trying to find the perfect mathematical formula for the aerodynamics of a Formula 1 car, software chops the 3D space around the car into millions of tiny cubes (a Mesh). The computer then uses massive matrix multiplication to calculate the PDE physics for one cube, pass the result to the neighboring cube, and step forward by 0.001 seconds. This is why simulating physics requires massive supercomputers.
+
+\n

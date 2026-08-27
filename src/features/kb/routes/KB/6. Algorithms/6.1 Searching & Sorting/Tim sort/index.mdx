@@ -1,8 +1,29 @@
+---
+title: Timsort
+description: "A highly sophisticated hybrid sorting algorithm derived from Merge Sort and Insertion Sort, mathematically designed to perform optimally on many kinds of real-world data."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tim sort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Timsort"
+  subtitle="The Engine of Python and Java"
+  tags={['Algorithms', 'Sorting', 'Performance', 'Python']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Tim Peters in 2002 for the Python programming language, Timsort is mathematically so efficient that it replaced Quicksort and Mergesort as the default sorting algorithm in Python, Java, and Android.
 
-</ConceptTemplate>
+## 1. Exploiting Natural Runs
+Timsort is mathematically based on a real-world observation: data given to a sorting algorithm is rarely completely random. It usually contains sub-sections that are already sorted (called "Natural Runs").
+Timsort scans the array looking for these Runs. If it finds a Run that is too small (e.g., less than 32 elements), it uses **Insertion Sort** to mathematically boost the size of the Run. (Insertion Sort is the fastest algorithm in existence for tiny arrays).
+
+## 2. Merging the Runs
+Once the entire array is partitioned into a series of mathematically optimal Runs, Timsort utilizes the combining logic of **Merge Sort** to stitch them together.
+By recognizing what is already sorted, and seamlessly swapping between Insertion Sort (for the micro level) and Merge Sort (for the macro level), Timsort achieves a worst-case Time Complexity of **O(N log N)**, but a mind-blowing best-case complexity of **O(N)**.
+

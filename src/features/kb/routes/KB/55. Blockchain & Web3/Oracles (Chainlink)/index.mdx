@@ -4,16 +4,28 @@ description: A decentralized oracle network that provides reliable, tamper-proof
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Oracles (Chainlink)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Oracles (Chainlink)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A Smart Contract is mathematically blind. It biologically cannot execute an HTTP `fetch()` request to the internet. 
+A Smart Contract is mathematically blind. It biologically cannot execute an HTTP `fetch()` request to the internet.
 
 If a Smart Contract is a DeFi lending protocol, it needs to know the current price of Apple Stock to execute a liquidation. How does it get this data?
 
+
 <Callout icon="success" title="The Oracle Solution">
-  It uses an **Oracle** (like Chainlink). 
-  
+
+
+  It uses an **Oracle** (like Chainlink).
+
   An Oracle is a decentralized network of off-chain servers that biologically read the internet (e.g., checking Bloomberg for the Apple Stock price). They reach a mathematical consensus on the price, and then mathematically write that price *into* the blockchain as a transaction. The Smart Contract can now safely read the data locally from the blockchain.
+
+
 </Callout>
 
-</ConceptTemplate>
+

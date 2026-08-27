@@ -1,8 +1,29 @@
+---
+title: Model Versioning
+description: The rigorous MLOps practice of immutably cataloging the specific mathematical weights, hyperparameters, and dataset lineage of every neural network trained, ensuring strict rollback capabilities in production.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model versioning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Versioning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In traditional software, you version code using Git (e.g., `v1.4.2`). In Machine Learning, the code is identical every time. What changes are the mathematical weights inside the `.pt` file. If you overwrite `model.pt`, you have irrevocably destroyed history.
 
-</ConceptTemplate>
+## 1. Cryptographic Hashing
+Model Versioning systems (like MLflow or DVC) do not just name files `model_v2.pt`.
+They calculate the SHA-256 hash of the exact physical bytes of the weights file. This hash acts as an immutable mathematical fingerprint. If a Data Scientist claims they are testing `v2`, but the hash does not perfectly match the Registry's hash, the system mathematically proves the file was tampered with or corrupted, and blocks deployment.
+
+## 2. The Lineage Triad
+A model version is useless if you do not know how it was made.
+A proper Model Versioning system mathematically links three things:
+1. **The Code**: The Git Commit Hash of the Python training script.
+2. **The Data**: The DVC Hash of the exact training dataset.
+3. **The Weights**: The SHA-256 Hash of the output model.
+If a production model (Version 14) starts generating biased predictions, engineers can use this Triad to perfectly reconstruct the exact environment, code, and data from six months ago to forensically investigate the mathematical root cause of the bias.
+

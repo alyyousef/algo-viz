@@ -1,8 +1,27 @@
+---
+title: Context Construction
+description: The critical engineering step in a RAG pipeline where retrieved chunks are dynamically ordered, filtered, and formatted into the exact mathematical Prompt structure required by the LLM.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Context construction">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Context Construction">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Retrieving 10 highly relevant chunks from a Vector Database is only half the battle. If you just paste them into the LLM randomly, the LLM will suffer from severe cognitive overload and fail to answer the prompt.
 
-</ConceptTemplate>
+## 1. The "Lost in the Middle" Phenomenon
+Mathematical studies on LLM Attention Mechanisms have proven the "Lost in the Middle" effect.
+If you feed an LLM a massive prompt containing 10 chunks, it will mathematically pay extreme attention to Chunk 1 (the beginning) and Chunk 10 (the end). It will almost completely ignore Chunks 4, 5, and 6.
+Therefore, Context Construction algorithms must mathematically reorder the retrieved documents. The most relevant chunk must be placed at the very beginning or the very end of the prompt window, never in the middle.
+
+## 2. Context Window Optimization
+Tokens are expensive, and context windows are finite.
+If the retrieved chunks exceed the LLM's maximum token limit (e.g., 8,000 tokens), the Context Constructor must mathematically truncate the data.
+Advanced pipelines use **Summarization Chains**. Before injecting the chunks into the final prompt, a smaller, cheaper LLM is used to summarize each 1,000-token chunk into a 100-token bulleted list. The Constructor then injects these hyper-dense summaries into the final prompt, mathematically preserving the semantic information while radically reducing the token count.
+

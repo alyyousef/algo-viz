@@ -1,8 +1,26 @@
+---
+title: Conditionals
+description: The mathematical bedrock of computational logic, allowing CPUs to dynamically alter their execution path based on boolean expressions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Conditionals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Conditionals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+At a hardware level, a CPU just executes instructions sequentially. Conditionals (`if/else`, `switch`) are the mathematical constructs that give software intelligence, allowing the CPU to jump to different code paths based on dynamic data.
 
-</ConceptTemplate>
+## 1. Branching in Assembly
+When a compiler sees an `if (x > 5)` statement, it mathematically translates this into two assembly instructions:
+1. **Compare (CMP)**: The ALU (Arithmetic Logic Unit) subtracts 5 from x and updates a mathematical flag in the CPU register.
+2. **Jump if Greater (JG)**: If the flag is set, the CPU physically changes its Instruction Pointer to jump to a different memory address, skipping the `else` block.
+
+## 2. Branch Prediction
+Because jumping to a different memory address breaks the CPU pipeline (the CPU has to throw away the upcoming instructions it had already started decoding), Conditionals are mathematically expensive.
+Modern CPUs utilize **Branch Prediction**. When the CPU encounters an `if` statement inside a loop, it uses a mathematical heuristic to guess which path will be taken before the math is even calculated. If it guesses right, execution is lightning fast. If it guesses wrong, it suffers a massive performance penalty. This is why sorting an array *before* running an `if` statement on it can mathematically make the code run 5x faster in languages like C++.
+

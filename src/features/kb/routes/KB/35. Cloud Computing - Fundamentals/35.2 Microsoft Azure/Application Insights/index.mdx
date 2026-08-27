@@ -1,0 +1,23 @@
+---
+title: Azure Application Insights
+description: An incredibly powerful Application Performance Management (APM) service that mathematically injects telemetry into live code to track request rates, dependency failures, and unhandled exceptions in real-time.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Application Insights"
+  subtitle="Deep Application Telemetry"
+  tags={['Azure', 'Monitoring', 'APM', 'Observability']}
+>
+
+If an API request is slow, standard server monitoring will tell you the CPU is at 50%. This is useless. Application Insights mathematically traces the exact millisecond execution of your code to tell you *why* it is slow.
+
+## 1. Auto-Instrumentation and the Application Map
+For languages like .NET, Java, and Node.js, Application Insights can be enabled without changing a single line of your source code (Auto-Instrumentation).
+The agent attaches to the runtime and mathematically tracks every outgoing HTTP call and SQL query. It uses this data to automatically draw an **Application Map**—a visual, mathematical graph showing how your microservices connect. If your Web API is taking 4 seconds to load, the Map will visually highlight a red line pointing to a specific slow SQL database, instantly identifying the mathematical bottleneck.
+
+## 2. Kusto Query Language (KQL)
+Application Insights ingests millions of telemetry events (page views, exceptions, custom events).
+To query this, Azure provides **KQL**, an incredibly fast, pipe-based mathematical query language. You can write a query to instantly isolate the exact stack trace of every `NullReferenceException` that occurred specifically for users on Safari browsers in the last 15 minutes, allowing engineers to debug production issues mathematically rather than guessing.
+
+</TechnologyTemplate>

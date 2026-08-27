@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Mercurial
+description: A distributed version control system designed for extreme performance and scalability, mathematically prioritizing a cleaner, safer, and more user-friendly command interface compared to Git.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Mercurial">
+<TechnologyTemplate
+  title="Mercurial"
+  subtitle="The Elegant Alternative to Git"
+  tags={['Version Control', 'Tooling', 'Engineering', 'Legacy']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the mid-2000s, Git and Mercurial (often abbreviated as `hg`) fought a massive war to replace Subversion (SVN) as the world's dominant version control system. While Git mathematically won the market share (largely due to GitHub), Mercurial remains a masterpiece of software engineering.
 
-</ConceptTemplate>
+## 1. Mathematical Simplicity and Safety
+Linus Torvalds designed Git to expose the complex mathematical graph theory of the repository directly to the user, making it incredibly powerful but notoriously difficult to learn.
+Mercurial took the opposite approach. It abstracted the mathematical complexity behind a clean, intuitive command-line interface. More importantly, Mercurial is mathematically engineered to be **safe**. By default, it physically prevents users from executing commands that would alter history or destroy commits (unlike Git, where `git push --force` can mathematically obliterate a colleague's work).
+
+## 2. Massive Enterprise Scale
+While open-source developers chose Git, massive tech giants (like Facebook/Meta) originally chose Mercurial.
+Facebook's monolithic codebase was so mathematically massive (terabytes of text) that standard Git commands took 10 minutes to execute. Mercurial's underlying mathematical architecture handled this scale significantly better at the time, leading Facebook to heavily modify and rely on Mercurial for years before eventually building custom internal systems.
+
+</TechnologyTemplate>

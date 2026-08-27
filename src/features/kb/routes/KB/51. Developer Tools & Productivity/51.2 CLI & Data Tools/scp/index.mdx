@@ -4,18 +4,30 @@ description: A means of securely transferring computer files between a local hos
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SCP (Secure Copy)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SCP (Secure Copy)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you want to move a file from your laptop to a remote Linux server, you cannot drag and drop it. 
+If you want to move a file from your laptop to a remote Linux server, you cannot drag and drop it.
 
 You use **SCP**. It uses the exact same encrypted cryptographic tunnel as SSH, but it is specifically designed to transfer raw file bytes instead of terminal commands.
 
+
 <Callout icon="info" title="The Syntax">
+
+
   The mathematical syntax of SCP is strictly: `scp [SOURCE] [DESTINATION]`
-  
+
   `scp ./database.sql root@192.168.1.50:/var/backups/`
-  
+
   This command mathematically connects to the remote server, authenticates using your SSH keys, and securely streams the `database.sql` file directly into the `/var/backups/` directory.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,29 @@
+---
+title: Serverless Architecture
+description: A cloud-native execution model where the cloud provider mathematically manages the dynamic allocation and provisioning of servers, allowing developers to write and deploy code without ever configuring physical or virtual infrastructure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Serverless architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Serverless Architecture"
+  subtitle="Ephemeral Compute and Pure Code"
+  tags={['Architecture', 'Cloud', 'AWS', 'Microservices']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard cloud deployment (like AWS EC2), you rent a virtual server. Even if no users visit your website at 3:00 AM, the server mathematically sits there, burning electricity and costing you money.
 
-</ConceptTemplate>
+## 1. Function as a Service (FaaS)
+Serverless (like AWS Lambda) eliminates the idle server.
+You upload a raw zip file containing a single Python function. There are no servers running.
+When a user clicks a button on the UI, AWS mathematically intercepts the HTTP request, instantly spins up an ephemeral Micro-VM, executes your Python function, returns the result, and instantly destroys the VM. You are billed mathematically by the millisecond of execution time. At 3:00 AM, your cost is exactly $0.00.
+
+## 2. Infinite Scaling
+If a system goes viral and receives 10,000 concurrent requests, a traditional server mathematically crashes. In Serverless, AWS instantly spins up 10,000 independent, parallel VMs. The architecture mathematically scales from zero to infinity automatically, forcing engineers to adopt highly stateless, event-driven designs.
+

@@ -4,15 +4,28 @@ description: A security framework requiring all users, whether in or outside the
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zero Trust Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zero Trust Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For decades, IT networks operated on the "Castle and Moat" model. Once you mathematically passed the firewall (the moat) and were inside the corporate network, you were inherently trusted. If a hacker breached the firewall, they had free reign.
 
 **Zero Trust** fundamentally destroys this model. The core mathematical tenet of Zero Trust is: *"Never Trust, Always Verify."*
 
+
 <Callout icon="success" title="Location is Irrelevant">
+
+
   In a true Zero Trust network, there is no "inside" or "outside." An employee sitting at a desk inside corporate headquarters is treated with the exact same mathematical suspicion as a random hacker sitting in a coffee shop halfway across the world.
+
+
 </Callout>
+
 
 ## Core Principles
 
@@ -20,4 +33,3 @@ For decades, IT networks operated on the "Castle and Moat" model. Once you mathe
 2. **Device Posture:** It is not just about *who* is logging in, but *what* device they are using. The Zero Trust engine mathematically verifies the laptop has the latest OS patches and EDR running before granting access.
 3. **Micro-Segmentation:** Applications are isolated from each other. Even if a hacker compromises the HR database, mathematical network policies prevent them from pivoting laterally to the Engineering source code repository.
 
-</ConceptTemplate>

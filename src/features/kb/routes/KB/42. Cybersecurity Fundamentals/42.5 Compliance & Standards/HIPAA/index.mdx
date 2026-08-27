@@ -4,25 +4,32 @@ description: The strict US federal law regulating the security and privacy of pr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HIPAA (Health Insurance Portability and Accountability Act)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HIPAA (Health Insurance Portability and Accountability Act)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Enacted in 1996, **HIPAA** is a United States federal law that dictates how healthcare providers, insurers, and their third-party software vendors must protect patient data.
 
 The core of HIPAA focuses on safeguarding **Protected Health Information (PHI)**. This includes any demographic information, medical histories, test results, mental health conditions, or insurance information that can be linked to a specific patient.
 
+
 <Callout icon="warning" title="Massive Penalties">
+
+
   HIPAA violations are notoriously expensive. Fines are levied per violation and can range from $100 to $50,000 *per compromised record*, with a maximum penalty of $1.5 million per year for identical violations. Furthermore, criminal penalties can include up to 10 years in federal prison for knowing violations.
+
+
 </Callout>
+
 
 ## The Three Core Rules
 
-<ComparisonTable 
-  headers={['Rule', 'Description']}
-  rows={[
-    ['The Privacy Rule', 'Dictates *who* has access to PHI. It requires obtaining patient consent before sharing data and gives patients the right to examine and obtain a copy of their health records.'],
-    ['The Security Rule', 'Dictates *how* PHI must be protected electronically. It mandates Administrative (training), Physical (locks on server rooms), and Technical (encryption, access controls) safeguards.'],
-    ['The Breach Notification Rule', 'Requires organizations to publicly report any breach affecting more than 500 individuals to the Secretary of HHS, and notify the affected individuals and the media.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Rule', 'Description']} rows={[ ['The Privacy Rule', 'Dictates *who* has access to PHI. It requires obtaining patient consent before sharing data and gives patients the right to examine and obtain a copy of their health records.'], ['The Security Rule', 'Dictates *how* PHI must be protected electronically. It mandates Administrative (training), Physical (locks on server rooms), and Technical (encryption, access controls) safeguards.'], ['The Breach Notification Rule', 'Requires organizations to publicly report any breach affecting more than 500 individuals to the Secretary of HHS, and notify the affected individuals and the media.'] ]} />
+
+

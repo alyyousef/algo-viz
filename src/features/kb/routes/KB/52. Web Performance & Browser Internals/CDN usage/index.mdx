@@ -4,16 +4,28 @@ description: A geographically distributed network of proxy servers and their dat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Content Delivery Network (CDN)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Content Delivery Network (CDN)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The Speed of Light is a biological and mathematical limitation of physics. 
+The Speed of Light is a biological and mathematical limitation of physics.
 
 If your Node.js server is physically located in a data center in New York, and a user in Tokyo attempts to download a 2MB image, the electrical signals must mathematically travel across the bottom of the Pacific Ocean. This physically takes 200 milliseconds of absolute latency.
 
+
 <Callout icon="success" title="Edge Computing">
-  A **CDN** (like Cloudflare or AWS CloudFront) solves the physics problem. 
-  
+
+
+  A **CDN** (like Cloudflare or AWS CloudFront) solves the physics problem.
+
   A CDN company places physical hard drives in 300 different cities around the globe. You upload your image to the CDN. The CDN mathematically duplicates the image to all 300 hard drives. When the user in Tokyo requests the image, they biologically download it from a server physically located *inside Tokyo*, reducing the latency from 200ms down to 5ms.
+
+
 </Callout>
 
-</ConceptTemplate>
+

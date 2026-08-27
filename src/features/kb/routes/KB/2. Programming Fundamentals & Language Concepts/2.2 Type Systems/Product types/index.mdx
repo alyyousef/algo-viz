@@ -1,8 +1,28 @@
+---
+title: Product Types
+description: A fundamental Algebraic Data Type where the total number of possible mathematical states is the multiplication of its constituent fields.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Product types">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Product Types">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Type Theory, a Product Type is a compound structure (like a Struct, Record, or Tuple) that mathematically groups multiple different types together into a single memory block.
 
-</ConceptTemplate>
+## 1. The Mathematics of "Product"
+Why is it called a "Product" type? It comes from Cartesian Products in Set Theory.
+If you define a Tuple: `(Boolean, Byte)`.
+- A `Boolean` has 2 possible states (True, False).
+- A `Byte` has 256 possible states (0 to 255).
+The total number of unique mathematical states this Tuple can represent in memory is EXACTLY `2 * 256 = 512` states. The state space multiplies (Product).
+
+## 2. Exponential State Explosion
+Because Product Types multiply their states, adding fields causes the mathematical state space of your program to explode exponentially.
+If you have a `User` struct with 10 boolean flags (`is_admin`, `is_active`, etc.), that struct mathematically has `2^10 = 1024` different states. Many of those states might be mathematically invalid (e.g., a user is an Admin but is not Active). This is why advanced developers prefer Sum Types (Enums) to strictly limit state, rather than using massive Product Types (Structs) full of booleans.
+

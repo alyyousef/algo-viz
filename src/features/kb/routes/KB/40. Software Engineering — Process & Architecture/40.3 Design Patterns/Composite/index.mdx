@@ -1,8 +1,30 @@
+---
+title: Composite Pattern
+description: A Structural Design Pattern from the Gang of Four (GoF) that mathematically allows you to compose objects into tree structures to represent part-whole hierarchies, treating individual objects and compositions uniformly.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Composite">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Composite Pattern"
+  subtitle="The Mathematical Tree"
+  tags={['Design Patterns', 'Structural', 'GoF', 'Data Structures']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are building a File System or a UI DOM tree, you mathematically possess two types of objects: Leaves (a File) and Branches (a Folder, which contains Files and other Folders).
 
-</ConceptTemplate>
+## 1. The Type-Checking Problem
+If you need to calculate the total size of a Folder, you must iterate through its contents. If the iteration requires mathematical type-checking (`if (item is File) { add size } else if (item is Folder) { recursion }`), the code becomes fragile and complex.
+
+## 2. The Uniform Component
+The Composite pattern solves this by forcing both the Leaf (File) and the Branch (Folder) to mathematically implement the exact same Interface (e.g., `IFileSystemNode`), which guarantees a `getSize()` method.
+- The File's `getSize()` mathematically returns its byte size (e.g., 100).
+- The Folder's `getSize()` mathematically iterates over its internal array of `IFileSystemNode` children, calling `getSize()` on each one and summing the result.
+The client code (the OS) simply calls `rootNode.getSize()`. It mathematically does not care if the node is a single file or a folder containing 10,000 nested sub-folders. The polymorphism perfectly handles the recursive mathematics.
+

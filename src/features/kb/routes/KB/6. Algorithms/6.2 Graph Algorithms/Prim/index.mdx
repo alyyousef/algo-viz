@@ -1,8 +1,32 @@
+---
+title: Prim's Algorithm
+description: "A greedy algorithm that finds a Minimum Spanning Tree (MST) for a weighted undirected graph by starting at an arbitrary node and continuously mathematically growing the tree one edge at a time."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prim">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Prim's Algorithm"
+  subtitle="Growing the Minimum Spanning Tree"
+  tags={['Algorithms', 'Graphs', 'MST', 'Greedy']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Prim's Algorithm is one of the standard ways to find a Minimum Spanning Tree (along with Kruskal's). It is mathematically very similar to Dijkstra's Shortest Path algorithm.
 
-</ConceptTemplate>
+## 1. The Greedy Growth
+1. The algorithm starts at an arbitrary mathematical vertex (Node A). It marks Node A as "in the MST".
+2. It looks at all edges connecting the MST to vertices *not yet* in the MST.
+3. It mathematically picks the absolute cheapest edge (e.g., Node A to Node C, weight 5).
+4. It adds Node C to the MST.
+5. It repeats step 2, now looking at all edges emanating from *both* Node A and Node C, picking the cheapest, and growing the tree until all vertices are included.
+
+## 2. Implementation with Priority Queues
+If implemented naively by scanning an array of edges every time, Prim's runs in O(V²), which is acceptable for dense graphs (like an adjacency matrix).
+However, for modern sparse networks, engineers use a **Min-Priority Queue** (Heap). When a node is added to the MST, all its outgoing edges are mathematically pushed into the Heap. Extracting the cheapest edge takes O(log V). This drops the Time Complexity to **O(E log V)**, making it highly efficient.
+

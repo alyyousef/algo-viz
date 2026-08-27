@@ -4,19 +4,31 @@ description: An electronic authentication method in which a user is granted acce
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-Factor Authentication (MFA)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Factor Authentication (MFA)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Because humans are biologically terrible at creating passwords (and often reuse `Password123!` across 50 websites), passwords alone are mathematically insufficient for security.
 
 **MFA** requires the user to prove their identity using multiple, independent mathematical factors.
 
+
 <Callout icon="tip" title="The Three Factors">
+
+
   To biologically prove who you are, you must provide two of the following:
   1. **Knowledge:** Something you *know* (A password or PIN).
   2. **Possession:** Something you *have* (A smartphone app, an SMS code, or a YubiKey).
   3. **Inherence:** Something you *are* (A biometric fingerprint or FaceID scan).
-  
+
   If a hacker sitting in Russia guesses your password (Knowledge), they mathematically cannot log in because they do not physically possess your iPhone in their hand (Possession).
+
+
 </Callout>
 
-</ConceptTemplate>
+

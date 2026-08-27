@@ -1,8 +1,31 @@
+---
+title: Bounded Contexts
+description: A central architectural pattern in Domain-Driven Design (DDD) that mathematically isolates complex business models by defining strict, explicit boundaries within which a specific domain term has a singular, unambiguous meaning.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bounded contexts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bounded Contexts"
+  subtitle="Mathematical Domain Isolation"
+  tags={['Architecture', 'DDD', 'Microservices', 'Design Patterns']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a massive enterprise system, trying to define a single, universal `User` or `Product` class is a catastrophic mathematical mistake that leads to "God Classes."
 
-</ConceptTemplate>
+## 1. The Semantic Ambiguity
+To the "Shipping" department, a "Product" is mathematically defined by its physical weight and physical dimensions.
+To the "Sales" department, a "Product" is mathematically defined by its price, discount tier, and marketing description. Sales does not care about physical weight.
+If you try to combine these into a single `Product` class, you create a massive, fragile entity that violates the Single Responsibility Principle.
+
+## 2. The Context Boundary
+Domain-Driven Design (DDD) solves this via **Bounded Contexts**.
+The architect mathematically splits the system. The "Shipping Context" has its own completely isolated `Shipping.Product` class and its own isolated database table. The "Sales Context" has its own `Sales.Product` class. The word "Product" means something completely different depending on which Bounded Context you are currently inside.
+When translating this to modern infrastructure, Bounded Contexts form the exact mathematical boundary lines for creating Microservices.
+

@@ -1,8 +1,24 @@
+---
+title: Maple
+description: A massive, commercial computer algebra system used heavily in universities for symbolic mathematics, calculus, and equation solving.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Maple">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Maple">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed at the University of Waterloo in 1980, Maple is a commercial Computer Algebra System (CAS). While languages like C or Fortran are designed to compute numerical answers (like `0.333333`), Maple is designed to compute **Symbolic** answers (like `1/3` or `sin(x)`).
 
-</ConceptTemplate>
+## 1. Symbolic Computation
+If you ask a standard programming language to calculate the derivative of `x^2`, it cannot do it, because it only understands numbers, not algebra.
+Maple's core engine mathematically parses the algebraic structure of the equation. You can type `diff(x^2, x)`, and Maple will mathematically manipulate the AST to return the exact symbolic answer: `2*x`. It can perform symbolic integration, matrix inversions with variables, and solve complex differential equations without ever rounding a float.
+
+## 2. The Programming Language
+Underneath the graphical math interface, Maple is a dynamically typed, imperative programming language. It allows engineers to write complex mathematical scripts and loops. Interestingly, a massive portion of the Maple math library is mathematically written in the Maple language itself, allowing advanced users to read exactly how the system is computing an integral.
+

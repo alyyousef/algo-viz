@@ -4,16 +4,28 @@ description: A subfield of machine learning focused on developing models that ca
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TinyML (Tiny Machine Learning)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="TinyML (Tiny Machine Learning)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Running an AI model like ChatGPT requires a massive, 400-watt Nvidia GPU. 
+Running an AI model like ChatGPT requires a massive, 400-watt Nvidia GPU.
 
 But what if you want to run an ML model inside a biological hearing aid, powered by a tiny battery that must last for 3 years, mathematically constrained to 256 Kilobytes of RAM?
 
+
 <Callout icon="success" title="Microcontroller Intelligence">
-  **TinyML** is the extreme mathematical optimization of Neural Networks. 
-  
+
+
+  **TinyML** is the extreme mathematical optimization of Neural Networks.
+
   Using techniques like **Quantization** (converting 32-bit floating-point numbers to 8-bit integers) and **Pruning** (deleting useless neural connections), engineers can biologically shrink an audio-recognition AI model to 15KB. This allows a $2 microcontroller to constantly listen for the wake-word *"Hey Siri"* while mathematically consuming less than 1 milliwatt of power.
+
+
 </Callout>
 
-</ConceptTemplate>
+

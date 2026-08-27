@@ -1,8 +1,26 @@
+---
+title: Scratch
+description: A profoundly influential visual block-based programming language developed by MIT, used by millions of children worldwide to learn coding.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Scratch">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Scratch">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by the Lifelong Kindergarten Group at the MIT Media Lab, Scratch is arguably the most successful educational programming language in history. It allows users to create interactive stories, games, and animations without typing any raw syntax.
 
-</ConceptTemplate>
+## 1. The Block Paradigm
+Like Blockly (which powers modern versions of Scratch), users mathematically snap puzzle pieces together to form logic.
+The blocks are heavily typed visually. For example, a "Boolean" block has pointed edges, and can only fit into a pointed hole (like the condition of an `if` statement). A "Number" block has rounded edges. This prevents entire classes of compile-time syntax and type errors.
+
+## 2. Event-Driven Concurrency
+Scratch is fundamentally an event-driven, concurrent system.
+Every "Sprite" (character) on the screen can have its own independent script.
+When the "Green Flag" (Start) is clicked, or when two sprites collide, multiple scripts across multiple sprites fire simultaneously. It introduces children to parallel processing, message broadcasting, and asynchronous events completely seamlessly.
+

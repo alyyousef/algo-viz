@@ -4,15 +4,28 @@ description: The mathematical requirement that a distributed system must continu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Partition Tolerance">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Partition Tolerance">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the context of the famous **CAP Theorem**, a **Partition** occurs when a network connection mathematically fails between two or more nodes in a distributed cluster.
 
 For example, if Node A is in New York and Node B is in London, and the undersea fiber optic cable is cut by a submarine, the network is "Partitioned." Both Node A and Node B are perfectly healthy and powered on, but they cannot mathematically communicate with each other.
 
+
 <Callout icon="warning" title="Not an Option">
+
+
   In the CAP Theorem (Consistency, Availability, Partition Tolerance), engineers often incorrectly debate "Choosing CA". You cannot choose CA over a wide area network. Partitions are a physical reality of the universe. Therefore, a distributed system *must* be Partition Tolerant, forcing the mathematical choice between Consistency (CP) and Availability (AP).
+
+
 </Callout>
+
 
 ## Handling a Partition
 
@@ -21,4 +34,3 @@ When a partition occurs, the system must mathematically execute one of two strat
 1. **Cancel the Operation (CP):** The system realizes it cannot sync data with the other node. To prevent mathematically conflicting data states, it throws a 500 Error and refuses to accept writes until the network heals.
 2. **Proceed Anyway (AP):** The system accepts the write locally to ensure high availability. The New York node and the London node mathematically "diverge" in state. When the network heals hours later, complex algorithms (like Vector Clocks) must be used to mathematically merge the conflicting data.
 
-</ConceptTemplate>

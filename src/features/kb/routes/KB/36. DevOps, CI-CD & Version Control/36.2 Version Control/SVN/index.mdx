@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Subversion (SVN)
+description: A centralized legacy version control system that relies on a single, authoritative master server, meaning developers must have a continuous network connection to commit code or view history.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="SVN">
+<TechnologyTemplate
+  title="Subversion (SVN)"
+  subtitle="Centralized Version Control"
+  tags={['Version Control', 'Legacy', 'Centralized', 'Engineering']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Git revolutionized the industry, Apache Subversion (SVN) was the global standard for version control. It fundamentally differs from Git in its mathematical architecture regarding decentralization.
 
-</ConceptTemplate>
+## 1. The Central Server Bottleneck
+Git is *Distributed* (every developer has a full 5GB mathematical clone of the entire repository history on their laptop).
+SVN is *Centralized*. A developer's laptop only contains a single snapshot of the current files. The mathematical history (all past commits) exists *only* on the central SVN server.
+Therefore, in SVN, if you are on an airplane without Wi-Fi, you are mathematically incapable of committing code, viewing a file's history, or switching branches, because all those operations require a network request to the central server.
+
+## 2. The Merging Nightmare
+SVN's mathematical branching and merging algorithms were notoriously weak.
+Because tracking branch divergence computationally required constant communication with the central server, developers avoided branching. Instead, massive teams worked directly on the "trunk" (main branch), leading to constant breakages. When branches were used, merging them back together often resulted in catastrophic, unresolvable conflicts, a trauma that drove the industry's rapid migration to Git in the 2010s.
+
+</TechnologyTemplate>

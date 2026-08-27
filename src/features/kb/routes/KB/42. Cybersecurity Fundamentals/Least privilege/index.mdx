@@ -5,31 +5,43 @@ description: "The practice of limiting user and system access rights to the abso
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Principle of Least Privilege (PoLP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Principle of Least Privilege (PoLP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The **Principle of Least Privilege (PoLP)** is arguably the most critical concept in modern IAM (Identity and Access Management). 
+The **Principle of Least Privilege (PoLP)** is arguably the most critical concept in modern IAM (Identity and Access Management).
 If an entity (a user, a microservice, or a script) does not explicitly require access to a resource to do its job, that access must be denied.
 
 ## 1. Why PoLP Matters (Blast Radius)
 In cybersecurity, we assume compromise is inevitable. The goal of PoLP is to minimize the **Blast Radius** of a compromise.
 
-If an entry-level marketing employee gets hit by a phishing attack, the attacker gains the employee's credentials. 
+If an entry-level marketing employee gets hit by a phishing attack, the attacker gains the employee's credentials.
 - **Without PoLP**: The employee had global "Admin" access. The attacker instantly deletes the entire production database.
 - **With PoLP**: The employee only had "Read" access to the Marketing CRM. The attacker steals some emails, but the core database, financial records, and server infrastructure remain untouched.
 
 ## 2. Implementing PoLP in the Cloud
-Cloud providers (AWS, Azure, GCP) enforce PoLP via Identity and Access Management (IAM) Policies. 
+Cloud providers (AWS, Azure, GCP) enforce PoLP via Identity and Access Management (IAM) Policies.
 A good IAM policy is granular down to the exact action and resource.
 
 Instead of: `Allow: S3:*` (Allow this server to do anything to any S3 bucket)
 You write: `Allow: s3:GetObject` on `arn:aws:s3:::marketing-images-bucket/*` (Allow this server only to READ, and only from this ONE specific bucket).
 
 ## 3. Just-in-Time (JIT) Access
-Even Senior Database Administrators shouldn't have permanent Admin access. 
+Even Senior Database Administrators shouldn't have permanent Admin access.
 Modern PoLP utilizes **JIT Access**. By default, the DBA has zero permissions. When an emergency occurs, the DBA requests access, another engineer approves it, and the DBA is granted temporary Admin credentials that automatically self-destruct after 60 minutes.
 
+
 <Callout icon="warning" title="The Developer Friction Problem">
+
+
 Developers hate PoLP because it slows them down. It is much easier to give a microservice global Admin rights so it "just works" rather than spending 3 hours writing a granular 500-line JSON IAM policy. Security engineering is a constant battle between developer velocity and system security.
+
+
 </Callout>
 
-</ConceptTemplate>
+

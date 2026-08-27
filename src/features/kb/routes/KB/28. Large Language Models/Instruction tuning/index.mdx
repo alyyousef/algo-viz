@@ -4,15 +4,28 @@ description: The fine-tuning process that turns a raw autocomplete engine into a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Instruction Tuning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Instruction Tuning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A raw, pre-trained base model (like the original GPT-3) is merely a mathematical autocomplete engine. If you prompt it with "Write a poem about the moon", it might respond with "Write a poem about the sun", because it is just continuing the pattern of a list of writing prompts.
 
 **Instruction Tuning** (Supervised Fine-Tuning or SFT) is the process of training the model on a high-quality dataset of (Prompt, Response) pairs so it learns to follow instructions and act like a chatbot.
 
+
 <Callout icon="success" title="The ChatGPT Magic">
+
+
   ChatGPT was not a new base model; it was GPT-3.5 that had undergone rigorous Instruction Tuning and Reinforcement Learning from Human Feedback (RLHF). This alignment process is what caused the explosive global adoption of AI.
+
+
 </Callout>
+
 
 ## The Process
 
@@ -20,4 +33,3 @@ A raw, pre-trained base model (like the original GPT-3) is merely a mathematical
 2. **Formatting:** The data is formatted using special chat templates (e.g., adding `<|user|>` and `<|assistant|>` tokens).
 3. **Training:** The model is fine-tuned using standard Backpropagation to mathematically maximize the probability of the assistant\'s response given the user\'s prompt.
 
-</ConceptTemplate>

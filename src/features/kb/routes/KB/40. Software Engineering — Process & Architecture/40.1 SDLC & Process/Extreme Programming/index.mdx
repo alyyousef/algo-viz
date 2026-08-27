@@ -1,8 +1,31 @@
+---
+title: Extreme Programming (XP)
+description: A highly disciplined, mathematically rigorous subset of Agile development that pushes traditional software engineering practices (like testing, code review, and customer integration) to their absolute logical extremes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Extreme Programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Extreme Programming (XP)"
+  subtitle="Agile Taken to the Mathematical Limit"
+  tags={['Process', 'Agile', 'Development', 'Kent Beck']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Kent Beck in the 1990s, Extreme Programming (XP) looked at the things that made software successful and mathematically pushed them to their absolute maximum limits.
 
-</ConceptTemplate>
+## 1. The Mathematical Extremes
+XP is defined by taking standard practices and turning the dial to 10:
+- If **Code Review** is good, we should do it 100% of the time. The result: **Pair Programming** (two engineers mathematically share one keyboard and screen, continuously reviewing every single line of code as it is typed).
+- If **Testing** is good, we should do it before we even write the code. The result: **Test-Driven Development (TDD)** (mathematically forcing the engineer to write the failing test first).
+- If **Integration** is good, we should do it constantly. The result: **Continuous Integration** (merging code into the main branch dozens of times a day).
+
+## 2. The Cost of Change Curve
+Traditional engineering believed that the cost to change software mathematically exploded exponentially over time. XP challenged this.
+By enforcing TDD, Pair Programming, and continuous Refactoring, XP mathematically flattens the "Cost of Change" curve. It guarantees that the codebase remains so mathematically clean and highly covered by automated tests that modifying the architecture in Year 5 is just as cheap and safe as modifying it in Year 1.
+

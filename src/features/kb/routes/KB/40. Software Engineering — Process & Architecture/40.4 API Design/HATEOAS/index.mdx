@@ -1,8 +1,38 @@
+---
+title: HATEOAS
+description: Hypermedia As The Engine Of Application State, the ultimate architectural constraint of REST, mathematically requiring the API to return dynamic hyperlinks that tell the client what actions are currently possible.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HATEOAS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="HATEOAS"
+  subtitle="The Ultimate REST Constraint"
+  tags={['API', 'REST', 'Architecture', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Roy Fielding (the inventor of REST) mathematically defined that an API is *not* RESTful unless it implements HATEOAS. (99% of "REST APIs" on the internet today do not implement HATEOAS).
 
-</ConceptTemplate>
+## 1. The State Machine
+When you visit a website in your browser, you don't memorize URLs. You click the hyperlinks the server gives you. HATEOAS mathematically applies this to APIs.
+If a client queries a Bank Account via API, standard JSON returns the balance. If the client wants to withdraw money, the client has to hardcode the `/withdraw` URL in their mobile app.
+
+## 2. Dynamic Hypermedia
+With HATEOAS, the API mathematically returns the data *and* a list of valid links.
+```json
+{
+  "balance": 100,
+  "links": [
+    { "rel": "deposit", "href": "/accounts/1/deposit" },
+    { "rel": "withdraw", "href": "/accounts/1/withdraw" }
+  ]
+}
+```
+If the balance hits 0, the server mathematically omits the "withdraw" link from the JSON. The client app is programmed to simply read the links. If the link isn't there, it grays out the button. The API mathematically drives the entire state machine of the client, completely decoupling the client from hardcoded URLs.
+

@@ -4,13 +4,26 @@ description: Neural networks designed to handle sequential data by maintaining a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Recurrent Neural Networks (RNNs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Recurrent Neural Networks (RNNs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Recurrent Neural Networks (RNNs) are a class of neural networks designed to process sequential data (like time series, text, or audio). Unlike standard feedforward networks, RNNs have loops in them, allowing information to persist.
 
+
 <Callout icon="warning" title="The Vanishing Gradient Problem">
+
+
   Standard RNNs suffer catastrophically from the **Vanishing Gradient Problem**. During Backpropagation Through Time (BPTT), gradients are multiplied repeatedly. If the gradients are slightly less than 1, they exponentially shrink to zero, meaning the RNN mathematically cannot learn long-term dependencies (it "forgets" earlier parts of the sequence).
+
+
 </Callout>
+
 
 ## How they maintain state
 
@@ -21,4 +34,3 @@ $HiddenState_t = Activation(Weights_{input} \times Input_t + Weights_{hidden} \t
 
 This means an RNN processing the word "World" in the sentence "Hello World" mathematically "remembers" that it just saw the word "Hello". This made them the dominant architecture for Natural Language Processing before Transformers were invented.
 
-</ConceptTemplate>

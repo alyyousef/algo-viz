@@ -8,24 +8,23 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 AWS is Amazon's cloud computing platform, launched in 2006. It completely revolutionized the software industry by allowing developers to rent servers and databases by the second over the internet, rather than spending millions of dollars building physical data centers. AWS holds the largest market share in the cloud industry.
 
+
 <Callout icon="tip" title="Regions and Availability Zones (AZs)">
+
+
   AWS is physically divided into **Regions** (e.g., us-east-1 in Virginia). Each Region consists of multiple isolated **Availability Zones** (AZs), which are separate physical data centers. To build highly available apps, you must deploy resources across multiple AZs.
+
+
 </Callout>
+
 
 ## Core Services
 
 AWS offers over 200 fully featured services, but 90% of applications rely on these core building blocks.
 
-<ComparisonTable 
-  headers={['Service Name', 'Category', 'Description']}
-  rows={[
-    ['EC2 (Elastic Compute Cloud)', 'Compute', 'Virtual Machines. You pick the OS, CPU, and RAM.'],
-    ['S3 (Simple Storage Service)', 'Storage', 'Object storage. Used to store images, backups, and static websites. Infinite capacity.'],
-    ['RDS (Relational Database Service)', 'Database', 'Managed PostgreSQL, MySQL, or SQL Server. Handles backups and patching for you.'],
-    ['Lambda', 'Compute / Serverless', 'Run code without provisioning servers. You only pay for the milliseconds your code executes.'],
-    ['VPC (Virtual Private Cloud)', 'Networking', 'Your own isolated private network inside AWS to secure your resources.']
-  ]}
-/>
+
+<ComparisonTable headers={['Service Name', 'Category', 'Description']} rows={[ ['EC2 (Elastic Compute Cloud)', 'Compute', 'Virtual Machines. You pick the OS, CPU, and RAM.'], ['S3 (Simple Storage Service)', 'Storage', 'Object storage. Used to store images, backups, and static websites. Infinite capacity.'], ['RDS (Relational Database Service)', 'Database', 'Managed PostgreSQL, MySQL, or SQL Server. Handles backups and patching for you.'], ['Lambda', 'Compute / Serverless', 'Run code without provisioning servers. You only pay for the milliseconds your code executes.'], ['VPC (Virtual Private Cloud)', 'Networking', 'Your own isolated private network inside AWS to secure your resources.'] ]} />
+
 
 ## Architecture: A Standard Web App on AWS
 
@@ -34,28 +33,28 @@ graph TD
   Internet((Internet))
   R53[Route 53\n(DNS)]
   ALB[Application Load Balancer]
-  
+
   subgraph AWS Cloud (VPC)
     subgraph Public Subnet
       NAT[NAT Gateway]
     end
-    
+
     subgraph Private Subnet (Web Tier)
       EC2_1[EC2 Web Server 1]
       EC2_2[EC2 Web Server 2]
     end
-    
+
     subgraph Private Subnet (DB Tier)
       RDS[(RDS PostgreSQL Primary)]
       RDS_Rep[(RDS Replica)]
     end
   end
-  
+
   Internet --> R53
   R53 --> ALB
   ALB --> EC2_1
   ALB --> EC2_2
-  
+
   EC2_1 --> RDS
   EC2_2 --> RDS
   RDS -. Replicates to .-> RDS_Rep

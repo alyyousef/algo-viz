@@ -1,8 +1,35 @@
+---
+title: Naming Conventions
+description: "The mathematical and linguistic rule sets used to standardize the names of variables, functions, and classes across a codebase, critical for ensuring readability and developer cognitive efficiency."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Naming conventions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Naming Conventions"
+  subtitle="The Syntax of Human Readability"
+  tags={['Process', 'Clean Code', 'Standards', 'Linguistics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Phil Karlton famously said: *"There are only two hard things in Computer Science: cache invalidation and naming things."*
 
-</ConceptTemplate>
+## 1. Casing Standards
+To prevent mathematical chaos, languages enforce strict visual structures:
+- **camelCase**: Used for variables and functions in JS/Java (`calculateTotalTax()`).
+- **PascalCase**: Used for Classes and Interfaces (`ShoppingCart`).
+- **snake_case**: Used heavily in Python and databases (`calculate_total_tax()`).
+- **UPPER_SNAKE_CASE**: Mathematically reserved for absolute Constants (`MAX_TIMEOUT_MS`).
+
+## 2. Linguistic Meaning
+The compiler doesn't care about names, but humans mathematically require strict linguistic rules:
+- **Classes are Nouns**: `User`, `Account`. Never `ProcessUser`.
+- **Methods are Verbs**: `deleteUser()`, `calculateInterest()`.
+- **Booleans are Predicates**: `isActive`, `hasChildren`. If a variable is named `status`, the developer mathematically does not know if it is a boolean, an integer, or a string.
+- **Avoid Disinformation**: Do not name a variable `accountList` if the underlying mathematical data structure is actually a `HashSet`. Name it `accounts`.
+

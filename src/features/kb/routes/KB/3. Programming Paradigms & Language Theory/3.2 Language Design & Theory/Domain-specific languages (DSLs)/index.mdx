@@ -1,8 +1,25 @@
+---
+title: Domain-Specific Languages (DSLs)
+description: Highly specialized, mathematically constrained programming languages designed to solve problems in one specific industry or domain, prioritizing expressiveness over general-purpose utility.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Domain-specific languages (DSLs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Domain-Specific Languages (DSLs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Java and Python are General-Purpose Languages (GPLs); they are Turing Complete and can theoretically build anything, but their syntax is bloated for specific mathematical tasks. DSLs are custom-built for one exact purpose.
 
-</ConceptTemplate>
+## 1. Internal vs. External DSLs
+- **External DSLs**: Languages that have their own custom parser and compiler. SQL is the most famous external DSL. You cannot build a web server in SQL, but its syntax is mathematically perfected for querying relational data. HTML and CSS are also external DSLs.
+- **Internal DSLs**: Languages built entirely within the syntax of an existing host language. Ruby is famous for this. Frameworks like RSpec allow you to write `expect(user).to be_valid`. It reads like plain English, but mathematically it is just highly chained Ruby methods acting as a DSL for software testing.
+
+## 2. The Abstraction Trade-off
+Building a DSL introduces a strict mathematical trade-off.
+By constraining the language, you prevent the developer from making certain architectural errors (you cannot cause a Memory Leak in SQL). You also allow domain experts (like Accountants or Biologists) to read the code. However, if the business requirements suddenly expand outside the mathematical boundaries of the DSL, developers hit a catastrophic wall, forcing them to either abandon the DSL or write horrific, hacky extensions.
+

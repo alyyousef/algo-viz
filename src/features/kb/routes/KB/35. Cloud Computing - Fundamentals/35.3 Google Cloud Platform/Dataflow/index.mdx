@@ -1,0 +1,23 @@
+---
+title: Google Cloud Dataflow
+description: A fully managed, serverless stream and batch data processing service built on Apache Beam, mathematically engineered to process massive data pipelines without provisioning clusters.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Dataflow"
+  subtitle="Serverless Data Processing"
+  tags={['GCP', 'Data', 'Streaming', 'Apache Beam']}
+>
+
+If you have a massive firehose of telemetry data coming from Pub/Sub, you need to clean it, mathematically aggregate it, and insert it into BigQuery. Managing a physical Apache Spark cluster to do this is tedious. Dataflow makes it serverless.
+
+## 1. Apache Beam (Unified Batch and Stream)
+Historically, developers had to write two entirely different codebases: one for Batch processing (Hadoop/Spark) and one for Streaming processing (Kafka/Flink).
+Dataflow is built on the **Apache Beam** SDK. Beam provides a unified mathematical model. You write your pipeline logic *once* in Python or Java. If you feed it a static CSV file, it mathematically processes it as a Batch. If you feed it a live Pub/Sub stream, it seamlessly processes it as a Stream, completely eliminating code duplication.
+
+## 2. Liquid Sharding (Dynamic Work Rebalancing)
+In a standard cluster, if you chop a dataset into 10 pieces for 10 worker nodes, but one piece is mathematically much harder to process, 9 nodes will finish quickly and sit idle while the 1 node struggles (the Straggler Problem).
+Dataflow solves this with **Liquid Sharding**. It mathematically monitors the CPU load of all worker nodes in real-time. If it detects a straggler, it dynamically slices the remaining work off the struggling node and redistributes it to the idle nodes on the fly, ensuring mathematically perfect cluster utilization and drastically faster execution times.
+
+</TechnologyTemplate>

@@ -4,7 +4,14 @@ description: An ultra-lightweight, security-oriented Linux distribution that dom
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Alpine Linux">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Alpine Linux">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Alpine Linux** is an independent, non-commercial Linux distribution designed for one thing: **Extreme Minimalism**.
 
@@ -16,11 +23,16 @@ Alpine achieves this microscopic footprint by completely abandoning the standard
 1. It replaces the massive GNU C Library (`glibc`) with the tiny `musl libc`.
 2. It replaces the massive GNU Coreutils (cat, grep, ls) with **BusyBox**, a single, tiny executable file that emulates hundreds of Unix commands.
 
+
 <Callout icon="success" title="The King of Containers">
+
+
   Because it is so incredibly small and fast to boot, Alpine Linux is the undisputed king of Docker containers. If you pull a Node.js or Python image from Docker Hub, it is almost certainly running Alpine Linux under the hood to minimize network bandwidth and attack surface.
+
+
 </Callout>
+
 
 ## Security First
 Beyond size, Alpine is heavily focused on security. The kernel is patched with an unofficial security port, and all user-space binaries are compiled as Position Independent Executables (PIE) with stack-smashing protection enabled by default.
 
-</ConceptTemplate>

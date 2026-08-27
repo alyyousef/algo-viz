@@ -4,7 +4,14 @@ description: The mathematical art of transforming raw data into highly optimized
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Feature Engineering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Feature Engineering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 "Applied machine learning is basically feature engineering." — Andrew Ng
 
@@ -28,4 +35,3 @@ The most powerful mathematical gains come from creating entirely new columns bas
 - **Temporal Features**: A raw Timestamp (`1718293819`) is useless to an algorithm. Feature engineering mathematically extracts it into multiple columns: `is_weekend` (0 or 1), `hour_of_day` (0-23), and `is_holiday`.
 - **Interaction Features**: If you are predicting house prices, you have `length` and `width` columns. You mathematically multiply them to create a new `total_area` feature, which the algorithm will find vastly more predictive than the raw dimensions alone.
 
-</ConceptTemplate>

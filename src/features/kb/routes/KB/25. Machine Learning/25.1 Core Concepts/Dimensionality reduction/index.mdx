@@ -4,7 +4,14 @@ description: The mathematical process of compressing a massive number of input f
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dimensionality Reduction">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dimensionality Reduction">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you feed a Machine Learning model an image that is 1000x1000 pixels, that represents 1,000,000 mathematical dimensions. The algorithm will likely crash due to the **Curse of Dimensionality** (the mathematical phenomenon where the volume of the space increases so exponentially that the available data becomes uselessly sparse).
 
@@ -16,7 +23,7 @@ If you feed a Machine Learning model an image that is 1000x1000 pixels, that rep
 
 ## 2. Principal Component Analysis (PCA)
 PCA is the absolute mathematical king of linear dimensionality reduction.
-It relies on linear algebra (Eigenvectors and Eigenvalues). It mathematically rotates the high-dimensional axes to find the direction that contains the absolute maximum variance (spread) in the data. This direction becomes "Principal Component 1". It then finds a second, mathematically orthogonal (90 degree) direction for PC2. 
+It relies on linear algebra (Eigenvectors and Eigenvalues). It mathematically rotates the high-dimensional axes to find the direction that contains the absolute maximum variance (spread) in the data. This direction becomes "Principal Component 1". It then finds a second, mathematically orthogonal (90 degree) direction for PC2.
 
 You can drop a 1,000-column dataset down to just PC1 and PC2, which might mathematically capture 90% of all the variance in the original 1,000 columns, allowing you to easily plot it on a 2D graph.
 
@@ -25,4 +32,3 @@ PCA is linear. If the data is twisted like a mathematical Swiss Roll, PCA will c
 
 **t-SNE** (t-Distributed Stochastic Neighbor Embedding) and **UMAP** are mathematically designed for highly non-linear data. They calculate the probability that two points are neighbors in high-dimensional space, and then mathematically force them to be neighbors in a new 2D space. They are the industry standard for visualizing massive datasets (like millions of Word Embeddings) in 2D scatter plots.
 
-</ConceptTemplate>

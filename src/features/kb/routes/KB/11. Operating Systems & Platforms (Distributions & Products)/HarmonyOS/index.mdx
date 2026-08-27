@@ -4,7 +4,14 @@ description: Huawei's highly ambitious distributed operating system, designed to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HarmonyOS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HarmonyOS">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **HarmonyOS** (Hongmeng OS) is a proprietary operating system developed by Huawei. It was rapidly accelerated into production after US trade sanctions blocked Huawei from using Google's Android services.
 
@@ -12,17 +19,22 @@ However, HarmonyOS is not just a phone OS; it is an incredibly ambitious **Distr
 
 ## The Distributed Bus
 
-The core philosophy of HarmonyOS is seamless hardware collaboration. 
-Through a technology called the **Distributed Virtual Bus**, HarmonyOS treats multiple physical devices as a single super-device. 
+The core philosophy of HarmonyOS is seamless hardware collaboration.
+Through a technology called the **Distributed Virtual Bus**, HarmonyOS treats multiple physical devices as a single super-device.
 - You can play a mobile game on your phone, and seamlessly swipe it up to your Smart TV to use the TV as a display, while your phone instantly transforms into the game controller.
 - Your phone's camera can be exposed directly as a hardware peripheral to your laptop.
 
+
 <Callout icon="warning" title="The Microkernel Transition">
+
+
   The initial versions of HarmonyOS (running on smartphones) were heavily based on the Android Open Source Project (AOSP) Linux kernel to maintain app compatibility. However, with **HarmonyOS NEXT**, Huawei completely stripped out all AOSP and Linux code, moving to a proprietary **Microkernel** architecture. It no longer supports Android APKs, relying entirely on its own native application ecosystem.
+
+
 </Callout>
+
 
 ## Unification
 
 Unlike Android (phones) and WearOS (watches) which are distinct codebases, HarmonyOS is designed to scale dynamically. The exact same OS core can be deployed on a smart watch with 128MB of RAM, a smartphone with 8GB of RAM, and a Smart Car dashboard, providing a completely unified development ecosystem.
 
-</ConceptTemplate>

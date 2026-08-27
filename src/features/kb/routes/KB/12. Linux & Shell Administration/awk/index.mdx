@@ -4,7 +4,14 @@ description: A wildly powerful, programmable command-line tool used exclusively 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="awk">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="awk">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **awk** (named after its creators Aho, Weinberger, and Kernighan) is not just a command; it is an entire, Turing-complete programming language designed specifically for parsing and manipulating structured text data directly in the terminal.
 
@@ -14,19 +21,24 @@ While tools like `grep` are used to find entire *lines* of text, `awk` is the ab
 
 By default, `awk` assumes that your text is separated by spaces or tabs. It assigns the first column to the variable `$1`, the second to `$2`, and the entire line to `$0`.
 
-If you run `ls -l`, it outputs a messy string with file sizes in the 5th column. 
+If you run `ls -l`, it outputs a messy string with file sizes in the 5th column.
 You can pipe that output into `awk` to print just the file sizes and the file names:
 `ls -l | awk '{ print $5, $9 }'`
 
+
 <Callout icon="success" title="Advanced Parsing (Field Separators)">
-  The `/etc/passwd` file uses colons (`:`) to separate its columns, not spaces. 
-  You can use the `-F` flag to tell `awk` exactly what the delimiter is. 
-  To print a clean list of all usernames (Column 1) on the system, you simply run: 
+
+
+  The `/etc/passwd` file uses colons (`:`) to separate its columns, not spaces.
+  You can use the `-F` flag to tell `awk` exactly what the delimiter is.
+  To print a clean list of all usernames (Column 1) on the system, you simply run:
   `awk -F ':' '{ print $1 }' /etc/passwd`
+
+
 </Callout>
 
+
 ## Mathematical Processing
-Because `awk` is a programming language, it can do math on the fly. 
+Because `awk` is a programming language, it can do math on the fly.
 You can pipe a list of file sizes into `awk` and have it add them all up, maintaining a running `sum` variable, and then use the special `END` block to print the total calculated size in bytes when it finishes reading the input.
 
-</ConceptTemplate>

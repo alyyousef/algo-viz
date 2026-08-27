@@ -1,8 +1,25 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Buildkite
+description: A highly scalable hybrid CI/CD platform that mathematically separates the orchestration (cloud) from the execution (on-premises agents), enabling massive parallel builds while maintaining strict security.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Buildkite">
+<TechnologyTemplate
+  title="Buildkite"
+  subtitle="Hybrid CI/CD Orchestration"
+  tags={['DevOps', 'CI/CD', 'Platform', 'Security']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a healthcare company uses GitHub Actions, their proprietary source code and database passwords must be mathematically transmitted to Microsoft's cloud servers to execute the tests, violating HIPAA compliance in some scenarios.
 
-</ConceptTemplate>
+## 1. The Hybrid Architecture
+Buildkite solves this through a brilliant mathematical architecture split.
+- **The Orchestrator (Cloud)**: Buildkite hosts the web UI, the mathematical DAG logic, and the reporting dashboards on their cloud.
+- **The Agents (On-Premises)**: The customer installs Buildkite Agents on their own private, firewalled servers (e.g., inside their own AWS VPC).
+When a pipeline triggers, the cloud Orchestrator sends a mathematical signal to the private Agent: *"Run this script."* The Agent pulls the code directly from the private Git repo, runs the tests, and only sends pure text logs back to the Orchestrator. The proprietary source code mathematically never leaves the customer's secure network.
+
+## 2. Infinite Concurrency
+Because the customer provides their own compute power, Buildkite allows mathematically infinite concurrency.
+A company like Shopify can spin up 10,000 ephemeral AWS EC2 instances, install the Buildkite Agent on all of them simultaneously, and execute 10,000 parallel test suites in 3 seconds, a scale that would be prohibitively expensive on fully cloud-hosted CI platforms.
+
+</TechnologyTemplate>

@@ -5,7 +5,14 @@ description: "The architectural style that defines how modern web APIs are desig
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<ConceptTemplate title="RESTful APIs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RESTful APIs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Coined by Roy Fielding in 2000, **REST (Representational State Transfer)** is a set of architectural constraints for building web APIs. True REST relies entirely on the built-in features of the HTTP protocol.
 
@@ -17,18 +24,10 @@ In REST, everything is a **Resource** (e.g., a User, an Article, a Comment). Res
 ## 2. HTTP Methods (CRUD)
 REST uses standard HTTP methods to map directly to CRUD (Create, Read, Update, Delete) database operations:
 
-<ComparisonTable 
-  headers={['HTTP Method', 'CRUD Operation', 'Example URI', 'Description']} 
-  rows={[
-    ['POST', 'Create', '/users', 'Creates a new user. Not idempotent.'],
-    ['GET', 'Read', '/users/123', 'Retrieves user 123. Safe and idempotent (does not modify state).'],
-    ['PUT', 'Update', '/users/123', 'Replaces the entire user 123 object. Idempotent.'],
-    ['PATCH', 'Update', '/users/123', 'Partially updates user 123 (e.g., only changing the email).'],
-    ['DELETE', 'Delete', '/users/123', 'Deletes user 123.']
-  ]} 
-/>
+
+<ComparisonTable headers={['HTTP Method', 'CRUD Operation', 'Example URI', 'Description']} rows={[ ['POST', 'Create', '/users', 'Creates a new user. Not idempotent.'], ['GET', 'Read', '/users/123', 'Retrieves user 123. Safe and idempotent (does not modify state).'], ['PUT', 'Update', '/users/123', 'Replaces the entire user 123 object. Idempotent.'], ['PATCH', 'Update', '/users/123', 'Partially updates user 123 (e.g., only changing the email).'], ['DELETE', 'Delete', '/users/123', 'Deletes user 123.'] ]} />
+
 
 ## 3. Statelessness
 A core constraint of REST is that the server must be completely **stateless**. The server cannot store session data (like a logged-in user's state) in its local memory. Every single HTTP request from the client must contain all the information necessary to authenticate and process the request (usually via a JWT in the `Authorization` header). This allows REST APIs to scale horizontally with ease.
 
-</ConceptTemplate>

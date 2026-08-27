@@ -4,7 +4,14 @@ description: A highly space-efficient alternative to Suffix Trees, consisting of
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Suffix Arrays">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Suffix Arrays">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Suffix Trees offer massive theoretical performance, they have a fatal engineering flaw: they consume an apocalyptic amount of memory (often 20x the size of the original string due to Node pointers). The **Suffix Array** was mathematically invented to provide the exact same analytical power as a Suffix Tree, but using drastically less memory and maintaining perfect CPU Cache Locality.
 
@@ -22,10 +29,9 @@ For `"BANANA$"`, the sorted suffixes are:
 To save memory, the array does not store the actual massive strings. It mathematically only stores the **Integer Starting Indices**: `[6, 5, 3, 1, 0, 4, 2]`.
 
 ## 2. O(M log N) Search
-To search for the pattern `"NAN"`, you simply perform a standard **Binary Search** over the Suffix Array. 
-Because binary search halves the search space $O(log N)$ times, and comparing your string takes $O(M)$ time, the total search time is mathematically $O(M log N)$. 
+To search for the pattern `"NAN"`, you simply perform a standard **Binary Search** over the Suffix Array.
+Because binary search halves the search space $O(log N)$ times, and comparing your string takes $O(M)$ time, the total search time is mathematically $O(M log N)$.
 
 ## 3. LCP Arrays (Longest Common Prefix)
 While slightly slower than a Suffix Tree in raw theory, Suffix Arrays are heavily augmented with an **LCP Array** (which mathematically tracks how many letters adjacent suffixes share). By combining a Suffix Array with an LCP array, algorithms can mathematically emulate the exact traversal logic of a Suffix Tree with significantly less memory overhead.
 
-</ConceptTemplate>

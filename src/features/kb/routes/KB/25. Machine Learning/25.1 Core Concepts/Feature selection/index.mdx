@@ -4,9 +4,16 @@ description: The mathematical process of discarding irrelevant or redundant vari
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Feature Selection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Feature Selection">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you feed a Machine Learning model 10,000 columns of data, and 9,000 of those columns are completely random noise (e.g., the user's astrological sign when predicting credit score), the model will mathematically overfit to the noise and fail. 
+If you feed a Machine Learning model 10,000 columns of data, and 9,000 of those columns are completely random noise (e.g., the user's astrological sign when predicting credit score), the model will mathematically overfit to the noise and fail.
 
 **Feature Selection** is the mathematical discipline of identifying and keeping only the columns that actually matter.
 
@@ -23,8 +30,7 @@ Wrapper methods mathematically train a real Machine Learning model over and over
 
 ## 3. Embedded Methods (L1 Regularisation)
 Embedded methods perform feature selection *while* the model is training.
-The most famous is **L1 Regularisation (Lasso Regression)**. 
+The most famous is **L1 Regularisation (Lasso Regression)**.
 
 During the mathematical gradient descent optimization, the L1 penalty mathematically forces the weights of irrelevant features to become exactly, literally $0.0$. By the time the model finishes training, it has mathematically deleted the irrelevant columns internally, providing built-in feature selection without requiring an external search loop.
 
-</ConceptTemplate>

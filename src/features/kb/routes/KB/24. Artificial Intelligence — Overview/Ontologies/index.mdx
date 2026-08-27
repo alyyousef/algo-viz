@@ -4,9 +4,16 @@ description: The rigid mathematical taxonomies used to formally define the relat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ontologies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ontologies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-An **Ontology** is a formal, explicit, mathematical specification of a shared conceptualization. 
+An **Ontology** is a formal, explicit, mathematical specification of a shared conceptualization.
 In simpler terms, it is a massive, rigidly structured dictionary where a computer is mathematically taught exactly how every concept in a specific domain relates to every other concept.
 
 ## 1. Components of an Ontology
@@ -19,7 +26,7 @@ Ontologies are mathematically defined using a triple structure (Subject, Predica
 By defining these mathematically, you create a rigid structure that an AI can use to reason about the world without needing to parse human language.
 
 ## 2. Web Ontology Language (OWL)
-In the early 2000s, the W3C attempted to build the "Semantic Web"—an internet where data was machine-readable, not just human-readable. 
+In the early 2000s, the W3C attempted to build the "Semantic Web"—an internet where data was machine-readable, not just human-readable.
 
 They created **OWL (Web Ontology Language)**, built on top of XML and RDF. Using OWL, a hospital could mathematically encode their entire medical knowledge base. An AI reading the OWL file would instantly understand that "Aspirin" mathematically `Treats` "Headaches", and is a subclass of "NSAIDs", allowing for automated drug conflict detection.
 
@@ -28,4 +35,3 @@ Constructing massive Ontologies (like Cyc, which spent 30 years trying to manual
 
 However, Ontologies are currently experiencing a massive rebirth through **RAG (Retrieval-Augmented Generation)**. LLMs are prone to hallucination. By plugging an LLM into a rigid corporate Ontology (Knowledge Graph), the LLM is mathematically forced to ground its answers in the rigid, verified facts of the ontology, guaranteeing accuracy.
 
-</ConceptTemplate>

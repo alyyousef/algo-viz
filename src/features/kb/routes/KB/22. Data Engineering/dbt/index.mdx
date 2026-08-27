@@ -4,7 +4,14 @@ description: The revolutionary framework that brings strict Software Engineering
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="dbt (Data Build Tool)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="dbt (Data Build Tool)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before dbt, Data Analysts were forced to maintain catastrophic 2,000-line SQL scripts inside Airflow to transform data. There was no version control, no modularity, and no testing. If a script broke, the entire data warehouse was corrupted.
 
@@ -44,7 +51,6 @@ Before deploying, dbt compiles these YAML rules into SQL tests. If the `user_id`
 Because dbt models are just text files, the entire data pipeline is stored in Git. When a Data Analyst wants to modify a metric, they open a Pull Request. A CI/CD pipeline automatically executes the dbt models against a temporary "Dev" schema in Snowflake, mathematically proving the SQL works before merging it into Production.
 
 ## 3. The Analytics Engineer
-dbt is so powerful that it created an entirely new job title: **The Analytics Engineer**. 
+dbt is so powerful that it created an entirely new job title: **The Analytics Engineer**.
 It empowered people who only know SQL (Analysts) to mathematically build production-grade, fault-tolerant data pipelines without needing to know complex Python, Scala, or Apache Spark.
 
-</ConceptTemplate>

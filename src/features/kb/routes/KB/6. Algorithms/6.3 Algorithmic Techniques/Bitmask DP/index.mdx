@@ -1,8 +1,34 @@
+---
+title: Bitmask Dynamic Programming
+description: "A highly optimized algorithmic technique that mathematically uses the binary representation of integers to represent small subsets or states, drastically accelerating Dynamic Programming transitions."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bitmask DP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Bitmask DP"
+  subtitle="State Compression via Binary"
+  tags={['Algorithms', 'Techniques', 'Dynamic Programming', 'Bitwise']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In many algorithmic problems (like the Traveling Salesperson Problem), you must keep track of a "State" representing which items you have visited and which you haven't.
 
-</ConceptTemplate>
+## 1. The Mathematical Mask
+If you have 5 cities, a boolean array `[True, False, True, False, False]` takes up memory and is slow to pass through recursive functions.
+A **Bitmask** mathematically compresses this array into a single integer.
+The binary number `10100` is exactly 20 in decimal.
+Instead of passing arrays, your DP function just takes the integer `20`. The entire state of the universe is mathematically encoded in one CPU register.
+
+## 2. O(1) Bitwise Transitions
+Because the state is an integer, transitioning between states is done using blisteringly fast, hardware-level bitwise operations (O(1) time):
+- **Check if City N is visited**: `(mask & (1 <&lt; N)) > 0`
+- **Mark City N as visited**: `mask | (1 <&lt; N)`
+- **Toggle City N**: `mask ^ (1 <&lt; N)`
+By combining this with Memoization, a recursive function like `solve(currentCity, mask)` can quickly cache its results in a simple 2D array, mathematically reducing factorial O(N!) time complexities down to exponential **O(N² * 2^N)** time complexities.
+

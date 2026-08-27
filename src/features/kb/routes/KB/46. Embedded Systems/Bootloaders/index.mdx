@@ -4,17 +4,30 @@ description: A small piece of software that runs immediately upon power-up, resp
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bootloaders">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bootloaders">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If firmware is the soul of a device, the **Bootloader** is the spark of life.
 
 When a microcontroller receives electrical power, the CPU mathematically executes the very first instruction at memory address `0x00000000`. Usually, this address contains the Bootloader.
 
+
 <Callout icon="success" title="The Over-The-Air (OTA) Update">
-  If you buy an IoT Smart Bulb, how does the manufacturer push a software update to it if the code is permanently burned into Flash memory? 
-  
+
+
+  If you buy an IoT Smart Bulb, how does the manufacturer push a software update to it if the code is permanently burned into Flash memory?
+
   The Bootloader makes this possible. The Bootloader is a tiny, indestructible piece of code that boots first. It checks the Wi-Fi for a new firmware `.bin` file. If it finds one, it physically overwrites the old firmware in the Flash memory, and then mathematically jumps to the new firmware's starting address.
+
+
 </Callout>
+
 
 ## The Boot Sequence
 
@@ -24,4 +37,3 @@ A typical embedded boot sequence:
 3. **Vector Table Setup:** Configures the CPU to know where the actual application code lives.
 4. **Jump to Application:** The Bootloader mathematically alters the Program Counter (PC) to point to the main Firmware. The Bootloader is now mathematically "dead" until the device is rebooted.
 
-</ConceptTemplate>

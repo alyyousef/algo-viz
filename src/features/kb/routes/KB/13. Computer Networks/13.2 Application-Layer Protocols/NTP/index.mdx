@@ -4,9 +4,16 @@ description: The critical infrastructure protocol used to keep the system clocks
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NTP (Network Time Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NTP (Network Time Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If the clock on your server is wrong by exactly 3 minutes, it doesn't sound like a big deal. 
+If the clock on your server is wrong by exactly 3 minutes, it doesn't sound like a big deal.
 In reality, a 3-minute clock skew will instantly destroy your entire infrastructure:
 - **Cryptography fails**: TLS certificates and Kerberos authentication tokens are mathematically tied to timestamps. If the server thinks the token is from "the future", it will instantly reject the login.
 - **Databases corrupt**: Distributed databases (like Cassandra or Spanner) rely on timestamps to figure out which data was written first. If the clocks are wrong, old data might accidentally overwrite new data.
@@ -23,4 +30,3 @@ NTP relies on a hierarchical system of trust known as **Stratums**:
 
 Because NTP operates over UDP, it constantly measures the network latency to the server, mathematically subtracting the latency to guarantee the clock is accurate to within a few milliseconds.
 
-</ConceptTemplate>

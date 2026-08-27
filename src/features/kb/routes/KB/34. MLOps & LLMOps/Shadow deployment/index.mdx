@@ -1,8 +1,27 @@
+---
+title: Shadow Deployment
+description: The safest ML deployment strategy, where a new model is deployed to live production servers to process real user traffic, but its mathematical predictions are secretly logged and never shown to the user.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Shadow deployment">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Shadow Deployment">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Canary deployment exposes 1% of users to risk. A Shadow Deployment exposes 0% of users to risk, while still providing 100% of the mathematical validation.
 
-</ConceptTemplate>
+## 1. The Dual-Routing Architecture
+In a Shadow Deployment, the API Gateway duplicates the incoming HTTP request.
+- **Request A** goes to the Legacy Model. The Legacy Model calculates the prediction and returns it to the user.
+- **Request B** (the exact same data) goes to the Shadow Model. The Shadow Model calculates the prediction, but the API Gateway *silently discards the HTTP response*. The user never sees it.
+However, the MLOps system secretly logs both the Legacy Prediction and the Shadow Prediction to a database.
+
+## 2. Offline Mathematical Comparison
+Because the Shadow Model is processing live, real-world data at full scale, engineers can monitor its exact CPU usage, VRAM spikes, and latency without any consequences.
+More importantly, they can run statistical queries comparing the two models. *"In the last 24 hours, out of 5 million requests, on which 10,000 requests did the Shadow Model mathematically disagree with the Legacy Model?"* Data Scientists manually review those 10,000 edge cases to determine if the new model is actually smarter, or if it has a fatal flaw, before ever turning it "On."
+

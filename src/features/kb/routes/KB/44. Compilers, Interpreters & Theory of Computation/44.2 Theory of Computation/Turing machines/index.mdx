@@ -4,18 +4,31 @@ description: A mathematical model of computation that defines an abstract machin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Turing Machines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Turing Machines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Invented by Alan Turing in 1936, the **Turing Machine** is the absolute pinnacle of the theoretical computer. 
+Invented by Alan Turing in 1936, the **Turing Machine** is the absolute pinnacle of the theoretical computer.
 
 It mathematically consists of:
 1. A **State Machine** (the CPU).
 2. An **Infinite Tape** divided into discrete cells (the infinite RAM/Hard Drive).
 3. A **Read/Write Head** that can move left or right along the tape.
 
+
 <Callout icon="success" title="The Ultimate Limit">
-  A Turing Machine is mathematically capable of simulating the execution logic of ANY computer algorithm in the universe. If a mathematical problem cannot be solved by a Turing Machine, it cannot be solved by an Intel Core i9, an Apple M3, or a massive supercomputer cluster. 
+
+
+  A Turing Machine is mathematically capable of simulating the execution logic of ANY computer algorithm in the universe. If a mathematical problem cannot be solved by a Turing Machine, it cannot be solved by an Intel Core i9, an Apple M3, or a massive supercomputer cluster.
+
+
 </Callout>
+
 
 ## Turing Completeness
 
@@ -25,4 +38,3 @@ A programming language or system is mathematically deemed **"Turing Complete"** 
 - **Accidentally Turing Complete:** Excel Spreadsheets, CSS3 (using complex animations), Magic: The Gathering (the card game).
 - **NOT Turing Complete:** Standard HTML, Standard Regular Expressions. (They are mathematically incapable of infinite arbitrary logic).
 
-</ConceptTemplate>

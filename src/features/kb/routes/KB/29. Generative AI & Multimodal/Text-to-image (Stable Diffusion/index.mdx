@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Stable Diffusion
+description: A groundbreaking, open-source Text-to-Image model that mathematically democratized AI art by executing complex Diffusion processes entirely within a compressed Latent Space.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Text-to-image (Stable Diffusion">
+<TechnologyTemplate
+  title="Stable Diffusion"
+  subtitle="Open-Source Latent Diffusion"
+  tags={['AI', 'Generative', 'Open Source', 'Diffusion']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Stable Diffusion, generating high-resolution images required massive server farms. Stable Diffusion proved that world-class image generation could run mathematically on a consumer laptop.
 
-</ConceptTemplate>
+## 1. Latent Diffusion Models (LDM)
+Standard Diffusion models mathematically manipulate raw pixels (Pixel Space), which requires immense VRAM.
+Stable Diffusion uses an Autoencoder (VAE) to mathematically crush the 512x512 image into a tiny 64x64 **Latent Tensor**.
+The entire complex mathematical denoising process (adding and removing static noise based on the text prompt) occurs solely inside this tiny 64x64 matrix. Because the mathematical grid is 64 times smaller, the processing time and VRAM requirements drop by orders of magnitude, allowing it to run on standard Nvidia consumer GPUs.
+
+## 2. ControlNet
+Stable Diffusion's open-source nature led to massive architectural innovations, primarily **ControlNet**.
+A raw text prompt ("A man dancing") lacks spatial precision. ControlNet mathematically attaches a secondary Neural Network to the Diffusion process. You can feed ControlNet a stick-figure skeleton (a Pose Map) or a Canny Edge map. The mathematics explicitly force the Diffusion model to generate the "dancing man" exactly matching the spatial coordinates of the skeleton, granting artists absolute physical control over the AI's hallucination.
+
+</TechnologyTemplate>

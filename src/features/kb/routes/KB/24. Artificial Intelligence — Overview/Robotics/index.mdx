@@ -4,7 +4,14 @@ description: The intersection of Artificial Intelligence and mechanical engineer
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Robotics (Overview)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Robotics (Overview)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 AI software running on a server operates in a mathematically perfect digital world. **Robotics** forces AI to operate in the chaotic, physically imperfect real world, dealing with friction, gravity, and sensor noise. It is often considered the ultimate final frontier of Artificial Intelligence.
 
@@ -12,7 +19,7 @@ AI software running on a server operates in a mathematically perfect digital wor
 If a robotic arm needs to pick up a coffee cup, the AI must mathematically calculate the exact angles for its shoulder, elbow, and wrist joints.
 
 - **Forward Kinematics**: The math is easy. If I set the shoulder to 45 degrees and the elbow to 90 degrees, exactly what XYZ coordinates will the hand end up at?
-- **Inverse Kinematics (IK)**: The math is incredibly difficult. I want the hand to be exactly at XYZ coordinates (10, 5, 2) to grab the cup. What exact joint angles do I need to achieve this? 
+- **Inverse Kinematics (IK)**: The math is incredibly difficult. I want the hand to be exactly at XYZ coordinates (10, 5, 2) to grab the cup. What exact joint angles do I need to achieve this?
 Because there are often multiple joint configurations that reach the same point, solving IK requires complex mathematical optimization and calculus.
 
 ## 2. SLAM (Simultaneous Localization and Mapping)
@@ -21,9 +28,8 @@ If you place a robot vacuum in a brand new house, it faces a mathematical parado
 **SLAM** solves this mathematically using probabilistic algorithms (like Kalman Filters or Particle Filters). As the robot moves, its LiDAR sensors bounce lasers off the walls. The algorithm mathematically updates the map, whilst simultaneously updating its estimated location within that map, allowing autonomous navigation without GPS.
 
 ## 3. Moravec's Paradox
-In the 1980s, AI researchers discovered a profound paradox: 
-It is mathematically easy to program a computer to exhibit adult-level performance on intelligence tests or playing Chess. It is mathematically nearly impossible to program a computer to have the sensorimotor skills of a 1-year-old human baby (like walking up a flight of stairs without falling). 
+In the 1980s, AI researchers discovered a profound paradox:
+It is mathematically easy to program a computer to exhibit adult-level performance on intelligence tests or playing Chess. It is mathematically nearly impossible to program a computer to have the sensorimotor skills of a 1-year-old human baby (like walking up a flight of stairs without falling).
 
 We are finally overcoming Moravec's Paradox using **Deep Reinforcement Learning**, where bipedal robots (like Boston Dynamics' Atlas) learn to balance mathematically by running millions of physics simulations, rather than relying on hardcoded human logic.
 
-</ConceptTemplate>

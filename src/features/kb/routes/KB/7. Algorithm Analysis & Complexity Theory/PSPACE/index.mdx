@@ -1,8 +1,33 @@
+---
+title: PSPACE
+description: "The complexity class representing problems that can be solved using a polynomial amount of memory, highlighting the fundamental difference between the limits of Time and the limits of Space."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PSPACE">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="PSPACE"
+  subtitle="The Limits of Memory"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While $P$, $NP$, and $EXPTIME$ classify problems based on the amount of **Time** (CPU cycles) they require, **PSPACE** (Polynomial Space) classifies problems based entirely on the amount of **Memory** (RAM) they consume.
 
-</ConceptTemplate>
+## 1. The Mathematical Definition
+A problem is in PSPACE if an algorithm can solve it using at most $O(N^k)$ memory space, where $k$ is a constant.
+Crucially, PSPACE does **not** care how long the algorithm takes. The algorithm could mathematically take 10 billion years to finish, but as long as it never consumes more than a polynomial amount of RAM, it belongs in PSPACE.
+
+## 2. The Relationship to Time
+- **$P \subseteq PSPACE$**: If an algorithm finishes in Polynomial Time, it physically cannot consume more than a polynomial amount of memory (it doesn't have enough time to write that much data).
+- **$NP \subseteq PSPACE$**: Even brute-forcing a Traveling Salesperson problem ($O(N!)$ time) only requires you to remember the *current* best path and the path you are currently exploring. Thus, it only uses $O(N)$ space. Therefore, every single problem in $NP$ can be solved in PSPACE.
+- **$PSPACE \subseteq EXPTIME$**: It is mathematically proven that an algorithm using $O(N^k)$ space can only enter a finite number of distinct physical states (specifically $2^{O(N^k)}$ states). If it runs longer than that, it must be stuck in an infinite loop. Thus, PSPACE is bounded by Exponential Time.
+
+## 3. PSPACE-Complete
+The hardest problems in PSPACE are **PSPACE-Complete**. The most famous examples are two-player games where the entire board must be evaluated, but the board size is finite. For example, determining if the first player has a winning strategy in a generalized game of **Othello** or **Hex** on an $N \times N$ board is PSPACE-Complete. You can mathematically simulate the entire game tree using Depth-First Search (using very little memory), but it will take an astronomically long time.
+

@@ -1,8 +1,33 @@
+---
+title: Test Fixtures
+description: "A mathematical testing concept referring to the fixed, known state of the environment required to run a test successfully, ensuring that every test executes in a perfectly predictable, isolated sandbox."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fixtures">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Test Fixtures"
+  subtitle="Establishing the Baseline State"
+  tags={['Testing', 'Unit Testing', 'Process', 'Tooling']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A unit test is mathematically invalid if it depends on the random state of the computer running it. If a test passes on the developer's laptop but fails on the CI/CD server, it is a flaky test.
 
-</ConceptTemplate>
+## 1. Establishing the Baseline
+To mathematically guarantee deterministic results, every test must start from a **Test Fixture**—a rigidly defined baseline state.
+Examples of Fixtures:
+- Loading a specific JSON file of fake users into the in-memory database.
+- Initializing the exact variables needed for a class to compile.
+- Setting the system clock to a fixed mathematical date (so tests checking "Is the user over 18?" don't suddenly fail next year).
+
+## 2. Setup and Teardown
+Modern testing frameworks (JUnit, PyTest, Jest) provide specific lifecycle hooks to manage fixtures.
+- `beforeEach()` / `setUp()`: Mathematically executes before *every single test*, ensuring the database is wiped clean and repopulated with the exact same 3 fake users. This guarantees that Test A cannot corrupt the database state for Test B.
+- `afterEach()` / `tearDown()`: Mathematically cleans up the environment (closing file handles, deleting temporary directories) so the RAM is perfectly clean for the next test.
+

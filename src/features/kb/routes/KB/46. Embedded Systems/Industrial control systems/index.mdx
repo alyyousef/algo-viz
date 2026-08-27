@@ -4,15 +4,28 @@ description: Computer-based systems that monitor and control industrial processe
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Industrial Control Systems (PLC & Modbus)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Industrial Control Systems (PLC & Modbus)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you are building an automated robotic factory to manufacture cars, you do not use Arduinos or Raspberry Pis. The electrical noise from massive 480V robotic welding arms would physically scramble the 3.3V memory inside a standard microcontroller, instantly crashing the system.
 
 Instead, factories run on **Programmable Logic Controllers (PLCs)**.
 
+
 <Callout icon="warning" title="The Physical Armor">
+
+
   A PLC is mathematically just a microcontroller, but it is physically encased in heavy armor. Its inputs are mathematically isolated using physical light (Opto-Isolators) so that a 400-volt power surge from a broken motor cannot physically fry the CPU.
+
+
 </Callout>
+
 
 ## Ladder Logic
 
@@ -22,4 +35,3 @@ PLCs are traditionally NOT programmed in C or Python. Because they were invented
 
 Inside a single circuit board, chips talk via I2C or SPI. Inside a factory, massive PLCs talk to each other over miles of copper wire using **Modbus**. Invented in 1979, Modbus is a brutally simple, serial communication protocol that mathematically guarantees data delivery across highly noisy industrial environments.
 
-</ConceptTemplate>

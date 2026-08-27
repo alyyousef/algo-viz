@@ -1,8 +1,26 @@
+---
+title: Dependency Parsing
+description: The mathematical process of analyzing the grammatical structure of a sentence, defining direct, hierarchical relationships between "head" words and their dependents.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dependency parsing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dependency Parsing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While a "Bag of Words" model destroys sentence structure, Dependency Parsing explicitly mathematically maps it, turning a flat string of text into a highly structured Directed Graph.
 
-</ConceptTemplate>
+## 1. The Root and The Edges
+In Dependency Parsing, a sentence is mathematically converted into a Tree.
+Every sentence has a **Root** (usually the main verb). Every other word is mathematically linked to a "Head" word via a directed edge (an arrow).
+For the sentence "The fast car crashed," the Root is "crashed." "car" is the Subject of "crashed" (an edge exists from crashed -> car). "The" and "fast" are adjectives modifying "car" (edges exist from car -> the, car -> fast).
+
+## 2. Information Extraction
+Once a sentence is mathematically transformed into a Dependency Graph, it becomes infinitely easier to query.
+If you want to extract features for a self-driving car AI, you don't search for the string "fast." You mathematically query the Dependency Tree for any adjectives directly pointing to the noun "car." This mathematical structure allows computers to extract precise relationships (Subject-Verb-Object) regardless of how wildly the human scrambled the word order in the original sentence.
+

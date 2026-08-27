@@ -4,7 +4,14 @@ description: The historical mathematical standard for evaluating Machine Transla
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="BLEU Score (Bilingual Evaluation Understudy)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="BLEU Score (Bilingual Evaluation Understudy)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Large Language Models, evaluating a translation AI was incredibly difficult. If the French phrase is *Le chat noir*, the reference translation is *The black cat*. But if the AI outputs *A dark feline*, a human knows it is correct, but a computer mathematically sees zero matching words.
 **BLEU** was invented by IBM to mathematically automate translation evaluation using n-gram overlap.
@@ -18,12 +25,11 @@ BLEU calculates how many chunks of words (n-grams) in the AI's output mathematic
 BLEU mathematically combines the precision of all 4 n-gram levels (using a geometric mean) to generate a final score between 0.0 (terrible) and 1.0 (perfect).
 
 ## 2. The Brevity Penalty
-A fatal mathematical flaw with raw precision is that an AI could just output the single word "The". Because "The" is in the reference text, the unigram precision would mathematically be 100%. 
+A fatal mathematical flaw with raw precision is that an AI could just output the single word "The". Because "The" is in the reference text, the unigram precision would mathematically be 100%.
 To stop this, BLEU introduces a **Brevity Penalty (BP)**. If the AI's generated sentence is mathematically shorter than the human reference sentence, the BLEU score is brutally exponentially penalized.
 
 ## 3. The Modern Downfall of BLEU
-BLEU was the industry standard for 20 years, but is mathematically obsolete for modern LLMs. 
-Because BLEU strictly checks for exact token overlap, it mathematically fails to understand synonyms or paraphrasing. If the AI outputs *A dark feline*, BLEU gives it a score of 0.0. 
+BLEU was the industry standard for 20 years, but is mathematically obsolete for modern LLMs.
+Because BLEU strictly checks for exact token overlap, it mathematically fails to understand synonyms or paraphrasing. If the AI outputs *A dark feline*, BLEU gives it a score of 0.0.
 Today, BLEU has been largely replaced by Neural Metrics (like BERTScore or BLEURT) which use Deep Learning vector embeddings to mathematically evaluate the *semantic meaning* of the translation, rather than relying on rigid n-gram string matching.
 
-</ConceptTemplate>

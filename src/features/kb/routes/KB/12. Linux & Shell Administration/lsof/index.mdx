@@ -4,16 +4,23 @@ description: The ultimate system administration diagnostic tool used to determin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="lsof (List Open Files)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="lsof (List Open Files)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In Linux, "Everything is a File". Hard drives are files (`/dev/sda`), network sockets are files, and directories are files. 
+In Linux, "Everything is a File". Hard drives are files (`/dev/sda`), network sockets are files, and directories are files.
 
 Because of this philosophy, the **`lsof` (List Open Files)** command is arguably the most powerful diagnostic tool in a sysadmin's arsenal. It asks the Kernel: "Show me every single file that is currently being held open by a process."
 
 ## Common Use Cases
 
 ### 1. "Device is Busy" Errors
-You try to unmount a USB drive using `umount /mnt/usb`, but Linux yells: *"umount: target is busy"*. 
+You try to unmount a USB drive using `umount /mnt/usb`, but Linux yells: *"umount: target is busy"*.
 You run: `lsof /mnt/usb`
 The output instantly tells you that Alice's `bash` process (PID 4501) is currently CD'd into that directory, preventing the unmount.
 
@@ -22,8 +29,13 @@ If you try to start a Node.js server on Port 8080, but get an *"Address already 
 `lsof -i :8080`
 It will immediately tell you the exact PID and name of the rogue Java process secretly listening on that network socket.
 
+
 <Callout icon="warning" title="Running as Root">
+
+
   By default, `lsof` will only show you the files opened by your specific user account. To see files opened by system daemons or other users, you MUST run it using `sudo`, otherwise it will silently hide the data.
+
+
 </Callout>
 
-</ConceptTemplate>
+

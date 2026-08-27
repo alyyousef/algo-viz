@@ -4,7 +4,14 @@ description: The cryptographic systems used to verify identity (Authentication) 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Authentication & Security">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Authentication & Security">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 HTTP is mathematically **Stateless**. If you log in on one request, the server immediately forgets who you are on the very next request. We must pass an identifier on every single request.
 
@@ -29,7 +36,6 @@ The modern API standard.
 
 ## OAuth 2.0 & OpenID Connect (SSO)
 Instead of forcing users to create a new password for your app, you can use **OAuth 2.0**.
-OAuth 2.0 is an *Authorization* framework (e.g., letting an app read your Google Calendar without giving the app your Google password). 
+OAuth 2.0 is an *Authorization* framework (e.g., letting an app read your Google Calendar without giving the app your Google password).
 **OpenID Connect (OIDC)** is an identity layer built on top of OAuth 2.0 that provides *Authentication* (Single Sign-On). When you click "Sign in with Google," OIDC returns an ID Token (a JWT) proving who you are.
 
-</ConceptTemplate>

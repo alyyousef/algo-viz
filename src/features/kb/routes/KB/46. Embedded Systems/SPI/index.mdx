@@ -4,18 +4,31 @@ description: A synchronous serial communication interface specification used for
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SPI (Serial Peripheral Interface)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SPI (Serial Peripheral Interface)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If I2C is a slow conference call to 127 people, **SPI** is a blazing-fast, direct mathematical megaphone to a specific person.
 
 Invented by Motorola, SPI abandons the complexity of mathematical addresses. Instead, it relies on brute-force physical wiring to achieve absolute maximum speed.
 
+
 <Callout icon="tip" title="The Four Wires">
+
+
   - **SCLK:** Serial Clock (Synchronous).
   - **MOSI:** Master Out, Slave In (Data from CPU to Sensor).
   - **MISO:** Master In, Slave Out (Data from Sensor to CPU).
   - **CS (Chip Select):** A dedicated, physical wire running from the CPU to ONE specific sensor.
+
+
 </Callout>
+
 
 ## Blazing Speed
 
@@ -25,4 +38,3 @@ Because SPI has two completely separate data wires (MOSI and MISO), it is mathem
 
 Because there is no addressing overhead and it is full-duplex, SPI can mathematically run at blazing speeds (often 20 MHz to 50 MHz). It is the absolute standard for reading SD Cards or refreshing TFT LCD Screens where massive data throughput is required.
 
-</ConceptTemplate>

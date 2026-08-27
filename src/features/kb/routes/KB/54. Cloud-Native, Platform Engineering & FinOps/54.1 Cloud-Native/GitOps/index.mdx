@@ -4,16 +4,28 @@ description: An operational framework that takes DevOps best practices used for 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitOps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitOps">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, if a Senior DevOps Engineer wanted to scale an application from 3 servers to 5 servers, they would manually run a `kubectl` command in their terminal. If they quit the company, nobody would know why the server count was changed.
 
 **GitOps** mathematically enforces that **Git is the absolute Single Source of Truth for Infrastructure.**
 
+
 <Callout icon="success" title="Continuous Reconciliation">
+
+
   With GitOps (using tools like ArgoCD or Flux), human beings are biologically banned from manually changing the Kubernetes cluster.
-  
+
   Instead, you edit a YAML file in a GitHub repository, changing `replicas: 3` to `replicas: 5`, and you merge the Pull Request. A software agent mathematically watching the Git repo detects the commit, compares it to the live K8s cluster, realizes there is a mathematical divergence, and automatically executes the commands to synchronize the cluster to match the Git repository.
+
+
 </Callout>
 
-</ConceptTemplate>
+

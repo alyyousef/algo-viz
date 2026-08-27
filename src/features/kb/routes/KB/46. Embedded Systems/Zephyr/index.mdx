@@ -4,7 +4,7 @@ description: A scalable real-time operating system supporting multiple hardware 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Zephyr"
   subtitle="The modern, Linux-foundation backed RTOS"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Zephyr_Project_logo.svg/512px-Zephyr_Project_logo.svg.png"
@@ -19,9 +19,15 @@ While FreeRTOS is the king of tiny, raw kernels, it fundamentally lacks standard
 
 **Zephyr** takes a completely different architectural approach. It attempts to bring the unified, monolithic driver model of Linux to tiny microcontrollers.
 
+
 <Callout icon="tip" title="The Device Tree">
+
+
   Borrowed directly from the Linux Kernel, Zephyr uses a **Device Tree** mathematically mapping every physical pin and sensor on the circuit board into a standardized text file. This means you can write your Zephyr application once, and seamlessly compile it for an STM32, an NXP chip, or a Nordic Bluetooth chip without changing a single line of C code.
+
+
 </Callout>
+
 
 ## Features
 

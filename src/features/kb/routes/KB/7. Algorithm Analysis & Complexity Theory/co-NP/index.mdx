@@ -1,8 +1,35 @@
+---
+title: co-NP
+description: "A fundamental Complexity Class representing problems where, if the answer is 'NO', a computer can mathematically verify that 'NO' answer in polynomial time."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="co-NP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="co-NP"
+  subtitle="The Mathematics of Falsification"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Computer Science']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+To understand **co-NP**, you must first understand NP.
+**NP** is the class of decision problems where, if the answer is **YES**, there is a mathematical proof that can be verified in fast, polynomial time. (e.g., "Is there a path shorter than 50 miles?" If I give you a path that is 40 miles, you can instantly verify it).
 
-</ConceptTemplate>
+**co-NP** is the exact inverse. It is the class of problems where, if the answer is **NO**, there is a mathematical counterexample that can be verified in polynomial time.
+
+## 1. The Prime Example: Primality Testing
+Consider the question: *"Is the number X a prime number?"*
+- If the answer is **NO** (meaning it is a composite number), I can hand you two numbers, $A$ and $B$. You can simply multiply $A \times B = X$ to instantly verify that $X$ is not prime.
+- Because a **NO** answer is trivially easy to verify, the problem of Composite Numbers is in **NP**.
+- Therefore, the problem of Primes (the exact inverse) is mathematically in **co-NP**.
+
+## 2. The Great Mathematical Unknown (NP vs co-NP)
+We mathematically know that $P \subseteq NP \cap co-NP$ (if a problem is easy to solve, it's easy to verify both YES and NO).
+However, one of the greatest unsolved problems in mathematics is whether $NP = co-NP$.
+If a problem is easy to verify a YES answer, is it mathematically guaranteed to be easy to verify a NO answer? Most computer scientists strongly believe $NP \neq co-NP$, meaning there are problems where finding a YES proof is easy, but proving a NO answer is astronomically difficult.
+

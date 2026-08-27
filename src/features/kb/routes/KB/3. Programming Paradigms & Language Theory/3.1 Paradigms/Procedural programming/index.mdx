@@ -4,15 +4,28 @@ description: A programming paradigm derived from imperative programming, based o
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Procedural Programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Procedural Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Procedural Programming** is a specific, structured type of Imperative Programming. As early programs grew in size, writing thousands of lines of sequential code (often relying on dangerous `GOTO` statements) resulted in unmaintainable "spaghetti code."
 
 The Procedural paradigm solved this by introducing the concept of the **Procedure** (also known as routines, subroutines, or functions). It dictates that a program should be broken down into a series of smaller, reusable computational steps.
 
+
 <Callout icon="info" title="The Foundation of Software Engineering">
+
+
   Procedural programming was the first major step toward modern software architecture. It introduced the idea of **Modularity** and **Scoping**—allowing variables to live locally inside a function rather than existing in a massive, global state.
+
+
 </Callout>
+
 
 ## Core Concepts
 
@@ -22,7 +35,7 @@ The Procedural paradigm solved this by introducing the concept of the **Procedur
 
 ## C: The Procedural King
 
-The **C** programming language is the ultimate example of procedural programming. 
+The **C** programming language is the ultimate example of procedural programming.
 
 ```c
 // The Data
@@ -41,4 +54,3 @@ int calculateArea(struct Rectangle rect) {
 
 Procedural programming works incredibly well for algorithms and system-level code (like the Linux Kernel). However, in massive business applications (like building a GUI or an RPG game), keeping hundreds of global variables and thousands of disconnected functions synchronized became chaotic. This limitation led directly to the creation of **Object-Oriented Programming**.
 
-</ConceptTemplate>

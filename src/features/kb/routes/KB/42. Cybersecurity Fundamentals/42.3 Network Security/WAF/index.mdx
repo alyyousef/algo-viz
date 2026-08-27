@@ -4,15 +4,28 @@ description: A specialized firewall that filters, monitors, and blocks HTTP traf
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Web Application Firewall (WAF)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Web Application Firewall (WAF)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A traditional network firewall operates at Layer 3 or 4 of the OSI model; it looks at IP addresses and Port numbers. It has no idea what the actual data is. If you host a website, you *must* open Port 443 (HTTPS) to the world. A traditional firewall will let a hacker right through on that port.
 
 A **Web Application Firewall (WAF)** operates at Layer 7. It mathematically parses the actual HTTP requests (the URLs, the headers, the JSON body) and looks for malicious payloads like SQL Injection or Cross-Site Scripting.
 
+
 <Callout icon="tip" title="WAF Deployment Models">
+
+
   Historically, WAFs were hardware appliances installed in the datacenter. Today, almost all modern WAFs (like Cloudflare or AWS WAF) are cloud-based reverse proxies. The user's traffic mathematically hits the Cloudflare server first, gets scrubbed clean, and then the safe traffic is forwarded to your actual web server.
+
+
 </Callout>
+
 
 ## How a WAF Works
 
@@ -21,4 +34,3 @@ WAFs primarily operate using a set of mathematical rules, often based on the OWA
 1. **Negative Security Model (Blacklisting):** The WAF allows all traffic by default, but drops anything that matches a known malicious signature (e.g., if the URL contains `SELECT * FROM`).
 2. **Positive Security Model (Whitelisting):** The WAF blocks all traffic by default, and only allows requests that perfectly match a strict mathematical schema (e.g., "The API only accepts a JSON object with a `userId` that is an integer").
 
-</ConceptTemplate>

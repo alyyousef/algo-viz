@@ -1,8 +1,30 @@
+---
+title: Distributed Tracing
+description: A mathematical observability methodology designed for microservice architectures, tracking a single user request as it traverses across dozens of decoupled servers, capturing exact latency and errors at every network hop.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Distributed tracing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Distributed Tracing"
+  subtitle="Mathematical Request Tracking"
+  tags={['Observability', 'Microservices', 'Performance', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a monolith, if a request takes 5 seconds, you look at the logs on the single server. In a microservices architecture, a single user click might mathematically trigger 20 different HTTP calls across 15 different servers (Auth, Cart, Inventory, Payment). If the request takes 5 seconds, which of the 15 servers was slow?
 
-</ConceptTemplate>
+## 1. The Trace ID and Span IDs
+Distributed Tracing solves this using mathematical correlation IDs.
+When the user clicks, the API Gateway (or a proxy like Envoy) generates a globally unique mathematical **Trace ID** (e.g., `T-1234`).
+As the request hits the "Auth" service, Auth creates a **Span ID** (`S-01`), logs how many milliseconds it took, and mathematically injects the Trace ID into the HTTP headers (e.g., `x-b3-traceid: T-1234`) before calling the "Cart" service.
+
+## 2. Mathematical Reconstruction
+Every service asynchronously flushes its "Spans" to a central tracing backend (like Jaeger or DataDog).
+The tracing backend mathematically groups all spans sharing the same Trace ID and renders a Gantt chart. An engineer can look at the chart and mathematically prove: *"The total request took 5 seconds. Auth took 10ms. Cart took 15ms. The Payment service mathematically consumed 4.97 seconds waiting on a slow database query."*
+

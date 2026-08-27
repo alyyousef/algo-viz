@@ -5,7 +5,14 @@ description: "The industry standard, cloud-agnostic Infrastructure as Code tool 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Terraform">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Terraform">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Terraform** is an open-source Infrastructure as Code (IaC) tool created by HashiCorp. It allows you to define both cloud and on-premise resources (like VMs, load balancers, and databases) in human-readable configuration files that you can version, reuse, and share.
 
@@ -20,8 +27,13 @@ It achieves this through a plugin ecosystem called **Providers**. There is an AW
 - **Imperative (e.g., Bash script with AWS CLI)**: "Create Server A. Then wait. Then attach Network B to Server A. If Server A exists, do nothing." (You must handle the logic and edge cases).
 - **Declarative (Terraform)**: "I want Server A and Network B attached." (Terraform calculates the dependency graph, builds Network B first, creates Server A, and attaches them. If Server A already exists, it does nothing).
 
+
 <Callout icon="info" title="OpenTofu">
+
+
 In 2023, HashiCorp changed Terraform's open-source license (MPL) to a Business Source License (BSL). In response, the Linux Foundation forked the project to create **OpenTofu**, an open-source, drop-in replacement for Terraform.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: FastText
+description: An advanced Word Embedding library developed by Facebook that mathematically represents words as a sum of their sub-word characters, allowing it to understand misspelled or brand new words.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="FastText">
+<TechnologyTemplate
+  title="FastText"
+  subtitle="Sub-word NLP Embeddings"
+  tags={['NLP', 'Machine Learning', 'Facebook', 'Embeddings']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Traditional Word2Vec models are mathematically fragile: if they encounter a word they didn't see during training (Out-Of-Vocabulary), they completely crash because they have no mathematical vector for it. FastText solves this.
 
-</ConceptTemplate>
+## 1. Sub-Word N-Grams
+Instead of mathematically mapping the whole word "apple" to a vector, FastText breaks the word into character n-grams (e.g., 3-character chunks): `<ap, app, ppl, ple, le>`.
+During training, the Neural Network mathematically assigns a vector to every single *n-gram*, not the whole word. The final vector for "apple" is mathematically calculated simply by adding the n-gram vectors together.
+
+## 2. Handling the Unknown
+This mathematical architecture gives FastText a massive advantage in the real world.
+If a user typos the word "appple", a standard NLP model throws an error. FastText simply breaks it down: `<ap, app, ppp, ppl, ple, le>`. Because it recognizes 80% of the mathematical sub-vectors from the original word "apple", it mathematically calculates a vector for "appple" that is nearly identical to "apple," allowing the AI to perfectly understand the typo without needing an explicit spell-checker.
+
+</TechnologyTemplate>

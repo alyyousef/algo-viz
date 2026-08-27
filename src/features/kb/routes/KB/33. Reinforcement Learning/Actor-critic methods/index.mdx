@@ -1,8 +1,27 @@
+---
+title: Actor-Critic Methods
+description: A highly advanced, hybrid Reinforcement Learning architecture that mathematically couples a Policy network (the Actor) with a Value network (the Critic) to drastically stabilize training variance.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Actor-critic methods">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Actor-Critic Methods">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Reinforcement Learning has two main algorithms: Value-Based (Q-Learning) and Policy-Based (REINFORCE). Actor-Critic mathematically merges them to eliminate the fatal flaws of both.
 
-</ConceptTemplate>
+## 1. The Actor and The Critic
+An Actor-Critic architecture spawns two separate Neural Networks (or two heads of the same network).
+- **The Actor (Policy)**: Looks at the environment and decides what to do. (e.g., *"I am going to jump."*)
+- **The Critic (Value)**: Does not take actions. It acts as a mathematical judge. It looks at the environment and mathematically predicts the total future reward of being in that state. (e.g., *"Being in this position is worth 50 points."*)
+
+## 2. The Advantage Function
+Why do we need the Critic? Pure Policy networks suffer from massive mathematical variance. If an agent randomly jumps and accidentally wins the game, it thinks "Jumping is always good," which is often false.
+The Critic provides a baseline. When the Actor jumps, the Critic calculates the **Advantage**: *"Did jumping yield a higher reward than I mathematically expected?"*
+If the Actor gets 60 points, but the Critic expected 50, the Advantage is +10. The Actor is mathematically rewarded. If the Actor gets 10 points, the Advantage is -40, and the Actor's weights are punished. This dual-network mathematical feedback loop is the foundation of the most powerful modern RL algorithms, including PPO and A3C.
+

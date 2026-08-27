@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: ARM Templates
+description: Azure Resource Manager (ARM) Templates are the native Infrastructure as Code mechanism for Microsoft Azure, utilizing mathematically precise JSON to declaratively define cloud infrastructure deployments.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="ARM templates">
+<TechnologyTemplate
+  title="ARM Templates"
+  subtitle="Native Azure Infrastructure as Code"
+  tags={['Azure', 'Infrastructure as Code', 'JSON', 'Cloud']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Terraform is cloud-agnostic, ARM Templates are the absolute, mathematical bedrock of Microsoft Azure. Every single action taken in the Azure Portal GUI is mathematically translated into ARM JSON behind the scenes before it hits the Azure API.
 
-</ConceptTemplate>
+## 1. Pure Declarative JSON
+An ARM Template is a massive JSON file. It is not a script; it is a mathematical declaration.
+You declare: *"I require a Virtual Network with this specific CIDR block, and a Storage Account."* You submit this JSON to the Azure Resource Manager. The Manager acts as the mathematical engine; it determines the current state, calculates the required API calls, handles the dependency graph (ensuring the VNet is created before the VM that relies on it), and provisions the resources.
+
+## 2. The JSON Complexity Problem
+Because JSON is a data-interchange format and not a programming language, writing complex ARM templates is mathematically brutal for humans.
+To implement a simple `for` loop to create 3 servers, a developer must write complex, heavily nested JSON arrays and utilize clumsy built-in mathematical functions like `"[concat('server-', copyIndex())]"`. This extreme verbosity and lack of readability drove Microsoft to eventually invent **Bicep** as a human-friendly abstraction layer over raw ARM JSON.
+
+</TechnologyTemplate>

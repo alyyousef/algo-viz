@@ -4,16 +4,28 @@ description: A distributed computing paradigm that brings computation and data s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IoT Edge Computing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IoT Edge Computing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A modern factory might have 10,000 biological sensors monitoring the temperature of industrial drills, generating 5 Gigabytes of telemetry data per second. 
+A modern factory might have 10,000 biological sensors monitoring the temperature of industrial drills, generating 5 Gigabytes of telemetry data per second.
 
 Mathematically transmitting 5GB/sec of data over an LTE connection to a centralized cloud database is financially impossible.
 
+
 <Callout icon="tip" title="Data Filtering at the Edge">
-  **IoT Edge Computing** solves this by placing a small physical server (an Edge Gateway) directly inside the factory. 
-  
+
+
+  **IoT Edge Computing** solves this by placing a small physical server (an Edge Gateway) directly inside the factory.
+
   The 10,000 sensors send their data to the local gateway. The gateway mathematically filters out the "normal" data (99.9% of it). If a drill's temperature spikes, the gateway instantly triggers an alarm locally, and *only* uploads the anomalous data to the cloud for long-term storage, mathematically reducing network bandwidth costs by 99%.
+
+
 </Callout>
 
-</ConceptTemplate>
+

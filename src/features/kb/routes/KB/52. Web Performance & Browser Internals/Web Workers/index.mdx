@@ -4,16 +4,28 @@ description: A simple means for web content to run scripts in background threads
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Web Workers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Web Workers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Because JavaScript is single-threaded, if you attempt to calculate the 50,000th Fibonacci number on the main thread, the Event Loop mathematically freezes. The user cannot click buttons, and the screen biologically locks up.
 
 **Web Workers** solve this by allowing you to spawn true, physical OS-level background threads.
 
+
 <Callout icon="warning" title="No DOM Access">
-  A Web Worker runs in a completely isolated mathematical memory space. 
-  
+
+
+  A Web Worker runs in a completely isolated mathematical memory space.
+
   Because it is a separate thread, it is biologically banned from touching the `document` (DOM). It cannot update the UI directly. Instead, the Main Thread and the Worker communicate exclusively by sending mathematical string messages back and forth using `postMessage()`.
+
+
 </Callout>
 
-</ConceptTemplate>
+

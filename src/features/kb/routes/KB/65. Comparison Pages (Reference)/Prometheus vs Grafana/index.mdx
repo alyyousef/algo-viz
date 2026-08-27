@@ -1,8 +1,32 @@
+---
+title: Prometheus vs Grafana
+description: "A clarification of the modern observability stack, detailing how Prometheus acts as the mathematical time-series database and alerting engine, while Grafana acts as the pure visualization and dashboarding layer."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Prometheus vs Grafana">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Prometheus vs Grafana"
+  subtitle="The Observability Stack"
+  tags={['Comparison', 'DevOps', 'Infrastructure', 'Monitoring']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Prometheus and Grafana are almost always mentioned together because they perfectly complement each other to form the industry-standard observability stack. They do not compete; they mathematically rely on each other.
 
-</ConceptTemplate>
+## 1. Prometheus (The Engine)
+- **Role**: Data Collection and Storage.
+- **Architecture**: A massive, mathematically optimized **Time-Series Database (TSDB)**. It uses a "Pull" model. It reaches out to all your web servers every 15 seconds, mathematically scrapes their metrics (CPU usage, memory, HTTP error rates), and stores them.
+- **Superpower**: PromQL (Prometheus Query Language). It allows engineers to write intense mathematical alerts (e.g., *"Trigger PagerDuty if the 99th percentile latency of the checkout service exceeds 500ms for more than 5 minutes"*).
+- **Limitation**: Its built-in UI for viewing graphs is mathematically functional but visually atrocious.
+
+## 2. Grafana (The Dashboard)
+- **Role**: Data Visualization.
+- **Architecture**: A pure frontend dashboarding tool. Grafana mathematically contains exactly zero of your metric data.
+- **Mechanism**: You connect Grafana to a "Data Source" (usually Prometheus, but it also supports Elasticsearch, InfluxDB, and Datadog). Grafana translates your visual dashboard panels into PromQL queries, fetches the data from Prometheus, and renders beautiful, real-time mathematical charts.
+

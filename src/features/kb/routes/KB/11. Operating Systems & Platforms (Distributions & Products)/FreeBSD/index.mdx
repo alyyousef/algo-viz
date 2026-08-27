@@ -4,7 +4,14 @@ description: A complete, highly stable Unix-like operating system known for its 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="FreeBSD">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="FreeBSD">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Linux is just a kernel, **FreeBSD** is a complete operating system. The kernel, the device drivers, and the user-land utilities are all developed together in a single, cohesive source code repository by the same core team.
 
@@ -16,9 +23,14 @@ Descended directly from the Berkeley Software Distribution (BSD) created at UC B
 2. **ZFS**: FreeBSD offers native, first-class support for ZFS, arguably the most advanced and resilient file system ever created.
 3. **Jails**: Decades before Docker containers existed on Linux, FreeBSD pioneered lightweight OS-level virtualization with **FreeBSD Jails**, allowing strict isolation of processes.
 
+
 <Callout icon="info" title="The Permissive License">
-  Unlike Linux (which uses the strict copyleft GPL license), FreeBSD uses the highly permissive **BSD License**. This allows companies to take FreeBSD, heavily modify it, and sell it as a closed-source product. 
+
+
+  Unlike Linux (which uses the strict copyleft GPL license), FreeBSD uses the highly permissive **BSD License**. This allows companies to take FreeBSD, heavily modify it, and sell it as a closed-source product.
   For example, Sony's PlayStation OS and Apple's macOS/iOS are heavily derived from FreeBSD code.
+
+
 </Callout>
 
-</ConceptTemplate>
+

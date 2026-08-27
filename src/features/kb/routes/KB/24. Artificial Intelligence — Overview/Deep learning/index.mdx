@@ -4,7 +4,14 @@ description: A powerful subfield of Machine Learning based on Artificial Neural 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Deep Learning (Overview)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Deep Learning (Overview)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While classical Machine Learning (Random Forests, SVMs) requires humans to manually extract features (Feature Engineering), **Deep Learning** algorithms mathematically learn to extract the features themselves directly from raw data (images, text, audio).
 
@@ -24,7 +31,6 @@ The network learns through **Backpropagation**:
 4. **Update**: It mathematically updates all 50 billion weights simultaneously to slightly reduce the error, repeating this loop millions of times.
 
 ## 3. The Need for Massive Compute (GPUs)
-Deep Learning was invented in the 1980s, but failed because CPUs are too slow. A neural network forward pass requires millions of independent matrix multiplications. 
+Deep Learning was invented in the 1980s, but failed because CPUs are too slow. A neural network forward pass requires millions of independent matrix multiplications.
 In the 2010s, researchers realized that **GPUs (Graphics Processing Units)**—which were designed to calculate millions of independent pixels for video games—could mathematically calculate neural networks 100x faster than CPUs, sparking the entire modern AI revolution.
 
-</ConceptTemplate>

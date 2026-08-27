@@ -1,8 +1,25 @@
+---
+title: Handlebars
+description: A highly popular, logic-less templating engine built to keep view templates clean and strictly separated from application logic.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Handlebars">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Handlebars">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Handlebars is a widely used templating engine (an extension of Mustache). Its core mathematical philosophy is that templates should be "logic-less". You should not be writing complex `for` loops or mathematical equations inside your HTML.
 
-</ConceptTemplate>
+## 1. The "Logic-Less" Philosophy
+In Handlebars, you use double curly braces (hence the name) to mathematically bind variables: `{{ title }}`.
+If you need to iterate over an array of users, you use a block helper: `{{#each users}} ... {{/each}}`.
+Crucially, you mathematically *cannot* write `{{ user.age + 5 }}`. Handlebars physically prevents you from doing math or executing raw JavaScript inside the template. The server must do all calculations before passing the final data object to Handlebars.
+
+## 2. Helpers
+If you mathematically *must* process data in the template (e.g., formatting a date), you register a custom "Helper" function in your server code. The template can then cleanly call that helper: `{{formatDate user.birthDate}}`. This rigorously enforces the Model-View-Controller separation of concerns.
+

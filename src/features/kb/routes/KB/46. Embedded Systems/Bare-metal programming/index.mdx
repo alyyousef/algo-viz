@@ -4,15 +4,28 @@ description: Programming that operates without the abstraction of an operating s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bare-Metal Programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bare-Metal Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you write a Python script, it is mathematically abstracted through five layers of software: The Python Interpreter, the C Standard Library, the Operating System Kernel, the Hardware Drivers, and finally the Silicon.
 
-**Bare-Metal Programming** strips all of that away. You are writing code that executes directly on the physical silicon with zero Operating System. 
+**Bare-Metal Programming** strips all of that away. You are writing code that executes directly on the physical silicon with zero Operating System.
+
 
 <Callout icon="tip" title="No Safety Nets">
+
+
   In Bare-Metal, there is no `printf()`. There is no `malloc()`. If you want to turn on an LED, you mathematically calculate the exact hexadecimal memory address of the physical copper pin on the chip (e.g., `0x40020000`), and you write a `1` directly to that physical RAM register.
+
+
 </Callout>
+
 
 ## The Mathematics of Memory-Mapped I/O
 
@@ -25,10 +38,9 @@ In Bare-Metal C, peripherals (like pins, timers, or UART radios) are physically 
 void turnOnLED() {
     // We are mathematically forcing the 5th bit of this physical memory address to 1.
     // This instantly sends 3.3 volts of physical electricity down Pin 5.
-    *GPIOA_ODR |= (1 << 5); 
+    *GPIOA_ODR |= (1 <&lt; 5);
 }
 ```
 
 The `volatile` keyword is mathematically critical here. It tells the C Compiler: *"Do not optimize this pointer away! I am talking to physical hardware, not regular RAM."*
 
-</ConceptTemplate>

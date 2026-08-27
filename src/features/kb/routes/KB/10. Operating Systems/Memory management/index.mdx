@@ -4,23 +4,35 @@ description: The complex orchestration of physical RAM, ensuring every process g
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Memory Management">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Memory Management">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In the very early days of computing (like MS-DOS), memory management didn't exist. Programs were loaded directly into physical RAM at whatever address they wanted. 
+In the very early days of computing (like MS-DOS), memory management didn't exist. Programs were loaded directly into physical RAM at whatever address they wanted.
 
 If a video game needed memory, it simply wrote data to physical address `0x1000`. If the Operating System happened to be storing critical network data at `0x1000`, the game would overwrite it, and the entire computer would instantly crash.
 
+
 <Callout icon="warning" title="The Three Goals">
+
+
   Modern Operating Systems must solve three massive problems simultaneously:
   1. **Allocation**: Dynamically giving memory to processes as they ask for it, without fragmenting the RAM into useless tiny chunks.
   2. **Isolation**: Ensuring Process A physically cannot read the passwords stored in Process B's memory.
   3. **Virtualization**: Creating the illusion that a program has access to infinite RAM, even if the physical computer only has 4GB installed.
+
+
 </Callout>
+
 
 ## The Modern Solution
 
-To achieve these goals, modern Operating Systems completely abandon the idea of letting programs talk to Physical RAM. 
+To achieve these goals, modern Operating Systems completely abandon the idea of letting programs talk to Physical RAM.
 
 Instead, the OS Kernel utilizes a hardware chip inside the CPU called the **Memory Management Unit (MMU)** to enforce a system called **Virtual Memory**. Every single memory request made by every single program is intercepted by the MMU and mathematically translated on the fly, creating a perfect, secure illusion for the software.
 
-</ConceptTemplate>

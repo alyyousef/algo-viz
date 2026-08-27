@@ -4,7 +4,7 @@ description: A software package manager that installs, updates, and removes pack
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="DNF"
   subtitle="The architect of Red Hat & Fedora"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Bash_Logo_Colored.svg/512px-Bash_Logo_Colored.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Historically, Red Hat systems used **YUM**. However, YUM was written in Python 2, was notoriously slow, and its dependency resolver mathematically consumed massive amounts of RAM.
 
+
 <Callout icon="success" title="The SAT Solver">
-  DNF completely replaced YUM by integrating **libsolv** (written by SUSE). 
-  
+
+
+  DNF completely replaced YUM by integrating **libsolv** (written by SUSE).
+
   Dependency resolution is biologically a Boolean Satisfiability Problem (SAT). `libsolv` is a mathematically rigorous C/C++ engine that solves these complex dependency graphs exponentially faster and with vastly less memory than YUM ever could.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

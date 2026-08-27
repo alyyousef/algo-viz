@@ -4,20 +4,32 @@ description: An interviewing technique that asks candidates to describe past beh
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Behavioral Interviewing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Behavioral Interviewing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Behavioral Interviews** test your biology, not your mathematics.
 
+
 <Callout icon="info" title="The STAR Method">
+
+
   You will be asked: *"Tell me about a time you disagreed with a coworker."*
-  
+
   You must answer using the **STAR Method**:
   - **S**ituation: Set the biological scene (e.g., "We were launching an API").
   - **T**ask: What was the goal?
   - **A**ction: What exact mathematical steps did *you* take?
   - **R**esult: What was the biological outcome, backed by numbers?
-  
+
   This proves you are not a toxic biological entity, and can actually function inside a corporate team.
+
+
 </Callout>
 
-</ConceptTemplate>
+

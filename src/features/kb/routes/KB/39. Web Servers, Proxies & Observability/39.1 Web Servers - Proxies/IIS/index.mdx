@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: IIS (Internet Information Services)
+description: Microsoft's proprietary, highly extensible web server mathematically integrated deeply into the Windows Server operating system, optimized for hosting .NET applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="IIS">
+<TechnologyTemplate
+  title="IIS (Internet Information Services)"
+  subtitle="The Enterprise Windows Web Server"
+  tags={['Web Servers', 'Microsoft', 'Windows', 'Enterprise']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a corporation's architecture is mathematically anchored in the Microsoft ecosystem (Active Directory, SQL Server, C# .NET), IIS is the foundational web server that ties the ecosystem together.
 
-</ConceptTemplate>
+## 1. Deep OS Integration
+Because IIS is not a standalone executable but an integrated Windows Server Role, it possesses mathematical capabilities Linux servers lack.
+The most prominent is **Windows Authentication (Kerberos/NTLM)**. If an employee logs into their corporate Windows laptop, IIS can mathematically authenticate them against Active Directory silently in the background via their browser, granting them access to internal web applications without requiring them to type a username and password.
+
+## 2. Application Pools
+IIS introduced a brilliant mathematical concept called **Application Pools**.
+In Apache, if a poorly written PHP script crashes, the entire Apache server goes down. In IIS, administrators mathematically assign different websites to different isolated Application Pools. Each pool runs as an entirely separate Windows Worker Process (`w3wp.exe`). If Website A mathematically consumes 100% of the CPU and crashes its worker process, Website B (running in a different Application Pool) remains perfectly stable and highly available.
+
+</TechnologyTemplate>

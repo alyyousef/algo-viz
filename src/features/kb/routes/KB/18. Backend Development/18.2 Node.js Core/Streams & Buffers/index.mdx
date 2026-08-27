@@ -4,7 +4,14 @@ description: The memory management architecture required to process massive file
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Streams & Buffers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Streams & Buffers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In naive backend development, if a user uploads a 5GB 4K Video to your server, a beginner might use `fs.readFile()` to read the file.
 `fs.readFile()` attempts to load the entire 5GB file into the server's RAM at once. If your server only has 2GB of RAM, the Node.js process will violently crash with a **Fatal Error: JavaScript heap out of memory**.
@@ -37,4 +44,3 @@ fs.createReadStream('massive-log.txt')
   .pipe(fs.createWriteStream('massive-log.txt.gz'));
 ```
 
-</ConceptTemplate>

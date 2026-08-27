@@ -1,8 +1,26 @@
+---
+title: Foreign Function Interface (FFI)
+description: The highly complex, low-level mathematical bridge that allows code written in a high-level language to directly execute machine code compiled from a different language (usually C).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Language interoperability (FFI)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Language Interoperability (FFI)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Python is mathematically incredibly slow. To achieve high performance in AI, Python must call libraries written in C++ (like TensorFlow). It does this using a Foreign Function Interface (FFI).
 
-</ConceptTemplate>
+## 1. The C ABI (Application Binary Interface)
+To cross language boundaries, you cannot pass Java Objects to Rust; the memory layouts are mathematically completely different.
+Instead, almost all languages use the **C ABI** as the universal mathematical lingua franca. The C ABI strictly defines exactly how memory is laid out and exactly which CPU registers hold which arguments.
+If Python wants to call Rust, the Rust compiler mathematically strips away all of Rust's advanced types and exposes a raw, C-compatible memory pointer. Python uses FFI to bind to that raw pointer and execute the machine code.
+
+## 2. The Cost of Crossing the Boundary
+FFI is not free. When Python calls a C function, the CPU must mathematically halt, perform a Context Switch, marshal the data (convert Python's memory layout into C's memory layout), execute the C code, and marshal the result back.
+If you use FFI to call a massive matrix multiplication, the math is 1,000x faster, making the FFI overhead irrelevant. But if you write a `for` loop in Python that calls a C function 1 million times, the FFI marshaling overhead will mathematically cause the program to run vastly slower than if you had just written the math in pure Python.
+

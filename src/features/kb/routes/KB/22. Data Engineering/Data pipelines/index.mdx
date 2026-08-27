@@ -4,7 +4,14 @@ description: The automated software systems responsible for extracting, transfor
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data Pipelines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Pipelines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A Data Pipeline is the automated software plumbing that moves data from Point A to Point B. Without pipelines, Data Analysts would have to manually export CSVs from the production database and email them to the BI team every morning.
 
@@ -23,4 +30,3 @@ A standard pipeline executes three mathematical phases (ETL or ELT):
 ## 3. The Orchestration Layer
 Because a Data Pipeline might consist of 50 different Python scripts and SQL queries that must execute in a strict mathematical order, they are managed by an Orchestrator (like **Apache Airflow** or **Dagster**). The orchestrator ensures that if the Extraction step fails, the Transformation step is mathematically halted to prevent data corruption.
 
-</ConceptTemplate>

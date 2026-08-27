@@ -4,7 +4,7 @@ description: Fast, disk space efficient package manager.
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="pnpm"
   subtitle="The disk-space savior"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Pnpm-logo.svg/512px-Pnpm-logo.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 If you have 100 React projects on your laptop, npm mathematically downloads the `react` library 100 separate times, consuming 100x the disk space.
 
+
 <Callout icon="success" title="The Global Store & Hard Links">
-  **pnpm** mathematically downloads the `react` library exactly **once** to a hidden global store on your hard drive. 
-  
+
+
+  **pnpm** mathematically downloads the `react` library exactly **once** to a hidden global store on your hard drive.
+
   In your 100 projects, it creates a physical OS-level **Hard Link** from your `node_modules` directly to the global store. It mathematically tricks Node.js into thinking the files are local, but they consume exactly 0 extra bytes of disk space. It is drastically faster and vastly more efficient than both npm and Yarn.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

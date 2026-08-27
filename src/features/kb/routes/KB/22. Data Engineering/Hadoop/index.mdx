@@ -4,7 +4,14 @@ description: The foundational Big Data framework that pioneered distributed stor
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Hadoop">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Hadoop">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 2004, Google published a whitepaper detailing how they stored and indexed the entire internet. Doug Cutting and Mike Cafarella used this paper to create **Apache Hadoop**, birthing the entire modern Big Data industry.
 
@@ -17,7 +24,7 @@ Hadoop is not a database; it is a mathematical framework consisting of three cor
 
 ## 2. The MapReduce Paradigm
 Moving 10 Terabytes of data across a network to a central CPU for processing is mathematically impossible due to network bandwidth limitations.
-MapReduce solves this by **moving the compute to the data**. 
+MapReduce solves this by **moving the compute to the data**.
 
 - **Map Phase**: A tiny 10KB Java program is sent to every single server that holds a slice of the data. The servers execute the logic locally on their own hard drives in parallel.
 - **Shuffle Phase**: The servers mathematically route their intermediate results across the network (e.g., all data for "User A" goes to Server 1, "User B" goes to Server 2).
@@ -27,8 +34,7 @@ MapReduce solves this by **moving the compute to the data**.
 While Hadoop was revolutionary, it had a fatal architectural flaw: **Disk I/O**.
 MapReduce mathematically forced data to be written to the physical spinning hard drive between every single processing step. For complex algorithms (like Machine Learning), this extreme disk latency made jobs take hours or days.
 
-Because of this, MapReduce was almost entirely replaced by **Apache Spark**, which performs the exact same distributed execution, but keeps the execution graph mathematically in **RAM**, making it 100x faster. 
+Because of this, MapReduce was almost entirely replaced by **Apache Spark**, which performs the exact same distributed execution, but keeps the execution graph mathematically in **RAM**, making it 100x faster.
 
 Today, raw Hadoop is considered legacy architecture, having been largely superseded by Spark, Databricks, and Cloud Data Warehouses (Snowflake).
 
-</ConceptTemplate>

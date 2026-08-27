@@ -1,8 +1,29 @@
+---
+title: Custom Resource Definitions (CRDs)
+description: An advanced extensibility mechanism in Kubernetes that allows developers to mathematically define custom objects and APIs, transforming Kubernetes from a container orchestrator into a universal control plane.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CRDs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Custom Resource Definitions (CRDs)"
+  subtitle="Extending the Kubernetes Brain"
+  tags={['Kubernetes', 'Architecture', 'APIs', 'Extensibility']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Out of the box, the Kubernetes API understands standard mathematical resources: `Pods`, `Deployments`, and `Services`. But what if you want Kubernetes to manage a PostgreSQL database or an AWS S3 Bucket?
 
-</ConceptTemplate>
+## 1. Defining New Mathematics
+A **CRD (Custom Resource Definition)** allows you to inject new mathematical nouns into the Kubernetes API.
+You can create a CRD called `Database`. Once applied, a developer can write standard Kubernetes YAML specifying `kind: Database` and use `kubectl get databases`. The Kubernetes API server now mathematically understands and stores the state of these custom objects in etcd, exactly as if they were native Pods.
+
+## 2. The Operator Pattern
+A CRD is just a mathematical data structure; it has no behavior. To make the CRD do something, you must write a Custom Controller (often called an **Operator**).
+If a developer applies a `Database` YAML file, the custom Operator detects the new object. The Operator contains the complex mathematical logic (written in Go) required to reach out to an external cloud provider, provision a managed PostgreSQL instance, configure the backups, and return the connection string to Kubernetes. CRDs allow Kubernetes to mathematically orchestrate anything in the world with an API, not just containers.
+

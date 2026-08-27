@@ -4,7 +4,7 @@ description: An open-source software tool used for the automation of building an
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Bazel"
   subtitle="Google's Monorepo Titan"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Bazel_logo.svg/512px-Bazel_logo.svg.png"
@@ -15,14 +15,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://bazel.build/"
 >
 
-If you have a monorepo containing a Python backend, a React frontend, and a Go microservice, you typically need to run `pip`, `npm`, and `go build` separately. 
+If you have a monorepo containing a Python backend, a React frontend, and a Go microservice, you typically need to run `pip`, `npm`, and `go build` separately.
 
 Bazel unifies everything. It mathematically parses the entire repository across all languages and builds a single, massive dependency graph.
 
+
 <Callout icon="success" title="Hermetic & Reproducible Builds">
-  Bazel's greatest strength is its **Hermeticity**. 
-  
+
+
+  Bazel's greatest strength is its **Hermeticity**.
+
   When Bazel compiles a C++ file, it physically sandboxes the compiler. It mathematically guarantees that the build cannot accidentally rely on a random library installed on the developer's laptop. If it compiles successfully on your laptop, it is mathematically guaranteed to compile identically on the CI/CD server, completely eliminating the "It works on my machine" problem.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

@@ -4,23 +4,35 @@ description: The encrypted extension of HTTP, designed to prevent Man-In-The-Mid
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HTTPS (HTTP Secure)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HTTPS (HTTP Secure)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Standard HTTP transmits data in pure, unencrypted plain text. If you log into your bank over HTTP from a coffee shop Wi-Fi, anyone with a packet sniffer (like Wireshark) can read your password in clear text.
 
-**HTTPS (HTTP Secure)** solves this by wrapping the standard HTTP payload inside an impenetrable cryptographic vault before sending it over the network. 
+**HTTPS (HTTP Secure)** solves this by wrapping the standard HTTP payload inside an impenetrable cryptographic vault before sending it over the network.
 
 ## The Transport Layer Security (TLS)
 
-HTTPS is not actually a new protocol; it is literally just standard HTTP layered on top of the **TLS** encryption protocol (which operates between Layer 4 and Layer 7). 
+HTTPS is not actually a new protocol; it is literally just standard HTTP layered on top of the **TLS** encryption protocol (which operates between Layer 4 and Layer 7).
 It defaults to TCP Port **443**.
 
 When you connect to an HTTPS website, two things happen mathematically:
 1. **Encryption**: The data is scrambled using complex mathematics (like AES). Even if a hacker intercepts the packet, it looks like pure random static.
 2. **Authentication**: How do you know the server you connected to is *actually* your bank, and not a hacker spoofing the IP address? The server provides a cryptographic **Digital Certificate**, signed by a globally trusted Certificate Authority (CA), mathematically proving its identity to your browser.
 
+
 <Callout icon="info" title="The Let's Encrypt Revolution">
+
+
   Historically, getting a Digital Certificate was a miserable process that cost hundreds of dollars a year, which is why only banks used HTTPS. In 2015, the **Let's Encrypt** project launched, providing completely free, automated certificates to anyone. Today, over 95% of all web traffic on Earth is encrypted via HTTPS.
+
+
 </Callout>
 
-</ConceptTemplate>
+

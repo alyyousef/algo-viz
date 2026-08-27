@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Triton Inference Server
+description: NVIDIA's ultimate, hardware-optimized serving engine, mathematically designed to squeeze absolute maximum performance out of GPUs by supporting multiple frameworks (PyTorch, TF, ONNX) simultaneously.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Triton Inference Server">
+<TechnologyTemplate
+  title="Triton Inference Server"
+  subtitle="NVIDIA's Hardware-Optimized Server"
+  tags={['MLOps', 'NVIDIA', 'GPU', 'Serving']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are paying $30,000 for an NVIDIA GPU, you do not want software bottlenecks. Triton is written directly by NVIDIA. It sits directly on top of CUDA and TensorRT, bypassing almost all high-level software overhead to achieve theoretical maximum mathematical throughput.
 
-</ConceptTemplate>
+## 1. Framework Agnostic
+TorchServe only runs PyTorch. TF Serving only runs TensorFlow. Triton runs *everything*.
+You can load a PyTorch model, a TensorFlow model, an XGBoost tree, and an ONNX graph into Triton simultaneously. Triton physically translates all of them down to its highly optimized C++ backend. This allows a company to standardize their entire MLOps deployment pipeline on a single technology, regardless of what the Data Scientists used to train the models.
+
+## 2. Concurrent Model Execution
+Triton understands the physical silicon of the GPU better than any other server.
+If you have two small models, Triton will mathematically execute them *concurrently* on the exact same GPU clock cycle using CUDA streams, rather than sequentially. Combined with dynamic batching and TensorRT optimization (which fuses mathematical operations together in hardware), Triton routinely delivers 3x to 5x higher throughput and lower latency than native Python serving solutions.
+
+</TechnologyTemplate>

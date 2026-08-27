@@ -4,14 +4,26 @@ description: A quantum algorithm for unstructured search that provides a quadrat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Grover's Algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Grover's Algorithm">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you have a biological phonebook with 1,000,000 unalphabetized names, and you need to find "Alice", a classical computer must mathematically check every single name one by one (an $O(N)$ operation taking 500,000 guesses on average).
 
+
 <Callout icon="success" title="The Quadratic Speedup">
+
+
   **Grover's Algorithm** is a quantum search algorithm that mathematically searches an unstructured database in $O(sqrt{N})$ time.
-  
+
   Instead of 500,000 guesses, Grover's Algorithm uses quantum amplitude amplification to mathematically boost the probability of Alice's location, finding her in exactly **1,000** guesses. While not exponential like Shor's Algorithm, this quadratic speedup will radically transform artificial intelligence, database searching, and password hashing (forcing the industry to upgrade from AES-128 to AES-256).
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Istio
+description: A powerful, open-source Service Mesh that provides a dedicated mathematical infrastructure layer for securing, connecting, and observing microservices communication across a Kubernetes cluster.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Istio">
+<TechnologyTemplate
+  title="Istio"
+  subtitle="The Enterprise Service Mesh"
+  tags={['Kubernetes', 'Service Mesh', 'Networking', 'Security']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a company has 500 microservices talking to each other, mathematically tracking latency, implementing retries, and securing the traffic with TLS encrypts becomes a nightmare. If every developer writes this logic into their application code, the codebase becomes bloated and inconsistent.
 
-</ConceptTemplate>
+## 1. The Sidecar Proxy Pattern
+Istio solves this by mathematically intercepting all network traffic.
+When a Pod is created, Istio automatically injects a second container into the Pod called the **Envoy Proxy** (the "Sidecar").
+The application container knows nothing about Istio. It simply sends an unencrypted HTTP request to `http://backend-service`. The Envoy Proxy mathematically intercepts that request at the network layer, encrypts it (mTLS), adds trace headers, and routes it to the destination's Envoy Proxy. This completely decouples networking logic from application logic.
+
+## 2. Advanced Traffic Engineering
+Because Envoy proxies intercept 100% of the traffic, the Istio Control Plane can execute advanced mathematical routing.
+You can configure Istio to perform **Fault Injection** (e.g., "Mathematically force 5% of requests to the database to fail with a 500 error to test the application's resilience"). You can also execute **Traffic Shadowing** (e.g., "Send a mathematical duplicate of all live production traffic to the new v2 Staging Pod, but silently discard the response").
+
+</TechnologyTemplate>

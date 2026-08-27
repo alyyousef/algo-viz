@@ -1,8 +1,30 @@
+---
+title: HTTP vs HTTPS
+description: "The critical networking distinction between raw, plaintext web transmission (HTTP) and mathematically encrypted, certificate-verified secure transmission (HTTPS)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HTTP vs HTTPS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="HTTP vs HTTPS"
+  subtitle="Plaintext vs TLS Encryption"
+  tags={['Comparison', 'Networking', 'Security', 'Protocols']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+HTTP (Hypertext Transfer Protocol) is the foundational language of the World Wide Web. It dictates how a browser asks a server for an HTML file. However, standard HTTP is a massive mathematical security risk.
 
-</ConceptTemplate>
+## 1. HTTP (Port 80)
+- **Mechanism**: When you submit a password over HTTP, it is mathematically transmitted across the internet as pure, readable plaintext.
+- **Vulnerability**: Any router between your laptop and the server (e.g., the public Starbucks Wi-Fi router) can mathematically read the packets, stealing your password instantly via a "Man-in-the-Middle" attack.
+
+## 2. HTTPS (Port 443)
+- **Mechanism**: HTTPS wraps standard HTTP inside a massive cryptographic tunnel called **TLS** (Transport Layer Security).
+- **The Handshake**: When you connect, the server sends a mathematical Certificate (verified by a trusted Certificate Authority). Your browser and the server use Asymmetric Math (RSA) to securely agree on a shared secret key. They then use that key to encrypt all further communication using Symmetric Math (AES-256).
+- **Security**: If the Starbucks router intercepts an HTTPS packet, it only sees mathematical garbage. It would take all the computers on Earth millions of years to crack the encryption. (Google Chrome now explicitly flags any non-HTTPS site as "Not Secure").
+

@@ -4,15 +4,28 @@ description: A data structure that tracks a set of elements partitioned into a n
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Disjoint Sets (Union-Find)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Disjoint Sets (Union-Find)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Disjoint Set** data structure (often called the **Union-Find** data structure) is a specialized tool used to keep track of a set of elements partitioned into non-overlapping subsets. It provides near-instantaneous answers to the question: "Are these two items in the same group?"
 
+
 <Callout icon="info" title="The Core Operations">
+
+
   The structure is defined by two primary operations:
   1. **Find**: Determine which subset a particular element is in. This is usually implemented by returning a "representative" or "root" element of that subset.
   2. **Union**: Join two subsets into a single subset.
+
+
 </Callout>
+
 
 ## How it Works (Tree Representation)
 
@@ -41,4 +54,3 @@ This function grows so incredibly slowly that for all practical values of $n$ (e
 2. **Cycle Detection**: Quickly detecting cycles in an undirected graph.
 3. **Image Processing**: Finding connected components (like the "paint bucket" fill tool in Photoshop).
 
-</ConceptTemplate>

@@ -4,14 +4,26 @@ description: An organized collection of data, generally stored and accessed elec
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Databases (Interview Prep)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Databases (Interview Prep)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A system design interview will heavily focus on the **Database Layer**.
 
+
 <Callout icon="warning" title="SQL vs NoSQL">
+
+
   You must mathematically justify your database choice.
-  
+
   If the data has strict financial relationships, you must choose a Relational DB (PostgreSQL) and discuss ACID transactions and foreign keys. If the data is unstructured biological telemetry logs arriving at 100,000 requests per second, you must mathematically pivot to a NoSQL DB (Cassandra or MongoDB) and discuss eventual consistency and document schemas.
+
+
 </Callout>
 
-</ConceptTemplate>
+

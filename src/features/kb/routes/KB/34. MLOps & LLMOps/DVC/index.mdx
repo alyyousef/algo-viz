@@ -1,8 +1,25 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: DVC (Data Version Control)
+description: The industry-standard open-source tool that seamlessly integrates with Git to track, version, and manage massive Machine Learning datasets and mathematical model files that are too large for GitHub.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="DVC">
+<TechnologyTemplate
+  title="DVC (Data Version Control)"
+  subtitle="Git for Machine Learning Data"
+  tags={['MLOps', 'Data', 'Git', 'CLI']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Git was mathematically designed to track lines of text code. If you try to commit a 50GB `.csv` file or a 4GB PyTorch model weight to Git, the repository will violently crash. DVC solves this problem seamlessly.
 
-</ConceptTemplate>
+## 1. The Pointer System
+DVC runs directly alongside Git.
+When you type `dvc add dataset.csv`, DVC calculates the MD5 hash of the massive file, moves the file into a hidden cache, and creates a tiny, 2-kilobyte text file called `dataset.csv.dvc`.
+This tiny text file contains the hash pointer. You commit the `.dvc` file to GitHub. You push the massive dataset to Amazon S3 (or any cloud storage) using `dvc push`. Git handles the code; DVC handles the data. They remain perfectly mathematically synchronized.
+
+## 2. DAG Pipelines and Reproducibility
+DVC is not just for storage; it is a mathematical pipeline executor.
+You can define a Directed Acyclic Graph (DAG) in a `dvc.yaml` file (e.g., Step 1: Clean Data -> Step 2: Train Model).
+If you modify the data cleaning script and run `dvc repro`, DVC mathematically analyzes the hashes of all dependencies. It realizes the model weights are outdated, automatically re-runs the cleaning script, re-runs the training script, generates the new model, and securely versions the entire pipeline state.
+
+</TechnologyTemplate>

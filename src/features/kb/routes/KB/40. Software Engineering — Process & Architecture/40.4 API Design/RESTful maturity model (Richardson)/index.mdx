@@ -1,8 +1,29 @@
+---
+title: Richardson Maturity Model
+description: "A heuristic mathematical model developed by Leonard Richardson that grades web APIs on a scale from Level 0 to Level 3, measuring how deeply they embrace the architectural constraints of REST."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RESTful maturity model (Richardson)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Richardson Maturity Model"
+  subtitle="The 4 Levels of REST"
+  tags={['API', 'REST', 'Architecture', 'Web']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Almost every API claims to be "RESTful," but mathematically, 90% of them are simply RPC systems communicating over HTTP. Leonard Richardson created a mathematical grading rubric to classify true REST.
 
-</ConceptTemplate>
+## 1. Levels 0 and 1
+- **Level 0 (The Swamp of POX)**: The API uses HTTP strictly as a transport mechanism (like SOAP). It has exactly one URL endpoint (e.g., `/api`) and uses only `POST` to send complex XML/JSON commands.
+- **Level 1 (Resources)**: The API introduces Nouns (Resources). Instead of one master endpoint, it has many URLs (`/users`, `/orders`). However, it still only uses `POST` for everything.
+
+## 2. Levels 2 and 3
+- **Level 2 (HTTP Verbs)**: The API mathematically maps CRUD operations to the correct HTTP methods (GET, POST, PUT, DELETE) and utilizes standard HTTP status codes (`200 OK`, `404 Not Found`, `201 Created`). (This is where 99% of modern "REST APIs" stop).
+- **Level 3 (Hypermedia / HATEOAS)**: The ultimate mathematical zenith of REST. The API responses contain **Hyperlinks** telling the client exactly what actions they can perform next. The client never hardcodes URLs; they dynamically traverse the state machine provided by the API's hypermedia.
+

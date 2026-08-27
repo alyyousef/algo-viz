@@ -4,9 +4,16 @@ description: The architectural strategy of storing expensive database queries in
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cache Fundamentals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cache Fundamentals">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Querying a relational database requires hitting the physical hard drive and performing complex mathematical `JOIN` operations. It is slow and expensive. 
+Querying a relational database requires hitting the physical hard drive and performing complex mathematical `JOIN` operations. It is slow and expensive.
 
 A **Cache** is a temporary storage layer composed entirely of ultra-fast RAM (like Redis or Memcached). By storing the results of expensive queries in RAM, the system can return data to the user in microseconds, completely bypassing the database.
 
@@ -24,4 +31,3 @@ A famous computer science quote states: *"There are only two hard things in Comp
 If a user updates their profile picture in the database, the cache still holds the old picture. You must explicitly tell the cache to delete (invalidate) the old data. If the invalidation logic fails, your application will serve stale, corrupted data to users indefinitely.
 Engineers mitigate this using **TTL (Time to Live)**, forcing the cache to automatically delete data after a certain timeframe (e.g., 5 minutes) as a safety net.
 
-</ConceptTemplate>

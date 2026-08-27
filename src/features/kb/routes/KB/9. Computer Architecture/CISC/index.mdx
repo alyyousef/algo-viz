@@ -4,15 +4,28 @@ description: A CPU design philosophy that emphasizes complex, multi-step instruc
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CISC (Complex Instruction Set Computer)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CISC (Complex Instruction Set Computer)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In the 1970s and 1980s, computer memory (RAM) was incredibly expensive, costing hundreds of dollars for a few kilobytes. Compilers (software that translates high-level code to assembly) were also very primitive. 
+In the 1970s and 1980s, computer memory (RAM) was incredibly expensive, costing hundreds of dollars for a few kilobytes. Compilers (software that translates high-level code to assembly) were also very primitive.
 
 Because memory was so scarce, hardware engineers needed a way to write programs using as few bytes as possible. This birthed the **CISC (Complex Instruction Set Computer)** philosophy.
 
+
 <Callout icon="info" title="The CISC Philosophy">
+
+
   The goal of CISC is to give the CPU a massive vocabulary of incredibly complex, specialized instructions. Instead of requiring the software to execute 5 simple instructions to multiply two numbers stored in RAM, the hardware provides a single, complex \`MULTIPLY\` instruction that does it all in one line.
+
+
 </Callout>
+
 
 ## Characteristics of CISC
 
@@ -23,15 +36,14 @@ Because memory was so scarce, hardware engineers needed a way to write programs 
 
 ## The x86 Monopoly
 
-The most famous CISC architecture in the world is **x86**, created by Intel in 1978 and expanded to 64-bit by AMD. 
-For 40 years, x86 has dominated the Desktop, Laptop, and Server markets. Because of strict backwards compatibility, a modern Intel i9 processor still physically contains the circuitry to run 16-bit code written for MS-DOS in the 1980s. 
+The most famous CISC architecture in the world is **x86**, created by Intel in 1978 and expanded to 64-bit by AMD.
+For 40 years, x86 has dominated the Desktop, Laptop, and Server markets. Because of strict backwards compatibility, a modern Intel i9 processor still physically contains the circuitry to run 16-bit code written for MS-DOS in the 1980s.
 
 Because of this historical baggage, x86 is a sprawling, incredibly complex ISA with thousands of instructions (including bizarre, highly specific instructions for video decoding and string manipulation).
 
 ## The Decline of Pure CISC
 
-As memory became dirt-cheap in the 1990s, the primary advantage of CISC (saving memory space) vanished. Furthermore, complex, variable-length instructions made it incredibly difficult to implement **Pipelining** (running multiple instructions overlapping at the same time). 
+As memory became dirt-cheap in the 1990s, the primary advantage of CISC (saving memory space) vanished. Furthermore, complex, variable-length instructions made it incredibly difficult to implement **Pipelining** (running multiple instructions overlapping at the same time).
 
 Modern Intel and AMD processors are no longer "pure" CISC. While they accept complex x86 instructions from the software, the hardware immediately translates them into simple, RISC-like "Micro-Ops" behind the scenes before executing them.
 
-</ConceptTemplate>

@@ -1,8 +1,33 @@
+---
+title: Linear Search
+description: "The simplest mathematical search algorithm, which finds the position of a target value within a list by sequentially checking each element from the beginning until a match is found."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Linear search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Linear Search"
+  subtitle="The Brute Force Approach"
+  tags={['Algorithms', 'Searching', 'Fundamentals', 'Big O']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Linear Search (or Sequential Search) is the mathematical equivalent of looking for a word in a dictionary by reading every single page starting from page 1.
 
-</ConceptTemplate>
+## 1. The Algorithm
+You are given an array: `[14, 5, 29, 3, 99]` and a target: `3`.
+The algorithm starts at index 0.
+`Is 14 == 3? No.`
+`Is 5 == 3? No.`
+`Is 29 == 3? No.`
+`Is 3 == 3? Yes. Return index 3.`
+
+## 2. Time Complexity
+The worst-case mathematical Time Complexity is **O(N)**. If the target is the very last element in a 1-billion-item database (or if it doesn't exist at all), the CPU must perform 1 billion comparisons.
+While highly inefficient compared to Binary Search (O(log N)), Linear Search has one critical mathematical advantage: **It does not require the data to be sorted.** If data is constantly changing and the cost of sorting it (O(N log N)) is too high, Linear Search is mathematically the only option.
+

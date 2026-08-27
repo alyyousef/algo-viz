@@ -4,9 +4,16 @@ description: The fundamental network-layer protocol responsible for addressing a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IP (Internet Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IP (Internet Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While MAC addresses allow two computers to talk on the exact same local switch, they cannot route traffic across the globe. 
+While MAC addresses allow two computers to talk on the exact same local switch, they cannot route traffic across the globe.
 The **Internet Protocol (IP)** operates at Layer 3 of the OSI model. It provides the logical addressing system and the routing mechanics required to send a packet of data from a laptop in Tokyo, through 15 different routers, to a server in New York.
 
 ## 1. Connectionless and Best-Effort
@@ -24,11 +31,16 @@ When a piece of data is sent over the internet, it is wrapped in an IP Header. T
 
 ## 3. Fragmentation
 
-Different networks have different physical limits on how large a packet can be (the **MTU** - Maximum Transmission Unit). Standard Ethernet MTU is 1500 bytes. 
+Different networks have different physical limits on how large a packet can be (the **MTU** - Maximum Transmission Unit). Standard Ethernet MTU is 1500 bytes.
 If an IP packet is 4000 bytes long, the IP protocol will automatically slice it into three smaller "fragments," label them with sequence numbers, and send them individually. The receiving computer's IP layer will wait for all three fragments to arrive and seamlessly stitch them back together before handing the data up to the application.
 
+
 <Callout icon="info" title="IPv4 vs IPv6">
+
+
   The original standard, IPv4, only supported 4.3 billion addresses, which ran out entirely in the 2010s. The internet is currently undergoing a multi-decade, agonizingly slow migration to **IPv6**, which supports $3.4 \times 10^{38}$ addresses (enough to assign an IP address to every single atom on the surface of the Earth).
+
+
 </Callout>
 
-</ConceptTemplate>
+

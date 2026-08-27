@@ -1,0 +1,25 @@
+---
+title: OCI Logging
+description: A highly scalable, centralized telemetry service that mathematically aggregates, indexes, and searches logs from all OCI resources, custom applications, and security audits.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Logging"
+  subtitle="Centralized Telemetry and Audit"
+  tags={['OCI', 'Observability', 'Logging', 'Security']}
+>
+
+In a distributed cloud architecture with 500 Virtual Machines and 50 Databases, manually SSHing into servers to read text-based log files is mathematically impossible. OCI Logging centralizes this data.
+
+## 1. Unified Log Ingestion
+OCI Logging acts as the single mathematical sink for three distinct types of logs:
+- **Audit Logs**: Irrefutable, mathematically secure records of every single API call made to the OCI Control Plane (e.g., *"User John deleted Database X at 2:00 PM"*).
+- **Service Logs**: Native telemetry emitted directly by OCI services (e.g., Load Balancer access logs, VCN Flow Logs).
+- **Custom Logs**: Application logs pushed directly from your code or via the unified monitoring agent installed on your VMs.
+
+## 2. Log Search and Service Connectors
+Once billions of log lines are aggregated, OCI provides a mathematical search engine to query them (using a syntax similar to SQL).
+However, storing hot logs forever is expensive. OCI utilizes **Service Connectors**. You write a mathematical rule: *"Hold the logs in hot search memory for 30 days. On day 31, mathematically intercept the log stream and archive it to an ultra-cheap Object Storage Bucket for 7-year compliance retention."* This automated state machine ensures strict security compliance at the lowest possible cost.
+
+</TechnologyTemplate>

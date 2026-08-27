@@ -4,25 +4,32 @@ description: A strategy for limiting network traffic, putting a cap on how often
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Rate Limiting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rate Limiting">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If a user writes a Python script to hit your login API 10,000 times a second, they will either successfully brute-force a password or mathematically crash your database. 
+If a user writes a Python script to hit your login API 10,000 times a second, they will either successfully brute-force a password or mathematically crash your database.
 
 **Rate Limiting** is the defensive architectural pattern of tracking how many requests a user (or IP address) has made in the last minute, and returning an HTTP `429 Too Many Requests` if they exceed a mathematical threshold.
 
+
 <Callout icon="warning" title="Distributed Tracking">
+
+
   Rate limiting in a single-server architecture is easy (store a counter in RAM). In a distributed system with 50 API Gateways, the gateways must mathematically share their counters using an ultra-fast centralized store like Redis, so an attacker cannot bypass the limit by hitting different gateways.
+
+
 </Callout>
+
 
 ## Mathematical Algorithms for Rate Limiting
 
-<ComparisonTable 
-  headers={['Algorithm', 'How it Works', 'Pros/Cons']}
-  rows={[
-    ['Token Bucket', 'Tokens are added to a bucket at a fixed mathematical rate. Every request removes a token. If the bucket is empty, requests are dropped.', 'Pro: Allows for brief bursts of traffic. Con: Tuning the bucket size can be tricky.'],
-    ['Fixed Window Counter', 'Counts requests from 12:00:00 to 12:01:00. Resets to zero at 12:01:00.', 'Con: Spiky traffic at the edge of the window (e.g., 500 requests at 12:00:59, 500 requests at 12:01:01) allows an attacker to mathematically double their rate limit.'],
-    ['Sliding Window Log', 'Stores the exact timestamp of every request in a Redis Sorted Set. Mathematically calculates exactly how many occurred in the last rolling 60 seconds.', 'Pro: Extremely accurate. Con: Uses a massive amount of Redis RAM.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Algorithm', 'How it Works', 'Pros/Cons']} rows={[ ['Token Bucket', 'Tokens are added to a bucket at a fixed mathematical rate. Every request removes a token. If the bucket is empty, requests are dropped.', 'Pro: Allows for brief bursts of traffic. Con: Tuning the bucket size can be tricky.'], ['Fixed Window Counter', 'Counts requests from 12:00:00 to 12:01:00. Resets to zero at 12:01:00.', 'Con: Spiky traffic at the edge of the window (e.g., 500 requests at 12:00:59, 500 requests at 12:01:01) allows an attacker to mathematically double their rate limit.'], ['Sliding Window Log', 'Stores the exact timestamp of every request in a Redis Sorted Set. Mathematically calculates exactly how many occurred in the last rolling 60 seconds.', 'Pro: Extremely accurate. Con: Uses a massive amount of Redis RAM.'] ]} />
+
+

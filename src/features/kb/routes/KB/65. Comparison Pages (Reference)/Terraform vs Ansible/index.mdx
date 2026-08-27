@@ -1,8 +1,32 @@
+---
+title: Terraform vs Ansible
+description: "A clarification of modern Infrastructure as Code (IaC), detailing how Terraform mathematically provisions the raw cloud hardware, while Ansible configures the software running inside those servers."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Terraform vs Ansible">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Terraform vs Ansible"
+  subtitle="Provisioning vs Configuration"
+  tags={['Comparison', 'DevOps', 'Infrastructure', 'Cloud']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The modern DevOps lifecycle mathematically requires both tools, but beginners often confuse them because they appear to do similar things. In reality, they handle two completely separate layers of the stack.
 
-</ConceptTemplate>
+## 1. Terraform (Infrastructure Provisioning)
+- **Goal**: Create the raw hardware architecture.
+- **Mechanism**: It is mathematically **Declarative**. You define the desired end-state in `.tf` files (e.g., *"I need an AWS VPC, 3 Subnets, and an EC2 instance"*). Terraform calculates the mathematical diff (the Execution Plan) against reality, and makes API calls to AWS to physically create those resources.
+- **State**: Terraform is State-Aware. It maintains a massive JSON `terraform.tfstate` file. If you delete the EC2 instance from your code, Terraform knows it exists in reality and will mathematically destroy it to match the code.
+
+## 2. Ansible (Configuration Management)
+- **Goal**: Install and configure software on the servers Terraform just created.
+- **Mechanism**: It is heavily **Procedural** (though it has declarative elements). Ansible SSH's directly into the running EC2 instance and executes commands: *"Update apt-get, install Nginx, copy this config file, and restart the service."*
+- **State**: Ansible is mathematically Stateless. It does not maintain a master file of reality. It simply executes the playbook from top to bottom.
+- **The Workflow**: Terraform provisions the empty EC2 instance. Terraform then hands the IP address to Ansible. Ansible SSH's in and installs the web server.
+

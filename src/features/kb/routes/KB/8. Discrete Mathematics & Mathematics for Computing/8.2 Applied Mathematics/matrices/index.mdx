@@ -1,8 +1,35 @@
+---
+title: Matrices
+description: "Two-dimensional grids of numbers that mathematically represent linear transformations, serving as the computational workhorse of 3D rendering and neural networks."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="matrices">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Matrices"
+  subtitle="The Engines of Linear Transformations"
+  tags={['Mathematics', 'Linear Algebra', 'Graphics', 'Machine Learning']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a Vector is a 1D Array, a **Matrix** is a 2D Array (a grid of rows and columns). In Linear Algebra, matrices are not just spreadsheets of data; they are mathematical functions that mutate, warp, and transform space.
 
-</ConceptTemplate>
+## 1. Matrices as Transformations
+If you have a 2D Vector (a point on a screen), you can multiply it by a $2 \times 2$ Matrix. The matrix mathematically acts as a set of instructions, warping the vector to a new location.
+- By using specific Transformation Matrices, you can instruct the math to **Rotate** the vector 90 degrees, **Scale** it to twice its size, or **Shear** it.
+
+## 2. Matrix Multiplication
+When you multiply a Matrix by another Matrix, you are mathematically chaining transformations together. If Matrix $A$ represents "Rotate 90 degrees" and Matrix $B$ represents "Scale by 2", multiplying $A \times B$ creates a single Matrix $C$ that does both instantly.
+*Note: Matrix multiplication is NOT commutative. $A \times B \neq B \times A$. (Rotating then scaling is mathematically different from scaling then rotating).*
+
+## 3. GPUs and Hardware
+Why do we need specialized Graphics Processing Units (GPUs)?
+Because rendering a 3D video game requires taking millions of vertex vectors (the 3D models) and multiplying them against projection matrices (the camera) 60 times a second.
+A CPU does math sequentially (one at a time). A GPU is a massive hardware grid explicitly engineered to perform millions of Matrix Multiplications completely in parallel. This exact same matrix-multiplication hardware is why GPUs are universally used to train AI Neural Networks.
+
+\n

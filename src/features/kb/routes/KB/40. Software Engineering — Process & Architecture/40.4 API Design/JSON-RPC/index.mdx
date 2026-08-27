@@ -1,8 +1,38 @@
+---
+title: JSON-RPC
+description: A stateless, light-weight Remote Procedure Call (RPC) protocol encoded in JSON, allowing clients to mathematically trigger specific methods and functions on a remote server, ignoring RESTful resource paradigms.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JSON-RPC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="JSON-RPC"
+  subtitle="Action-Oriented JSON APIs"
+  tags={['API', 'RPC', 'Architecture', 'Web']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+REST is mathematically obsessed with *Nouns* (Resources like `/users`). If you want to perform a complex action that doesn't easily map to a Noun (e.g., "Calculate the orbit of a satellite"), REST forces you into awkward architectural gymnastics.
 
-</ConceptTemplate>
+## 1. The RPC Paradigm
+JSON-RPC ignores Nouns and embraces *Verbs*. It is a Remote Procedure Call.
+The client mathematically treats the remote server exactly as if it were a local software library, simply calling methods by their name.
+The client sends a single HTTP POST request to a single endpoint (`/rpc`) with a highly standardized JSON payload:
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "calculateOrbit",
+  "params": [45, 90, 12.5],
+  "id": 1
+}
+```
+
+## 2. Simplicity and Batching
+The server executes the mathematical function and returns the result matching the `id`.
+Because JSON-RPC is so structurally simple, it supports massive Batching. A client can mathematically pack 50 different method calls into a single JSON array, send one HTTP request, and the server will execute all 50 functions and return an array of 50 results, drastically reducing network latency.
+

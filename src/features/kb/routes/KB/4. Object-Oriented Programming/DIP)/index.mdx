@@ -1,8 +1,23 @@
+---
+title: DIP (Dependency Inversion Principle)
+description: A redirect to the core Dependency Inversion Principle concept, representing the final pillar of the SOLID object-oriented design methodology.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DIP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="DIP"
+  subtitle="See: Dependency Inversion Principle"
+  tags={['SOLID', 'OOP', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+*This topic is fully covered under the **Dependency Inversion** section.*
 
-</ConceptTemplate>
+DIP is the foundational mathematical rule that prevents "spaghetti code" by forcing all dependencies to point inward toward abstract interfaces, rather than outward toward concrete implementations.
+

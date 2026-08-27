@@ -4,25 +4,32 @@ description: A caching layer located at the edge of the network, physically clos
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CDN Caching">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CDN Caching">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a user's **Browser Cache** is completely empty, the next layer of mathematical defense is the **Content Delivery Network (CDN) Cache**.
 
 Instead of the user's request traveling 3,000 miles to your Origin Server in Virginia, the request hits a CDN Edge Node mathematically located 10 miles from the user's house. The CDN checks its own massive RAM/SSD cache. If it has the file, it returns it in ~5 milliseconds.
 
+
 <Callout icon="success" title="The Global Shield">
+
+
   A properly configured CDN (like Cloudflare or Fastly) can mathematically absorb 99% of your static traffic. If your website is featured on national television, the CDN will serve the 10 million image requests from its edge nodes. Your actual Origin Database might only see 100 requests.
+
+
 </Callout>
+
 
 ## Dynamic vs. Static Caching
 
-<ComparisonTable 
-  headers={['Content Type', 'CDN Behavior', 'Mathematical Rule']}
-  rows={[
-    ['Static Assets (Images, JS, CSS)', 'The CDN caches these aggressively.', 'Always use long TTLs. Rely on filename hashing (Cache Busting) for invalidation.'],
-    ['Public Dynamic Content (Blog Posts)', 'The CDN caches the HTML output.', 'Use a shorter TTL (e.g., 5 minutes) so authors don\'t have to wait a year to see their edits.'],
-    ['Private Dynamic Content (User Profile)', 'The CDN MUST mathematically bypass the cache.', 'Use `Cache-Control: private, no-store`. If the CDN accidentally caches User A\'s banking details and serves them to User B, it is a catastrophic security breach.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Content Type', 'CDN Behavior', 'Mathematical Rule']} rows={[ ['Static Assets (Images, JS, CSS)', 'The CDN caches these aggressively.', 'Always use long TTLs. Rely on filename hashing (Cache Busting) for invalidation.'], ['Public Dynamic Content (Blog Posts)', 'The CDN caches the HTML output.', 'Use a shorter TTL (e.g., 5 minutes) so authors don\'t have to wait a year to see their edits.'], ['Private Dynamic Content (User Profile)', 'The CDN MUST mathematically bypass the cache.', 'Use `Cache-Control: private, no-store`. If the CDN accidentally caches User A\'s banking details and serves them to User B, it is a catastrophic security breach.'] ]} />
+
+

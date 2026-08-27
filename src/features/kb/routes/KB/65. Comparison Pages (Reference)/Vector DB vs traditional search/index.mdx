@@ -1,8 +1,31 @@
+---
+title: Vector DB vs Traditional Search
+description: "A mathematical paradigm shift in search architecture, contrasting the keyword-matching inverted indices of Elasticsearch with the semantic, multi-dimensional cosine similarity of Vector Databases."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Vector DB vs traditional search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Vector DB vs Traditional Search"
+  subtitle="Keyword Matching vs Semantic Meaning"
+  tags={['Comparison', 'Databases', 'Machine Learning', 'AI']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The explosion of Large Language Models (LLMs) fundamentally changed how computers search for information, moving from rigid lexical matching to mathematical spatial reasoning.
 
-</ConceptTemplate>
+## 1. Traditional Search (Elasticsearch)
+- **Architecture**: **Lexical (Keyword) Search**. It uses a mathematical data structure called an Inverted Index (similar to the index at the back of a textbook).
+- **Mechanism**: If you search for "fast car", it mathematically scans for documents containing the exact strings "fast" or "car" (using algorithms like TF-IDF or BM25).
+- **The Problem**: If a document says "rapid automobile," Traditional Search will return zero results, because it mathematically does not understand that "fast" and "rapid" mean the exact same thing.
+
+## 2. Vector Databases (Pinecone, Milvus)
+- **Architecture**: **Semantic Search**. It uses Machine Learning Embedding Models (like OpenAI's text-embedding-ada-002).
+- **Mechanism**: The model mathematically converts every sentence into a massive array of floats (e.g., a 1,536-dimensional Vector). These vectors map the *meaning* of the text into high-dimensional geometric space.
+- **The Search**: "Fast car" and "rapid automobile" will be mapped to almost the exact same physical mathematical coordinate in that 1,536-dimensional space. The database mathematically calculates the **Cosine Similarity** (the angle between the vectors) and returns the closest points. It searches by *meaning*, not by keywords.
+

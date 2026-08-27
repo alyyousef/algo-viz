@@ -1,8 +1,33 @@
+---
+title: Encryption vs Hashing
+description: "A critical cybersecurity distinction between two-way reversible mathematical obfuscation (Encryption) and one-way irreversible deterministic mathematical scrambling (Hashing)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Encryption vs hashing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Encryption vs Hashing"
+  subtitle="Reversible vs Irreversible Math"
+  tags={['Comparison', 'Security', 'Cryptography', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Both Encryption and Hashing use intense mathematical algorithms to hide sensitive data, but their fundamental architectures serve completely different security purposes.
 
-</ConceptTemplate>
+## 1. Encryption (Two-Way)
+- **Goal**: To protect data *in transit* so it can be safely read later.
+- **Mechanism**: Uses a mathematical Key. You lock the data with the Key (Ciphertext), send it, and the receiver uses the exact same Key (or a mathematical pair) to unlock and read the original data.
+- **Use Case**: Sending credit card numbers over HTTPS. Storing private medical records in a database.
+- **Mathematical Property**: Fully Reversible. If you have the key, you can always recover the exact original text. (e.g., AES-256, RSA).
+
+## 2. Hashing (One-Way)
+- **Goal**: To mathematically verify data integrity *without* ever knowing the original data.
+- **Mechanism**: Runs the data through a chaotic mathematical function to generate a fixed-length string (e.g., 64 characters).
+- **Use Case**: Storing User Passwords. A website never stores "password123". It stores the Hash. When you log in, it hashes your input and checks if the hashes match.
+- **Mathematical Property**: Strictly Irreversible. It is mathematically impossible (barring quantum computing) to reverse-engineer the Hash back into the original text. A 1-megabyte file and a 1-gigabyte file both result in exactly 64 characters. (e.g., SHA-256, bcrypt).
+

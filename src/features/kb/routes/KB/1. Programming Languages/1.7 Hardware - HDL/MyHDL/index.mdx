@@ -1,8 +1,25 @@
+---
+title: MyHDL
+description: A brilliant Python library that allows software engineers to mathematically design and simulate hardware using standard Python code.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MyHDL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="MyHDL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Jan Decaluwe in 2004, MyHDL is a Python package that mathematically transforms Python into a Hardware Description Language.
 
-</ConceptTemplate>
+## 1. Python as Hardware
+Designing hardware usually requires learning archaic languages like VHDL. MyHDL allows a software engineer to design physical logic gates using standard Python syntax.
+You write standard Python functions (using generators and `yield` statements to mathematically represent clock cycles). Because it is standard Python, you can simulate and test your hardware design using standard Python testing frameworks (like `pytest`) and visualization libraries (like Matplotlib).
+
+## 2. The Conversion Engine
+Python itself is far too slow and dynamic to run on physical silicon.
+Once you have tested your hardware mathematically in Python, you call a MyHDL conversion function. The MyHDL engine mathematically analyzes the Abstract Syntax Tree (AST) of your Python code and translates it directly into synthesizable Verilog or VHDL. This generated code can then be flashed onto an FPGA (Field Programmable Gate Array) or sent to a silicon foundry, allowing purely software-trained engineers to design physical microchips.
+

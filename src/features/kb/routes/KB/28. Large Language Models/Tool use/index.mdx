@@ -4,27 +4,34 @@ description: Empowering LLMs to interact with the external world by triggering A
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tool Use (Function Calling)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tool Use (Function Calling)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-By default, an LLM is a frozen mathematical brain trapped in a box. It cannot browse the internet, execute math reliably, or book a flight. 
+By default, an LLM is a frozen mathematical brain trapped in a box. It cannot browse the internet, execute math reliably, or book a flight.
 
 **Tool Use** (or Function Calling) is the paradigm where the LLM is fine-tuned to recognize when it needs external information, and instead of generating text, it generates a structured JSON object requesting to run a specific tool.
 
+
 <Callout icon="success" title="The Agentic Workflow">
+
+
   This is the foundation of AI Agents. The model outputs a tool call (e.g., `{"name": "get_weather", "args": {"location": "London"}}`). The backend intercepts this, executes the actual code, and feeds the result back into the LLM\'s context window so it can formulate a final answer.
+
+
 </Callout>
+
 
 ## How Models Learn Tools
 
 Models do not inherently know how to output perfect JSON. They must be explicitly fine-tuned.
 
-<ComparisonTable 
-  headers={['Phase', 'Description']}
-  rows={[
-    ['System Prompting', 'The user injects a JSON Schema describing all available tools into the system prompt.'],
-    ['Fine-Tuning', 'The model is trained on thousands of examples where a user asks a question, and the expected assistant output is a perfectly formatted JSON tool call.'],
-    ['Execution Loop', 'The model pauses generation when a tool call is made, waits for the system to append the tool response, and resumes generation.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Phase', 'Description']} rows={[ ['System Prompting', 'The user injects a JSON Schema describing all available tools into the system prompt.'], ['Fine-Tuning', 'The model is trained on thousands of examples where a user asks a question, and the expected assistant output is a perfectly formatted JSON tool call.'], ['Execution Loop', 'The model pauses generation when a tool call is made, waits for the system to append the tool response, and resumes generation.'] ]} />
+
+

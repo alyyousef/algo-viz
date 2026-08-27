@@ -4,9 +4,16 @@ description: The mathematical failure state where a Machine Learning model is to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Underfitting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Underfitting">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While Overfitting is the model memorizing the noise, **Underfitting (High Bias)** occurs when the mathematical architecture of the model is simply not powerful enough to capture the true underlying signal of the data. 
+While Overfitting is the model memorizing the noise, **Underfitting (High Bias)** occurs when the mathematical architecture of the model is simply not powerful enough to capture the true underlying signal of the data.
 
 ## 1. The Mathematical Symptoms
 You can mathematically diagnose underfitting by tracking the Loss Function (Error) during training.
@@ -26,4 +33,3 @@ Fixing underfitting is straightforward: give the model more mathematical power.
 - **Feature Engineering**: Mathematically combine features (e.g., $x_1 \times x_2$) to expose more complex patterns to the algorithm.
 - **Reduce Regularisation**: Mathematically lower the penalty terms, allowing the model weights to grow and capture more variance.
 
-</ConceptTemplate>

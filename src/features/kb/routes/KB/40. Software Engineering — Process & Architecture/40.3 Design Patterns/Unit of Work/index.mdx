@@ -1,8 +1,30 @@
+---
+title: Unit of Work Pattern
+description: An architectural design pattern that mathematically maintains a list of objects affected by a business transaction and coordinates the writing out of all changes in one atomic database operation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Unit of Work">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Unit of Work Pattern"
+  subtitle="Mathematical Transactional Integrity"
+  tags={['Design Patterns', 'Architecture', 'Databases', 'Enterprise']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a user buys a TV, the code must deduct money from their `User` account and remove the TV from the `Inventory`.
+If you execute `userRepository.save(user)` and it succeeds, but then `inventoryRepository.save(tv)` crashes, the database is mathematically corrupted. The money is gone, but the TV is still in the warehouse.
 
-</ConceptTemplate>
+## 1. The In-Memory Ledger
+The Unit of Work pattern prevents this by halting immediate database writes.
+When you modify the User and the Inventory objects in RAM, they mathematically register themselves with a central `UnitOfWork` object (acting like an in-memory ledger). It records: "User is modified, Inventory is modified."
+
+## 2. The Atomic Flush
+When the business transaction is complete, the application calls `unitOfWork.commit()`.
+The Unit of Work opens exactly ONE database transaction, mathematically translates all the in-memory changes into SQL updates, and executes them in a single batch. If any part fails, the database mathematically rolls back the entire transaction. (This pattern is built directly into modern ORMs like Entity Framework and Hibernate via the `SaveChanges()` or `flush()` methods).
+

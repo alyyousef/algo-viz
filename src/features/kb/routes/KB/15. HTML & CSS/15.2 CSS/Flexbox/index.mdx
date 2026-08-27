@@ -5,10 +5,17 @@ description: "Flexible Box Module, a one-dimensional layout model for distributi
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Flexbox"
   icon="align-justify"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before **Flexbox** (introduced around 2012), developers relied on massive hacks—like floats, clearfixes, and absolute positioning—just to align elements horizontally. Flexbox revolutionized CSS by providing a robust, one-dimensional layout engine.
 
@@ -36,8 +43,13 @@ While the container dictates the overall layout, the children can dictate their 
 - `flex-shrink`: How much this item should shrink if there isn't enough space.
 - `flex-basis`: The default size before growing or shrinking.
 
+
 <Callout icon="tip" title="The flex shorthand">
+
+
 You'll often see `flex: 1;` on a child element. This is shorthand for `flex-grow: 1; flex-shrink: 1; flex-basis: 0%;`. It tells the item to fill all available space equally.
+
+
 </Callout>
 
-</ConceptTemplate>
+

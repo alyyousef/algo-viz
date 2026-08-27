@@ -4,7 +4,14 @@ description: A high-availability data model where changes made to one node take 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Eventual Consistency">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Eventual Consistency">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a strictly consistent database, if you update your Twitter bio, the database locks the entire system until that bio is copied to every server globally. This guarantees everyone sees the new bio instantly, but makes the database incredibly slow.
 
@@ -24,8 +31,13 @@ Eventual consistency is the backbone of massive global systems (like DNS, Cassan
 - **Speed**: The write operation returns a success message in 1 millisecond because it doesn't wait for global synchronization.
 - **Availability**: If the underwater cable to London is severed, Server A continues accepting writes. It will simply wait until the cable is fixed to eventually sync with London.
 
+
 <Callout icon="warning" title="Conflict Resolution">
+
+
   If two users update the exact same row on two disconnected servers simultaneously, an eventually consistent system will have a conflict when the network reconnects. Engineers must implement resolution strategies, like "Last Write Wins" (LWW) based on timestamps, or using complex data structures called CRDTs to merge the data automatically.
+
+
 </Callout>
 
-</ConceptTemplate>
+

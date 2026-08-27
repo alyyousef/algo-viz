@@ -1,8 +1,32 @@
+---
+title: Event Sourcing
+description: A radically different data architecture where the current state of a system is not stored in a database row, but is instead mathematically calculated dynamically by replaying an immutable append-only log of every state-changing event.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Event sourcing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Event Sourcing"
+  subtitle="The Immutable Ledger of State"
+  tags={['Architecture', 'Databases', 'Design Patterns', 'Data']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard SQL database, if a user changes their name from "Alice" to "Bob", you execute an `UPDATE` statement. The data "Alice" is mathematically destroyed forever. You have lost historical context.
 
-</ConceptTemplate>
+## 1. The Append-Only Ledger
+Event Sourcing (often used heavily in banking and accounting) forbids `UPDATE` and `DELETE` operations.
+Instead, the database is an immutable, append-only log of mathematical **Events**:
+1. `UserCreated(id: 1, name: "Alice")`
+2. `UserNameChanged(id: 1, name: "Bob")`
+
+## 2. Rehydrating State
+To find out the user's current name, the application does not query a "Users" table.
+The application queries the Event Store, pulls every event that ever happened to ID 1, and mathematically executes a left-fold (a **Reduce** function). It replays history from the beginning of time. It sees "Alice", then applies "Bob". The final, dynamically calculated state is "Bob".
+Because the raw mathematical events are never destroyed, developers get perfect auditing, and the ability to "time travel" the database by mathematically replaying events up to a specific timestamp.
+

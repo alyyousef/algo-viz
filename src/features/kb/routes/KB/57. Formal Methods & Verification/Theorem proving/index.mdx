@@ -4,14 +4,26 @@ description: The process of finding a proof of a mathematical theorem using a co
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Theorem Proving">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Theorem Proving">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Model Checkers are completely automated, but they mathematically fail if the program has infinite states (they run out of RAM).
 
 **Theorem Proving** is not automated. It is a biological partnership between a human mathematician and a computer.
 
+
 <Callout icon="info" title="Interactive Mathematics">
+
+
   The human writes the software, and then manually writes the mathematical proof that the software is correct. The computer acts as a relentless, unforgiving judge that checks the logic of the proof step-by-step. It requires PhD-level mathematical skill, but it can mathematically verify infinitely complex systems that Model Checkers cannot handle, such as entire Operating System kernels.
+
+
 </Callout>
 
-</ConceptTemplate>
+

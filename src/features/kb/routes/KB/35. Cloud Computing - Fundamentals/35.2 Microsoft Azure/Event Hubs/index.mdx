@@ -1,0 +1,24 @@
+---
+title: Azure Event Hubs
+description: A massive, big-data streaming platform and event ingestion service capable of mathematically receiving and processing millions of events per second with ultra-low latency.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Event Hubs"
+  subtitle="Massive Telemetry Ingestion"
+  tags={['Azure', 'Big Data', 'Streaming', 'Events']}
+>
+
+Event Grid is designed for discrete, individual events (e.g., "A file was uploaded"). Event Hubs is designed for a massive, unceasing mathematical firehose of data (e.g., 100,000 IoT sensors sending temperature telemetry every second).
+
+## 1. Partitioned Consumer Architecture
+If a single server tried to read 100,000 messages a second, its CPU would instantly melt.
+Event Hubs mathematically solves this using **Partitions**. As the firehose of data enters the Hub, it is mathematically sliced into separate buckets (Partitions).
+When you spin up a cluster of 10 processing servers, Event Hubs assigns exactly one Partition to each server. This mathematical division of labor guarantees that you can horizontally scale your consumers to process millions of messages concurrently without any network collision or locking issues.
+
+## 2. Kafka Compatibility
+Apache Kafka is the open-source industry standard for massive data streaming, but hosting a physical Kafka cluster requires extensive distributed systems engineering.
+Event Hubs mathematically exposes a **Kafka-compatible protocol head**. A developer can take an existing application written for Apache Kafka and point its connection string directly at Azure Event Hubs. The code mathematically believes it is talking to a physical Kafka cluster, allowing enterprises to migrate to a fully managed PaaS without rewriting a single line of streaming code.
+
+</TechnologyTemplate>

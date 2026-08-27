@@ -1,8 +1,26 @@
+---
+title: PowerShell
+description: A revolutionary, object-oriented shell and scripting language developed by Microsoft to bring strict mathematical order to system administration.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PowerShell">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PowerShell">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Released by Microsoft in 2006 (created by Jeffrey Snover), PowerShell completely upended the historical mathematical model of command-line shells.
 
-</ConceptTemplate>
+## 1. The Object-Oriented Pipe
+In Bash, AWK, or any Unix shell, the "Pipe" (`|`) mathematically transfers **Strings**.
+If you run `ps | grep "chrome"`, the first command outputs a giant block of text, and the second command uses Regular Expressions to parse that text. If a column shifts by one space, the script mathematically crashes.
+PowerShell pipes **.NET Objects**.
+If you run `Get-Process | Where-Object {$_.Name -eq "chrome"}`, the pipe does not transfer text. It mathematically transfers a strongly-typed, memory-mapped C# Object. You access the data exactly like you would in a C# program (`Process.Name`), completely eliminating the need for fragile text parsing.
+
+## 2. Unprecedented System Access
+Because PowerShell is built directly on top of the .NET Framework, it has mathematical access to the entire Windows operating system. A PowerShell script can instantiate C# classes, mathematically query the Windows Registry, manipulate Active Directory users, interact with COM objects (like Excel), and manage Azure Cloud infrastructure, making it the most powerful automation tool ever built for the Microsoft ecosystem.
+

@@ -1,8 +1,32 @@
+---
+title: Meet in the Middle
+description: "An advanced mathematical search technique used to solve problems where the search space is slightly too large for standard brute force, splitting the problem in half to drastically reduce exponential time complexities."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Meet in the middle">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Meet in the Middle"
+  subtitle="Halving Exponential Time"
+  tags={['Algorithms', 'Techniques', 'Optimization', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are asked to find a subset of numbers from an array of size 40 that sum to exactly `X`, a standard brute-force approach requires generating all subsets: **O(2^40)**.
+2^40 is roughly 1 trillion operations, which will mathematically cause the CPU to Time Out.
 
-</ConceptTemplate>
+## 1. The Split
+Meet in the Middle mathematically splits the array of 40 into two separate arrays of 20.
+1. Generate all subsets for the left half: **O(2^20)**. Store their sums in an array and sort it.
+2. Generate all subsets for the right half: **O(2^20)**.
+
+## 2. The Meeting Point
+For every subset sum `Y` in the right half, you need to find if there is a sum in the left half that equals `X - Y`.
+Because you mathematically sorted the left half's sums, you can simply use Binary Search (O(log N)) to find it!
+The time complexity drops from a catastrophic O(2^40) down to **O(2^(N/2) * log(2^(N/2)))**, which evaluates to roughly 1 million operations. The algorithm mathematically finishes in 0.1 seconds instead of 10 minutes.
+

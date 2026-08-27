@@ -1,8 +1,39 @@
+---
+title: Confidence Intervals
+description: "A statistical range of values that mathematically guarantees, with a specific level of certainty, that the true population parameter falls within its bounds."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="confidence intervals">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Confidence Intervals"
+  subtitle="Quantifying Uncertainty"
+  tags={['Mathematics', 'Statistics', 'Data Science', 'Analysis']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In statistics, taking a sample of 1,000 users to calculate a metric (like average time spent on an app) gives you a single "Point Estimate" (e.g., 4.2 minutes). But because it's just a sample, the true average of all 1,000,000 users is almost certainly not exactly 4.2.
+A **Confidence Interval** provides a mathematical range (e.g., $4.2 \pm 0.3$) to quantify how accurate that estimate actually is.
 
-</ConceptTemplate>
+## 1. The 95% Confidence Interval
+A 95% Confidence Interval means that if you were to repeat this exact experiment 100 times, pulling 100 different random samples, 95 of those calculated ranges would successfully contain the true, objective population average.
+
+## 2. The Formula
+For a large sample size, the Confidence Interval for a mean is calculated as:
+$CI = \bar{x} \pm Z \left( \frac{\sigma}{\sqrt{n}} \right)$
+
+- $\bar{x}$: The sample mean (e.g., 4.2)
+- $Z$: The Z-score for the desired confidence level (1.96 for 95%)
+- $\sigma$: The standard deviation
+- $n$: The sample size
+
+## 3. The Margin of Error
+The term $Z (\sigma / \sqrt{n})$ is the **Margin of Error**.
+Notice the math: Because $n$ (sample size) is in the denominator, increasing your sample size mathematically shrinks the Margin of Error. However, because it is under a square root ($\sqrt{n}$), the math has diminishing returns. To cut your Margin of Error in half, you must mathematically quadruple your sample size.
+
+\n

@@ -1,0 +1,24 @@
+---
+title: Azure Container Apps
+description: A fully managed, serverless container service heavily optimized for microservices, allowing developers to deploy Docker containers without managing the underlying Kubernetes cluster.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Container Apps"
+  subtitle="Serverless Microservices"
+  tags={['Azure', 'Containers', 'Serverless', 'Microservices']}
+>
+
+Running raw Kubernetes (AKS) is an infrastructure nightmare. Running a simple web app (App Service) lacks microservice networking. Container Apps is the mathematical middle ground, built on top of a hidden Kubernetes cluster.
+
+## 1. KEDA (Kubernetes Event-Driven Autoscaling)
+The most powerful mathematical feature of Container Apps is its native integration with **KEDA**.
+Standard auto-scaling looks at CPU percentage (e.g., "Scale up if CPU > 80%"). This is slow and reactive.
+KEDA scales based on *Events*. You can configure your Container App to mathematically monitor an Azure Service Bus queue. If the queue is empty, the container scales exactly to Zero (costing $0). The exact millisecond a message hits the queue, KEDA mathematically forces the Container App to boot up, process the message, and spin back down to zero.
+
+## 2. Dapr (Distributed Application Runtime)
+Microservices require complex math to talk to each other (Service Discovery, Mutual TLS encryption, State management).
+Container Apps natively injects **Dapr** as a "sidecar" into your container. If Container A wants to talk to Container B, it does not need to know B's IP address or write complex retry logic. Container A simply sends a standard HTTP request to its own local Dapr sidecar (`localhost:3500`), and Dapr mathematically handles the secure network routing, retries, and encryption to Container B completely invisibly.
+
+</TechnologyTemplate>

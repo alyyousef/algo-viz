@@ -1,0 +1,25 @@
+---
+title: Amazon CloudWatch
+description: The central nervous system of AWS, providing a unified mathematical telemetry platform for collecting logs, visualizing performance metrics, and triggering automated alarms across all cloud infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon CloudWatch"
+  subtitle="The Telemetry Hub"
+  tags={['AWS', 'Monitoring', 'Logs', 'Metrics']}
+>
+
+If an EC2 server runs out of memory and crashes in the cloud, you cannot physically look at its screen. CloudWatch is the mathematical dashboard that allows you to "see" the internal state of your entire architecture.
+
+## 1. Metrics and Alarms
+Every AWS service automatically pushes mathematical **Metrics** to CloudWatch (e.g., EC2 pushes CPU Utilization, DynamoDB pushes Consumed Read Capacity).
+You can mathematically define an **Alarm** on these metrics. For example: *"If the Average CPU Utilization of this server exceeds 80% for 3 consecutive 5-minute periods, trigger an Alarm."*
+This Alarm does not just send an email. It can execute an automated mathematical response, such as triggering an Auto Scaling Group to instantly provision three new servers to handle the traffic spike, preventing downtime.
+
+## 2. CloudWatch Logs
+Metrics are numbers; Logs are text.
+If your Python backend throws a `NullReferenceException`, that text is streamed directly into CloudWatch Logs.
+Because wading through millions of lines of text is impossible, CloudWatch provides **Log Insights**, a purpose-built query language. You can mathematically parse the raw text logs on the fly, extracting JSON fields and writing SQL-like queries to instantly find exactly how many times a specific Error Code was thrown in the last 24 hours.
+
+</TechnologyTemplate>

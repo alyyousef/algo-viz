@@ -4,7 +4,14 @@ description: Enterprise architecture systems designed to manage dozens of separa
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Monorepo Tooling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Monorepo Tooling">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, if a company had a Web App, a Mobile App, and a shared UI Library, they put them in 3 separate Git repositories (Polyrepo). This was a nightmare. If you updated the UI library, you had to publish it to NPM, update the version in the Web App repo, and deploy.
 
@@ -16,11 +23,10 @@ However, if you have 50 applications in one repo, running `npm run test` will ta
 The original monorepo tool. It simply helped version and publish multiple packages simultaneously. However, it was slow and lacked advanced mathematical build caching.
 
 ## 2. Nx (The Enterprise Standard)
-Created by former Google Angular engineers, Nx treats your repository as a massive Directed Acyclic Graph (DAG). 
-If you edit a deeply nested utility function, Nx mathematically calculates exactly which apps depend on that function, and it will **only rebuild and test those specific apps**, ignoring the rest of the repo. 
+Created by former Google Angular engineers, Nx treats your repository as a massive Directed Acyclic Graph (DAG).
+If you edit a deeply nested utility function, Nx mathematically calculates exactly which apps depend on that function, and it will **only rebuild and test those specific apps**, ignoring the rest of the repo.
 It also utilizes **Remote Caching**—if Developer A builds the app on their laptop, the compiled output is sent to a cloud server. If Developer B tries to build the exact same code, Nx instantly downloads the cached result in 2 seconds instead of compiling it locally.
 
 ## 3. Turborepo (The Modern Challenger)
 Acquired by Vercel, Turborepo is written in Rust. It functions very similarly to Nx (DAG mapping + Remote Caching) but is heavily optimized for zero-configuration, seamless integration with Next.js, and uses highly readable JSON configuration files.
 
-</ConceptTemplate>

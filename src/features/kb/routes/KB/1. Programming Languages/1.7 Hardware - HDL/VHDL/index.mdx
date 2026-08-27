@@ -1,8 +1,27 @@
+---
+title: VHDL
+description: A strictly typed, highly verbose hardware description language heavily utilized in defense, aerospace, and European semiconductor design.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="VHDL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="VHDL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+VHDL (VHSIC Hardware Description Language) was originally developed in 1983 under a massive mathematical mandate from the United States Department of Defense. They needed a standardized, rigorous language to mathematically document the behavior of complex ASIC microchips for military contractors.
 
-</ConceptTemplate>
+## 1. Strong Typing and Verbosity
+VHDL is heavily based on the Ada programming language. Unlike Verilog, which is famously "loose" (it will often silently allow you to connect wires of different sizes, leading to disastrous silicon bugs), VHDL is mathematically brutal.
+It is a strongly typed, incredibly verbose language. If you attempt to assign an integer to a bit-vector without an explicit mathematical conversion function, the VHDL compiler will halt immediately. This verbosity makes it harder to learn than Verilog, but it mathematically guarantees a much higher level of safety for mission-critical hardware (like flight controllers or pacemakers).
+
+## 2. Entity and Architecture
+VHDL mathematically separates hardware design into two distinct concepts:
+- **Entity**: The black-box definition of the chip (What goes in, what comes out).
+- **Architecture**: The internal mathematical logic (How it works).
+This allows a defense contractor to mathematically define the Entity of a cryptoprocessor, and then seamlessly swap out three different internal Architectures (e.g., one optimized for speed, one optimized for low power) without altering the rest of the radar system.
+

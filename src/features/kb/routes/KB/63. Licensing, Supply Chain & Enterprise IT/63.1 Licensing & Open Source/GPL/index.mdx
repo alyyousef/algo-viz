@@ -4,14 +4,26 @@ description: The GNU General Public License is a series of widely used free soft
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GNU GPL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GNU GPL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **GPL** (General Public License), written by Richard Stallman, is the most famous **Strong Copyleft** license in the world.
 
+
 <Callout icon="warning" title="The Viral License">
-  The GPL is mathematically viral. 
-  
+
+
+  The GPL is mathematically viral.
+
   If a corporation writes 1 million lines of Proprietary code, and they biologically `import` a single 10-line library licensed under the GPL, the GPL mathematically infects their entire codebase. The corporation is legally forced to open-source all 1 million lines of their Proprietary code. For this biological reason, enterprise lawyers strictly forbid engineers from ever importing GPL code into corporate projects.
+
+
 </Callout>
 
-</ConceptTemplate>
+

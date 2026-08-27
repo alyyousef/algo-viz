@@ -1,8 +1,26 @@
+---
+title: Reactive Programming
+description: A paradigm built entirely around continuous, mathematical streams of asynchronous data, where the architecture automatically propagates state changes through a complex dependency graph.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reactive programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Reactive Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you write `A = B + C` in a standard language, `A` is calculated once. If `B` changes later, `A` does not automatically update. In Reactive Programming, `A` is mathematically bound to `B`; it updates instantly, like a cell in Excel.
 
-</ConceptTemplate>
+## 1. The Observable Stream
+The foundational mathematical unit is the **Observable Stream**.
+Everything (mouse clicks, network responses, variable changes) is mathematically modeled as an infinite pipe of data flowing over time.
+The developer uses Functional concepts (Map, Filter, Reduce) to mathematically mutate these streams in real-time. For example: `mouseClicks.filter(isRightClick).map(getCoordinates)`.
+
+## 2. The Observer Pattern and Propagation
+Reactive architectures (like RxJS or React) rely heavily on the Observer Pattern.
+When the source data (State) changes, the mathematical engine instantly propagates that change down the dependency graph. The UI Components that are "subscribed" to that specific stream physically receive the new data and re-render. Because the mathematical flow is entirely declarative (the UI declares *what* data it needs, not *how* to fetch it), the architecture can gracefully handle massive volumes of asynchronous, chaotic real-time data.
+

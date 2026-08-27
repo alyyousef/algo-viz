@@ -4,18 +4,30 @@ description: A Core Web Vital metric that measures the time from when a user fir
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="First Input Delay (FID)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="First Input Delay (FID)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-You load a website. You see a "Menu" button. You click it. Nothing happens for two seconds. You biological frustration peaks. 
+You load a website. You see a "Menu" button. You click it. Nothing happens for two seconds. You biological frustration peaks.
 
-This is **First Input Delay**. 
+This is **First Input Delay**.
 
 FID mathematically measures the exact millisecond delay between the user physically clicking their mouse, and the browser's Main Thread actually having the free CPU capacity to respond to that click.
 
+
 <Callout icon="info" title="The Cause of FID">
+
+
   FID is almost exclusively caused by the Main Thread being biologically exhausted by heavy JavaScript execution. If React is mathematically parsing a 10,000-item array synchronously, the Event Loop is blocked. The browser records the physical mouse click, but cannot execute the `onClick` handler until the array parsing finishes.
-  
+
   *Note: In March 2024, Google officially replaced FID with **INP (Interaction to Next Paint)** as the standard Core Web Vital metric.*
+
+
 </Callout>
 
-</ConceptTemplate>
+

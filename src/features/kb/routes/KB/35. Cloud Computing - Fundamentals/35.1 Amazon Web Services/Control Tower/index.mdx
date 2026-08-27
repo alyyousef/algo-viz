@@ -1,0 +1,27 @@
+---
+title: AWS Control Tower
+description: An enterprise governance service that automates the mathematical provisioning of a secure, multi-account AWS environment (a Landing Zone) enforced by strict, un-bypassable compliance guardrails.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Control Tower"
+  subtitle="Multi-Account Governance"
+  tags={['AWS', 'Security', 'Enterprise', 'Governance']}
+>
+
+If a massive enterprise puts 500 developers in a single AWS account, the Blast Radius of a single mistake is the entire company. The architectural solution is to use AWS Organizations to give every team their own isolated AWS account. Control Tower manages the chaos of hundreds of accounts.
+
+## 1. The Landing Zone
+When you activate Control Tower, it uses CloudFormation to mathematically synthesize a **Landing Zone**.
+It automatically creates a structural hierarchy of AWS Accounts:
+- **Log Archive Account**: A locked-down account where every CloudTrail log from all 500 sub-accounts is immutably stored.
+- **Security Account**: An account for the Infosec team containing cross-account auditing tools (Security Hub, GuardDuty).
+When a new team needs an environment, they use the Account Factory. Control Tower automatically spins up a mathematically pristine, pre-configured AWS account that is instantly wired into the central billing and security architecture.
+
+## 2. Detective and Preventive Guardrails
+Control Tower enforces absolute mathematical rules across all 500 accounts using **Guardrails**.
+- **Preventive Guardrails** (powered by Service Control Policies - SCPs): A mathematical absolute. For example, *"No one, not even the Root User of a sub-account, is allowed to disable CloudTrail or provision servers outside of the US-East-1 region."* The API mathematically blocks the action.
+- **Detective Guardrails** (powered by AWS Config): *"If any developer creates an S3 bucket that is public, instantly flag it as Non-Compliant and trigger an automated Lambda function to mathematically rewrite the bucket policy to Private."*
+
+</TechnologyTemplate>

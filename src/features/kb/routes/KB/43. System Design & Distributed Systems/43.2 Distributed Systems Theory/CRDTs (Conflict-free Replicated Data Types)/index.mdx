@@ -4,27 +4,34 @@ description: A data structure that can be replicated across multiple computers i
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Conflict-Free Replicated Data Types (CRDTs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Conflict-Free Replicated Data Types (CRDTs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In distributed databases (like DynamoDB), if two users edit the exact same document simultaneously, the system uses Vector Clocks to mathematically detect a "Conflict," and then forces the application engineer to write custom code to resolve it.
 
 **Conflict-Free Replicated Data Types (CRDTs)** are mathematically magical data structures that automatically resolve conflicts without any human intervention. They guarantee that no matter what order the concurrent edits arrive, all nodes will mathematically converge to the exact same final state.
 
+
 <Callout icon="tip" title="Collaborative Editing">
+
+
   CRDTs are the mathematical foundation of modern collaborative software. When 10 people are typing in a Google Doc or Figma canvas simultaneously, CRDTs mathematically ensure that everyone sees the exact same document without locking the system.
+
+
 </Callout>
+
 
 ## The Mathematics of Commutativity
 
 CRDTs work because they rely on mathematical operations that are **Commutative** (meaning the order of operations doesn't matter: A + B = B + A).
 
-<ComparisonTable 
-  headers={['CRDT Type', 'How it Works', 'Example']}
-  rows={[
-    ['Grow-Only Counter (G-Counter)', 'A distributed counter where nodes can only ADD, never subtract. Every node mathematically tracks its own count, and the total is the MAX of all nodes.', 'A YouTube Video View Counter.'],
-    ['Positive-Negative Counter (PN-Counter)', 'A combination of two G-Counters (one for Adds, one for Subtracts). The final value is the mathematical difference between the two.', 'A Reddit Upvote/Downvote system.'],
-    ['Observed-Remove Set (OR-Set)', 'A set where items can be added and removed. Every element is tagged with a mathematically unique UUID upon insertion to avoid deletion conflicts.', 'A distributed Shopping Cart.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['CRDT Type', 'How it Works', 'Example']} rows={[ ['Grow-Only Counter (G-Counter)', 'A distributed counter where nodes can only ADD, never subtract. Every node mathematically tracks its own count, and the total is the MAX of all nodes.', 'A YouTube Video View Counter.'], ['Positive-Negative Counter (PN-Counter)', 'A combination of two G-Counters (one for Adds, one for Subtracts). The final value is the mathematical difference between the two.', 'A Reddit Upvote/Downvote system.'], ['Observed-Remove Set (OR-Set)', 'A set where items can be added and removed. Every element is tagged with a mathematically unique UUID upon insertion to avoid deletion conflicts.', 'A distributed Shopping Cart.'] ]} />
+
+

@@ -4,25 +4,32 @@ description: A geographically distributed network of proxy servers and their dat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Content Delivery Networks (CDNs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Content Delivery Networks (CDNs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Due to the mathematical limits of the speed of light, if your web server is in New York, a user in Tokyo will always experience ~200ms of latency just to download a CSS file.
 
 A **Content Delivery Network (CDN)** solves this by placing thousands of caching servers (Edge Nodes) in every major city on Earth. When the Tokyo user requests a 5MB image, the CDN serves it from a datacenter physically located in Tokyo, dropping the latency to ~10ms.
 
+
 <Callout icon="success" title="The Push vs. Pull Model">
+
+
   Most modern CDNs (like Cloudflare or Fastly) use a **Pull** model. The first time a Tokyo user requests the image, the Tokyo Edge Node pulls it from the New York Origin Server. It mathematically caches it for 24 hours. The next 10,000 users in Tokyo get the image instantly from the Edge without ever touching the Origin.
+
+
 </Callout>
+
 
 ## What Should Be CDN-Cached?
 
-<ComparisonTable 
-  headers={['Asset Type', 'Should you CDN it?', 'Explanation']}
-  rows={[
-    ['Static Assets (Images, Video, CSS, JS)', 'Yes (Mandatory)', 'These files never mathematically change per user. Serving them from the Origin server is a massive waste of expensive CPU and bandwidth.'],
-    ['HTML Pages', 'Sometimes', 'If it is a public blog post, cache it! If it is a logged-in user\'s dashboard, it cannot be cached globally.'],
-    ['API Responses (JSON)', 'Rarely', 'Most API data is highly dynamic and user-specific. However, a public API like a weather forecast should absolutely be CDN-cached for a few minutes.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Asset Type', 'Should you CDN it?', 'Explanation']} rows={[ ['Static Assets (Images, Video, CSS, JS)', 'Yes (Mandatory)', 'These files never mathematically change per user. Serving them from the Origin server is a massive waste of expensive CPU and bandwidth.'], ['HTML Pages', 'Sometimes', 'If it is a public blog post, cache it! If it is a logged-in user\'s dashboard, it cannot be cached globally.'], ['API Responses (JSON)', 'Rarely', 'Most API data is highly dynamic and user-specific. However, a public API like a weather forecast should absolutely be CDN-cached for a few minutes.'] ]} />
+
+

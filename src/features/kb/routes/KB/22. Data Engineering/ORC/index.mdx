@@ -4,7 +4,14 @@ description: The Optimized Row Columnar format, deeply integrated into the Hadoo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache ORC (Optimized Row Columnar)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache ORC (Optimized Row Columnar)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Apache ORC** is a highly efficient, mathematically compressed columnar storage format. It is the direct rival to Apache Parquet, engineered primarily by Hortonworks to provide blistering fast execution specifically for **Apache Hive**.
 
@@ -24,4 +31,3 @@ ORC and Parquet are architecturally very similar, but they won different ecosyst
 
 Because Apache Spark overwhelmingly won the execution engine war against Hive, **Parquet** became the de facto industry standard, but ORC remains heavily utilized in massive enterprise Hadoop clusters.
 
-</ConceptTemplate>

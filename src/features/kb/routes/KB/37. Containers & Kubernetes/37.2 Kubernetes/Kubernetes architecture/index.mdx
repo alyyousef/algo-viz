@@ -5,7 +5,14 @@ description: "The high-level architecture of Kubernetes, separating the Control 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Kubernetes Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kubernetes Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Kubernetes (K8s)** is an open-source container orchestration platform. While Docker allows you to run a container on one machine, K8s allows you to manage thousands of containers across hundreds of machines, handling automated rollouts, self-healing, scaling, and load balancing.
 
@@ -26,8 +33,13 @@ These are the actual servers (VMs or bare metal) where your application containe
 - **kube-proxy**: Manages network routing, maintaining network rules on the host to allow communication to the Pods from inside or outside the cluster.
 - **Container Runtime**: The actual software that runs the containers (e.g., **containerd** or **CRI-O**). Docker is no longer directly supported as a runtime in modern K8s.
 
+
 <Callout icon="info" title="Managed Kubernetes">
+
+
 Because the Control Plane (specifically etcd) is incredibly difficult to run and maintain in a highly-available way, 90% of companies use Managed Kubernetes services like **AWS EKS**, **Google GKE**, or **Azure AKS**, where the cloud provider completely hides and manages the Control Plane for you.
+
+
 </Callout>
 
-</ConceptTemplate>
+

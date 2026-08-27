@@ -4,9 +4,16 @@ description: A highly specialized tree structure designed specifically for light
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tries (Prefix Trees)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tries (Prefix Trees)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you type "App" into a search bar, how does Google instantly suggest "Apple", "App Store", and "Application" out of millions of possibilities? 
+If you type "App" into a search bar, how does Google instantly suggest "Apple", "App Store", and "Application" out of millions of possibilities?
 It doesn't use a Hash Table (which can only do exact matches). It uses a **Trie** (pronounced "Try", derived from "re**trie**val").
 
 ## 1. How Tries Store Strings
@@ -27,11 +34,16 @@ If you also want to store "CAR", you don't create three new nodes. The Trie reus
 Tries are memory hogs. Every single character node might have an array of 26 pointers (one for every letter of the alphabet), taking up massive amounts of RAM.
 
 However, their speed is staggering.
-To search for the word "Zebra" in a database of 10 million words, a BST would require dozens of expensive, full-string alphabetical comparisons. 
+To search for the word "Zebra" in a database of 10 million words, a BST would require dozens of expensive, full-string alphabetical comparisons.
 A Trie only requires **5 pointer hops**. The time complexity to search for a word in a Trie is strictly $O(L)$, where $L$ is the length of the word you are searching for. It does not matter if the Trie contains 10 words or 10 billion words; the search time never increases.
 
+
 <Callout icon="tip" title="Prefix Matching">
+
+
   Tries are the only data structure that natively excels at Prefix Matching. If a user types "CA", you just traverse down to the 'A' node. From that node, if you run a quick Depth-First Search, you can instantly collect every single valid word in the dictionary that starts with "CA".
+
+
 </Callout>
 
-</ConceptTemplate>
+

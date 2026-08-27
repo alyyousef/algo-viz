@@ -1,0 +1,24 @@
+---
+title: OCI Load Balancer
+description: A mathematically rigorous, high-availability software-defined networking service that distributes incoming TCP and HTTP traffic across multiple compute instances to ensure fault tolerance.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Load Balancer"
+  subtitle="Layer 4 and Layer 7 Traffic Distribution"
+  tags={['OCI', 'Networking', 'Load Balancing', 'High Availability']}
+>
+
+If an enterprise deploys a single Web Server, that server is a mathematical single point of failure. If it crashes, the application goes offline. The OCI Load Balancer solves this by fronting a cluster of servers with a single Public IP address.
+
+## 1. Flexible Bandwidth Shapes
+Historically in OCI, you had to choose a fixed bandwidth size for your Load Balancer (e.g., exactly 100 Mbps or 400 Mbps).
+Modern OCI utilizes **Flexible Load Balancers**. You mathematically define a minimum bandwidth (e.g., 10 Mbps) and a maximum bandwidth (e.g., 1000 Mbps). During normal hours, OCI only charges you for the 10 Mbps footprint. If a sudden surge of traffic hits, the underlying software-defined network mathematically expands the bandwidth up to 1000 Mbps instantly, ensuring zero dropped packets without requiring you to over-provision expensive network capacity.
+
+## 2. Health Checks and Routing Policies
+The Load Balancer does not just blindly forward traffic. It mathematically monitors the health of the backend servers.
+It continuously pings a specific endpoint (e.g., `/api/health`). If Server B fails to return a `200 OK` HTTP status code three times in a row, the Load Balancer mathematically removes Server B from the routing pool. All subsequent traffic is instantly rerouted to Server A and Server C.
+Furthermore, it supports **Layer 7 Routing**. The Load Balancer can mathematically inspect the URL path: *"If the URL contains `/images/`, route the packet to the Image Server Pool. If it contains `/api/`, route it to the API Server Pool."*
+
+</TechnologyTemplate>

@@ -4,25 +4,32 @@ description: The world's fastest and most advanced password recovery utility, le
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hashcat">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hashcat">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While *John the Ripper* is excellent for CPU-based cracking, **Hashcat** is the undisputed champion of GPU-accelerated password cracking. 
+While *John the Ripper* is excellent for CPU-based cracking, **Hashcat** is the undisputed champion of GPU-accelerated password cracking.
 
 A modern CPU might have 16 or 32 cores to do math. A modern Nvidia RTX 4090 GPU has over 16,000 compute cores. Hashcat is explicitly designed to leverage OpenCL and CUDA to execute billions of mathematical hash comparisons per second across massive GPU clusters.
 
+
 <Callout icon="warning" title="The NTLM Vulnerability">
+
+
   Hashcat can crack older, unsalted hashes at terrifying speeds. For example, a single RTX 4090 can calculate over 100 Billion Windows NTLM hashes per second. This means an 8-character complex Windows password can be mathematically brute-forced in less than an hour.
+
+
 </Callout>
+
 
 ## Advanced Attack Modes
 
-<ComparisonTable 
-  headers={['Mode', 'Description']}
-  rows={[
-    ['Combinator Attack', 'Takes two dictionaries and mathematically concatenates every word in the first with every word in the second (e.g., `super` + `mario` = `supermario`).'],
-    ['Mask Attack', 'A surgical brute-force. Instead of trying every character, you define a mathematical mask. If you know the password is a name followed by 4 digits, you use the mask `?l?l?l?l?l?d?d?d?d`, reducing the search space by trillions.'],
-    ['Hybrid Attack', 'Combines a dictionary word with a mask. (e.g., Word from dictionary + `?d?d?s` to append two numbers and a symbol).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Mode', 'Description']} rows={[ ['Combinator Attack', 'Takes two dictionaries and mathematically concatenates every word in the first with every word in the second (e.g., `super` + `mario` = `supermario`).'], ['Mask Attack', 'A surgical brute-force. Instead of trying every character, you define a mathematical mask. If you know the password is a name followed by 4 digits, you use the mask `?l?l?l?l?l?d?d?d?d`, reducing the search space by trillions.'], ['Hybrid Attack', 'Combines a dictionary word with a mask. (e.g., Word from dictionary + `?d?d?s` to append two numbers and a symbol).'] ]} />
+
+

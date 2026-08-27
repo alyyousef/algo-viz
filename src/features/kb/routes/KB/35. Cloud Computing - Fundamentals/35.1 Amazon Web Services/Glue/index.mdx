@@ -1,0 +1,24 @@
+---
+title: AWS Glue
+description: A fully managed, serverless ETL (Extract, Transform, Load) service that mathematically discovers, catalogs, and transforms massive datasets for analytics and machine learning.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="AWS Glue"
+  subtitle="Serverless Data Integration"
+  tags={['AWS', 'Data', 'ETL', 'Serverless']}
+>
+
+Data Engineers spend 80% of their time writing boilerplate Python scripts to move data from a database into a data lake, change the date format, and save it as a Parquet file. AWS Glue automates this entire mathematical pipeline.
+
+## 1. The Glue Data Catalog (Crawlers)
+If you dump 10,000 JSON files into S3, AWS has no idea what that data is.
+You point an **AWS Glue Crawler** at the S3 bucket. The Crawler physically opens the files, mathematically infers the schema (e.g., *"This field is a String, this field is an Array of Integers"*), and creates a centralized table definition in the **Glue Data Catalog**.
+Once the mathematical schema is cataloged, services like Amazon Athena can instantly query those raw JSON files using standard SQL.
+
+## 2. Serverless Spark ETL
+Once the data is cataloged, you need to transform it (e.g., joining user data with purchase history).
+You write a Python or Scala script using the Apache Spark framework. You hand the script to Glue. Glue acts exactly like EMR, but it is entirely serverless. It instantly spins up a massive, distributed Spark cluster, mathematically executes your transformation across thousands of parallel nodes, writes the final cleaned dataset to a new S3 bucket, and vanishes. You only pay for the exact seconds the cluster was running.
+
+</TechnologyTemplate>

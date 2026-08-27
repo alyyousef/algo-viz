@@ -4,9 +4,16 @@ description: A signaling mechanism that allows a thread to safely go to sleep in
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Condition Variables">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Condition Variables">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-A Mutex solves the problem of protecting shared data. But what if a thread needs to wait for a specific *state* to change? 
+A Mutex solves the problem of protecting shared data. But what if a thread needs to wait for a specific *state* to change?
 
 Imagine a Producer-Consumer scenario using a shared `Queue` protected by a Mutex.
 A Consumer thread locks the Mutex, looks at the Queue, and sees that it is empty. What does it do?
@@ -22,8 +29,13 @@ A Condition Variable is always paired directly with a Mutex. It provides a way f
 1. **`Wait(Condition, Mutex)`**: The OS atomically puts the thread to sleep AND unlocks the Mutex at the exact same nanosecond.
 2. **`Signal(Condition)`**: Later, a Producer thread acquires the Mutex, adds data to the Queue, and calls `Signal`. The OS wakes up the sleeping Consumer. Before the Consumer is allowed to actually resume executing, the OS automatically re-acquires the Mutex for it.
 
+
 <Callout icon="warning" title="Spurious Wakeups">
+
+
   Because of the complex way multi-core OS schedulers work, a thread sleeping on a Condition Variable can occasionally wake up *even if nobody signaled it* (a Spurious Wakeup). Therefore, a `Wait()` call must **always** be placed inside a `while` loop that re-checks the condition upon waking.
+
+
 </Callout>
 
-</ConceptTemplate>
+

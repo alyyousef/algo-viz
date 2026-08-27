@@ -1,8 +1,28 @@
+---
+title: States (Reinforcement Learning)
+description: The mathematical representation of the Environment at a specific point in time, providing the AI Agent with the necessary data to evaluate its situation and select an action.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="States">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="States (Reinforcement Learning)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If an Agent does not know where it is, it cannot act. The State ($S$) is the physical or mathematical snapshot of the universe handed to the Agent at every time step.
 
-</ConceptTemplate>
+## 1. The Markov Property
+For Reinforcement Learning math to function correctly, the State must possess the **Markov Property**.
+This mathematical rule states: *The future is independent of the past, given the present.*
+If the State is a photograph of a Chess board, it possesses the Markov property. You do not need to know the past 40 moves to know what to do next; the entire physics of the game are perfectly encapsulated in that single photograph. If the State does *not* contain all necessary information, the math breaks down.
+
+## 2. State Representation
+How you mathematically encode the State dictates whether the Neural Network will converge.
+- **Low-Dimensional State**: An array of 4 floats: $[x, y, velocity, angle]$. (e.g., Balancing a pole on a cart). Incredibly easy for a standard Dense Neural Network to learn.
+- **High-Dimensional State**: A $1080 \times 1920 \times 3$ RGB matrix of raw pixels. Requires massive Convolutional Neural Networks (CNNs).
+Crucially, for high-dimensional video games, a single frame does *not* possess the Markov Property (a single photo doesn't tell you if the ball is moving left or right). The standard architectural fix is **Frame Stacking**: you mathematically concatenate the last 4 frames together into a single tensor, forcing the State to include velocity and restoring the Markov Property.
+

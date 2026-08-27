@@ -4,14 +4,21 @@ description: A highly advanced deep learning optimization library developed by M
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DeepSpeed">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DeepSpeed">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Training a 100-Billion parameter Large Language Model mathematically requires over 1 Terabyte of VRAM just to hold the optimizer states and gradients. Because the largest NVIDIA GPU only has 80GB of VRAM, training these models used to be impossible without extreme, custom engineering. 
+Training a 100-Billion parameter Large Language Model mathematically requires over 1 Terabyte of VRAM just to hold the optimizer states and gradients. Because the largest NVIDIA GPU only has 80GB of VRAM, training these models used to be impossible without extreme, custom engineering.
 **Microsoft DeepSpeed** is the optimization library that solved this mathematical bottleneck, powering massive models like ChatGPT and Megatron.
 
 ## 1. The ZeRO Optimizer (Zero Redundancy Optimizer)
 In standard Data Parallel training, every single GPU holds an exact, 100% duplicate copy of the entire massive model, the gradients, and the Adam optimizer states. This is mathematically catastrophic for VRAM.
-**ZeRO** is DeepSpeed's flagship breakthrough. It mathematically slices the optimizer states and weights, and distributes them across the GPUs. 
+**ZeRO** is DeepSpeed's flagship breakthrough. It mathematically slices the optimizer states and weights, and distributes them across the GPUs.
 - **ZeRO Stage 1**: Partitions the Optimizer States.
 - **ZeRO Stage 2**: Partitions the Gradients.
 - **ZeRO Stage 3**: Partitions the actual Model Weights.
@@ -24,4 +31,3 @@ If the model is so massive that it mathematically exceeds the combined VRAM of *
 ## 3. The Industry Standard
 DeepSpeed is almost entirely responsible for the open-source LLM revolution. By integrating DeepSpeed with Hugging Face, researchers were suddenly able to train mathematically massive models on tiny, consumer-grade server clusters, completely destroying the monopoly held by trillion-dollar tech giants.
 
-</ConceptTemplate>

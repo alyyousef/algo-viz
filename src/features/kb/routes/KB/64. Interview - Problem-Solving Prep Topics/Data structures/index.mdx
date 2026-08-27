@@ -4,14 +4,26 @@ description: A data organization, management, and storage format that enables ef
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data Structures (Interview Prep)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Structures (Interview Prep)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If Algorithms are the verbs, **Data Structures** are the nouns.
 
+
 <Callout icon="warning" title="Choosing the Right Tool">
+
+
   Selecting the wrong Data Structure is an instant mathematical failure in an interview.
-  
+
   If you need to rapidly check if an item exists, and you biologically choose an Array ($O(N)$), you fail. You must mathematically know to choose a Hash Set ($O(1)$). You must know when to use a Linked List (fast insertions) vs an Array (fast lookups), and how to use a Min-Heap to instantly track the K-th largest element in a stream of data.
+
+
 </Callout>
 
-</ConceptTemplate>
+

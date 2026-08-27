@@ -1,8 +1,26 @@
+---
+title: x86 Assembly
+description: The foundational 32-bit assembly language that dominated the personal computer revolution for decades.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="x86 Assembly">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="x86 Assembly">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The x86 architecture (originating with the Intel 8086 in 1978) is a **Complex Instruction Set Computer (CISC)** architecture. It mathematically defines the electrical instructions for the vast majority of desktop and laptop processors (excluding modern Apple Silicon).
 
-</ConceptTemplate>
+## 1. The CISC Philosophy
+Unlike ARM or RISC-V (which use small, simple instructions), x86 is mathematically dense.
+A single x86 instruction can mathematically load a value from a complex RAM address, add a number to it, and store it back into RAM in one step.
+Because the instruction set has grown organically over 40 years, it contains thousands of highly specialized mathematical instructions, making it incredibly difficult for a human to master, but allowing modern compilers to generate brutally fast execution paths.
+
+## 2. The Register Starvation Problem
+The greatest mathematical weakness of 32-bit x86 was its severe lack of registers. It only had 8 general-purpose registers (EAX, EBX, ECX, EDX, ESI, EDI, EBP, ESP).
+Because the CPU had so few places to store temporary variables internally, it constantly had to mathematically "spill" data out to the slow physical RAM (the stack) and read it back, creating a massive performance bottleneck for complex algorithms.
+

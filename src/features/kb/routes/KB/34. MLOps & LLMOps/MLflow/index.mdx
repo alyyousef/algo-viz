@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: MLflow
+description: The de facto standard open-source platform for managing the end-to-end Machine Learning lifecycle, unifying experiment tracking, model registry, and mathematically reproducible deployment pipelines.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="MLflow">
+<TechnologyTemplate
+  title="MLflow"
+  subtitle="The End-to-End MLOps Platform"
+  tags={['MLOps', 'Tracking', 'Registry', 'Python']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by Databricks, MLflow is the glue that holds MLOps together. It mathematically guarantees that a model trained on a laptop can be reproduced, tracked, and deployed to a cloud cluster without losing a single piece of metadata.
 
-</ConceptTemplate>
+## 1. The MLflow Tracking Server
+MLflow replaces chaotic spreadsheets with a centralized API.
+When training code runs, it calls `mlflow.log_metric("loss", 0.1)`. The tracking server mathematically stores the hyperparameters, the Git commit hash of the code, and the loss curves.
+Most importantly, it logs the **Environment**. MLflow automatically captures the exact mathematical versions of PyTorch, CUDA, and Pandas, ensuring that the model can be deserialized perfectly years later.
+
+## 2. The Model Registry and Flavors
+Once an experiment is deemed successful, it is pushed to the **MLflow Model Registry**, which acts as a mathematical CI/CD pipeline for AI (Staging $\rightarrow$ Production $\rightarrow$ Archived).
+MLflow solves deployment friction using **Flavors**. A Scikit-Learn model is mathematically different from a PyTorch model. MLflow wraps them all in a standardized `MLmodel` format. A DevOps engineer does not need to know PyTorch to deploy the model; they just point the deployment server at the MLflow Flavor, and MLflow automatically loads the exact mathematical dependencies required to run the inference.
+
+</TechnologyTemplate>

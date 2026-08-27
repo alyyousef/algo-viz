@@ -5,15 +5,22 @@ description: 'The sum total of all different points (the "surface") where an una
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Attack Surface">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Attack Surface">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In cybersecurity, the **Attack Surface** represents every conceivable way a system could potentially be compromised. 
+In cybersecurity, the **Attack Surface** represents every conceivable way a system could potentially be compromised.
 A fundamental goal of secure architecture is **Attack Surface Reduction (ASR)**—shrinking the target so hackers have fewer opportunities to find a vulnerability.
 
 ## 1. Types of Attack Surfaces
 The total attack surface is typically divided into three categories:
 
-1. **Digital / Network Attack Surface**: 
+1. **Digital / Network Attack Surface**:
    - Open server ports (e.g., leaving Port 22 SSH exposed to the public internet).
    - Public-facing APIs, web forms, and authentication endpoints.
    - Outdated software dependencies (NPM packages) with known vulnerabilities.
@@ -29,12 +36,17 @@ The total attack surface is typically divided into three categories:
 Every piece of code you write and every feature you add *increases* the attack surface. ASR aims to reverse this:
 
 - **Disable Unused Features**: If your web server doesn't use FTP, uninstall the FTP daemon. (Every running service is a potential exploit vector).
-- **Network Segmentation**: Move databases into Private Subnets that have no public IP addresses. 
+- **Network Segmentation**: Move databases into Private Subnets that have no public IP addresses.
 - **Code Minification**: Remove dead code and unused NPM dependencies from your application.
 - **Zero Trust & VPNs**: Hide internal administrative portals (like Grafana or Jenkins) behind strict ZTNA gateways so they are completely invisible to the public internet.
 
+
 <Callout icon="warning" title="Shadow IT">
+
+
 The most dangerous part of an organization's attack surface is the part the security team doesn't know exists. **Shadow IT** (e.g., a marketing team quietly spinning up an unauthorized WordPress server on AWS without telling IT) creates massive, unmonitored attack vectors that are often the root cause of corporate breaches.
+
+
 </Callout>
 
-</ConceptTemplate>
+

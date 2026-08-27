@@ -4,23 +4,35 @@ description: A syntactic feature of many programming languages that allows an as
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Async/Await">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Async/Await">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Promises mathematically solved the "Callback Hell" problem, chaining `.then()` statements still forced developers to write code that looked fundamentally different from standard, top-to-bottom synchronous code.
 
 **Async/Await** (introduced in C# 5.0 and popularized heavily by JavaScript ES2017) is a mathematical syntax sugar built directly on top of Promises.
 
+
 <Callout icon="success" title="The Illusion of Synchrony">
+
+
   When you place the `await` keyword in front of a Promise, the compiler mathematically pauses the execution of that specific function until the Promise resolves. To the human reader, the code looks like standard, blocking, sequential code. But to the CPU, the thread is completely non-blocked and free to process other events.
+
+
 </Callout>
+
 
 ## Under the Hood: State Machines
 
-When the compiler (like V8 or Roslyn) encounters an `async` function containing an `await`, it does not just compile it normally. 
+When the compiler (like V8 or Roslyn) encounters an `async` function containing an `await`, it does not just compile it normally.
 
-It mathematically transforms the entire function into a **Finite State Machine**. 
-- It splits the function into chunks. 
-- It executes Chunk 1, registers a callback on the Promise, and physically returns control to the Main Thread. 
+It mathematically transforms the entire function into a **Finite State Machine**.
+- It splits the function into chunks.
+- It executes Chunk 1, registers a callback on the Promise, and physically returns control to the Main Thread.
 - When the Promise resolves, the system invokes the callback, mathematically re-entering the State Machine at Chunk 2, perfectly restoring the local variables from the closure.
 
-</ConceptTemplate>

@@ -1,0 +1,23 @@
+---
+title: Google Cloud Storage (GCS)
+description: A unified, infinitely scalable object storage service that provides a single API to mathematically store and retrieve unstructured data across multiple global storage classes.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Storage (GCS)"
+  subtitle="Unified Object Storage"
+  tags={['GCP', 'Storage', 'Object', 'Serverless']}
+>
+
+Google Cloud Storage (GCS) is the exact equivalent of AWS S3. It is a flat, mathematical namespace (Buckets and Objects) used to store unstructured data like videos, images, and massive analytical datasets.
+
+## 1. The Unified API
+In AWS, moving data from S3 Standard to S3 Glacier (Archive) fundamentally changes how you interact with the data (requiring asynchronous API calls).
+GCS mathematically unifies this. Whether your data is in the **Standard** tier (accessed every day) or the **Archive** tier (accessed once a year), the exact same API call is used to retrieve it, and the time-to-first-byte is measured in milliseconds for both. The only mathematical difference is the billing: Archive costs vastly less to store, but vastly more to read.
+
+## 2. Object Lifecycle Management
+You do not want to pay high Standard tier prices for 10-year-old log files.
+GCS provides **Lifecycle Policies**. You define a mathematical rule on the Bucket: *"If an object is strictly older than 30 days, mathematically transition its storage class from Standard to Coldline. If it is older than 365 days, transition it to Archive."* This automated state machine ensures your company pays the absolute minimum storage cost possible without requiring any human intervention.
+
+</TechnologyTemplate>

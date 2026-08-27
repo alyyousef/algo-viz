@@ -1,8 +1,25 @@
+---
+title: Pose Estimation
+description: The highly complex AI task of mathematically locating and connecting the physical biomechanical keypoints (joints) of a human body in 2D or 3D space from a standard image or video.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pose estimation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pose Estimation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to track an athlete's golf swing, you don't need to segment the pixels of their shirt. You need the exact spatial coordinates of their wrists, elbows, and shoulders.
 
-</ConceptTemplate>
+## 1. Top-Down vs. Bottom-Up Approaches
+- **Top-Down (Two-Stage)**: First, an Object Detector (like YOLO) mathematically finds the person and crops a bounding box. Then, a second network analyzes the cropped box to find the joints. It is highly accurate but mathematically scales linearly with the number of people; if there are 50 people in the crowd, it runs 50 times slower.
+- **Bottom-Up (Single-Stage)**: The AI (like OpenPose) mathematically searches the entire uncropped image for *all* joints simultaneously (finding 50 left elbows and 50 left wrists). It then uses a mathematical graph algorithm (Part Affinity Fields) to figure out which elbow physically connects to which wrist. This is much harder to train but mathematically runs at the same speed regardless of how many people are in the frame.
+
+## 2. Heatmap Regression
+To predict where a wrist is, the network does not output a raw $[x, y]$ coordinate.
+Instead, it outputs a **Heatmap** (a 2D matrix representing the physical image). The matrix is entirely 0, except for a mathematically smooth 2D Gaussian curve peaking at 1.0 exactly where the wrist is. Predicting a physical Heatmap provides a much smoother, more stable mathematical gradient during backpropagation than trying to predict raw integer coordinates.
+

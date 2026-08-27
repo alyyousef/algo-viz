@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Kubeflow
+description: The industry-standard, Kubernetes-native MLOps platform designed to orchestrate massive, mathematically complex Machine Learning pipelines, from data preprocessing to hyperparameter tuning and model serving.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Kubeflow">
+<TechnologyTemplate
+  title="Kubeflow"
+  subtitle="The Kubernetes Machine Learning OS"
+  tags={['MLOps', 'Kubernetes', 'Pipelines', 'Scaling']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Machine Learning is mathematically too massive for a single laptop. It requires distributed computing. Kubeflow is the operating system that forces Kubernetes to understand the specific architectural needs of Neural Networks.
 
-</ConceptTemplate>
+## 1. Kubeflow Pipelines (KFP)
+Training a model is a Directed Acyclic Graph (DAG) of mathematical steps.
+In Kubeflow, you define the DAG in Python. (e.g., Step A: Extract Data -> Step B: Normalize Tensors -> Step C: Train ResNet50).
+Kubeflow mathematically converts this Python code into a Kubernetes YAML file. When executed, Kubeflow spins up an independent Docker container for every single step. If Step C (Training) requires 8 GPUs, Kubeflow dynamically allocates 8 GPUs specifically for that container, runs the math, saves the output tensor to cloud storage, and immediately kills the GPUs to save money.
+
+## 2. Katib (Hyperparameter Tuning)
+Finding the perfect Learning Rate is a mathematical nightmare of trial and error.
+Kubeflow includes **Katib**, a distributed Hyperparameter tuning engine. You give Katib a mathematical search space (e.g., $0.0001 < LR < 0.1$). Katib spins up 50 parallel Kubernetes pods, trains 50 different neural networks simultaneously using Bayesian Optimization algorithms, mathematically compares their Validation Loss, and returns the absolute optimal Hyperparameter configuration.
+
+</TechnologyTemplate>

@@ -4,25 +4,32 @@ description: A network security technology that continuously monitors for malici
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Intrusion Prevention Systems (IPS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Intrusion Prevention Systems (IPS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While an IDS (Intrusion Detection System) is a passive alarm that just notifies the security team, an **Intrusion Prevention System (IPS)** is an active defender. 
+While an IDS (Intrusion Detection System) is a passive alarm that just notifies the security team, an **Intrusion Prevention System (IPS)** is an active defender.
 
 An IPS sits "in-line" on the network. Every single packet mathematically entering the building must pass *through* the IPS. If the IPS detects a known malware signature or malicious behavior, it instantly drops the packet, completely stopping the attack before it reaches the target server.
 
+
 <Callout icon="warning" title="The False Positive Risk">
+
+
   Because an IPS actively drops traffic, a false positive is disastrous. If an IPS mathematically misidentifies a legitimate database backup as a "Data Exfiltration Attack" and kills the connection, the business suffers an outage. This is why IPS rules must be tuned flawlessly.
+
+
 </Callout>
+
 
 ## Detection Methodologies
 
-<ComparisonTable 
-  headers={['Methodology', 'Description']}
-  rows={[
-    ['Signature-Based', 'The IPS maintains a massive database of mathematical fingerprints for known malware (like a virus scanner). It is extremely fast but cannot detect brand new "zero-day" attacks.'],
-    ['Anomaly-Based', 'The IPS uses machine learning to mathematically baseline the "normal" traffic patterns of the network over several weeks. If traffic suddenly spikes or deviates from the baseline, it is blocked.'],
-    ['Policy-Based', 'Administrators write strict mathematical rules (e.g., "Any SSH traffic originating from outside the United States is instantly dropped").']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Methodology', 'Description']} rows={[ ['Signature-Based', 'The IPS maintains a massive database of mathematical fingerprints for known malware (like a virus scanner). It is extremely fast but cannot detect brand new "zero-day" attacks.'], ['Anomaly-Based', 'The IPS uses machine learning to mathematically baseline the "normal" traffic patterns of the network over several weeks. If traffic suddenly spikes or deviates from the baseline, it is blocked.'], ['Policy-Based', 'Administrators write strict mathematical rules (e.g., "Any SSH traffic originating from outside the United States is instantly dropped").'] ]} />
+
+

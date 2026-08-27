@@ -1,8 +1,25 @@
+---
+title: Lemmatization
+description: A linguistically aware mathematical algorithm that reduces words to their absolute base dictionary form (lemma), taking into account context and part-of-speech.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Lemmatization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Lemmatization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In NLP, "running," "runs," and "ran" are mathematically treated as three entirely different words, which dilutes the predictive power of a model. We must reduce them to their base form.
 
-</ConceptTemplate>
+## 1. Stemming vs. Lemmatization
+**Stemming** is a dumb, brute-force mathematical hack. It simply chops the ends off words. A stemmer chops "Caring" into "Car," which completely destroys the semantic meaning.
+**Lemmatization** uses a massive, pre-compiled dictionary (like WordNet) and mathematical morphological analysis. It analyzes the context of the sentence. If it sees "He is caring," it knows "caring" is an adjective and correctly reduces it to the lemma "care," completely avoiding the "car" mistake.
+
+## 2. The Computational Cost
+Because Stemming is just a simple Regex chop, it is mathematically instantaneous.
+Lemmatization requires the computer to first run a Part-of-Speech Tagger (to figure out if the word is a noun or a verb), and then mathematically query a massive dictionary database. Therefore, Lemmatization is significantly slower and more CPU-intensive, but absolutely mandatory for high-accuracy NLP tasks like Sentiment Analysis or Machine Translation.
+

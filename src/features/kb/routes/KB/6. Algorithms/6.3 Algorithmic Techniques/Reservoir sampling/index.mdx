@@ -1,8 +1,33 @@
+---
+title: Reservoir Sampling
+description: "A mathematical family of randomized algorithms for choosing a simple random sample of 'K' items from a massive population of 'N' items, where 'N' is either unknown or too large to fit into main memory."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reservoir sampling">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Reservoir Sampling"
+  subtitle="Sampling the Infinite Stream"
+  tags={['Algorithms', 'Techniques', 'Randomization', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Imagine you are reading a live, infinite stream of Twitter posts. Your manager asks you to save exactly 10 random posts to represent the whole day.
+You cannot store all the posts in an array and pick 10 at the end, because you don't have enough RAM. You cannot just pick the first 10, because that isn't random.
 
-</ConceptTemplate>
+## 1. The Mathematical Reservoir
+Reservoir Sampling solves this elegantly in O(N) time and O(K) space.
+1. Create a "Reservoir" array of size K (e.g., K = 10).
+2. For the first 10 tweets you receive, mathematically put them all in the Reservoir.
+3. When the 11th tweet arrives, you generate a random number `R` between 1 and 11. If `R <= 10`, you evict the tweet at index `R` in the reservoir and replace it with the new 11th tweet. If `R == 11`, you ignore the 11th tweet.
+4. When the Nth tweet arrives, generate a random number `R` between 1 and N. If `R <= 10`, replace.
+
+## 2. The Probability Proof
+It seems completely unfair to the early tweets, but mathematically, it is perfectly uniform.
+By induction, you can mathematically prove that after N items have been processed, *every single item* (whether it arrived first or last) has an exact mathematical probability of **K / N** of being inside the Reservoir.
+

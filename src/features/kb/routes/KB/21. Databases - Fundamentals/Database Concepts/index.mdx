@@ -4,7 +4,14 @@ description: The fundamental principles governing data storage, retrieval, and t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Core Database Concepts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Core Database Concepts">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before deciding between PostgreSQL, MongoDB, or Redis, an engineer must understand the fundamental concepts that govern how any database physically stores and protects data on a hard drive.
 
@@ -31,4 +38,3 @@ Searching a database row-by-row (a "Full Table Scan") is incredibly slow. An **I
 - If you query `WHERE user_id = 500`, the database uses the Index to find the user in $O(\log N)$ time, instead of scanning all 10 million rows.
 - **The Trade-off**: Indexes consume massive amounts of disk space, and every time you `INSERT` or `UPDATE` a row, the database must also pause to update the Index, slowing down write speeds.
 
-</ConceptTemplate>

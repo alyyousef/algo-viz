@@ -4,25 +4,31 @@ description: An added layer of security that helps to detect and mitigate certai
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Content Security Policy (CSP)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Content Security Policy (CSP)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a web server tells a browser to render a webpage, the browser blindly trusts everything the server sends. If an attacker injects a malicious `<script src="hacker.com/malware.js"></script>` into the page, the browser will mathematically execute it because it cannot distinguish between the developer's code and the attacker's code.
 
 **Content Security Policy (CSP)** is a mathematical HTTP header that solves this. It acts as a strict whitelist, explicitly telling the browser exactly which domains are allowed to execute scripts, load images, or open WebSockets.
 
+
 <Callout icon="success" title="The Ultimate XSS Defense">
+
+
   A strong CSP is the single most effective defense against XSS. If your CSP is `default-src 'self'`, and an attacker successfully injects a malicious script tag pointing to `hacker.com`, the browser will mathematically refuse to load it, completely neutralizing the attack.
+
+
 </Callout>
+
 
 ## Core CSP Directives
 
-<ComparisonTable 
-  headers={['Directive', 'Example', 'Meaning']}
-  rows={[
-    ['default-src', `'self'`, 'The fallback whitelist. Only allow resources to be loaded from the exact same domain as the current webpage.'],
-    ['script-src', `'self' https://apis.google.com`, 'Only allow JavaScript to execute if it comes from our own domain or Google\'s API domain. Mathematically blocks all inline `<script>` blocks.'],
-    ['img-src', `*`, 'Allow images to be loaded from absolutely anywhere on the internet (useful for user-generated content).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Directive', 'Example', 'Meaning']} rows={[ ['default-src', `'self'`, 'The fallback whitelist. Only allow resources to be loaded from the exact same domain as the current webpage.'], ['script-src', `'self' https://apis.google.com`, 'Only allow JavaScript to execute if it comes from our own domain or Google\'s API domain. Mathematically blocks all inline `<script> ` blocks.'], ['img-src', `*`, 'Allow images to be loaded from absolutely anywhere on the internet (useful for user-generated content).'] ]} />
+

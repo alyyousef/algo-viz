@@ -1,0 +1,24 @@
+---
+title: Amazon CloudFront
+description: A massive, globally distributed Content Delivery Network (CDN) that caches static and dynamic web content at the physical edges of the internet to mathematically minimize latency for end users.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon CloudFront"
+  subtitle="AWS's Global CDN"
+  tags={['AWS', 'CDN', 'Networking', 'Edge']}
+>
+
+If your web server is in Virginia, and a user in Tokyo requests a 5MB image, the data must physically travel through deep-sea fiber optic cables across the Pacific Ocean, which takes 200 milliseconds. CloudFront solves this geographical physics problem.
+
+## 1. Edge Locations and Caching
+CloudFront consists of hundreds of **Points of Presence (PoPs)** located in major cities around the globe.
+When the Tokyo user requests the image, the request is mathematically routed via DNS to the Tokyo PoP. If the image is not there (a Cache Miss), CloudFront fetches it from Virginia, delivers it to the user, and *saves a copy in Tokyo*. The next million users in Tokyo who request that image get it directly from the local PoP in 5 milliseconds. This mathematically reduces the load on your Virginia server to near zero.
+
+## 2. Edge Compute (Lambda@Edge)
+CloudFront is not just dumb storage; it is a distributed compute engine.
+Using **Lambda@Edge** or **CloudFront Functions**, you can execute JavaScript directly inside the Tokyo PoP before the request even reaches your main server.
+You can mathematically inspect the HTTP headers, realize the user is on an iPhone, and rewrite the URL to serve a mobile-optimized image, all in sub-milliseconds at the edge of the network, drastically improving security, routing, and user experience.
+
+</TechnologyTemplate>

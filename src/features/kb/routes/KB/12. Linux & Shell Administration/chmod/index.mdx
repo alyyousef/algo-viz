@@ -4,7 +4,14 @@ description: The fundamental command used to change the read, write, and execute
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="chmod">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="chmod">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **`chmod`** (Change Mode) command is one of the most frequently used commands in Linux. It modifies the permission bits (Read, Write, Execute) for the Owner, Group, and Others.
 
@@ -33,8 +40,13 @@ If you don't want to calculate numbers, you can use symbolic math using `u` (Use
 - **Remove Write permission for Others**: `chmod o-w public.txt`
 - **Explicitly set Group to Read-only**: `chmod g=r public.txt`
 
+
 <Callout icon="warning" title="Directories and Execute">
+
+
   Remember that for a directory, the "Execute" bit means "Allow the user to CD into this directory". If you remove the Execute bit from a directory (`chmod -x`), no one will be able to open it, even if they have Read permission!
+
+
 </Callout>
 
-</ConceptTemplate>
+

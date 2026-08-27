@@ -1,8 +1,30 @@
+---
+title: Requirements Engineering
+description: The systematic, rigorous process of eliciting, documenting, analyzing, and managing the exact mathematical and functional expectations of stakeholders before a single line of code is written.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Requirements engineering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Requirements Engineering"
+  subtitle="Defining Mathematical Intent"
+  tags={['Process', 'SDLC', 'Product Management', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The most mathematically expensive bug in software engineering is building the wrong product flawlessly. If the code is perfect but it does not solve the user's actual problem, the entire engineering effort is a mathematical waste of capital.
 
-</ConceptTemplate>
+## 1. Elicitation and Analysis
+Users rarely know exactly what they want in mathematical terms. They say: *"The app needs to be fast."*
+The Requirements Engineer must translate that vague desire into a strict, testable mathematical requirement: *"When a user clicks 'Load Dashboard', the API must return the JSON payload in under 200 milliseconds at the P95 latency percentile."* This provides the engineering team with a concrete, physical target.
+
+## 2. Functional vs Non-Functional Requirements
+Requirements are strictly divided into two categories:
+- **Functional Requirements**: What the system mathematically *does*. (e.g., "The system must calculate sales tax based on the user's zip code.")
+- **Non-Functional Requirements (NFRs)**: How the system mathematically *behaves*. (e.g., Security, Scalability, Reliability). "The system must encrypt passwords using Argon2" or "The system must support 10,000 concurrent TCP connections." NFRs are often more mathematically complex to implement than the functional requirements.
+

@@ -1,8 +1,30 @@
+---
+title: Code Linting
+description: "The automated mathematical process of running a static analysis tool against source code to flag programming errors, bugs, stylistic violations, and suspicious constructs before the code is compiled or executed."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Code linting">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Code Linting"
+  subtitle="Automated Static Analysis"
+  tags={['Process', 'Clean Code', 'Tooling', 'JavaScript']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a team of 50 developers, arguments about whether to use spaces or tabs, or whether to put curly braces on a new line, are mathematically a massive waste of expensive engineering time.
 
-</ConceptTemplate>
+## 1. Automated Enforcer
+A Linter (like ESLint for JavaScript or SonarQube for Java) solves this by mathematically enforcing the rules.
+The architectural team defines a configuration file (`.eslintrc`). The Linter parses the source code into an Abstract Syntax Tree (AST) and mathematically checks it against the rules.
+If a developer forgets a semicolon, leaves an unused variable, or uses a dangerous mathematical operator (like `==` instead of `===` in JS), the Linter paints the IDE red and throws an error.
+
+## 2. CI/CD Integration
+Linters are mathematically integrated directly into the CI/CD pipeline (Continuous Integration).
+When a developer opens a Pull Request on GitHub, the CI server runs the Linter. If the code violates the mathematical styling rules, the CI server instantly fails the build and blocks the PR from merging. This automates code formatting, completely eliminating styling arguments during human Code Review.
+

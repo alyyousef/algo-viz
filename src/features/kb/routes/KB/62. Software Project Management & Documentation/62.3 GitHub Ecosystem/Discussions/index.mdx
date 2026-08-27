@@ -4,10 +4,16 @@ description: A collaborative communication forum for the community around an ope
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GitHub Discussions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Discussions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Historically, users would biologically flood the "Issues" tab with questions like *"How do I install this?"* or *"What if you added this massive feature?"*. This mathematically polluted the strict bug tracker.
 
 **Discussions** act as a biological Reddit-style forum built directly into the repository. It gives the human community a place to biologically ask questions, vote in polls, and share ideas, keeping the mathematical Issues tab strictly reserved for actionable code bugs.
 
-</ConceptTemplate>

@@ -4,15 +4,28 @@ description: The landmark state statute that brought GDPR-style data privacy rig
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="CCPA (California Consumer Privacy Act)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CCPA (California Consumer Privacy Act)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Because the United States lacks a comprehensive federal data privacy law, the state of California stepped in. Enacted in 2020 (and significantly expanded by the CPRA in 2023), the **CCPA** is the strictest data privacy law in America.
 
 Because California represents the 5th largest economy in the world, almost every major technology company was forced to adopt CCPA standards nationwide rather than trying to geographically segregate California users.
 
+
 <Callout icon="info" title="The 'Do Not Sell' Mandate">
+
+
   The most famous and visible requirement of the CCPA is that companies must place a clear, conspicuous link on their website\'s homepage titled **"Do Not Sell or Share My Personal Information"**. Clicking this must immediately halt the mathematical exchange of the user\'s data with third-party ad networks.
+
+
 </Callout>
+
 
 ## Key Rights Under CCPA/CPRA
 
@@ -22,4 +35,3 @@ Because California represents the 5th largest economy in the world, almost every
 4. **Right to Non-Discrimination:** A business cannot charge a consumer a different price or provide a lower quality of service just because the consumer exercised their privacy rights.
 5. **Right to Correct:** (Added by CPRA) Consumers can demand the correction of inaccurate personal data.
 
-</ConceptTemplate>

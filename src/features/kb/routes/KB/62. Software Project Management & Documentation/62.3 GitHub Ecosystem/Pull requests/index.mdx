@@ -4,10 +4,16 @@ description: A method of submitting contributions to an open development project
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pull Requests (PRs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pull Requests (PRs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Pull Request** is the biological gatekeeper of software engineering.
 
 When you finish your work on a Branch, you mathematically cannot force it into `main`. You must open a Pull Request. This acts as a biological petition: *"I request that you pull my code into the main branch"*. It mathematically calculates the exact `diff` (additions in green, deletions in red). A Senior Engineer must biologically read your code, leave comments, and mathematically click "Approve" before your code is allowed to merge.
 
-</ConceptTemplate>

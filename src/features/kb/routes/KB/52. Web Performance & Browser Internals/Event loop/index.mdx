@@ -4,21 +4,33 @@ description: The secret behind JavaScript's asynchronous concurrency model.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Event Loop">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Event Loop">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 JavaScript is mathematically **Single-Threaded**. It only has one physical Call Stack. It can only execute one line of code at a time.
 
-So, if JS is single-threaded, how can it execute a `setTimeout` for 5 seconds, whilst simultaneously rendering a UI animation, without freezing the browser? 
+So, if JS is single-threaded, how can it execute a `setTimeout` for 5 seconds, whilst simultaneously rendering a UI animation, without freezing the browser?
 
 The answer is the **Event Loop**.
 
+
 <Callout icon="success" title="The Architecture">
+
+
   1. **The Call Stack:** Executes your `console.log` statements.
   2. **Web APIs:** When you call `fetch()`, the Call Stack mathematically hands the network request off to the Browser's C++ threads (Web APIs) and continues executing.
   3. **The Callback Queue:** When the HTTP response returns 2 seconds later, the Web API pushes the `.then()` callback into the Queue.
   4. **The Event Loop:** This is an infinite biological loop. It constantly asks: *"Is the Call Stack empty?"* If yes, it grabs the first item from the Callback Queue and pushes it onto the Call Stack.
+
+
 </Callout>
+
 
 Understanding the Event Loop is the most mathematically critical requirement for senior JavaScript engineering.
 
-</ConceptTemplate>

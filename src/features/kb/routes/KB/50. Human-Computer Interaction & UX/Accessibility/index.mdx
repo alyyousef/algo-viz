@@ -4,23 +4,35 @@ description: The inclusive practice of ensuring there are no barriers that preve
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Digital Accessibility (a11y)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Digital Accessibility (a11y)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Accessibility** (numeronym: **a11y**) is not a nice-to-have feature. In many countries, it is a strict legal requirement. 
+**Accessibility** (numeronym: **a11y**) is not a nice-to-have feature. In many countries, it is a strict legal requirement.
 
 It is the mathematical and architectural discipline of ensuring that a software system is 100% usable by humans with visual, motor, auditory, or cognitive disabilities.
 
+
 <Callout icon="warning" title="The Screen Reader Reality">
+
+
   If a blind user visits a website, they cannot see the UI. They use a **Screen Reader** (like VoiceOver or NVDA) which mathematically reads the HTML DOM aloud.
-  
+
   If a developer builds a button using a `<div>` with an `onClick` handler instead of a native `<button>` tag, the Screen Reader will mathematically assume it is just plain text. The blind user will physically not know the button exists, rendering the software completely broken. This is why **Semantic HTML** is a critical engineering requirement.
+
+
 </Callout>
+
 
 ## The Curb Cut Effect
 
 The greatest psychological truth of Accessibility is the **Curb Cut Effect**.
-When cities physically cut slopes into sidewalks (Curb Cuts) to help people in wheelchairs, they discovered it massively helped people pushing strollers, people on bicycles, and people carrying heavy luggage. 
+When cities physically cut slopes into sidewalks (Curb Cuts) to help people in wheelchairs, they discovered it massively helped people pushing strollers, people on bicycles, and people carrying heavy luggage.
 
 Designing software for extreme disabilities mathematically improves the UX for everyone. (e.g., High contrast text helps visually impaired users, but it also helps a 20-year-old trying to read their phone outside in the glaring sun).
 
-</ConceptTemplate>

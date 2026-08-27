@@ -1,8 +1,33 @@
+---
+title: Clean Code
+description: "A philosophy of software craftsmanship, popularized by Robert C. Martin (Uncle Bob), that emphasizes writing code that is mathematically simple, highly readable, and easily maintainable by human engineers."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Clean code">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Clean Code"
+  subtitle="Writing for the Human, Not the Machine"
+  tags={['Process', 'Clean Code', 'Engineering', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A compiler mathematically does not care if your variables are named `a`, `b`, and `c`, or if your function is 5,000 lines long. The computer will execute it perfectly. Clean Code is the realization that source code is written for *human beings* to read.
 
-</ConceptTemplate>
+## 1. The Reading to Writing Ratio
+Robert C. Martin mathematically observed that engineers spend 10 times as much time *reading* old code as they do writing new code.
+Therefore, optimizing code so that it is "fast to type" (by using short, cryptic variable names) is a mathematical catastrophe. Code must be optimized for readability.
+- **Bad**: `int d; // elapsed time in days`
+- **Clean**: `int elapsedTimeInDays;`
+
+## 2. Core Principles
+Clean Code dictates strict mathematical heuristics:
+- **Functions should be small**: A function should do exactly one thing (Single Responsibility Principle) and ideally be shorter than 20 lines.
+- **No Side Effects**: A function named `checkPassword()` must mathematically only check the password. It must not secretly initialize a user session in the background.
+- **Meaningful Names**: The name of a variable, function, or class should mathematically answer all the big questions: why it exists, what it does, and how it is used. Comments are considered a failure to express the intent mathematically in the code itself.
+

@@ -1,8 +1,38 @@
+---
+title: Singular Value Decomposition (SVD)
+description: "One of the most profound algorithms in linear algebra, decomposing any matrix into three simple geometric transformations, used for data compression and recommendation engines."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SVD">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Singular Value Decomposition (SVD)"
+  subtitle="The Ultimate Matrix Factorization"
+  tags={['Mathematics', 'Linear Algebra', 'Data Science', 'Machine Learning']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Not every matrix is a perfect, square matrix that has Eigenvectors. How do you find the underlying mathematical skeleton of messy, rectangular, real-world data (like a database of 10,000 users and 500 movies)? You use **Singular Value Decomposition (SVD)**.
 
-</ConceptTemplate>
+## 1. The Theorem
+SVD mathematically proves that *any* matrix $A$, no matter how weird or rectangular, can be perfectly decomposed into a multiplication of three very specific matrices:
+$A = U \Sigma V^T$
+
+1. **$V^T$ (Rotation)**: Aligns the data with the optimal axes.
+2. **$\Sigma$ (Scaling)**: Stretches or squishes the data. The values on the diagonal are the "Singular Values", sorted from most important to least important.
+3. **$U$ (Rotation)**: A final rotation into the target space.
+
+## 2. The Netflix Prize (Recommendation Engines)
+In 2006, Netflix offered $1,000,000 to anyone who could improve their recommendation algorithm by 10%. The winning team famously used SVD.
+If you have a massive, sparse matrix of Users vs. Movie Ratings, you run SVD. The algorithm mathematically discovers hidden "latent concepts". It might figure out that User 14 loves Action movies, even though "Action" isn't explicitly labeled in the data. The mathematical decomposition naturally clusters related users and movies.
+
+## 3. Data Compression (Dimensionality Reduction)
+Because the $\Sigma$ matrix sorts the Singular Values by mathematical importance, you can simply throw away the bottom 80% of the values (setting them to zero) and multiply the matrices back together.
+The result is a highly compressed matrix that still retains almost all the original, meaningful variance. This is mathematically equivalent to Principal Component Analysis (PCA).
+
+\n

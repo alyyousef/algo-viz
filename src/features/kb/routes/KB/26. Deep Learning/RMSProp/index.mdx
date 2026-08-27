@@ -4,9 +4,16 @@ description: A critical optimization algorithm designed to solve the rapidly dim
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RMSProp (Root Mean Square Propagation)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RMSProp (Root Mean Square Propagation)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In Deep Learning, some parameters (like common words) are updated constantly, while others (like rare words) are updated rarely. **AdaGrad** was an early optimizer that assigned a unique learning rate to every parameter, dividing the rate by the sum of all past squared gradients. 
+In Deep Learning, some parameters (like common words) are updated constantly, while others (like rare words) are updated rarely. **AdaGrad** was an early optimizer that assigned a unique learning rate to every parameter, dividing the rate by the sum of all past squared gradients.
 But AdaGrad had a fatal mathematical flaw: because it kept summing *all* past gradients forever, the denominator constantly grew, mathematically crushing the learning rate down to absolute $0$, stopping training entirely. **RMSProp** was invented to fix this.
 
 ## 1. The Moving Average Fix
@@ -14,7 +21,7 @@ Instead of keeping a permanent sum of all past history, RMSProp mathematically a
 
 $E[g^2]_t = 0.9 cdot E[g^2]_{t-1} + 0.1 cdot g_t^2$
 
-This equation mathematically forces the algorithm to heavily prioritize recent gradients and slowly "forget" the distant past. 
+This equation mathematically forces the algorithm to heavily prioritize recent gradients and slowly "forget" the distant past.
 
 ## 2. The Mathematical Normalization
 When updating the weights, RMSProp mathematically divides the learning rate by the square root of that moving average.
@@ -24,4 +31,3 @@ When updating the weights, RMSProp mathematically divides the learning rate by t
 ## 3. Legacy
 RMSProp was so historically effective that it was famously never published in a formal peer-reviewed paper; it was simply taught by Geoffrey Hinton in a Coursera lecture. It mathematically forms one half of the modern **Adam** optimizer (Adam is literally just RMSProp + Momentum).
 
-</ConceptTemplate>

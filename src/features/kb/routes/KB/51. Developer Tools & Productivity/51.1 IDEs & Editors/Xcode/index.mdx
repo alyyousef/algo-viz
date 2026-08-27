@@ -5,7 +5,7 @@ description: "Apple's official IDE for macOS, used to develop software for iOS, 
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   name="Xcode"
   icon="xcode"
   creator="Apple"
@@ -20,7 +20,7 @@ It is the official, monolithic IDE provided by Apple for writing Swift and Objec
 ## Features and Pain Points
 
 ### 1. Interface Builder & SwiftUI
-Historically, iOS developers dragged and dropped UI elements onto a canvas (Storyboards). This generated massive, unreadable XML files that caused terrifying merge conflicts in Git. 
+Historically, iOS developers dragged and dropped UI elements onto a canvas (Storyboards). This generated massive, unreadable XML files that caused terrifying merge conflicts in Git.
 Today, Xcode heavily pushes **SwiftUI**, a modern, declarative UI framework (similar to React). Xcode provides incredibly fast "Canvas Previews," allowing developers to see the UI update in real-time as they type Swift code.
 
 ### 2. Instruments
@@ -29,8 +29,14 @@ Xcode includes "Instruments," a world-class profiling tool. It allows developers
 ### 3. The "Xcode Experience"
 Xcode is infamous in the developer community for its immense file size (often over 12GB to download), its tendency to crash mysteriously, and its unhelpful error messages (like the dreaded "Derived Data" corruption, which requires developers to nuke a specific hidden folder just to make the project compile again).
 
+
 <Callout icon="warning" title="Vendor Lock-in">
+
+
 Xcode is the ultimate example of a walled garden. It is completely proprietary, runs only on macOS, and is the absolute gatekeeper to a multi-billion dollar app ecosystem.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

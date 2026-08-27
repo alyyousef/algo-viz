@@ -1,0 +1,24 @@
+---
+title: OCI Terraform Provider
+description: The official, mathematically deterministic Infrastructure as Code (IaC) plugin that allows HashiCorp Terraform to provision and manage Oracle Cloud resources.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Terraform Provider"
+  subtitle="Infrastructure as Code for Oracle"
+  tags={['OCI', 'Terraform', 'IaC', 'Automation']}
+>
+
+Manually clicking through the OCI Web Console to build 50 servers is mathematically unscalable and prone to human error. The OCI Terraform Provider allows you to define your entire cloud architecture in strict, version-controlled code.
+
+## 1. Declarative Architecture
+Terraform uses HCL (HashiCorp Configuration Language). It is mathematically **declarative**, not imperative.
+You do not tell OCI *how* to build a server. You declare the mathematical *end-state*: *"I want exactly one `oci_core_instance` with 4 OCPUs in the US-Ashburn region."*
+When you run `terraform apply`, the OCI Provider mathematically queries the current state of the cloud. If the server does not exist, it executes the exact REST API calls to create it. If the server already exists but only has 2 OCPUs, Terraform calculates the mathematical delta and executes the API call to upgrade the OCPUs to 4, guaranteeing the physical cloud matches your code perfectly.
+
+## 2. OCI Resource Manager Integration
+Running Terraform locally on a developer's laptop creates a security risk (managing the `terraform.tfstate` file).
+OCI natively integrates Terraform directly into the cloud via **OCI Resource Manager**. You push your Terraform code to a Git repository. OCI Resource Manager mathematically pulls the code, securely executes the Terraform binary inside the OCI Control Plane, and safely stores the state file in an encrypted internal bucket. This provides enterprise-grade IaC governance without managing external CI/CD runners.
+
+</TechnologyTemplate>

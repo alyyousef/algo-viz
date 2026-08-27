@@ -1,8 +1,31 @@
+---
+title: Elasticsearch vs OpenSearch
+description: "A history of open-source politics and licensing, contrasting Elastic's move to proprietary licenses with Amazon's hard fork to maintain a purely open-source Lucene-based search engine."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Elasticsearch vs OpenSearch">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Elasticsearch vs OpenSearch"
+  subtitle="The Open Source Fork"
+  tags={['Comparison', 'Databases', 'Search', 'Open Source']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Elasticsearch (built on Apache Lucene) is the dominant mathematical engine for full-text search and log analytics. However, a massive licensing war resulted in a hard split in the ecosystem.
 
-</ConceptTemplate>
+## 1. The Licensing War (Elasticsearch)
+Historically, Elasticsearch was purely open-source (Apache 2.0). Amazon Web Services (AWS) hosted it and made billions of dollars without contributing much back to Elastic (the parent company).
+In 2021, Elastic mathematically struck back by changing its license to the **SSPL** (Server Side Public License). This explicitly banned cloud providers like AWS from offering Elasticsearch as a managed service, forcing enterprise customers into Elastic's own cloud.
+
+## 2. The Hard Fork (OpenSearch)
+Because AWS was legally banned from using new versions of Elasticsearch, they took the last open-source version (7.10) and mathematically **forked** it, creating **OpenSearch**.
+- **OpenSearch**: Purely open-source (Apache 2.0), driven by AWS and a coalition of enterprises. It is highly optimized for AWS integrations.
+- **Elasticsearch**: Proprietary, but mathematically more feature-rich due to Elastic's focused engineering team (especially in Machine Learning and Vector Search).
+For standard developers, their APIs are nearly identical, but massive corporations must now choose based on licensing legality and their cloud provider alignment.
+

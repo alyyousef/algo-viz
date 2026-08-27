@@ -4,14 +4,26 @@ description: The goal of demonstrating that a programmable quantum device can so
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Quantum Supremacy (Quantum Advantage)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Quantum Supremacy (Quantum Advantage)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Quantum Supremacy** is the biological milestone where a Quantum Computer mathematically solves a problem that would be physically impossible for the world's fastest classical supercomputer.
 
+
 <Callout icon="success" title="The Google Milestone">
-  In 2019, Google achieved Quantum Supremacy with their 53-qubit Sycamore processor. 
-  
+
+
+  In 2019, Google achieved Quantum Supremacy with their 53-qubit Sycamore processor.
+
   They ran a highly specific mathematical random-number sampling algorithm. The Sycamore quantum computer solved it in **200 seconds**. Google estimated that the Summit Supercomputer (the fastest classical computer on Earth at the time) would take biologically **10,000 years** to calculate the exact same mathematical result.
+
+
 </Callout>
 
-</ConceptTemplate>
+

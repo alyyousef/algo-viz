@@ -5,15 +5,22 @@ description: "Plugins that Terraform uses to translate HCL code into API calls f
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Terraform Providers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Terraform Providers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The core Terraform binary is actually quite dumb—it doesn't know how to talk to AWS, it doesn't know how to create an Azure VM, and it doesn't know what an S3 bucket is. 
+The core Terraform binary is actually quite dumb—it doesn't know how to talk to AWS, it doesn't know how to create an Azure VM, and it doesn't know what an S3 bucket is.
 
 All of that logic is outsourced to **Providers**.
 
 ## 1. What is a Provider?
 A Provider is a plugin (a separate Go binary downloaded during `terraform init`) that understands the API interactions for a specific service.
-- When you define an `aws_s3_bucket`, Terraform Core hands that request to the AWS Provider. 
+- When you define an `aws_s3_bucket`, Terraform Core hands that request to the AWS Provider.
 - The AWS Provider knows how to authenticate via IAM, construct the correct JSON payload, and send the HTTP POST request to the AWS API.
 
 ## 2. Configuring Providers
@@ -39,8 +46,13 @@ provider "aws" {
 ## 3. Multiple Providers (Aliasing)
 You can use multiple providers in the same project, or even multiple instances of the *same* provider. For example, if you need to deploy an S3 bucket in `us-east-1` and a backup bucket in `eu-west-1`, you use Provider Aliases.
 
+
 <Callout icon="tip" title="The Provider Registry">
+
+
 HashiCorp maintains a public registry (registry.terraform.io) hosting thousands of providers. There are providers for major clouds (AWS, GCP, Azure), SaaS platforms (GitHub, Datadog, Stripe), and even localized services (Active Directory, PostgreSQL).
+
+
 </Callout>
 
-</ConceptTemplate>
+

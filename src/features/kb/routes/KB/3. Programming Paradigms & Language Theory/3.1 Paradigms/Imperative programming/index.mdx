@@ -4,19 +4,32 @@ description: A paradigm that uses statements that change a program's state, focu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Imperative Programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Imperative Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Imperative Programming** is the oldest and most fundamental programming paradigm. It is closely tied to the physical architecture of computers (the von Neumann architecture).
 
 In the imperative paradigm, the programmer writes code that describes **exactly HOW** the computer should perform a task, step-by-step. It relies heavily on statements that change the underlying memory state of the computer (mutating variables).
 
+
 <Callout icon="info" title="The Recipe Analogy">
+
+
   Imperative programming is like giving someone a recipe:
   1. Take a bowl.
   2. Put 2 eggs in the bowl.
   3. While the eggs are not whisked, stir the eggs.
   4. Pour the bowl into a pan.
+
+
 </Callout>
+
 
 ## Core Concepts
 
@@ -33,7 +46,7 @@ const numbers = [1, 2, 3, 4];
 const evens = []; // Mutable state
 
 // Explicit control flow and mutation
-for (let i = 0; i < numbers.length; i++) {
+for (let i = 0; i &lt; numbers.length; i++) {
   if (numbers[i] % 2 === 0) {
     evens.push(numbers[i]);
   }
@@ -45,4 +58,3 @@ for (let i = 0; i < numbers.length; i++) {
 - **Strengths**: It maps directly to how the CPU actually executes machine code, making it highly performant and intuitive for low-level memory manipulation (C, Assembly).
 - **Weaknesses**: As systems grow massively complex, tracking the constantly changing "State" of hundreds of variables leads to severe bugs and makes concurrent (multi-threaded) programming incredibly dangerous.
 
-</ConceptTemplate>

@@ -1,0 +1,24 @@
+---
+title: Google Cloud Bigtable
+description: A massively scalable, sparsely populated NoSQL wide-column store designed for high-throughput, low-latency mathematical operations on petabytes of structured data.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google Cloud Bigtable"
+  subtitle="High-Throughput Wide-Column NoSQL"
+  tags={['GCP', 'Database', 'NoSQL', 'Big Data']}
+>
+
+Bigtable is the exact underlying database architecture that physically powers Google Search, Google Maps, and YouTube. It is not designed for complex SQL joins; it is mathematically engineered to read and write millions of rows per second at single-digit millisecond latency.
+
+## 1. The 3D Mathematical Map
+Bigtable is fundamentally a massive, distributed, multi-dimensional sorted map.
+The data is mathematically indexed by exactly three values: **(Row Key, Column Key, Timestamp)**.
+Because the data is strictly lexicographically sorted by the Row Key, querying is blisteringly fast, but *only* if you know the Row Key. If you design your Row Key poorly (e.g., using sequential user IDs like 1, 2, 3), you create a "hotspot"—all writes mathematically hit the exact same physical server node, melting it. Proper Bigtable architecture requires mathematical hashing of the Row Key to perfectly distribute the load across the cluster.
+
+## 2. Analytical vs. Transactional
+Unlike Datastore (Firestore), Bigtable does not support multi-row ACID transactions. It is purely designed for scale.
+It is heavily used for **Time-Series Data** (e.g., IoT sensors sending temperature readings every millisecond) and **Financial Data** (e.g., tracking every stock trade in the world in real-time). Because it integrates natively with Apache Hadoop and Spark, it acts as the high-speed ingestion buffer that eventually feeds into analytical engines like BigQuery.
+
+</TechnologyTemplate>

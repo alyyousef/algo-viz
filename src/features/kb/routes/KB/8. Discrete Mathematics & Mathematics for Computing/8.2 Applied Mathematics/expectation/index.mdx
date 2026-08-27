@@ -1,8 +1,44 @@
+---
+title: Expected Value
+description: "The mathematical calculation of the long-term average outcome of a random variable, serving as the basis for risk analysis and algorithm performance."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="expectation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Expected Value"
+  subtitle="The Long-Term Average"
+  tags={['Mathematics', 'Probability', 'Statistics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The **Expected Value** (or Expectation) of a random variable is the theoretical long-run average value of repetitions of the experiment it represents.
 
-</ConceptTemplate>
+## 1. The Formula
+For a discrete random variable $X$, the Expected Value $E[X]$ is calculated by multiplying each possible outcome by its probability, and summing them all up.
+$E[X] = \sum x_i P(x_i)$
+
+- **Example (A Dice Roll)**: $E[X] = 1(\frac{1}{6}) + 2(\frac{1}{6}) + 3(\frac{1}{6}) + 4(\frac{1}{6}) + 5(\frac{1}{6}) + 6(\frac{1}{6}) = 3.5$
+Notice that 3.5 is mathematically impossible to roll on a single die, but it is the exact average if you roll the die a million times.
+
+## 2. Linearity of Expectation
+One of the most mathematically powerful properties in statistics is the **Linearity of Expectation**. It states that the expected value of a sum of random variables is equal to the sum of their individual expected values, *even if the variables are dependent*.
+$E[X + Y] = E[X] + E[Y]$
+
+
+<Callout type="success" title="Algorithmic Application">
+
+
+  In Computer Science, this property is heavily used to prove the Expected Time Complexity of randomized algorithms. For example, the expected runtime of Randomized Quicksort is mathematically proven to be $O(N \log N)$ purely through the Linearity of Expectation on the random pivot choices.
+
+
+</Callout>
+
+
+\n

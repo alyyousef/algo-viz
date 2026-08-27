@@ -4,16 +4,28 @@ description: A category of cloud computing services that provides a platform all
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Function as a Service (FaaS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Function as a Service (FaaS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In the IaaS (Infrastructure as a Service) era, you rented a virtual Linux server and had to manage the OS, the networking, and the scaling.
 
 **FaaS** mathematically abstracts the server entirely.
 
+
 <Callout icon="success" title="The Micro-Container Paradigm">
-  With FaaS, the developer writes a single, stateless mathematical function (e.g., `function processPayment() { ... }`). 
-  
+
+
+  With FaaS, the developer writes a single, stateless mathematical function (e.g., `function processPayment() { ... }`).
+
   When an HTTP request arrives, the cloud provider dynamically spins up a micro-container in 50 milliseconds, executes the function, returns the response, and instantly destroys the container. You are billed purely for the execution time, usually measured in increments of 1 millisecond.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -4,12 +4,19 @@ description: The frameworks powering the data science, AI, and rapid-prototyping
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Python Ecosystem">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Python Ecosystem">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Python is legendary for its readability and its massive dominance in the Data Science and Artificial Intelligence sectors. However, it is also a powerhouse for web development.
 
 ## 1. Django (Batteries Included)
-Django's philosophy is "Batteries Included". 
+Django's philosophy is "Batteries Included".
 If you install Django, you immediately get a world-class ORM (Object-Relational Mapper) for database querying, a built-in authentication system, and a magical automatic Admin Dashboard UI that allows non-technical users to edit the database.
 
 It utilizes the MVT (Model-View-Template) architecture and enforces a strict "Django way" of doing things. It is the absolute industry standard for rapidly building massive, complex content-driven applications (Instagram was originally built on Django).
@@ -20,8 +27,7 @@ You are mathematically forced to piece together your own architecture using exte
 
 ## 3. FastAPI (The Modern Async Revolution)
 Historically, Python web servers were entirely synchronous (unlike Node.js), meaning they struggled heavily with concurrent network requests.
-**FastAPI** revolutionized the ecosystem. It is built entirely on modern Python Async/Await (ASGI). 
+**FastAPI** revolutionized the ecosystem. It is built entirely on modern Python Async/Await (ASGI).
 
 Furthermore, FastAPI relies heavily on Python **Type Hints** and Pydantic models. You define the exact mathematical shape of your JSON request, and FastAPI automatically validates it, serializes it, and magically generates a flawless **Swagger/OpenAPI** documentation page for your API. It is currently the fastest-growing framework in the Python ecosystem.
 
-</ConceptTemplate>

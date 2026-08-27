@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: AutoGen
+description: A groundbreaking framework developed by Microsoft designed explicitly to build Multi-Agent systems, where multiple specialized AI models converse and debate to solve complex tasks collaboratively.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="AutoGen">
+<TechnologyTemplate
+  title="AutoGen"
+  subtitle="Multi-Agent Conversational Framework"
+  tags={['AI', 'Agents', 'Microsoft', 'Multi-Agent Systems']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a single Agent gets confused, it often mathematically spirals into a hallucination loop. AutoGen solves this by creating multiple, distinct Agents that mathematically check each other's work through simulated human conversation.
 
-</ConceptTemplate>
+## 1. The Conversational Pattern
+In AutoGen, the fundamental unit of execution is not a single ReAct loop, but a **Message Passing Protocol**.
+You mathematically define a `CoderAgent` (prompted to write Python) and a `ReviewerAgent` (prompted to find bugs).
+The User gives the Coder a task. The Coder generates the code and mathematically passes it to the Reviewer. If the Reviewer finds a bug, it replies to the Coder. This multi-turn conversational loop mathematically continues until both Agents reach a consensus or the code successfully compiles.
+
+## 2. Human-in-the-Loop Integration
+AutoGen is mathematically designed to treat Human beings as just another Agent in the network.
+A `UserProxyAgent` is instantiated. During the massive AI-to-AI conversation, the System can mathematically pause execution and prompt the human via the Terminal: *"The Coder wants to delete this database. Do you approve?"* This architectural design seamlessly blends autonomous mathematical reasoning with strict human oversight.
+
+</TechnologyTemplate>

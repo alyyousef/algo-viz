@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Loki
+description: A horizontally-scalable, highly-available log aggregation system built by Grafana, mathematically inspired by Prometheus and designed specifically to be highly cost-effective by not indexing the contents of logs.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Loki">
+<TechnologyTemplate
+  title="Loki"
+  subtitle="Prometheus-Style Log Aggregation"
+  tags={['Observability', 'Logging', 'Grafana', 'Cost Optimization']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Elasticsearch is the industry standard for logs, but it is mathematically incredibly expensive to run. It performs a full-text index on every single word in every single log, which requires massive amounts of RAM and expensive SSDs.
 
-</ConceptTemplate>
+## 1. The Mathematical Compromise
+Grafana Loki achieves extreme cost reduction by making a specific mathematical compromise: **It does not index the text of the logs.**
+Instead, Loki only indexes the *metadata* (the labels). If you send an Nginx log to Loki, Loki indexes the labels `{app="frontend", environment="prod"}`, but it compresses the actual log text ("GET /api/users 200 OK") into a highly compressed block and writes it to cheap, slow storage like AWS S3.
+
+## 2. Label-Based Querying
+When an engineer needs to search for an error, they don't do a full-text search across 5TB of data.
+They use **LogQL**. They mathematically filter down to the exact specific stream using labels: `{app="frontend", environment="prod"}`. Loki grabs that specific compressed block from S3, decompresses it in memory, and then runs a mathematical regex grep across that tiny subset of logs to find the word "Error". This architecture allows companies to store petabytes of logs for a fraction of the mathematical cost of Elasticsearch.
+
+</TechnologyTemplate>

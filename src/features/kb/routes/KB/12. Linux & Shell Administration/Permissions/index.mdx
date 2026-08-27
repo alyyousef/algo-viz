@@ -4,9 +4,16 @@ description: The classic Unix Read, Write, and Execute bits that govern exactly 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Standard Permissions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Standard Permissions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Every single file and directory in Linux has a strict set of permissions that dictate exactly what can be done to it. 
+Every single file and directory in Linux has a strict set of permissions that dictate exactly what can be done to it.
 
 If you run `ls -l`, you will see a 10-character permission string on the far left, looking something like this: **`-rwxr-xr--`**
 
@@ -23,13 +30,18 @@ Inside each Triad, there are three possible bits:
 - **w (Write)**: Can modify the file. (For directories: can create/delete files inside).
 - **x (Execute)**: Can run the file as a program. (For directories: can `cd` into the directory).
 
+
 <Callout icon="success" title="Numeric (Octal) Notation">
-  Permissions are commonly represented as a 3-digit Octal number, where **Read=4**, **Write=2**, and **Execute=1**. 
+
+
+  Permissions are commonly represented as a 3-digit Octal number, where **Read=4**, **Write=2**, and **Execute=1**.
   - `chmod 755 script.sh` gives the Owner (4+2+1=7) full control, while giving the Group (4+0+1=5) and Others (4+0+1=5) read and execute only.
   - `chmod 600 key.pem` gives the Owner (4+2=6) read/write, and completely locks out everyone else (0, 0).
+
+
 </Callout>
+
 
 ## The Root Exception
 The `root` user entirely ignores these permission strings. The kernel grants Root the ability to read, write, or delete any file on the system, regardless of what the permission bits say.
 
-</ConceptTemplate>

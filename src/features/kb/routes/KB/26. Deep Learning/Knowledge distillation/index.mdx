@@ -4,7 +4,14 @@ description: A powerful model compression technique where a massive, highly accu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Knowledge Distillation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Knowledge Distillation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Massive Large Language Models (like a 70-Billion parameter LLaMA) are highly accurate, but computationally impossible to run on a standard smartphone. **Knowledge Distillation** solves this by using the massive model (the Teacher) to train a tiny model (the Student) to mathematically replicate its exact behavior.
 
@@ -18,8 +25,7 @@ When the massive Teacher model looks at an image of a Dog, it doesn't output 100
 - Cat: $14%$
 - Car: $1%$
 
-This distribution contains what researchers call **Dark Knowledge**. The Teacher model is mathematically communicating that a Dog is visually similar to a Cat, but looks absolutely nothing like a Car. 
-During Knowledge Distillation, the Student model is trained to mathematically minimize the KL-Divergence between its own outputs and the Teacher's *Soft Targets*. 
+This distribution contains what researchers call **Dark Knowledge**. The Teacher model is mathematically communicating that a Dog is visually similar to a Cat, but looks absolutely nothing like a Car.
+During Knowledge Distillation, the Student model is trained to mathematically minimize the KL-Divergence between its own outputs and the Teacher's *Soft Targets*.
 By learning the nuanced probabilities rather than rigid 1/0 labels, the tiny Student model is mathematically guided into replicating the exact complex decision boundaries of the Teacher, achieving accuracies impossible to reach if trained from scratch.
 
-</ConceptTemplate>

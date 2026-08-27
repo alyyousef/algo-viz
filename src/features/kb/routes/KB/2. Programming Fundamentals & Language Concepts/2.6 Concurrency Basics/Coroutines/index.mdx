@@ -1,8 +1,25 @@
+---
+title: Coroutines
+description: A form of cooperative multitasking where functions can mathematically yield control back and forth to each other without requiring the OS to manage physical threads.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Coroutines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Coroutines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard function executes from top to bottom. A Coroutine is a function that can mathematically pause its execution, yield control to another Coroutine, and later resume exactly where it left off.
 
-</ConceptTemplate>
+## 1. Cooperative vs Preemptive Multitasking
+In standard multithreading, the Operating System uses **Preemptive Multitasking**. The OS physically halts Thread A (Context Switch) and gives CPU time to Thread B, whether Thread A wanted to stop or not. This is mathematically expensive and requires Mutex locks to prevent data corruption.
+Coroutines use **Cooperative Multitasking**. The OS doesn't intervene. Coroutine A explicitly, mathematically says `yield`, voluntarily handing the CPU to Coroutine B. Because the coroutines never interrupt each other violently, you rarely need Mutex locks, resulting in insanely fast, lock-free concurrency.
+
+## 2. Stackless vs Stackful
+- **Stackless Coroutines** (e.g., C++20, Rust, Kotlin): The coroutine's state (its local variables) is mathematically packaged into an object and stored on the Heap when it pauses. It is highly memory efficient.
+- **Stackful Coroutines** (Fibers, Go Goroutines): Each coroutine is assigned its own tiny, physical Stack in memory (e.g., 2KB). When it pauses, the CPU physically swaps the Stack Pointer to another coroutine's stack.
+

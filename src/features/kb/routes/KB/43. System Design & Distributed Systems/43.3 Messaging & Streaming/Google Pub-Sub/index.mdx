@@ -1,8 +1,30 @@
+---
+title: Google Cloud Pub/Sub
+description: "A fully-managed, highly scalable real-time messaging service provided by Google Cloud, mathematically designed to ingest and distribute massive streams of data with extremely low latency and high durability."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Google Pub/Sub">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Google Cloud Pub/Sub"
+  subtitle="Global-Scale Messaging"
+  tags={['System Design', 'GCP', 'Messaging', 'Cloud']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Google Cloud Pub/Sub is mathematically designed to combine the "Push" fan-out capabilities of AWS SNS with the "Pull" queueing durability of AWS SQS into a single, globally scalable service.
 
-</ConceptTemplate>
+## 1. Global by Default
+Unlike AWS (which strictly ties SQS queues to a specific geographic Region like `us-east-1`), Google Pub/Sub is mathematically global.
+You publish an event to a single Topic, and Google's internal fiber-optic network automatically routes that message to subscribers sitting in data centers in Tokyo, London, and New York. The architecture mathematically abstracts away regional boundaries.
+
+## 2. Push and Pull Subscriptions
+When a Topic receives a message, it distributes it to Subscriptions. Google Pub/Sub mathematically supports both modes:
+- **Pull Subscriptions**: Your microservices actively poll the subscription (like AWS SQS). Excellent for throttling heavy workloads.
+- **Push Subscriptions**: Google Pub/Sub actively fires an HTTP POST request to your microservice's web server (like AWS SNS or Webhooks). Excellent for serverless architectures (like Google Cloud Functions), because the HTTP request mathematically wakes up the serverless function instantly without requiring a background polling daemon.
+

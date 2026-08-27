@@ -4,13 +4,20 @@ description: The absolute industry standard open-source library and repository f
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hugging Face Transformers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hugging Face Transformers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Before Hugging Face, if you wanted to use a massive AI model, you had to read a 40-page research paper, mathematically recreate the architecture from scratch in PyTorch, hunt down the massive 50GB weight files on an obscure university FTP server, and write a custom tokenizer.
 **Hugging Face Transformers** mathematically abstracted this entire nightmare into 3 lines of Python code, triggering the Generative AI revolution.
 
 ## 1. The Unified API
-The `transformers` library provides a mathematically standardized API for virtually every AI model in existence (BERT, GPT, LLaMA, Stable Diffusion). 
+The `transformers` library provides a mathematically standardized API for virtually every AI model in existence (BERT, GPT, LLaMA, Stable Diffusion).
 To download, mathematically initialize, and run a 7-Billion parameter LLM, you simply call `AutoModel.from_pretrained("meta-llama/Llama-2-7b")`. The library automatically downloads the weights, constructs the PyTorch architecture, and loads the model into VRAM.
 
 ## 2. The Model Hub (The GitHub of AI)
@@ -19,4 +26,3 @@ Hugging Face is not just a library; it is a massive cloud repository hosting ove
 ## 3. Democratization (PEFT & LoRA)
 Hugging Face mathematically democratized AI by aggressively integrating optimization techniques. Using their `PEFT` (Parameter-Efficient Fine-Tuning) library, developers can mathematically freeze the massive master weights of a 70B model, inject tiny adapter matrices (LoRA), and successfully fine-tune massive foundation models on a single consumer GPU, an act that previously required a $100,000 server.
 
-</ConceptTemplate>

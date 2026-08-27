@@ -4,22 +4,34 @@ description: A system of devices or set of devices, that manages, commands, dire
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Control Systems (PID)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Control Systems (PID)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you command a drone to fly exactly 10 meters in the air, you cannot just turn the motors on to 100% and hope it stops perfectly at 10 meters. Momentum will carry it to 12 meters, gravity will pull it back down, and it will violently bounce in the air until it crashes.
 
 To make physical machines move smoothly, we use **Control Theory**.
 
+
 <Callout icon="success" title="The PID Controller">
+
+
   The absolute king of industrial control is the **PID Controller** (Proportional, Integral, Derivative). It constantly mathematically calculates the **Error** (the difference between where the drone is, and where it should be).
-  
+
   - **Proportional (P):** The current error. (If you are far away, push the motors hard. If you are close, push gently).
   - **Integral (I):** The past error. (If the drone is stuck at 9.9 meters because the wind is pushing it down, the 'I' mathematically accumulates over time and gives an extra boost to overcome the wind).
   - **Derivative (D):** The future error. (If the drone is approaching 10 meters too fast, the 'D' recognizes the high velocity and mathematically slams the brakes to prevent overshooting).
+
+
 </Callout>
+
 
 ## Tuning
 
 Writing a PID controller in C takes exactly 5 lines of code. **Tuning** a PID controller (finding the perfect mathematical multipliers for P, I, and D) is a dark art that takes engineers weeks of trial and error.
 
-</ConceptTemplate>

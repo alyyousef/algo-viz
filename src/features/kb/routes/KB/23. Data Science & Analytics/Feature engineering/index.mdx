@@ -1,8 +1,26 @@
+---
+title: Feature Engineering
+description: The mathematically creative process of transforming raw data columns into highly optimized, predictive signals designed specifically for Machine Learning algorithms.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Feature engineering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Feature Engineering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Machine Learning algorithms are purely mathematical; they cannot understand context. Feature Engineering is the process of physically altering the data to make the hidden mathematical patterns obvious to the algorithm.
 
-</ConceptTemplate>
+## 1. Mathematical Transformations
+If a dataset contains a "Date of Birth" column (e.g., `1990-05-15`), a neural network sees it as a useless string of text.
+Through Feature Engineering, the Data Scientist applies a mathematical transformation: `Current_Year - Birth_Year`. They drop the Date column and create a brand new column called "Age" (`34`). The algorithm can now mathematically understand the concept of Age, instantly increasing the model's predictive accuracy.
+
+## 2. One-Hot Encoding
+Algorithms cannot do math on categorical strings (like "Red", "Green", "Blue").
+If you arbitrarily assign them numbers (Red=1, Green=2, Blue=3), the algorithm will mathematically assume that Blue is "greater than" Red, which destroys the model.
+Instead, Data Scientists use **One-Hot Encoding**. They mathematically split the single column into three separate columns: `is_red`, `is_green`, and `is_blue`. The values are purely binary (1 or 0). This mathematically perfectly represents categories to the algorithm without introducing false numerical hierarchy.
+

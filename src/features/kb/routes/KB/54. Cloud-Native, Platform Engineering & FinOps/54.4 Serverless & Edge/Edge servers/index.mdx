@@ -4,16 +4,28 @@ description: Computing servers located close to the end user (at the edge of the
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Edge Servers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Edge Servers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The Speed of Light dictates that a user in Australia mathematically cannot communicate with a server in New York faster than 200 milliseconds. 
+The Speed of Light dictates that a user in Australia mathematically cannot communicate with a server in New York faster than 200 milliseconds.
 
 **Edge Servers** bypass this physical limitation by pushing the compute biologically closer to the user.
 
+
 <Callout icon="tip" title="The Point of Presence (PoP)">
+
+
   Instead of one centralized data center, companies like Cloudflare operate 300 Edge Servers in 300 different cities globally.
-  
+
   When an Australian user makes an API request, they mathematically hit the Edge Server located in Sydney. The entire computation happens 10 miles away from their house, reducing the mathematical latency from 200ms down to a biologically imperceptible 15ms.
+
+
 </Callout>
 
-</ConceptTemplate>
+

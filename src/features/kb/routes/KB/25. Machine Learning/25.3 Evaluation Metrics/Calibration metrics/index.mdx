@@ -4,10 +4,17 @@ description: The mathematical evaluation of whether a model's predicted probabil
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Calibration Metrics">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Calibration Metrics">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In high-stakes industries (Finance, Medicine), it is not enough for an AI to simply classify a patient as "Cancer". The doctor needs to know the exact probability. 
-If the Neural Network outputs a probability of 0.8 (80%), the mathematical law of **Calibration** dictates that if you gather 100 patients to whom the model assigned an 80% probability, exactly 80 of them should actually have Cancer in the real world. 
+In high-stakes industries (Finance, Medicine), it is not enough for an AI to simply classify a patient as "Cancer". The doctor needs to know the exact probability.
+If the Neural Network outputs a probability of 0.8 (80%), the mathematical law of **Calibration** dictates that if you gather 100 patients to whom the model assigned an 80% probability, exactly 80 of them should actually have Cancer in the real world.
 If only 50 of them actually have cancer, the model is mathematically **Uncalibrated** (Overconfident).
 
 ## 1. Reliability Diagrams (Calibration Curves)
@@ -22,7 +29,6 @@ You cannot compare curves easily, so the graph is mathematically collapsed into 
 ECE mathematically calculates the absolute difference between the predicted probability and the true accuracy in every single bin. It then calculates the weighted average of those differences across all bins. The closer ECE is to 0.0, the more perfectly calibrated the model is.
 
 ## 3. Modern Neural Networks are Terrible at Calibration
-Deep Neural Networks (especially ResNets) are notorious for being mathematically highly accurate, but catastrophically uncalibrated. Because of massive depth and Batch Normalization, they tend to output probabilities like 99.9% even when they are completely wrong. 
+Deep Neural Networks (especially ResNets) are notorious for being mathematically highly accurate, but catastrophically uncalibrated. Because of massive depth and Batch Normalization, they tend to output probabilities like 99.9% even when they are completely wrong.
 To fix this, engineers apply **Platt Scaling** or **Isotonic Regression** to mathematically recalibrate the Softmax outputs post-training, forcing the probabilities back into alignment with reality.
 
-</ConceptTemplate>

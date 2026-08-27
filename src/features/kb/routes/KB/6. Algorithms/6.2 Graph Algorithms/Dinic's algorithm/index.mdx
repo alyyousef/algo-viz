@@ -1,8 +1,30 @@
+---
+title: Dinic's Algorithm
+description: "A highly efficient polynomial-time algorithm for computing the maximum flow in a flow network, mathematically utilizing Level Graphs and Blocking Flows to vastly outperform the older Ford-Fulkerson method."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dinic's algorithm">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Dinic's Algorithm"
+  subtitle="High-Speed Maximum Flow"
+  tags={['Algorithms', 'Graphs', 'Network Flow', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented by Yefim Dinitz in 1970, Dinic's Algorithm mathematically solves the Maximum Flow problem much faster than Edmonds-Karp by processing multiple paths simultaneously rather than one at a time.
 
-</ConceptTemplate>
+## 1. The Level Graph
+In standard Ford-Fulkerson, DFS can wander aimlessly through the network, taking mathematically terrible paths that result in catastrophic O(E * max_flow) time complexity.
+Dinic's solves this by first using BFS (Breadth-First Search) to create a **Level Graph**.
+It assigns a "level" (distance from the Source) to every node. An edge is only valid if it strictly points from Level N to Level N+1. This mathematically forces the algorithm to only take the absolute shortest paths to the Sink, preventing it from wandering backward or sideways.
+
+## 2. Blocking Flows
+Once the Level Graph is established, Dinic's uses DFS to find a **Blocking Flow**. Instead of pushing flow down one single path (like Edmonds-Karp), it mathematically pushes flow down *all possible shortest paths* in the Level Graph simultaneously until every path is saturated.
+It then recalculates the Level Graph and repeats. The Time Complexity is mathematically guaranteed to be **O(V²E)**, making it the standard algorithm for competitive programming and heavy network routing.
+

@@ -1,8 +1,25 @@
+---
+title: reStructuredText
+description: A highly standardized, extensible plain-text markup language, serving as the official documentation standard for the Python ecosystem.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="reStructuredText">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="reStructuredText (reST)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+reStructuredText (often abbreviated as reST) is a plaintext markup syntax heavily utilized in the Python community. It is the core language processed by the **Sphinx** documentation generator.
 
-</ConceptTemplate>
+## 1. Markdown's Stricter Cousin
+While Markdown is lightweight, reST is mathematically heavy and rigorous.
+It supports complex directives and roles.
+Instead of just making text bold, you can mathematically tag text with domain-specific meaning: `:math:`E=mc^2`` or `:pep:`8``.
+
+## 2. The Sphinx Ecosystem
+Sphinx mathematically parses reST files and can pull documentation strings (docstrings) directly out of Python source code to automatically generate massive, cross-referenced technical manuals. It is capable of generating HTML, LaTeX, and PDF formats, making it the backbone of `docs.python.org` and nearly all major Python libraries.
+

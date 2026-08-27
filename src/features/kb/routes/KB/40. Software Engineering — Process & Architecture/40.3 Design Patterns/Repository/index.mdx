@@ -1,8 +1,32 @@
+---
+title: Repository Pattern
+description: An architectural design pattern that mathematically abstracts data access logic, acting as an in-memory domain object collection, mediating between the domain and data mapping layers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Repository">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Repository Pattern"
+  subtitle="Abstracting the Database"
+  tags={['Design Patterns', 'Architecture', 'DDD', 'Databases']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you write raw SQL queries directly inside your Business Logic classes, your business rules are mathematically permanently coupled to that specific SQL dialect.
 
-</ConceptTemplate>
+## 1. The Collection Illusion
+The Repository pattern solves this by tricking the Business Logic into thinking the Database is just a simple, in-memory Array.
+The architect creates an interface: `IUserRepository` with methods like `findById(id)` and `save(User u)`.
+The Business Logic simply executes: `User u = repository.findById(42);`.
+
+## 2. Isolating the SQL
+The actual concrete implementation (`PostgresUserRepository`) mathematically implements the interface and hides all the ugly JDBC/SQL logic inside it.
+This provides two massive architectural advantages:
+1. **Testing**: You can create an `InMemoryUserRepository` for Unit Tests, completely bypassing the physical database.
+2. **Swapping**: If the company migrates from PostgreSQL to MongoDB, you simply write a `MongoUserRepository` class. You do not have to mathematically alter a single line of your core Business Logic.
+

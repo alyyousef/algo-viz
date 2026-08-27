@@ -1,8 +1,31 @@
+---
+title: Functions
+description: Self-contained blocks of mathematical logic that accept inputs, perform computation, and return outputs, forming the basis of modular code.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Functions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Functions (Subroutines)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Function is the foundational mathematical unit of code reuse. Instead of writing the same 20 lines of logic multiple times, you write it once, name it, and mathematically invoke it from anywhere in the program.
 
-</ConceptTemplate>
+## 1. The Call Stack
+When you call a function, the CPU performs a highly complex mathematical maneuver:
+1. It pushes all the arguments onto the Stack in RAM.
+2. It pushes the **Return Address** (the exact physical location of the code that called the function) onto the Stack.
+3. It changes its Instruction Pointer to jump to the physical memory location of the Function.
+4. The Function allocates its own local variables on the Stack (a Stack Frame), executes its logic, and calculates a Return Value.
+5. The CPU reads the Return Address, physically jumps back to the original code, and pops the function's Stack Frame, mathematically destroying all its local variables.
+
+## 2. Pure Functions
+In functional programming, a **Pure Function** is a strict mathematical concept:
+1. It will always return the exact same output given the exact same input.
+2. It produces absolutely no **Side Effects** (it does not modify global variables, write to disk, or alter the UI).
+Because Pure Functions are mathematically completely isolated, they are trivial to test, and compilers can aggressively optimize them by caching their results (Memoization).
+

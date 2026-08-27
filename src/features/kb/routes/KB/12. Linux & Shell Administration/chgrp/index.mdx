@@ -4,7 +4,14 @@ description: The specific command-line utility used to change the Group ownershi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="chgrp">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="chgrp">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Every file in Linux is owned by a specific User and a specific Group. While the `chown` command can change both, the **`chgrp`** command is a specialized utility designed exclusively to change the Group ownership of a file.
 
@@ -15,12 +22,17 @@ The syntax is extremely simple: `chgrp [GROUP] [FILE]`.
 If you have a file named `project.txt`, and you want to hand ownership of it to the `developers` group so your team can edit it:
 `sudo chgrp developers project.txt`
 
+
 <Callout icon="warning" title="Security Restrictions">
+
+
   Unlike Windows, you cannot just assign any group to a file. A standard user can only use `chgrp` if they currently own the file **and** they are already a member of the target group. Otherwise, you must use `sudo`.
+
+
 </Callout>
+
 
 ## Recursive Group Changes
 If you have a massive directory containing thousands of files, you can use the `-R` (Recursive) flag to instantly change the group of everything inside the folder:
 `sudo chgrp -R www-data /var/www/html/`
 
-</ConceptTemplate>

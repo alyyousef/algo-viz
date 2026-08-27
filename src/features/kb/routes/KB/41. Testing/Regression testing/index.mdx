@@ -1,8 +1,34 @@
+---
+title: Regression Testing
+description: "A mathematical verification process in software engineering performed after a code modification, designed to ensure that previously working, older functionality has not been accidentally broken by the new changes."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Regression testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Regression Testing"
+  subtitle="Preventing the Return of Old Bugs"
+  tags={['Testing', 'Quality Assurance', 'Process', 'Agile']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a complex, mathematically coupled system, fixing a bug in the "Payment" module might accidentally break the "Shipping" module. A **Regression** is a software bug that makes a feature stop functioning as intended after a certain event (usually a code deployment).
 
-</ConceptTemplate>
+## 1. The Regression Suite
+A Regression Test Suite is a massive collection of Unit, Integration, and End-to-End tests that mathematically prove the *existing* system works.
+When a developer writes a new feature, they add 5 new tests. But before the code is merged to the main branch, the CI/CD pipeline runs the entire Regression Suite (all 5,000 existing tests).
+If test #2,412 (written three years ago) suddenly fails, the pipeline halts. The developer has caused a regression.
+
+## 2. Bug Fix Driven Testing
+A core rule of Regression Testing: **Every time a manual bug is reported in production, you must write an automated test for it before you fix it.**
+If a user reports that "Typing a negative age crashes the app", the developer must:
+1. Write a test that injects a negative age. Mathematically watch it fail (Red).
+2. Fix the code.
+3. Watch the test pass (Green).
+This test is permanently added to the Regression Suite. The company mathematically guarantees that this specific bug will *never* reach production again.
+

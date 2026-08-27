@@ -4,18 +4,30 @@ description: Lightweight Directory Access Protocol is an open, vendor-neutral, i
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LDAP (Lightweight Directory Access Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LDAP (Lightweight Directory Access Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If Active Directory is a database, **LDAP** is the mathematical language you use to query that database.
 
 Invented in 1993, LDAP is a protocol that operates over TCP/IP. It allows an application (like a company's internal wiki) to biologically ask the central server: *"Does a user with the ID 'jdoe' exist, and is their password 'password123'?"*
 
+
 <Callout icon="info" title="The Tree Structure">
+
+
   LDAP mathematically stores data in a hierarchical tree.
   A user's identity is defined by a **Distinguished Name (DN)**, such as:
   `cn=John Doe,ou=Engineering,dc=example,dc=com`
-  
+
   This rigid structure makes it incredibly fast to query large enterprise hierarchies, which is why almost every modern Identity Provider (including Okta and Keycloak) still supports LDAP synchronization for legacy applications.
+
+
 </Callout>
 
-</ConceptTemplate>
+

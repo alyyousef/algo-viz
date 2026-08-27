@@ -4,7 +4,14 @@ description: The architectural strategies used to expand a database's capacity t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Database Scaling & Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Database Scaling & Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A single database server can easily handle thousands of requests per second. But what happens when an application goes viral and the database CPU hits 100%? The database becomes a global bottleneck, bringing down the entire application.
 
@@ -33,8 +40,13 @@ If your application is writing massive amounts of data (like Twitter), the Prima
 - **User IDs 10,001 to 20,000** are physically stored on Database Server B.
 - When a user logs in, your application server uses a mathematical Hashing Algorithm to determine which physical database server holds their data, and routes the query directly to that server.
 
+
 <Callout icon="warning" title="The Sharding Nightmare">
+
+
   Sharding introduces catastrophic complexity to an application. You can no longer perform `JOIN` operations between users, because their data lives on entirely different physical machines. Schema migrations require orchestrating updates across dozens of servers simultaneously. Sharding is an absolute last resort.
+
+
 </Callout>
 
-</ConceptTemplate>
+

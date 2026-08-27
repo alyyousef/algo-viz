@@ -1,0 +1,28 @@
+---
+title: Azure Blob Storage
+description: Microsoft's massively scalable object storage solution for the cloud, mathematically optimized for storing massive amounts of unstructured data such as text or binary data.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Blob Storage"
+  subtitle="Infinite Unstructured Storage"
+  tags={['Azure', 'Storage', 'Object', 'Serverless']}
+>
+
+Azure Blob Storage is the exact architectural equivalent of AWS S3. It is a flat, infinitely scalable mathematical namespace designed to store unstructured bytes (Blobs) without the overhead of a traditional file system.
+
+## 1. Blob Types
+Azure mathematically divides blobs into three distinct architectures:
+- **Block Blobs**: Best for standard files (images, documents). The file is mathematically chunked into tiny "blocks". If a 5GB upload fails at 4.9GB, Azure only re-uploads the failed blocks, not the entire file.
+- **Append Blobs**: Optimized exclusively for appending data to the end of a file. Used heavily for high-throughput application logging.
+- **Page Blobs**: Mathematically optimized for random read/write operations. This is the exact underlying storage architecture that physically powers the hard drives (VHDs) of Azure Virtual Machines.
+
+## 2. Storage Tiers
+Storing 100 Terabytes of data you access every day is expensive. Storing 100 Terabytes of 10-year-old tax documents is cheap.
+Azure uses mathematical **Access Tiers**:
+- **Hot**: High storage cost, extremely cheap mathematical read/write costs.
+- **Cool**: Cheaper storage, but higher read/write costs (for data accessed once a month).
+- **Archive**: The data is mathematically compressed and physically written to tape drives. It costs almost nothing, but retrieving the data takes up to 15 hours because a physical robot must retrieve the tape.
+
+</TechnologyTemplate>

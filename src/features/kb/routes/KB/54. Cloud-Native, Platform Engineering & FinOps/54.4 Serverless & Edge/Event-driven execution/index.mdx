@@ -4,16 +4,28 @@ description: A software architecture paradigm promoting the production, detectio
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Event-Driven Execution">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Event-Driven Execution">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Serverless architecture fundamentally mathematically requires an **Event-Driven** model.
 
 In a traditional web server (like Express.js), a process sits biologically idle in an infinite `while(true)` loop, waiting for an HTTP request to arrive. You pay for this idle time.
 
+
 <Callout icon="info" title="The Trigger Mechanism">
-  In an Event-Driven model, the code is literally turned off. 
-  
+
+
+  In an Event-Driven model, the code is literally turned off.
+
   The cloud provider monitors an Event Source (like an S3 bucket, an API Gateway, or a Kafka queue). When an event occurs (a file is uploaded, a message arrives), the cloud provider intercepts the event, boots the serverless function, hands it the event payload as a JSON object, and shuts it down. It is a strictly reactive mathematical model.
+
+
 </Callout>
 
-</ConceptTemplate>
+

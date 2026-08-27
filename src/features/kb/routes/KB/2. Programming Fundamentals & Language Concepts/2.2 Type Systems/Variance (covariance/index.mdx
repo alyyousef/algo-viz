@@ -1,8 +1,31 @@
+---
+title: Variance (Covariance & Contravariance)
+description: The advanced mathematical rules dictating how subtyping hierarchies apply to complex generic types like Lists, Arrays, and Functions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Variance (covariance">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Variance">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Variance mathematically answers the question: "If a Cat is an Animal, is a List of Cats a List of Animals?"
 
-</ConceptTemplate>
+## 1. Covariance
+Covariance mathematically preserves the inheritance direction.
+If `Cat <: Animal` (Cat is a subtype of Animal), and a List is **Covariant**, then `List<Cat> <: List<Animal>`.
+This is mathematically safe ONLY for Read-Only operations. If a function iterates over a `List<Animal>` and prints their names, passing it a `List<Cat>` is mathematically sound.
+
+## 2. Contravariance
+Contravariance mathematically reverses the inheritance direction.
+If a function accepts a callback `Action<Cat>`, you can safely pass it an `Action<Animal>`.
+Because the `Action<Animal>` is mathematically designed to process *any* animal, it is guaranteed to be able to safely process the specific `Cat` that the function hands to it.
+
+## 3. Invariance
+Invariance means there is no mathematical relationship at all.
+In Java, generic Lists are **Invariant**. `List<Cat>` is mathematically completely unrelated to `List<Animal>`. You cannot pass one where the other is expected. This strict mathematical rule prevents the catastrophic Heap Corruption that would occur if you passed a Mutable `List<Cat>` into a function expecting a `List<Animal>`, and that function executed `list.add(new Dog())`.
+

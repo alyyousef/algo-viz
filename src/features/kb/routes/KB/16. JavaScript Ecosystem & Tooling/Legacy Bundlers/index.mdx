@@ -4,23 +4,29 @@ description: The heavy architectural tools used to traverse dependency graphs an
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Legacy Bundlers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Legacy Bundlers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Browsers historically punished you for making too many HTTP requests. If your app consisted of 500 separate Javascript files, the browser would have to make 500 slow network requests to load the page.
 To solve this, developers created **Bundlers**—tools that spider through your code, read the `import` statements, and mathematically stitch everything together into one massive `bundle.js` file.
 
 ## Webpack (The Monolith)
-For years, **Webpack** was the absolute standard. It viewed everything (Javascript, CSS, Images, SVGs) as a module. 
-Webpack was incredibly powerful, allowing for **Code Splitting** (breaking the massive bundle into smaller chunks that only load when the user visits a specific page). 
+For years, **Webpack** was the absolute standard. It viewed everything (Javascript, CSS, Images, SVGs) as a module.
+Webpack was incredibly powerful, allowing for **Code Splitting** (breaking the massive bundle into smaller chunks that only load when the user visits a specific page).
 
 **The Flaw**: Webpack configuration files (`webpack.config.js`) were notoriously horrifying. They were massive, impossible to read, and broke constantly. Additionally, because Webpack was written in Javascript, building a large enterprise app could take 10+ minutes.
 
 ## Rollup (The Library King)
-Created by Rich Harris (creator of Svelte), Rollup focused strictly on Javascript (ignoring CSS/Images). 
-Rollup pioneered **Tree-Shaking**—a mathematical algorithm that statically analyzes your ESM imports and aggressively deletes any unused functions from the final output, producing incredibly tiny bundle sizes. 
+Created by Rich Harris (creator of Svelte), Rollup focused strictly on Javascript (ignoring CSS/Images).
+Rollup pioneered **Tree-Shaking**—a mathematical algorithm that statically analyzes your ESM imports and aggressively deletes any unused functions from the final output, producing incredibly tiny bundle sizes.
 Because of this, Rollup became the industry standard for bundling open-source NPM libraries (like React components), while Webpack remained the standard for web applications.
 
 ## Parcel
 Parcel attempted to solve the Webpack configuration nightmare by offering a "Zero Configuration" bundler. It worked brilliantly out-of-the-box, automatically detecting HTML/CSS/JS without a massive config file, though it struggled to gain Webpack's enterprise market share.
 
-</ConceptTemplate>

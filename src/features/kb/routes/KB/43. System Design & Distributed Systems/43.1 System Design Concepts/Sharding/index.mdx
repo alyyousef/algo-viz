@@ -4,27 +4,34 @@ description: A type of database partitioning that separates very large databases
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Database Sharding">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Database Sharding">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Database Replication solves the problem of too many *Reads*, but all *Writes* still mathematically go to a single Primary server. What happens when your application generates 100,000 `INSERT` statements per second, completely overwhelming the Primary's physical disk?
 
 **Sharding** is the ultimate, nuclear option for database scaling. It mathematically splits the actual table data across multiple independent database clusters.
 
+
 <Callout icon="warning" title="The Complexity Nightmare">
+
+
   Sharding is incredibly complex. Once you shard a database, mathematical `JOIN` operations across different shards become impossible. You cannot easily do `SELECT * FROM Users JOIN Orders` if Users A-M are on Server 1 and Orders are on Server 2.
+
+
 </Callout>
+
 
 ## The Shard Key
 
 To distribute the data, you must choose a mathematical **Shard Key**. This key determines which server a row lives on.
 
-<ComparisonTable 
-  headers={['Sharding Strategy', 'How it Works', 'The Danger']}
-  rows={[
-    ['Hash-Based Sharding', 'Mathematically hashes the UserID (e.g., `Hash(UserID) % 4`) to distribute rows evenly across 4 servers.', 'If you add a 5th server, the modulo math changes, and you must physically migrate terabytes of data.'],
-    ['Range-Based Sharding', 'Users A-F go to Server 1, G-M go to Server 2.', 'Data imbalances. If all your active users happen to have last names starting with A, Server 1 mathematically melts while Server 2 does nothing (a "Hot Spot").'],
-    ['Directory-Based Sharding', 'A master lookup table stores the exact server location for every single row.', 'The lookup table itself becomes a massive mathematical bottleneck and SPOF.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Sharding Strategy', 'How it Works', 'The Danger']} rows={[ ['Hash-Based Sharding', 'Mathematically hashes the UserID (e.g., `Hash(UserID) % 4`) to distribute rows evenly across 4 servers.', 'If you add a 5th server, the modulo math changes, and you must physically migrate terabytes of data.'], ['Range-Based Sharding', 'Users A-F go to Server 1, G-M go to Server 2.', 'Data imbalances. If all your active users happen to have last names starting with A, Server 1 mathematically melts while Server 2 does nothing (a "Hot Spot").'], ['Directory-Based Sharding', 'A master lookup table stores the exact server location for every single row.', 'The lookup table itself becomes a massive mathematical bottleneck and SPOF.'] ]} />
+
+

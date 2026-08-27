@@ -4,7 +4,14 @@ description: The agonizing complexity of cryptographic App Signing, the App Stor
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Deployment & CI-CD">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Deployment & CI-CD">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Deploying a website takes 30 seconds via Vercel. Deploying a mobile app takes days, cryptographic certificates, and human review.
 
@@ -26,4 +33,3 @@ Fastlane is an open-source tool (written in Ruby). You write a `Fastfile` that m
 4. Build the `.ipa` (iOS) and `.aab` (Android).
 5. Automatically upload the binaries and release notes to TestFlight and Google Play Beta.
 
-</ConceptTemplate>

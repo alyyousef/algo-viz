@@ -1,8 +1,31 @@
+---
+title: Liskov Substitution Principle (LSP)
+description: The "L" in the SOLID principles, mathematically establishing that objects of a superclass shall be replaceable with objects of its subclasses without breaking the application or altering the correctness of the program.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LSP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Liskov Substitution Principle (LSP)"
+  subtitle="The Mathematics of Subtyping"
+  tags={['OOP', 'SOLID', 'Architecture', 'Barbara Liskov']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Introduced by computer scientist Barbara Liskov in 1987, this principle mathematically defines what it actually means to create a subclass.
 
-</ConceptTemplate>
+## 1. The Square-Rectangle Problem
+The classic violation of LSP is the Square-Rectangle problem.
+In mathematics, a Square is a Rectangle. So a developer makes `Square` inherit from `Rectangle`.
+A `Rectangle` has methods `setWidth(w)` and `setHeight(h)`. But for a `Square` to remain a square, setting the width *must* automatically change the height to match.
+If an external function expects a generic `Rectangle`, sets the width to 5, sets the height to 10, and mathematically calculates the area as 50, passing in a `Square` will break the function (the area will calculate as 100). The `Square` mathematically failed substitution.
+
+## 2. Behavioral Subtyping
+LSP dictates that a child class must honor the mathematical **Preconditions** and **Postconditions** of its parent.
+If a parent method `process(String data)` promises to never return `null`, the child class overriding that method cannot suddenly start returning `null`. If it does, the substitution fails, the application mathematically throws a `NullPointerException`, and the inheritance tree is proven to be architecturally invalid.
+

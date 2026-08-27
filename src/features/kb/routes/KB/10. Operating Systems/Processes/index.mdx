@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Processes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Processes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you double-click an application (like Google Chrome), the Operating System reads the static executable file from the hard drive and loads it into RAM. The moment that code begins executing, it becomes a **Process**.
 
@@ -18,7 +25,7 @@ A process is heavily isolated by the OS. It believes it is the *only* program ru
 4. **Stack**: Temporary storage for function parameters, return addresses, and local variables. Grows downward.
 
 ## 2. The Process Control Block (PCB)
-The OS must track thousands of processes. It does this using a massive C-struct called the **PCB**. 
+The OS must track thousands of processes. It does this using a massive C-struct called the **PCB**.
 The PCB stores:
 - **Process ID (PID)**: The unique integer identifying the process.
 - **Process State**: Is it *Running*, *Waiting*, or *Terminated*?
@@ -26,11 +33,16 @@ The PCB stores:
 - **Memory Limits**: The start and end physical addresses this process is allowed to access.
 
 ## 3. Process Isolation
-Because every process has its own isolated memory space, Process A cannot mathematically access the memory of Process B. If Process A has a buffer overflow and crashes, Process B is completely unaffected. 
+Because every process has its own isolated memory space, Process A cannot mathematically access the memory of Process B. If Process A has a buffer overflow and crashes, Process B is completely unaffected.
 If they *need* to talk, they must use OS-mediated **Inter-Process Communication (IPC)** (like Pipes or Sockets), which is slow but incredibly secure.
 
+
 <Callout icon="warning" title="Zombie Processes">
+
+
 When a process finishes execution, it sends an `exit()` system call. The OS clears its memory but leaves the PCB intact so the Parent Process can read its exit status. If the parent forgets to read it (using `wait()`), the dead process remains in the process table forever as a **Zombie**.
+
+
 </Callout>
 
-</ConceptTemplate>
+

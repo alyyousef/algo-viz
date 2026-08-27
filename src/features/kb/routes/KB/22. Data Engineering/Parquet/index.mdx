@@ -4,7 +4,14 @@ description: The undisputed industry standard columnar storage format, mathemati
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Apache Parquet">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Parquet">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you store 10 Terabytes of data in CSV format, querying it is mathematically agonizing. CSV files are uncompressed, unstructured strings. To find the average age of a user, the CPU must scan every single comma in the 10TB file.
 
@@ -28,4 +35,3 @@ Parquet files mathematically store statistics in their footers. For every "Row G
 
 If you execute `SELECT * FROM users WHERE age > 60`, the engine reads the Parquet footer. If the `age` column for that chunk has a Max value of 45, the engine mathematically **drops the entire block**, refusing to read it from disk. This is called Predicate Pushdown, and it is the secret to Parquet's blistering speed.
 
-</ConceptTemplate>

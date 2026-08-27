@@ -1,0 +1,27 @@
+---
+title: Azure Virtual Machines (VMs)
+description: The foundational Infrastructure as a Service (IaaS) compute offering in Azure, providing developers with absolute root access to mathematically partitioned slices of physical server hardware.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Virtual Machines (VMs)"
+  subtitle="IaaS Cloud Compute"
+  tags={['Azure', 'Compute', 'IaaS', 'Infrastructure']}
+>
+
+Azure Virtual Machines are the exact equivalent of AWS EC2. When you provision a VM, you are renting a mathematically isolated slice of CPU, RAM, and Disk from a massive physical server rack sitting in a Microsoft data center.
+
+## 1. VM Series and Sizing
+Microsoft mathematically engineers different hardware architectures for specific workloads:
+- **D-Series (General Purpose)**: A balanced mathematical ratio of CPU to RAM, used for standard web servers.
+- **E-Series (Memory Optimized)**: Massive amounts of RAM relative to CPU, designed specifically for in-memory databases like Redis or SAP HANA.
+- **N-Series (GPU Accelerated)**: Physically packed with NVIDIA GPUs, designed for Machine Learning and heavy video rendering.
+You select the exact mathematical size (e.g., `Standard_D4s_v3`: 4 vCPUs, 16GB RAM) and the Hyper-V hypervisor strictly enforces those hardware boundaries.
+
+## 2. Availability Sets vs. Zones
+To guarantee 99.99% uptime, you cannot rely on one VM.
+- **Availability Sets**: You deploy 2 VMs. Azure mathematically guarantees they are placed on different physical server racks connected to different power supplies within the *same* data center. If a rack fails, one VM survives.
+- **Availability Zones**: You deploy 2 VMs. Azure mathematically guarantees they are placed in two *entirely different physical buildings* miles apart. If a tornado destroys the entire data center, the other VM survives.
+
+</TechnologyTemplate>

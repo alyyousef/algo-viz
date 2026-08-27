@@ -4,30 +4,36 @@ description: The most mathematically intuitive metric for Regression models, cal
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MAE (Mean Absolute Error)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="MAE (Mean Absolute Error)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When predicting continuous numbers (Regression), you must mathematically measure how far off the prediction was from the true value. **Mean Absolute Error (MAE)** is the most robust, highly interpretable metric for this task.
 
 ## 1. The Mathematical Equation
 $MAE = \frac{1}{n} sum_{i=1}^{n} |y_i - \hat{y}_i|$
 
-1. The algorithm predicts a house price ($\hat{y} = $300k$). The true price is ($y = $350k$). 
-2. The mathematical error (Residual) is $-$50k$. 
+1. The algorithm predicts a house price ($\hat{y} = $300k$). The true price is ($y = $350k$).
+2. The mathematical error (Residual) is $-$50k$.
 3. It takes the **Absolute Value** ($|$50k|$), mathematically converting all negative errors into positive numbers so they don't cancel each other out.
 4. It sums up all the absolute errors across the entire dataset, and divides by $n$ (the total number of rows) to find the mean (average).
 
 ## 2. The Advantage: Perfect Interpretability
 MAE is heavily favored in business environments because it maps perfectly to human intuition.
-If you build a model to predict the stock market, and the MAE is $5.00, you can walk into a boardroom and confidently state: *"On average, our AI is off by exactly $5.00."* 
+If you build a model to predict the stock market, and the MAE is $5.00, you can walk into a boardroom and confidently state: *"On average, our AI is off by exactly $5.00."*
 
 Unlike RMSE (which squares the numbers and distorts the units), MAE maintains the exact mathematical units of the target variable.
 
 ## 3. Robustness to Outliers
-MAE's greatest mathematical strength is that it treats all errors linearly. 
+MAE's greatest mathematical strength is that it treats all errors linearly.
 If a model makes three errors of $10, $10, and $1000:
 - MAE mathematically views the $1000 error as exactly 100x worse than the $10 error.
 - RMSE squares the errors, viewing the $1000 error as 10,000x worse, causing the metric to explode and warping the entire evaluation based on a single outlier.
 
 Because MAE does not square the errors, it is mathematically **hyper-robust to outliers**. If your dataset contains a few massive anomalies (like a billionaire's mansion in a normal neighborhood), MAE will cleanly evaluate the model's performance on the median data without being dragged to infinity by the anomaly.
 
-</ConceptTemplate>

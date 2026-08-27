@@ -1,8 +1,29 @@
+---
+title: Compilation
+description: The highly complex mathematical pipeline that transforms human-readable text into optimized, executable hardware instructions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Compilation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Compilation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Compilation is not a single mathematical action; it is a multi-stage pipeline designed to strip away abstraction until only raw physics (machine code) remains.
 
-</ConceptTemplate>
+## 1. The Front-End (Analysis)
+The Front-End mathematically understands the code.
+- **Lexical Analysis (Scanner)**: Breaks the raw string of text into mathematically distinct Tokens (Keywords, Identifiers, Operators).
+- **Syntax Analysis (Parser)**: Analyzes the Tokens against the language's grammar rules to build an **Abstract Syntax Tree (AST)**.
+- **Semantic Analysis (Type Checker)**: Traverses the AST to mathematically prove that the logic makes sense (e.g., ensuring you are not multiplying a String by a Boolean).
+
+## 2. The Back-End (Synthesis)
+The Back-End mathematically generates the hardware instructions.
+- **Intermediate Representation (IR)**: The AST is converted into a lower-level mathematical format (like LLVM IR). This allows the compiler to perform massive optimizations (dead code elimination, loop unrolling) independent of the target CPU.
+- **Code Generation**: The optimized IR is mathematically translated into specific Assembly instructions for the target CPU architecture (e.g., x86 or ARM).
+- **Linking**: The separate compiled object files are mathematically stitched together, resolving memory addresses for external libraries (like `printf`) into a single final executable binary.
+

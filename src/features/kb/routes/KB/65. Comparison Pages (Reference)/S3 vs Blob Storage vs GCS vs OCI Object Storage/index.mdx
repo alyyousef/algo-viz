@@ -8,20 +8,20 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Object storage is an architecture that manages data as objects (as opposed to file systems or blocks). It is infinitely scalable, extremely cheap, and accessed via HTTP APIs. It is perfect for storing images, videos, backups, and logs.
 
+
 <Callout icon="info" title="The S3 Standard">
+
+
   Amazon S3 was the first major cloud service ever launched (2006). Its API is so ubiquitous that almost all competitors (including on-premise solutions like MinIO) have built their storage to be "S3-compatible".
+
+
 </Callout>
+
 
 ## The Offerings
 
-<ComparisonTable 
-  headers={['Provider', 'Service Name', 'Notable Feature']}
-  rows={[
-    ['AWS', 'Amazon S3', 'The industry standard. Massive ecosystem of integrations. Complex tiered storage classes (Glacier).'],
-    ['Microsoft Azure', 'Azure Blob Storage', 'Excellent integration with Azure Data Lake for enterprise analytics.'],
-    ['Google Cloud (GCP)', 'Cloud Storage (GCS)', 'Single API across all storage classes, excellent global edge caching.'],
-    ['Oracle Cloud (OCI)', 'OCI Object Storage', 'Aggressively priced, especially for outbound data transfer (Egress).']
-  ]}
-/>
+
+<ComparisonTable headers={['Provider', 'Service Name', 'Notable Feature']} rows={[ ['AWS', 'Amazon S3', 'The industry standard. Massive ecosystem of integrations. Complex tiered storage classes (Glacier).'], ['Microsoft Azure', 'Azure Blob Storage', 'Excellent integration with Azure Data Lake for enterprise analytics.'], ['Google Cloud (GCP)', 'Cloud Storage (GCS)', 'Single API across all storage classes, excellent global edge caching.'], ['Oracle Cloud (OCI)', 'OCI Object Storage', 'Aggressively priced, especially for outbound data transfer (Egress).'] ]} />
+
 
 </TechnologyTemplate>

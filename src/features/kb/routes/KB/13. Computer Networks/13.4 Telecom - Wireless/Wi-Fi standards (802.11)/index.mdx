@@ -4,9 +4,16 @@ description: The ubiquitous set of protocols dictating how local devices connect
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Wi-Fi Standards (IEEE 802.11)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Wi-Fi Standards (IEEE 802.11)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Wi-Fi is simply the wireless equivalent of Ethernet, governed by the **IEEE 802.11** working group. 
+Wi-Fi is simply the wireless equivalent of Ethernet, governed by the **IEEE 802.11** working group.
 Because it is designed for consumer use, it operates in the "Unlicensed" ISM radio bands (Industrial, Scientific, and Medical). Because these bands are unlicensed, anyone can use them, meaning they are incredibly crowded and prone to massive interference from microwave ovens and baby monitors.
 
 ## The Evolution of 802.11
@@ -18,8 +25,13 @@ The IEEE naming scheme became too complex for consumers, so the Wi-Fi Alliance o
 - **Wi-Fi 6 (802.11ax)**: Released in 2019. Did not focus on raw speed; instead focused entirely on **Congestion**. It introduced OFDMA (borrowed from Cellular networks), allowing a router to talk to 30 different IoT devices and laptops in the exact same millisecond, rather than forcing them to wait in a queue.
 - **Wi-Fi 7 (802.11be)**: Released in 2024. Introduces MLO (Multi-Link Operation). Your laptop can connect to the 2.4 GHz, 5 GHz, and new 6 GHz bands *all at the exact same time*, combining their speeds for virtually zero latency.
 
+
 <Callout icon="warning" title="WPA3 Security">
+
+
   In 2017, the legendary "KRACK" vulnerability proved that the WPA2 encryption standard was mathematically broken, allowing hackers to decrypt Wi-Fi traffic. **WPA3** is now the mandatory standard. It replaces the old pre-shared key handshake with SAE (Simultaneous Authentication of Equals), rendering offline brute-force dictionary attacks completely impossible.
+
+
 </Callout>
 
-</ConceptTemplate>
+

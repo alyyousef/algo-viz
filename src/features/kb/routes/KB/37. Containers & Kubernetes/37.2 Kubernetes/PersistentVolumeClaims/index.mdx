@@ -1,8 +1,29 @@
+---
+title: PersistentVolumeClaims (PVCs)
+description: A declarative request made by a developer in Kubernetes for mathematical storage resources (capacity and access mode) without needing to know the underlying hardware specifics.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PersistentVolumeClaims">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="PersistentVolumeClaims (PVCs)"
+  subtitle="Declarative Storage Requests"
+  tags={['Kubernetes', 'Storage', 'Architecture', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Kubernetes, a developer should never write YAML that says "Mount AWS EBS Volume ID v-12345." That breaks the mathematical abstraction. Instead, developers use **PersistentVolumeClaims (PVCs)**.
 
-</ConceptTemplate>
+## 1. The Request for Storage
+A PVC is a pure mathematical request. A developer creates a `PersistentVolumeClaim` object that essentially says: *"I need 50GB of storage that can be read and written to by a single node (ReadWriteOnce), and it must be fast SSD (StorageClass: gp3)."*
+The developer mounts this PVC directly into their Pod. The developer mathematically does not care if the cluster is running on AWS, Google Cloud, or a Raspberry Pi.
+
+## 2. Dynamic Provisioning
+When the PVC is created, the Kubernetes Controller Manager mathematically evaluates the request.
+If **Dynamic Provisioning** is enabled, the cluster automatically talks to the underlying cloud provider. It mathematically executes the API calls to dynamically provision a 50GB AWS EBS volume, creates a matching `PersistentVolume` (PV) object in Kubernetes, and mathematically binds the PV to the developer's PVC. When the developer deletes the PVC, Kubernetes automatically deletes the EBS volume to save money.
+

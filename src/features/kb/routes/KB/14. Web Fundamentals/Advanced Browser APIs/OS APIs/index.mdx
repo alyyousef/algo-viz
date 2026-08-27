@@ -4,19 +4,26 @@ description: Powerful APIs that allow web applications to interact with the unde
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OS Integration APIs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OS Integration APIs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 To make Progressive Web Apps (PWAs) indistinguishable from native apps, the browser acts as a bridge, exposing controlled subsets of the underlying OS to JavaScript.
 
 ## Geolocation API
-Allows the web app to request the user's physical latitude and longitude. 
+Allows the web app to request the user's physical latitude and longitude.
 - On a desktop computer, this is usually triangulated via Wi-Fi networks and IP addresses (low accuracy).
 - On a mobile device, the browser asks the OS to activate the physical GPS chip for high-accuracy tracking (essential for mapping apps).
 - *Requires explicit user permission via an OS prompt.*
 
 ## Web Notifications API
 Allows the web app to trigger system-level notifications.
-- Instead of showing a fake HTML popup inside the webpage, it triggers the native Windows 11/macOS/Android notification center. 
+- Instead of showing a fake HTML popup inside the webpage, it triggers the native Windows 11/macOS/Android notification center.
 - When combined with a **Service Worker**, the backend server can wake up the app and trigger a Push Notification even if the browser tab is completely closed.
 
 ## Additional Integrations
@@ -24,4 +31,3 @@ Allows the web app to trigger system-level notifications.
 - **Contact Picker API**: Allows the user to select contacts from their phone's native address book and pass them to the web app.
 - **Wake Lock API**: Prevents the screen from dimming or locking while the web app is running (critical for recipe apps or e-readers).
 
-</ConceptTemplate>

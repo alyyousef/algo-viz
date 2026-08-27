@@ -1,8 +1,27 @@
+---
+title: Constraint Programming
+description: A declarative paradigm where developers do not write step-by-step algorithms, but instead mathematically define the absolute limitations of a problem, forcing the compiler to calculate the solution.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Constraint programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Constraint Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you want to solve a Sudoku puzzle in Java, you must write a massive, complex backtracking algorithm telling the computer *how* to solve it. In Constraint Programming, you only tell the computer *what* the rules are.
 
-</ConceptTemplate>
+## 1. Declarative Rule Sets
+In a language like Prolog or MiniZinc, you mathematically declare the boundaries of reality.
+1. `All variables must be integers between 1 and 9.`
+2. `All variables in Row 1 must be mathematically distinct (no duplicates).`
+You do not write a `for` loop. You simply hand these mathematical constraints to a pre-built Solver Engine.
+
+## 2. The Solver Engine
+The Solver Engine is a highly optimized mathematical graph traversal algorithm (often using SAT Solvers or Simplex algorithms).
+It takes your constraints, mathematically intersects them, and aggressively prunes the search space. It tries millions of combinations per second, instantly discarding any branch that violates a constraint. When it finds a set of numbers that mathematically satisfies every single rule simultaneously, it outputs the solution. This paradigm is heavily used in industrial scheduling, logistics, and resource allocation where writing a manual algorithm is mathematically impossible.
+

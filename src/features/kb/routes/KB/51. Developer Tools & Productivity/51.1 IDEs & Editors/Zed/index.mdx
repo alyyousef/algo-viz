@@ -5,7 +5,7 @@ description: "A lightning-fast, collaborative code editor written in Rust, built
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   name="Zed"
   icon="zed"
   creator="Nathan Sobo (Zed Industries)"
@@ -14,7 +14,7 @@ import { Callout } from '@/features/kb/components/mdx/Callout'
   repository="https://github.com/zed-industries/zed"
 >
 
-**Zed** is the newest major player in the text editor space, built by the same developers who created GitHub's Atom editor and the Tree-sitter parsing library. 
+**Zed** is the newest major player in the text editor space, built by the same developers who created GitHub's Atom editor and the Tree-sitter parsing library.
 
 Where Atom and VS Code used web technologies (Electron/JavaScript), which inherently carry memory and performance overhead, Zed is written entirely in **Rust** and renders its UI directly to the GPU (using Vulkan/Metal).
 
@@ -27,8 +27,14 @@ The core thesis of Zed is that editors have become too slow. There should be exa
 2. **Native AI Integration**: Unlike VS Code where GitHub Copilot is an extension bolted on top, Zed integrates AI deeply into the editor's core UX, providing incredibly fast inline code generation and a native AI chat panel that understands your codebase.
 3. **Vim Mode Built-in**: Recognizing that power users demand modal editing, Zed ships with a highly accurate, native Vim mode out of the box, without needing to install a slow javascript-based extension.
 
+
 <Callout icon="info" title="The Electron Backlash">
+
+
 Zed represents a broader industry trend (alongside tools like Tauri or native Rust apps) of moving away from Electron. Developers are tired of their chat app, music player, and code editor each running a separate, massive instance of the Chromium browser in the background and draining laptop batteries.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

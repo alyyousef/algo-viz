@@ -1,0 +1,24 @@
+---
+title: Azure Functions
+description: Microsoft's premier event-driven, serverless compute platform, enabling developers to run localized blocks of code that mathematically scale from zero to tens of thousands of concurrent executions.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Functions"
+  subtitle="Event-Driven Serverless Compute"
+  tags={['Azure', 'Serverless', 'Compute', 'Events']}
+>
+
+Azure Functions is the exact equivalent of AWS Lambda. It allows you to write a piece of code (C#, Python, JavaScript) and mathematically execute it only when an event occurs, without ever provisioning or paying for an idle server.
+
+## 1. Triggers and Bindings
+Azure Functions abstracts away API boilerplate using a mathematical concept called **Bindings**.
+- **Trigger**: What causes the function to run (e.g., An HTTP request, a new message on a Service Bus queue, or a timer).
+- **Input/Output Bindings**: If your function needs to save data to a database, you do *not* write database connection code. You configure an Output Binding in a JSON file. Your function simply mathematically returns a JSON object; the Azure runtime intercepts the return value and automatically executes the complex network math to securely insert it into CosmosDB.
+
+## 2. Consumption vs. Premium Plans
+- **Consumption Plan**: Pure serverless. You pay exactly per execution millisecond. The math scales to infinity, but suffers from "Cold Starts" (taking a few seconds to boot the code if it hasn't been run recently).
+- **Premium Plan**: You mathematically reserve a pool of pre-warmed instances. You pay a higher baseline cost, but you completely eliminate Cold Starts, and your Functions can securely access resources inside isolated private Virtual Networks.
+
+</TechnologyTemplate>

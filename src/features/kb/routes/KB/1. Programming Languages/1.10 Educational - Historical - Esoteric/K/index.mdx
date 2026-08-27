@@ -1,8 +1,26 @@
+---
+title: K
+description: A commercial, extremely high-performance array language used heavily in finance and high-frequency trading.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="K">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="K">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Developed by Arthur Whitney (who previously worked on APL and J), K is an esoteric, commercial array language. It is the underlying language of **kdb+**, an incredibly fast time-series database used by Wall Street banks to process billions of financial ticks per second.
 
-</ConceptTemplate>
+## 1. The Pursuit of Speed
+K is mathematically obsessed with raw execution speed.
+It achieves this by being incredibly tiny. The entire K interpreter is only a few hundred kilobytes. Because the interpreter and the data structures are so small, the entire environment easily fits inside the L1/L2 cache of a modern CPU, avoiding slow RAM lookups entirely.
+
+## 2. APL Lineage
+Like APL and J, K is heavily array-oriented, reading right-to-left.
+Unlike J, which uses a massive vocabulary of ASCII digraphs, K minimizes the core primitive set.
+K code is notoriously unreadable, often consisting of a dense string of symbols (e.g., `+/x`), but a single line of K can replace 50 lines of C code and execute 10 times faster due to its inherent vectorization and cache locality.
+

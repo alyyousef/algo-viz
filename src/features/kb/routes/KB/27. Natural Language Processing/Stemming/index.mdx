@@ -1,8 +1,28 @@
+---
+title: Stemming
+description: A fast, mathematically primitive algorithm that uses hardcoded heuristic rules to chop the suffixes and prefixes off words to normalize text.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stemming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Stemming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before the invention of deep learning and complex Lemmatization dictionaries, search engines needed a mathematically cheap way to normalize text so that searching for "running" would also find documents containing "run."
 
-</ConceptTemplate>
+## 1. The Porter Stemmer Algorithm
+The most famous stemming algorithm was invented by Martin Porter in 1980.
+It does not use AI; it uses a rigid sequence of mathematical Regex string-replacements.
+For example, a rule might state: `If a word ends in "sses", replace it with "ss"` (e.g., "caresses" -> "caress").
+Another rule: `If a word ends in "ing", delete "ing"`.
+
+## 2. Over-stemming and Under-stemming
+Because Stemming is mathematically blind to context, it causes catastrophic linguistic errors.
+- **Over-stemming**: The algorithm chops off too much. It might stem both "University" and "Universe" down to "Univers." A search engine will now mathematically conflate the two concepts, returning articles about outer space when you search for college.
+- **Under-stemming**: The algorithm fails to chop enough. It might stem "Data" to "Data" but "Datum" to "Datum", failing to mathematically recognize that they are the singular and plural forms of the exact same concept.
+

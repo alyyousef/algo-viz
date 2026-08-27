@@ -1,0 +1,24 @@
+---
+title: Azure Front Door
+description: A massive, global Layer 7 load balancer and Content Delivery Network (CDN) that mathematically routes internet traffic to the fastest, closest Azure region while providing robust edge security.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Front Door"
+  subtitle="Global Edge Routing"
+  tags={['Azure', 'Networking', 'Global', 'CDN']}
+>
+
+If your application is hosted in New York, and a user in Sydney tries to connect, their HTTP request must mathematically bounce across 20 different underwater fiber optic routers, resulting in high latency and packet loss.
+
+## 1. The Anycast Network
+Front Door utilizes Microsoft's massive, private global WAN (Wide Area Network).
+When the user in Sydney types your URL, they do not connect to New York. Because of **Anycast DNS**, they connect to a physical Microsoft Edge Node located directly in Sydney.
+The Front Door edge node mathematically intercepts the HTTP request, terminates the SSL connection locally (saving massive latency), and routes the request onto Microsoft's private, hyper-fast fiber backbone directly to your New York server, completely bypassing the chaotic public internet.
+
+## 2. Global Failover and Web Application Firewall
+Because Front Door sits at the global edge of the internet, it is the ultimate mathematical failover system.
+If you deploy your app to both New York and London, Front Door monitors their health. If the entire East Coast of the US loses power, Front Door instantly detects the mathematical failure and transparently routes all global traffic to London. Furthermore, it includes a global WAF. If a massive DDoS attack originates from a botnet in Russia, Front Door mathematically absorbs and blocks the attack at the physical edge nodes in Europe, ensuring the malicious packets never even reach your actual Azure infrastructure.
+
+</TechnologyTemplate>

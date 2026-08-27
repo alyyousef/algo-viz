@@ -4,17 +4,30 @@ description: The specific, physical hardware implementation of an Instruction Se
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Microarchitecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microarchitecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In computer engineering, there is a strict separation between the **Architecture** (the API) and the **Microarchitecture** (the physical implementation).
 
 - **The Architecture (ISA)**: This is the rulebook. It states: "This CPU understands x86 instructions. It has 16 general-purpose registers. \`ADD RAX, RBX\` means add two numbers." It is a software contract.
 - **The Microarchitecture**: This is the physical blueprint of the silicon. It dictates *how* the hardware actually fulfills the contract. Does it use a 14-stage pipeline? Does it use a 512KB L1 cache? Does it use Neural branch prediction?
 
+
 <Callout icon="info" title="The Car Analogy">
+
+
   - **Architecture**: The standard layout of a car. Steering wheel on the left, gas pedal on the right, brake on the left. (If you know how to drive, you can drive any car).
   - **Microarchitecture**: The engine. Is it a V8? A V6? An Electric Motor? The driver doesn't care, as long as pressing the gas pedal moves the car forward.
+
+
 </Callout>
+
 
 ## Why Microarchitecture Matters
 
@@ -26,8 +39,7 @@ This allows Intel and AMD to release brand new processors every single year. A 2
 
 Historically, Intel released CPUs using the famous "Tick-Tock" strategy to manage engineering risk:
 - **Tick (Process Node Shrink)**: Take last year's proven microarchitecture, but shrink the physical transistors (e.g., from 22nm to 14nm). This lowers power consumption and allows higher clock speeds, but the logic design remains identical.
-- **Tock (New Microarchitecture)**: Keep the physical transistor size the same, but completely redesign the logic gates, pipelines, and caches (a brand new microarchitecture) to increase IPC (Instructions Per Clock). 
+- **Tock (New Microarchitecture)**: Keep the physical transistor size the same, but completely redesign the logic gates, pipelines, and caches (a brand new microarchitecture) to increase IPC (Instructions Per Clock).
 
 Because designing a new microarchitecture is incredibly difficult, engineers rely heavily on **Simulation**. Before a chip is ever manufactured, its microarchitecture is simulated in software for years to ensure it perfectly adheres to the ISA contract.
 
-</ConceptTemplate>

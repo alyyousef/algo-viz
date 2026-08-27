@@ -1,8 +1,31 @@
+---
+title: Multiple Inheritance
+description: A controversial Object-Oriented feature, supported in languages like C++ and Python, where a single child class is mathematically permitted to inherit state and behavior from two or more completely distinct parent classes simultaneously.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="multiple">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Multiple Inheritance"
+  subtitle="The Mathematical Diamond Problem"
+  tags={['OOP', 'Inheritance', 'C++', 'Python']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a `Smartphone` is mathematically both a `Computer` and a `Phone`, it logically makes sense to have the `Smartphone` class inherit from both parent classes.
 
-</ConceptTemplate>
+## 1. The Deadly Diamond of Death
+However, Multiple Inheritance introduces a catastrophic mathematical ambiguity known as the **Diamond Problem**.
+Imagine `Computer` and `Phone` both inherit from a grand-parent class called `ElectronicDevice`. The `ElectronicDevice` class has a `turnOn()` method.
+Both `Computer` and `Phone` override the `turnOn()` method with their own custom logic.
+If `Smartphone` inherits from both, and the developer calls `mySmartphone.turnOn()`, which mathematical implementation does the CPU execute? The Computer's or the Phone's? The compiler physically cannot resolve the ambiguity.
+
+## 2. The Modern Solution
+Because this ambiguity caused massive bugs in early C++ systems, modern languages like Java and C# fundamentally mathematically outlaw Multiple Inheritance for classes.
+They solve the requirement by allowing a class to inherit from exactly ONE parent class, but implement INFINITE **Interfaces**, forcing the developer to provide the concrete logic themselves to mathematically guarantee zero ambiguity.
+

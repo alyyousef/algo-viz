@@ -4,9 +4,16 @@ description: A complex branch of AI where multiple autonomous agents interact, c
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-Agent Systems (MAS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Agent Systems (MAS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While a single AI Agent playing Pac-Man is impressive, the real world consists of billions of humans interacting simultaneously. **Multi-Agent Systems (MAS)** study how multiple AI algorithms interact within a shared mathematical environment. 
+While a single AI Agent playing Pac-Man is impressive, the real world consists of billions of humans interacting simultaneously. **Multi-Agent Systems (MAS)** study how multiple AI algorithms interact within a shared mathematical environment.
 
 ## 1. Cooperation vs Competition
 Multi-Agent Systems are governed heavily by mathematical **Game Theory**.
@@ -17,11 +24,10 @@ Multi-Agent Systems are governed heavily by mathematical **Game Theory**.
 ## 2. The Tragedy of the Commons
 In decentralized Multi-Agent Systems, where agents do not share a global "hive mind", catastrophic mathematical failures can occur.
 
-If you program 1,000 autonomous trading agents to maximize their own individual profit on the stock market, they will mathematically execute trades flawlessly. However, their combined actions might trigger a "Flash Crash", destroying the entire market. 
+If you program 1,000 autonomous trading agents to maximize their own individual profit on the stock market, they will mathematically execute trades flawlessly. However, their combined actions might trigger a "Flash Crash", destroying the entire market.
 Research in MAS focuses on mathematically designing the environment's rules (mechanism design) so that the selfish actions of individual agents naturally result in a globally optimal outcome (Nash Equilibrium).
 
 ## 3. Swarm Intelligence
-Inspired by biological systems (ant colonies, flocks of birds), Swarm Intelligence features hundreds of incredibly simple AI agents. 
+Inspired by biological systems (ant colonies, flocks of birds), Swarm Intelligence features hundreds of incredibly simple AI agents.
 No individual ant agent is intelligent, and there is no central leader. However, by following 2 or 3 strict mathematical rules based entirely on their immediate local surroundings (e.g., "follow the strongest pheromone trail"), the swarm exhibits breathtakingly complex, globally intelligent behavior, such as calculating the mathematically shortest path to a food source.
 
-</ConceptTemplate>

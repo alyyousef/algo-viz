@@ -4,26 +4,38 @@ description: The critical security utility that allows standard users to tempora
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="sudo (Superuser Do)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="sudo (Superuser Do)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Logging in directly as the `root` user is highly dangerous. If you leave your terminal unlocked, anyone can destroy the server. 
-Instead, Linux uses **`sudo`** (Superuser Do). 
+Logging in directly as the `root` user is highly dangerous. If you leave your terminal unlocked, anyone can destroy the server.
+Instead, Linux uses **`sudo`** (Superuser Do).
 
 It allows authorized standard users to prefix their commands with `sudo` (e.g., `sudo systemctl restart nginx`). The system will prompt the user for *their own password* (not the Root password), execute that single command as Root, and then immediately return to standard privileges.
 
 ## The visudo File
 
-How does the system know who is allowed to use `sudo`? 
+How does the system know who is allowed to use `sudo`?
 It checks the **`/etc/sudoers`** file.
 
+
 <Callout icon="warning" title="The visudo Command">
-  You must **never** edit `/etc/sudoers` directly using Nano or Vim. If you make a syntax typo and save the file, you will instantly break the `sudo` command globally, permanently locking yourself out of Root access. 
+
+
+  You must **never** edit `/etc/sudoers` directly using Nano or Vim. If you make a syntax typo and save the file, you will instantly break the `sudo` command globally, permanently locking yourself out of Root access.
   You must always edit it by running the **`visudo`** command. `visudo` opens the file in a temporary buffer, and when you save, it mathematically verifies the syntax before actually applying it to the real file.
+
+
 </Callout>
 
+
 ## Granular Permissions
-The true power of the `sudoers` file is granularity. You don't have to give a user full Root access. 
+The true power of the `sudoers` file is granularity. You don't have to give a user full Root access.
 You can add a line like: `alice ALL=(ALL) /bin/systemctl restart nginx`
 This allows Alice to use `sudo` to restart the web server, but if she tries to `sudo rm -rf /`, the system will explicitly deny her.
 
-</ConceptTemplate>

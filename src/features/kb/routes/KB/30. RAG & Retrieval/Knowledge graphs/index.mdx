@@ -1,8 +1,28 @@
+---
+title: Knowledge Graphs
+description: A semantic data architecture that mathematically models information not as flat tables or vectors, but as an interconnected network of exact logical relationships between entities.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Knowledge graphs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Knowledge Graphs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Relational Databases (SQL) map data to tables. Vector Databases map data to geometry. Knowledge Graphs map data to human-like logical reasoning.
 
-</ConceptTemplate>
+## 1. Nodes and Edges (RDF Triples)
+The fundamental mathematical unit of a Knowledge Graph is the **Triple**: `(Subject, Predicate, Object)`.
+- **Node (Subject)**: e.g., "Apple Inc."
+- **Edge (Predicate)**: e.g., "Founded By"
+- **Node (Object)**: e.g., "Steve Jobs"
+Because every single fact is stored as an explicit, hardcoded mathematical vector (Edge) pointing from one concept to another, the database natively understands logic. It doesn't just know that "Apple" and "Steve Jobs" appear in the same paragraph; it knows the exact physical nature of their relationship.
+
+## 2. Graph Traversal and Ontologies
+Knowledge Graphs are powered by **Ontologies** (strict mathematical schemas defining what types of relationships are possible).
+When queried (often using SPARQL or Cypher), the database performs **Graph Traversal**. If you ask, "Which CEOs of tech companies were born in California?", the engine does not scan text. It mathematically jumps from the "California" node, travels backward across all "Born In" edges to find People, filters them by traversing their "CEO Of" edges, and checks if the resulting Company node has a "Type" edge pointing to "Tech". This allows for mathematically perfect, hallucination-free logical deduction.
+

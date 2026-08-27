@@ -4,16 +4,28 @@ description: Delegated Proof of Stake is a consensus mechanism in which users ca
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Delegated Proof of Stake (DPoS)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Delegated Proof of Stake (DPoS)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Standard PoS is mathematically highly decentralized, but relatively slow because you still have to wait for thousands of nodes to agree.
 
 **Delegated Proof of Stake (DPoS)** mathematically sacrifices extreme decentralization for extreme speed.
 
+
 <Callout icon="info" title="The Representative Democracy">
+
+
   In DPoS (used by EOS or Tron), the thousands of network users mathematically vote for a very small number of "Delegates" (e.g., 21 master nodes).
-  
+
   Because there are only exactly 21 physical servers writing blocks, the network can mathematically process 4,000 transactions per second (compared to Ethereum's 15 TPS). If a Delegate acts maliciously, the users biologically vote them out in the next cycle and replace them.
+
+
 </Callout>
 
-</ConceptTemplate>
+

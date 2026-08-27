@@ -4,7 +4,14 @@ description: An unsupervised learning algorithm that mathematically builds a nes
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hierarchical Clustering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hierarchical Clustering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 K-Means requires you to mathematically guess the number of clusters ($K$) before you run the algorithm. **Hierarchical Clustering** does the opposite. It mathematically builds a massive tree containing *every possible number of clusters* from 1 to $N$, allowing you to inspect the tree and choose the perfect $K$ after the math is done.
 
@@ -22,10 +29,9 @@ How do you mathematically calculate the distance between two clusters if each cl
 - **Ward's Method**: The industry standard. It mathematically calculates the variance inside the clusters. It merges the two clusters that result in the absolute minimum increase in total internal variance.
 
 ## 3. The Dendrogram
-The algorithm outputs a **Dendrogram**, a massive mathematical tree diagram. 
-The y-axis represents the mathematical distance at which the clusters were merged. 
+The algorithm outputs a **Dendrogram**, a massive mathematical tree diagram.
+The y-axis represents the mathematical distance at which the clusters were merged.
 A Data Scientist inspects the dendrogram, looks for a massive vertical gap (a huge jump in mathematical distance), and simply draws a horizontal line through the tree to mathematically extract the optimal number of clusters.
 
 *Downside*: It requires building an $N \times N$ distance matrix, giving it an $O(N^3)$ time complexity, making it computationally impossible to run on datasets larger than a few tens of thousands of rows.
 
-</ConceptTemplate>

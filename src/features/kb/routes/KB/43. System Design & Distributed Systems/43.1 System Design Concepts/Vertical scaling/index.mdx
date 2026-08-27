@@ -4,15 +4,28 @@ description: The process of adding more resources (CPU, RAM, Disk) to an existin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Vertical Scaling (Scaling Up)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vertical Scaling (Scaling Up)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a server begins to mathematically choke under heavy load, the easiest and most intuitive solution is to simply buy a bigger, faster server. This is known as **Vertical Scaling** (or "Scaling Up").
 
 If your database server currently has 16GB of RAM and an 8-core CPU, vertical scaling means shutting it down, physically swapping the motherboard for a 256GB RAM / 64-core beast, and turning it back on.
 
+
 <Callout icon="success" title="The Advantage: Zero Code Changes">
+
+
   The primary mathematical benefit of Vertical Scaling is that it requires absolutely zero changes to your application architecture. The application code still thinks it is talking to a single database; that database is just magically much faster now.
+
+
 </Callout>
+
 
 ## The Mathematical Limits of Vertical Scaling
 
@@ -22,4 +35,3 @@ Vertical Scaling is fantastic for startups, but it eventually hits a hard, mathe
 2. **Exponential Cost:** A server with twice as much RAM does not cost twice as much money; it often costs four or five times as much. The price curve for ultra-high-end enterprise hardware is exponential.
 3. **Single Point of Failure (SPOF):** No matter how expensive and powerful your single mainframe is, if the power supply mathematically explodes, your entire application goes offline globally.
 
-</ConceptTemplate>

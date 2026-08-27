@@ -1,0 +1,23 @@
+---
+title: Azure Virtual Networks (VNets)
+description: The absolute foundational networking boundary in Azure, providing a cryptographically isolated, logically dedicated slice of the Azure cloud for deploying secure resources.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Virtual Networks (VNets)"
+  subtitle="The Isolated Cloud Network"
+  tags={['Azure', 'Networking', 'Security', 'Infrastructure']}
+>
+
+An Azure Virtual Network (VNet) is the exact equivalent of an AWS VPC. Without a VNet, your databases and servers would be accessible to the public internet. A VNet provides the mathematical moat that keeps hackers out.
+
+## 1. CIDR and Isolation
+When you create a VNet, you define its size using a mathematical CIDR block (e.g., `10.0.0.0/16`, giving you 65,536 private IP addresses).
+The Azure Software Defined Network (SDN) hypervisor strictly enforces isolation. If your VNet is `10.0.0.0/16`, and another company's VNet is `10.0.0.0/16`, they are completely invisible to each other. The physical network hardware mathematically drops any packet attempting to cross the VNet boundary unless explicitly permitted by a VNet Peering connection.
+
+## 2. VNet Peering
+If you have a "Frontend" VNet and a "Backend" VNet, they cannot communicate by default.
+You establish **VNet Peering**. This mathematically fuses the routing tables of the two VNets at the hypervisor level. The traffic flows directly across Microsoft's private, hyper-fast fiber optic backbone. It never touches the public internet, and there are no physical gateways or hops involved, ensuring massive bandwidth and ultra-low latency between the isolated networks.
+
+</TechnologyTemplate>

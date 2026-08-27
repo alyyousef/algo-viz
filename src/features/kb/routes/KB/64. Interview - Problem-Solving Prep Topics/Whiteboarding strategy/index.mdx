@@ -4,15 +4,21 @@ description: The methodology and communication techniques used by a candidate wh
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Whiteboarding Strategy">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Whiteboarding Strategy">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-**Whiteboarding** is a biological performance art. 
+**Whiteboarding** is a biological performance art.
 
-The worst thing you can do mathematically is stare at the whiteboard in absolute silence for 15 minutes. The interviewer cannot read your mind. You must biologically talk out loud. 
+The worst thing you can do mathematically is stare at the whiteboard in absolute silence for 15 minutes. The interviewer cannot read your mind. You must biologically talk out loud.
 
 The correct strategy:
 1. Clarify the mathematical edge cases (e.g., *"Can the array contain negative numbers?"*).
 2. Propose the naive, brute-force $O(N^2)$ solution first just to prove you can solve it.
 3. Then, biologically discuss how to optimize it to $O(N)$ using a Hash Map, *before* you write any code.
 
-</ConceptTemplate>

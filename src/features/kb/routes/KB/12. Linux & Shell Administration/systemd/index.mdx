@@ -5,10 +5,17 @@ description: "A software suite that provides an array of system components for L
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="systemd"
   icon="server"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **systemd** is the modern standard "init system" for Linux. It is the very first process (Process ID 1) that starts when the kernel finishes booting. Its job is to start all the other services (networking, SSH, databases, web servers) in the correct order.
 
@@ -39,8 +46,13 @@ WantedBy=multi-user.target
 ```
 Because `Restart=always` is set, if your Node app crashes due to an exception, systemd will automatically restart it instantly.
 
+
 <Callout icon="info" title="The systemd Controversy">
+
+
 systemd is highly controversial among Linux purists. The UNIX philosophy states that programs should "do one thing and do it well." systemd ignores this entirely; it grew from an init system into a massive monolith that manages logging (journald), network configuration (networkd), time synchronization (timesyncd), and DNS. Despite the backlash, it has been adopted by almost every major distribution (Ubuntu, Debian, Fedora, Arch).
+
+
 </Callout>
 
-</ConceptTemplate>
+

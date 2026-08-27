@@ -1,8 +1,31 @@
+---
+title: Event-Driven Architecture (EDA)
+description: "A dominant software architecture paradigm promoting the production, detection, and consumption of events, mathematically decoupling services by having them react to state changes rather than relying on synchronous API calls."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Event-driven systems">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Event-Driven Architecture (EDA)"
+  subtitle="Reacting to State Changes"
+  tags={['System Design', 'Architecture', 'Microservices', 'Messaging']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In a standard Synchronous Microservice Architecture, if the User Service creates a user, it must execute a synchronous REST API call to the Email Service to send the welcome email.
+If the Email Service is mathematically offline, the User Service HTTP request times out, and the entire user creation process fails. This is catastrophic tight coupling.
 
-</ConceptTemplate>
+## 1. The Asynchronous Decoupling
+In an **Event-Driven Architecture**, the User Service mathematically does not know the Email Service exists.
+When a user is created, the User Service simply publishes a JSON message (an "Event") to a central Message Broker (like Kafka or RabbitMQ) saying: `{ "event": "UserCreated", "userId": 123 }`.
+The User Service instantly returns a success response to the frontend.
+
+## 2. Event Choreography
+The Email Service is mathematically subscribed to the `UserCreated` event. It pulls the event from the broker and sends the email asynchronously in the background.
+If the Email Service is offline, the broker simply holds the event safely on disk. When the Email Service boots back up 3 hours later, it pulls the event and sends the email. The system is mathematically resilient, fault-tolerant, and perfectly decoupled.
+

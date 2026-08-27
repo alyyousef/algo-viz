@@ -1,0 +1,25 @@
+---
+title: OCI Compartments
+description: A fundamental, mathematically rigorous logical isolation feature unique to Oracle Cloud, used to strictly organize and secure cloud resources across an entire enterprise.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Compartments"
+  subtitle="Logical Resource Isolation"
+  tags={['OCI', 'Security', 'Governance', 'IAM']}
+>
+
+In AWS, if you want to completely isolate the "HR Team" from the "DevOps Team", you generally create two entirely separate AWS Accounts. OCI handles this mathematically within a single Tenancy (Account) using **Compartments**.
+
+## 1. Logical Boundaries
+A Compartment is a logical, mathematical folder. It is not a physical network boundary.
+When you create a Virtual Machine, a Database, or a Virtual Cloud Network (VCN), you *must* mathematically place it into a specific Compartment (e.g., `Production_Compartment`).
+You then apply IAM Policies strictly to the Compartment: *"Allow the 'DevOps_Group' to manage all Virtual Machines inside the 'Production_Compartment'."* If a DevOps engineer tries to delete a VM in the `HR_Compartment`, the mathematical IAM evaluation strictly blocks the action.
+
+## 2. Hierarchical Nesting and Quotas
+Compartments can be mathematically nested up to 6 levels deep.
+(e.g., `Root -> Finance -> Analytics -> Sandbox`).
+This allows for massive enterprise governance. You can apply a **Quota Policy** at the `Finance` level: *"Mathematically restrict this compartment and all its children to a maximum of 50 CPU cores."* This absolute mathematical ceiling prevents a junior developer in the Sandbox from accidentally spinning up 1,000 GPUs and bankrupting the company.
+
+</TechnologyTemplate>

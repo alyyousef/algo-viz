@@ -4,17 +4,24 @@ description: The automated static analysis tools that mathematically enforce sty
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Code Quality (ESLint, Prettier)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Code Quality (ESLint, Prettier)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-In a team of 50 developers, everyone has different opinions on coding style. Some prefer single quotes, some prefer double quotes. Some prefer 2 spaces, some prefer tabs. 
+In a team of 50 developers, everyone has different opinions on coding style. Some prefer single quotes, some prefer double quotes. Some prefer 2 spaces, some prefer tabs.
 
-Without automated tooling, Pull Request reviews devolve into bitter arguments over indentation, wasting thousands of hours of expensive engineering time. 
+Without automated tooling, Pull Request reviews devolve into bitter arguments over indentation, wasting thousands of hours of expensive engineering time.
 
 The industry mathematically solved this using a strict separation of concerns:
 
 ## 1. Prettier (The Code Formatter)
 Prettier is an "opinionated" code formatter. It does not care about logic or bugs. Its only job is visual spacing.
-When you press Save in your editor, Prettier rips your code apart into an Abstract Syntax Tree (AST), deletes all of your personal formatting, and reprints it using a strict set of mathematical rules. 
+When you press Save in your editor, Prettier rips your code apart into an Abstract Syntax Tree (AST), deletes all of your personal formatting, and reprints it using a strict set of mathematical rules.
 
 ```js
 // You write this ugly mess:
@@ -42,4 +49,3 @@ ESLint scans the AST for dangerous patterns:
 ## The Synergy
 Today, these tools are run automatically on "pre-commit hooks" using a tool called **Husky**. The system will literally forbid the developer from committing their code to Git unless Prettier has formatted it and ESLint reports zero errors.
 
-</ConceptTemplate>

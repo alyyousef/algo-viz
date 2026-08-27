@@ -1,8 +1,28 @@
+---
+title: Agda
+description: A dependently typed functional programming language and interactive theorem prover.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Agda">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Agda">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Agda is not just a programming language; it is a mathematical proof assistant. It is a purely functional language closely related to Haskell, but it features a **Dependent Type System**.
 
-</ConceptTemplate>
+## 1. Dependent Types
+In standard languages (Java, Rust, Haskell), types (like `String` or `Int`) and values (like `"Hello"` or `5`) exist in completely separate mathematical universes.
+In Agda, types can mathematically depend on values.
+You can define a type called `Vector A n`, which means "an array of type A, with exactly length n".
+If you write an `append` function, its mathematical signature is:
+`append : Vector A n -> Vector A m -> Vector A (n + m)`
+If your code accidentally returns an array of length `n + m - 1`, the code will mathematically fail to compile. The compiler mathematically proves that your logic is flawless before execution.
+
+## 2. Interactive Theorem Proving
+Agda developers do not write code in isolation. They use an interactive Emacs or VSCode mode. The developer writes the mathematical type signature (the Theorem), and the Agda compiler interactively helps them write the code (the Proof) to satisfy it, turning programming into a rigorous mathematical dialogue.
+

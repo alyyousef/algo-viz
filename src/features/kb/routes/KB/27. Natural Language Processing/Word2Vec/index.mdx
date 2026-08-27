@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Word2Vec
+description: The pioneering Neural Network architecture created by Google that first popularized Word Embeddings by mathematically predicting surrounding words based on context.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Word2Vec">
+<TechnologyTemplate
+  title="Word2Vec"
+  subtitle="Neural Word Embeddings"
+  tags={['NLP', 'Machine Learning', 'Google', 'Embeddings']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Tomas Mikolov at Google in 2013, Word2Vec changed the trajectory of Artificial Intelligence forever by proving that shallow Neural Networks could capture deep semantic meaning.
 
-</ConceptTemplate>
+## 1. CBOW (Continuous Bag of Words)
+Word2Vec is actually two different mathematical algorithms.
+The first is CBOW. The Neural Network is given the surrounding context words (e.g., "The cat sat on the ___") and must mathematically predict the missing target word ("mat"). By forcing the network to guess the middle word millions of times, the internal weights of the network mathematically adjust to represent the semantic meaning of the words.
+
+## 2. Skip-Gram
+The second algorithm is Skip-Gram, which is the exact mathematical inverse of CBOW.
+The network is given a single target word (e.g., "mat") and must mathematically predict all the surrounding context words ("The", "cat", "sat", "on").
+Skip-Gram is mathematically much harder, but it produces vastly superior embeddings for rare words. The final resulting weights from the network's hidden layer become the 300-dimensional Word Embeddings that can be exported and used in any other NLP system.
+
+</TechnologyTemplate>

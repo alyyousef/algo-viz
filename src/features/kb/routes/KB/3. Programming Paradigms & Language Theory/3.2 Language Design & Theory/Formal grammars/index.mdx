@@ -1,8 +1,28 @@
+---
+title: Formal Grammars
+description: The absolute mathematical rules defining which sequences of characters are valid in a language, categorized by Noam Chomsky into a strict hierarchy of computational complexity.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Formal grammars">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Formal Grammars">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A language is just an infinite set of valid strings. A Formal Grammar is the finite set of mathematical rules (Productions) that generates all of those valid strings, and instantly rejects any invalid string (Syntax Errors).
 
-</ConceptTemplate>
+## 1. The Chomsky Hierarchy
+In 1956, Noam Chomsky mathematically proved that all grammars exist in a strict hierarchy of four levels, dictating the complexity of the machine required to parse them:
+- **Type 3 (Regular Grammars)**: The weakest. Can be parsed by a simple State Machine. Used for Regex (e.g., validating an email address).
+- **Type 2 (Context-Free Grammars)**: Can be parsed by a Pushdown Automaton (a machine with a Stack). This is the mathematical foundation of almost all modern programming languages (parsed via BNF/EBNF).
+- **Type 1 (Context-Sensitive)**: Requires a Turing machine with bounded memory.
+- **Type 0 (Recursively Enumerable)**: The absolute peak. Any language that can be computed by a Turing Machine.
+
+## 2. The HTML Regex Fallacy
+This mathematical hierarchy explains a famous programming paradox: *You cannot parse HTML with Regular Expressions.*
+Regex is mathematically locked to Type 3 (Regular Grammars). HTML allows infinitely nested tags (e.g., `<div><div></div></div>`), which requires a mathematical memory Stack to keep track of the nesting depth. Therefore, HTML is mathematically a Type 2 (Context-Free) grammar. Attempting to parse Type 2 structures with a Type 3 Regex engine guarantees eventual, catastrophic mathematical failure.
+

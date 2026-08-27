@@ -4,16 +4,29 @@ description: The byte-ordering convention that dictates how multi-byte numbers a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Endianness">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Endianness">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Memory is addressed in **Bytes** (8 bits). However, most numbers we use in programming are 32-bit (4 bytes) or 64-bit (8 bytes) integers. 
+Memory is addressed in **Bytes** (8 bits). However, most numbers we use in programming are 32-bit (4 bytes) or 64-bit (8 bytes) integers.
 When a CPU needs to store a 4-byte integer into RAM, it must split the number into four separate chunks and store them in four sequential memory addresses.
 
-**Endianness** is the architectural decision of *which order* to store those bytes in. 
+**Endianness** is the architectural decision of *which order* to store those bytes in.
+
 
 <Callout icon="info" title="The Name's Origin">
+
+
   The term comes from Jonathan Swift's 1726 novel *Gulliver's Travels*, where two warring factions fight over whether to crack a boiled egg at the "Little End" or the "Big End".
+
+
 </Callout>
+
 
 ## Big-Endian vs. Little-Endian
 
@@ -45,4 +58,3 @@ Because Intel chose Little-Endian for PCs, and the creators of the Internet chos
 
 If a Little-Endian PC sends a 32-bit IP address over the network without converting it, the receiving router will read it backwards and drop the packet. Software developers must constantly use functions like \`htonl()\` (Host-to-Network Long) to flip the bytes before sending them over a socket.
 
-</ConceptTemplate>

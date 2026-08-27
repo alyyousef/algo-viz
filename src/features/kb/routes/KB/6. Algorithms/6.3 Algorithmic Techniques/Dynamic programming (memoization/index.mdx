@@ -1,8 +1,31 @@
+---
+title: Dynamic Programming (Memoization)
+description: "An optimization technique that solves complex recursive problems by mathematically remembering (caching) the results of expensive function calls to prevent redundant calculations."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dynamic programming (memoization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Memoization (Top-Down DP)"
+  subtitle="Caching the Recursion Tree"
+  tags={['Algorithms', 'Techniques', 'Dynamic Programming', 'Caching']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+This page was generated due to a parsing artifact in the scaffolding script.
+For the full mathematical explanation, please refer to the primary **Dynamic Programming** page.
 
-</ConceptTemplate>
+## 1. The Recursive Problem
+In a naive recursive Fibonacci function (`fib(n) = fib(n-1) + fib(n-2)`), calculating `fib(50)` mathematically requires evaluating `fib(2)` hundreds of millions of times. This redundant recalculation causes a catastrophic exponential Time Complexity of O(2^N).
+
+## 2. Top-Down Memoization
+Memoization solves this mathematically. You create a Hash Map or Array cache.
+Before the function calculates `fib(N)`, it checks the cache: *"Have I ever calculated this exact state before?"*
+If YES, it mathematically instantly returns the cached value in O(1) time.
+If NO, it performs the expensive recursion, but *saves* the answer to the cache before returning. This mathematically collapses the O(2^N) recursion tree into a straight line, solving the problem in exactly **O(N)** time.
+

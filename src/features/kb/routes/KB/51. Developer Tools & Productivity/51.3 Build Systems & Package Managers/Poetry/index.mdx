@@ -4,7 +4,7 @@ description: Python packaging and dependency management made easy.
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Poetry"
   subtitle="The modern Python workflow"
   logoUrl="https://python-poetry.org/images/logo-origami.svg"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Historically, Python developers listed dependencies in a flat `requirements.txt` file. It mathematically lacked version locking, meaning a production server might install a slightly different sub-dependency version than the local dev machine, causing an outage.
 
+
 <Callout icon="tip" title="pyproject.toml & Lockfiles">
-  Poetry mathematically solves this by introducing a strict `pyproject.toml` file and a `poetry.lock` file. 
-  
+
+
+  Poetry mathematically solves this by introducing a strict `pyproject.toml` file and a `poetry.lock` file.
+
   It guarantees absolute deterministic builds. Furthermore, Poetry completely abstracts Virtual Environments. When you run `poetry install`, it automatically creates an isolated `venv` in the background without the developer ever needing to manually manage it.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

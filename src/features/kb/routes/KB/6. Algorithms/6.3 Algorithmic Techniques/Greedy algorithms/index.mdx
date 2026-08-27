@@ -1,8 +1,32 @@
+---
+title: Greedy Algorithms
+description: "A mathematical algorithmic paradigm that builds up a solution piece by piece, always choosing the next piece that offers the most obvious and immediate benefit without worrying about the future."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Greedy algorithms">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Greedy Algorithms"
+  subtitle="Choosing the Immediate Best"
+  tags={['Algorithms', 'Techniques', 'Optimization', 'Mathematics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Greedy Algorithm never mathematically looks ahead. It makes the locally optimal choice at every step, hoping that these local choices mathematically sum up to a global optimum.
 
-</ConceptTemplate>
+## 1. When Greedy Succeeds
+Greedy algorithms are blisteringly fast (often O(N log N) due to sorting) and mathematically perfect for specific problems:
+- **Dijkstra's Algorithm**: Always pick the shortest immediate edge.
+- **Kruskal's MST**: Always pick the absolute cheapest edge in the graph.
+- **Fractional Knapsack**: Always pick the item with the highest value-to-weight ratio.
+If a problem exhibits the mathematical "Greedy Choice Property" and "Optimal Substructure", greedy algorithms are mathematically guaranteed to find the perfect solution.
+
+## 2. When Greedy Fails
+Greedy algorithms mathematically fail when immediate choices trap you into terrible long-term outcomes.
+In the **0/1 Knapsack Problem** (where you cannot split items), picking the item with the highest value-to-weight ratio might physically block you from fitting two medium items that together have a higher total value. When a problem has interlocking constraints, Greedy fails, and you are mathematically forced to use Dynamic Programming.
+

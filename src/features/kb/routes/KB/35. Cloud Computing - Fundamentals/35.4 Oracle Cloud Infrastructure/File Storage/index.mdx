@@ -1,0 +1,24 @@
+---
+title: OCI File Storage (FSS)
+description: A fully managed, highly scalable, POSIX-compliant elastic file system in Oracle Cloud that allows thousands of servers to concurrently mount and share data via the NFS protocol.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI File Storage (FSS)"
+  subtitle="Managed Network File System"
+  tags={['OCI', 'Storage', 'File', 'NFS']}
+>
+
+While Block Volumes can only be attached to a single Virtual Machine at a time, OCI File Storage (FSS) is a shared network drive. It mathematically allows 10,000 different Virtual Machines to read and write to the exact same folder simultaneously.
+
+## 1. Elastic Scaling and NFSv3
+FSS uses the standard Network File System (NFSv3) protocol.
+To a Linux Virtual Machine, the FSS volume looks exactly like a local hard drive (e.g., mounted at `/shared/data`).
+The most powerful mathematical feature of FSS is its **Elasticity**. You do not provision a 500GB drive. The drive starts at 0 bytes. As you write files, the underlying hardware mathematically expands up to 8 Exabytes. You are billed purely by the exact byte count resting on the disk at the end of the month, eliminating the mathematical waste of provisioning empty storage space.
+
+## 2. Export Options and Security
+Because FSS is a network drive, security is paramount. If you are not careful, any VM in the network can mount it.
+FSS uses **Export Options** to enforce mathematical security at the IP level. You define strict rules: *"Only Virtual Machines with the IP address `10.0.1.5` are mathematically allowed to mount this drive with Read/Write permissions. All other IPs in the subnet are strictly Read-Only."* This guarantees that a compromised web server cannot maliciously delete files off the shared corporate drive.
+
+</TechnologyTemplate>

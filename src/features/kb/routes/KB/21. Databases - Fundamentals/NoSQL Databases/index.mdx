@@ -4,9 +4,16 @@ description: Non-relational databases designed for hyper-scalability, flexible s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="NoSQL Databases">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NoSQL Databases">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Relational (SQL) databases were designed in the 1970s for highly structured data (like accounting ledgers) running on single, massive servers. 
+Relational (SQL) databases were designed in the 1970s for highly structured data (like accounting ledgers) running on single, massive servers.
 In the 2000s, the explosion of web traffic and unstructured data (JSON, social media feeds, sensor logs) exposed the limits of SQL's rigid schemas and its inability to horizontally scale across hundreds of cheap servers. **NoSQL** was born.
 
 ## 1. Document Databases (MongoDB, Couchbase)
@@ -17,7 +24,7 @@ Instead of tables and rows, Document Databases store data as hierarchical JSON-l
 
 ## 2. Key-Value Stores (Redis, DynamoDB)
 
-The absolute fastest type of database in existence. It functions exactly like a giant Hash Table. 
+The absolute fastest type of database in existence. It functions exactly like a giant Hash Table.
 - You provide a Key (e.g., `session_id_42`), and the database returns a massive blob of data (Value).
 - You cannot perform complex queries. You cannot say *"Find all users older than 25"*. You must know the exact Key.
 - Because they often run entirely in RAM (like Redis), they offer sub-millisecond latency and are the backbone of modern caching architectures.
@@ -27,8 +34,13 @@ The absolute fastest type of database in existence. It functions exactly like a 
 Designed to handle astronomical amounts of data spread across thousands of servers. They organize data into columns instead of rows.
 - If you have a database tracking the temperature of 10 million IoT sensors every second, a Wide-Column store can write that data across 50 different servers simultaneously without locking up. They are heavily optimized for write-heavy workloads.
 
+
 <Callout icon="warning" title="Eventual Consistency">
+
+
   To achieve massive horizontal scalability and speed, many NoSQL databases sacrifice strict ACID compliance, opting for **Base (Basically Available, Soft state, Eventual consistency)**. If you update a user's profile picture, it might take a few milliseconds for that change to propagate to all servers globally. During that window, different users might temporarily see different pictures.
+
+
 </Callout>
 
-</ConceptTemplate>
+

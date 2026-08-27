@@ -1,8 +1,40 @@
+---
+title: Composition
+description: A strict "has-a" relationship in Object-Oriented Programming representing absolute mathematical ownership, where the child object's lifecycle is entirely bound to the parent object's lifecycle.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Composition">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Composition"
+  subtitle="Strict Mathematical Ownership"
+  tags={['OOP', 'UML', 'Design Patterns', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If Aggregation is a university and a professor (the professor survives if the university closes), Composition is a House and a Room. If the physical house is mathematically destroyed, the room ceases to exist.
 
-</ConceptTemplate>
+## 1. The Life-and-Death Bound
+In Composition, the parent class is strictly responsible for the creation and destruction of the child class.
+```java
+public class House {
+    private Room livingRoom;
+
+    public House() {
+        // The House creates the Room.
+        // The Room cannot exist outside the House.
+        this.livingRoom = new Room("Living Room");
+    }
+}
+```
+Because the `House` instantiates the `Room` internally, no outside class has a reference to that `Room`. If the `House` object is deleted from memory, the Garbage Collector will automatically and mathematically delete the `Room` object.
+
+## 2. Preventing Shared State
+Composition is mathematically safer than Aggregation.
+In Aggregation, you pass an existing object in via the constructor. This means some *other* part of the code also holds a reference to that object, leading to complex shared-state bugs if multiple threads modify it. Composition mathematically guarantees absolute isolation; the parent uniquely owns the child.
+

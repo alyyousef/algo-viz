@@ -1,8 +1,38 @@
+---
+title: Reductions
+description: "The fundamental mathematical technique of Complexity Theory, used to prove the difficulty of a new problem by translating it into a known, already-solved problem."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reductions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Reductions"
+  subtitle="Translating Mathematical Difficulty"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In algorithm design and complexity theory, a **Reduction** is a mathematical transformation. If you can translate Problem A into Problem B, you have mathematically proven that Problem A cannot possibly be harder than Problem B.
 
-</ConceptTemplate>
+## 1. Algorithmic Reductions (Solving Problems)
+Imagine you need to find the Median of an array (Problem A).
+You already possess a blisteringly fast algorithm that Sorts an array (Problem B).
+You can **reduce** finding the median to sorting:
+1. Run the Sorting Algorithm.
+2. Pick the exact middle element.
+By mathematically reducing the Median problem to the Sorting problem, you prove that finding the median takes $O(N \log N)$ time. (Note: Median can actually be solved in $O(N)$ without sorting, but the reduction is still mathematically valid).
+
+## 2. Polynomial-Time Reductions (Proving Hardness)
+Reductions are the entire foundation of **NP-Completeness**.
+Suppose you invent a new, weird puzzle game (Problem X), and you want to mathematically prove to the world that it is NP-Hard (meaning no fast algorithm exists).
+1. You take a famous, proven NP-Hard problem (like 3-SAT or Traveling Salesperson).
+2. You write a fast (polynomial time) algorithm that mathematically translates any valid Traveling Salesperson graph into a board state for your new puzzle game.
+3. **The Proof**: Because Traveling Salesperson is mathematically proven to be impossible to solve quickly, and you can instantly turn it into your game, your game *must* also be impossible to solve quickly. If your game were easy, you could use it to quickly solve Traveling Salesperson.
+
+Through reductions, computer scientists have mathematically linked thousands of disparate problems (Sudoku, Protein Folding, Routing) into a single, unified web of complexity.
+

@@ -4,7 +4,7 @@ description: A Unix shell that can be used as an interactive login shell and as 
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Zsh"
   subtitle="The modern, hyper-extensible shell"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Zsh.svg/512px-Zsh.svg.png"
@@ -15,17 +15,23 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
   websiteUrl="https://www.zsh.org/"
 >
 
-In 2019, Apple mathematically abandoned Bash and made **Zsh** the default shell for macOS. 
+In 2019, Apple mathematically abandoned Bash and made **Zsh** the default shell for macOS.
+
 
 <Callout icon="success" title="Oh My Zsh">
-  Zsh's absolute dominance among frontend and full-stack developers is entirely due to the **Oh My Zsh** framework. 
-  
+
+
+  Zsh's absolute dominance among frontend and full-stack developers is entirely due to the **Oh My Zsh** framework.
+
   It allows developers to mathematically inject massive community-driven plugins into their terminal. Instead of typing `git checkout -b`, developers use the `gcb` alias. It also provides visual themes (like *Spaceship* or *Powerlevel10k*) that parse the current directory and instantly render Git branch status, Node.js versions, and AWS profiles directly into the terminal prompt.
+
+
 </Callout>
+
 
 ## Path Expansion and Globbing
 
-Zsh's native mathematical parsing is vastly superior to Bash. 
+Zsh's native mathematical parsing is vastly superior to Bash.
 If you type `cd /u/lo/b`, Zsh will automatically expand it to `cd /usr/local/bin`. Its recursive globbing allows you to type `ls **/*.js` to instantly find every JavaScript file in every nested subdirectory without ever needing to use the complex `find` command.
 
 </TechnologyTemplate>

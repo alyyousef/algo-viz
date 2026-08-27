@@ -4,23 +4,30 @@ description: The mathematical objective functions that neural networks attempt t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Loss Functions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Loss Functions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A Loss Function (or Cost Function) is a mathematical algorithm that evaluates how well your algorithm models your dataset. It outputs a single scalar value representing the "Error". The entire goal of training a neural network via Backpropagation and Gradient Descent is to find the weights that minimize this Loss Function.
 
+
 <Callout icon="warning" title="Choosing the Wrong Loss">
+
+
   If you use Mean Squared Error (MSE) for a classification problem, the mathematics of the gradients will be extremely unstable and the network may fail to learn entirely. You must pair the mathematical objective with the specific problem type.
+
+
 </Callout>
+
 
 ## Standard Loss Functions
 
-<ComparisonTable 
-  headers={['Loss Function', 'Problem Type', 'Mechanism']}
-  rows={[
-    ['Mean Squared Error (MSE)', 'Regression (Predicting continuous numbers like house prices)', 'Calculates the average of the squared differences between the predicted values and the actual values. Heavily penalizes large outliers.'],
-    ['Binary Cross-Entropy (Log Loss)', 'Binary Classification (e.g., Spam vs Not Spam)', 'Measures the performance of a classification model where the prediction is a probability value between 0 and 1. Punishes confident but wrong predictions severely.'],
-    ['Categorical Cross-Entropy', 'Multi-class Classification (e.g., identifying 10 different types of animals)', 'The standard loss for networks outputting probabilities across multiple mutually exclusive classes (usually paired with a Softmax output layer).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Loss Function', 'Problem Type', 'Mechanism']} rows={[ ['Mean Squared Error (MSE)', 'Regression (Predicting continuous numbers like house prices)', 'Calculates the average of the squared differences between the predicted values and the actual values. Heavily penalizes large outliers.'], ['Binary Cross-Entropy (Log Loss)', 'Binary Classification (e.g., Spam vs Not Spam)', 'Measures the performance of a classification model where the prediction is a probability value between 0 and 1. Punishes confident but wrong predictions severely.'], ['Categorical Cross-Entropy', 'Multi-class Classification (e.g., identifying 10 different types of animals)', 'The standard loss for networks outputting probabilities across multiple mutually exclusive classes (usually paired with a Softmax output layer).'] ]} />
+
+

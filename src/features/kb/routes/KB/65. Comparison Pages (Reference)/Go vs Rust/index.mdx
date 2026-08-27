@@ -1,8 +1,33 @@
+---
+title: Go vs Rust
+description: "A philosophical comparison between the two dominant modern systems languages: Google's Go (simplicity and fast concurrency) and Mozilla's Rust (memory safety without garbage collection)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Go vs Rust">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Go vs Rust"
+  subtitle="The Modern Systems War"
+  tags={['Comparison', 'Languages', 'Systems', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+As C and C++ began showing their age (primarily due to memory leaks and security vulnerabilities), the tech giants built two completely different languages to replace them.
 
-</ConceptTemplate>
+## 1. Go (Golang)
+- **Creator**: Google (Rob Pike, Ken Thompson).
+- **Philosophy**: Extreme Simplicity. Go is designed to be mathematically trivial to learn. It removes classes, inheritance, and complex abstractions.
+- **Superpower**: Concurrency. Go uses lightweight "Goroutines" and channels, allowing a web server to handle 100,000 concurrent requests with mathematically perfect efficiency. It has an ultra-fast Garbage Collector.
+- **Use Case**: Cloud infrastructure, microservices, and network routing. (Docker, Kubernetes, and Terraform are written in Go).
+
+## 2. Rust
+- **Creator**: Mozilla.
+- **Philosophy**: Absolute Control and Safety. Rust allows you to write mathematically perfect, brutally fast C-level code, but its compiler physically refuses to compile if there is a single memory leak or race condition.
+- **Superpower**: The Borrow Checker. Rust completely eliminates the Garbage Collector. It mathematically tracks the "ownership" of every variable in RAM at compile-time, ensuring memory is freed instantly when it goes out of scope.
+- **Use Case**: Operating systems (Rust is now natively supported in the Linux Kernel), web browsers, AAA game engines, and embedded systems where a Garbage Collector pause is catastrophic.
+

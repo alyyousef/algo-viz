@@ -5,10 +5,17 @@ description: "Transport Layer Security, the cryptographic protocol designed to p
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="TLS"
   icon="lock"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **TLS (Transport Layer Security)** is the successor to the deprecated **SSL (Secure Sockets Layer)**. It is the cryptographic armor that wraps around other protocols. When you wrap HTTP in TLS, you get HTTPS. When you wrap SMTP in TLS, you get SMTPS.
 
@@ -28,8 +35,13 @@ When you navigate to `https://bank.com`:
 ## TLS 1.3
 Released in 2018, **TLS 1.3** was a massive overhaul. It ruthlessly stripped out dozens of outdated, vulnerable cryptographic algorithms (like MD5 and SHA-1) and reduced the handshake from two round-trips to **one round-trip (1-RTT)**, making the secure web significantly faster.
 
+
 <Callout icon="info" title="Let's Encrypt">
+
+
 Before 2015, TLS certificates cost hundreds of dollars a year, and configuring them was a nightmare. This meant 70% of the web was unencrypted. A non-profit called **Let's Encrypt** launched, providing automated, free TLS certificates to anyone. Today, over 95% of web traffic is encrypted, entirely changing the landscape of internet privacy.
+
+
 </Callout>
 
-</ConceptTemplate>
+

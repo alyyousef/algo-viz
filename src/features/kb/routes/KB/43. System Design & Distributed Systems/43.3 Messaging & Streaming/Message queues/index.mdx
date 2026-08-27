@@ -4,7 +4,14 @@ description: Asynchronous communication infrastructure that decouples microservi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Message Queues">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Message Queues">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If Microservice A needs Microservice B to process an invoice, it could make a direct HTTP REST call. However, if Microservice B is currently overwhelmed or crashed, the HTTP call will timeout, and the invoice is permanently lost. This is called **Tight Coupling**.
 
@@ -23,4 +30,3 @@ If a Super Bowl ad causes 100,000 users to sign up in one minute, the system nee
 
 Instead, the Web Server dumps 100,000 "Send Email" tasks into a Message Queue. The Email Server pulls them off the queue at a steady, safe rate of 500 per minute. The queue acts as a shock absorber, protecting the Email Server from being destroyed by the traffic spike.
 
-</ConceptTemplate>

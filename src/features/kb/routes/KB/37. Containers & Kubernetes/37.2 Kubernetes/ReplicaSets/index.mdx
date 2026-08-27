@@ -1,8 +1,29 @@
+---
+title: ReplicaSets
+description: A core Kubernetes workload controller mathematically designed to maintain a stable, specified number of identical Pod replicas running in the cluster at any given time.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="ReplicaSets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="ReplicaSets"
+  subtitle="The Guarantee of Availability"
+  tags={['Kubernetes', 'Workloads', 'Architecture', 'High Availability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you manually create a `Pod` in Kubernetes and the physical server it is running on catches fire, the Pod mathematically ceases to exist. It is not restarted. To ensure high availability, you must wrap Pods in a **ReplicaSet**.
 
-</ConceptTemplate>
+## 1. The Mathematical Equation
+The ReplicaSet controller runs a continuous mathematical loop evaluating a single equation: **Current Pods == Desired Pods**.
+If you set `replicas: 3`, the ReplicaSet uses a mathematical "Label Selector" to scan the cluster. It looks for all Pods containing the label `app=frontend`. If it counts 2 Pods, the equation fails. The ReplicaSet immediately mathematically commands the API server to create 1 new Pod. If someone manually launches a 4th Pod, the equation fails, and the ReplicaSet ruthlessly terminates one Pod to restore mathematical equilibrium.
+
+## 2. Managed by Deployments
+In modern Kubernetes, developers **almost never create ReplicaSets directly**.
+Instead, developers create `Deployments`. A Deployment mathematically manages ReplicaSets. When you update the Docker image in a Deployment, the Deployment creates a *brand new* ReplicaSet, scales it up, and simultaneously scales down the *old* ReplicaSet, providing a mathematically flawless, zero-downtime rolling update.
+

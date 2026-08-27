@@ -1,8 +1,28 @@
+---
+title: Jinja2
+description: A fast, expressive, and extensible templating engine for Python, heavily used in Flask, Django, and Ansible.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Jinja2">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Jinja2">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Jinja2 is the premier templating engine for the Python ecosystem. It was heavily inspired by Django's templating system but operates completely independently. It is famously used by the Flask web framework and the Ansible configuration management tool.
 
-</ConceptTemplate>
+## 1. Syntax and Power
+Like Handlebars, Jinja2 uses double braces `{{ variable }}` for output and `{% if x %}` for logic.
+However, Jinja2 mathematically strikes a balance between "Logic-Less" and "Full Programming". It allows advanced operations directly in the template:
+- **Filters**: Using a pipe mathematically transform data (e.g., `{{ user.name | capitalize }}`).
+- **Macros**: You can mathematically define reusable HTML functions (like a Button component) directly inside the template file.
+
+## 2. Template Inheritance
+Jinja2's most powerful architectural feature is Inheritance.
+You can create a mathematically complete `base.html` template with a header and footer, and define a `{% block content %}`.
+Child templates simply declare `{% extends "base.html" %}` and inject their specific HTML into the content block, drastically reducing code duplication across large web applications.
+

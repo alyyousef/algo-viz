@@ -5,10 +5,17 @@ description: "Simple Mail Transfer Protocol, the internet standard communication
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="SMTP"
   icon="mail"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **SMTP (Simple Mail Transfer Protocol)** is the foundation of global email. It is the protocol used to *push* or send emails from a client to a mail server, and from one mail server to another.
 
@@ -31,8 +38,13 @@ To combat spam and spoofing, the internet layered cryptographic verifications on
 - **DKIM (DomainKeys Identified Mail)**: Cryptographically signs every outgoing email so the receiver can verify it wasn't tampered with.
 - **DMARC**: Tells the receiving server what to do (reject or quarantine) if an email fails SPF or DKIM checks.
 
+
 <Callout icon="warning" title="Port 25 Blocking">
+
+
 If you rent a cloud server on AWS or DigitalOcean and try to build your own email server, you will find that outbound traffic on Port 25 is hard-blocked at the firewall level. Cloud providers do this to prevent hackers from renting servers to send millions of spam emails. You usually have to request manual unblocking from customer support.
+
+
 </Callout>
 
-</ConceptTemplate>
+

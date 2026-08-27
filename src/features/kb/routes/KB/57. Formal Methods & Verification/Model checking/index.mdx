@@ -4,14 +4,26 @@ description: An automated technique that, given a finite-state model of a system
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model Checking">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Checking">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you write a concurrent, multi-threaded application, biological Unit Testing is impossible. A race condition bug might only occur if Thread 1 pauses for exactly 3 milliseconds while Thread 2 writes to the database.
 
+
 <Callout icon="warning" title="State Space Explosion">
+
+
   **Model Checking** mathematically explores the application.
-  
+
   It generates a massive state machine of every possible state the program could ever enter. It mathematically forces Thread 1 and Thread 2 to interleave in every possible microscopic combination. If even one of those billions of combinations leads to a Deadlock, the Model Checker finds it. The mathematical challenge is the "State Space Explosion"—complex programs have more states than atoms in the universe, requiring massive RAM to verify.
+
+
 </Callout>
 
-</ConceptTemplate>
+

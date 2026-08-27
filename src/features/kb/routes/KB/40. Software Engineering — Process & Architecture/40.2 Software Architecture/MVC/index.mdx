@@ -1,8 +1,30 @@
+---
+title: MVC (Model-View-Controller)
+description: A foundational architectural pattern for user interfaces that mathematically divides an application into three interconnected parts, separating internal representations of information from the ways information is presented to the user.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MVC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="MVC (Model-View-Controller)"
+  subtitle="The Trinity of UI Architecture"
+  tags={['Architecture', 'Design Patterns', 'UI', 'Web']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Invented in the 1970s for desktop applications, MVC became the mathematically dominant architecture for early web frameworks (Ruby on Rails, Django, ASP.NET MVC).
 
-</ConceptTemplate>
+## 1. The Three Pillars
+MVC strictly separates concerns:
+- **Model**: The pure mathematical data and business rules (e.g., a `User` class that knows how to save itself to SQL). It is completely ignorant of the UI.
+- **View**: The visual representation (e.g., an HTML/CSS template). It is mathematically dumb; it just displays whatever variables it is handed.
+- **Controller**: The brain. It intercepts user input (an HTTP POST request), asks the Model to update its state, and then mathematically passes the new Model to the View to be rendered.
+
+## 2. Preventing Tightly Coupled UI
+Before MVC, developers wrote "Server Pages" (like early PHP or ASP) where raw SQL queries, business logic `if/else` statements, and HTML `<div>` tags were mathematically scrambled together in a single file. MVC mathematically forces the developer to extract the SQL into the Model, the HTML into the View, and the routing into the Controller, allowing designers to edit the HTML without mathematically destroying the database queries.
+

@@ -4,7 +4,14 @@ description: A specialized, complete binary tree prioritizing the rapid retrieva
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Binary Heaps">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Binary Heaps">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Binary Heap** looks exactly like a Binary Search Tree visually, but its mathematical rules are completely different. While a BST organizes data left-to-right for fast searching, a Heap organizes data top-to-bottom for fast prioritization.
 
@@ -12,11 +19,11 @@ Heaps are the underlying implementation for **Priority Queues** (where the highe
 
 ## 1. The Heap Property
 
-There are two types of Heaps: Max-Heaps and Min-Heaps. 
+There are two types of Heaps: Max-Heaps and Min-Heaps.
 In a **Max-Heap**, the fundamental rule is: *Every parent node must be greater than or equal to its children.*
 
-Because this rule applies to the entire tree, **the absolute maximum value in the entire dataset is always sitting directly at the Root Node.** 
-You can retrieve the maximum value in absolute $O(1)$ time. 
+Because this rule applies to the entire tree, **the absolute maximum value in the entire dataset is always sitting directly at the Root Node.**
+You can retrieve the maximum value in absolute $O(1)$ time.
 
 *(A Min-Heap is the exact reverse; the smallest value is at the root).*
 
@@ -28,8 +35,13 @@ When you extract the maximum value from the root, the tree is broken. The Heap m
 
 When you insert a new value, the opposite happens (**"Heapify Up"**): the new value is added to the bottom of the tree, and it bubbles up, swapping with its parent until it settles into the correct priority tier.
 
+
 <Callout icon="success" title="The Array Implementation">
+
+
   Because a Binary Heap must always be a "Complete" tree (all levels fully populated left-to-right), it does not actually use Node objects or Pointers! Heaps are almost exclusively implemented under the hood using a flat, contiguous **Array**. Mathematical formulas (like `LeftChild = 2i + 1`) are used to traverse the tree, making it incredibly fast and cache-efficient.
+
+
 </Callout>
 
-</ConceptTemplate>
+

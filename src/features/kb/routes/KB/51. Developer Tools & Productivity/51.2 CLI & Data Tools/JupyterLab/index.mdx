@@ -4,7 +4,7 @@ description: The latest web-based interactive development environment for notebo
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="JupyterLab"
   subtitle="The IDE of Data Science"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Jupyter_logo.svg/512px-Jupyter_logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 In a standard IDE (like VS Code), if you have a script that takes 5 minutes to download a 10GB CSV file and 1 second to print a graph, you must mathematically wait 5 minutes every single time you change the color of the graph.
 
+
 <Callout icon="success" title="The REPL Cell Architecture">
-  Jupyter mathematically isolates the execution state into **Cells**. 
-  
+
+
+  Jupyter mathematically isolates the execution state into **Cells**.
+
   You execute Cell 1 (which downloads the 10GB CSV into the `df` variable in RAM). It takes 5 minutes.
   You then edit the graph color in Cell 2 and execute *only* Cell 2. It runs in 1 millisecond, utilizing the `df` variable already stored in the kernel's RAM. This allows for instantaneous, highly iterative mathematical data exploration.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

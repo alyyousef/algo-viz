@@ -4,9 +4,16 @@ description: The massive, multi-billion dollar corporate titan of the Linux serv
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RHEL (Red Hat Enterprise Linux)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RHEL (Red Hat Enterprise Linux)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While Ubuntu dominates the cloud startup ecosystem, **RHEL (Red Hat Enterprise Linux)** dominates the traditional Fortune 500 corporate datacenter. 
+While Ubuntu dominates the cloud startup ecosystem, **RHEL (Red Hat Enterprise Linux)** dominates the traditional Fortune 500 corporate datacenter.
 
 Developed by Red Hat (now owned by IBM), RHEL is a commercial, closed-subscription operating system. You do not just download it for free; you pay Red Hat thousands of dollars for a support contract.
 
@@ -18,8 +25,13 @@ Since Linux is fundamentally free and open-source, why do banks and airlines pay
 2. **Backporting**: If a critical security flaw is found in the Linux kernel in 2025, Red Hat engineers will manually rewrite the fix and "backport" it into the ancient 2018 kernel running on RHEL 8, ensuring the server stays secure without *ever* changing its behavior or breaking legacy apps.
 3. **The Throat to Choke**: If a hospital's database goes down, they cannot sue the open-source community. They need a phone number they can call at 3:00 AM, where an IBM engineer is legally obligated by an SLA contract to fix the problem immediately.
 
+
 <Callout icon="info" title="SELinux (Security-Enhanced Linux)">
+
+
   RHEL is heavily associated with **SELinux**, an incredibly powerful (and notoriously difficult to configure) Mandatory Access Control system originally developed by the NSA. SELinux mathematically restricts what a compromised application can do, ensuring that even if a hacker takes over your web server, they cannot read the rest of the hard drive.
+
+
 </Callout>
 
-</ConceptTemplate>
+

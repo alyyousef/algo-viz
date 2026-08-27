@@ -1,8 +1,43 @@
+---
+title: Numerical Integration
+description: "Algorithmic techniques used to calculate the approximate area under a curve when an exact, algebraic integral is mathematically impossible to find."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="numerical integration">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Numerical Integration"
+  subtitle="Approximating Areas"
+  tags={['Mathematics', 'Algorithms', 'Calculus', 'Simulation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In calculus, you evaluate an integral $\int f(x) dx$ algebraically. However, for many complex functions (like the bell curve equation $e^{-x^2}$), it is mathematically proven that an algebraic anti-derivative *does not exist*. Computers must approximate the area using **Numerical Integration**.
 
-</ConceptTemplate>
+## 1. Riemann Sums (Rectangles)
+The most basic approximation. You chop the area under the curve into $N$ rectangles. You calculate the height of the curve at the left edge of each rectangle, multiply by the width, and sum them up. It is computationally easy, but highly inaccurate unless $N$ is massive.
+
+## 2. The Trapezoidal Rule
+Instead of drawing flat rectangles (which miss chunks of the curve), this algorithm draws a straight angled line between the left edge and the right edge, creating a Trapezoid. This fits the curve much more tightly, vastly reducing the mathematical error for the same amount of computational work.
+
+
+<Callout type="success" title="Simpson's Rule (Parabolas)">
+
+
+  If the Trapezoidal Rule connects points with straight lines, **Simpson's Rule** mathematically connects every three points with a curved Parabola. Because real-world functions are usually curved, fitting parabolas to them is insanely accurate. For very smooth functions, Simpson's Rule converges to the true answer incredibly fast.
+
+
+</Callout>
+
+
+## 3. Monte Carlo Integration
+In 1D math, Simpson's rule is perfect. But what if you are calculating a 100-dimensional integral for a physics simulation? Creating a grid of trapezoids across 100 dimensions would require more calculations than there are atoms in the universe (The Curse of Dimensionality).
+**Monte Carlo Integration** abandons grids entirely. It throws millions of purely random darts at the mathematical space, checks what percentage hit "inside" the function, and uses probability to estimate the total volume. In high dimensions, randomness is mathematically far more efficient than rigid structure.
+
+\n

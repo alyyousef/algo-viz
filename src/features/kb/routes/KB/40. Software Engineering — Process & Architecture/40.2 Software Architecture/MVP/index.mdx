@@ -1,8 +1,30 @@
+---
+title: MVP (Model-View-Presenter)
+description: A derivative of the MVC architectural pattern used primarily for building heavy desktop or mobile user interfaces, mathematically designed to facilitate automated unit testing of presentation logic.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="MVP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="MVP (Model-View-Presenter)"
+  subtitle="Testable UI Architecture"
+  tags={['Architecture', 'Design Patterns', 'UI', 'Mobile']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In classic MVC, the View is often tightly coupled to the Controller or the Model, making it mathematically impossible to write automated Unit Tests for the UI logic without spinning up a real, physical screen.
 
-</ConceptTemplate>
+## 1. The Passive View
+MVP solves this by making the View mathematically "Passive."
+The View (the physical screen) implements a strict Interface (e.g., `ILoginView` with methods like `showSpinner()` and `showError()`). The View has absolutely zero business logic; it merely listens for physical button clicks and immediately passes them to the **Presenter**.
+
+## 2. The Dominant Presenter
+The Presenter is a pure mathematical class with no dependencies on the Android SDK or Windows GUI libraries.
+When the user clicks "Login", the View tells the Presenter. The Presenter checks the Model. If the password fails, the Presenter executes `view.showError()`.
+Because the Presenter only knows about the `ILoginView` interface, an engineer can mathematically write a Unit Test that passes in a "Mock View" and verifies the Presenter's logic in 2 milliseconds, without ever rendering a real pixel.
+

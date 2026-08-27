@@ -1,8 +1,29 @@
+---
+title: Control Groups (cgroups)
+description: A fundamental Linux kernel feature that mathematically limits, accounts for, and isolates the physical resource usage (CPU, memory, disk I/O, network) of a collection of processes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="cgroups">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Control Groups (cgroups)"
+  subtitle="Mathematical Resource Limiting"
+  tags={['Linux', 'Kernel', 'Containers', 'Security']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you run two Node.js applications on a standard Linux server, and App A has a memory leak, it will mathematically consume 100% of the server's RAM, causing the kernel to forcefully kill App B. Cgroups prevent this mathematical tragedy.
 
-</ConceptTemplate>
+## 1. The Resource Sandbox
+Cgroups (originally developed by Google) are one of the two foundational technologies behind all containers (the other being Namespaces).
+When a container starts, the container engine uses cgroups to mathematically place a hard ceiling on its physical resources. You configure a cgroup: *"This specific process tree is mathematically forbidden from utilizing more than 512MB of RAM and 0.5 CPU cores."*
+
+## 2. OOM Killer and Quality of Service
+If the containerized application attempts to allocate 513MB of RAM, the Linux kernel's cgroup subsystem mathematically intercepts the syscall.
+The kernel instantly triggers the **OOM (Out of Memory) Killer** specifically for that cgroup, killing the offending container but leaving the rest of the host system (and other containers) perfectly stable. This mathematical resource isolation is the exact mechanism that allows Kubernetes to safely pack 50 independent applications onto a single physical server without interference.
+

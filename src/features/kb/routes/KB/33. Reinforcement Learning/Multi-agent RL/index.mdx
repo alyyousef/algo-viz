@@ -1,8 +1,27 @@
+---
+title: Multi-Agent Reinforcement Learning (MARL)
+description: An exponentially complex extension of RL where multiple autonomous Agents mathematically interact within the same environment, creating shifting dynamics of cooperation, competition, and chaos.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multi-agent RL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multi-Agent Reinforcement Learning (MARL)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Standard RL assumes the Environment is static. If you move left, you hit a wall. In MARL, if you move left, another AI might move right to block you. The Environment is no longer a static physics engine; it is a mathematically hostile, constantly adapting ecosystem.
 
-</ConceptTemplate>
+## 1. The Non-Stationarity Problem
+The foundational mathematical assumption of standard RL (the Markov property) breaks down in MARL.
+If Agent A is learning to play tennis against Agent B, Agent A might learn a perfect serve. But Agent B's neural network is also updating. Tomorrow, Agent B learns to block the serve.
+From Agent A's perspective, the physical laws of the universe (the Transition Dynamics) just spontaneously changed. This is called **Non-Stationarity**. Because the environment is constantly shifting beneath their feet, MARL algorithms often suffer from mathematical instability and catastrophic forgetting.
+
+## 2. Centralized Training, Decentralized Execution (CTDE)
+To solve Non-Stationarity, researchers developed the CTDE architecture (used by OpenAI Five in Dota 2).
+During the **Training Phase** on the supercomputer, the system is Centralized. A massive "Critic" network mathematically sees the entire game board and the internal thoughts of *all* Agents simultaneously, stabilizing the gradients and allowing them to learn complex teamwork.
+However, during **Execution** (the actual game), the Critic is deleted. The Agents are Decentralized. They can only see their own local screens and must execute their Policy networks independently.
+

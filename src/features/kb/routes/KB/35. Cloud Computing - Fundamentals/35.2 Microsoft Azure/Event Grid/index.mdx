@@ -1,0 +1,24 @@
+---
+title: Azure Event Grid
+description: A highly scalable, fully managed event routing service that enables developers to build mathematically decoupled, reactive, event-driven architectures across the entire Azure ecosystem.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Event Grid"
+  subtitle="The Event Routing Backbone"
+  tags={['Azure', 'Messaging', 'Events', 'Serverless']}
+>
+
+When a user uploads an image to Azure Blob Storage, you want a Serverless Function to instantly compress it. You could write a script that polls the storage account every 5 seconds (wasting compute). Event Grid mathematically eliminates polling.
+
+## 1. Push-Based Event Routing
+Event Grid is physically wired into the fabric of Azure.
+When the image hits Blob Storage, the storage account instantly fires a tiny JSON packet (an Event) to Event Grid: `{"eventType": "BlobCreated", "subject": "/image.jpg"}`.
+Event Grid acts as a mathematical router. It instantly pushes that JSON payload directly to the Azure Function. The compute is strictly reactive. Because it is push-based, you only pay for the exact millisecond the event occurs, completely eliminating the architectural inefficiency of constant polling.
+
+## 2. Advanced Mathematical Filtering
+If 100,000 files are uploaded, but your Function only cares about `.jpg` files (and not `.pdf`), you do not want to trigger the Function 100,000 times just to throw the PDFs away.
+Event Grid allows you to define mathematical **Filters** on the subscription. You configure the subscription to explicitly match: `SubjectEndsWith: ".jpg"`. Event Grid evaluates this string mathematics at the network layer, instantly dropping the PDF events and only forwarding the JPEGs, saving massive amounts of downstream serverless compute costs.
+
+</TechnologyTemplate>

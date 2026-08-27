@@ -4,20 +4,33 @@ description: A system that converts an analog signal, such as a sound picked up 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Analog-to-Digital Converter (ADC)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Analog-to-Digital Converter (ADC)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-While GPIO pins only understand binary (0V or 3.3V), the physical universe does not work in binary. 
+While GPIO pins only understand binary (0V or 3.3V), the physical universe does not work in binary.
 
 Temperature, sound waves, light intensity, and battery levels are all continuous, analog values. An **ADC** is a specialized piece of hardware inside the microcontroller that mathematically translates an infinitely variable analog voltage into a discrete digital number the CPU can understand.
 
+
 <Callout icon="success" title="The Mathematics of Resolution">
+
+
   The precision of an ADC is mathematically defined by its **Bit Resolution**.
-  
+
   If you have a 10-bit ADC measuring a 0 to 5 Volt signal:
   - 10 bits mathematically gives $2^{10} = 1024$ possible values.
   - The ADC divides 5 Volts into 1024 tiny "steps" (each step is 0.0048 Volts).
   - If the physical wire has exactly 2.5 Volts on it, the ADC mathematically returns the integer `512` to the C program.
+
+
 </Callout>
+
 
 ## Sample Rate
 
@@ -25,4 +38,3 @@ In addition to Resolution, ADCs are mathematically bound by their **Sample Rate*
 - A slow ADC (10 Hz) is perfectly fine for measuring the temperature of a room.
 - A fast ADC (44,100 Hz) is mathematically required to digitize human speech for a microphone (following the Nyquist–Shannon sampling theorem).
 
-</ConceptTemplate>

@@ -4,16 +4,23 @@ description: The build tools that mathematically transform futuristic TypeScript
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Transpilers & Compilers">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Transpilers & Compilers">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When React introduced **JSX** (writing HTML directly inside Javascript), browsers had no idea how to read it. They would instantly crash with a Syntax Error. 
+When React introduced **JSX** (writing HTML directly inside Javascript), browsers had no idea how to read it. They would instantly crash with a Syntax Error.
 Furthermore, when ES6 released, developers wanted to use new features like Arrow Functions, but users on older browsers (Internet Explorer) couldn't run them.
 
 We needed a tool to "Transpile" (Translate + Compile) the futuristic code back down into older, highly-compatible JavaScript.
 
 ## Babel (The JS Pioneer)
-**Babel** was the undisputed king of transpilation for nearly a decade. 
-It parsed your React JSX and ES6 code into an Abstract Syntax Tree (AST), mathematically transformed the nodes, and spat out ugly, highly compatible ES5 code. 
+**Babel** was the undisputed king of transpilation for nearly a decade.
+It parsed your React JSX and ES6 code into an Abstract Syntax Tree (AST), mathematically transformed the nodes, and spat out ugly, highly compatible ES5 code.
 
 **The Flaw**: Babel was written in Javascript. As codebases grew to millions of lines, Babel would often take 5+ minutes just to compile the application. Javascript was simply too slow for heavy compiler mathematics.
 
@@ -28,4 +35,3 @@ Created by Next.js (Vercel), SWC is a Rust-based compiler designed specifically 
 
 Today, nearly all modern frameworks (Next.js, Vite) have completely abandoned Babel in favor of esbuild or SWC.
 
-</ConceptTemplate>

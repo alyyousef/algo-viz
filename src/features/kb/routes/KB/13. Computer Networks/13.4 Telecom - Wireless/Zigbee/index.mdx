@@ -4,24 +4,36 @@ description: A low-power, mesh networking standard dominating the smart home ind
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zigbee">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zigbee">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-If you want to install 50 smart lightbulbs in your house, you should not connect them to your Wi-Fi router. 50 constant Wi-Fi connections will overwhelm the router's RAM, causing your laptop and TV to lag. 
+If you want to install 50 smart lightbulbs in your house, you should not connect them to your Wi-Fi router. 50 constant Wi-Fi connections will overwhelm the router's RAM, causing your laptop and TV to lag.
 
 Instead, the smart home industry uses **Zigbee** (IEEE 802.15.4).
 
 ## The Mesh Architecture
 
 Wi-Fi uses a "Star" topology: every device must talk directly to the central router. If the router is too far away, the connection drops.
-Zigbee uses a **Mesh** topology. 
+Zigbee uses a **Mesh** topology.
 
-Every single Zigbee device that is plugged into the wall (like a smart plug or lightbulb) automatically acts as a micro-router. 
-If your Smart Hub is in the living room, and a lightbulb is in the garage, the lightbulb doesn't need to reach the Hub. It sends its data to the kitchen lightbulb, which forwards it to the hallway lightbulb, which finally hands it to the Hub. 
+Every single Zigbee device that is plugged into the wall (like a smart plug or lightbulb) automatically acts as a micro-router.
+If your Smart Hub is in the living room, and a lightbulb is in the garage, the lightbulb doesn't need to reach the Hub. It sends its data to the kitchen lightbulb, which forwards it to the hallway lightbulb, which finally hands it to the Hub.
 
 The more Zigbee devices you add to your house, the stronger and more resilient the network becomes, because there are more routing paths available.
 
+
 <Callout icon="success" title="The Matter Standard">
+
+
   Historically, Zigbee devices from Philips Hue would not talk to Zigbee devices from Samsung. In 2022, Apple, Google, and Amazon united to release **Matter**—an overarching software standard running on top of protocols like Thread (an IPv6 evolution of Zigbee). Now, any Matter-certified device works flawlessly with any other ecosystem natively.
+
+
 </Callout>
 
-</ConceptTemplate>
+

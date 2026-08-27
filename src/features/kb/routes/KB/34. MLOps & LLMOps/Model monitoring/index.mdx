@@ -1,8 +1,27 @@
+---
+title: Model Monitoring
+description: The continuous, automated MLOps practice of mathematically analyzing the real-time statistical distributions of live API predictions to detect silent degradation, bias, and drift before they impact users.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model monitoring">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Monitoring">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Unlike traditional software, an ML model does not throw a 500 Server Error when it breaks. It just confidently returns a bad mathematical prediction. Model Monitoring is the immune system that detects this silent failure.
 
-</ConceptTemplate>
+## 1. Statistical Baselines
+A Model Monitoring system (like Evidently AI or Arize) cannot function without a mathematical baseline.
+During training, the MLOps pipeline calculates the exact statistical distribution (mean, variance) of every single input feature (e.g., Age) and the output prediction (e.g., Loan Approval Rate = 15%). This is the **Reference Data**.
+In production, the system continuously calculates the exact same mathematical distributions on the live API traffic (the **Live Data**).
+
+## 2. Anomaly Detection and Alerts
+The monitoring system mathematically compares the Live Data to the Reference Data using statistical tests (like Population Stability Index or Kullback-Leibler Divergence).
+- **Output Drift**: If the model suddenly starts approving 60% of loans instead of the baseline 15%, the system fires a critical alert.
+- **Data Quality Alerts**: If the API starts receiving "Age = null" or "Age = -5" because an upstream database broke, the neural network will mathematically output garbage. The monitor intercepts these anomalies, alerting data engineers to fix the pipeline before the model poisons the business logic.
+

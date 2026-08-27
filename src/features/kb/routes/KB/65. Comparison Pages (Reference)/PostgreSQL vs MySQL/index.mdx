@@ -1,8 +1,34 @@
+---
+title: PostgreSQL vs MySQL
+description: "A comparison of the world's most popular open-source relational databases, contrasting MySQL's historical speed and simplicity with PostgreSQL's massive, standard-compliant, enterprise-grade mathematical feature set."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PostgreSQL vs MySQL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="PostgreSQL vs MySQL"
+  subtitle="The Open Source Database War"
+  tags={['Comparison', 'Databases', 'Architecture', 'SQL']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+For 20 years, every web developer faced the exact same choice: MySQL or PostgreSQL. While both are ACID-compliant Relational Databases, the modern industry has heavily shifted toward Postgres.
 
-</ConceptTemplate>
+## 1. MySQL (The LAMP Stack Pioneer)
+- **History**: Rose to dominance in the 2000s as the "M" in the LAMP stack (Linux, Apache, MySQL, PHP). Backed WordPress, Facebook, and Twitter. (Now owned by Oracle).
+- **Philosophy**: Speed and Simplicity over strict standards. Historically, if you inserted a string into an integer column, MySQL would silently mathematically convert it or truncate it instead of throwing an error (though strict mode fixes this today).
+- **Pros**: Blisteringly fast for simple read-heavy web applications. Extremely easy to set up.
+
+## 2. PostgreSQL (The World's Most Advanced DB)
+- **History**: An object-relational database developed with a militant devotion to mathematical correctness and the SQL standard.
+- **Philosophy**: Data Integrity over everything. It will aggressively reject any mathematically invalid data.
+- **Superpowers**:
+  - **Native JSONB**: Postgres can index and query massive JSON documents natively, almost entirely eliminating the need for MongoDB in hybrid apps.
+  - **PostGIS**: Mathematical extensions that make Postgres the undisputed king of Geospatial routing and mapping data.
+  - **Advanced Math**: Window functions, Common Table Expressions (CTEs), and partial indexes were natively supported in Postgres years before MySQL caught up.
+

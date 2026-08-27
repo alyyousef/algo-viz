@@ -1,8 +1,24 @@
+---
+title: Zsh
+description: The Z Shell, a massively extensible Unix shell that is the default on macOS and heavily favored by power users.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zsh">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zsh (Z Shell)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Paul Falstad in 1990, Zsh is a highly advanced, mathematically complex command-line shell. It is fully compatible with Bash (meaning your old Bash scripts will run flawlessly), but it incorporates the best features of Ksh, tcsh, and dozens of new innovations.
 
-</ConceptTemplate>
+## 1. Extensibility and Oh My Zsh
+Out of the box, Zsh looks exactly like Bash. However, its mathematical architecture allows for massive extensibility.
+This gave rise to **Oh My Zsh**, a community-driven framework that mathematically transforms the shell into a powerhouse. It provides hundreds of plugins that automatically detect if you are in a Git repository, mathematically showing your current branch and commit status directly in the prompt. It provides highly advanced, programmable tab-completion (e.g., hitting Tab after `kill` will graphically list the active processes to select from).
+
+## 2. The New Standard
+For decades, Bash was the undisputed default shell on all Unix systems. However, in 2019, Apple mathematically abandoned Bash due to a licensing dispute (Bash upgraded to the GPLv3 license, which Apple's legal department rejected). Consequently, Apple made Zsh the default mathematical shell for all Mac operating systems, skyrocketing its global usage among developers.
+

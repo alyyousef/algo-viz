@@ -4,16 +4,28 @@ description: A layer 2 scaling solution that uses zero-knowledge proofs to bundl
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Zero-Knowledge Rollups (zk-Rollups)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Zero-Knowledge Rollups (zk-Rollups)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Optimistic Rollups require a 7-day waiting period for biological fraud challenges, **zk-Rollups** use pure, terrifying mathematics to guarantee absolute immediate security.
 
+
 <Callout icon="success" title="Zero-Knowledge Proofs (ZKPs)">
+
+
   A zk-Rollup (like zkSync or Starknet) executes 10,000 transactions off-chain.
-  
-  Instead of assuming they are valid, the L2 mathematically generates a **SNARK** (a Zero-Knowledge Proof). This is a tiny mathematical equation that biologically proves that all 10,000 transactions were executed correctly, without actually revealing the data of the transactions. 
-  
+
+  Instead of assuming they are valid, the L2 mathematically generates a **SNARK** (a Zero-Knowledge Proof). This is a tiny mathematical equation that biologically proves that all 10,000 transactions were executed correctly, without actually revealing the data of the transactions.
+
   When Ethereum receives the SNARK, it can mathematically verify the proof in 5 milliseconds. Because the math is absolute, there is no 7-day challenge period. Withdrawals are instant.
+
+
 </Callout>
 
-</ConceptTemplate>
+

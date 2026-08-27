@@ -1,8 +1,27 @@
+---
+title: Value Functions
+description: The core mathematical predictors in RL that estimate the total cumulative future reward an Agent can expect to receive from a given State or Action.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Value functions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Value Functions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a chess player looks at a board and thinks, *"I have a 90% chance of winning from this position,"* they are calculating a Value Function. It is the mathematical estimation of the long-term future.
 
-</ConceptTemplate>
+## 1. State-Value Function ($V$)
+The State-Value function, $V(s)$, calculates how "good" it is to be in a specific State $s$.
+It is the Expected Return ($G_t$) starting from State $s$ and strictly following the current Policy ($\pi$) until the end of the game.
+If an Agent is driving toward a cliff, the physical State (coordinates) might be perfectly fine right now. But because the Agent's velocity is carrying it over the edge, the State-Value $V(s)$ will be astronomically negative. The Agent uses this mathematical foresight to slam the brakes *before* the disaster occurs.
+
+## 2. Action-Value Function ($Q$)
+The Action-Value function, $Q(s, a)$, calculates how good it is to take a *specific action* in a specific State.
+Unlike $V(s)$, which just scores the State, $Q(s, a)$ mathematically forces the Agent to ask, *"If I take Action A right now, and then follow my Policy forever, what is my total score?"*
+By calculating $Q$ for every possible action, the Agent simply picks the action with the highest $Q$-Value. The mathematical relationship between $V$ and $Q$ is called the **Advantage Function** ($A(s, a) = Q(s, a) - V(s)$), which tells the Agent exactly how much better (or worse) a specific action was compared to the baseline expectation of the State.
+

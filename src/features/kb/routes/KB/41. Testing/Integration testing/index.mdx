@@ -5,12 +5,19 @@ description: "The phase of software testing in which individual software modules
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Integration Testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Integration Testing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Unit Tests verify that individual functions work in isolation, **Integration Testing** verifies that those functions work correctly when connected to other components, such as databases, external APIs, or other microservices.
 
 ## 1. The "Two Doors" Problem
-A famous programming joke illustrates the need for integration testing: 
+A famous programming joke illustrates the need for integration testing:
 *Two separate locks are installed on a door. One lock works perfectly. The other lock works perfectly. But when placed next to each other, you can't slide the door open because the handles collide.*
 Both components passed their unit tests, but the integration failed.
 
@@ -22,8 +29,13 @@ Both components passed their unit tests, but the integration failed.
 ## 3. Setting Up Integration Tests
 Because integration tests require real infrastructure, they are slower and harder to maintain than unit tests. Modern teams use tools like **Testcontainers** (spinning up temporary Docker containers for databases during the test run) or in-memory databases (like SQLite) to make integration testing more deterministic.
 
+
 <Callout icon="warning" title="The Flaky Test Problem">
+
+
 Integration tests are highly susceptible to "flakiness" (tests that pass sometimes and fail other times without code changes). This is usually caused by network latency, shared database state between parallel tests, or API rate limits. Ensure every test runs in an isolated transaction that rolls back after execution.
+
+
 </Callout>
 
-</ConceptTemplate>
+

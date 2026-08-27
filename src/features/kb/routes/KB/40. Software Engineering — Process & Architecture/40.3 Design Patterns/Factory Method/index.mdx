@@ -1,8 +1,30 @@
+---
+title: Factory Method Pattern
+description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically defines an interface for creating an object, but defers the exact instantiation logic to subclasses, allowing for dynamic, polymorphic object creation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Factory Method">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Factory Method Pattern"
+  subtitle="Polymorphic Instantiation"
+  tags={['Design Patterns', 'Creational', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are building a Logistics application that calculates shipping routes, you initially write the code using a `Truck` class. Later, the business asks to add maritime shipping via a `Ship` class. If your core logic is littered with `new Truck()`, you mathematically have to rewrite the entire application.
 
-</ConceptTemplate>
+## 1. The Virtual Constructor
+The Factory Method solves this by mathematically replacing direct constructor calls with a method call.
+You create an abstract `LogisticsApp` class with a method `createTransport()` that returns the generic interface `ITransport`.
+The core logic of the app calls `ITransport transport = createTransport(); transport.deliver();`.
+
+## 2. Deferring to Subclasses
+To actually run the code, you create subclasses: `RoadLogistics` (where `createTransport()` mathematically returns `new Truck()`) and `SeaLogistics` (where it returns `new Ship()`).
+The core mathematical delivery algorithm is perfectly decoupled from the specific type of transport being instantiated. You can add `AirLogistics` (returning `new Airplane()`) next year without modifying the core logic.
+

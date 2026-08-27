@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: GloVe (Global Vectors)
+description: A groundbreaking NLP algorithm developed by Stanford that mathematically calculates Word Embeddings by analyzing the global co-occurrence matrix of a massive text corpus.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="GloVe">
+<TechnologyTemplate
+  title="GloVe"
+  subtitle="Global Word Embeddings"
+  tags={['NLP', 'Machine Learning', 'Stanford', 'Embeddings']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Word2Vec uses a local, sliding window (a Neural Network looking at 5 words at a time) to learn embeddings, GloVe (Global Vectors for Word Representation) uses massive, global matrix mathematics.
 
-</ConceptTemplate>
+## 1. The Co-occurrence Matrix
+GloVe starts by building a gigantic mathematical table.
+If the vocabulary has 100,000 words, it builds a 100k x 100k matrix. It scans Wikipedia, and every time the word "Ice" appears near the word "Solid," it increments that specific cell in the matrix.
+After scanning billions of words, this matrix contains the absolute mathematical probability of every word appearing next to every other word.
+
+## 2. Dimensionality Reduction
+A 100k x 100k matrix is mathematically too massive to use in real-time AI.
+GloVe uses advanced linear algebra (similar to Singular Value Decomposition) to compress this massive matrix down into a dense 300-dimensional vector for each word. The resulting vectors possess incredible mathematical properties. If you take the GloVe vector for "King," subtract the vector for "Man," and add the vector for "Woman," the resulting mathematical coordinates will land almost exactly on the vector for "Queen." The math has physically mapped human semantic meaning.
+
+</TechnologyTemplate>

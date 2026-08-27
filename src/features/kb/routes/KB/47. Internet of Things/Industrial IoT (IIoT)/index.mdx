@@ -4,17 +4,30 @@ description: The use of smart sensors and actuators to enhance manufacturing and
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Industrial IoT (IIoT)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Industrial IoT (IIoT)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Consumer IoT is a smart toaster. **Industrial IoT (IIoT)** is a smart oil refinery.
 
 Also known as **Industry 4.0**, IIoT is the mathematical convergence of classical Operational Technology (OT) — the PLCs and SCADA systems that run factories — with modern Information Technology (IT) — the Cloud, Big Data, and AI.
 
+
 <Callout icon="warning" title="The Culture Clash">
-  For decades, the OT world (Factory floor) and the IT world (Corporate servers) mathematically hated each other. 
+
+
+  For decades, the OT world (Factory floor) and the IT world (Corporate servers) mathematically hated each other.
   - **OT priorities:** Absolute physical safety, 100% uptime, deterministic 5-millisecond latency. They never connect to the Internet.
   - **IT priorities:** Rapid iteration, Agile deployments, Public Cloud integration, and Big Data.
+
+
 </Callout>
+
 
 ## The IT/OT Convergence
 
@@ -22,4 +35,3 @@ IIoT mathematically forces these two worlds to merge. The factory floor (OT) mus
 
 To do this safely without exposing a robotic arm to a hacker on the public internet, IIoT heavily relies on **Edge Gateways**, strict **VLAN segmentation**, and specialized protocols like **OPC UA**, which mathematically standardizes data structures between 40-year-old factory machines and modern cloud databases.
 
-</ConceptTemplate>

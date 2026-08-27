@@ -1,8 +1,30 @@
+---
+title: RPC (Remote Procedure Call)
+description: "A distributed computing paradigm where a computer program mathematically causes a subroutine or procedure to execute in a different address space (on a remote server), coded as if it were a normal local procedure call."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RPC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="RPC (Remote Procedure Call)"
+  subtitle="Invoking Functions Across the Network"
+  tags={['API', 'RPC', 'Architecture', 'Distributed Systems']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While REST focuses on interacting with Data Resources (Nouns), RPC mathematically focuses entirely on executing Actions (Verbs).
 
-</ConceptTemplate>
+## 1. The Illusion of Local Execution
+The mathematical goal of RPC is transparency. The developer writing the Client code should not need to worry about TCP sockets, HTTP headers, or JSON serialization.
+They simply call a method: `let balance = bankServer.calculateInterest(accountId, rate);`
+Under the hood, the RPC framework (like gRPC or JSON-RPC) mathematically intercepts the function call, serializes the arguments (accountId, rate), transmits them over the network, executes the function on the remote server, and returns the result, creating the perfect illusion that the function executed locally on the client's CPU.
+
+## 2. When to Use RPC
+REST is excellent for standard CRUD operations (Create, Read, Update, Delete) on web entities.
+RPC is mathematically superior for highly complex, verb-heavy operations where mapping the action to a Noun feels forced and unnatural (e.g., `convertVideoFormat()`, `restartServer()`, `calculateCryptography()`). Microservices heavily utilize RPC (specifically gRPC) because it is strictly typed and mathematically faster than REST.
+

@@ -4,7 +4,14 @@ description: The rigorous mathematical methodology of Hypothesis Testing, calcul
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Statistical Testing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Statistical Testing">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Hypothesis Testing** is the mathematical engine that powers all scientific discovery and A/B testing. It provides a rigid framework to determine if an observed anomaly is real, or just random mathematical noise.
 
@@ -18,8 +25,8 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 Data Scientists select different mathematical tests based on the shape and type of the data.
 
 ### T-Test (Comparing Means)
-Used to mathematically compare the averages of two groups. 
-- *Example*: Comparing the average checkout value of Group A vs Group B. 
+Used to mathematically compare the averages of two groups.
+- *Example*: Comparing the average checkout value of Group A vs Group B.
 - It relies on Student's T-distribution, which adjusts mathematically for the uncertainty of having a small sample size.
 
 ### Chi-Square Test (Categorical Data)
@@ -34,4 +41,3 @@ If you have a Red, Blue, and Green button, running three separate T-Tests mathem
 - **Type I Error (False Positive)**: Mathematically rejecting the Null Hypothesis when it was actually true. (Telling a healthy patient they have a disease). Controlled by $alpha$.
 - **Type II Error (False Negative)**: Mathematically accepting the Null Hypothesis when it was actually false. (Telling a diseased patient they are healthy). Controlled by $eta$ (Statistical Power).
 
-</ConceptTemplate>

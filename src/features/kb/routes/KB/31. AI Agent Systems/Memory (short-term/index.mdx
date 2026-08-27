@@ -1,8 +1,26 @@
+---
+title: Short-Term Memory (Agents)
+description: The algorithmic mechanism of maintaining state within the finite Token Context Window of a single conversational session, mathematically constrained by hardware limitations.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Memory (short-term">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Short-Term Memory">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+During a conversation, an LLM must remember what was said 5 minutes ago. Because the LLM itself is mathematically stateless, the Application framework must manage Short-Term Memory by repeatedly feeding the entire conversation history back into the LLM on every single API call.
 
-</ConceptTemplate>
+## 1. The Context Window Constraint
+Every LLM has a mathematical limit (e.g., 128,000 tokens). This is the absolute physical size of its Short-Term Memory.
+If you append every single chat message to an Array and pass the entire Array to the LLM, the Array will eventually exceed 128,000 tokens. The API will mathematically reject the call (Context Overflow). Furthermore, processing 128,000 tokens is incredibly expensive and slow.
+
+## 2. Sliding Windows and Rolling Summaries
+To prevent Overflow, frameworks use mathematical truncation algorithms.
+- **Sliding Window**: The simplest approach. It mathematically deletes Message 1 when Message 101 is added, always maintaining a strict maximum of the most recent $N$ messages. The AI abruptly forgets older context.
+- **Rolling Summary**: A sophisticated mathematical approach. When the memory buffer hits 8,000 tokens, a secondary, cheaper LLM is triggered. It reads the oldest 4,000 tokens and mathematically compresses them into a dense 200-token summary (e.g., "User and AI discussed Python syntax"). The original 4,000 tokens are deleted, and the dense summary is prepended to the memory buffer, mathematically preserving the core context while freeing up massive amounts of token space.
+

@@ -4,7 +4,14 @@ description: The foundational addressing system of the web, mathematically defin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="URLs and URIs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="URLs and URIs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 You use URLs every single day, but their mathematical structure dictates exactly how browsers, proxies, and web servers process requests.
 
@@ -27,4 +34,3 @@ Let's dissect: `https://admin:pass@www.example.com:8080/path/to/page?search=hell
 7. **Query String**: `?search=hello` (Key-value parameters passed to the backend server. Separated by `&`).
 8. **Fragment (Hash)**: `#section3` (Points to an anchor ID on the page. **Crucially, the fragment is NEVER sent to the server.** It is processed entirely client-side by the browser to scroll down the page).
 
-</ConceptTemplate>

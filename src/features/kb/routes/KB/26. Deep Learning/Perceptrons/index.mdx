@@ -4,13 +4,26 @@ description: The simplest and oldest model of an artificial neuron, invented in 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Perceptrons">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Perceptrons">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The Perceptron, invented by Frank Rosenblatt in 1957, is a mathematical model of a biological neuron and the earliest form of a neural network. It is a binary classifier that takes a vector of inputs, multiplies them by weights, sums them, and passes them through a step function.
 
+
 <Callout icon="warning" title="The XOR Problem">
+
+
   In 1969, Marvin Minsky and Seymour Papert proved mathematically that a single-layer perceptron is completely incapable of learning the XOR logical operation because XOR is not "linearly separable." This devastating revelation caused the first "AI Winter," freezing funding for neural network research for over a decade.
+
+
 </Callout>
+
 
 ## How it works
 
@@ -19,4 +32,3 @@ The Perceptron, invented by Frank Rosenblatt in 1957, is a mathematical model of
 3. **Summation:** Adds all the weighted inputs together, plus a bias ($b$).
 4. **Activation:** If the sum is greater than 0, output 1. Otherwise, output 0. (The Heaviside Step Function).
 
-</ConceptTemplate>

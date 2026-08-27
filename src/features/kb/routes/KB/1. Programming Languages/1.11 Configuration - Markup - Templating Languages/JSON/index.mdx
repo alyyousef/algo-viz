@@ -1,8 +1,31 @@
+---
+title: JSON
+description: JavaScript Object Notation, the undisputed universal standard for transmitting structured data across the internet.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JSON">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JSON (JavaScript Object Notation)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Douglas Crockford in the early 2000s, JSON is a lightweight, text-based, language-independent data interchange format. It mathematically annihilated XML to become the absolute backbone of modern REST APIs and web services.
 
-</ConceptTemplate>
+## 1. Syntax and Simplicity
+JSON is mathematically a subset of JavaScript. It supports exactly six data types:
+Strings, Numbers, Booleans, Null, Arrays, and Objects.
+Its brilliance lies in its strict limitations.
+- Keys *must* be wrapped in double quotes.
+- Trailing commas are mathematically illegal.
+- It cannot contain functions or binary data.
+
+Because it is so simple and mathematically rigid, writing a blazingly fast JSON parser in any language (C, Python, Rust) is trivial.
+
+## 2. JSON vs XML
+In the 1990s, the world used XML (Extensible Markup Language). XML required opening and closing tags for every single value (`<name>John</name>`). It was bloated, computationally expensive to parse, and deeply unreadable.
+JSON mathematically stripped away the tags, using curly braces and brackets. It reduced payload sizes over the network by massive margins and mathematically mapped perfectly to the native Object structures of almost every modern programming language.
+

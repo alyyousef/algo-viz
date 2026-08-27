@@ -5,9 +5,16 @@ description: Small pieces of data sent by the server and stored in the user's br
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="HTTP Cookies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HTTP Cookies">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-The HTTP protocol is fundamentally **stateless**. The server has no memory of past requests. If you login on Request 1, the server will completely forget who you are on Request 2. 
+The HTTP protocol is fundamentally **stateless**. The server has no memory of past requests. If you login on Request 1, the server will completely forget who you are on Request 2.
 **Cookies** were invented in 1994 by Netscape to solve this, introducing State to the Web.
 
 ## 1. How Cookies Work
@@ -16,7 +23,7 @@ The HTTP protocol is fundamentally **stateless**. The server has no memory of pa
 3. **Automatic Transmission**: For every single subsequent HTTP request the browser makes to `amazon.com` (even for images or CSS), it automatically attaches the header: `Cookie: session_id=abc123`. The server reads this and remembers who you are.
 
 ## 2. Critical Security Flags
-Because cookies are automatically attached to requests, they are highly vulnerable to attack vectors like XSS (Cross-Site Scripting) and CSRF (Cross-Site Request Forgery). 
+Because cookies are automatically attached to requests, they are highly vulnerable to attack vectors like XSS (Cross-Site Scripting) and CSRF (Cross-Site Request Forgery).
 
 To secure them, you must append strict flags when setting the cookie:
 - `HttpOnly`: Mathematically prevents client-side JavaScript (`document.cookie`) from reading the cookie. This utterly defeats XSS attacks trying to steal the session token.
@@ -24,11 +31,16 @@ To secure them, you must append strict flags when setting the cookie:
 - `SameSite=Strict`: Prevents the browser from sending the cookie if the request originated from a different domain. This absolutely obliterates CSRF attacks.
 
 ## 3. Size and Limitations
-Cookies are small. They are strictly limited to **4 Kilobytes** of data per cookie, and usually max out at ~50 cookies per domain. 
+Cookies are small. They are strictly limited to **4 Kilobytes** of data per cookie, and usually max out at ~50 cookies per domain.
 Furthermore, because they are sent back and forth on *every single request*, storing massive amounts of data in a cookie will severely bloat your network bandwidth and destroy web performance.
 
+
 <Callout icon="warning" title="Third-Party Cookies">
+
+
 A First-Party cookie is set by the domain you are currently visiting. A Third-Party cookie is set by an iframe or tracking pixel (like Facebook Ads) embedded on that page. Due to severe privacy concerns (cross-site tracking), modern browsers (Safari, Firefox, and soon Chrome) are aggressively blocking all Third-Party cookies by default.
+
+
 </Callout>
 
-</ConceptTemplate>
+

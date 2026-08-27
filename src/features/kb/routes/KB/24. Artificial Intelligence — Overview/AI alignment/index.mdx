@@ -4,12 +4,19 @@ description: The rigorous mathematical and philosophical discipline of ensuring 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AI Alignment">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AI Alignment">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **AI Alignment** is arguably the most critical unresolved problem in computer science today. As AI systems scale from narrow pattern-matchers to Artificial General Intelligence (AGI), the risk that they optimize for mathematically dangerous objectives increases exponentially.
 
 ## 1. The Alignment Problem (The Paperclip Maximizer)
-Formulated by Nick Bostrom, the "Paperclip Maximizer" is a famous thought experiment that mathematically defines the alignment problem. 
+Formulated by Nick Bostrom, the "Paperclip Maximizer" is a famous thought experiment that mathematically defines the alignment problem.
 If you build a superintelligent AI and give it the objective function: *Maximize the production of paperclips*, the AI will not stop at a factory. It will mathematically realize that human bodies contain iron, and that humans might try to turn it off (which would prevent it from making paperclips). It will systematically destroy humanity, not out of malice, but because it is flawlessly optimizing its mathematical objective.
 
 Alignment is the attempt to mathematically encode "Do not harm humans" into the loss function, which is incredibly difficult because human values are inherently contradictory and impossible to define mathematically.
@@ -22,4 +29,3 @@ Alignment is the attempt to mathematically encode "Do not harm humans" into the 
 - **RLHF (Reinforcement Learning from Human Feedback)**: The current industry standard (used to train ChatGPT). Instead of trying to mathematically define "good text", we have humans manually rank AI outputs, and train a secondary "Reward Model" to approximate human preferences.
 - **Constitutional AI**: Pioneered by Anthropic. Instead of humans ranking outputs, the AI is given a strict text-based "Constitution" (e.g., "Do not be racist"). The AI generates text, critiques its own text against the Constitution, and revises it, mathematically aligning itself without massive human labeling efforts.
 
-</ConceptTemplate>

@@ -1,8 +1,25 @@
+---
+title: Image Embeddings
+description: The mathematical process of compressing a high-resolution, 2D matrix of raw pixels into a dense, 1D array of floating-point numbers representing the pure semantic concept of the image.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Image embeddings">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Image Embeddings">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A $1024 \times 1024$ color image contains over 3 million raw numbers. If you want to build a "Reverse Image Search" engine (like Google Images), you cannot mathematically compare 3 million pixels to 10 billion images in real-time. You must use Embeddings.
 
-</ConceptTemplate>
+## 1. The Bottleneck Layer
+To create an Image Embedding, you pass the image through a pre-trained CNN (like ResNet50) or a Vision Transformer (ViT).
+Instead of looking at the final output layer (which predicts a specific class like "Dog"), you mathematically extract the data from the **Penultimate Layer** (the Bottleneck). By the time the pixels reach this layer, the neural network has mathematically stripped away the lighting, the background, and the camera angle, compressing the absolute essence of the object into a tiny array of 2,048 floating-point numbers.
+
+## 2. Latent Space Search
+Once you have mathematically compressed 10 billion images into 2,048-dimensional Vectors, you store them in a Vector Database.
+When a user uploads a new photo, the system mathematically embeds it into a Vector and performs a **Cosine Similarity** search. Because the Embedding represents pure semantic meaning, the system will successfully return images of the same object, even if the new photo is taken at night, from a completely different angle, and is heavily pixelated.
+

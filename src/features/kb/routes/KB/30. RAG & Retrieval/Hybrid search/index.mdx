@@ -1,8 +1,27 @@
+---
+title: Hybrid Search
+description: A retrieval architecture that mathematically merges the semantic understanding of Vector Search with the absolute precision of traditional Keyword (Lexical) Search to eliminate blind spots.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hybrid search">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hybrid Search">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Vector Search is mathematically brilliant at understanding concepts. If you search for "fast car," it will successfully return documents containing "speeding automobile." However, Vector Search is mathematically terrible at exact terminology (like finding a specific error code `ERR_7X9` or a specific person's name).
 
-</ConceptTemplate>
+## 1. The Dual Engine Approach
+Hybrid Search runs two entirely separate mathematical engines simultaneously:
+- **Dense Retrieval (Vector Search)**: Calculates Cosine Similarity on embeddings to find semantic meaning.
+- **Sparse Retrieval (Keyword Search)**: Uses algorithms like BM25 (TF-IDF) to mathematically calculate the exact frequency and rarity of the physical characters in the search query across the document.
+
+## 2. Reciprocal Rank Fusion (RRF)
+If Engine A returns a list of 100 documents, and Engine B returns a different list of 100 documents, how do you combine them?
+You use **Reciprocal Rank Fusion**.
+RRF is a mathematical algorithm that looks at a document's rank in both lists. If Document X is ranked #2 by the Vector Engine (great semantic match) and #5 by the Keyword Engine (exact word match), RRF mathematically calculates a combined score (e.g., $1/(k+2) + 1/(k+5)$). This algorithm automatically mathematically bubbles the absolute best documents to the very top, perfectly balancing deep semantic understanding with exact physical keyword precision.
+

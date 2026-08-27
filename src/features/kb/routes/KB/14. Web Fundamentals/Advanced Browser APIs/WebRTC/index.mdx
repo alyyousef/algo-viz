@@ -4,7 +4,14 @@ description: A massive, complex open-source project and API that enables direct,
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="WebRTC (Real-Time Communication)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="WebRTC (Real-Time Communication)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you want to build a video conferencing app like Zoom or Google Meet entirely inside a web browser, HTTP and WebSockets are entirely the wrong tools. They route all traffic through a central backend server, which introduces massive latency and requires the company to pay thousands of dollars in bandwidth costs.
 
@@ -21,4 +28,3 @@ However, establishing a direct P2P connection over the modern internet is incred
 2. **STUN Servers**: Because Alice's laptop is hidden behind her home Wi-Fi router (NAT), she doesn't know her own public IP. She pings a public STUN server, which replies: *"Your public IP is 198.51.100.4"*. She sends this IP to Bob.
 3. **TURN Servers**: In corporate environments, strict firewalls physically block P2P UDP traffic. If the direct connection fails, WebRTC silently falls back to a TURN server—a massive, expensive cloud relay that forcefully proxies the video traffic through standard HTTPS ports.
 
-</ConceptTemplate>

@@ -1,8 +1,31 @@
+---
+title: Selection Sort
+description: "An in-place comparison sorting algorithm that divides the input list into two parts: a sorted sublist building up from left to right, and an unsorted sublist occupying the rest of the list."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Selection sort">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Selection Sort"
+  subtitle="Finding the Minimum"
+  tags={['Algorithms', 'Sorting', 'Fundamentals', 'Big O']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Selection sort is mathematically intuitive but terribly inefficient. It works by constantly searching the unsorted section for the absolute smallest number.
 
-</ConceptTemplate>
+## 1. The Mathematical Mechanism
+1. The algorithm starts at index 0. It assumes index 0 is the smallest.
+2. It mathematically scans the *entire rest of the array* to see if there is a smaller number.
+3. If it finds a smaller number (e.g., at index 5), it swaps index 0 with index 5. Now, the absolute smallest number in the entire array is locked into index 0.
+4. It moves to index 1, and repeats the scan for the remaining unsorted right side.
+
+## 2. Time Complexity
+Because it must mathematically scan the entire remaining array for every single index, it requires two nested loops.
+The Time Complexity is **O(N²)** in all cases (Best, Average, and Worst). Even if the array is already perfectly sorted, Selection Sort is mathematically too stupid to realize it; it will still scan the entire array N times, making it strictly worse than Insertion Sort for almost all real-world applications.
+

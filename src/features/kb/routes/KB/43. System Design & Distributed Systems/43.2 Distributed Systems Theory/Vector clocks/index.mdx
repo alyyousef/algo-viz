@@ -4,15 +4,28 @@ description: An algorithm for generating a partial ordering of events in a distr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Vector Clocks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vector Clocks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Lamport Clocks have a mathematical flaw: If Event A has timestamp `5` and Event B has timestamp `10`, Lamport guarantees that A *might* have caused B, but it cannot mathematically prove it. They might be completely independent events that just happened to get those numbers.
 
 **Vector Clocks** mathematically solve this. Instead of a single integer, every node in the cluster maintains an entire array (a vector) of integers—one for every node in the system.
 
+
 <Callout icon="warning" title="Conflict Detection (DynamoDB)">
+
+
   Vector clocks are the exact mathematical foundation of Amazon DynamoDB's conflict resolution. If two users simultaneously update the same shopping cart on different servers, the system uses the vector clock to mathematically prove there was a "Concurrent Write" conflict, forcing the application to resolve it.
+
+
 </Callout>
+
 
 ## The Algorithm
 
@@ -24,4 +37,3 @@ Imagine a 3-Node cluster. Every node has an array: `[0, 0, 0]`.
 
 By mathematically comparing the arrays later, a database can definitively prove if one array is a direct ancestor of another, or if they branched off concurrently (a conflict).
 
-</ConceptTemplate>

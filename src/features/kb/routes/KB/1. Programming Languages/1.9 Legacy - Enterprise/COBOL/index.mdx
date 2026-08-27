@@ -1,8 +1,30 @@
+---
+title: COBOL
+description: Common Business-Oriented Language, the ancient, heavily verbose mainframe language that still silently processes trillions of dollars in global financial transactions.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="COBOL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="COBOL">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Designed in 1959 by a committee led by Grace Hopper, COBOL is one of the oldest programming languages in existence. Despite its age, it remains the mathematical bedrock of the global financial system, processing an estimated $3 trillion in commerce every single day.
 
-</ConceptTemplate>
+## 1. English-Like Syntax
+In 1959, the mathematical goal of COBOL was to allow non-programmers (like bankers and accountants) to read the code.
+Instead of writing mathematical symbols (`x = y + z`), COBOL is heavily verbose:
+```cobol
+ADD Y TO Z GIVING X.
+```
+The code is rigidly structured into "Divisions" (Identification, Environment, Data, Procedure). While modern developers find the syntax agonizingly slow to write, its strict, rigid nature ensures that the code behaves exactly as expected for decades.
+
+## 2. Fixed-Point Mathematics
+Why do banks still use a language from 1959 instead of Python or Java?
+Modern languages use Floating-Point mathematics (IEEE 754). If you ask Python to add `0.1 + 0.2`, the mathematical result is `0.30000000000000004`. In a bank processing billions of transactions, those microscopic rounding errors compound into millions of missing dollars.
+COBOL natively uses **Fixed-Point Decimal Mathematics**. It calculates numbers exactly the way a human accountant does on paper, mathematically guaranteeing absolute, to-the-penny precision for financial data.
+

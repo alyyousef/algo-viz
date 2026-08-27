@@ -4,17 +4,30 @@ description: The open-source, royalty-free Instruction Set Architecture that thr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="RISC-V Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RISC-V Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-For decades, if a hardware startup or university wanted to build a custom CPU, they faced a massive legal wall. 
-If they wanted to use **x86**, it was legally impossible (locked down by Intel and AMD). 
+For decades, if a hardware startup or university wanted to build a custom CPU, they faced a massive legal wall.
+If they wanted to use **x86**, it was legally impossible (locked down by Intel and AMD).
 If they wanted to use **ARM**, they had to pay millions of dollars in licensing fees and sign strict NDAs before they could even look at the architecture.
 
 In 2010, researchers at UC Berkeley decided to fix this by creating **RISC-V** (pronounced "Risk-Five"), a completely open-source, royalty-free Instruction Set Architecture.
 
+
 <Callout icon="success" title="The Linux of Hardware">
+
+
   Just as Linux commoditized the operating system (allowing anyone to run servers for free without paying Microsoft), RISC-V threatens to commoditize CPU hardware. Any student, startup, or nation-state can download the RISC-V specification and physically manufacture a CPU without paying a single cent to anyone.
+
+
 </Callout>
+
 
 ## The Modular Design
 
@@ -38,4 +51,3 @@ RISC-V is governed by an independent foundation in Switzerland, completely immun
 
 While x86 dominates PCs and ARM dominates smartphones, RISC-V is rapidly taking over the **Embedded/IoT market** (smartwatches, hard drive controllers, microwaves). Western companies like Western Digital and Nvidia are actively replacing internal ARM management chips with RISC-V to save hundreds of millions in licensing fees.
 
-</ConceptTemplate>

@@ -1,8 +1,26 @@
+---
+title: Curry-Howard Correspondence
+description: The profound mathematical discovery proving that writing a computer program and proving a mathematical theorem are exactly the same physical and logical action.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Curry-Howard correspondence">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Curry-Howard Correspondence">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Curry-Howard Isomorphism is one of the most beautiful discoveries in theoretical computer science. It proves a direct, perfect mathematical bridge between Logic and Computation.
 
-</ConceptTemplate>
+## 1. Types are Propositions
+In formal logic, you have a Proposition (a statement that is either True or False). In programming, you have a Type (like `String`).
+Curry-Howard mathematically proves they are identical. A Type is a Proposition. If you write the type signature `A -> B` (a function that takes A and returns B), it is mathematically identical to the logical implication $A \implies B$ (If A is true, then B is true).
+
+## 2. Programs are Proofs
+If Types are Propositions, what is the actual Code?
+The Code is the mathematical **Proof**.
+If the compiler successfully compiles your function `A -> B` without throwing a Type Error, you have physically, mathematically proven that the logical statement $A \implies B$ is True. If your program doesn't compile, your mathematical proof is flawed. This isomorphism birthed advanced proof assistants (like Coq and Agda), where mathematicians write code, and if it compiles, they have unassailably proven highly complex theorems.
+

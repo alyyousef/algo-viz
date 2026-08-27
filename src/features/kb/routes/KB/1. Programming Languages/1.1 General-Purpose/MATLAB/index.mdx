@@ -5,10 +5,17 @@ description: "A proprietary programming language and computing environment speci
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="MATLAB"
   icon="activity"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **MATLAB** (Matrix Laboratory) is a proprietary, multi-paradigm programming language and IDE developed by MathWorks. It is heavily utilized by engineers, physicists, and applied mathematicians for highly complex numerical computing.
 
@@ -23,10 +30,10 @@ While Python (with NumPy) has eaten into its market share, MATLAB remains domina
 
 ```matlab
 % Create a 1D array (vector) from 0 to 10 with step 0.1
-t = 0:0.1:10; 
+t = 0:0.1:10;
 
 % Calculate the sine of every element in the array instantly (vectorization)
-y = sin(t); 
+y = sin(t);
 
 % Plot the result with labels
 plot(t, y);
@@ -40,8 +47,13 @@ B = [5 6; 7 8];
 C = A * B; % True matrix multiplication, not element-wise
 ```
 
+
 <Callout icon="warning" title="Proprietary Limitations">
+
+
 Unlike Python or R, MATLAB requires an expensive commercial license. This has driven a massive shift toward open-source alternatives in academia and startups over the last decade.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,33 @@
+---
+title: AWS vs Azure vs GCP vs OCI
+description: "A high-level architectural comparison of the world's major public cloud providers: Amazon Web Services, Microsoft Azure, Google Cloud Platform, and Oracle Cloud Infrastructure."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AWS vs Azure vs GCP vs OCI">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="AWS vs Azure vs GCP vs OCI"
+  subtitle="The Public Cloud Titans"
+  tags={['Comparison', 'Cloud', 'Architecture', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Public Cloud market is dominated by massive tech conglomerates providing globally distributed data centers, compute power, and managed services on demand.
 
-</ConceptTemplate>
+## 1. Amazon Web Services (AWS)
+**The Pioneer & Market Leader**. AWS invented modern cloud computing (EC2, S3). It has the largest market share, the most massive ecosystem of services, and the widest global reach. It is the default choice for most startups and massive enterprises, but its sheer volume of services can result in a steep learning curve and complex billing architectures.
+
+## 2. Microsoft Azure
+**The Enterprise Standard**. Azure is fundamentally designed to integrate flawlessly with Microsoft's existing enterprise monopolies (Windows Server, Active Directory, Office 365, MS SQL). If a massive corporation already operates on Microsoft infrastructure, Azure provides a mathematically seamless hybrid-cloud transition, making it the primary choice for Fortune 500 legacy companies.
+
+## 3. Google Cloud Platform (GCP)
+**The Data & AI Powerhouse**. GCP is built on the exact same infrastructure that runs Google Search and YouTube. It is heavily favored by organizations prioritizing Big Data (BigQuery), Machine Learning (TensorFlow/TPUs), and Kubernetes (which Google invented). While its market share is smaller, its network speed and data analytics tools are widely considered mathematically superior.
+
+## 4. Oracle Cloud Infrastructure (OCI)
+**The Performance Challenger**. OCI is a Gen-2 cloud designed specifically for massive, high-performance, legacy database workloads. It offers "Bare Metal" servers with extreme I/O performance and highly aggressive pricing structures (often drastically cheaper bandwidth egress fees than AWS), specifically targeting massive enterprises looking to escape Oracle's traditional on-premise licensing costs.
+

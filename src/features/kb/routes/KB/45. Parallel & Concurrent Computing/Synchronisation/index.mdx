@@ -4,13 +4,26 @@ description: Mechanisms that ensure that two or more concurrent processes or thr
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Synchronization">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Synchronization">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Synchronization** is the mathematical discipline of writing code that safely navigates Race Conditions and Deadlocks. It is the process of coordinating the execution of multiple threads to mathematically guarantee data integrity.
 
+
 <Callout icon="info" title="The Critical Section">
+
+
   A **Critical Section** is any block of code that accesses shared memory (like updating the `bank_balance`). The mathematical goal of all Synchronization primitives is to ensure that *only one thread can ever be inside a Critical Section at a time*.
+
+
 </Callout>
+
 
 ## The Cost of Synchronization
 
@@ -20,4 +33,3 @@ If you have 8 CPU cores, and all 8 threads need to enter the Critical Section to
 
 Writing highly concurrent software is an extreme mathematical balancing act: making the Critical Sections as unbelievably tiny as possible, so the threads spend 99% of their time running in parallel, and only 1% of their time waiting in line.
 
-</ConceptTemplate>

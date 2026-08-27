@@ -1,0 +1,24 @@
+---
+title: Azure App Service
+description: A fully managed Platform as a Service (PaaS) that allows developers to deploy web applications and REST APIs without managing any underlying Linux or Windows infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure App Service"
+  subtitle="Managed Web Hosting"
+  tags={['Azure', 'PaaS', 'Web', 'Compute']}
+>
+
+If you want to host a .NET or Node.js web API, you could rent a Virtual Machine, install the OS, install the runtime, configure Nginx, and manage SSL certificates. Azure App Service mathematically automates all of this, reducing deployment to a single Git push.
+
+## 1. Platform as a Service (PaaS)
+App Service handles the mathematical drudgery of infrastructure.
+You simply provide your source code (or a Docker container). Azure automatically provisions the underlying compute, injects your code, binds the SSL certificates, and exposes a secure HTTPS endpoint. It natively supports Windows and Linux environments. If the underlying OS requires a critical security patch, Azure mathematically executes a zero-downtime rolling update in the background; you never even know it happened.
+
+## 2. Deployment Slots
+Updating a live production server is dangerous. App Service solves this with **Deployment Slots**.
+A Slot is a mathematically identical clone of your production environment running on a hidden URL. You deploy V2 of your app to the "Staging Slot." You test it thoroughly. When ready, you click "Swap."
+Azure mathematically reroutes the internal load balancer. The Staging Slot instantly becomes Production, and Production becomes Staging. If V2 immediately crashes, you click "Swap" again, mathematically executing a 1-second rollback.
+
+</TechnologyTemplate>

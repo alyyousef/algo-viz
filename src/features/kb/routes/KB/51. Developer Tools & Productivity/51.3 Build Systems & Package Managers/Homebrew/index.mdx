@@ -4,7 +4,7 @@ description: A free and open-source software package management system that simp
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Homebrew"
   subtitle="The missing package manager for macOS"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Homebrew-logo.svg/512px-Homebrew-logo.svg.png"
@@ -17,12 +17,18 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 If you want to install `node` or `postgresql` on a Mac, you historically had to hunt down `.pkg` installers on random websites.
 
-With Homebrew, you simply open the terminal and type `brew install node`. 
+With Homebrew, you simply open the terminal and type `brew install node`.
+
 
 <Callout icon="info" title="The Ruby Architecture">
-  Homebrew scripts (called "Formulas") are written entirely in **Ruby**. 
-  
+
+
+  Homebrew scripts (called "Formulas") are written entirely in **Ruby**.
+
   When you install a package, Homebrew physically downloads the raw C++ source code from GitHub and mathematically compiles it locally on your exact CPU. It safely sandboxes all binaries inside the `/opt/homebrew` directory, physically preventing Apple's strict System Integrity Protection (SIP) from blocking the installation.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

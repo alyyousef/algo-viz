@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Bamboo
+description: A legacy, enterprise-grade continuous integration and deployment server developed by Atlassian, mathematically integrated with Jira and Bitbucket for highly regulated, on-premises environments.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Bamboo">
+<TechnologyTemplate
+  title="Bamboo"
+  subtitle="Atlassian's On-Premises CI/CD Server"
+  tags={['DevOps', 'CI/CD', 'Atlassian', 'Legacy']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before the rise of cloud-hosted YAML pipelines (like GitHub Actions), enterprise CI/CD required heavily customized, on-premises physical servers. Bamboo was Atlassian's flagship product for this era.
 
-</ConceptTemplate>
+## 1. Deep Atlassian Integration
+Bamboo's mathematical superiority historically came from its native integration with the Atlassian stack.
+If a pipeline failed, Bamboo could automatically execute a mathematical API call to Jira to transition a ticket from "In Testing" back to "In Progress," and assign it to the developer who broke the build. This reduced administrative overhead in massive corporations.
+
+## 2. The Migration to the Cloud
+Unlike modern systems that use a simple text file (`.yml`) in the repository to define the pipeline, Bamboo historically relied on a massive GUI web interface where administrators manually clicked to create build steps. This violated the mathematical principle of "Configuration as Code."
+While Bamboo is still used in highly secure, air-gapped data centers (like defense contractors), Atlassian has largely shifted its focus to **Bitbucket Pipelines** for its modern, cloud-native customer base.
+
+</TechnologyTemplate>

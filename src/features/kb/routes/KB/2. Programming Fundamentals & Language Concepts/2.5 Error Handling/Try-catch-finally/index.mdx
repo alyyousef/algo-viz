@@ -1,8 +1,25 @@
+---
+title: Try-Catch-Finally
+description: The syntactical structures used by the compiler to establish boundaries for catching Exceptions and ensuring absolute resource cleanup during Stack Unwinding.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Try/catch/finally">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Try-Catch-Finally">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The `try-catch-finally` block is the mechanism used to tame the violent, unpredictable Stack Unwinding caused by Exceptions.
 
-</ConceptTemplate>
+## 1. Try and Catch
+- **Try**: Establishes a mathematical surveillance boundary. The compiler injects metadata into the binary indicating that if an Exception occurs within this specific block of memory instructions, it should not instantly crash the program.
+- **Catch**: The recovery zone. If an Exception is caught, the Stack Unwinding mathematically stops. The CPU binds the Exception object to the catch parameter (`catch (Exception e)`) and executes the block, allowing the program to safely resume normal execution.
+
+## 2. The Guarantee of Finally
+Because an Exception instantly teleports the CPU out of the `try` block, any cleanup code at the bottom of the `try` block will be mathematically skipped, resulting in severe resource leaks (e.g., an open database connection).
+The `finally` block provides a mathematical guarantee of execution. Whether the `try` block finishes normally, or an Exception violently rips control away, the JVM/CLR compiler guarantees that the CPU will *always* mathematically execute the `finally` block before it leaves the function. This ensures that `connection.close()` is executed with absolute certainty.
+

@@ -4,7 +4,14 @@ description: The process of taking a massive, pre-trained base model and updatin
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Fine-Tuning">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Fine-Tuning">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Training a foundational Large Language Model from scratch (like GPT-4 or Llama 3) requires tens of thousands of GPUs running for months, costing hundreds of millions of dollars. The resulting "Base Model" is highly intelligent but acts like an unruly autocomplete engine; it just wants to predict the next word of internet text.
 
@@ -20,13 +27,18 @@ You do **not** fine-tune a model to teach it new facts (that is what RAG is for,
 
 ## 2. Instruction Tuning (The Chatbot Transformation)
 
-The most important type of fine-tuning is **Instruction Tuning**. 
+The most important type of fine-tuning is **Instruction Tuning**.
 A Base Model fed the prompt *"What is the capital of France?"* might autocomplete it with *"What is the capital of Spain?"* because it thinks it is completing a list of trivia questions from a website.
 
 By fine-tuning the model on tens of thousands of specific `Prompt -> Ideal Response` pairs, the model's weights shift. It learns to stop autocompleting documents and instead adopt the persona of a helpful AI assistant that answers instructions directly.
 
+
 <Callout icon="success" title="PEFT and LoRA">
+
+
   Historically, fine-tuning required updating all 70 billion weights of a model (Full Fine-Tuning), which required massive GPU clusters. Today, developers use **LoRA (Low-Rank Adaptation)**, which freezes the base model and only trains a tiny, lightweight "adapter" of weights. You can fine-tune a massive Llama model on a single consumer GPU in a few hours using LoRA.
+
+
 </Callout>
 
-</ConceptTemplate>
+

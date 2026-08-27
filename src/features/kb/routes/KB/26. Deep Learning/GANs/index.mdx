@@ -8,9 +8,15 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Generative Adversarial Networks (GANs) are a class of machine learning frameworks designed by Ian Goodfellow and his colleagues in 2014. GANs are a method of generative modeling using deep learning methods, where two neural networks are trained simultaneously in an adversarial setting.
 
+
 <Callout icon="info" title="The Counterfeiter and the Police">
+
+
   The standard analogy for a GAN is a game of cat and mouse between a counterfeiter (the Generator) trying to produce fake currency, and the police (the Discriminator) trying to detect the fakes. As the game goes on, both get better at their jobs until the fakes are indistinguishable from real currency.
+
+
 </Callout>
+
 
 ## The Two Networks
 
@@ -21,7 +27,7 @@ A GAN consists of two entirely separate neural networks that compete against eac
 
 ## The Training Process
 
-Training a GAN is a minimax game. 
+Training a GAN is a minimax game.
 
 - The Discriminator wants to maximize its accuracy in distinguishing real from fake.
 - The Generator wants to minimize the Discriminator's accuracy (or maximize its mistake rate).
@@ -43,13 +49,8 @@ The training loop alternates between two phases:
 
 While incredibly powerful for tasks like image generation (e.g., DeepFakes, StyleGAN), GANs are notoriously difficult to train.
 
-<ComparisonTable 
-  headers={['Problem', 'Description']}
-  rows={[
-    ['Mode Collapse', 'The Generator discovers one specific output that fools the Discriminator perfectly and only produces that one output, losing all diversity.'],
-    ['Non-convergence', 'The models oscillate and never reach an equilibrium (Nash equilibrium).'],
-    ['Vanishing Gradients', 'If the Discriminator gets too good too fast, the Generator learns nothing because the gradients are near zero.']
-  ]}
-/>
+
+<ComparisonTable headers={['Problem', 'Description']} rows={[ ['Mode Collapse', 'The Generator discovers one specific output that fools the Discriminator perfectly and only produces that one output, losing all diversity.'], ['Non-convergence', 'The models oscillate and never reach an equilibrium (Nash equilibrium).'], ['Vanishing Gradients', 'If the Discriminator gets too good too fast, the Generator learns nothing because the gradients are near zero.'] ]} />
+
 
 </TechnologyTemplate>

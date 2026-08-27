@@ -4,23 +4,36 @@ description: Google's custom-designed ASIC dedicated exclusively to accelerating
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tensor Processing Units (TPUs)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tensor Processing Units (TPUs)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For years, the Artificial Intelligence revolution was powered by **GPUs** (Nvidia). Because neural networks require millions of parallel calculations, GPUs were perfectly suited for the task. However, GPUs are still inherently designed to render 3D graphics; they contain hardware for texture mapping and ray tracing that is completely useless for AI, wasting silicon area and power.
 
 In 2016, Google shocked the industry by announcing they had secretly built their own custom ASIC dedicated exclusively to deep learning: the **Tensor Processing Unit (TPU)**.
 
+
 <Callout icon="info" title="The Matrix Multiplier">
+
+
   At its core, 95% of the math required to run a Large Language Model (like ChatGPT) is simply multiplying massive grids of numbers (Matrices/Tensors) together. The TPU strips away all graphics logic, branch predictors, and standard CPU caches, dedicating almost all of its silicon exclusively to matrix multiplication.
+
+
 </Callout>
+
 
 ## The Systolic Array Architecture
 
-The genius of the TPU is its heart: the **Systolic Array**. 
+The genius of the TPU is its heart: the **Systolic Array**.
 
 In a standard CPU or GPU, the ALU reads two numbers from a register, multiplies them, and writes the answer back to the register. This constant reading and writing to registers consumes massive amounts of power and limits speed (the Von Neumann bottleneck).
 
-A Systolic Array is a massive, physical grid of thousands of ALUs wired directly into each other (e.g., a 256 $\times$ 256 grid of MAC units - Multiply-Accumulate). 
+A Systolic Array is a massive, physical grid of thousands of ALUs wired directly into each other (e.g., a 256 $\times$ 256 grid of MAC units - Multiply-Accumulate).
 1. Data flows into the top and left of the grid, pulsing through the ALUs like blood pumping through a heart (hence "systolic").
 2. ALU #1 multiplies a number and passes the result *directly* to ALU #2 below it, without ever saving it to a register.
 3. The data cascades through 65,000 ALUs simultaneously.
@@ -36,4 +49,3 @@ Because Google built the TPU as a proprietary ASIC, you cannot buy one at a stor
 
 The success of the TPU proved that the future of computing lies in Domain-Specific Architectures (DSAs)—specialized hardware designed for specific algorithms.
 
-</ConceptTemplate>

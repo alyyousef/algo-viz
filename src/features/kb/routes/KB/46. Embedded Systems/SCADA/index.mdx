@@ -4,15 +4,28 @@ description: Supervisory control and data acquisition, a control system architec
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SCADA (Supervisory Control and Data Acquisition)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SCADA (Supervisory Control and Data Acquisition)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If a PLC controls a single robotic arm in a factory, **SCADA** is the massive software brain that sits in a central control room and mathematically monitors the entire electrical grid of a country, or the flow of oil through a 1,000-mile pipeline.
 
+
 <Callout icon="info" title="The High-Level Supervisor">
-  SCADA systems do not execute Real-Time mathematical control. If a pipeline pressure valve needs to be shut within 10 milliseconds to prevent an explosion, the local PLC handles that autonomously. 
-  
+
+
+  SCADA systems do not execute Real-Time mathematical control. If a pipeline pressure valve needs to be shut within 10 milliseconds to prevent an explosion, the local PLC handles that autonomously.
+
   The SCADA system mathematically polls the PLC every few seconds to gather data, draw historical graphs on a computer screen for human operators, and allow the human to send high-level commands back down to the PLCs.
+
+
 </Callout>
+
 
 ## Architecture
 
@@ -24,4 +37,3 @@ A standard SCADA system mathematically consists of:
 
 Because SCADA systems mathematically control the critical physical infrastructure of society (water, power, oil), they are the ultimate target for nation-state Cyberwarfare (e.g., the Stuxnet virus).
 
-</ConceptTemplate>

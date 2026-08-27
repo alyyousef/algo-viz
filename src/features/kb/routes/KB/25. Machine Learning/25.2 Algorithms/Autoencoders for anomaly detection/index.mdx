@@ -4,7 +4,14 @@ description: Utilizing unsupervised Deep Learning bottleneck architectures to ma
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Autoencoders (Anomaly Detection)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Autoencoders (Anomaly Detection)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 An **Autoencoder** is a brilliant, unsupervised Deep Learning architecture designed to output exactly what was inputted. By forcing the data through a mathematical bottleneck, it becomes the ultimate tool for detecting anomalies in highly complex data like images or server logs.
 
@@ -17,13 +24,12 @@ Because of the bottleneck, the network mathematically *cannot* memorize the data
 
 ## 2. Using Reconstruction Loss for Anomalies
 You train the Autoencoder **only on normal, healthy data**.
-Once trained, the Autoencoder is a master at mathematically compressing and decompressing normal data. 
+Once trained, the Autoencoder is a master at mathematically compressing and decompressing normal data.
 - If you feed it a normal server log, it reconstructs it perfectly. The mathematical difference between the input and output (the **Reconstruction Loss**) is ~0.01.
-- If a hacker attacks the server and you feed the highly anomalous log into the Autoencoder, the network panics. It has never seen this mathematical pattern before, and the bottleneck destroys the information. The Decoder outputs garbage. 
+- If a hacker attacks the server and you feed the highly anomalous log into the Autoencoder, the network panics. It has never seen this mathematical pattern before, and the bottleneck destroys the information. The Decoder outputs garbage.
 - The **Reconstruction Loss** spikes to 5.0. You simply set a mathematical threshold (e.g., Alert if Loss > 2.0) to instantly detect zero-day cyberattacks.
 
 ## 3. Variational Autoencoders (VAEs)
 Standard Autoencoders can mathematically overfit to the training data.
 **Variational Autoencoders** introduce probability calculus. Instead of compressing the input into 10 hard numbers, the Encoder compresses the input into a mathematical probability distribution (Means and Standard Deviations). The Decoder then samples from this distribution. This forces the latent space to be continuous and smooth, drastically improving the mathematical robustness of the anomaly detection.
 
-</ConceptTemplate>

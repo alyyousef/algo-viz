@@ -4,7 +4,14 @@ description: The modern web standard designed to render 3D scenes to Virtual Rea
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="WebXR (VR & AR)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="WebXR (VR & AR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **WebXR** (Web Extended Reality) is the unified API that replaces the deprecated WebVR. It bridges the gap between the web browser and specialized stereoscopic hardware like the Meta Quest, Apple Vision Pro, and AR-capable smartphones.
 
@@ -22,4 +29,3 @@ In an `immersive-ar` session, WebXR also provides:
 - **Hit Testing**: Mathematically calculating where the user's camera is pointing relative to the physical floor, allowing you to "place" a virtual IKEA sofa onto a real-world rug.
 - **Environment Blending**: Using the device's passthrough cameras to composite the WebGL graphics seamlessly over the real world.
 
-</ConceptTemplate>

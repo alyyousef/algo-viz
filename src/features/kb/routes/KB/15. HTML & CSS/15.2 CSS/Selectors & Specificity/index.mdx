@@ -5,10 +5,17 @@ description: "The rule engine of CSS that determines exactly which styles are ap
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Selectors & Specificity"
   icon="target"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 CSS stands for **Cascading Style Sheets**. The "Cascade" is the algorithm the browser uses to decide which style wins when two different rules try to style the same element.
 
@@ -24,15 +31,20 @@ When a conflict occurs, the browser calculates a specificity score based on the 
 For example, `#nav .link` (1 ID, 1 Class) will override `div ul li .link` (3 Elements, 1 Class) because IDs carry vastly more weight.
 
 ## Advanced Selectors
-- **Combinators**: 
+- **Combinators**:
   - `div p` (Descendant: any `p` inside a `div`)
   - `div > p` (Direct child: only `p` elements directly nested one level deep)
   - `h1 + p` (Adjacent sibling: the `p` immediately following an `h1`)
 - **Pseudo-classes**: Target state. (e.g., `:focus`, `:nth-child(2)`, `:not(.active)`)
 - **Pseudo-elements**: Target sub-parts of an element. (e.g., `::before`, `::selection`)
 
+
 <Callout icon="warning" title="The !important Nuclear Option">
+
+
 Appending `!important` to a rule forces it to win over almost everything else, regardless of specificity. While tempting for quick fixes, overusing it destroys the cascade and makes your CSS impossible to maintain. Only use it when overriding third-party libraries.
+
+
 </Callout>
 
-</ConceptTemplate>
+

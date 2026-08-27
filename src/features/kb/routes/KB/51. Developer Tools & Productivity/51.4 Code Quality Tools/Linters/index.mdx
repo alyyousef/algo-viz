@@ -4,15 +4,28 @@ description: Tools that analyze source code to flag programming errors, bugs, st
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Linters">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Linters">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A compiler tells you if your code is mathematically broken. A **Linter** tells you if your code is *biologically terrible*.
 
 Linters are static analysis tools that parse your source code without running it. They mathematically enforce rules about variable naming, deprecated functions, and potential memory leaks.
 
+
 <Callout icon="warning" title="The Origin of 'Lint'">
+
+
   The term "lint" comes from the physical fuzz (lint) trapped in sheep's wool. In 1978, a C programmer at Bell Labs wrote a tool that "picked the lint" out of C code—finding the tiny, microscopic bugs that the C compiler ignored, like unused variables or uninitialized pointers.
+
+
 </Callout>
+
 
 ## Linting vs Formatting
 
@@ -20,4 +33,3 @@ It is critical to mathematically separate these two concepts:
 - **Formatting** cares about *how the code looks* (tabs vs spaces, line lengths).
 - **Linting** cares about *how the code behaves* (unused variables, infinite loops, deprecated APIs).
 
-</ConceptTemplate>

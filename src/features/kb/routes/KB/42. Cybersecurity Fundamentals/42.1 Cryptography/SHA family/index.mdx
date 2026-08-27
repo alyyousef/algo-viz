@@ -5,15 +5,21 @@ description: The evolution of NIST-standardized hash functions from the broken S
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-
-<ConceptTemplate title="The SHA Family">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The SHA Family">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Secure Hash Algorithm (SHA)** family is a set of cryptographic hash functions published by the United States National Institute of Standards and Technology (NIST). They form the mathematical backbone of global digital signatures, certificates, and blockchain networks.
 
 ## 1. SHA-1 (The Fallen Standard)
 Designed by the NSA in 1995, SHA-1 produces a 160-bit hash. For a decade, it secured the entire internet (SSL certificates).
 
-However, by the mid-2000s, cryptographers discovered mathematical weaknesses. In 2017, Google executed a devastating **SHAttered attack**, generating two completely different PDF files that mathematically resulted in the exact same SHA-1 hash. 
+However, by the mid-2000s, cryptographers discovered mathematical weaknesses. In 2017, Google executed a devastating **SHAttered attack**, generating two completely different PDF files that mathematically resulted in the exact same SHA-1 hash.
 **SHA-1 is mathematically compromised and strictly forbidden in modern systems.**
 
 ## 2. SHA-2 (The Current Global Standard)
@@ -27,17 +33,16 @@ In 2007, NIST was terrified that because SHA-2 shared structural similarities wi
 
 SHA-3 uses a wildly different mathematical architecture called the **Sponge Construction**. It "absorbs" the input data into a massive internal state matrix, scrambles it using complex permutations, and then "squeezes" out the hash.
 
-<ComparisonTable 
-  headers={['Algorithm', 'Architecture', 'Current Status']} 
-  rows={[
-    ['SHA-1', 'Merkle-Damgård', 'Broken (Collisions found). Do not use.'],
-    ['SHA-2 (SHA-256)', 'Merkle-Damgård', 'Secure. The absolute industry standard.'],
-    ['SHA-3', 'Sponge Construction', 'Secure. Kept as a mathematical failsafe in case SHA-2 is ever broken.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Algorithm', 'Architecture', 'Current Status']} rows={[ ['SHA-1', 'Merkle-Damgård', 'Broken (Collisions found). Do not use.'], ['SHA-2 (SHA-256)', 'Merkle-Damgård', 'Secure. The absolute industry standard.'], ['SHA-3', 'Sponge Construction', 'Secure. Kept as a mathematical failsafe in case SHA-2 is ever broken.'] ]} />
+
 
 <Callout icon="tip" title="Don't Hash Passwords with SHA">
+
+
 While SHA-256 is incredible for data integrity, it is a catastrophic choice for hashing passwords. SHA-256 is mathematically designed to be as fast as possible on hardware (GPUs can calculate billions of hashes per second). This allows hackers to trivially brute-force user passwords. Passwords must be hashed using slow, memory-hard mathematical algorithms like **Argon2** or **Bcrypt**.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,26 @@
+---
+title: Bounded Polymorphism
+description: A type system feature that mathematically restricts generic type parameters to only accept types that implement a specific interface or inherit from a specific class.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bounded polymorphism">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bounded Polymorphism">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In standard Generics (Parametric Polymorphism), a type variable `T` mathematically means "absolutely any type." Bounded Polymorphism places mathematical constraints on `T`, telling the compiler, "T can be anything, *as long as* it meets these specific rules."
 
-</ConceptTemplate>
+## 1. The Mathematical Constraint
+If you write a generic sorting function: `function sort<T>(array: T[])`.
+If someone passes an array of integers, it works. But what if they pass an array of database connections? How do you mathematically determine if Connection A is "greater than" Connection B? The compiler will throw an error when it tries to compile the comparison logic.
+Bounded Polymorphism fixes this: `function sort<T extends Comparable>(array: T[])`.
+You mathematically bound `T`. The compiler will now instantly reject any type that does not explicitly implement the `Comparable` interface, ensuring absolute mathematical safety at compile-time.
+
+## 2. Type Erasure
+In Java, Generics and Bounded Polymorphism exist purely in the compiler's mathematical analysis. When Java actually compiles the code to bytecode, it performs **Type Erasure**. It physically deletes the `<T extends Comparable>` tags and replaces them with standard Object casts. The JVM runtime knows absolutely nothing about Generics; it is entirely a mathematical illusion enforced by the compile-time type checker.
+

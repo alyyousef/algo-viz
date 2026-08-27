@@ -4,16 +4,29 @@ description: A paradigm that focuses on WHAT the program should accomplish witho
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Declarative Programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Declarative Programming">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Declarative Programming** is an umbrella paradigm (which includes Functional and Logic programming) that stands in direct contrast to Imperative programming.
 
 In the declarative paradigm, the programmer writes code that describes **WHAT** the desired outcome is, leaving the complex, step-by-step implementation details (the "HOW") to the underlying language compiler or engine.
 
+
 <Callout icon="success" title="The Restaurant Analogy">
-  Declarative programming is like ordering at a restaurant. You tell the waiter: "I want a medium-rare steak with fries." (The **WHAT**). 
+
+
+  Declarative programming is like ordering at a restaurant. You tell the waiter: "I want a medium-rare steak with fries." (The **WHAT**).
   You do *not* go into the kitchen and tell the chef to turn the stove to 400 degrees, cook for 5 minutes, flip, and plate (The **HOW**).
+
+
 </Callout>
+
 
 ## Classic Examples
 
@@ -40,4 +53,3 @@ const evens = numbers.filter(n => n % 2 === 0);
 - **Strengths**: Code is significantly shorter, more readable, and less prone to off-by-one errors. It is highly composable and allows the underlying engine to aggressively optimize the execution.
 - **Weaknesses**: When performance is highly critical, or the underlying engine's abstraction "leaks," you may lose the fine-grained control needed to optimize the hardware usage.
 
-</ConceptTemplate>

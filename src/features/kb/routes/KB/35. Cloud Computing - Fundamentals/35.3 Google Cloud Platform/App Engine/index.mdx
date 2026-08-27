@@ -1,0 +1,25 @@
+---
+title: Google App Engine
+description: Google's original Platform as a Service (PaaS), providing a fully managed, mathematically abstracted environment for deploying web applications that instantly auto-scale from zero to global traffic.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Google App Engine"
+  subtitle="The Original PaaS"
+  tags={['GCP', 'PaaS', 'Web', 'Serverless']}
+>
+
+App Engine was released long before Kubernetes or Docker existed. It allows developers to deploy Python, Java, or Node.js code directly to Google's infrastructure without ever seeing or managing a Virtual Machine, load balancer, or operating system.
+
+## 1. Standard vs. Flexible Environments
+App Engine mathematically partitions its architecture into two distinct paradigms:
+- **Standard Environment**: Your code runs in a highly restrictive, pre-configured sandbox. You cannot write to the local file system or install arbitrary C-libraries. Because of this strict mathematical confinement, Google can boot a new instance of your app in milliseconds. It mathematically scales to exactly zero when there is no traffic, costing $0.
+- **Flexible Environment**: Your code runs inside a Docker container on Google Compute Engine VMs. You have total freedom (you can use any language, any library). However, because it relies on standard Docker/VM architecture, it boots slower (minutes, not milliseconds) and cannot scale to absolute zero; at least one instance must remain running.
+
+## 2. Versioning and Traffic Splitting
+Deploying to App Engine is mathematically elegant.
+Every time you run `gcloud app deploy`, it creates an immutable **Version**. By default, 100% of traffic routes to the new version.
+However, you can mathematically execute **A/B Testing** or **Canary Deployments** directly in the router. You instruct App Engine: *"Route exactly 95% of incoming HTTP requests to V1, and 5% to V2."* The hypervisor mathematically distributes the packets. If V2 generates 500 Server Errors, you instantly shift the slider back to 100% V1, executing a zero-downtime rollback in seconds.
+
+</TechnologyTemplate>

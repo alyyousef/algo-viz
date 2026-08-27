@@ -4,7 +4,14 @@ description: A unified compute framework designed specifically to scale AI Pytho
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Ray">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Ray">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Writing Python code that mathematically executes on a single CPU is easy. Writing Python code that mathematically orchestrates thousands of GPUs across 100 physical servers to train an AI is a distributed systems nightmare. **Ray** solves this.
 
@@ -20,4 +27,3 @@ While Ray can execute any Python script, it is specifically designed to be the u
 ## 3. Industry Dominance
 Ray is the absolute industry standard for massive AI scaling. It was famously the core infrastructure used by OpenAI to mathematically distribute the Reinforcement Learning training process of ChatGPT across their massive Azure supercomputer.
 
-</ConceptTemplate>

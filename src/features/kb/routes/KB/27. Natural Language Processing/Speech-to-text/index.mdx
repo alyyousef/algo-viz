@@ -1,8 +1,26 @@
+---
+title: Speech-to-Text (ASR)
+description: Automatic Speech Recognition (ASR) is the complex AI pipeline that mathematically translates raw acoustic audio waves into structured, human-readable text.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Speech-to-text">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Speech-to-Text (ASR)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An audio file is mathematically just a massive array of numbers representing the physical air pressure hitting a microphone 44,100 times a second. ASR converts these physics into words.
 
-</ConceptTemplate>
+## 1. The Acoustic Model
+The first step is mathematically converting the raw waveform into a Spectrogram (a visual heat map of audio frequencies over time).
+The Acoustic Model (a Neural Network) scans the Spectrogram. It does not try to predict words; it mathematically predicts **Phonemes** (the foundational sounds of human speech, like "ah", "ee", "ch"). It outputs a mathematical probability distribution for every phoneme at every millisecond of audio.
+
+## 2. The Language Model and CTC
+The Acoustic model might predict that the sounds were "r-eh-k-ah-g-n-ay-z-s-p-ee-ch".
+The **Language Model** takes over. It uses NLP mathematics to figure out what English words those phonemes represent. Does it mean "wreck a nice beach" or "recognize speech"? By mathematically calculating the statistical probability of those phrases occurring in the English language, it corrects the acoustic errors.
+Modern systems (like OpenAI's Whisper) use End-to-End Deep Learning, completely merging the Acoustic and Language models into a single massive Transformer network.
+

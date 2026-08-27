@@ -4,13 +4,26 @@ description: The digital circuit within the CPU that performs all arithmetic and
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Arithmetic Logic Unit (ALU)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Arithmetic Logic Unit (ALU)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Arithmetic Logic Unit (ALU)** is the computational heart of the CPU. While the Control Unit handles moving data around, the ALU is the component that actually *does the math*. It is a complex digital circuit composed entirely of basic logic gates (\`AND\`, \`OR\`, \`NOT\`) configured into adders, multiplexers, and shifters.
 
+
 <Callout icon="success" title="Everything is Math">
+
+
   Under the hood, almost all computational tasks reduce down to simple integer mathematics and bit-shifting. Moving a window across your screen, rendering text, or encrypting a password all eventually rely on the ALU crunching raw binary numbers.
+
+
 </Callout>
+
 
 ## The Two Halves of the ALU
 
@@ -32,4 +45,3 @@ It produces two outputs:
   - **Negative Flag (N)**: Set to \`1\` if the result was a negative number.
   - **Overflow Flag (V)**: Set to \`1\` if the result was too large to fit in the physical hardware (e.g., trying to store \`300\` in an 8-bit register that maxes out at \`255\`).
 
-</ConceptTemplate>

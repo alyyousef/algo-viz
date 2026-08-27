@@ -4,10 +4,16 @@ description: A way of arranging the sequences of DNA, RNA, or protein to identif
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sequence Alignment">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sequence Alignment">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you want to know if a human and a mouse share a specific gene, you mathematically compare their DNA strings.
 
 However, DNA mutates. Base pairs get inserted, deleted, or swapped over millions of years. Standard string equality (`string1 == string2`) is biologically useless. **Sequence Alignment** algorithms (like Needleman-Wunsch or Smith-Waterman) use Dynamic Programming to mathematically calculate the optimal alignment between two strings, tolerating gaps and mutations, to prove evolutionary relationships.
 
-</ConceptTemplate>

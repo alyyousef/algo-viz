@@ -1,8 +1,31 @@
+---
+title: Reliability
+description: The fundamental, overarching mathematical measurement of how consistently a system performs its intended function under expected and unexpected conditions without experiencing catastrophic failure.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Reliability">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Reliability"
+  subtitle="The Most Important Feature"
+  tags={['SRE', 'Architecture', 'Quality', 'Metrics']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Google SRE famously states: *"Reliability is the most important feature of any system."* If a web application has the most beautiful UI and the fastest algorithms in the world, but the server returns an HTTP 500 Error, the mathematical value of all other features is zero.
 
-</ConceptTemplate>
+## 1. MTBF and MTTR
+Reliability is mathematically quantified using two primary metrics:
+- **MTBF (Mean Time Between Failures)**: How long does the system run perfectly before it crashes? (e.g., the system crashes once every 3 months).
+- **MTTR (Mean Time To Recovery)**: When it does crash, how fast can you fix it? (e.g., it takes 5 minutes to restore service).
+Traditional IT focused almost entirely on increasing MTBF (trying to build perfect, unbreakable servers). Modern Cloud SRE mathematically accepts that servers will eventually break, and therefore focuses heavily on decreasing MTTR (using automated failovers) to achieve high reliability.
+
+## 2. The Cost Curve
+Reliability is an asymptotic mathematical curve.
+Achieving 99% reliability is cheap. Pushing from 99% to 99.9% costs $10,000. Pushing from 99.9% to 99.999% (Five Nines, equating to 5 minutes of downtime *per year*) requires multi-region active-active database replication and costs millions of dollars. SRE is the mathematical practice of determining exactly where on that cost curve the business actually needs to be.
+

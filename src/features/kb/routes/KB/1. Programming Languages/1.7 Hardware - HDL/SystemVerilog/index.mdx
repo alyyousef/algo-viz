@@ -1,8 +1,25 @@
+---
+title: SystemVerilog
+description: The massive, industry-standard superset of Verilog, combining hardware description with object-oriented verification frameworks.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SystemVerilog">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SystemVerilog">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Adopted as an IEEE standard in 2005, SystemVerilog was created to solve a massive mathematical crisis in the semiconductor industry: Verification.
+As microchips (like Intel CPUs or Nvidia GPUs) grew to contain billions of transistors, writing the hardware in Verilog was only 30% of the work; proving that the hardware mathematically worked without bugs was 70% of the work.
 
-</ConceptTemplate>
+## 1. Hardware Description
+For the actual design of physical logic gates, SystemVerilog mathematically extends old Verilog by adding strict C-like data types (`int`, `enum`, `struct`), multidimensional arrays, and interfaces. This allows engineers to bundle 50 different wires (like a PCIe bus) into a single mathematical `interface` object, drastically reducing the spaghetti-code wiring that plagued massive Verilog projects.
+
+## 2. Object-Oriented Verification (UVM)
+The true power of SystemVerilog lies in its verification features. It includes full Object-Oriented Programming (Classes, Inheritance, Polymorphism) and Constrained Random Generation.
+Instead of manually writing tests to see if a CPU works, engineers use SystemVerilog to build massive OOP mathematical models (often using the Universal Verification Methodology - UVM). The system mathematically blasts the simulated chip with millions of randomized, highly-constrained inputs, aggressively hunting for edge-case silicon bugs before a billion-dollar fabrication run.
+

@@ -4,21 +4,33 @@ description: A terminal multiplexer, a software application that can be used to 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GNU Screen">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GNU Screen">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Before `tmux` existed, there was **GNU Screen**. 
+Before `tmux` existed, there was **GNU Screen**.
 
 Released in 1987, it was the original mathematical architecture that allowed Unix users to detach and reattach terminal sessions to prevent catastrophic data loss during dial-up modem disconnections.
 
+
 <Callout icon="warning" title="Screen vs Tmux">
-  Today, `tmux` has mathematically defeated `screen` in almost every metric. Tmux has a cleaner codebase, uses a client-server architecture, and has vastly superior window-splitting capabilities. 
-  
+
+
+  Today, `tmux` has mathematically defeated `screen` in almost every metric. Tmux has a cleaner codebase, uses a client-server architecture, and has vastly superior window-splitting capabilities.
+
   However, `screen` is still biologically burned into the muscle memory of veteran System Administrators. Its primary advantage today is that it is often pre-installed on legacy, air-gapped mainframes where you cannot `apt install tmux`.
+
+
 </Callout>
+
 
 ## Serial Port Communication
 
-One highly specific mathematical use-case where `screen` still dominates is interfacing with raw hardware. 
+One highly specific mathematical use-case where `screen` still dominates is interfacing with raw hardware.
 If an embedded engineer plugs a Raspberry Pi or a Cisco Router into their laptop via a USB-to-Serial cable, they can use `screen /dev/tty.usbserial 115200` to open a direct, low-level hardware communication pipe.
 
-</ConceptTemplate>

@@ -5,7 +5,14 @@ description: "An open-source, unified analytics engine for large-scale data proc
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Apache Spark">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Apache Spark">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Apache Spark** is the undisputed king of distributed data processing. If you need to transform a 500-gigabyte CSV file, you can't do it on your laptop using Pandas—you will run out of RAM. You need to distribute that work across 20 different servers. Spark handles the complex coordination of dividing that work, executing it in parallel, and combining the results.
 
@@ -24,8 +31,13 @@ Spark is a unified engine containing multiple libraries:
 - **Spark Streaming**: For processing real-time data using micro-batches.
 - **MLlib**: For distributed machine learning (training a random forest on a cluster of machines).
 
+
 <Callout icon="tip" title="PySpark">
+
+
 While Spark is written in Scala (a JVM language), the vast majority of modern Data Engineers interact with it using **PySpark**, a Python API that allows data scientists to write Python code that is translated into optimized distributed JVM execution plans.
+
+
 </Callout>
 
-</ConceptTemplate>
+

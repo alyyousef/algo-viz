@@ -4,7 +4,14 @@ description: Explains Xcode, the history of Objective-C vs Swift, and the transi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="iOS Development (Swift & SwiftUI)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="iOS Development (Swift & SwiftUI)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 iOS is Apple's proprietary mobile operating system. Because it is a closed ecosystem, developing for iOS mathematically requires a Mac computer running macOS.
 
@@ -26,11 +33,10 @@ In 2019, Apple introduced **SwiftUI**, fundamentally mirroring the declarative r
 ```swift
 struct ContentView: View {
     @State private var name = "World"
-    
+
     var body: some View {
         Text("Hello, (name)!")
     }
 }
 ```
 
-</ConceptTemplate>

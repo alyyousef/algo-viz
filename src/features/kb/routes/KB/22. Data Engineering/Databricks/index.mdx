@@ -4,7 +4,14 @@ description: The creator of Apache Spark and the pioneer of the Data Lakehouse a
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Databricks">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Databricks">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Databricks** is one of the most dominant titans in modern Data Engineering, directly competing with Snowflake. It was founded by the original creators of **Apache Spark**.
 
@@ -16,7 +23,7 @@ Databricks mathematically abstracted this away. It provides a fully managed, ser
 ## 2. The Pioneer of the Lakehouse
 Historically, you had to maintain two systems: A Data Lake for Machine Learning, and a Data Warehouse (Snowflake) for BI analytics.
 
-Databricks invented and heavily championed the **Data Lakehouse** architecture to mathematically merge the two. 
+Databricks invented and heavily championed the **Data Lakehouse** architecture to mathematically merge the two.
 They created **Delta Lake**, an open-source Table Format that adds strict ACID transactions, Time Travel, and Schema Enforcement directly on top of raw Parquet files living in cheap AWS S3 / Azure Data Lake storage.
 
 By doing this, Databricks eliminated the need for a Data Warehouse. You execute highly-governed, blazing-fast SQL queries directly against the Data Lake.
@@ -27,4 +34,3 @@ Databricks has aggressively expanded beyond just Spark, building a unified mathe
 - **MLflow**: The industry standard open-source framework for tracking Machine Learning experiments, packaging models, and deploying them to production.
 - **Unity Catalog**: A unified governance and metadata catalog that mathematically secures access to files, tables, and ML models across all clouds.
 
-</ConceptTemplate>

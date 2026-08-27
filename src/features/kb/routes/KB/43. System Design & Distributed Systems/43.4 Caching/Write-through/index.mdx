@@ -4,24 +4,32 @@ description: A caching pattern where data is written to the cache and the primar
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Write-Through Cache">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Write-Through Cache">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Cache-Aside solves the problem of *Reading* data efficiently, it is highly prone to serving stale data. If an admin mathematically updates a user's permissions in the Database, the Cache still holds the old permissions.
 
 The **Write-Through** pattern solves this by changing how data is mathematically written to the system.
 
+
 <Callout icon="success" title="Perfect Consistency">
+
+
   In a Write-Through cache, every single time the application updates a record, it writes the new data to Redis AND writes the new data to PostgreSQL simultaneously. This mathematically guarantees the cache is never stale.
+
+
 </Callout>
+
 
 ## Mathematical Trade-Offs
 
-<ComparisonTable 
-  headers={['Pros', 'Cons']}
-  rows={[
-    ['Absolute Data Consistency. The cache always mathematically matches the database.', 'Higher Write Latency. Every `UPDATE` statement mathematically takes twice as long because the app must wait for both the DB and the Cache to acknowledge the write.'],
-    ['Fast Reads for Recently Written Data. If User A updates their profile, and User B immediately views it, it is guaranteed to be in the blazing-fast cache.', 'Wasted RAM. The app caches *everything* it writes, even if that data is mathematically never read again (e.g., system logs).']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Pros', 'Cons']} rows={[ ['Absolute Data Consistency. The cache always mathematically matches the database.', 'Higher Write Latency. Every `UPDATE` statement mathematically takes twice as long because the app must wait for both the DB and the Cache to acknowledge the write.'], ['Fast Reads for Recently Written Data. If User A updates their profile, and User B immediately views it, it is guaranteed to be in the blazing-fast cache.', 'Wasted RAM. The app caches *everything* it writes, even if that data is mathematically never read again (e.g., system logs).'] ]} />
+
+

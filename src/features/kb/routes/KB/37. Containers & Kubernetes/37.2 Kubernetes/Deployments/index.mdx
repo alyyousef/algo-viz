@@ -6,17 +6,24 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Kubernetes Deployments">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kubernetes Deployments">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Because individual Pods are ephemeral and prone to failure, we use **Deployments** to manage them. A Deployment provides declarative updates for Pods and ReplicaSets. You describe the desired state in the Deployment, and the controller changes the actual state to match it at a controlled rate.
 
 ## 1. The ReplicaSet Relationship
-Technically, a Deployment doesn't manage Pods directly. 
+Technically, a Deployment doesn't manage Pods directly.
 1. The **Deployment** manages a **ReplicaSet**.
 2. The **ReplicaSet** is a controller whose sole job is to ensure that a specified number of Pod replicas (e.g., 3) are running at any given time. If a node dies and a Pod is lost, the ReplicaSet instantly spins up a new one to get back to 3.
 
 ## 2. Rolling Updates
-The primary reason we use Deployments instead of raw ReplicaSets is for Zero-Downtime deployments. 
+The primary reason we use Deployments instead of raw ReplicaSets is for Zero-Downtime deployments.
 
 When you update a Deployment to use a new Docker image tag (e.g., `v2.0`):
 1. The Deployment creates a *new* ReplicaSet for `v2.0`.
@@ -27,17 +34,16 @@ When you update a Deployment to use a new Docker image tag (e.g., `v2.0`):
 ## 3. Deployment Rollbacks
 Because the Deployment keeps the old ReplicaSet around (just scaled to 0), rolling back a bad release is instant. If `v2.0` crashes in production, you issue a `kubectl rollout undo` command. K8s simply scales the `v1.0` ReplicaSet back up and scales `v2.0` to 0.
 
-<ComparisonTable 
-  headers={['Controller', 'Best For', 'Characteristics']} 
-  rows={[
-    ['Deployment', 'Stateless Web Apps / APIs.', 'Pods are interchangeable. No persistent identity.'],
-    ['StatefulSet', 'Databases (Kafka, PostgreSQL).', 'Pods have sticky, sequential IDs (db-0, db-1) and persistent storage attached.'],
-    ['DaemonSet', 'Logging agents, Node monitoring.', 'Ensures exactly 1 Pod runs on every single node in the cluster.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Controller', 'Best For', 'Characteristics']} rows={[ ['Deployment', 'Stateless Web Apps / APIs.', 'Pods are interchangeable. No persistent identity.'], ['StatefulSet', 'Databases (Kafka, PostgreSQL).', 'Pods have sticky, sequential IDs (db-0, db-1) and persistent storage attached.'], ['DaemonSet', 'Logging agents, Node monitoring.', 'Ensures exactly 1 Pod runs on every single node in the cluster.'] ]} />
+
 
 <Callout icon="tip" title="Self-Healing">
+
+
 The combination of a Deployment and a ReplicaSet is the core of Kubernetes' famous "self-healing" capability. The orchestrator constantly runs a reconciliation loop, comparing your YAML file to reality and fixing any discrepancies.
+
+
 </Callout>
 
-</ConceptTemplate>
+

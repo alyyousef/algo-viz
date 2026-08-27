@@ -5,8 +5,14 @@ description: The mathematical breakdown of the gold-standard symmetric block cip
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
 
-
-<ConceptTemplate title="Advanced Encryption Standard (AES)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Advanced Encryption Standard (AES)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In 2001, the U.S. National Institute of Standards and Technology (NIST) adopted the Rijndael algorithm as the **Advanced Encryption Standard (AES)**. Today, it mathematically secures almost every encrypted byte on Earth, from TLS connections to classified military hard drives.
 
@@ -27,17 +33,16 @@ In each round, four complex mathematical transformations are applied to the 4x4 
 ## 2. Block Cipher Modes of Operation
 Because AES mathematically only encrypts 128 bits at a time, you cannot just run it sequentially on a 10MB file without a "Mode of Operation."
 
-<ComparisonTable 
-  headers={['Mode', 'Mechanism', 'Security Assessment']} 
-  rows={[
-    ['ECB (Electronic Codebook)', 'Encrypts each 128-bit block completely independently.', 'CATASTROPHICALLY INSECURE. Identical plaintext blocks produce identical ciphertext blocks, leaving visual patterns (The famous "ECB Penguin"). Never use.'],
-    ['CBC (Cipher Block Chaining)', 'XORs each plaintext block with the ciphertext of the previous block before encrypting.', 'Secure, but strictly sequential. Cannot be mathematically parallelized across CPU cores.'],
-    ['GCM (Galois/Counter Mode)', 'Turns AES into a Stream Cipher using a counter. Mathematically includes an authentication tag (AEAD).', 'THE INDUSTRY STANDARD. Massively parallelizable and guarantees data has not been tampered with.']
-  ]} 
-/>
+
+<ComparisonTable headers={['Mode', 'Mechanism', 'Security Assessment']} rows={[ ['ECB (Electronic Codebook)', 'Encrypts each 128-bit block completely independently.', 'CATASTROPHICALLY INSECURE. Identical plaintext blocks produce identical ciphertext blocks, leaving visual patterns (The famous "ECB Penguin"). Never use.'], ['CBC (Cipher Block Chaining)', 'XORs each plaintext block with the ciphertext of the previous block before encrypting.', 'Secure, but strictly sequential. Cannot be mathematically parallelized across CPU cores.'], ['GCM (Galois/Counter Mode)', 'Turns AES into a Stream Cipher using a counter. Mathematically includes an authentication tag (AEAD).', 'THE INDUSTRY STANDARD. Massively parallelizable and guarantees data has not been tampered with.'] ]} />
+
 
 <Callout icon="warning" title="Quantum Threat">
+
+
 While RSA and ECC are mathematically destroyed by Quantum Computers, AES is remarkably resistant. Grover's Algorithm halves the effective key space of symmetric ciphers. Therefore, AES-128 is theoretically vulnerable to quantum attacks, but **AES-256 remains mathematically impenetrable even against theoretical quantum supercomputers**.
+
+
 </Callout>
 
-</ConceptTemplate>
+

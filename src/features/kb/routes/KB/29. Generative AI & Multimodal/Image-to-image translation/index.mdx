@@ -1,8 +1,26 @@
+---
+title: Image-to-Image Translation
+description: A specialized Generative AI task where the mathematical structure of a source image is preserved while its physical style or domain is fundamentally altered.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Image-to-image translation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Image-to-Image Translation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you sketch a crude outline of a shoe, Image-to-Image Translation mathematically converts that sketch into a photorealistic photograph of a Nike sneaker, preserving the exact geometry but altering the domain.
 
-</ConceptTemplate>
+## 1. Paired Translation (Pix2Pix)
+Early Image-to-Image models required strictly paired datasets.
+To train the model to colorize Black-and-White photos, scientists had to provide exactly matched pairs: (Color Photo A, B&W Photo A). The Neural Network learned a strict mathematical mapping from the B&W domain to the Color domain. But paired datasets are rare. You cannot find an exact paired dataset of "A horse running" and "That exact same horse running, but as a zebra."
+
+## 2. Unpaired Translation (CycleGAN)
+CycleGAN revolutionized the field using a mathematical trick called **Cycle Consistency Loss**.
+You provide two massive, unrelated folders: 1,000 random pictures of Horses, and 1,000 random pictures of Zebras.
+The AI trains two GANs simultaneously. Generator A translates the Horse into a Zebra. Generator B translates that Zebra *back* into a Horse. The mathematical loss function explicitly checks if the reconstructed Horse perfectly matches the original Horse. If it does, the mathematical translation is deemed successful, allowing for domain translation without paired data.
+

@@ -1,8 +1,26 @@
+---
+title: Tail Recursion
+description: A strict mathematical optimization that prevents recursive functions from blowing up the call stack by reusing the current stack frame.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="tail)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tail Recursion">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Recursion is mathematically elegant, but standard recursion requires pushing a brand new Stack Frame onto memory for every single function call, leading to catastrophic Memory Exhaustion (Stack Overflow). Tail Recursion is the mathematical solution.
 
-</ConceptTemplate>
+## 1. The Tail Position
+For a recursive function to be Tail-Recursive, the mathematical recursive call must be the **absolute very last operation** performed in the function.
+- **NOT Tail-Recursive**: `return n * factorial(n - 1)`. The function calls itself, gets a result, and *then* mathematically multiplies it by `n`. Because the multiplication happens *after* the call, the CPU must preserve the Stack Frame to remember the value of `n`.
+- **Tail-Recursive**: `return factorial(n - 1, current_total * n)`. All mathematical calculation is pushed into the arguments. The recursive call is the final act.
+
+## 2. Tail-Call Optimization (TCO)
+When a compiler (like Haskell or GCC) detects a function is Tail-Recursive, it performs **Tail-Call Optimization**.
+Because there is no mathematical work left to do in the current function, the CPU does not need to remember the current Stack Frame. The compiler physically rewrites the assembly code to **overwrite** the current Stack Frame with the new arguments, and issues a standard `JUMP` instruction instead of a `CALL` instruction. This mathematically transforms infinite recursion into a highly efficient `while` loop at the hardware level, consuming exactly 0 extra bytes of RAM.
+

@@ -1,8 +1,32 @@
+---
+title: Sentinel Policies
+description: A proprietary Policy-as-Code framework by HashiCorp that mathematically evaluates Terraform plans against strict organizational rules before allowing the infrastructure to be physically provisioned.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sentinel policies">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Sentinel Policies"
+  subtitle="Mathematical Infrastructure Governance"
+  tags={['Terraform', 'Security', 'Compliance', 'Policy as Code']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+While Terraform mathematically guarantees that the infrastructure will look like your code, it does not guarantee that your code is actually legal, secure, or cheap. Sentinel (a feature of Terraform Cloud/Enterprise) enforces these mathematical rules.
 
-</ConceptTemplate>
+## 1. The Pre-Apply Mathematical Gate
+Sentinel operates strictly *between* the `terraform plan` and `terraform apply` phases.
+When a developer initiates a run, Terraform generates the mathematical plan (the diff). Sentinel intercepts this diff and runs it against a repository of policies.
+For example, a company policy might state: *"No AWS EC2 instance can be mathematically larger than a `t3.large`."* If the developer's plan attempts to provision an expensive `p3.16xlarge` GPU instance, Sentinel mathematically evaluates the rule, fails, and physically aborts the pipeline, preventing the company from incurring a massive cloud bill.
+
+## 2. Enforcement Levels
+Sentinel policies are mathematically graded by severity:
+- **Advisory**: The mathematical rule is broken, but Sentinel just prints a warning and allows the deployment to proceed.
+- **Soft Mandatory**: The deployment is blocked, but a senior manager can click an "Override" button in the UI to allow it.
+- **Hard Mandatory**: The deployment is mathematically terminated. Absolutely no one can override it without modifying the Sentinel code itself (used for strict legal compliance, like preventing S3 buckets from being public).
+

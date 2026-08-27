@@ -6,7 +6,14 @@ import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTempl
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Red-Black Trees">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Red-Black Trees">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While AVL Trees enforce a strict mathematical height balance, **Red-Black Trees** adopt a looser, color-based rule system. This looser balancing mathematically reduces the number of structural rotations required during insertions, making it the dominant self-balancing tree in modern software architecture.
 
@@ -19,22 +26,20 @@ Every node contains an extra bit of data: its Color (Red or Black). A valid Red-
 4. **No two Red nodes can be adjacent** (A Red node cannot have a Red parent or Red child).
 5. **Black-Height Property**: Every mathematical path from a given node down to any of its descendant NIL leaves must contain the exact same number of Black nodes.
 
-Because of Rule 4 and Rule 5, the longest possible path from the root to a leaf is mathematically bounded to be no more than exactly **twice** the length of the shortest path. 
+Because of Rule 4 and Rule 5, the longest possible path from the root to a leaf is mathematically bounded to be no more than exactly **twice** the length of the shortest path.
 
 ## 2. AVL vs Red-Black
 
-<ComparisonTable 
-  headers={['Metric', 'AVL Tree', 'Red-Black Tree']} 
-  rows={[
-    ['Balancing Rules', 'Strict height difference of max 1.', 'Loose coloring rules (max path is 2x shortest path).'],
-    ['Search Speed', 'Slightly faster (shorter, denser tree).', 'Slightly slower.'],
-    ['Insert/Delete Speed', 'Slower (often requires cascading rotations up to root).', 'Significantly faster (requires max 3 rotations mathematically).'],
-    ['Primary Use Case', 'Read-Heavy environments.', 'General purpose (Read/Write balanced).']
-  ]} 
-/>
+
+<ComparisonTable headers={['Metric', 'AVL Tree', 'Red-Black Tree']} rows={[ ['Balancing Rules', 'Strict height difference of max 1.', 'Loose coloring rules (max path is 2x shortest path).'], ['Search Speed', 'Slightly faster (shorter, denser tree).', 'Slightly slower.'], ['Insert/Delete Speed', 'Slower (often requires cascading rotations up to root).', 'Significantly faster (requires max 3 rotations mathematically).'], ['Primary Use Case', 'Read-Heavy environments.', 'General purpose (Read/Write balanced).'] ]} />
+
 
 <Callout icon="tip" title="Ubiquity in Systems Engineering">
+
+
 Red-Black Trees are everywhere. When you use a `std::map` or `std::set` in C++, or a `TreeMap` in Java, you are mathematically instantiating a Red-Black Tree under the hood. The Completely Fair Scheduler (CFS) in the Linux Kernel uses a Red-Black tree to mathematically track CPU task execution times in `O(log n)`.
+
+
 </Callout>
 
-</ConceptTemplate>
+

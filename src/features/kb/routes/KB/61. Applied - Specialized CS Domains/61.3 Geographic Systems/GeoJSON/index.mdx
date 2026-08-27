@@ -4,10 +4,16 @@ description: An open standard format designed for representing simple geographic
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GeoJSON">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GeoJSON">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When a server mathematically sends map data to a browser (like Google Maps), it uses **GeoJSON**.
 
 It is literally just standard JSON, but strictly formatted to hold geometric math. You declare a `type` (like "Polygon" or "Point") and provide an array of `coordinates`. It allows frontend JavaScript libraries (like Leaflet or Mapbox) to effortlessly parse the biological data and mathematically render borders, roads, and markers onto an interactive HTML canvas.
 
-</ConceptTemplate>

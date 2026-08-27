@@ -1,8 +1,26 @@
+---
+title: Do-While Loops
+description: A post-test mathematical loop guaranteed to execute its block of code at least once before evaluating its condition.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="do-while)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Do-While Loops">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A `do-while` loop is a specific mathematical variation of the standard `while` loop.
 
-</ConceptTemplate>
+## 1. The Post-Test Guarantee
+A standard `while` loop is a "Pre-Test" loop. The CPU mathematically evaluates the boolean condition *before* it executes the block. If the condition is false initially, the block executes zero times.
+A `do-while` loop is a "Post-Test" loop. The CPU unconditionally executes the block of code, and only mathematically evaluates the condition at the *bottom* of the block. Therefore, it is mathematically guaranteed that the code inside a `do-while` loop will execute at least exactly one time.
+
+## 2. Assembly Implementation
+At the hardware level, a `do-while` loop is actually mathematically more efficient than a standard `while` loop.
+A standard `while` loop usually requires two assembly jumps: an unconditional jump at the bottom to go back to the top, and a conditional jump at the top to exit the loop.
+A `do-while` loop only requires a single mathematical conditional jump instruction at the bottom of the block (`JNZ` - Jump if Not Zero) to jump back to the top, making it slightly faster at the bare-metal level.
+

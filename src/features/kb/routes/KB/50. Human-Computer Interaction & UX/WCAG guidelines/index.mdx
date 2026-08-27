@@ -4,23 +4,35 @@ description: Web Content Accessibility Guidelines are part of a series of web ac
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="WCAG Guidelines">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="WCAG Guidelines">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Web Content Accessibility Guidelines (WCAG)** are the strict, internationally recognized mathematical standards for Digital Accessibility.
 
 If a company is sued for discrimination because a blind user cannot use their app, the court of law mathematically evaluates the software against the WCAG 2.1 AA standard.
 
+
 <Callout icon="tip" title="The POUR Principles">
+
+
   The entire WCAG specification is mathematically organized into 4 absolute principles (POUR):
   1. **Perceivable:** The user must be able to perceive the information. (If there is an image, there must be text `alt` data for a screen reader).
   2. **Operable:** The user must be able to operate the interface. (The entire website must be 100% navigable using only the `Tab` key on a keyboard, without a mouse).
   3. **Understandable:** The text must be readable and predictable.
   4. **Robust:** The code must be mathematically valid standard HTML so assistive technologies can parse it without crashing.
+
+
 </Callout>
+
 
 ## The Mathematics of Color Contrast
 
-WCAG is not subjective. It dictates strict mathematical ratios. 
+WCAG is not subjective. It dictates strict mathematical ratios.
 To pass WCAG AA standards, normal text must have a mathematical contrast ratio of exactly **4.5:1** against its background. If a designer chooses a light grey text (`#999`) on a white background, the ratio is `2.8:1`. The design mathematically fails the legal accessibility requirement and must be rejected by the engineering team.
 
-</ConceptTemplate>

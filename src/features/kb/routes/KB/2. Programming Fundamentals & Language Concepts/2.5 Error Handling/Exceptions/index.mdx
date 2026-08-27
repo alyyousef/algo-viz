@@ -1,8 +1,26 @@
+---
+title: Exceptions
+description: A powerful control-flow mechanism that instantly halts normal execution and mathematically forces the Call Stack to unwind until an error handler is found.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Exceptions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Exceptions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Exceptions were invented to solve the fundamental flaw of Error Codes: Developers kept forgetting to mathematically check them, allowing errors to fail silently. Exceptions cannot be ignored; they actively hijack the CPU.
 
-</ConceptTemplate>
+## 1. Stack Unwinding
+When a program hits a `throw` statement, standard mathematical execution halts instantly.
+The CPU physically looks at the current Stack Frame. Is there a `catch` block here? If not, the CPU mathematically destroys the Stack Frame, aborting the function. It jumps to the Parent function's Stack Frame. Is there a `catch` block here?
+This mathematical process (Stack Unwinding) continues violently up the chain. If it reaches the `main()` function and still hasn't found a handler, the Operating System terminates the entire process.
+
+## 2. The Invisible GOTO
+While Exceptions guarantee errors are not ignored, they are heavily criticized by Systems Engineers (like the creators of Go and Rust).
+Exceptions act as invisible, unpredictable `GOTO` statements. When reading code, it is mathematically impossible to know if a simple function call `saveToDatabase()` will return normally, or violently blow up the Call Stack. This makes mathematically analyzing the Control Flow of a large Java or C++ application incredibly difficult, and forces the compiler to inject massive amounts of hidden boilerplate code to handle the potential unwinding process.
+

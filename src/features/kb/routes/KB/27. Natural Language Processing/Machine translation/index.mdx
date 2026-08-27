@@ -1,8 +1,27 @@
+---
+title: Machine Translation
+description: The immensely complex AI task of mathematically decoding a sentence in a Source language and generating a semantically identical sentence in a Target language.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Machine translation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Machine Translation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Early translation systems (like old Google Translate) used Statistical MT, which mathematically mapped phrases from English to French using a massive dictionary. This resulted in robotic, grammatically broken translations.
 
-</ConceptTemplate>
+## 1. Sequence-to-Sequence (Seq2Seq)
+Modern translation uses Neural Machine Translation (NMT), specifically the Seq2Seq architecture.
+The system uses two separate Neural Networks.
+1. **The Encoder**: Reads the English sentence one word at a time. It mathematically compresses the *meaning* of the entire sentence into a single, dense, high-dimensional vector (the Context Vector).
+2. **The Decoder**: Takes that purely mathematical Context Vector and generates the French sentence, one word at a time. The Decoder has no idea what the original English words were; it is translating pure mathematical thought.
+
+## 2. The Attention Mechanism
+The original Seq2Seq had a massive mathematical bottleneck: forcing a 100-word paragraph into a single Context Vector caused the network to "forget" the beginning of the sentence.
+In 2014, the **Attention Mechanism** was invented. Instead of one vector, the Decoder mathematically looks at *all* the vectors from the Encoder simultaneously. When translating the French word for "Apple," the math explicitly forces the Decoder to focus 99% of its computational "attention" on the specific English word "Apple," solving the memory bottleneck and paving the way for the Transformer architecture.
+

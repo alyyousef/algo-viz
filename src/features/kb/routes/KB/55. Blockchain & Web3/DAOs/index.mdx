@@ -4,16 +4,28 @@ description: A decentralized autonomous organization is an organization represen
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DAOs (Decentralized Autonomous Organizations)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DAOs (Decentralized Autonomous Organizations)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 How do you biologically manage a corporation without a CEO, a Board of Directors, or a legal jurisdiction?
 
 You form a **DAO**.
 
+
 <Callout icon="info" title="Mathematical Governance">
+
+
   A DAO is a corporation where the bylaws are mathematically hard-coded into an Ethereum Smart Contract.
-  
+
   The Smart Contract holds the corporate treasury (e.g., $500 Million). To spend that money, users who hold "Governance Tokens" must mathematically submit an on-chain vote. If 51% of tokens vote "Yes", the Smart Contract automatically, autonomously executes the transfer of funds. Human executives are mathematically replaced by cryptographic consensus.
+
+
 </Callout>
 
-</ConceptTemplate>
+

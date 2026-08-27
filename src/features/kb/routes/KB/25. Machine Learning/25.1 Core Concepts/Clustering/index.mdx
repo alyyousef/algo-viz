@@ -4,7 +4,14 @@ description: The unsupervised learning task of mathematically grouping unlabeled
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Clustering">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Clustering">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Supervised Learning, you tell the algorithm what the answers are. In Unsupervised Learning, you provide zero labels. **Clustering** is the mathematical process of asking the algorithm to discover the hidden structure of the data entirely on its own by grouping similar points together.
 
@@ -15,13 +22,12 @@ To group data, the algorithm must mathematically define "Similarity". This is us
 - **Cosine Similarity**: Mathematically measures the *angle* between two vectors, ignoring their magnitude. Heavily used in NLP clustering (grouping similar text documents), because two documents might be about "Sports", but one is 10 pages long and the other is 1 page. Euclidean distance would fail here; Cosine succeeds.
 
 ## 2. Centroid-Based Clustering (K-Means)
-The most famous clustering algorithm. You mathematically specify the number of clusters ($K$). 
-The algorithm places $K$ random "Centroids" in the space. It assigns every data point to the nearest centroid. It then mathematically recalculates the centroid's position to be the exact center of its newly assigned points. It repeats this loop until the centroids mathematically stop moving (Convergence). 
+The most famous clustering algorithm. You mathematically specify the number of clusters ($K$).
+The algorithm places $K$ random "Centroids" in the space. It assigns every data point to the nearest centroid. It then mathematically recalculates the centroid's position to be the exact center of its newly assigned points. It repeats this loop until the centroids mathematically stop moving (Convergence).
 *Flaw*: It forces every point into a spherical cluster, and struggles heavily with strange, non-circular data shapes.
 
 ## 3. Density-Based Clustering (DBSCAN)
-Unlike K-Means, DBSCAN does not require you to guess $K$. 
-It mathematically defines a cluster as a continuous region of high data density, separated by regions of low density. 
+Unlike K-Means, DBSCAN does not require you to guess $K$.
+It mathematically defines a cluster as a continuous region of high data density, separated by regions of low density.
 It randomly picks a point and mathematically checks how many neighbors are within a tiny radius (Epsilon). If there are enough neighbors, it expands the cluster. If a point is alone in the middle of nowhere, DBSCAN mathematically ignores it, flagging it as an **Outlier**. This allows it to cluster highly complex, non-spherical shapes flawlessly.
 
-</ConceptTemplate>

@@ -5,17 +5,24 @@ description: "A client-optimized language created by Google, famous for powering
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Dart"
   icon="smartphone"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Created by Google in 2011, **Dart** was originally intended to replace JavaScript in the browser. While that ambition failed, Dart found massive success years later as the foundational language for **Flutter**, Google's wildly popular cross-platform UI toolkit.
 
 ## Key Characteristics
 
 1. **Client-Optimized**: Dart is explicitly designed for building fast user interfaces on screens (mobile, web, desktop).
-2. **JIT & AOT Compilation**: 
+2. **JIT & AOT Compilation**:
    - During development, it uses **Just-In-Time (JIT)** compilation to enable "Hot Reload" (instant UI updates without losing state).
    - For production, it uses **Ahead-Of-Time (AOT)** compilation to compile down to native ARM/x86 machine code, resulting in fast startup and smooth 60fps performance.
 3. **Sound Null Safety**: Types in Dart are non-nullable by default, completely eliminating Null Reference Exceptions at runtime.
@@ -29,12 +36,12 @@ Dart feels very familiar to Java, C#, or TypeScript developers.
 void main() {
   String name = 'Flutter Dev';
   int age = 30;
-  
+
   // Nullable type
   String? nickname = null;
 
   print('Hello $name!');
-  
+
   // Asynchronous programming is built-in
   fetchData().then((data) => print(data));
 }
@@ -45,8 +52,13 @@ Future<String> fetchData() async {
 }
 ```
 
+
 <Callout icon="info" title="The Flutter Connection">
+
+
 You almost never see Dart used outside of Flutter. The language and the framework evolved together; Dart's syntax actually changed to better support Flutter's declarative widget trees (e.g., adding collection-if and spread operators).
+
+
 </Callout>
 
-</ConceptTemplate>
+

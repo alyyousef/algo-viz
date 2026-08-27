@@ -4,17 +4,30 @@ description: A method of reducing the average power delivered by an electrical s
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Pulse Width Modulation (PWM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Pulse Width Modulation (PWM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **PWM** is an incredibly clever mathematical trick used to "fake" an analog voltage using only a strictly digital (binary) GPIO pin.
 
 Because physical components (like an LED or a DC Motor) take time to react, if you turn a digital pin ON and OFF fast enough, the component physically averages out the energy.
 
+
 <Callout icon="tip" title="The Duty Cycle">
+
+
   The mathematical core of PWM is the **Duty Cycle** (the percentage of time the pin is ON vs OFF).
-  
+
   If you switch a 5V pin ON for 50% of the time, and OFF for 50% of the time (doing this 1,000 times a second), the LED physically experiences exactly 2.5 Volts of energy. It will appear exactly 50% bright. The human eye mathematically cannot see the 1,000 Hz flickering.
+
+
 </Callout>
+
 
 ## Hardware Timers
 
@@ -22,4 +35,3 @@ If the CPU had to manually turn the pin ON and OFF in a `while` loop, the CPU wo
 
 Therefore, PWM is mathematically handled entirely by isolated **Hardware Timers** inside the silicon. The programmer writes a single configuration byte to a register (e.g., "Set Pin 9 to 25% Duty Cycle at 10 kHz"), and the Timer hardware mathematically takes over the physical pin, allowing the CPU to go back to sleep.
 
-</ConceptTemplate>

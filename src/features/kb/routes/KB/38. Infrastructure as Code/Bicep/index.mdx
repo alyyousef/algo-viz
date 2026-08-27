@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Bicep
+description: A domain-specific language (DSL) developed by Microsoft to serve as a mathematically elegant, human-readable abstraction layer directly over the complex JSON of Azure ARM Templates.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Bicep">
+<TechnologyTemplate
+  title="Bicep"
+  subtitle="The Elegant Azure DSL"
+  tags={['Azure', 'Infrastructure as Code', 'Cloud', 'DSL']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Writing raw JSON ARM Templates is an exercise in mathematical frustration due to excessive brackets, quotes, and complex function syntax. Microsoft created Bicep as the direct, native solution to this developer experience nightmare.
 
-</ConceptTemplate>
+## 1. Transparent Transpilation
+Bicep is mathematically similar to Terraform's HCL (HashiCorp Configuration Language). It is clean, declarative, and drops the requirement for JSON syntax.
+However, the Azure API does not mathematically understand Bicep. When you deploy a Bicep file, the Bicep CLI acts as a transpiler (similar to how TypeScript transpiles to JavaScript). It mathematically compiles the clean Bicep code down into the verbose, raw JSON ARM Template, and submits that JSON to Azure.
+
+## 2. Day Zero Support
+Because Bicep transpiles directly to ARM, it has a massive mathematical advantage over Terraform on Azure: **Day Zero Support**.
+When Microsoft releases a brand new cloud service (e.g., Azure Quantum), the Terraform team must manually write Go code to update the Terraform Azure Provider to support the new API, which can take months. Because Bicep is natively tied to the Azure API specifications, it mathematically supports the new service on the exact day it is released, requiring zero provider updates.
+
+</TechnologyTemplate>

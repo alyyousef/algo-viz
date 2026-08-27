@@ -4,14 +4,26 @@ description: A type of data storage typically used in storage-area network (SAN)
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Block Storage">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Block Storage">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Block Storage** is the raw, unformatted mathematical bedrock of storage.
 
+
 <Callout icon="info" title="The Raw Sectors">
+
+
   When an Operating System mounts Block Storage (like AWS EBS), it doesn't see "Files" or "Folders". It just sees a massive, raw array of blank 4KB blocks of metal.
-  
+
   The OS must biologically format this raw metal with a File System (like NTFS or ext4). Because the OS has direct, low-level access to the raw blocks, Block Storage provides the absolute lowest latency possible, making it the mandatory choice for running massive SQL Databases.
+
+
 </Callout>
 
-</ConceptTemplate>
+

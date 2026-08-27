@@ -4,10 +4,16 @@ description: A system whose components are located on different networked comput
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Distributed Systems (Interview Prep)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Distributed Systems (Interview Prep)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In a Senior Engineering interview, you are expected to understand the mathematical horrors of the network.
 
 You must prove you know that networks biologically fail. If Server A sends a payment request to Server B, and the network drops the packet, how do you prevent the user from being charged twice? You must discuss mathematical concepts like **Idempotency keys**, distributed locking (via Redis or ZooKeeper), Message Queues (Kafka) for asynchronous processing, and eventual consistency.
 
-</ConceptTemplate>

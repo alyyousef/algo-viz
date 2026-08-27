@@ -1,8 +1,38 @@
+---
+title: Proof Techniques
+description: "A summary of the formal mathematical methodologies used by computer scientists to guarantee the absolute correctness of algorithms, theorems, and system architectures."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Proof techniques">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Proof Techniques"
+  subtitle="The Arsenal of Mathematical Certainty"
+  tags={['Mathematics', 'Discrete Math', 'Logic', 'Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In software engineering, testing a program 10,000 times does not mathematically prove it is bug-free (it just proves you didn't find a bug yet). To guarantee absolute, infinite correctness, computer scientists rely on strict mathematical **Proof Techniques**.
 
-</ConceptTemplate>
+## 1. Direct Proof
+The most straightforward logical path. You start with known axioms and definitions, and apply strict algebraic rules until you reach the conclusion.
+- **Example**: Prove that the sum of two Even numbers is Even.
+- **Proof**: Let $A = 2x$ and $B = 2y$. The sum is $2x + 2y = 2(x+y)$. Because the result is a multiple of 2, it is mathematically Even.
+
+## 2. Proof by Contrapositive
+In logic, the statement "If P is true, then Q is true" ($P \implies Q$) is mathematically identical to its contrapositive: "If Q is false, then P is false" ($\neg Q \implies \neg P$).
+Sometimes, it is mathematically easier to prove the negative reverse.
+- **Example**: Prove that if $x^2$ is Even, then $x$ is Even.
+- **Proof**: Instead of dealing with square roots, we prove the contrapositive: "If $x$ is Odd, then $x^2$ is Odd." Let $x = 2k + 1$. Then $x^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$. This is mathematically the definition of an Odd number. The contrapositive is true, therefore the original statement is true.
+
+## 3. Proof by Contradiction
+Assume the statement is False, and use logic to derive an impossible mathematical paradox (like $1=0$). This forces the assumption to be wrong, meaning the original statement must be True. (Used famously by Turing to prove the Halting Problem).
+
+## 4. Mathematical Induction
+The technique for proving a property holds for an infinite sequence (like $N=1, 2, 3...$). You prove the **Base Case** ($N=1$), and the **Inductive Step** (if $N=k$ is true, $N=k+1$ must mathematically follow). This is the only formal way to prove the absolute correctness of Recursive algorithms.
+

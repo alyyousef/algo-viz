@@ -4,26 +4,38 @@ description: A domain-specific language designed for text processing and typical
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="AWK">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AWK">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **AWK** (named after its creators Aho, Weinberger, and Kernighan) is not a simple command. It is a massive, Turing-complete mathematical programming language built directly into the Unix terminal.
 
 It is specifically engineered to process columnar text data (like CSV files or server logs).
 
+
 <Callout icon="info" title="The Architecture of AWK">
+
+
   If you have a 10-Gigabyte Nginx access log, and you want to extract only the IP Addresses (Column 1) of users who hit a 404 error (Column 9), writing a Python script will be slow.
-  
+
   In AWK, it is a single mathematical line:
   `awk '$9 == "404" { print $1 }' access.log`
-  
+
   AWK automatically streams the file line by line, splits every line by whitespace into variables (`$1`, `$2`, etc.), mathematically evaluates the `if` condition, and prints the result in milliseconds.
+
+
 </Callout>
+
 
 ## The Begin and End Blocks
 
-AWK allows you to execute mathematical logic before and after the file is parsed. 
+AWK allows you to execute mathematical logic before and after the file is parsed.
 If you want to sum up the total bytes transferred in a massive log file (Column 10):
 `awk 'BEGIN { sum=0 } { sum += $10 } END { print "Total Bytes:", sum }' access.log`
 It is an absolute powerhouse of data engineering.
 
-</ConceptTemplate>

@@ -4,15 +4,28 @@ description: A specific class of computer software that provides the low-level c
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Firmware">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Firmware">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Software is easily changed (soft). Hardware is physically permanent (hard). 
+Software is easily changed (soft). Hardware is physically permanent (hard).
 
 **Firmware** sits exactly in the middle. It is the software permanently flashed into the Read-Only Memory (ROM) or Flash memory of a Microcontroller. It is the "soul" of the hardware.
 
+
 <Callout icon="info" title="The Universal Presence">
+
+
   Every digital device on Earth has firmware. Your TV remote has firmware. The anti-lock brakes in your car have firmware. Even the external hard drive you plug into your computer contains its own microscopic CPU running firmware just to translate USB signals into spinning magnetic disks.
+
+
 </Callout>
+
 
 ## The Firmware Lifecycle
 
@@ -23,4 +36,3 @@ Software is easily changed (soft). Hardware is physically permanent (hard).
 
 Because firmware controls physical reality (motors, heaters, lasers), bugs in firmware can cause physical fires, explosions, or death (e.g., the Therac-25 radiation machine).
 
-</ConceptTemplate>

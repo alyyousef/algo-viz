@@ -1,8 +1,33 @@
+---
+title: Stack vs Heap
+description: "A fundamental computer architecture comparison detailing the mathematical speed and strict lifetime of Stack memory versus the flexible, dangerous, and manual nature of Heap memory."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stack vs heap">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Stack vs Heap"
+  subtitle="RAM Architecture and Memory Management"
+  tags={['Comparison', 'Architecture', 'Memory', 'Fundamentals']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When a program runs, the Operating System assigns it a mathematical block of RAM. The program divides this memory into two distinct architectural regions: the Stack and the Heap.
 
-</ConceptTemplate>
+## 1. The Stack
+- **Architecture**: A strict LIFO (Last-In-First-Out) data structure managed directly by the CPU.
+- **Mechanism**: When a function is called, the CPU mathematically pushes a "Stack Frame" containing all local variables (like `int x = 5`). When the function finishes, the CPU instantly mathematically pops the frame off, destroying the variables.
+- **Pros**: Blisteringly fast. Memory allocation is a single CPU instruction (moving the stack pointer). Zero fragmentation.
+- **Cons**: Extremely small (usually only a few Megabytes). You must know the exact mathematical size of your data at compile time.
+
+## 2. The Heap
+- **Architecture**: A massive, unstructured pool of RAM (measured in Gigabytes).
+- **Mechanism**: You use the Heap when you don't know how much data you need at compile time (e.g., downloading a JSON file from the internet). The OS mathematically searches the Heap for a large enough block, marks it as "in use," and returns a Pointer to it.
+- **Pros**: Massive size and extreme flexibility. Data mathematically survives until you explicitly delete it.
+- **Cons**: Slow allocation. If you forget to mathematically free the memory (in C/C++), you create a **Memory Leak**. If you free it twice, you create a security vulnerability. High-level languages (Java, Python) solve this by using an automated Garbage Collector, which occasionally freezes your program to clean the Heap.
+

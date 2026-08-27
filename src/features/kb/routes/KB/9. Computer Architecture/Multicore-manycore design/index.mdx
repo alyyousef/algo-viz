@@ -4,16 +4,29 @@ description: The architectural shift from increasing single-core clock speeds to
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multicore and Manycore Design">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Multicore and Manycore Design">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-For the first 30 years of microprocessor history, the primary way to make a computer faster was simply to increase the clock speed (from 10 MHz to 3.8 GHz). However, in 2004, the industry hit the **Power Wall**. 
+For the first 30 years of microprocessor history, the primary way to make a computer faster was simply to increase the clock speed (from 10 MHz to 3.8 GHz). However, in 2004, the industry hit the **Power Wall**.
 Because power consumption and heat generation scale exponentially with frequency, pushing a CPU past 4 GHz caused the silicon to literally melt.
 
 To continue increasing performance (adhering to Moore's Law), engineers fundamentally shifted their strategy: instead of making one core ridiculously fast, they placed **multiple independent cores on the same chip**.
 
+
 <Callout icon="success" title="The Multicore Era">
+
+
   A multicore processor is essentially gluing two complete, independent CPUs (each with their own ALUs, Control Units, and L1/L2 caches) onto a single piece of silicon, allowing the operating system to run two entirely separate programs perfectly simultaneously.
+
+
 </Callout>
+
 
 ## Multicore (2 to 64 Cores)
 
@@ -30,7 +43,6 @@ While multicore processors optimize for high single-thread performance (each cor
 
 ## Amdahl's Law
 
-The painful reality of multicore design is governed by **Amdahl's Law**. It states that the performance benefit of adding more cores is strictly limited by the portion of the program that *cannot* be parallelized. 
+The painful reality of multicore design is governed by **Amdahl's Law**. It states that the performance benefit of adding more cores is strictly limited by the portion of the program that *cannot* be parallelized.
 If 20% of your software relies on sequential logic (e.g., waiting for user input or writing to a file in order), no matter if you have 10 cores or 10,000 cores, the maximum theoretical speedup of your program is capped at 5x. This is why 64-core processors don't make video games run 64 times faster.
 
-</ConceptTemplate>

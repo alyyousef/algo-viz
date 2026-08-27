@@ -1,8 +1,29 @@
+---
+title: Kubernetes vs Docker
+description: "Clarifying the most common misconception in DevOps: Docker is the engine that builds and runs a single container, while Kubernetes is the mathematical orchestrator that manages thousands of them across a cluster of servers."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Kubernetes vs Docker">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Kubernetes vs Docker"
+  subtitle="The Engine vs The Orchestrator"
+  tags={['Comparison', 'DevOps', 'Containers', 'Kubernetes']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Comparing Kubernetes to Docker is like comparing a symphony conductor to an individual violin. They do not compete; they mathematically rely on each other.
 
-</ConceptTemplate>
+## 1. Docker (The Container Engine)
+- **Purpose**: Docker takes your source code and mathematically packages it into a single, immutable box (a Container Image) containing the OS, libraries, and code.
+- **Limitation**: If you run Docker on a server, and that server loses power, your website dies. Docker has no mathematical concept of multiple servers (excluding Docker Swarm, which lost the orchestration war).
+
+## 2. Kubernetes (The Container Orchestrator)
+- **Purpose**: Kubernetes (K8s) is a massive clustered operating system. You give K8s a cluster of 100 physical Linux servers. You don't tell it *how* to run containers; you give it a declarative mathematical state: *"Ensure there are always exactly 5 instances of my Docker container running."*
+- **Mechanism**: K8s constantly monitors the cluster. If Server #3 catches fire, taking down 2 of your Docker containers, the K8s Control Plane mathematically detects the failure instantly, and automatically boots up 2 replacement Docker containers on Server #7 to maintain the declared state. It handles load balancing, auto-scaling, and rolling updates seamlessly.
+

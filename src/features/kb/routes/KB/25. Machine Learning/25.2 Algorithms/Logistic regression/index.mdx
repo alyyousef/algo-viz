@@ -5,7 +5,14 @@ description: The core statistical model for binary classification, utilizing the
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Logistic Regression">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Logistic Regression">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Despite its name, Logistic Regression is **not** a regression algorithm; it is the fundamental algorithm for **Binary Classification**. It outputs a mathematical probability between 0 and 1.
 
@@ -16,7 +23,7 @@ To fix this, Logistic Regression wraps the linear output `θ^T x` in the **Sigmo
 
 **`σ(z) = 1 / (1 + e^-z)`**
 
-The Sigmoid function asymptotes at exactly 0 and 1. If `σ(z) >= 0.5`, we predict Class 1. If `σ(z) < 0.5`, we predict Class 0.
+The Sigmoid function asymptotes at exactly 0 and 1. If `σ(z) >= 0.5`, we predict Class 1. If `σ(z) &lt; 0.5`, we predict Class 0.
 
 ## 2. The Log Loss (Cross-Entropy) Cost Function
 We cannot use Mean Squared Error (MSE) for Logistic Regression because wrapping MSE with the Sigmoid function creates a non-convex mathematical landscape filled with local minima, trapping Gradient Descent.
@@ -32,8 +39,13 @@ Instead, we use the **Binary Cross-Entropy (Log Loss)** cost function:
 ## 3. Multiclass Classification (Softmax)
 To extend Logistic Regression beyond two classes (e.g., predicting whether an image is a Cat, Dog, or Bird), we mathematically generalize the Sigmoid function into the **Softmax Function**, which converts a vector of raw scores (logits) into a normalized probability distribution where all values sum to 1.
 
+
 <Callout icon="tip" title="Linearly Separable Data">
+
+
 Logistic Regression fundamentally draws a single straight line (or hyperplane) to separate classes. If your data is geometrically concentric (e.g., a circle of Class 1 surrounded by a ring of Class 0), Logistic Regression will completely fail without feature engineering (like polynomial features).
+
+
 </Callout>
 
-</ConceptTemplate>
+

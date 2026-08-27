@@ -1,8 +1,28 @@
+---
+title: Object Detection
+description: A fundamental computer vision task requiring an AI model to simultaneously mathematically classify multiple objects in an image and calculate exact geometric bounding boxes around them.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Object detection">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Object Detection">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Image Classification answers *"What is in this picture?"* Object Detection answers *"Where exactly is everything in this picture?"* It mathematically unifies Classification (categorical math) with Regression (spatial math).
 
-</ConceptTemplate>
+## 1. The Regression Problem
+To draw a bounding box, the network cannot output a category; it must output continuous physical coordinates.
+The AI mathematically predicts four exact numbers for every object: $[x, y, w, h]$.
+- $x, y$: The coordinates of the center of the box.
+- $w, h$: The width and height of the box relative to the image size.
+During training, the loss function mathematically penalizes the network if its predicted coordinate is physically far away from the human-labeled Ground Truth box, forcing the network to perfectly align its geometric predictions with physical reality.
+
+## 2. One-Stage vs. Two-Stage Detectors
+- **Two-Stage (Faster R-CNN)**: Stage 1 mathematically guesses 1,000 places where an object *might* be (Region Proposals). Stage 2 crops those regions and classifies them. Extremely accurate, but mathematically slow.
+- **One-Stage (YOLO, SSD)**: Mathematically divides the entire image into a dense physical grid (e.g., $13 \times 13$). Every single cell in the grid mathematically predicts bounding boxes and classifications simultaneously in a single forward pass. Less accurate on tiny objects, but mathematically capable of running at 120 FPS for real-time video processing.
+

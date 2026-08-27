@@ -1,8 +1,25 @@
+---
+title: Batch
+description: The original scripting language for MS-DOS and Windows, used for basic task automation and system administration.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Batch">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Batch (.bat)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Batch (files ending in `.bat` or `.cmd`) is the command-line scripting language natively interpreted by `cmd.exe` in Microsoft Windows. It has its roots all the way back to MS-DOS in 1981.
 
-</ConceptTemplate>
+## 1. Legacy Automation
+Unlike Bash, which is a fully Turing-complete programming language with advanced scoping rules, Batch is fundamentally just a text file containing a list of DOS commands (like `DIR` or `COPY`) that execute top-to-bottom.
+It mathematically lacks basic programming structures. To do a `while` loop, you must use `GOTO` statements to jump to mathematical labels in the text file, exactly like Assembly language.
+
+## 2. The Persistence of .bat
+Despite Microsoft releasing **PowerShell** (a vastly superior, object-oriented, deeply integrated scripting language) to replace it, Batch remains heavily used.
+Because every single Windows machine in the world can run a `.bat` file instantly without adjusting security execution policies, IT administrators still rely on Batch files to mathematically execute simple software installations, map network drives, and bootstrap massive build environments.
+

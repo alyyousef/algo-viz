@@ -1,8 +1,31 @@
+---
+title: PyTorch vs TensorFlow
+description: "A historical overview of the Deep Learning framework wars, detailing how Google's TensorFlow initially dominated production while Meta's PyTorch mathematically conquered the research community with dynamic computation graphs."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PyTorch vs TensorFlow">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="PyTorch vs TensorFlow"
+  subtitle="The Deep Learning War"
+  tags={['Comparison', 'Machine Learning', 'AI', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are training massive Neural Networks, you are using one of these two open-source frameworks. Over the last 5 years, the landscape has radically shifted.
 
-</ConceptTemplate>
+## 1. TensorFlow (Google)
+- **History**: The first truly massive framework. It used **Static Computation Graphs**. You had to mathematically define the entire neural network structure upfront before feeding it any data.
+- **Pros**: This static nature allowed TensorFlow to mathematically optimize the graph, making it incredibly fast and easy to deploy to mobile devices (TensorFlow Lite) and web browsers (TensorFlow.js).
+- **Cons**: It was famously a nightmare to debug. Because the graph was static, you couldn't use standard Python print statements to see what was happening inside the network. (They fixed this in TF 2.0 with Eager Execution, but the damage was done).
+
+## 2. PyTorch (Meta/Facebook)
+- **History**: Released specifically to solve TensorFlow's debuggability problem. It uses **Dynamic Computation Graphs**. The network is built on the fly, line-by-line, as the data flows through it.
+- **Pros**: It feels like native Python. You can use standard `if/else` statements and `print()` exactly where the math is happening.
+- **The Verdict**: Because of its mathematical flexibility, PyTorch absolutely conquered academia. Over 90% of papers published at top AI conferences now use PyTorch. Almost all modern GenAI (HuggingFace, LLaMA, Stable Diffusion) is built on PyTorch. TensorFlow is mostly maintained for legacy production systems.
+

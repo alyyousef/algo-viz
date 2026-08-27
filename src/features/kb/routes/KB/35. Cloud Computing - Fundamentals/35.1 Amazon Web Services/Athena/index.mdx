@@ -1,0 +1,25 @@
+---
+title: Amazon Athena
+description: A powerful, serverless interactive query service that allows data analysts to use standard SQL to mathematically query petabytes of raw data stored directly in Amazon S3 without needing a database.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon Athena"
+  subtitle="Serverless SQL for S3"
+  tags={['AWS', 'Data', 'SQL', 'Serverless']}
+>
+
+Traditionally, if you have 10TB of raw CSV logs in S3, you must provision a massive database, write an ETL script, wait hours for the data to load, and *then* run your SQL query. Athena bypasses the database entirely.
+
+## 1. Schema on Read
+Athena uses a mathematical concept called **Schema on Read**.
+The data in S3 remains raw (CSV, JSON, Parquet). You use AWS Glue to define a logical schema (e.g., "Column 1 is an Integer, Column 2 is a String").
+When you execute a SQL query in Athena, a massive fleet of hidden servers mathematically parses the raw text files in S3 in parallel, applies the schema dynamically, executes the SQL aggregation math, returns the answer, and immediately vanishes.
+
+## 2. Cost and Columnar Optimization
+Athena charges based purely on the amount of data mathematically scanned (e.g., $5.00 per Terabyte scanned).
+If you query a 1TB CSV file to find one row, Athena must physically scan all 1TB of text. You pay $5.00.
+Data Engineers optimize this by converting CSV files to **Parquet**, a columnar storage format. If you run the exact same SQL query on a Parquet file, Athena uses the mathematical metadata in the file to only scan the specific column you requested (e.g., scanning only 10GB instead of 1TB). Your query runs 100x faster, and you only pay 5 cents.
+
+</TechnologyTemplate>

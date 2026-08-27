@@ -4,15 +4,28 @@ description: An instance of a computer program that is being executed by one or 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Processes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Processes">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When you double-click an `.exe` file (or run `node app.js`), the Operating System takes the static, lifeless code from the hard drive, loads it into RAM, and mathematically brings it to life as a **Process**.
 
 A Process is mathematically the heaviest, most secure execution unit in Computer Science. It is an isolated island of execution.
 
+
 <Callout icon="warning" title="Memory Isolation">
+
+
   The OS mathematically guarantees that Process A can NEVER access the memory of Process B. If your Chrome browser (Process A) crashes because of a memory leak, it mathematically cannot corrupt the RAM of your Spotify app (Process B). They exist in completely separate Virtual Memory spaces.
+
+
 </Callout>
+
 
 ## Anatomy of a Process
 
@@ -25,4 +38,3 @@ When the OS creates a Process, it mathematically allocates a massive bundle of r
 
 Because a Process is so heavy, switching the CPU from executing Process A to Process B (a **Context Switch**) is mathematically very slow.
 
-</ConceptTemplate>

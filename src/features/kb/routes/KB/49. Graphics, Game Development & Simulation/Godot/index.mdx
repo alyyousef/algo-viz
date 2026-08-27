@@ -4,7 +4,7 @@ description: A cross-platform, free and open-source game engine released under t
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Godot"
   subtitle="The Open-Source rebel"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Godot_icon.svg/512px-Godot_icon.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Unreal takes a 5% royalty fee. Unity recently attempted a highly controversial "Runtime Fee" business model. Because **Godot** is MIT Licensed, you legally own 100% of the game you build.
 
+
 <Callout icon="tip" title="The Node Hierarchy Architecture">
+
+
   Unlike Unity's flat `GameObject` list, Godot relies on a strict **Tree Hierarchy of Nodes**.
-  
+
   In Godot, everything is a Node. A `Player` is not an object; it is a Scene containing a tree of nodes (a `KinematicBody` node, which contains a `CollisionShape` node and a `Sprite` node). You can mathematically instance this entire `Player` scene directly inside a `Level` scene. It is incredibly clean, modular, and strongly resembles the DOM tree in web development.
+
+
 </Callout>
+
 
 ## GDScript
 

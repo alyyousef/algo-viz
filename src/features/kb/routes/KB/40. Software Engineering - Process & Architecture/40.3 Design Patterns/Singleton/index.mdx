@@ -5,7 +5,14 @@ description: "A creational design pattern that restricts the instantiation of a 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate title="Singleton Pattern">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Singleton Pattern">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Singleton** is the most famous (and most controversial) design pattern from the original Gang of Four book. It ensures that a class has only one single instance throughout the entire lifecycle of an application, and provides a global point of access to it.
 
@@ -48,8 +55,13 @@ console.log(db1 === db2); // true! They point to the exact same object in memory
 - Centralized Application Configuration or Logging services.
 - Hardware interface access (e.g., you only have one physical printer, so you only want one PrinterSpooler object).
 
+
 <Callout icon="warning" title="The Anti-Pattern Debate">
+
+
 Many modern developers consider the Singleton an **Anti-Pattern**. It introduces hidden global state, makes unit testing incredibly difficult (because state bleeds between tests), and tightly couples your code. In modern applications, Singletons are usually replaced by **Dependency Injection** frameworks, which handle the object lifecycle and guarantee a single instance without hardcoding it into the class itself.
+
+
 </Callout>
 
-</ConceptTemplate>
+

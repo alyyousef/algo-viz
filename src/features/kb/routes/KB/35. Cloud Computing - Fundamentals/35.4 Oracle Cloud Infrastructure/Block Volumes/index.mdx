@@ -1,0 +1,24 @@
+---
+title: OCI Block Volumes
+description: High-performance, mathematically durable, persistent block storage networks that act as the physical hard drives for Oracle Cloud Compute instances.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Block Volumes"
+  subtitle="Persistent Network Hard Drives"
+  tags={['OCI', 'Storage', 'Block', 'Compute']}
+>
+
+OCI Block Volumes are the exact equivalent of AWS EBS. When you provision a Virtual Machine in Oracle Cloud, its primary "C: Drive" or "/dev/sda" is not physically inside the server; it is a Block Volume attached via a hyper-fast iSCSI network connection.
+
+## 1. Dynamic Performance Scaling
+In most clouds, if you want a faster hard drive, you have to provision a massively large hard drive (because IOPS are tied to Gigabytes) or pay exorbitant fees for provisioned IOPS.
+OCI Block Volumes offer a unique mathematical advantage: **Dynamic Performance Scaling**.
+Using the OCI Console, you can move a slider to instantly change the Volume Performance Unit (VPU) from "Lower Cost" to "Balanced" to "Higher Performance" (ultra-high IOPS). The mathematical change happens instantly on the fly, with zero downtime. You can crank up the IOPS right before running a massive database batch job, and crank it back down an hour later to save money.
+
+## 2. Volume Groups and Consistent Backups
+If an enterprise application spans multiple disks (e.g., Disk 1 has the database files, Disk 2 has the transaction logs), taking independent backups is dangerous. If the backups are taken 5 seconds apart, the mathematical state of the database is corrupted.
+OCI provides **Volume Groups**. You mathematically group multiple Block Volumes together. When you trigger a backup, OCI executes a **Crash-Consistent** snapshot across all volumes in the group at the exact same mathematical millisecond, guaranteeing the backup is transactionally safe and restorable.
+
+</TechnologyTemplate>

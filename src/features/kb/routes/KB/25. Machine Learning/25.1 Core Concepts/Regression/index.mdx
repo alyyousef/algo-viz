@@ -4,17 +4,24 @@ description: The supervised learning task of mathematically predicting a continu
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Regression">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Regression">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In Supervised Machine Learning, if the target variable is a category ("Dog" vs "Cat"), it is Classification. If the target variable is a continuous numerical value (e.g., predicting the exact temperature tomorrow, the price of a house, or the stock market), it is mathematically defined as **Regression**.
 
 ## 1. Linear Regression
-The absolute foundational algorithm of statistics and Machine Learning. 
+The absolute foundational algorithm of statistics and Machine Learning.
 It attempts to draw a mathematically perfect straight line through a scatter plot of data.
 Equation: $y = mx + b$ (or for multiple variables, $y = w_1x_1 + w_2x_2 + b$).
 
 ### Ordinary Least Squares (OLS)
-How does the algorithm mathematically find the perfect line? It uses OLS. 
+How does the algorithm mathematically find the perfect line? It uses OLS.
 It calculates the distance (the Residual) from every single data point to the line. It mathematically squares those distances (to remove negative numbers and heavily punish massive outliers), and sums them up. The algorithm adjusts the slope ($w$) until that sum is the absolute mathematical minimum.
 
 ## 2. Non-Linear Regression
@@ -29,4 +36,3 @@ Instead, you mathematically measure the error distance:
 - **MAE (Mean Absolute Error)**: The average dollar amount the model was off by. Highly interpretable.
 - **RMSE (Root Mean Squared Error)**: Squares the errors before averaging them, mathematically punishing the model heavily for massive outliers.
 
-</ConceptTemplate>

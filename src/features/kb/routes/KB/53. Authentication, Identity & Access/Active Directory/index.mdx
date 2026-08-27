@@ -4,7 +4,7 @@ description: A directory service developed by Microsoft for Windows domain netwo
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Active Directory"
   subtitle="The legacy king of enterprise networks"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Microsoft_logo.svg/512px-Microsoft_logo.svg.png"
@@ -17,11 +17,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 In a classic Windows enterprise, when an employee types their password into their Windows laptop on Monday morning, the laptop does not check its local hard drive. It mathematically sends the password over the local ethernet cable to the **Active Directory (AD)** Domain Controller server.
 
+
 <Callout icon="warning" title="Group Policy Objects">
-  AD was not just for passwords. It utilized **GPOs**. 
-  
+
+
+  AD was not just for passwords. It utilized **GPOs**.
+
   The IT Admin could mathematically define a policy: *"No employee in the 'Intern' group can change their desktop wallpaper."* When the intern logged in, AD physically downloaded this policy to the laptop and biologically locked the Windows UI.
+
+
 </Callout>
+
 
 *(Note: Today, legacy AD is heavily integrated with **Entra ID** (formerly Azure AD) to bridge on-premise networks with modern cloud SSO).*
 

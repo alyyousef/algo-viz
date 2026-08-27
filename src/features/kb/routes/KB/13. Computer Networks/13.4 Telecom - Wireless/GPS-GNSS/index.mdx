@@ -4,26 +4,38 @@ description: The global constellation of satellites providing hyper-accurate pos
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="GPS / GNSS">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GPS / GNSS">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **GPS (Global Positioning System)** is the American implementation of **GNSS (Global Navigation Satellite System)**. (Other countries have their own: Europe's Galileo, Russia's GLONASS, China's BeiDou).
 
-GPS does not track your phone. Your phone never sends a single byte of data to a GPS satellite. GPS is strictly a one-way, receive-only technology. 
+GPS does not track your phone. Your phone never sends a single byte of data to a GPS satellite. GPS is strictly a one-way, receive-only technology.
 
 ## The Physics of Trilateration
 
 Every GPS satellite is essentially a flying, hyper-accurate Atomic Clock.
 The satellite broadcasts a continuous, unencrypted radio signal that essentially says: *"I am Satellite #12, and my current time is exactly 12:00:00.0000000."*
 
-1. Your phone receives that signal. 
-2. Because radio waves travel at the speed of light, the signal takes a few milliseconds to reach your phone. 
-3. Your phone looks at its own clock and sees it received the signal at 12:00:00.0600000. 
+1. Your phone receives that signal.
+2. Because radio waves travel at the speed of light, the signal takes a few milliseconds to reach your phone.
+3. Your phone looks at its own clock and sees it received the signal at 12:00:00.0600000.
 4. By measuring that exact delay, the phone mathematically calculates that it is exactly 11,000 miles away from Satellite #12.
 
 If your phone knows it is 11,000 miles from Satellite #12, 12,000 miles from Satellite #4, and 14,000 miles from Satellite #9, it uses **Trilateration** (intersecting 3D spheres) to calculate your exact latitude and longitude on the surface of the Earth.
 
+
 <Callout icon="warning" title="The 4th Satellite">
+
+
   Trilateration technically only requires 3 satellites to find a 3D position. However, your smartphone does not contain a $100,000 atomic clock; its internal clock is terrible. If your phone's clock is off by just 1 millisecond, the distance calculation will be wrong by 186 miles. **A GPS receiver requires a 4th satellite lock** to mathematically correct the errors in its own internal clock, ensuring 3-meter accuracy.
+
+
 </Callout>
 
-</ConceptTemplate>
+

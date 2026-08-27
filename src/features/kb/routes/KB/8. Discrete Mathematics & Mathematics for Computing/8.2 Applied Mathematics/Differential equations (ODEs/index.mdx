@@ -1,8 +1,37 @@
+---
+title: Ordinary Differential Equations (ODEs)
+description: "Equations that mathematically relate a function of a single variable to its derivatives, used to precisely model physics, population growth, and mechanical systems."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Differential equations (ODEs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Ordinary Differential Equations"
+  subtitle="Modeling Dynamic Systems"
+  tags={['Mathematics', 'Calculus', 'Physics', 'Simulation']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+An **Ordinary Differential Equation (ODE)** is an equation containing an unknown function (of one variable) and its derivatives. If algebra is solving for an unknown *number* ($x = 5$), differential equations are solving for an unknown *function* (e.g., finding the exact formula for a pendulum's swing over time).
 
-</ConceptTemplate>
+## 1. The Setup
+A classic ODE is Newton's Second Law of Motion: $F = ma$.
+Since Acceleration ($a$) is the second derivative of Position ($x$) over Time ($t$), the equation is actually an ODE:
+$F = m \frac{d^2x}{dt^2}$
+By solving this ODE, you derive the exact formula for where an object will be at any future point in time.
+
+## 2. Order and Linearity
+- **Order**: The highest derivative present. ($y'' + y = 0$ is a Second-Order ODE).
+- **Linearity**: A linear ODE only has derivatives to the first power. Nonlinear ODEs (like the Navier-Stokes equations) are notoriously chaotic and mathematically impossible to solve analytically.
+
+## 3. Algorithmic Solutions
+Because most real-world ODEs cannot be solved with clean algebra, computer scientists use Numerical Methods to step through time and approximate the function.
+- **Euler's Method**: The simplest algorithm. Calculate the derivative, draw a straight line, step forward by $\Delta t$, recalculate. Very fast, but accumulates massive mathematical error over time.
+- **Runge-Kutta (RK4)**: The gold-standard algorithm used in physics engines (like Kerbal Space Program). It calculates 4 different slopes at each timestep and mathematically weights them, producing insanely accurate physics simulations without requiring supercomputers.
+
+\n

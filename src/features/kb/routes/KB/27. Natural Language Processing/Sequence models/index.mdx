@@ -1,8 +1,26 @@
+---
+title: Sequence Models
+description: Specialized Neural Network architectures mathematically designed to process temporal, ordered data (like text or audio) where the sequence of inputs fundamentally alters the meaning.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sequence models">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sequence Models">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A standard Neural Network (Feed-Forward) assumes every input is mathematically independent. If you feed it the word "Not", it has no memory of the word "Happy" that came before it. Sequence Models possess mathematical Memory.
 
-</ConceptTemplate>
+## 1. Recurrent Neural Networks (RNN)
+An RNN processes a sentence one word at a time, from left to right.
+When it reads word #2, it mathematically combines the Vector for word #2 with the **Hidden State** (the mathematical memory) generated from word #1. This allows the network to maintain a running mathematical summary of the sentence.
+However, standard RNNs suffer from the **Vanishing Gradient Problem**. During Backpropagation, the mathematical gradients multiply. If the sentence is 50 words long, the gradient mathematically shrinks to exactly 0, causing the network to completely "forget" the beginning of the sentence.
+
+## 2. LSTM (Long Short-Term Memory)
+To fix the Vanishing Gradient, engineers invented the LSTM.
+An LSTM introduces mathematical "Gates" (Forget Gate, Input Gate, Output Gate). These gates act as microscopic bouncers, using Sigmoid math (0 or 1) to explicitly decide whether a piece of memory should be kept or deleted. This allows LSTMs to mathematically hold onto important context for hundreds of words, solving the memory bottleneck of early sequence models.
+

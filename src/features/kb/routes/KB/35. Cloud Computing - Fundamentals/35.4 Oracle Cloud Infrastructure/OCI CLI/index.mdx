@@ -1,0 +1,24 @@
+---
+title: OCI Command Line Interface (CLI)
+description: A powerful, Python-based terminal tool that allows DevOps engineers to mathematically interact with, provision, and manage every single Oracle Cloud resource directly from the command line.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI Command Line Interface (CLI)"
+  subtitle="Terminal-Based Cloud Control"
+  tags={['OCI', 'CLI', 'DevOps', 'Automation']}
+>
+
+While the OCI Web Console is visually appealing, it is mathematically impossible to use a mouse to provision 500 Virtual Machines efficiently. The OCI CLI provides scriptable, programmatic access to the entire cloud.
+
+## 1. The REST API Wrapper
+Every single button in the OCI Web Console is secretly just executing an HTTP REST API call.
+The OCI CLI is a mathematical wrapper around this API. When a developer types `oci compute instance launch --shape VM.Standard2.1` in their terminal, the CLI mathematically constructs the required JSON payload, signs it cryptographically with the user's private RSA key, and fires the HTTP request directly to the OCI Control Plane. This allows engineers to write Bash or PowerShell scripts to completely automate their infrastructure deployments.
+
+## 2. JMESPath Querying
+When you ask the CLI for a list of all Virtual Machines, it returns a massive, highly nested mathematical JSON document containing thousands of lines of metadata.
+The OCI CLI natively integrates **JMESPath**, a mathematical query language for JSON.
+Instead of piping the output into complex `grep` or `awk` commands, the engineer can append a query: `--query "data[*].{Name:"display-name", State:"lifecycle-state"}"`. The CLI mathematically filters the massive JSON response on the client side, outputting only a clean, human-readable table of the VM names and whether they are running or stopped.
+
+</TechnologyTemplate>

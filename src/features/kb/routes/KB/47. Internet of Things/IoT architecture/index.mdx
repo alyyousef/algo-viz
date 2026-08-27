@@ -4,23 +4,35 @@ description: The overarching framework and physical/logical layout that defines 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="IoT Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IoT Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Internet of Things (IoT)** is not a single technology. It is a massive, multi-layered architecture designed to bridge physical reality (the edge) with infinite mathematical processing power (the cloud).
 
 A standard, enterprise-grade IoT Architecture consists of **Four Layers**:
 
+
 <Callout icon="info" title="The Four Layers">
+
+
   1. **The Edge Layer (Devices & Sensors):** The physical microcontrollers (ESP32, STM32) gathering raw data from the physical universe.
   2. **The Network/Gateway Layer:** The local routers or protocols (Wi-Fi, LoRaWAN, BLE) bridging the Edge devices to the public Internet.
   3. **The Data Processing Layer (Cloud):** The massive servers (AWS IoT, Azure IoT) mathematically receiving, ingesting, and storing billions of telemetry data points per second.
   4. **The Application Layer:** The web dashboards, mobile apps, and Machine Learning algorithms that analyze the data and make business decisions.
+
+
 </Callout>
+
 
 ## The Challenge of Scale
 
-If you build an IoT pet feeder, the architecture is trivial (ESP32 -> Wi-Fi -> Web App). 
+If you build an IoT pet feeder, the architecture is trivial (ESP32 -> Wi-Fi -> Web App).
 
 If you build an IoT system for a massive global shipping company, the architecture is exponentially harder. You must mathematically handle 500,000 devices dropping offline simultaneously when a ship loses satellite coverage, buffer their telemetry locally, and securely synchronize it back to the cloud days later without overloading the database.
 
-</ConceptTemplate>

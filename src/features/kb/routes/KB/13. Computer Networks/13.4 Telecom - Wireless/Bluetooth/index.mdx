@@ -4,7 +4,14 @@ description: A short-range, personal area network (PAN) standard designed to eli
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bluetooth">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bluetooth">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 While Wi-Fi is designed to network an entire house to the global internet, **Bluetooth** (IEEE 802.15.1) is designed as a Personal Area Network (PAN). Its only goal is to eliminate the 3-foot cable between your phone and your headphones.
 
@@ -12,13 +19,12 @@ It operates in the exact same highly congested **2.4 GHz** unlicensed band as Wi
 
 ## Frequency-Hopping Spread Spectrum (FHSS)
 
-Because Bluetooth shares the 2.4 GHz band with Wi-Fi routers and microwaves, it would normally be crushed by interference. 
-To survive, Bluetooth uses **FHSS (Frequency-Hopping Spread Spectrum)**. 
+Because Bluetooth shares the 2.4 GHz band with Wi-Fi routers and microwaves, it would normally be crushed by interference.
+To survive, Bluetooth uses **FHSS (Frequency-Hopping Spread Spectrum)**.
 
 The Bluetooth transmitter and receiver synchronize their clocks. They then rapidly change their radio frequency **1,600 times per second**. If a Wi-Fi router is currently blasting data on Channel 6, the Bluetooth headphones will instantly hop to Channel 43, then Channel 12, successfully dodging the Wi-Fi interference in real-time.
 
 ## Bluetooth Low Energy (BLE)
-Introduced in Bluetooth 4.0, **BLE** is a radically different protocol designed for IoT devices (like heart rate monitors or Apple AirTags). 
+Introduced in Bluetooth 4.0, **BLE** is a radically different protocol designed for IoT devices (like heart rate monitors or Apple AirTags).
 Standard Bluetooth maintains a continuous, power-hungry connection. BLE devices sleep 99% of the time, wake up, rapidly broadcast a tiny beacon of data, and instantly go back to sleep. This allows a single coin-cell battery to power a BLE device for over a year.
 
-</ConceptTemplate>

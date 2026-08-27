@@ -1,8 +1,26 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: containerd
+description: An industry-standard, lightweight container runtime designed to mathematically manage the complete container lifecycle of its host system, acting as the core engine behind modern Kubernetes and Docker.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="containerd">
+<TechnologyTemplate
+  title="containerd"
+  subtitle="The Core Container Engine"
+  tags={['Containers', 'Kubernetes', 'Runtime', 'Infrastructure']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In the early days, Docker was a massive monolith that handled building images, networking, and running containers. Over time, the industry mathematically demanded that this monolith be broken into smaller, standardized pieces.
 
-</ConceptTemplate>
+## 1. The Extraction from Docker
+Containerd (originally part of Docker) was extracted and donated to the Cloud Native Computing Foundation (CNCF).
+It is a highly focused daemon. It does not know how to build a Dockerfile. It does not have a user-friendly CLI. Its only mathematical purpose is to:
+1. Download OCI images from a registry.
+2. Unpack them into a filesystem.
+3. Call the low-level `runc` binary to start the process using Linux cgroups and namespaces.
+
+## 2. Kubernetes Integration (CRI)
+Kubernetes needed a way to run containers without the massive overhead of the full Docker engine.
+Containerd implements the **Container Runtime Interface (CRI)**, a mathematical API standard defined by Kubernetes. When Kubernetes decides to start a pod on a node, the Kubelet communicates directly with containerd via gRPC. Containerd spins up the container. This mathematically streamlined architecture is why Kubernetes formally deprecated Docker as its underlying runtime in favor of containerd.
+
+</TechnologyTemplate>

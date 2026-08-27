@@ -1,8 +1,29 @@
+---
+title: Memento Pattern
+description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically allows you to capture and externalize an object's internal state so that the object can be restored to this state later, without violating encapsulation.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Memento">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Memento Pattern"
+  subtitle="The Mathematical Snapshot"
+  tags={['Design Patterns', 'Behavioral', 'GoF', 'Data Structures']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Implementing an "Undo" feature in a text editor or a video game save system is mathematically difficult. You need to save the exact internal state of the `Editor` object.
 
-</ConceptTemplate>
+## 1. The Encapsulation Violation
+You could have the UI simply copy all the variables out of the `Editor` and store them in an array. However, this mathematically violates encapsulation. The `Editor` would have to make all its private, internal variables (like the cursor position or the hidden text buffer) public.
+
+## 2. The Opaque Snapshot
+The Memento pattern solves this. The `Editor` (the Originator) is the *only* class allowed to create the snapshot.
+When the user types, the UI asks the Editor for a Memento. The Editor mathematically packages its own private state into a `Memento` object and hands it to the UI (the Caretaker).
+Crucially, the `Memento` object is mathematically opaque to the UI. The UI cannot read or modify the variables inside it; it can only store it in an Undo stack. When the user hits CTRL+Z, the UI hands the Memento back to the Editor, which mathematically unpacks it and restores its own private state.
+

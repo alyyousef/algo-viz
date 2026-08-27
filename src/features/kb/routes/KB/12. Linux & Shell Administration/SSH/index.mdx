@@ -5,10 +5,17 @@ description: "Secure Shell, a cryptographic network protocol for operating netwo
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="SSH"
   icon="lock"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **SSH (Secure Shell)** is the standard protocol used by developers and sysadmins to log into remote servers securely. It replaces older, insecure protocols like Telnet (which sent passwords in plain text).
 
@@ -19,7 +26,7 @@ When you SSH into a server (e.g., `ssh user@192.168.1.10`), a secure, encrypted 
 While you *can* use a password with SSH, best practice mandates using **SSH Keys** (Public Key Cryptography).
 1. You generate a key pair on your laptop (a private key and a public key).
 2. You append your public key to the server's `~/.ssh/authorized_keys` file.
-3. When you connect, the server uses the public key to issue a cryptographic challenge that only your private key can solve. 
+3. When you connect, the server uses the public key to issue a cryptographic challenge that only your private key can solve.
 This makes brute-force password guessing impossible.
 
 ## More Than Just Terminals
@@ -29,8 +36,13 @@ SSH is incredibly versatile. It is the underlying transport mechanism for many o
 - **Git**: When you `git push` to GitHub using the `git@github.com` URL, you are pushing data over an SSH tunnel.
 - **Port Forwarding (Tunneling)**: You can securely forward a local port on your laptop to a private database port inside a secure AWS VPC through an SSH "Jump host."
 
+
 <Callout icon="warning" title="Keep Your Private Key Secret">
+
+
 Your private key (usually `~/.ssh/id_rsa` or `~/.ssh/id_ed25519`) is literally your digital identity. If a hacker steals this file, they have root access to every server you control. Never commit it to Git.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,23 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Docker Hub
+description: The world's largest public cloud repository for container images, serving as the mathematical central distribution point for open-source software and official vendor application binaries.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Docker Hub">
+<TechnologyTemplate
+  title="Docker Hub"
+  subtitle="The Global Container Registry"
+  tags={['Containers', 'Docker', 'Registry', 'Cloud']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a Docker Image is the immutable binary executable, a Container Registry is the mathematical app store where those binaries are hosted. Docker Hub is the default, public registry for the entire ecosystem.
 
-</ConceptTemplate>
+## 1. Image Resolution and Layers
+When a developer types `docker run nginx`, their local Docker Engine realizes it does not mathematically possess the `nginx` image.
+By default, it reaches out to `docker.io` (Docker Hub). It doesn't download a single massive file; it downloads a mathematical manifest. This manifest defines the specific SHA-256 hashes of the image's "Layers." If the developer already has the underlying Alpine Linux layer cached on their laptop, the Engine only downloads the delta layers, saving massive amounts of bandwidth.
+
+## 2. Official Images and Security
+Docker Hub hosts **Official Images** (like Node, Python, Postgres).
+These are mathematically audited and maintained directly by the Docker team in collaboration with the upstream software creators. They serve as the secure, mathematical foundation (the `FROM` line in a Dockerfile) for nearly all corporate applications, ensuring developers aren't building their infrastructure on malicious, unverified code.
+
+</TechnologyTemplate>

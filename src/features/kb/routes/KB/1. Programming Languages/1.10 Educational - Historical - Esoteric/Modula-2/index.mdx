@@ -1,8 +1,25 @@
+---
+title: Modula-2
+description: A highly structured systems programming language developed by Niklaus Wirth as the successor to Pascal.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Modula-2">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Modula-2">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created in 1978 by Niklaus Wirth (the creator of Pascal), Modula-2 was designed to solve the critical architectural flaws of Pascal, specifically for writing entire operating systems.
 
-</ConceptTemplate>
+## 1. The Module Architecture
+As the name implies, Modula-2 introduced the concept of **Modules**.
+In the 1970s, managing large codebases was mathematically chaotic. Modula-2 strictly enforced separating a program into independent Modules.
+Crucially, it forced the separation of a Module's **Definition** (the interface, what other code can see) from its **Implementation** (the hidden inner code). This heavily influenced modern package systems in Ada, Python, and Go.
+
+## 2. Systems Programming
+Unlike Pascal (which was mostly educational), Modula-2 was a bare-metal systems language. It included mathematically precise facilities for memory addresses, interrupts, and concurrency (coroutines), making it capable of writing device drivers and embedded systems before C took over the world.
+

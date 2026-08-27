@@ -1,8 +1,45 @@
+---
+title: Akra-Bazzi Method
+description: "A generalized mathematical theorem for analyzing the asymptotic complexity of divide-and-conquer algorithms, acting as a massive extension to the Master Theorem capable of handling uneven subproblem sizes."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Akra-Bazzi method">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Akra-Bazzi Method"
+  subtitle="The Generalized Master Theorem"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Divide and Conquer']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The Master Theorem is the standard tool for solving divide-and-conquer recurrences (like Merge Sort). However, it mathematically fails if the recursive calls split the data unevenly (e.g., $T(n) = T(n/3) + T(2n/3) + O(n)$). The Akra-Bazzi method mathematically solves this.
 
-</ConceptTemplate>
+## 1. The Mathematical Problem
+Standard divide-and-conquer algorithms split the array perfectly in half:
+$T(n) = 2T(n/2) + O(n)$.
+But what if an algorithm splits the array into a 1/4 chunk and a 3/4 chunk? The Master Theorem instantly breaks down because it mathematically requires all subproblems to be the exact same size.
+
+## 2. The Akra-Bazzi Theorem
+Given a recurrence of the form:
+$T(x) = g(x) + \sum_{i=1}^{k} a_i T(b_i x)$
+
+Where:
+- $a_i$ is the number of subproblems (must be > 0).
+- $b_i$ is the scaling factor (e.g., 1/3, 2/3).
+- $g(x)$ is the work done outside the recursion (e.g., $O(n)$ for merging).
+
+**The Solution:**
+First, mathematically find the unique real number $p$ such that:
+$\sum_{i=1}^{k} a_i b_i^p = 1$
+
+Then, the asymptotic complexity is strictly bounded by the integral:
+$T(x) = \Theta\left( x^p \left( 1 + \int_1^x \frac{g(u)}{u^{p+1}} du \right) \right)$
+
+## 3. Why It Matters
+While the integral calculus makes it significantly harder to evaluate by hand than the Master Theorem, Akra-Bazzi is mathematically profound. It proves that even if an algorithm recursively splits data into chaotic, uneven fractions, the overall time complexity is still entirely predictable and bounded by polynomial integration.
+

@@ -1,8 +1,27 @@
+---
+title: SAC (Soft Actor-Critic)
+description: A state-of-the-art, off-policy Reinforcement Learning algorithm that maximizes both the Expected Reward and the Entropy (randomness) of the Policy, resulting in massive sample efficiency and stability.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SAC">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SAC (Soft Actor-Critic)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+PPO is highly stable but mathematically requires fresh data (On-Policy), making it slow. DQN is fast (Off-Policy) but mathematically unstable in continuous action spaces. SAC combines the best of both worlds.
 
-</ConceptTemplate>
+## 1. Maximum Entropy RL
+Standard RL aims to maximize one mathematical variable: The Reward.
+SAC introduces a fundamental paradigm shift: **Maximum Entropy RL**.
+The mathematical objective function is altered to maximize the Reward *plus* the Entropy (chaos/randomness) of the Policy.
+By mathematically rewarding the Neural Network for outputting highly uncertain, flat probability distributions, SAC forces the Agent to continuously explore every single possible optimal path. If there are two equally good ways to solve a puzzle, SAC will mathematically learn *both*, rather than collapsing into a single, fragile solution.
+
+## 2. Off-Policy Actor-Critic
+Because SAC uses an Actor-Critic architecture, it can handle Continuous Action spaces (like steering a robot arm).
+Crucially, SAC is **Off-Policy**. It utilizes a massive Replay Buffer. It can mathematically train its Actor and Critic networks using old data generated from hours ago, making it astronomically more data-efficient than PPO. This makes SAC the industry standard for real-world Robotics, where generating physical training data (moving a real robotic arm) is incredibly slow and expensive.
+

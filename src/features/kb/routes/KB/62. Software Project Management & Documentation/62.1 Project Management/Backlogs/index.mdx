@@ -4,10 +4,16 @@ description: A prioritized list of work for the development team that is derived
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="The Backlog">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="The Backlog">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The **Backlog** is the mathematical graveyard of good ideas.
 
 It is a massive list of every single User Story, bug fix, and technical debt item the company biologically wants to build. The Product Manager's biological job is to ruthlessly rank this list mathematically, putting the highest-value items at the absolute top. During Sprint Planning, the engineers only look at the top 10 items. Items at the bottom of the Backlog are mathematically ignored and usually never get built.
 
-</ConceptTemplate>

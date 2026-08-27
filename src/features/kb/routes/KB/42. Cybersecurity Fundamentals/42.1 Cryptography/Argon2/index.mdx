@@ -4,25 +4,32 @@ description: The winner of the Password Hashing Competition, representing the ab
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Argon2">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Argon2">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Designed by Alex Biryukov, Daniel Dinu, and Dmitry Khovratovich, **Argon2** won the grueling, multi-year Password Hashing Competition in 2015. It is officially recommended by OWASP and NIST as the most secure algorithm for hashing user passwords in a database.
 
 Like scrypt, Argon2 is memory-hard, making it mathematically devastating to brute-force using custom ASICs or massive GPU clusters.
 
+
 <Callout icon="success" title="Side-Channel Resistance">
+
+
   Older memory-hard algorithms were vulnerable to "cache-timing attacks", where a hacker on the same physical server (e.g., in a shared AWS environment) could mathematically deduce your password by monitoring how your CPU accessed the CPU cache. Argon2i was specifically designed to make its memory access patterns completely independent of the password, rendering these attacks impossible.
+
+
 </Callout>
+
 
 ## The Three Variants
 
-<ComparisonTable 
-  headers={['Variant', 'Design Goal', 'Primary Use Case']}
-  rows={[
-    ['Argon2d', 'Maximizes resistance against GPU cracking by using highly unpredictable, data-dependent memory access.', 'Cryptocurrency mining or backend systems isolated from side-channel attackers.'],
-    ['Argon2i', 'Maximizes resistance against side-channel cache-timing attacks by using completely predictable memory access.', 'Password hashing on shared cloud servers.'],
-    ['Argon2id', 'A hybrid approach. It acts like Argon2i for the first pass to defeat side-channel attacks, then switches to Argon2d to defeat GPU cracking.', 'The industry standard. If you don\'t know which to use, use Argon2id.']
-  ]}
-/>
 
-</ConceptTemplate>
+<ComparisonTable headers={['Variant', 'Design Goal', 'Primary Use Case']} rows={[ ['Argon2d', 'Maximizes resistance against GPU cracking by using highly unpredictable, data-dependent memory access.', 'Cryptocurrency mining or backend systems isolated from side-channel attackers.'], ['Argon2i', 'Maximizes resistance against side-channel cache-timing attacks by using completely predictable memory access.', 'Password hashing on shared cloud servers.'], ['Argon2id', 'A hybrid approach. It acts like Argon2i for the first pass to defeat side-channel attacks, then switches to Argon2d to defeat GPU cracking.', 'The industry standard. If you don\'t know which to use, use Argon2id.'] ]} />
+
+

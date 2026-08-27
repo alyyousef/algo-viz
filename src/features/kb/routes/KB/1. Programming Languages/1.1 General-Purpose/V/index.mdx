@@ -1,8 +1,38 @@
+---
+title: V (Vlang)
+description: A statically typed compiled programming language designed for building maintainable software with ultra-fast compilation and zero dependencies.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="V">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="V (Vlang)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+V is a relatively new systems programming language that aims to be a simpler, faster alternative to C++, Rust, and Go. It is famous for its astonishing compilation speed (compiling itself in under a second).
 
-</ConceptTemplate>
+## 1. Simplicity and Performance
+V was explicitly designed to have a tiny cognitive load. The entire language documentation can be read in a few hours.
+- **C Translation**: V can automatically translate C code into human-readable V code, allowing seamless integration with massive legacy C codebases (like DOOM).
+- **Compilation Speed**: The compiler is mathematically optimized, emitting machine code directly or generating ultra-optimized C code for GCC/Clang to compile.
+
+## 2. Safety Without the Rust Struggle
+V attempts to provide memory safety without the crushing complexity of Rust's borrow checker.
+
+
+<Callout icon="info" title="Memory Management in V">
+
+
+V uses a unique approach: it mathematically frees memory at compile time where possible, falling back to a minimal tracing Garbage Collector or manual management depending on the compiler flags. By default, variables are immutable and cannot be null.
+
+
+</Callout>
+
+
+<ComparisonTable headers={["Language", "Compilation Speed", "Memory Safety", "Complexity"]} rows={[ ["V", "Instantaneous", "Default (Compile-time/GC)", "Low"], ["Rust", "Slow", "Guaranteed (Borrow Checker)", "High"], ["C", "Fast", "Manual (Unsafe)", "Medium"] ]} />
+
+

@@ -1,0 +1,24 @@
+---
+title: Amazon EMR (Elastic MapReduce)
+description: A managed cluster platform that radically simplifies running massive Big Data frameworks like Apache Hadoop and Apache Spark to mathematically process petabytes of data across hundreds of EC2 instances.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Amazon EMR (Elastic MapReduce)"
+  subtitle="Managed Big Data Clusters"
+  tags={['AWS', 'Big Data', 'Spark', 'Hadoop']}
+>
+
+If you need to mathematically analyze a 500 Terabyte log file, a single computer will take 10 years. EMR allows you to spin up 1,000 computers, chop the file into 1,000 pieces, analyze them concurrently in 5 minutes, and combine the result.
+
+## 1. The MapReduce Paradigm
+EMR automates the complex networking of distributed mathematics.
+- **Map**: EMR automatically distributes the raw data across the Worker Nodes. Each node executes your Python/Java code to independently filter and mathematically transform its specific chunk of data.
+- **Reduce**: EMR handles the massive network shuffling required to pull all the transformed data back to a Master Node, which mathematically aggregates the results (e.g., Summing up the total clicks).
+
+## 2. Decoupling Compute and Storage
+In a traditional on-premise Hadoop cluster, the data is physically stored on the hard drives of the servers (HDFS). If you need more storage, you have to buy more CPU power, which is financially inefficient.
+EMR mathematically decouples this using **EMRFS**. The 500 Terabytes of data live permanently in Amazon S3 (infinite, cheap storage). You only spin up the massive, expensive EMR EC2 cluster when you actually need to run the math. The cluster pulls the data from S3, executes the Spark job, writes the answer back to S3, and instantly terminates the EC2 instances, saving the company millions of dollars.
+
+</TechnologyTemplate>

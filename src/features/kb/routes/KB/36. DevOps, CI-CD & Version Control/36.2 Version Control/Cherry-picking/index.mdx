@@ -1,8 +1,30 @@
+---
+title: Cherry-picking
+description: A surgical Git operation that mathematically extracts a single specific commit from one branch and applies it to another branch without merging the entire surrounding commit history.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Cherry-picking">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Cherry-picking"
+  subtitle="Surgical Commit Extraction"
+  tags={['Version Control', 'Git', 'Advanced Operations', 'Engineering']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Normally, when you merge a branch, you merge the *entire* mathematical history of that branch. However, there are scenarios where you only want one specific line of code without bringing along the rest of the garbage.
 
-</ConceptTemplate>
+## 1. The Hotfix Scenario
+Imagine you are working on a massive `feature-v2` branch containing 50 commits. It is not ready for production.
+Suddenly, a critical bug is discovered in production (`main`). You realize that commit `#a1b2c3d` in your feature branch actually contains the exact fix for this bug. You cannot merge the entire feature branch into `main` because it is unfinished.
+Instead, you switch to `main` and run `git cherry-pick a1b2c3d`. Git mathematically calculates the exact diff of that single commit and surgically applies it to `main`, fixing the production bug instantly.
+
+## 2. Mathematical Re-hashing
+When you Cherry-pick a commit, you are not moving the commit; you are mathematically duplicating it.
+The new commit applied to `main` will have the exact same file changes and the exact same commit message, but because it has a different parent commit, Git mathematically calculates a completely **new SHA-1 hash** for it. They are mathematically two distinct objects in the Git database.
+

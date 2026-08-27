@@ -1,8 +1,25 @@
+---
+title: Wolfram Language (Mathematica)
+description: A deeply integrated, knowledge-based symbolic language that mathematically attempts to compute everything in the universe.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Wolfram Language (Mathematica)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Wolfram Language (Mathematica)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Stephen Wolfram in 1988 as the core of **Mathematica**, the Wolfram Language is a profoundly unique, commercial, symbolic programming language. It powers the Wolfram Alpha computational search engine used by Siri.
 
-</ConceptTemplate>
+## 1. The Knowledge-Based Paradigm
+Most programming languages start empty. If you want the atomic weight of Gold or the population of France, you must find an API, parse the JSON, and store it.
+The Wolfram Language is a **Knowledge-Based** language. It mathematically contains massive amounts of real-world data built directly into the compiler. You can write a single line of code that mathematically plots the GDP of France over the last 50 years, or calculates the orbital trajectory of Mars, without importing a single library.
+
+## 2. Symbolic Everything
+Like Lisp, the Wolfram Language is homoiconic. Everything is a symbolic expression.
+An equation, a photograph, an audio file, and the user interface itself are all mathematically represented as the exact same underlying tree structure (`Head[arg1, arg2]`). This allows a user to mathematically map a function over an array of images just as easily as mapping it over an array of integers, making it an unrivaled tool for exploratory research.
+

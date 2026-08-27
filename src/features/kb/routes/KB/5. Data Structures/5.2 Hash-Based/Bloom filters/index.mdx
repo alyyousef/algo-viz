@@ -4,15 +4,28 @@ description: A space-efficient probabilistic data structure used to test set mem
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Bloom Filters">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Bloom Filters">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Bloom filter** is a highly space-efficient probabilistic data structure invented by Burton Howard Bloom in 1970. It is used to answer a very specific question: **"Is this element a member of a set?"**
 
+
 <Callout icon="warning" title="The Probabilistic Trade-off">
+
+
   Because Bloom filters use a fraction of the memory of a hash table, they make a mathematical compromise:
   - **False Positives are possible**: The filter might say "Yes, the item is in the set" when it actually isn't.
   - **False Negatives are impossible**: If the filter says "No, the item is not in the set", it is 100% guaranteed to not be there.
+
+
 </Callout>
+
 
 ## How it Works
 
@@ -45,4 +58,3 @@ Bloom filters are used to prevent expensive operations (like a slow database que
 
 You can control the false positive rate by tuning the size of the bit array ($m$) and the number of hash functions ($k$) relative to how many items you expect to insert ($n$). A larger bit array results in fewer false positives but uses more RAM.
 
-</ConceptTemplate>

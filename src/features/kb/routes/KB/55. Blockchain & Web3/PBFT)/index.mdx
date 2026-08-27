@@ -4,16 +4,28 @@ description: Practical Byzantine Fault Tolerance is an algorithm that optimizes 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Practical Byzantine Fault Tolerance (PBFT)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Practical Byzantine Fault Tolerance (PBFT)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Unlike PoW or PoS (which are public blockchains), what consensus mechanism do you use for a Private Enterprise blockchain where all nodes are known entities?
 
 You use **PBFT**.
 
+
 <Callout icon="tip" title="The Mathematical Two-Thirds Majority">
+
+
   PBFT mathematically assumes that nodes might fail or be compromised by a virus, but it does not require burning electricity or locking up financial stakes.
-  
+
   Instead, the nodes mathematically send messages back and forth in a strict multi-phase voting protocol (Pre-prepare, Prepare, Commit). The protocol mathematically guarantees that as long as **less than 1/3** of the nodes are malicious, the network will biologically reach absolute consensus. It is blazingly fast but mathematically cannot scale beyond ~100 nodes due to the massive network traffic of the voting phases.
+
+
 </Callout>
 
-</ConceptTemplate>
+

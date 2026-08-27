@@ -1,8 +1,29 @@
+---
+title: Abstract Factory Pattern
+description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically provides an interface for creating families of related or dependent objects without specifying their exact concrete classes.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Abstract Factory">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Abstract Factory Pattern"
+  subtitle="Families of Objects"
+  tags={['Design Patterns', 'Creational', 'GoF', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you are building a cross-platform UI framework, you need to create Buttons, Checkboxes, and TextFields. However, a Windows Button mathematically renders completely differently than a macOS Button.
 
-</ConceptTemplate>
+## 1. The Family Problem
+If you use raw instantiation (`new WindowsButton()`), your business logic is mathematically tightly coupled to the Windows OS. If you run the code on a Mac, it crashes. You need a way to mathematically guarantee that you always create a complete "family" of matching UI components.
+
+## 2. The Abstract Factory
+The architect creates an Interface called `IGUIFactory`, which mathematically guarantees three methods: `createButton()`, `createCheckbox()`, and `createTextField()`.
+You then create concrete implementations: `WindowsFactory` and `MacFactory`.
+When the application starts, it checks the OS and injects the correct Factory into the business logic. The business logic simply calls `factory.createButton()`. It has absolutely zero mathematical knowledge of whether it is receiving a Windows button or a Mac button, completely fulfilling the Open-Closed Principle.
+

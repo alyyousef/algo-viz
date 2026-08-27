@@ -4,16 +4,28 @@ description: A basic quantity derived from the probability of a particular event
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Information Content (Surprisal)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Information Content (Surprisal)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Information Theory begins with a deeply philosophical mathematical question: *How much "information" is actually contained in a message?*
 
 Claude Shannon mathematically defined information as **Surprise**.
 
+
 <Callout icon="info" title="The Mathematics of Surprise">
+
+
   If I tell you *"The sun rose in the east today"*, that message contains biologically zero information, because the probability of it happening was 100%.
-  
+
   If I tell you *"It is snowing in the Sahara Desert"*, that message contains massive amounts of information, because the probability was near 0%. The mathematical formula for Information Content is $I(x) = -\log_2(P(x))$. The lower the probability of an event, the higher the mathematical information it carries when it occurs.
+
+
 </Callout>
 
-</ConceptTemplate>
+

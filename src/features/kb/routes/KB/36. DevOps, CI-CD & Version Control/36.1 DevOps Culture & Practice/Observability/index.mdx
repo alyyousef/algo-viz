@@ -1,8 +1,33 @@
+---
+title: Observability
+description: A superset of monitoring that mathematically defines a system's capability to allow its internal states to be inferred from knowledge of its external outputs (Logs, Metrics, and Traces).
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Observability">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Observability"
+  subtitle="Understanding the Unknown Unknowns"
+  tags={['DevOps', 'Observability', 'SRE', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Monitoring answers the question: *"Is the system broken?"*
+Observability answers the mathematical question: *"Why is the system broken, specifically in a way we never predicted?"*
 
-</ConceptTemplate>
+## 1. The Three Pillars
+Observability is mathematically constructed from three telemetry pillars:
+1. **Metrics**: Aggregated mathematical trends (e.g., "CPU is at 99%"). They tell you there is a problem.
+2. **Logs**: Discrete, timestamped event records (e.g., "Database connection failed"). They provide deep context.
+3. **Traces**: The mathematical journey of a single request across a distributed microservice architecture. Traces tell you exactly which specific microservice out of 50 caused the CPU spike.
+
+## 2. High Cardinality Data
+Traditional monitoring systems fail when you need to group data by millions of unique user IDs.
+True Observability platforms (like Honeycomb or Datadog) support **High Cardinality**. If the system is slow, an Observability platform allows you to slice the telemetry mathematically: *"Is the system slow for everyone, or only for users in Germany, using the iOS App, on version 2.4, executing the checkout query?"*
+By correlating the three pillars mathematically without losing high-cardinality context, engineers can debug "Unknown Unknowns"—bizarre edge-case failures that were never explicitly anticipated by a static dashboard.
+

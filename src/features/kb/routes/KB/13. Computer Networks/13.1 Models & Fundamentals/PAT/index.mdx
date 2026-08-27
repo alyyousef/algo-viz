@@ -4,7 +4,14 @@ description: The specific extension of NAT that allows hundreds of devices to sh
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="PAT (Port Address Translation)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PAT (Port Address Translation)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Strict, one-to-one NAT (Static NAT) takes one Private IP and translates it to one Public IP. If your office has 500 computers, you would have to buy 500 expensive Public IP addresses from your ISP. This defeats the purpose of conserving IPv4 addresses.
 
@@ -23,8 +30,13 @@ So, PAT dynamically overwrites the **Source Ports**:
 - It translates Laptop A's packet to: `203.0.113.5:50001`
 - It translates Laptop B's packet to: `203.0.113.5:50002`
 
+
 <Callout icon="success" title="The Translation Table">
+
+
   The router maintains a massive NAT/PAT translation table in RAM. When Google replies to Port 50001, the router checks the table, instantly sees that 50001 belongs to Laptop A, rewrites the packet back to its original Private IP and original port (10001), and delivers it flawlessly.
+
+
 </Callout>
 
-</ConceptTemplate>
+

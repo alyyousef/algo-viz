@@ -1,8 +1,29 @@
+---
+title: Stack vs. Heap Allocation
+description: The two fundamentally different mathematical paradigms Operating Systems use to manage RAM for running applications.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stack vs heap">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Stack vs. Heap Allocation">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When an application starts, the OS mathematically divides its RAM into two primary data structures: The Stack and The Heap. Understanding the physics of how they operate is the most critical concept in Systems Engineering.
 
-</ConceptTemplate>
+## 1. The Stack (Fast, Deterministic, Tiny)
+The Stack is a perfectly contiguous block of memory.
+When a function is called, the CPU mathematically moves a single hardware register (the Stack Pointer) down by exactly the number of bytes needed for local variables. This allocation takes exactly 1 CPU cycle.
+When the function returns, the CPU moves the pointer back up. The memory is instantly "freed."
+Because the Stack is contiguous and perfectly predictable, it mathematically lives almost entirely inside the CPU's ultra-fast L1 Cache. However, because it is strictly LIFO (Last-In-First-Out), data on the Stack *must* have a mathematically fixed size at compile time, and it is instantly destroyed when the function ends.
+
+## 2. The Heap (Slow, Dynamic, Massive)
+The Heap is a massive, mathematically chaotic ocean of memory.
+If you need to store a dynamic String or an Array whose size isn't known until runtime, you must use the Heap.
+Allocating Heap memory (`malloc`/`new`) is mathematically grueling. The OS must search for an empty block of RAM that fits the requested size, mark it as used, and return the physical pointer to you.
+Because the Heap is highly fragmented, jumping between Heap objects causes massive **Cache Misses**, forcing the CPU to fetch data from main RAM, which mathematically takes 200x longer than reading from the Stack.
+

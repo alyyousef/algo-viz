@@ -5,378 +5,255 @@ const TICK3 = '```'
 const TICK1 = '`'
 
 const contentMap = {
-  'src/features/kb/routes/KB/5. Data Structures/5.1 Linear/Arrays/index.mdx': `---
-title: Arrays
-description: The most fundamental contiguous memory data structure, providing $O(1)$ random access to elements based on a mathematical index calculation.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/LaTeX/index.mdx': `---
+title: LaTeX
+description: A high-quality typesetting system mathematically designed for the production of technical and scientific documentation.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Arrays">
+<ConceptTemplate title="LaTeX">
 
-An **Array** is the most basic and hardware-friendly data structure in computer science. It is a collection of elements (usually of the same data type) stored in **contiguous memory locations**.
+Developed in the 1980s by Leslie Lamport (built on top of Donald Knuth's TeX), LaTeX is the undisputed global standard for publishing scientific, mathematical, and academic papers.
 
-Because the memory is strictly contiguous, the computer does not need to search for an element. If you know the memory address of the first element, you can mathematically calculate the exact physical memory location of any other element instantly.
+## 1. What You See Is What You Mean
+Unlike Microsoft Word (a WYSIWYG editor where you format text visually), LaTeX is a WYSIWYM (What You See Is What You Mean) editor. 
+You write plain text infused with commands.
+TICK3latex
+The quadratic formula is given by:
+\\begin{equation}
+x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}
+\\end{equation}
+TICK3
+You then run the LaTeX compiler, which mathematically calculates the optimal kerning, line breaks, and typographical spacing to generate a flawless PDF. The human focuses purely on the *structure* of the document; the compiler handles the *design*.
 
-## 1. The $O(1)$ Lookup Math
-
-If you declare an array of 32-bit integers (each taking 4 bytes of memory), and the array starts at memory address \`1000\`, the computer can find the 5th element (\`index 4\`) instantly:
-
-\`\`\`text
-Address = Base_Address + (Index * Element_Size)
-Address = 1000 + (4 * 4 bytes)
-Address = 1016
-\`\`\`
-
-Because this is a single CPU multiplication instruction, accessing *any* element by its index is strictly $O(1)$ time complexity, regardless of whether the array has 10 elements or 10 billion elements.
-
-## 2. The Contiguous Penalty
-
-The greatest strength of an array is also its greatest weakness. Because it must be contiguous, its size is absolutely fixed when it is created.
-
-- **Insertion/Deletion**: If you have an array of 1,000 elements, and you want to insert a new element at index 0, you must physically move all 1,000 existing elements one slot to the right to make room. This takes $O(N)$ time.
-- **Fixed Size**: If you create an array of size 10, and you want to add an 11th element, you cannot just append it to the end (the memory block right next to the array might already be owned by a different program). You must create a brand new, larger array and copy all the old elements over.
-
-<Callout icon="tip" title="CPU Cache Locality">
-  Arrays are significantly faster than Linked Lists in the real world, even when time complexity suggests they are equal. Because arrays are contiguous, modern CPUs can load entire chunks of the array into the ultra-fast L1 Cache in a single fetch (Spatial Locality). Linked Lists are scattered randomly across RAM, causing constant, slow cache misses.
-</Callout>
+## 2. Unmatched Mathematical Typesetting
+Word processors mathematically fail at complex equations. LaTeX was explicitly built by mathematicians to render equations perfectly. Its algorithms for calculating the bounding boxes of integrals and fractions are so mathematically superior that modern engines (like MathJax on the web) simply emulate LaTeX syntax.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.1 Linear/Dynamic arrays/index.mdx': `---
-title: Dynamic Arrays
-description: A smart wrapper around a static array that automatically resizes itself when it runs out of capacity, providing the illusion of an infinitely expandable list.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/Liquid/index.mdx': `---
+title: Liquid
+description: An open-source, logic-less template language created by Shopify, used extensively in e-commerce and static site generators.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dynamic Arrays (ArrayList, std::vector, list)">
+<ConceptTemplate title="Liquid">
 
-A standard Array is fixed in size. If you allocate space for 10 items, you cannot add an 11th. 
-A **Dynamic Array** (known as \`ArrayList\` in Java, \`std::vector\` in C++, and simply \`list\` in Python) solves this by automatically managing memory reallocation behind the scenes.
+Created by Shopify in 2006 (written in Ruby), Liquid is a safe, customer-facing template language. It is designed so that non-programmers can build beautiful storefronts without the ability to mathematically execute malicious code or crash the Shopify servers.
 
-## 1. How It Works (The Growth Factor)
+## 1. Safety First
+Because Shopify allows millions of merchants to upload custom code to their servers, the templating language *must* be sandboxed.
+Liquid mathematically prohibits server-side execution, database queries, or infinite loops. A user can only access the specific data objects (like TICK1product.priceTICK1) that the server explicitly provides.
 
-Under the hood, a dynamic array is just a standard, fixed-size static array combined with two integer variables:
-- \`Size\`: The number of items currently inside the array.
-- \`Capacity\`: The physical size of the underlying static array.
+## 2. Syntax: Tags, Objects, and Filters
+Liquid uses three mathematical constructs:
+- **Objects**: TICK1{{ product.title }}TICK1 outputs data.
+- **Tags**: TICK1{% if user.logged_in %}TICK1 executes logic.
+- **Filters**: TICK1{{ "hello" | upcase }}TICK1 mathematically modifies the output (converting to "HELLO").
 
-When you append items, the \`Size\` increases. When \`Size == Capacity\`, the dynamic array executes its resize routine:
-1. It requests a brand new, larger block of contiguous memory from the OS (usually double the current capacity, a **growth factor of 2**).
-2. It copies every single element from the old array into the new array.
-3. It deletes the old array and frees the memory.
-
-## 2. Amortized $O(1)$ Time Complexity
-
-Wait, if resizing requires copying every element, isn't appending an item $O(N)$? 
-Yes, the *worst-case* append is $O(N)$. However, because the array doubles in size every time, these expensive resizes happen exponentially less frequently as the array grows.
-
-If you average out the cost of all the cheap $O(1)$ appends and the rare $O(N)$ resizes over time, the average cost per append mathematically approaches a constant time. This is called **Amortized $O(1)$** complexity.
-
-<Callout icon="warning" title="The Capacity Trap">
-  If you know you are going to add 1 million items to a dynamic array, do not just blindly append them in a loop. The array will have to resize and copy memory roughly 20 times. Always pre-allocate the capacity if you know the final size in advance (e.g., \`new ArrayList<>(1000000)\`).
-</Callout>
+Beyond Shopify, Liquid powers Jekyll, the static site generator that drove the initial explosion of GitHub Pages.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.1 Linear/Linked lists (singly/index.mdx': `---
-title: Singly Linked Lists
-description: A dynamic, linear data structure where elements are scattered across memory and connected via pointers, allowing for extremely fast insertions and deletions.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/Markdown/index.mdx': `---
+title: Markdown
+description: A profoundly popular, lightweight markup language designed to be easy to read and write in plain text while seamlessly compiling to HTML.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Singly Linked Lists">
+<ConceptTemplate title="Markdown">
 
-Unlike Arrays, which require a single block of contiguous memory, a **Linked List** allows data to be scattered randomly across RAM. 
+Created by John Gruber in 2004, Markdown revolutionized how humans write on the web. Before Markdown, writing a blog post required writing raw HTML (TICK1<strong>Bold</strong>TICK1), which was mathematically impossible to read natively.
 
-Each element in a linked list is a **Node**. A node contains two things:
-1. **The Data**: The actual value being stored (e.g., the number 42).
-2. **The Pointer (Next)**: The memory address of the *next* node in the sequence.
+## 1. Human-Readable Syntax
+Markdown was designed so that the raw text file looks like the intended output.
+- TICK1**Bold**TICK1
+- TICK1*Italic*TICK1
+- TICK1# Heading 1TICK1
+- TICK1[Link Text](https://example.com)TICK1
 
-The very first node is tracked by a variable called the \`Head\`. The final node's pointer points to \`Null\`.
+A standard Markdown compiler (like marked.js) mathematically parses this text via Regular Expressions and generates the equivalent HTML tags.
 
-## 1. Trade-offs vs Arrays
-
-Because nodes are connected by pointers, Linked Lists completely flip the performance characteristics of Arrays:
-
-- **Inserts/Deletes are Fast ($O(1)$)**: If you want to insert a new node in the middle of a linked list, you do not need to physically shift thousands of elements. You simply update two pointers to "wire in" the new node. 
-- **Lookups are Slow ($O(N)$)**: You cannot mathematically jump to index 500. Because the memory is scattered, the only way to find the 500th element is to start at the \`Head\` and follow the pointers, one by one, 500 times. 
-
-## 2. Memory Overhead
-
-Linked lists are significantly less memory-efficient than arrays. If you store 1 million 32-bit integers in an array, it takes exactly 4MB of RAM. 
-If you store them in a Singly Linked List on a 64-bit machine, every integer requires an additional 64-bit pointer. This triples your memory usage (4MB for data + 8MB for pointers = 12MB).
-
-<Callout icon="info" title="Doubly Linked Lists">
-  A Singly Linked List only points forward. If you are at Node 50, you cannot go backwards to Node 49. A **Doubly Linked List** adds a second \`Prev\` pointer to every node, allowing bi-directional traversal at the cost of even more memory overhead.
-</Callout>
+## 2. The Fragmentation Problem
+Because Gruber never provided a strict mathematical BNF grammar for Markdown, the language fragmented. 
+How many spaces constitute a list indentation? What happens if you nest a blockquote in a list? Different compilers guessed differently.
+This led to the creation of **CommonMark** (a mathematically rigorous, unambiguous specification of Markdown) and **GitHub Flavored Markdown (GFM)**, which added tables, task lists, and strikethroughs to the standard.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.1 Linear/Queues/index.mdx': `---
-title: Queues
-description: A strict FIFO (First-In-First-Out) data structure used to process items in the exact order they arrived, essential for task scheduling and breadth-first search.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/Mustache/index.mdx': `---
+title: Mustache
+description: The original "logic-less" templating language that inspired Handlebars and fundamentally changed web UI architecture.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Queues (FIFO)">
+<ConceptTemplate title="Mustache">
 
-A **Queue** is an abstract data structure that perfectly mimics a line of people waiting at a grocery store checkout. It operates on a strict **First-In-First-Out (FIFO)** principle. 
+Mustache (named because the curly braces TICK1{{ }}TICK1 look like a sideways mustache) is a web template system with implementations in Ruby, JavaScript, Python, C++, and almost every other major language. 
 
-The first item added to the queue will absolutely be the first item removed. You cannot skip the line.
+## 1. Absolute Logic-Less Design
+Mustache is mathematically stricter than Handlebars. 
+In Handlebars, you can write custom Helpers to execute logic. Mustache explicitly forbids this. 
+You cannot have TICK1if/elseTICK1 statements. You only have "Sections" (TICK1{{#person}} ... {{/person}}TICK1). If the TICK1personTICK1 object is false or null, the section is not rendered. If it is an array, the section mathematically loops over the array. 
+This forces the backend developer to pre-calculate every single boolean flag (e.g., TICK1show_person_divTICK1) before handing the data to Mustache.
 
-## 1. The Core Operations
-
-A queue is heavily restricted. You are only allowed to perform two primary actions, both of which operate in strictly $O(1)$ time:
-- **Enqueue**: Add a new item to the absolute *back* of the line (the "Tail").
-- **Dequeue**: Remove and return the item at the absolute *front* of the line (the "Head").
-
-## 2. Common Use Cases
-
-Queues are heavily used in operating systems and distributed architectures whenever a system is receiving work faster than it can process it.
-
-1. **Task Scheduling**: A printer queue holds documents in the exact order they were submitted by different users.
-2. **Breadth-First Search (BFS)**: The BFS graph algorithm relies on a queue to explore neighboring nodes level-by-level before moving deeper.
-3. **Message Brokers**: Enterprise systems like Apache Kafka or RabbitMQ are essentially massive, distributed queues that ensure millions of API events are processed in chronological order.
-
-<Callout icon="error" title="The Array Dequeue Problem">
-  Do not implement a Queue using a standard Array! If you \`Dequeue\` the item at index 0, you must physically shift every other item in the array to the left, resulting in an incredibly slow $O(N)$ operation. Queues should always be implemented using a Linked List, or a specialized **Circular Buffer**, to ensure $O(1)$ dequeues.
-</Callout>
+## 2. Architectural Impact
+By mathematically forcing developers to remove logic from the View layer, Mustache practically trained an entire generation of developers on the strict Model-View-Controller (MVC) paradigm, paving the way for modern state-driven frameworks like React and Vue.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.1 Linear/Stacks/index.mdx': `---
-title: Stacks
-description: A strict LIFO (Last-In-First-Out) data structure used to track states, handle function calls, and manage deeply nested recursive algorithms.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/Pug/index.mdx': `---
+title: Pug
+description: A high-performance, indentation-sensitive HTML templating engine for Node.js (formerly known as Jade).
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Stacks (LIFO)">
+<ConceptTemplate title="Pug">
 
-A **Stack** perfectly mimics a physical stack of dinner plates. If you want a plate, you must take the one directly off the top. You cannot pull a plate from the bottom without breaking the entire stack.
+Pug (originally named Jade until a trademark dispute) is a templating engine for Node.js that mathematically eliminates the need to write HTML tags and closing brackets, relying entirely on Python-style indentation.
 
-It operates on a strict **Last-In-First-Out (LIFO)** principle. The most recently added item is the first one removed.
+## 1. Indentation as Syntax
+Writing HTML is mathematically redundant. You open a TICK1<div>TICK1, write content, and must remember to close the TICK1</div>TICK1.
+In Pug, you just write the tag name and indent.
+TICK3pug
+div.container
+  h1 Hello World
+  p.description This is Pug.
+TICK3
+The compiler mathematically tracks the indentation levels. When the indentation decreases, it automatically injects the closing HTML tags. This drastically reduces file size and prevents structural HTML errors.
 
-## 1. The Core Operations
-
-Like Queues, Stacks restrict your access to the data. You are only allowed two primary $O(1)$ operations:
-- **Push**: Add a new item to the top of the stack.
-- **Pop**: Remove and return the item from the top of the stack.
-- *(Optional) **Peek**: Look at the top item without actually removing it.*
-
-## 2. Common Use Cases
-
-Stacks are the fundamental backbone of program execution and state management.
-
-1. **The Call Stack**: Whenever a function calls another function, the CPU "Pushes" the current state (local variables and the return memory address) onto the Call Stack. When the function finishes, the CPU "Pops" that state off the stack to resume exactly where it left off.
-2. **Undo/Redo Mechanisms**: Every action you take in a text editor is pushed onto a stack. When you hit Ctrl+Z, the editor pops the most recent action off the stack and reverses it.
-3. **Depth-First Search (DFS)**: The DFS algorithm uses a stack (either explicitly, or implicitly via recursion) to plunge as deep into a graph as possible before backtracking.
-
-<Callout icon="warning" title="Stack Overflow">
-  The OS limits the physical RAM allocated to the Call Stack (often just a few megabytes). If you write a recursive function that never hits its base case, the CPU will continuously push new frames onto the stack until it physically runs out of memory, instantly crashing the program with a **Stack Overflow** error.
-</Callout>
+## 2. JavaScript Integration
+Unlike Mustache, Pug is fully programmable. It supports TICK1ifTICK1, TICK1elseTICK1, TICK1eachTICK1 loops, and variable interpolation directly, compiling down to a highly optimized JavaScript function that mathematically concatenates strings at blazing speeds.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.2 Hash-Based/Hash tables/index.mdx': `---
-title: Hash Tables
-description: The ultimate key-value data structure, providing magical O(1) average time complexity for inserts, deletes, and lookups by passing keys through a mathematical hashing function.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/reStructuredText/index.mdx': `---
+title: reStructuredText
+description: A highly standardized, extensible plain-text markup language, serving as the official documentation standard for the Python ecosystem.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Hash Tables (Hash Maps / Dictionaries)">
+<ConceptTemplate title="reStructuredText (reST)">
 
-If you want to find an employee's salary using their ID number, an Array forces you to check every single element ($O(N)$). If the data is sorted, Binary Search gets it down to $O(\\log N)$. 
+reStructuredText (often abbreviated as reST) is a plaintext markup syntax heavily utilized in the Python community. It is the core language processed by the **Sphinx** documentation generator.
 
-A **Hash Table** allows you to find the exact salary in **$O(1)$ constant time**, regardless of whether the company has 10 employees or 10 million. 
+## 1. Markdown's Stricter Cousin
+While Markdown is lightweight, reST is mathematically heavy and rigorous. 
+It supports complex directives and roles. 
+Instead of just making text bold, you can mathematically tag text with domain-specific meaning: TICK1:math:\`E=mc^2\`TICK1 or TICK1:pep:\`8\`TICK1. 
 
-## 1. How It Works (The Hash Function)
-
-A Hash Table is fundamentally just an array under the hood. The magic is how it decides *where* in the array to put the data.
-
-1. **The Key**: You want to store the key-value pair \`("Alice", $90000)\`.
-2. **The Hash Function**: You pass the string "Alice" into a mathematical Hash Function. It scrambles the letters and deterministically spits out a massive integer: \`84729104\`.
-3. **The Modulo**: You take that massive integer and use the modulo operator against the size of your array (e.g., \`84729104 % 10 = 4\`).
-4. **Storage**: The Hash Table instantly stores Alice's salary at Array Index 4.
-
-When you want to look up Alice later, you don't search the array. You just hash "Alice" again, the math instantly gives you Index 4, and you grab the data directly.
-
-## 2. Collisions
-
-What happens if the hash function calculates Index 4 for "Alice", but later calculates Index 4 for "Bob" as well? This is a **Collision**.
-
-You cannot put two items in the same array slot. Hash Tables handle collisions using two main strategies:
-- **Chaining**: Index 4 stops holding a raw value, and instead holds a Linked List. Both Alice and Bob are appended to the linked list at Index 4. 
-- **Open Addressing**: If Index 4 is taken, the algorithm simply probes forward (checking Index 5, then Index 6) until it finds an empty slot for Bob.
-
-<Callout icon="error" title="Worst-Case Complexity">
-  While Hash Tables are famous for $O(1)$ lookups, if you use a terrible hash function that puts *every single item* into the exact same array slot (a 100% collision rate), the Hash Table degrades into a single massive Linked List, resulting in a catastrophic $O(N)$ lookup time. 
-</Callout>
+## 2. The Sphinx Ecosystem
+Sphinx mathematically parses reST files and can pull documentation strings (docstrings) directly out of Python source code to automatically generate massive, cross-referenced technical manuals. It is capable of generating HTML, LaTeX, and PDF formats, making it the backbone of TICK1docs.python.orgTICK1 and nearly all major Python libraries.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.3 Trees/Binary search trees/index.mdx': `---
-title: Binary Search Trees (BST)
-description: A node-based tree structure that maintains sorted data in memory, allowing for fast O(log N) searches, insertions, and deletions.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/TOML/index.mdx': `---
+title: TOML
+description: Tom's Obvious, Minimal Language, a highly readable configuration format designed to map flawlessly to a hash table.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Binary Search Trees (BST)">
+<ConceptTemplate title="TOML">
 
-An Array provides fast lookups but terrible $O(N)$ insertions. A Linked List provides fast insertions but terrible $O(N)$ lookups. 
-A **Binary Search Tree (BST)** bridges this gap, providing $O(\\log N)$ time complexity for *both* lookups and insertions.
+Created by Tom Preston-Werner (co-founder of GitHub), TOML was designed to be a mathematically unambiguous, easily readable alternative to YAML and JSON for configuration files. It is the official configuration format for Rust (Cargo), Python (pyproject.toml), and Go.
 
-## 1. The Golden Rule of a BST
+## 1. Fixing INI and YAML
+- **INI** is too simple. It lacks data types and arrays.
+- **YAML** is mathematically too complex. Its reliance on strict indentation and implicit typing (where the string "no" might accidentally be parsed as a Boolean TICK1falseTICK1) causes catastrophic deployment errors.
 
-A BST is composed of Nodes. Every Node has a value, a Left pointer, and a Right pointer. 
-To qualify as a valid BST, the tree must strictly obey one mathematically invariant rule:
-
-For any given Node:
-1. **Every** value in its entire Left Subtree must be **less** than the Node's value.
-2. **Every** value in its entire Right Subtree must be **greater** than the Node's value.
-
-## 2. The $O(\\log N)$ Search
-
-If you are looking for the number 42 in a BST:
-1. You start at the Root Node (e.g., 50).
-2. Because 42 is less than 50, you know with absolute certainty that 42 cannot be on the right side of the tree. You move Left.
-3. You are now at Node 30. 42 is greater than 30, so you move Right.
-4. You instantly found 42.
-
-Every time you make a decision, you eliminate exactly half of the remaining tree from consideration. This halving mechanism is what provides the logarithmic $O(\\log N)$ speed.
-
-<Callout icon="warning" title="The Unbalanced Degeneration">
-  If you insert pre-sorted data (e.g., 1, 2, 3, 4, 5) into a naive BST, it will exclusively build down the right side. It degrades into a straight line (a Linked List), utterly destroying its efficiency and resulting in $O(N)$ lookups. In production environments, engineers never use naive BSTs; they use **Self-Balancing Trees** (like AVL Trees or Red-Black Trees) that automatically rotate their nodes to guarantee the tree never becomes lopsided.
-</Callout>
+TOML looks like INI, but is mathematically strict. 
+Strings must be quoted. Booleans are strictly TICK1trueTICK1 or TICK1falseTICK1. It natively supports arrays TICK1ports = [8000, 8001]TICK1 and inline tables. It mathematically guarantees that any TOML file will parse predictably into a standard Dictionary/Hash Table in any programming language.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.3 Trees/Tries/index.mdx': `---
-title: Tries (Prefix Trees)
-description: A highly specialized tree structure designed specifically for lightning-fast string retrieval and prefix matching, forming the backbone of autocomplete engines.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/XML/index.mdx': `---
+title: XML
+description: eXtensible Markup Language, the immensely powerful, tag-based data format that defined Enterprise computing in the 2000s.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Tries (Prefix Trees)">
+<ConceptTemplate title="XML (eXtensible Markup Language)">
 
-If you type "App" into a search bar, how does Google instantly suggest "Apple", "App Store", and "Application" out of millions of possibilities? 
-It doesn't use a Hash Table (which can only do exact matches). It uses a **Trie** (pronounced "Try", derived from "re**trie**val").
+Before JSON became the standard for web APIs, XML ruled the enterprise world. It is a markup language similar to HTML, but unlike HTML (which has predefined tags like TICK1<h1>TICK1), XML allows developers to mathematically define their own tags.
 
-## 1. How Tries Store Strings
+## 1. The Power of Validation (XSD)
+JSON's greatest weakness is schema validation. If an API expects an integer and receives a string, it often crashes at runtime.
+XML solved this mathematically using **XML Schema Definition (XSD)**. 
+An XSD file is a mathematically rigorous contract that defines exactly what tags are allowed in an XML file, in what order, and what data types they must contain. The XML parser mathematically guarantees the data is valid before the application ever touches it.
 
-In a BST, an entire word is stored inside a single node. In a Trie, the word is violently shattered. **Every node represents a single character.**
+## 2. XPath and XSLT
+XML is not just a data format; it is an ecosystem.
+- **XPath**: A query language that mathematically traverses the XML tree (e.g., TICK1/bookstore/book[price>35]TICK1), allowing precise data extraction without writing code.
+- **XSLT**: A functional language that can mathematically transform an XML document into a completely different XML, HTML, or PDF document.
 
-To store the word "CAT":
-1. The Root is an empty node.
-2. It has a child node 'C'.
-3. 'C' has a child node 'A'.
-4. 'A' has a child node 'T'.
-5. 'T' contains a special boolean flag: \`isEndOfWord = true\`.
-
-If you also want to store "CAR", you don't create three new nodes. The Trie reuses the existing 'C' and 'A' nodes, and simply branches off a new 'R' node from the 'A'.
-
-## 2. Performance (Speed over Space)
-
-Tries are memory hogs. Every single character node might have an array of 26 pointers (one for every letter of the alphabet), taking up massive amounts of RAM.
-
-However, their speed is staggering.
-To search for the word "Zebra" in a database of 10 million words, a BST would require dozens of expensive, full-string alphabetical comparisons. 
-A Trie only requires **5 pointer hops**. The time complexity to search for a word in a Trie is strictly $O(L)$, where $L$ is the length of the word you are searching for. It does not matter if the Trie contains 10 words or 10 billion words; the search time never increases.
-
-<Callout icon="tip" title="Prefix Matching">
-  Tries are the only data structure that natively excels at Prefix Matching. If a user types "CA", you just traverse down to the 'A' node. From that node, if you run a quick Depth-First Search, you can instantly collect every single valid word in the dictionary that starts with "CA".
-</Callout>
+While largely abandoned for modern web APIs due to its massive verbosity and parsing overhead, XML remains the backbone of enterprise SOAP services, SVG graphics, and Android layouts.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.4 Heaps/Binary heaps/index.mdx': `---
-title: Binary Heaps
-description: A specialized, complete binary tree prioritizing the rapid retrieval of the maximum or minimum element, serving as the core engine for Priority Queues.
+  'src/features/kb/routes/KB/1. Programming Languages/1.11 Configuration - Markup - Templating Languages/YAML/index.mdx': `---
+title: YAML
+description: YAML Ain't Markup Language, a highly readable data serialization standard heavily utilized in DevOps and CI/CD pipelines.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Binary Heaps">
+<ConceptTemplate title="YAML">
 
-A **Binary Heap** looks exactly like a Binary Search Tree visually, but its mathematical rules are completely different. While a BST organizes data left-to-right for fast searching, a Heap organizes data top-to-bottom for fast prioritization.
+YAML was explicitly designed to be easily readable by humans. It completely drops the brackets and braces of JSON, replacing them with Python-style semantic indentation. It is the undisputed configuration standard for Docker, Kubernetes, GitHub Actions, and Ansible.
 
-Heaps are the underlying implementation for **Priority Queues** (where the highest priority task always jumps to the front of the line).
+## 1. Readability vs Complexity
+While a YAML file looks beautifully clean, the YAML 1.2 specification is mathematically massive and incredibly complex.
+- It supports **Anchors and Aliases** (TICK1&TICK1 and TICK1*TICK1), allowing you to define a block of data once and mathematically copy-paste it elsewhere in the file.
+- It supports multi-line strings with complex folding rules (TICK1>TICK1 vs TICK1|TICK1).
 
-## 1. The Heap Property
-
-There are two types of Heaps: Max-Heaps and Min-Heaps. 
-In a **Max-Heap**, the fundamental rule is: *Every parent node must be greater than or equal to its children.*
-
-Because this rule applies to the entire tree, **the absolute maximum value in the entire dataset is always sitting directly at the Root Node.** 
-You can retrieve the maximum value in absolute $O(1)$ time. 
-
-*(A Min-Heap is the exact reverse; the smallest value is at the root).*
-
-## 2. Insertion and Deletion ($O(\\log N)$)
-
-When you extract the maximum value from the root, the tree is broken. The Heap must repair itself:
-1. It takes the very last leaf node at the bottom of the tree and moves it to the Root.
-2. It executes a **"Heapify Down"** operation: the new root compares itself to its children. If it is smaller, it swaps places with the larger child, bubbling down the tree until the Heap Property is restored.
-
-When you insert a new value, the opposite happens (**"Heapify Up"**): the new value is added to the bottom of the tree, and it bubbles up, swapping with its parent until it settles into the correct priority tier.
-
-<Callout icon="success" title="The Array Implementation">
-  Because a Binary Heap must always be a "Complete" tree (all levels fully populated left-to-right), it does not actually use Node objects or Pointers! Heaps are almost exclusively implemented under the hood using a flat, contiguous **Array**. Mathematical formulas (like \`LeftChild = 2i + 1\`) are used to traverse the tree, making it incredibly fast and cache-efficient.
-</Callout>
+## 2. The "Norway Problem"
+YAML's attempt to be "helpful" can cause catastrophic mathematical failures. 
+In older YAML parsers, if you configured an array of countries like TICK1[GB, FR, NO]TICK1, the parser would see "NO", mathematically assume you meant the Boolean TICK1falseTICK1, and corrupt the data. 
+Because indentation strictly defines the mathematical structure of the data, a single misplaced space character can completely destroy a Kubernetes cluster deployment.
 
 </ConceptTemplate>
 `,
 
-  'src/features/kb/routes/KB/5. Data Structures/5.5 Graphs/DAGs/index.mdx': `---
-title: Directed Acyclic Graphs (DAGs)
-description: A directed graph with absolutely no loops or cycles, forming the mathematical foundation for dependency resolution, data pipelines, and Git commit histories.
+  'src/features/kb/routes/KB/1. Programming Languages/1.2 Functional/Agda/index.mdx': `---
+title: Agda
+description: A dependently typed functional programming language and interactive theorem prover.
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Directed Acyclic Graphs (DAGs)">
+<ConceptTemplate title="Agda">
 
-A Graph is a collection of Nodes (Vertices) connected by Edges. 
-A **Directed Acyclic Graph (DAG)** is a highly restrictive, specialized graph that must obey two absolute laws:
+Agda is not just a programming language; it is a mathematical proof assistant. It is a purely functional language closely related to Haskell, but it features a **Dependent Type System**.
 
-1. **Directed**: Every edge is a one-way street (an arrow). You can go from Node A to Node B, but you cannot go backwards.
-2. **Acyclic**: There are absolutely no cycles. If you start at Node A and follow the arrows, it is mathematically impossible to ever return to Node A. 
+## 1. Dependent Types
+In standard languages (Java, Rust, Haskell), types (like TICK1StringTICK1 or TICK1IntTICK1) and values (like TICK1"Hello"TICK1 or TICK15TICK1) exist in completely separate mathematical universes. 
+In Agda, types can mathematically depend on values. 
+You can define a type called TICK1Vector A nTICK1, which means "an array of type A, with exactly length n".
+If you write an TICK1appendTICK1 function, its mathematical signature is:
+TICK1append : Vector A n -> Vector A m -> Vector A (n + m)TICK1
+If your code accidentally returns an array of length TICK1n + m - 1TICK1, the code will mathematically fail to compile. The compiler mathematically proves that your logic is flawless before execution.
 
-## 1. Why are DAGs Important?
-
-DAGs are the mathematical model used for anything that involves **Dependencies**, **Prerequisites**, or **Chronological Time**.
-
-- **University Courses**: You must take Calculus 101 before Calculus 102. (A directed arrow). You cannot have a cycle where 101 requires 102, and 102 requires 101, otherwise you could never graduate.
-- **Git Commit History**: Every commit points backwards to its parent commit. Time only flows in one direction. It is a DAG.
-- **Data Engineering (Airflow)**: Massive ETL pipelines run thousands of scripts. Script C might require the output of Script A and Script B. The pipeline is modeled as a DAG to ensure the scripts execute in the exact correct order.
-
-## 2. Topological Sorting
-
-The most important algorithm associated with DAGs is the **Topological Sort**. 
-Because a DAG has no cycles, it is always possible to flatten the entire graph into a single, straight line (an array) such that every single arrow points perfectly from left to right. 
-
-If a compiler is trying to build a massive project with 500 interdependent files, it runs a Topological Sort on the DAG. The resulting linear array is the exact chronological order the files must be compiled in to avoid "Missing Dependency" errors.
-
-<Callout icon="info" title="The Cycle Detection Trap">
-  You cannot run a Topological Sort on a standard graph. If there is even one cycle (A -> B -> C -> A), the topological sort will fail instantly, because it is logically impossible to put them in a straight line where every prerequisite is satisfied. You must use algorithms like Kahn's Algorithm or DFS to verify a graph is a valid DAG before sorting it.
-</Callout>
+## 2. Interactive Theorem Proving
+Agda developers do not write code in isolation. They use an interactive Emacs or VSCode mode. The developer writes the mathematical type signature (the Theorem), and the Agda compiler interactively helps them write the code (the Proof) to satisfy it, turning programming into a rigorous mathematical dialogue.
 
 </ConceptTemplate>
-`,
+`
 }
 
 async function main() {
   for (const [filePath, content] of Object.entries(contentMap)) {
     const fullPath = path.resolve(filePath)
     await fs.mkdir(path.dirname(fullPath), { recursive: true })
-
+    
     // Safely replace TICK1 and TICK3 placeholders with actual backticks
     let finalContent = content.replace(/TICK3/g, TICK3).replace(/TICK1/g, TICK1)
-
+    
     // Append a safe newline
     await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8')
     console.log('Wrote ' + filePath)

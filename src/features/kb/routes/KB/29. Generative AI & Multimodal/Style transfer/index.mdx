@@ -1,8 +1,26 @@
+---
+title: Neural Style Transfer
+description: A groundbreaking mathematical algorithm that separates the physical content of one image and fuses it with the artistic style of another image using deep convolutional layers.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Style transfer">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Neural Style Transfer">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If you take a photograph of your house, Neural Style Transfer can mathematically repaint it to look exactly as if Vincent van Gogh painted it, preserving the house's geometry but adopting his brushstrokes.
 
-</ConceptTemplate>
+## 1. Separating Content and Style
+The algorithm uses a pre-trained Convolutional Neural Network (like VGG-19).
+It feeds the Photograph into the network. It does not care about the final prediction; it mathematically extracts the raw activations from the *deepest* layers of the network. These deep layers mathematically represent the **Content** (the physical geometry of the house).
+It then feeds the Van Gogh painting into the network and extracts the activations from the *shallow* layers. It mathematically calculates the Gram Matrix of these layers, which captures the **Style** (the texture, color, and brushstrokes, ignoring the actual objects in the painting).
+
+## 2. The Optimization Loop
+The AI creates a brand new image of pure white noise.
+It runs a mathematical optimization loop (Gradient Descent). It mathematically twists the pixels of the white noise image until its "Content" matches the Photograph, AND its "Style" matches the Van Gogh painting. After a few hundred iterations, the resulting image is a perfect, mathematically calculated fusion of both inputs.
+

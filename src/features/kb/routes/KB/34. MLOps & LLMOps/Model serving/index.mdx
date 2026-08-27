@@ -1,8 +1,26 @@
+---
+title: Model Serving
+description: The highly specialized MLOps infrastructure layer responsible for loading raw mathematical model weights into VRAM and exposing them as secure, high-throughput, low-latency APIs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Model serving">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Model Serving">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A Jupyter Notebook mathematically processes one image in a second. A global API must mathematically process 5,000 images a second. Model Serving is the DevOps engineering required to bridge that gap.
 
-</ConceptTemplate>
+## 1. The Serving Architecture
+Model Serving engines (like NVIDIA Triton, TorchServe, or BentoML) are fundamentally different from standard web servers (like Nginx).
+- **VRAM Management**: They mathematically optimize the loading of 10GB neural network weights directly into GPU memory, ensuring multiple models can share a single GPU without causing Out-of-Memory (OOM) crashes.
+- **Dynamic Batching**: If 100 users hit the API in the same millisecond, a standard web server processes them sequentially. A Model Serving engine intercepts the 100 requests, mathematically fuses them into a single $100 \times N$ Tensor, executes a single hardware-accelerated pass on the GPU, and splits the results back to the users. This increases throughput by orders of magnitude.
+
+## 2. Serverless vs. Dedicated Endpoints
+- **Serverless Inference**: The model is spun down to zero when unused. When a request hits, the infrastructure boots up the container, loads the weights, and runs the math. Excellent for saving money, but mathematically suffers from "Cold Start" latency (taking 5+ seconds to boot).
+- **Dedicated Endpoints**: The model is permanently locked in GPU VRAM, mathematically ready to execute inference in sub-milliseconds, 24/7. Required for real-time systems (like self-driving cars or trading algorithms) where cold starts are fatal.
+

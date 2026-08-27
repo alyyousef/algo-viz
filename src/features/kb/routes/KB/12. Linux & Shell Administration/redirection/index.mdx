@@ -4,7 +4,13 @@ description: The fundamental shell operator used to capture output text and perm
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Redirection (>, <)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Redirection (>, <)">
+      {children}
+  </ConceptTemplate>
+  )
+}
 
 While Pipes (`|`) send data to other *programs*, **Redirection (`>`)** sends data directly to *files* on the hard drive.
 
@@ -22,15 +28,20 @@ Every Linux program has three invisible data streams:
 - **Double Bracket (`>>`)**: Captures Standard Output and safely **appends** it to the bottom of the file (perfect for logs).
   `echo "Error 500" >> server.log`
 
-<Callout icon="warning" title="Redirecting Errors (2>)">
-  By default, `>` only captures File Descriptor 1 (Normal output). If a command fails, the error message bypasses the redirect and prints to your screen. 
+
+<Callout icon="warning" title="Redirecting Errors (2>
+
+)">
+  By default, `>` only captures File Descriptor 1 (Normal output). If a command fails, the error message bypasses the redirect and prints to your screen.
   To capture errors into a file, you must explicitly tell the shell to redirect File Descriptor 2:
   `find / -name "secret" 2> errors.log`
   *(To redirect BOTH normal output and errors to the same place, use the magic syntax `&>` or `2>&1`).*
+
+
 </Callout>
+
 
 ## The Black Hole (/dev/null)
 If you are running a script and you want to completely silence all of its output (ignoring both normal text and errors), you redirect it to the Kernel's legendary black hole:
 `./noisy_script.sh &> /dev/null`
 
-</ConceptTemplate>

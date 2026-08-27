@@ -8,11 +8,17 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 SQL Injection (SQLi) is a web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database. It generally allows an attacker to view data that they are not normally able to retrieve. This might include data belonging to other users, or any other data that the application itself is able to access.
 
+
 <Callout icon="error" title="The Cause: String Concatenation">
-  SQL Injection ONLY happens when you build SQL queries by manually concatenating user input as strings. 
-  
+
+
+  SQL Injection ONLY happens when you build SQL queries by manually concatenating user input as strings.
+
   `"SELECT * FROM Users WHERE name = '" + userInput + "';"`
+
+
 </Callout>
+
 
 ## The Exploit
 

@@ -4,7 +4,7 @@ description: An extremely fast Python linter and code formatter, written in Rust
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="Ruff"
   subtitle="The Rust-powered absolute destroyer of Python tools"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/512px-Python-logo-notext.svg.png"
@@ -17,10 +17,16 @@ import { TechnologyTemplate } from '@/features/kb/components/templates/Technolog
 
 Historically, checking Python code required running 4 different tools (Flake8, Black, isort, Bandit), all written in Python, which took mathematically massive amounts of time on large Monorepos.
 
+
 <Callout icon="tip" title="The Consolidation">
-  Ruff re-engineered the rules of all those tools natively in Rust. 
-  
+
+
+  Ruff re-engineered the rules of all those tools natively in Rust.
+
   You type `ruff check .`. It mathematically spins up parallel threads on every CPU core, parses the Abstract Syntax Tree, formats the code perfectly (replicating Black), sorts the imports, and lints for thousands of errors, finishing in 0.1 seconds. It is one of the fastest architectural paradigm shifts in the history of the Python ecosystem.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

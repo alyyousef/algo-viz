@@ -1,0 +1,30 @@
+---
+title: OCI IAM Policies
+description: The strict, human-readable mathematical rules engine that definitively grants or denies access to every single resource within the Oracle Cloud Infrastructure.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="OCI IAM Policies"
+  subtitle="The Authorization Engine"
+  tags={['OCI', 'Security', 'IAM', 'Governance']}
+>
+
+In OCI, every API request is mathematically denied by default. An IAM Policy is the explicit mathematical override that allows a user or group to perform an action.
+
+## 1. The SQL-Like Syntax
+An OCI Policy is constructed using a very specific, human-readable syntax:
+```sql
+Allow <subject> to <verb> <resource-type> in <location> where <conditions>
+```
+For example: `Allow group 'Network_Admins' to manage virtual-network-family in compartment 'Production'`.
+The mathematical engine parses this instantly. The verb `manage` grants full CRUD (Create, Read, Update, Delete) permissions. If you change the verb to `read`, the engine mathematically strips the ability to modify or delete the networks, providing strict Principle of Least Privilege.
+
+## 2. Granular Conditions
+Policies can use mathematical **Conditions** to enforce extreme security.
+```sql
+Allow group 'Developers' to manage instances in compartment 'Dev' where request.region = 'us-ashburn-1'
+```
+If a compromised developer account in London attempts to spin up a Virtual Machine in the Frankfurt region, the IAM engine mathematically evaluates the condition. Because the `request.region` does not equal Ashburn, the engine instantly returns a `403 Forbidden` error. This allows security teams to mathematically geofence their entire cloud infrastructure using simple text strings.
+
+</TechnologyTemplate>

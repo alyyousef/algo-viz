@@ -4,22 +4,35 @@ description: A flaw in a system or process whereby the output and/or result of t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Race Conditions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Race Conditions">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 A **Race Condition** is the most notorious, mathematically devastating bug in Concurrent Programming.
 
 It occurs when multiple Threads attempt to read and write the exact same shared memory location simultaneously, and the final mathematical outcome strictly depends on the unpredictable microscopic timing of the CPU scheduler.
 
+
 <Callout icon="error" title="The Classic Bank Bug">
+
+
   Imagine `balance = $100`.
   - **Thread 1** tries to add $50.
   - **Thread 2** tries to subtract $20.
-  
+
   Mathematically, `balance += 50` is NOT a single CPU operation. It requires three steps:
   1. Read `balance` from RAM into CPU (`100`).
   2. Add `50` to the CPU register (`150`).
   3. Write `150` back to RAM.
+
+
 </Callout>
+
 
 ## The Mathematical Collision
 
@@ -34,4 +47,3 @@ If Thread 1 and Thread 2 execute perfectly concurrently, this mathematical night
 
 The final balance is mathematically `$80`. The $50 deposit literally vanished into thin air. This is a Race Condition.
 
-</ConceptTemplate>

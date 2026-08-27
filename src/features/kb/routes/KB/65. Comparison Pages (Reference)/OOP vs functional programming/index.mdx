@@ -1,8 +1,31 @@
+---
+title: OOP vs Functional Programming
+description: "A philosophical and architectural comparison of the two dominant programming paradigms: mutating state via Objects (OOP) versus mathematically pure, stateless transformations (FP)."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="OOP vs functional programming">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="OOP vs Functional Programming"
+  subtitle="Mutable State vs Pure Math"
+  tags={['Comparison', 'Architecture', 'Paradigms', 'Design']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+The way you structure a massive codebase is determined by your paradigm. The industry is currently experiencing a massive shift from pure OOP toward Functional architectures.
 
-</ConceptTemplate>
+## 1. Object-Oriented Programming (OOP)
+- **Core Concept**: **State and Behavior are bundled together**. A `Car` object holds data (`speed=50`) and methods that mathematically mutate that data (`accelerate()`).
+- **Pillars**: Encapsulation, Inheritance, Polymorphism.
+- **The Problem**: Shared Mutable State. If Thread A and Thread B both call `car.accelerate()` at the same time, the math breaks. Furthermore, deep inheritance trees (e.g., `Dog` inherits from `Mammal` inherits from `Animal`) become incredibly brittle and mathematically complex to refactor. (Famous quote: "You wanted a banana but what you got was a gorilla holding the banana and the entire jungle.")
+
+## 2. Functional Programming (FP)
+- **Core Concept**: **State and Behavior are strictly separated**. Data is mathematically **Immutable**. You do not mutate the `Car`. You pass the `Car` data into an `accelerate()` function, which mathematically returns a *brand new, copied Car* with the new speed.
+- **Pillars**: Pure Functions (no side effects), First-Class Functions (passing functions as variables), High-Order Functions (`map`, `filter`, `reduce`).
+- **The Benefit**: Mathematical Predictability. Because data never changes, multi-threading is trivially safe (zero race conditions). Modern UI frameworks (React, Jetpack Compose) are mathematically modeled entirely on Functional Programming paradigms (State flows down, Events flow up).
+

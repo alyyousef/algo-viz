@@ -1,8 +1,32 @@
+---
+title: Emacs
+description: "A legendary, highly extensible text editor and computing environment, mathematically infamous for its reliance on chorded keyboard shortcuts and its deeply integrated Lisp programming language."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Emacs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Emacs"
+  subtitle="The Lisp Machine Editor"
+  tags={['Editor', 'Tooling', 'Linux', 'Lisp']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Created by Richard Stallman in the 1970s, Emacs is the protagonist in the legendary "Editor War" against Vim.
 
-</ConceptTemplate>
+## 1. The Emacs Lisp Architecture
+Vim is a text editor; Emacs is mathematically an operating system that happens to include a text editor.
+The absolute core of Emacs is written in C, but 95% of its functionality is written in **Emacs Lisp (Elisp)**.
+Because the editor itself is a running Lisp machine, a developer can mathematically modify the source code of the editor *while the editor is running*, without recompiling. You can turn Emacs into an email client, a web browser, a tetris game, or a psychoanalyst chatbot (M-x doctor) simply by evaluating Lisp functions.
+
+## 2. Chorded Keybindings
+Unlike Vim's modal editing, Emacs mathematically relies on "chording" (pressing multiple modifier keys simultaneously).
+- `C-x C-s` (Control-X, followed by Control-S) to save.
+- `M-x` (Meta/Alt-X) to execute a mathematical command.
+This heavy reliance on the Control key historically led to the joke that Emacs stands for "Escape Meta Alt Control Shift", and is infamous for causing "Emacs Pinky" (RSI in the left pinky finger).
+

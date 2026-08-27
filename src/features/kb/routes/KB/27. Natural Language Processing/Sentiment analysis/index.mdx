@@ -1,8 +1,27 @@
+---
+title: Sentiment Analysis
+description: The mathematical process of classifying the emotional polarity (Positive, Negative, Neutral) of unstructured text, widely used in finance and marketing.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sentiment analysis">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sentiment Analysis">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+If a company releases a new phone, they cannot physically read 10 million tweets to see if people like it. They use Sentiment Analysis to mathematically aggregate the emotional tone of the internet.
 
-</ConceptTemplate>
+## 1. The Classification Math
+At its core, Sentiment Analysis is a binary (or multi-class) mathematical classification problem.
+A text document is converted into a Vector (using TF-IDF or Word Embeddings). That Vector is fed into a Machine Learning model (like Logistic Regression or a Transformer). The model mathematically outputs a float between 0.0 (Extremely Negative) and 1.0 (Extremely Positive).
+
+## 2. The Sarcasm Problem
+Simple Bag-of-Words models fail catastrophically at Sentiment Analysis because of human sarcasm.
+"I absolutely loved waiting 4 hours in the rain for this product!"
+A dumb algorithm sees "loved" and mathematically scores the sentence as Highly Positive.
+Modern models (like BERT) mathematically process the *Context* (waiting 4 hours in the rain). By analyzing the contradiction between the positive verb and the negative context, the Neural Network mathematically deduces sarcasm and correctly classifies the sentence as Highly Negative.
+

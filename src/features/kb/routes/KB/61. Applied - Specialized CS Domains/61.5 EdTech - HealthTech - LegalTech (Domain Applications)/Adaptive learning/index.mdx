@@ -4,10 +4,16 @@ description: An educational method which uses computers as interactive teaching 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Adaptive Learning (EdTech)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Adaptive Learning (EdTech)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 Instead of forcing 30 biological humans to read the exact same textbook chapter, **Adaptive Learning** uses mathematics to personalize the curriculum.
 
 As a student answers questions in the software, an AI mathematically tracks their exact biological knowledge gaps. If the student mathematically fails 3 algebra questions in a row, the algorithm instantly dynamically generates easier, prerequisite arithmetic questions. It uses mathematical models (like Item Response Theory) to keep the student in the exact biological "Zone of Proximal Development".
 
-</ConceptTemplate>

@@ -4,7 +4,14 @@ description: The German engineering marvel of the Linux world, famous for its po
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="openSUSE">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="openSUSE">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **openSUSE** (sponsored by the German software company SUSE) is one of the oldest and most respected Linux distributions in the world, serving as the upstream testing ground for the enterprise-grade SUSE Linux Enterprise Server (SLES).
 
@@ -14,13 +21,18 @@ openSUSE brilliantly splits its operating system into two completely different p
 1. **openSUSE Leap**: A rock-solid, incredibly stable release that shares its core codebase directly with SLES. It is perfect for servers and conservative desktop users.
 2. **openSUSE Tumbleweed**: A bleeding-edge, rolling-release distribution (similar to Arch Linux) that provides the absolute newest software every single day, heavily favored by software developers.
 
+
 <Callout icon="success" title="The YaST Control Center">
+
+
   The crown jewel of openSUSE is **YaST (Yet another Setup Tool)**. In most Linux distributions, you must memorize terminal commands to configure the firewall, set up a network drive, or manage users. YaST provides an incredibly powerful, centralized GUI (and an equivalent terminal UI) that allows users to fully configure every aspect of the OS from a single dashboard.
+
+
 </Callout>
+
 
 ## Btrfs and Instant Rollbacks
 
-openSUSE was one of the first major distributions to adopt the **Btrfs** filesystem by default. 
+openSUSE was one of the first major distributions to adopt the **Btrfs** filesystem by default.
 Because Btrfs supports Copy-on-Write snapshots, openSUSE automatically takes a snapshot of the entire OS every time you install an update. If an update catastrophically breaks your system, you simply reboot, select the "Snapshot" option in the bootloader, and instantly rewind the entire computer to 5 minutes ago.
 
-</ConceptTemplate>

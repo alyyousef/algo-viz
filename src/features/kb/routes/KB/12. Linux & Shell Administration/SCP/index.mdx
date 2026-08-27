@@ -4,25 +4,37 @@ description: A legacy command-line tool used to securely transfer files between 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="SCP (Secure Copy Protocol)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SCP (Secure Copy Protocol)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When managing a remote Linux server, you often need to upload a configuration file or download a backup archive. 
+When managing a remote Linux server, you often need to upload a configuration file or download a backup archive.
 **SCP (Secure Copy Protocol)** is a simple command-line tool that transfers files over the network using the exact same encrypted tunnel and authentication methods as SSH.
 
 ## Basic Syntax
 
 SCP uses a syntax very similar to the standard local `cp` (copy) command, but it allows you to specify remote network targets using the `user@host:/path` format.
 
-- **Upload a file to a server**: 
+- **Upload a file to a server**:
   `scp backup.tar.gz root@192.168.1.50:/var/backups/`
-- **Download a file from a server**: 
+- **Download a file from a server**:
   `scp root@192.168.1.50:/var/log/nginx/error.log ./`
-- **Upload a whole directory recursively (-r)**: 
+- **Upload a whole directory recursively (-r)**:
   `scp -r ./website_build/ root@192.168.1.50:/var/www/html/`
 
+
 <Callout icon="warning" title="The Deprecation of SCP">
-  While SCP is famous and ubiquitous, it is technically **deprecated** by modern standards due to fundamental flaws in its underlying RCP protocol (it has no resuming capability, poor performance on high-latency networks, and subtle security vulnerabilities regarding file names). 
+
+
+  While SCP is famous and ubiquitous, it is technically **deprecated** by modern standards due to fundamental flaws in its underlying RCP protocol (it has no resuming capability, poor performance on high-latency networks, and subtle security vulnerabilities regarding file names).
   Modern Linux distributions heavily encourage admins to use **SFTP** or **Rsync** instead.
+
+
 </Callout>
 
-</ConceptTemplate>
+

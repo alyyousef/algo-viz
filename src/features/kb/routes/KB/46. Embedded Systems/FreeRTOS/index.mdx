@@ -4,7 +4,7 @@ description: A market-leading real-time operating system (RTOS) for microcontrol
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   title="FreeRTOS"
   subtitle="The undisputed king of microcontrollers"
   logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/FreeRTOS_logo.svg/512px-FreeRTOS_logo.svg.png"
@@ -19,9 +19,15 @@ Writing Bare-Metal C for a microcontroller is fine if you only have one task (e.
 
 **FreeRTOS** solves this. It provides a tiny scheduler that allows you to mathematically spawn standard "Tasks" (threads), complete with Mutexes, Semaphores, and Message Queues, even on a chip with only 16KB of RAM.
 
+
 <Callout icon="success" title="The AWS Acquisition">
+
+
   In 2017, Amazon Web Services (AWS) formally took over the stewardship of FreeRTOS. They did this because they realized that to dominate the Internet of Things (IoT) cloud market, they needed the actual endpoint devices to connect seamlessly to AWS IoT Core. AWS provides FreeRTOS completely free, bundled with secure AWS MQTT networking libraries.
+
+
 </Callout>
+
 
 ## Memory Footprint
 

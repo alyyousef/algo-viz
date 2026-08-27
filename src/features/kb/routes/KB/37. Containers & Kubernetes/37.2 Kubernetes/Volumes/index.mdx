@@ -1,8 +1,30 @@
+---
+title: Volumes
+description: The fundamental Kubernetes abstraction that allows a Pod's containers to mathematically mount directories from various storage backends, solving the ephemeral nature of the standard container filesystem.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Volumes">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Volumes"
+  subtitle="Solving Ephemeral Storage"
+  tags={['Kubernetes', 'Storage', 'Architecture', 'Infrastructure']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+By definition, Docker containers are ephemeral. When a container restarts, its root filesystem is mathematically wiped clean. A Kubernetes **Volume** provides a directory (possibly containing data) that is mathematically accessible to all containers running within a specific Pod.
 
-</ConceptTemplate>
+## 1. Ephemeral vs. Persistent Volumes
+Kubernetes mathematically distinguishes between two main categories of volumes:
+- **Ephemeral Volumes (e.g., `emptyDir`)**: These share the exact mathematical lifecycle of the Pod. If the Pod crashes and restarts on the same Node, the `emptyDir` data persists. But if the Pod is completely deleted and rescheduled to a different Node, the `emptyDir` data is permanently destroyed. This is used for temporary cache or scratch space.
+- **Persistent Volumes**: These have a lifecycle mathematically independent of the Pod (see PersistentVolumes). If the Pod is deleted, the data on the underlying AWS EBS or Google Persistent Disk remains perfectly intact.
+
+## 2. Pod-Level Sharing
+A crucial mathematical property of a Volume is that it is defined at the *Pod* level, not the *Container* level.
+If you have a Pod with two containers (Container A and Container B), you can mathematically define a single `emptyDir` Volume. Container A can mount that Volume at `/var/log/app` (and write logs to it). Container B can mount that exact same Volume at `/fluentd/logs` (and read those logs to send to a central server). The Volume mathematically bridges the filesystem gap between isolated containers.
+

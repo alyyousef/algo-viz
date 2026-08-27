@@ -1,8 +1,35 @@
+---
+title: Multiple Dispatch
+description: An advanced mathematical feature of dynamic polymorphism where the specific method implementation invoked is determined at runtime based on the runtime types of multiple arguments, rather than just the type of the receiver object.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Multiple dispatch">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Multiple Dispatch"
+  subtitle="Multi-Variable Runtime Polymorphism"
+  tags={['OOP', 'Polymorphism', 'Julia', 'Advanced']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In standard Object-Oriented languages (Java, C++), dynamic polymorphism relies on **Single Dispatch**.
+When you call `spaceship.collideWith(asteroid)`, the CPU mathematically looks at the runtime type of `spaceship` to determine which method to execute. It completely ignores the runtime type of the `asteroid` argument until the method has already started running.
 
-</ConceptTemplate>
+## 1. The Collision Problem
+If you have a video game with `Spaceship`, `Asteroid`, and `Laser` objects, handling collisions via Single Dispatch requires massive, ugly `if (obj instanceof Asteroid)` chains inside the method, mathematically ruining the polymorphism.
+
+## 2. The Multiple Dispatch Solution
+Languages like Julia or Common Lisp support **Multiple Dispatch**.
+When a developer calls `collide(objectA, objectB)`, the compiler and runtime mathematically analyze the exact runtime types of *both* arguments simultaneously.
+```julia
+collide(a::Spaceship, b::Asteroid) = println("Ship destroyed!")
+collide(a::Laser, b::Asteroid) = println("Asteroid destroyed!")
+collide(a::Spaceship, b::Laser) = println("Shields depleted!")
+```
+The CPU mathematically routes the execution to the exact specific function signature based on the combination of all arguments, completely eliminating complex `if/else` type-checking trees and creating mathematically elegant physics engines.
+

@@ -4,9 +4,16 @@ description: The hierarchical, decentralized phonebook of the internet that tran
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="DNS (Domain Name System)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DNS (Domain Name System)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Computers only understand IP addresses (like `142.250.190.46`), but humans cannot memorize billions of random numbers. We remember names (like `google.com`). 
+Computers only understand IP addresses (like `142.250.190.46`), but humans cannot memorize billions of random numbers. We remember names (like `google.com`).
 **DNS** is the globally distributed database that bridges this gap, translating domain names into routing IP addresses in milliseconds.
 
 ## 1. The Resolution Process (How a lookup works)
@@ -27,8 +34,13 @@ When configuring a domain, administrators set up specific records to route diffe
 - **MX Record (Mail Exchange)**: Tells the internet which server handles email for the domain.
 - **TXT Record**: A text string used for verification, heavily used by SPF, DKIM, and DMARC to prevent email spoofing.
 
+
 <Callout icon="tip" title="Time to Live (TTL)">
+
+
   Every DNS record has a **TTL** (e.g., 3600 seconds). This tells the Recursive Resolver how long it is allowed to cache the IP address before it must delete it and ask the Authoritative Server again. If you are migrating servers, you must lower your TTL to 60 seconds days in advance, otherwise, users' browsers will aggressively cache the old IP and fail to connect to your new server.
+
+
 </Callout>
 
-</ConceptTemplate>
+

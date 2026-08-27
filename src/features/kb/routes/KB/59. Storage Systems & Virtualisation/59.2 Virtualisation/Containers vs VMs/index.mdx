@@ -4,11 +4,17 @@ description: The architectural differences between hardware-level virtualization
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Containers vs VMs">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Containers vs VMs">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 They achieve similar biological isolation, but their mathematical architectures are opposites.
 
 - **Virtual Machines**: Emulate the *Hardware*. Every single VM requires its own massive, complete Guest Operating System (Kernel + Drivers). Booting a VM takes biological minutes, and it consumes gigabytes of RAM just for the idle OS.
 - **Containers (Docker)**: Emulate the *Operating System*. Containers mathematically share the single Host OS Kernel. They don't boot an OS; they just start a process. Booting a container takes biological milliseconds, and it consumes exactly the RAM the application needs, making them mathematically 100x more efficient.
 
-</ConceptTemplate>

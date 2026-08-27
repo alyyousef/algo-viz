@@ -1,0 +1,23 @@
+---
+title: PlanetScale
+description: A mathematically advanced, serverless MySQL platform built on the open-source Vitess framework, designed to scale relationally to millions of queries per second through transparent horizontal sharding.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="PlanetScale"
+  subtitle="Serverless Vitess MySQL"
+  tags={['Cloud', 'Database', 'MySQL', 'Serverless']}
+>
+
+MySQL is mathematically designed to run on a single server (vertical scaling). If your database exceeds the capacity of the largest server available, you hit a hard mathematical wall. PlanetScale solves this using **Vitess** (the technology originally built by YouTube to scale MySQL).
+
+## 1. Transparent Horizontal Sharding
+PlanetScale does not force you to rewrite your application logic to handle database sharding.
+The application connects to PlanetScale believing it is talking to a standard, single MySQL database. Behind the scenes, PlanetScale mathematically chops the massive tables into "Shards" and distributes them across hundreds of physical servers. The Vitess routing engine intercepts the incoming SQL query, mathematically determines which physical shard holds the required rows, executes the query, and aggregates the results, completely invisibly to the developer.
+
+## 2. Non-Blocking Schema Changes
+In standard MySQL, altering a table with 10 billion rows (e.g., `ALTER TABLE ADD COLUMN`) physically locks the table. The application goes down for hours while the math computes.
+PlanetScale eliminates this with **Non-Blocking Schema Changes**. It creates a mathematical shadow copy of the table, applies the new column, and uses a VReplication stream to sync the live data in the background. Once the shadow table is perfectly synchronized, it executes an atomic mathematical swap in milliseconds. The database never locks, and the application never experiences downtime.
+
+</TechnologyTemplate>

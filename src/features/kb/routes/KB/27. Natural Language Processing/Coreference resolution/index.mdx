@@ -1,8 +1,28 @@
+---
+title: Coreference Resolution
+description: The highly complex NLP task of mathematically determining which pronouns and noun phrases refer to the exact same physical entity in the real world.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Coreference resolution">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Coreference Resolution">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When humans read "John went to the store because he needed milk," we instantly know "he" refers to "John." For a computer, "he" is just a two-letter string completely mathematically decoupled from "John."
 
-</ConceptTemplate>
+## 1. The Clustering Problem
+Coreference Resolution is mathematically treated as a clustering problem.
+The algorithm scans a document and extracts every single Entity (Names, Pronouns, Noun Phrases like "The President"). It must then mathematically calculate the probability that Entity A and Entity B point to the same physical object in reality, grouping them into a single mathematical cluster.
+
+## 2. The Winograd Schema
+This is incredibly difficult because it requires mathematically modeling physical reality, not just grammar.
+Consider the Winograd Schema:
+"The city councilmen refused the demonstrators a permit because **they** feared violence." (They = Councilmen).
+"The city councilmen refused the demonstrators a permit because **they** advocated violence." (They = Demonstrators).
+Grammatically, both sentences are mathematically identical. To resolve the coreference, the Neural Network must possess a mathematical understanding of human psychology (councilmen fear violence; demonstrators advocate it). Standard statistical NLP fails here; it requires massive, context-aware Transformer models.
+

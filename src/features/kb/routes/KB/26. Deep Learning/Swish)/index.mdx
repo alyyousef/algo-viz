@@ -4,7 +4,14 @@ description: A smooth, non-monotonic activation function discovered by Google's 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Swish Activation Function">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Swish Activation Function">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 For years, ReLU was the undisputed king of activation functions. In 2017, Google unleashed an automated AI (Neural Architecture Search) to mathematically test millions of mathematical functions to see if any could beat ReLU. The AI discovered **Swish**.
 
@@ -12,15 +19,14 @@ For years, ReLU was the undisputed king of activation functions. In 2017, Google
 $Swish(x) = x cdot 	ext{Sigmoid}(x)$
 $f(x) = rac{x}{1 + e^{-x}}$
 
-It mathematically multiplies the input by the Sigmoid of the input. 
+It mathematically multiplies the input by the Sigmoid of the input.
 Like ReLU, if $x$ is highly positive, Swish lets it pass unharmed. Like ReLU, if $x$ is highly negative, Swish crushes it to zero.
 
 ## 2. The Non-Monotonic Dip
-The mathematical magic of Swish happens slightly below zero. 
-Unlike ReLU (which harshly cuts off at exactly 0), Swish produces a smooth, continuous curve that actually mathematically dips *slightly below zero* before rising again. 
+The mathematical magic of Swish happens slightly below zero.
+Unlike ReLU (which harshly cuts off at exactly 0), Swish produces a smooth, continuous curve that actually mathematically dips *slightly below zero* before rising again.
 This is mathematically known as being **Non-Monotonic** (the function goes down before it goes up). This slight negative dip provides a critical, non-zero gradient that mathematically prevents neurons from permanently dying, while retaining small negative inputs that might hold valuable context.
 
 ## 3. Production Use
 Swish mathematically outperforms ReLU by roughly 1-2% on massive Computer Vision benchmarks (like ImageNet). However, because computing a Sigmoid is mathematically more expensive than a simple $max(0, x)$ operation, Swish is strictly reserved for ultra-deep, state-of-the-art architectures (like EfficientNet) where the accuracy boost outweighs the slight compute penalty.
 
-</ConceptTemplate>

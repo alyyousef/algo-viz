@@ -5,7 +5,7 @@ description: "A proprietary graphical operating system developed and marketed by
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate 
+<TechnologyTemplate
   name="macOS"
   icon="apple"
   creator="Apple"
@@ -19,16 +19,22 @@ Because macOS is fundamentally UNIX, it became the darling of software developer
 
 ## The Walled Garden and Hardware Integration
 
-Unlike Windows, which must support billions of different hardware combinations (resulting in driver conflicts and blue screens), macOS only runs on hardware designed by Apple. 
+Unlike Windows, which must support billions of different hardware combinations (resulting in driver conflicts and blue screens), macOS only runs on hardware designed by Apple.
 
-This tight integration allows macOS to achieve incredible battery life, perfectly calibrated trackpads, and features like "Handoff" (where you can copy text on an iPhone and paste it on a Mac). 
+This tight integration allows macOS to achieve incredible battery life, perfectly calibrated trackpads, and features like "Handoff" (where you can copy text on an iPhone and paste it on a Mac).
 
 ## Core Technologies
 - **Cocoa**: The native object-oriented API for macOS applications (historically written in Objective-C, now Swift).
 - **Metal**: Apple's proprietary graphics API (their competitor to DirectX and Vulkan). By forcing developers to use Metal instead of cross-platform standards like OpenGL, Apple achieves better performance but alienates many game developers.
 
+
 <Callout icon="warning" title="The Death of 32-bit">
+
+
 In macOS Catalina (2019), Apple ruthlessly dropped all support for 32-bit applications. If you had an old 32-bit game or utility, it permanently stopped working. This aggressive forward-momentum keeps macOS lean and secure, but severely punishes users relying on unmaintained legacy software.
+
+
 </Callout>
+
 
 </TechnologyTemplate>

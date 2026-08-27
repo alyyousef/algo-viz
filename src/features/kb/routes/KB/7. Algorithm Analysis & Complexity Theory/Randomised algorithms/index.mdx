@@ -1,8 +1,33 @@
+---
+title: Randomised Algorithms
+description: "A mathematical strategy that intentionally introduces randomness (coin flips) into the logic of an algorithm to achieve vastly superior average-case time complexity or to bypass mathematical worst-cases."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Randomised algorithms">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Randomised Algorithms"
+  subtitle="The Power of Coin Flips"
+  tags={['Algorithms', 'Mathematics', 'Complexity', 'Probability']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+A traditional (Deterministic) algorithm will do the exact same thing every single time you run it on the same input. A **Randomised Algorithm** mathematically rolls dice during execution. Counterintuitively, this intentional chaos often results in vastly faster and more secure algorithms.
 
-</ConceptTemplate>
+## 1. Las Vegas Algorithms
+These algorithms always produce the **mathematically perfect, 100% correct answer**, but their *runtime* depends on randomness.
+- **Example: Randomized Quicksort**. A malicious user could intentionally feed Quicksort a specifically crafted array to trigger its catastrophic $O(N^2)$ worst-case. To defeat this, Randomized Quicksort mathematically chooses a completely random element as the pivot. The math proves that the probability of a user forcing the worst-case drops to virtually zero, guaranteeing a lightning-fast $O(N \log N)$ average runtime.
+
+## 2. Monte Carlo Algorithms
+These algorithms have a strictly guaranteed, fast runtime, but the **answer might mathematically be wrong** (with a small, calculable probability).
+- **Example: Miller-Rabin Primality Test**. If you want to know if a 2048-bit number is prime, deterministic math is too slow. Miller-Rabin uses random numbers to test primality. If it says "Composite," it is 100% correct. If it says "Prime," there is a $1/4$ chance it is wrong.
+- **The Magic of Iteration**: If you run Miller-Rabin 40 times, the probability that it lied to you 40 times in a row is $(1/4)^{40}$. This probability is mathematically smaller than the chance of a cosmic ray flipping a bit in your CPU. It is "practically" perfect, and runs infinitely faster than a deterministic algorithm.
+
+## 3. The Philosophy
+Randomness allows algorithms to mathematically "break symmetry" and escape worst-case traps. It is heavily utilized in Cryptography, load balancing, and Machine Learning (e.g., Random Forests, Stochastic Gradient Descent).
+

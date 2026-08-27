@@ -4,10 +4,16 @@ description: A widely used method for numerically solving differential equations
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Finite Element Method (FEM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Finite Element Method (FEM)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 If you biologically crash a virtual car into a wall, how do you mathematically know if the steel bumper will snap or bend?
 
 The **Finite Element Method** breaks the biological 3D CAD model of the car into a mesh of millions of tiny, mathematical "finite elements". If the car hits the wall, the computer calculates the exact stress and strain on the first tiny piece of steel. That piece then mathematically transfers its force to its 3 neighbors, which transfer to their neighbors, creating a massive wave of linear algebra that mathematically proves exactly where the car's chassis will fail.
 
-</ConceptTemplate>

@@ -1,8 +1,24 @@
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+---
+title: Docker Engine
+description: The industry-defining, client-server application that pioneered the container revolution, providing a comprehensive toolkit for building, shipping, and mathematically isolating software applications.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
 
-<ConceptTemplate title="Docker Engine">
+<TechnologyTemplate
+  title="Docker Engine"
+  subtitle="The Pioneer of Containerization"
+  tags={['Containers', 'Docker', 'Architecture', 'DevOps']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Before Docker (released in 2013), utilizing Linux cgroups and namespaces required extreme, mathematical kernel expertise. Docker democratized this technology by wrapping complex kernel APIs in a simple, developer-friendly interface.
 
-</ConceptTemplate>
+## 1. The Client-Server Architecture
+The Docker Engine is mathematically split into two main components:
+1. **The Docker Daemon (dockerd)**: A heavy background process running as root that physically creates containers, manages networking, and handles storage volumes.
+2. **The Docker CLI (docker)**: The terminal client that developers use (e.g., `docker run ubuntu`). The CLI mathematically translates human commands into REST API calls, transmitting them to the local (or remote) Daemon.
+
+## 2. The Dockerfile
+Docker's greatest mathematical invention is the **Dockerfile**.
+By allowing developers to define a server environment declaratively in a text file, Docker mathematically guaranteed that code would run identically across all machines. A developer runs `docker build`, the Daemon mathematically calculates the caching hashes for each layer, and outputs an immutable OCI image that can be shipped to production.
+
+</TechnologyTemplate>

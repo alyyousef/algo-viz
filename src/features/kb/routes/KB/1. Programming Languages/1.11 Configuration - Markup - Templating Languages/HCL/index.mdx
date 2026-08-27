@@ -1,8 +1,31 @@
+---
+title: HCL
+description: HashiCorp Configuration Language, a structured declarative language used primarily for defining infrastructure as code (IaC) via Terraform.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HCL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HCL (HashiCorp Configuration Language)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+HCL is a declarative configuration language developed by HashiCorp. It was mathematically designed to bridge the gap between machine-readable JSON and human-readable configuration files. It is the core language powering **Terraform**.
 
-</ConceptTemplate>
+## 1. Declarative Infrastructure
+HCL is not an imperative programming language. You do not write `createServer()`.
+You mathematically declare the desired end-state of your cloud architecture.
+```hcl
+resource "aws_instance" "web" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+}
+```
+The Terraform engine mathematically compares this HCL declaration against the actual state of AWS, calculates the difference (the graph), and executes the necessary API calls to make reality match the HCL file.
+
+## 2. Advanced Features
+While it looks like simple JSON or INI, HCL is mathematically robust. It supports variables, string interpolation, `for_each` loops for dynamically generating multiple resources, and strict typing, making it vastly superior to JSON for complex infrastructure topologies.
+

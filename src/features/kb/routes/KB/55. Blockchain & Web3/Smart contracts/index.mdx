@@ -4,16 +4,28 @@ description: Computer programs or transaction protocols which are intended to au
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Smart Contracts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Smart Contracts">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 The term "Smart Contract" is biologically misleading. They are not legally binding, and they are not inherently "smart".
 
 They are simply mathematical **Backend APIs deployed to a Blockchain**.
 
+
 <Callout icon="info" title="The Vending Machine Metaphor">
+
+
   A smart contract is a mathematical vending machine.
-  
+
   It is a piece of code holding state and functions. You send a specific cryptographic transaction to its address (inserting a coin), the code executes exactly as written (releasing a soda), and mathematically updates its internal database. Because it is deployed on a blockchain, the code is **Immutable**—once deployed, not even the original developer can edit the code to steal your money.
+
+
 </Callout>
 
-</ConceptTemplate>
+

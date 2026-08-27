@@ -4,7 +4,14 @@ description: The highly specialized mathematical libraries used to render comple
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Data Visualization & 3D">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Data Visualization & 3D">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 When standard HTML divs are mathematically insufficient to represent massive datasets or complex geometries, we shift to the Canvas API, SVGs, and WebGL.
 
@@ -22,7 +29,7 @@ To solve the D3 conflict, developers created high-level wrappers.
 ## 3. Three.js (The WebGL Wrapper)
 Writing raw WebGL (Web Graphics Library) to render a 3D cube in the browser requires hundreds of lines of horrifyingly complex C-style GLSL shader code and heavy matrix multiplication math.
 
-**Three.js** is a massive Javascript abstraction layer over WebGL. It provides human-readable APIs for Cameras, Lighting, Geometries, and Materials. 
+**Three.js** is a massive Javascript abstraction layer over WebGL. It provides human-readable APIs for Cameras, Lighting, Geometries, and Materials.
 In the React ecosystem, this is dominated by **React Three Fiber (R3F)**, which brilliantly maps Three.js instances directly to React Components, allowing you to render a 3D spinning box using declarative JSX:
 
 ```tsx
@@ -35,4 +42,3 @@ In the React ecosystem, this is dominated by **React Three Fiber (R3F)**, which 
 </Canvas>
 ```
 
-</ConceptTemplate>

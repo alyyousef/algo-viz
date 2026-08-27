@@ -1,8 +1,31 @@
+---
+title: JCL
+description: Job Control Language, the highly structured scripting language used by IBM mainframes to mathematically instruct the operating system how to run batch jobs.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="JCL">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="JCL (Job Control Language)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+JCL is the scripting language used on IBM mainframe operating systems (like z/OS). While a COBOL program contains the mathematical business logic (e.g., "calculate payroll"), JCL contains the mathematical instructions for the operating system (e.g., "allocate 50 gigabytes of tape drive storage, load this COBOL program, run it, and print the output to this printer").
 
-</ConceptTemplate>
+## 1. Batch Processing
+Mainframes are mathematically optimized for massive, high-throughput batch processing, not interactive typing.
+A bank does not manually run payroll for a million customers one by one. They submit a "Job" to the mainframe using JCL. The JCL script mathematically defines every single physical and virtual resource the job will need *before* it runs. The operating system (JES2/JES3) mathematically reads all the submitted JCLs, schedules them based on resource availability, and executes them in the middle of the night.
+
+## 2. The Positional Syntax
+Because JCL was designed for 80-column punch cards in the 1960s, its syntax is incredibly rigid and notoriously difficult to read.
+```jcl
+//PAYROLL JOB (ACCT), 'PAY RUN', CLASS=A, MSGCLASS=X
+//STEP1   EXEC PGM=CALCPAY
+//INPUT   DD DSN=BANK.DATA.IN, DISP=SHR
+//OUTPUT  DD DSN=BANK.DATA.OUT, DISP=(NEW,CATLG,DELETE)
+```
+The `DD` (Data Definition) statement is the most critical mathematical concept in JCL. It mathematically binds a physical dataset (a file on a hard drive) to a logical variable expected by the COBOL program, completely decoupling the software logic from the physical hardware storage.
+

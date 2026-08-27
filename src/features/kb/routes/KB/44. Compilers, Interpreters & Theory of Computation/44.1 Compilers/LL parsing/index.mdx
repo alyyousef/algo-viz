@@ -4,7 +4,14 @@ description: A top-down parser for a subset of context-free grammars that parses
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="LL Parsing (Top-Down)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LL Parsing (Top-Down)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In compiler theory, **LL** stands for:
 - **L:** Read the tokens from **L**eft to right.
@@ -12,9 +19,15 @@ In compiler theory, **LL** stands for:
 
 LL Parsers (which include Recursive Descent) are mathematically considered **Top-Down Parsers**. They start at the very top of the AST (the root "Program" node) and mathematically guess which child nodes to build as they read tokens.
 
+
 <Callout icon="warning" title="The Left-Recursion Problem">
+
+
   LL Parsers have a severe mathematical flaw: they cannot handle "Left-Recursive" grammars. If a rule says `Expression -> Expression + Number`, an LL parser will see "Expression", recursively call `parseExpression()`, which sees "Expression", and recursively calls `parseExpression()`, resulting in an instant infinite mathematical loop (Stack Overflow).
+
+
 </Callout>
+
 
 ## LL(k) Lookahead
 
@@ -23,4 +36,3 @@ Because an LL parser mathematically guesses what node to build *before* reading 
 - **LL(1):** The parser only needs to look at the next 1 token to know exactly what grammatical rule applies. This is the mathematically fastest parser.
 - **LL(k):** The parser mathematically requires looking `k` tokens ahead.
 
-</ConceptTemplate>

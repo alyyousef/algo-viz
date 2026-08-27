@@ -5,10 +5,17 @@ description: "A computer program that exposes an operating system's services to 
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Shell"
   icon="terminal"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In computing, a **Shell** is the outermost layer of an operating system. It is the interface that surrounds the OS Kernel (the core). The Kernel talks to the hardware, and the Shell talks to the Kernel on your behalf.
 
@@ -26,8 +33,13 @@ People often confuse these two terms:
 
 Shells maintain a state of variables that modify how programs behave. The most famous is the `$PATH` variable. When you type `node`, the Shell looks through every directory listed in the `$PATH` variable until it finds the `node` binary executable.
 
+
 <Callout icon="tip" title="POSIX Compliance">
+
+
 POSIX (Portable Operating System Interface) is a standard to maintain compatibility between operating systems. A "POSIX-compliant shell" (like `sh` or Bash) guarantees that standard scripts will run the same way across any UNIX-like system.
+
+
 </Callout>
 
-</ConceptTemplate>
+

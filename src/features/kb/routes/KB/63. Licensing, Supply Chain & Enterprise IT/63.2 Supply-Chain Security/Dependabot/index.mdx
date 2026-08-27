@@ -4,10 +4,16 @@ description: A tool built into GitHub that automatically checks your dependency 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Dependabot">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dependabot">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 As discussed in the GitHub section, **Dependabot** is the biological manifestation of SCA and CVE tracking.
 
 It mathematically monitors your `package.json`. The millisecond a new CVE is published to the global database, Dependabot biologically calculates if your project is affected. If it is, it automatically mathematically writes the code to upgrade the package and opens a Pull Request.
 
-</ConceptTemplate>

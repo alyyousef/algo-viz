@@ -4,7 +4,14 @@ description: The structural foundation of the modern web, providing the core mar
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="HTML5 Architecture">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="HTML5 Architecture">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **HTML (HyperText Markup Language)** is the structural bedrock of the internet. It is not a programming language; it is a declarative markup language that tells the browser how to structure content into a **DOM Tree**.
 
@@ -35,4 +42,3 @@ Every valid HTML5 document strictly requires the following boilerplate:
 
 - `<!DOCTYPE html>`: This is not an HTML tag. It is a historical artifact that explicitly tells the browser rendering engine to run in "Standards Mode", preventing it from intentionally rendering the page incorrectly (Quirks Mode) to support IE6 from 2001.
 
-</ConceptTemplate>

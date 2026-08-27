@@ -1,0 +1,23 @@
+---
+title: Azure Key Vault
+description: Microsoft's centralized, mathematically secure cloud service for safely storing, strictly controlling, and cryptographically managing API keys, database passwords, and TLS certificates.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Key Vault"
+  subtitle="The Cryptographic Credential Store"
+  tags={['Azure', 'Security', 'Encryption', 'Secrets']}
+>
+
+If a developer accidentally commits a database connection string to a public GitHub repository, a hacker can compromise the corporate database in seconds. Key Vault mathematically prevents this by completely removing credentials from the application code.
+
+## 1. Hardware Security Modules (HSMs)
+When you store a highly sensitive cryptographic key in Key Vault (e.g., the Master Key for encrypting a database), Azure does not store it on a standard hard drive.
+The key is physically injected into a **FIPS 140-2 Level 2 validated Hardware Security Module (HSM)**. These are tamper-proof physical appliances. When an application needs to decrypt data, it does not download the key. It sends the encrypted data to the Key Vault API. The physical HSM mathematically decrypts the data internally and returns the plaintext, guaranteeing the raw key never physically leaves the silicon.
+
+## 2. Certificate Auto-Rotation
+Managing HTTPS (TLS) certificates is notoriously error-prone; if a cert expires, the website goes offline.
+Key Vault integrates natively with Certificate Authorities (like DigiCert). You can configure a mathematical rule: *"When this certificate is 30 days away from expiring, automatically request a new one."* Key Vault generates a new private key, requests the new certificate, and mathematically pushes it out to your Azure App Services and Application Gateways, providing true zero-touch, zero-downtime certificate rotation.
+
+</TechnologyTemplate>

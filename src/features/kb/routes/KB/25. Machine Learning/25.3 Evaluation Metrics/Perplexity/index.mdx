@@ -4,9 +4,16 @@ description: The foundational mathematical metric for evaluating Large Language 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Perplexity">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Perplexity">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-When training a Large Language Model (LLM) like GPT-4, you cannot use Accuracy. The English language has 100,000 words. If the model predicts the next word is "beautiful", but the actual word was "stunning", standard Accuracy says the model was 0% correct. 
+When training a Large Language Model (LLM) like GPT-4, you cannot use Accuracy. The English language has 100,000 words. If the model predicts the next word is "beautiful", but the actual word was "stunning", standard Accuracy says the model was 0% correct.
 Instead, LLMs are evaluated using **Perplexity**, a mathematical concept derived from Information Theory.
 
 ## 1. The Mathematical Definition
@@ -27,7 +34,6 @@ If a model has a Perplexity of **10**, it means that, on average, when the model
 The lower the Perplexity, the less "perplexed" (surprised) the model is by human language, meaning it has successfully mathematically modeled the underlying grammar of reality.
 
 ## 3. The Flaw (Overfitting to Formatting)
-Perplexity strictly measures how well the model predicts the *exact* sequence of characters in the test set. 
+Perplexity strictly measures how well the model predicts the *exact* sequence of characters in the test set.
 If the test set consists entirely of Shakespeare, and you feed it modern, perfectly fluent English, the Perplexity will mathematically spike to catastrophic levels, simply because the model is surprised by the lack of "Thee" and "Thou". It measures statistical probability, not actual linguistic quality or truthfulness.
 
-</ConceptTemplate>

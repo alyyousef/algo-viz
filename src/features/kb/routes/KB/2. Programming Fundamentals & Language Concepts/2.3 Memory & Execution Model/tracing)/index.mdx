@@ -1,8 +1,27 @@
+---
+title: Tracing Garbage Collection
+description: An automated memory management strategy that mathematically traverses the entire graph of objects in memory to find and delete unreferenced data.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="tracing)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Tracing Garbage Collection">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Tracing Garbage Collection is the primary memory management model used by the JVM (Java), V8 (JavaScript), and the CLR (C#). It completely decouples memory management from the developer's code.
 
-</ConceptTemplate>
+## 1. The Mark-and-Sweep Algorithm
+The foundational mathematical algorithm for a Tracing GC is Mark-and-Sweep.
+1. **The Roots**: The GC identifies the "Roots" (all active variables on the CPU Stack, and all Global static variables).
+2. **Mark Phase**: The GC mathematically traverses every pointer originating from the Roots, walking the massive graph of objects in the Heap. Every object it physically reaches is "Marked" as Alive.
+3. **Sweep Phase**: The GC scans the entire Heap linearly. Any object that was *not* marked during the traversal is mathematically proven to be unreachable by the program. The GC deletes it and returns the RAM to the OS.
+
+## 2. Stop-The-World Pauses
+Because the program is constantly creating and deleting pointers, the GC cannot accurately trace the graph while the program is running.
+To mathematically guarantee it doesn't accidentally delete an object that is currently in use, the GC issues a **Stop-The-World (STW)** command. It physically suspends every single CPU thread running your application. It performs the Mark-and-Sweep, and then resumes the threads. If the Heap is massive (e.g., 50 Gigabytes), this STW pause can last for several seconds, causing massive latency spikes in real-time applications (like video games or trading platforms).
+

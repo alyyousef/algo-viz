@@ -1,0 +1,29 @@
+---
+title: Azure Load Balancer
+description: A high-performance, ultra-low latency Layer 4 load balancer that mathematically distributes incoming TCP and UDP network traffic across a cluster of backend virtual machines.
+---
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+
+<TechnologyTemplate
+  title="Azure Load Balancer"
+  subtitle="Layer 4 Network Routing"
+  tags={['Azure', 'Networking', 'TCP', 'Routing']}
+>
+
+While Azure Application Gateway operates at Layer 7 (HTTP) and understands URLs, Azure Load Balancer operates purely at **Layer 4 (TCP/UDP)**. It does not know what an HTTP request is; it only understands raw IP addresses and ports, making it mathematically blisteringly fast.
+
+## 1. The Hash-Based Distribution Algorithm
+When a packet hits the Azure Load Balancer, it must decide which backend Virtual Machine to send it to.
+It uses a **5-tuple mathematical hash** by default:
+1. Source IP
+2. Source Port
+3. Destination IP
+4. Destination Port
+5. Protocol (TCP/UDP)
+The load balancer runs this hash equation instantly in hardware. The mathematical result guarantees that all packets belonging to a specific user's TCP connection will be strictly routed to the exact same backend server for the duration of the session, preventing broken TCP handshakes.
+
+## 2. Internal vs. Public
+- **Public Load Balancer**: Maps a Public IP address to a pool of backend servers (e.g., routing internet traffic to your web servers).
+- **Internal Load Balancer**: Maps a Private IP address to a pool of servers (e.g., routing your web servers' internal traffic to a highly available cluster of database servers). Internal Load Balancers are mathematically isolated from the internet, guaranteeing absolute backend security.
+
+</TechnologyTemplate>

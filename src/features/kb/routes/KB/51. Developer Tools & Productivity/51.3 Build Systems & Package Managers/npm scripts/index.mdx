@@ -4,13 +4,23 @@ description: Scripts defined in the package.json file to automate development ta
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="npm scripts">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="npm scripts">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-Before modern JS development, engineers used complex task runners like Gulp or Grunt to compile SCSS, minify JavaScript, and start servers. 
+Before modern JS development, engineers used complex task runners like Gulp or Grunt to compile SCSS, minify JavaScript, and start servers.
 
 Today, the industry mathematically relies entirely on **npm scripts** embedded directly in the `package.json`.
 
+
 <Callout icon="info" title="The Abstraction Layer">
+
+
   ```json
   "scripts": {
     "dev": "vite",
@@ -18,10 +28,12 @@ Today, the industry mathematically relies entirely on **npm scripts** embedded d
     "test": "jest"
   }
   ```
-  
-  Instead of telling a new developer to "Install Vite globally, run the TypeScript compiler, and then execute Vite's build command", you just tell them to run `npm run build`. 
-  
+
+  Instead of telling a new developer to "Install Vite globally, run the TypeScript compiler, and then execute Vite's build command", you just tell them to run `npm run build`.
+
   npm mathematically abstracts the underlying CLI tools, ensuring that the project uses the exact localized versions of Vite and TypeScript installed in `node_modules/.bin`, preventing global version conflicts.
+
+
 </Callout>
 
-</ConceptTemplate>
+

@@ -1,8 +1,33 @@
+---
+title: TCP vs UDP
+description: "A mathematical breakdown of the Transport Layer, comparing the guaranteed, ordered delivery of TCP with the blisteringly fast, unreliable spray of UDP packets."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="TCP vs UDP">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="TCP vs UDP"
+  subtitle="The Backbone of the Internet"
+  tags={['Comparison', 'Networking', 'Architecture', 'Systems']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+When data is sent across the internet, the IP (Internet Protocol) routes it to the correct computer. The Transport Layer (TCP or UDP) dictates exactly *how* that data is mathematically delivered to the application.
 
-</ConceptTemplate>
+## 1. TCP (Transmission Control Protocol)
+- **Architecture**: **Connection-Oriented and Reliable**.
+- **Mechanism**: It performs a mathematical "3-Way Handshake" (SYN, SYN-ACK, ACK) to establish a connection. It numbers every single packet. If a router drops packet #4, the receiving computer mathematically detects the gap and demands a retransmission. It guarantees that data arrives perfectly in order.
+- **Use Case**: HTTP/HTTPS, SSH, Email, File Transfers. If you are downloading a bank statement, losing a single byte mathematically corrupts the entire PDF.
+- **Tradeoff**: The mathematical overhead of handshakes, acknowledgments, and retransmissions makes TCP relatively slow.
+
+## 2. UDP (User Datagram Protocol)
+- **Architecture**: **Connectionless and Unreliable**.
+- **Mechanism**: It literally just blasts packets into the void. There is no handshake. There is no sequence numbering. If a packet is dropped, UDP mathematically does not care and will never re-send it.
+- **Use Case**: Live Video Streaming (Twitch, Zoom), Multiplayer Gaming (Call of Duty). If you drop a frame of video in a live call, you don't want the network to pause the entire call to go fetch the old frame; you want to immediately see the *next* frame.
+- **Tradeoff**: Zero mathematical guarantees, but blisteringly low latency.
+

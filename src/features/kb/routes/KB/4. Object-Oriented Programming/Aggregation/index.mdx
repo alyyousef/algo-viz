@@ -1,8 +1,39 @@
+---
+title: Aggregation
+description: A specific "has-a" relationship in Object-Oriented Programming representing a weak mathematical association where the child object can exist completely independently of the parent object's lifecycle.
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Aggregation">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Aggregation"
+  subtitle="Independent Mathematical Association"
+  tags={['OOP', 'UML', 'Design Patterns', 'Architecture']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In Object-Oriented Design, a `University` class *has a* `Professor` class. But the mathematical lifecycle of these two objects is loosely coupled.
 
-</ConceptTemplate>
+## 1. The "Has-A" Relationship
+Aggregation models a relationship where one class is a collection or container of other classes, but it does not mathematically own them.
+```java
+public class Department {
+    // The Department aggregates Professors
+    private List<Professor> professors;
+
+    public Department(List<Professor> profs) {
+        this.professors = profs;
+    }
+}
+```
+The `Department` object holds a list of `Professor` objects, but it did not create them.
+
+## 2. Independent Lifecycles
+The defining mathematical characteristic of Aggregation is the lifecycle independence.
+If the university goes bankrupt and the `Department` object is mathematically destroyed (garbage collected) by the system, the `Professor` objects **do not die**. They still exist in memory and can be assigned to a different `Department` or a different `University` entirely. They are aggregated, not owned.
+

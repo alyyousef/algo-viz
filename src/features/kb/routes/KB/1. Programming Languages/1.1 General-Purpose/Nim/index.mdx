@@ -5,10 +5,17 @@ description: "A statically typed, compiled systems programming language combinin
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<ConceptTemplate 
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
   name="Nim"
   icon="cpu"
 >
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 **Nim** is a highly expressive, statically typed compiled programming language. It aims to offer the performance of C, the expressiveness of Python, and the extensibility of Lisp.
 
@@ -35,4 +42,3 @@ greet("World")
 "Nimlang".greet()
 ```
 
-</ConceptTemplate>

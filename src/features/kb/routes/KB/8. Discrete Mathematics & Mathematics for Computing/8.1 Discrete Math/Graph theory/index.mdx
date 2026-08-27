@@ -1,8 +1,35 @@
+---
+title: Graph Theory
+description: "The mathematical study of networks, defining structures as collections of Vertices connected by Edges, serving as the absolute foundation for internet routing, social networks, and modern databases."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Graph theory">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate
+  title="Graph Theory"
+  subtitle="The Mathematics of Networks"
+  tags={['Mathematics', 'Discrete Math', 'Graphs', 'Theory']}
+>
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+Graph Theory is the branch of discrete mathematics that models pairwise relationships between objects. Whenever you use Google Maps to find a route, or a database queries a relational join, it mathematically translates the problem into a Graph.
 
-</ConceptTemplate>
+## 1. The Mathematical Definition
+A Graph $G$ is formally defined as an ordered pair $G = (V, E)$.
+- **$V$ (Vertices/Nodes)**: The set of objects (e.g., Cities, IP Addresses, People).
+- **$E$ (Edges/Links)**: The set of connections between those objects.
+
+## 2. Types of Graphs
+- **Directed vs Undirected**: In an Undirected graph, if Node A is connected to B, B is connected to A (e.g., a Two-way street). In a Directed Graph (Digraph), the connection has a strict direction (e.g., a One-way street, or Twitter followers).
+- **Weighted vs Unweighted**: In a Weighted graph, every edge has a numerical cost (e.g., the distance in miles between two cities). Unweighted graphs treat all connections equally.
+- **Cyclic vs Acyclic**: A Cycle exists if you can start at Node A, follow a path of edges, and mathematically return to Node A. A Directed Acyclic Graph (DAG) explicitly forbids this, which is why git commit histories and blockchain ledgers must mathematically be DAGs.
+
+## 3. The Seven Bridges of Königsberg
+Graph theory was invented by Leonhard Euler in 1736 to solve a puzzle: *"Is it possible to walk through the city of Königsberg crossing its 7 bridges exactly once?"*
+Euler mathematically abstracted the landmasses into Vertices and the bridges into Edges. He proved that an "Eulerian Path" is mathematically impossible if more than two Vertices have an odd number of connecting Edges. By removing the geographical map and abstracting it to pure nodes and links, Euler birthed modern Topology and Computer Science.
+

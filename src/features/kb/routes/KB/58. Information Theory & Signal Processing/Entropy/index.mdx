@@ -4,14 +4,26 @@ description: The average level of "information", "surprise", or "uncertainty" in
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Entropy (Information Theory)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Entropy (Information Theory)">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
 In physics, Entropy is the measure of biological disorder in the universe. In computer science, **Information Entropy** is the measure of mathematical uncertainty.
 
+
 <Callout icon="success" title="The Coin Toss">
+
+
   If you have a perfectly fair coin, you have absolutely zero idea if the next toss will be Heads or Tails. The uncertainty is maximized. Mathematically, this system has an Entropy of exactly **1 Bit** per toss.
-  
+
   If you have a rigged coin with Heads on both sides, you are 100% certain the next toss will be Heads. The uncertainty is zero. This system has an Entropy of **0 Bits**. You do not biologically need to transmit the result of the rigged coin toss over the internet, because the receiver already knows the answer. This is the fundamental mathematical basis of data compression.
+
+
 </Callout>
 
-</ConceptTemplate>
+

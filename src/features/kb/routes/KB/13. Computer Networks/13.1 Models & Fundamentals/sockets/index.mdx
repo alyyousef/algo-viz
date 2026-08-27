@@ -4,16 +4,23 @@ description: The software programming interface (API) that allows applications t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-<ConceptTemplate title="Sockets">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Sockets">
+      {children}
+    
+  </ConceptTemplate>
+  )
+}
 
-We know that Layer 3 provides the IP address, and Layer 4 provides the Port. 
+We know that Layer 3 provides the IP address, and Layer 4 provides the Port.
 But how does a Python script actually tell the Operating System, *"Hey, I want to listen for incoming data on Port 8080"*?
 
 It uses a **Socket**.
 
 ## What is a Socket?
 
-A Socket is not a physical piece of hardware; it is a software abstraction provided by the Operating System Kernel. 
+A Socket is not a physical piece of hardware; it is a software abstraction provided by the Operating System Kernel.
 In Linux, "Everything is a File." A socket is literally a file descriptor. When a Python application wants to send a network packet, it doesn't write binary ones and zeros to the Ethernet card. It just calls `socket.write("Hello")`, and the OS handles all the insane complexity of encapsulating it into TCP, IP, and Ethernet frames.
 
 ## The Socket Tuple
@@ -25,8 +32,13 @@ A network connection is mathematically defined by a **5-Tuple**:
 4. **Destination IP Address**
 5. **Destination Port**
 
+
 <Callout icon="success" title="Multiplexing">
+
+
   A web server like Nginx listens on exactly one port (`80`). How can 10,000 different users load the website simultaneously without the traffic colliding? Because the OS tracks connections using the 5-Tuple. Even though all 10,000 users are hitting Destination Port 80, they all have completely different Source IPs and Source Ports, allowing the Kernel to spawn 10,000 unique, isolated Sockets in RAM simultaneously.
+
+
 </Callout>
 
-</ConceptTemplate>
+
