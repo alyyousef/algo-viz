@@ -1,25 +1,151 @@
 ---
 title: RPG
-description: Report Program Generator, a legacy language intimately tied to the IBM AS/400 (IBM i) architecture, still heavily used in manufacturing and retail.
+description: "Report Program Generator. The legendary, highly structured language created by IBM in 1959, which evolved to become the absolute backbone of the AS/400 (IBM i) midrange ecosystem."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="RPG (Report Program Generator)">
+    <ConceptTemplate title="RPG">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by IBM in 1959, RPG is the primary programming language for the legendary IBM AS/400 (now IBM i) midrange server architecture. It is heavily utilized in global manufacturing, warehousing, and retail (e.g., Costco).
+**RPG** (Report Program Generator) was created by IBM in 1959. 
 
-## 1. The Fixed-Format Cycle
-Historically, RPG was not a procedural language. It was a **Cycle-Driven** language based on physical punch cards.
-The RPG compiler mathematically enforced a rigid, implicit loop (The Cycle). The developer did not write a `while(read_file)` loop. They simply defined the input file, the output report, and the mathematical calculations to perform on each record. The operating system automatically fed the records into the program, calculated the totals, and printed the report.
+To understand RPG, you must understand its evolution. Originally, it was not a programming language; it was literally a tool to replicate the physical wiring of punch-card tabulating machines. You filled out specific physical forms (Input Form, Calculation Form, Output Form) to mathematically tell the machine how to read a punch-card, add two numbers, and print a paper report.
 
-## 2. RPG IV (ILE RPG)
-In 1994, IBM released RPG IV. It completely mathematically overhauled the language, moving away from the punch-card fixed format and introducing Free-Format coding.
-Modern Free-Format RPG looks very similar to C or Java. It supports Object-Oriented concepts, native SQL integration, and REST API calls. Despite its modern capabilities, millions of lines of the original, rigid, cycle-driven RPG code still mathematically execute daily in warehouses around the world, making it a critical legacy language.
+Over decades, RPG evolved dramatically (RPG II, RPG III, RPG/400, RPG IV/ILE, and finally Free-Format RPG). It became the primary programming language for the **IBM AS/400 (now IBM i)**, one of the most reliable and successful "midrange" business computers ever built. Today, RPG mathematically drives the inventory and logistics systems for massive retailers, casinos, and manufacturing plants worldwide.
 
+## 1. Deep Dive & Mechanics
+
+RPG is defined by **The Cycle** and **Fixed-Format Specifications**.
+
+Originally, RPG was built around "The Logic Cycle." The compiler mathematically generated a massive, hidden `while` loop into every program. The loop would automatically open a file, read a record, perform math, print a line, and loop until End-Of-File, without the programmer writing a single line of loop control code.
+
+To write RPG, you had to use **Fixed-Format Specifications**. Similar to COBOL, you had to type exact characters in exact columns.
+- `F-Specs`: File declarations (Databases/Screens).
+- `D-Specs`: Data declarations (Variables).
+- `C-Specs`: Calculation logic (The math).
+If you put a variable name in column 15 instead of 14, the program would mathematically crash.
+
+## 2. Mathematical / Theoretical Foundation
+
+The theoretical power of RPG relies on its integration with **DB2 for i**.
+
+In a modern web stack, the Database (PostgreSQL) and the Language (Python) are completely separate systems that talk over a network.
+In the IBM i (AS/400) ecosystem, the Database (DB2) is mathematically fused into the Operating System itself. RPG is perfectly native to this database. 
+
+An RPG program does not need SQL strings, drivers, or network connections to read data. RPG mathematically addresses the database tables natively via Record-Level Access (RLA) using commands like `CHAIN` or `READ`. The OS handles the physical memory mapping instantly, making RPG database reads mathematically faster than almost any modern web stack.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating the massive evolution of RPG. We will show the legacy Fixed-Format RPG (which looks like gibberish to modern developers) and the modern Free-Format RPG (which looks like modern C/JavaScript).
+
+**1. Legacy Fixed-Format RPG (RPG III / Early RPG IV)**
+```text
+     * 1. Comment line starts with an asterisk.
+     * This is Fixed-Format. The letter in column 6 dictates the Spec type.
+     
+     * 2. File Spec (F-Spec)
+     * Declares a Database file called EMPFILE. 'I' means Input. 
+     FEMPFILE   IF   E           K DISK
+     
+     * 3. Calculation Spec (C-Spec)
+     * The math. You must place Operation Codes (like CHAIN, MULT) exactly in column 26.
+     * Factor 1 (Input), Factor 2 (Target), Result (Output).
+     C     EMPNO         CHAIN     EMPFILE                            99
+     * If record found (Indicator 99 is off)
+     C                   IF        *IN99 = *OFF
+     * Mathematically multiply Salary by 1.10 (10% raise) and store in NEWSAL
+     C     SALARY        MULT      1.10          NEWSAL            9 2
+     C                   ENDIF
+     * Return control to the OS
+     C                   SETON                                        LR
+```
+
+**2. Modern Free-Format RPG (Fully Free RPG)**
+```rpgle
+       // 1. In 2013, IBM released Fully Free-Format RPG.
+       // The compiler no longer mathematically cares about columns!
+       // You just write code like a normal modern language.
+       
+       **FREE
+       
+       // 2. File Declaration (F-Spec equivalent)
+       // We declare the database table 'EMPFILE' for Input/Update.
+       // The OS mathematically links this to DB2 automatically.
+       Dcl-F EMPFILE Disk(*Ext) Usage(*Update) Keyed;
+       
+       // 3. Variable Declaration (D-Spec equivalent)
+       // We mathematically declare a packed decimal for financial math.
+       Dcl-S NewSal Packed(9:2);
+       
+       // 4. Processing Logic (C-Spec equivalent)
+       // Read the database natively using the 'Chain' command (lookup by Key).
+       Chain EmpNo EMPFILE;
+       
+       // %Found is a built-in mathematical function checking the database cursor.
+       If %Found(EMPFILE);
+           // Calculate the 10% raise using standard mathematical symbols!
+           NewSal = Salary * 1.10;
+           
+           // Natively update the database record
+           Salary = NewSal;
+           Update EMPREC;
+       EndIf;
+       
+       // *INLR (Last Record Indicator) mathematically ends the program 
+       // and closes the database files cleanly.
+       *INLR = *On;
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group ibm_env(cloud)[IBM AS/400 (IBM i) Architecture]
+
+    service code(document)[RPG Source Code] in ibm_env
+    
+    group compiler(server)[ILE Compiler (Integrated Language Env)] in ibm_env
+    service cycle(database)[Implicit Logic Cycle] in compiler
+    service spec(database)[Spec Parsing (F/D/C)] in compiler
+    
+    group os(server)[IBM i Operating System] in ibm_env
+    service db2(database)[DB2 for i (Native OS Integration)] in os
+    service rla(disk)[Record-Level Access (CHAIN)] in os
+
+    code:B --> T:cycle
+    cycle:B --> T:spec
+    
+    %% RPG doesn't need SQL; it accesses the DB natively via the OS
+    spec:B --> T:rla
+    rla:B --> T:db2
+```
+
+## 5. Interview Prep
+
+**Q: What is the "Logic Cycle" in RPG?**
+**A:** In early RPG versions, the compiler generated a massive invisible `while` loop that automatically opened files, read records, executed math, and printed reports without the developer writing the loop. While powerful for simple reports, it was mathematically too rigid for complex modern apps. Today, modern RPG developers explicitly disable the Logic Cycle and write their own `DoWhile` loops.
+
+**Q: What is the difference between RPG and COBOL?**
+**A:** Both are legacy business languages. 
+- COBOL is the language of the **Mainframe** (IBM Z-Series). It focuses heavily on massive, offline Batch Processing (millions of records overnight).
+- RPG is the language of the **Midrange** (IBM AS/400 / IBM i). It focuses heavily on interactive, real-time database transactions directly coupled with DB2.
+
+**Q: Why do RPG developers talk about "Indicators"?**
+**A:** Because RPG evolved from punch-card machines (which used physical switches to track true/false states), the language mathematically handles booleans using 99 global "Indicators" (`*IN01` to `*IN99`). If a database read failed, the system would flip `*IN99` to `ON`. The developer would check if `*IN99 = *ON`. In modern Free-Format RPG, indicators are considered highly anti-pattern, replaced by mathematical functions like `%Found()` or `%Error()`.
+
+## 6. Production Use Cases
+
+RPG completely dominates the IBM i (AS/400) ecosystem, which is used heavily by supply chain, retail, and casino operations:
+- **Las Vegas Casino Operations:** Many of the world's largest casinos (including major properties on the Las Vegas Strip) run their core gaming, hotel reservation, and accounting systems on IBM AS/400 machines. Millions of lines of RPG code mathematically process the constant, highly concurrent stream of slot machine payouts and hotel bookings 24/7 without ever crashing.
+- **Global Retail Inventory (Costco / Home Depot):** Massive big-box retailers require bulletproof inventory management. When a cashier scans a barcode at the register, that transaction often pings an IBM i server sitting in the back of the store, where an RPG program mathematically deducts the item from DB2 and calculates the localized tax rate in less than 50 milliseconds.
+- **Manufacturing and Logistics (ERP):** Systems like *Infor M3* or *JD Edwards* (historically massive RPG codebases) are used by trucking and manufacturing companies. The RPG code mathematically schedules the factory floor, calculates the required raw materials using complex Bill of Materials (BOM) algorithms, and generates the shipping manifests.
+
+<Callout icon="info" title="The Survival of the AS/400">
+The AS/400 (now IBM i) is arguably the greatest feat of software engineering in IBM's history. Created in 1988, it uses an incredibly advanced mathematical architecture called TIMI (Technology Independent Machine Interface). When IBM upgrades the physical hardware (e.g., from a 32-bit CISC CPU to a 64-bit PowerPC RISC CPU), the TIMI layer mathematically translates the legacy compiled code on the fly. You can take an RPG program compiled in 1995, move it to a 2024 IBM server, and it will execute perfectly without recompiling.
+</Callout>

@@ -1,25 +1,150 @@
 ---
-title: PL/I
-description: Programming Language One, an immensely massive language designed by IBM to replace both Fortran and COBOL by combining all their features.
+title: PL-I
+description: "Programming Language One. IBM's audacious 1960s attempt to mathematically merge the business data processing of COBOL with the scientific supercomputing power of Fortran into one language to rule them all."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="PL/I">
+    <ConceptTemplate title="PL-I">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by IBM in the 1960s, PL/I (Programming Language One) was mathematically intended to be the ultimate programming language. IBM realized their customers were split: Scientists used Fortran (for math), and Businesses used COBOL (for record keeping). IBM attempted to build one massive language that could do both.
+**PL/I** (Programming Language One) was designed by IBM in 1964 alongside the release of the revolutionary System/360 mainframe.
 
-## 1. The Kitchen Sink Language
-PL/I is mathematically enormous. It took the scientific features of Fortran, the record-handling features of COBOL, and the block-structured logic of ALGOL, and jammed them all into a single compiler.
-It had hundreds of built-in keywords, complex exception handling (`ON ERROR` conditions), multi-threading capabilities (`TASKS`), and incredibly complex pointer arithmetic.
+To understand PL/I, you must understand the massive corporate divide of the 1960s. IBM was forced to maintain two entirely separate software ecosystems. 
+1. The Scientists used **Fortran** (which was incredible at complex math, but terrible at reading sequential data files). 
+2. The Accountants used **COBOL** (which was incredible at processing data files, but terrible at complex math).
 
-## 2. The Collapse of Complexity
-Because the mathematical specification was so massive, the PL/I compiler was notoriously slow and required massive amounts of physical RAM, which was exorbitantly expensive in the 1960s.
-Furthermore, because it had so many features, it was almost impossible for a single programmer to master the entire language. Different teams would use completely different mathematical subsets of PL/I, leading to unmaintainable codebases. While it is still used today in some deeply legacy banking systems, its massive complexity prevented it from successfully replacing COBOL and Fortran.
+IBM decided this was incredibly inefficient. They attempted to invent a single "Language to rule them all." PL/I was mathematically designed to be a superset of both. It could do the Fixed-Point decimal banking math of COBOL, the massive floating-point matrix arrays of Fortran, and it introduced revolutionary concepts (like Exception Handling) a decade before C or C++ existed.
 
+## 1. Deep Dive & Mechanics
+
+PL/I is defined by its incredibly massive, mathematically complex **Compiler and Feature Set**.
+
+Because PL/I attempted to include every single programming paradigm known in 1964, the language is notoriously massive. It supports:
+- Procedural programming.
+- Recursive functions (which COBOL could not do).
+- Dynamic memory allocation (`ALLOCATE` and `FREE`, similar to `malloc` in C).
+- Complex Exception Handling (`ON ERROR` conditions).
+- Native multitasking and concurrency.
+
+This massive feature set made the PL/I compiler incredibly slow and mathematically complex to build. The language was so large that most developers only learned the 10% of the language relevant to their specific job (business or science).
+
+## 2. Mathematical / Theoretical Foundation
+
+PL/I's most defining architectural feature is its **Exception Handling (ON-Conditions)**.
+
+In C, if you divide by zero, the CPU throws a hardware interrupt and your program crashes instantly. You have to write `if (x == 0)` manually everywhere.
+
+PL/I introduced mathematical event-driven exception handling. You could write an `ON ZERODIVIDE` block at the top of your program. The PL/I runtime would mathematically monitor the CPU. If *any* math operation anywhere in the program triggered a divide-by-zero, the program would instantly jump to your `ON` block, allow you to fix the variable, and mathematically resume execution exactly where it crashed. This was a revolutionary concept in the 1960s.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating PL/I's syntax. Notice how it looks like a hybrid between COBOL's data structures and ALGOL/C's block structure, and its revolutionary `ON` condition exception handling.
+
+```pli
+/* 1. Program Definition */
+/* PL/I programs are defined as PROCEDURES. */
+/* OPTIONS(MAIN) tells the OS this is the entry point (like 'int main()' in C). */
+CALCULATOR: PROCEDURE OPTIONS(MAIN);
+
+    /* 2. Data Declaration */
+    /* DCL is short for DECLARE. */
+    /* FIXED DEC(7,2) is identical to COBOL's BCD math (Perfect for money). */
+    DCL ACCOUNT_BALANCE   FIXED DEC(7,2) INIT(5000.00);
+    DCL WITHDRAWAL_AMOUNT FIXED DEC(7,2) INIT(0.00);
+    
+    /* FLOAT BIN(53) is identical to Fortran's floating point math (Perfect for science). */
+    DCL GRAVITY           FLOAT BIN(53) INIT(9.81);
+    
+    /* String declaration */
+    DCL USER_NAME         CHAR(20) VARYING INIT('Alice');
+
+    /* 3. Exception Handling (ON Conditions) */
+    /* If a mathematical divide-by-zero happens ANYWHERE in this procedure, */
+    /* the runtime will intercept the CPU interrupt, print this message, */
+    /* and gracefully exit instead of crashing the mainframe. */
+    ON ZERODIVIDE BEGIN;
+        PUT SKIP LIST ('ERROR: Mathematical Divide By Zero detected!');
+        GOTO END_PROGRAM; /* Jump to the end */
+    END;
+    
+    /* 4. Processing Logic */
+    /* Unlike COBOL's strict columns, PL/I is free-form text. */
+    PUT SKIP LIST ('Welcome ', USER_NAME);
+    PUT SKIP LIST ('Current Balance: $', ACCOUNT_BALANCE);
+    
+    WITHDRAWAL_AMOUNT = 1500.50;
+    
+    /* Standard control flow */
+    IF WITHDRAWAL_AMOUNT > ACCOUNT_BALANCE THEN DO;
+        PUT SKIP LIST ('Insufficient funds.');
+    END;
+    ELSE DO;
+        /* Perform the fixed-point decimal math */
+        ACCOUNT_BALANCE = ACCOUNT_BALANCE - WITHDRAWAL_AMOUNT;
+        PUT SKIP LIST ('Withdrawal Successful. New Balance: $', ACCOUNT_BALANCE);
+    END;
+    
+    /* 5. Triggering an Exception */
+    /* This will mathematically trigger the ON ZERODIVIDE block above! */
+    DCL BAD_MATH FLOAT BIN(53);
+    BAD_MATH = GRAVITY / 0;
+
+/* 6. Program Termination */
+END_PROGRAM:
+    PUT SKIP LIST ('Program Terminating.');
+
+END CALCULATOR;
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group pli_env(cloud)[PL/I Execution Architecture]
+
+    service code(document)[PL/I Source (.pli)] in pli_env
+    
+    group compiler(server)[PL/I Multics/IBM Compiler] in pli_env
+    service dec(database)[Fixed-Point Decimal Engine] in compiler
+    service float(database)[Floating-Point Binary Engine] in compiler
+    
+    group runtime(server)[PL/I Runtime Environment] in pli_env
+    service mem(database)[Dynamic Memory Allocator] in runtime
+    service trap(disk)[OS Interrupt Trapping (ON-Conditions)] in runtime
+
+    code:B --> T:dec
+    code:B --> T:float
+    
+    %% The Runtime actively monitors the CPU for mathematical hardware exceptions
+    dec:B --> T:mem
+    float:B --> T:mem
+    float:B --> T:trap
+```
+
+## 5. Interview Prep
+
+**Q: Did PL/I succeed in killing COBOL and Fortran?**
+**A:** No. PL/I was a massive commercial failure regarding its primary goal. The language was so incredibly complex that the compiler was slow and full of bugs. COBOL programmers refused to learn it because it looked too mathematical (like Fortran), and Fortran programmers refused to learn it because it looked too bureaucratic (like COBOL). It became the classic "Jack of all trades, master of none."
+
+**Q: If it failed, why is it famous?**
+**A:** Because of **Multics**. Multics was the 1960s mainframe operating system that preceded Unix. The creators of Multics decided to write the entire Operating System in PL/I instead of Assembly Language (an incredibly radical idea at the time). While Multics failed, the concept of writing an OS in a high-level language was proven. When Ken Thompson and Dennis Ritchie created Unix to replace Multics, they wanted to use PL/I, but the compiler was too massive for their tiny computer. So they invented a stripped-down, mathematical language called **C**, which heavily borrowed PL/I's block structure and dynamic memory concepts.
+
+**Q: What is a `VARYING` string?**
+**A:** In C, a string is a mathematical array of characters terminated by a `\0` (null byte). In COBOL, strings are fixed length (if a string is 20 chars long, but you put "Hi" in it, the computer physically stores "Hi                  "). PL/I invented the `VARYING` string (often called a Pascal String). It mathematically stores the length of the string in the first byte of memory, allowing the string to dynamically shrink and grow without wasting memory or risking buffer overflows caused by missing null terminators.
+
+## 6. Production Use Cases
+
+While largely forgotten by the public, PL/I is still heavily maintained in highly specific, deeply entrenched corporate mainframes:
+- **Core Automotive Manufacturing:** Massive European and American automotive companies (who bought into the IBM System/360 vision in the 1970s) wrote their core assembly line inventory and logistics systems in PL/I. The language's ability to handle both the financial accounting of car parts (Fixed Decimal) and the physical physics/geometry calculations of the manufacturing robots (Floating Point) in a single codebase kept it alive for decades.
+- **Legacy Banking and Credit Networks:** While most banks use COBOL, several major credit card processing networks (notably parts of the Discover and Mastercard ecosystem) heavily utilized PL/I. The language's native multi-tasking abilities and advanced exception handling allowed them to build mathematically robust, concurrent transaction processing systems that were far superior to single-threaded COBOL in the 1980s.
+- **Mainframe System Utilities:** Many of the internal diagnostic tools, database administration scripts, and core utilities running inside the IBM z/OS operating system today are still mathematically compiled from PL/I code written 40 years ago, as it remains one of the most powerful system-level languages available on the platform.
+
+<Callout icon="info" title="No Reserved Words">
+A notoriously terrible design decision in PL/I was that it had **no reserved words**. You could mathematically declare a variable named `IF` and assign it the value `THEN`. The compiler was forced to use complex mathematical heuristics to guess whether the word `IF` on line 42 meant "the start of a conditional block" or "the integer variable you declared earlier." This resulted in completely unreadable code and horrifying compiler bugs.
+</Callout>

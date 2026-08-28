@@ -1,28 +1,157 @@
 ---
 title: T-SQL
-description: Transact-SQL, Microsoft's proprietary extension to standard SQL, dominating the enterprise data space within SQL Server.
+description: "Transact-SQL. Microsoft's proprietary, massively powerful extension of standard SQL, heavily integrated with the Windows ecosystem and SQL Server."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="T-SQL (Transact-SQL)">
+    <ConceptTemplate title="T-SQL">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-T-SQL is Microsoft's proprietary mathematical extension to standard SQL, heavily used in Microsoft SQL Server and Azure SQL. It is the direct competitor to Oracle's PL/SQL.
+**T-SQL (Transact-SQL)** was co-developed by Sybase and Microsoft in the late 1980s. When Microsoft split from Sybase to create **Microsoft SQL Server**, T-SQL became its proprietary, exclusive language.
 
-## 1. Procedural Enhancements
-Like PL/SQL, standard declarative SQL is often mathematically insufficient for complex business logic (like iterating through a cursor to calculate a moving average that depends on previous rows).
-T-SQL adds imperative, mathematical programming features directly into the database engine:
-- **Local Variables**: `DECLARE @EmployeeCount INT;`
-- **Control Flow**: `IF/ELSE`, `WHILE`, and `RETURN` statements.
-- **TRY/CATCH**: Modern exception handling mathematically equivalent to C#, allowing developers to gracefully rollback transactions if a specific query fails.
+Standard ANSI SQL is mathematically limited to querying data. It lacks procedural programming logic. Just as Oracle created PL/SQL to solve this, Microsoft created T-SQL. 
 
-## 2. Table-Valued Functions
-One of T-SQL's most powerful mathematical features is the Table-Valued Function (TVF).
-A standard function returns a single value (a Scalar). A TVF returns an entire virtual Table. You can write a complex mathematical script that calculates the tax liability for all employees, and then you can mathematically `JOIN` the result of that function directly into another SQL query as if it were a physical table on the hard drive.
+T-SQL extends standard SQL by adding local variables, `WHILE` loops, `TRY...CATCH` exception handling, and massive proprietary functions designed to integrate deeply with the Microsoft Windows ecosystem. It is the absolute, undisputed lingua franca of enterprise Microsoft databases.
 
+## 1. Deep Dive & Mechanics
+
+T-SQL is defined by its **Batches and Procedural Flow**.
+
+Unlike PL/SQL (which uses strict `BEGIN...END` blocks that must be compiled), T-SQL is highly script-oriented. A developer can open SQL Server Management Studio (SSMS), declare a variable at the top of the script, write 50 different SQL statements, and send the entire mathematical block to the server. 
+
+The server mathematically divides the script into **Batches** using the `GO` command. Variables defined in one batch mathematically cease to exist in the next batch, allowing developers to manage memory and execution scope explicitly.
+
+## 2. Mathematical / Theoretical Foundation
+
+The true architectural power of T-SQL relies on its **Proprietary Extensions and Dynamic Execution**.
+
+While PostgreSQL relies heavily on C-extensions, T-SQL relies on deep integration with the .NET Framework (CLR integration). A developer can write a C# function and mathematically expose it directly into T-SQL.
+
+Furthermore, T-SQL dominates at Dynamic SQL execution. Using the `sp_executesql` stored procedure, a developer can construct a SQL query entirely out of strings in memory, inject mathematical parameters into it safely (preventing SQL injection), and execute it on the fly. This allows for incredibly complex, metadata-driven database architectures.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating T-SQL's unique variable syntax (`@`), batch processing (`GO`), error handling (`TRY/CATCH`), and its famous Temp Tables (`#`).
+
+```sql
+-- 1. Variable Declaration and Assignment
+-- In T-SQL, all local variables MUST start with the @ symbol.
+DECLARE @TargetSalary INT;
+DECLARE @DepartmentName VARCHAR(50);
+
+-- Mathematical assignment using SET
+SET @TargetSalary = 80000;
+SET @DepartmentName = 'Engineering';
+
+-- 2. Temporary Tables
+-- Prefixing a table with a single '#' creates a mathematically isolated Temp Table.
+-- It exists entirely in RAM (or tempdb) and is automatically deleted 
+-- the millisecond the connection closes.
+CREATE TABLE #TempHighEarners (
+    EmployeeID INT,
+    FullName VARCHAR(100),
+    Salary INT
+);
+
+-- 3. Procedural Flow and Error Handling
+BEGIN TRY
+    -- We start a mathematical transaction. 
+    -- If anything fails, we can roll it back.
+    BEGIN TRANSACTION;
+
+    -- Standard SQL extended with variables
+    INSERT INTO #TempHighEarners (EmployeeID, FullName, Salary)
+    SELECT EmpID, FirstName + ' ' + LastName, Salary
+    FROM Employees
+    WHERE Salary > @TargetSalary AND Dept = @DepartmentName;
+
+    -- The famous @@ROWCOUNT system variable mathematically holds 
+    -- the number of rows affected by the last statement.
+    IF @@ROWCOUNT = 0
+    BEGIN
+        -- We print to the developer console
+        PRINT 'No high earners found in this department.';
+    END
+    ELSE
+    BEGIN
+        PRINT 'High earners inserted into temp table.';
+    END
+
+    -- If we reach this line, the math succeeded. We commit the transaction.
+    COMMIT TRANSACTION;
+    
+END TRY
+BEGIN CATCH
+    -- 4. Exception Handling
+    -- If ANY error occurs in the TRY block, execution instantly jumps here.
+    IF @@TRANCOUNT > 0
+    BEGIN
+        ROLLBACK TRANSACTION; -- Destroy the failed mathematical operation
+    END
+    
+    -- T-SQL provides built-in functions to diagnose the crash
+    PRINT 'Error Number: ' + CAST(ERROR_NUMBER() AS VARCHAR);
+    PRINT 'Error Message: ' + ERROR_MESSAGE();
+END CATCH;
+
+-- 5. The Batch Separator
+-- 'GO' is not a T-SQL command. It is a signal to the SSMS terminal 
+-- to bundle everything above it and send it to the engine.
+GO
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group tsql_env(cloud)[SQL Server T-SQL Execution]
+
+    service ssms(document)[SSMS Client Script] in tsql_env
+    
+    group batch(server)[Batch Execution (Separated by GO)] in tsql_env
+    service var(database)[DECLARE @Var] in batch
+    service sql(disk)[Execute SELECT] in batch
+    
+    group engine(server)[SQL Server Engine] in tsql_env
+    service temp(database)[tempdb (Holds #TempTables)] in engine
+    service trans(disk)[Transaction Manager (TRY/CATCH)] in engine
+
+    ssms:B --> T:batch
+    batch:B --> T:engine
+    
+    %% Variables rely on the TempDB and Transaction architecture
+    var:R --> L:temp
+    sql:R --> L:trans
+```
+
+## 5. Interview Prep
+
+**Q: What is the difference between PL/SQL and T-SQL?**
+**A:** 
+- **PL/SQL (Oracle):** Heavy, structured, and block-oriented (`DECLARE...BEGIN...END`). It strongly typed, focuses heavily on Cursors, and is designed for massive, complex mathematical business logic.
+- **T-SQL (Microsoft):** Lighter, script-oriented, and batch-driven (`GO`). It is heavily optimized for Set-Based operations and Temp Tables (`#Table`) rather than looping through Cursors.
+
+**Q: What is the difference between `#TempTable` and `@TableVariable` in T-SQL?**
+**A:** This is a classic Senior DBA interview question. 
+- A `#TempTable` physically lives in the `tempdb` database. It has mathematical statistics, so the Query Optimizer can create highly efficient execution plans for massive datasets.
+- A `@TableVariable` exists mostly in RAM. It has *zero* mathematical statistics (the Optimizer always assumes it has exactly 1 row). If you put 100,000 rows into a Table Variable, the Optimizer will generate a catastrophic execution plan and crash the server's performance.
+
+**Q: What is `NOLOCK` and why is it dangerous?**
+**A:** In SQL Server, reading data places mathematical Locks on the rows, blocking other users from writing to them. Developers often add `WITH (NOLOCK)` to their `SELECT` statements to bypass this and make the query run instantly. However, `NOLOCK` allows "Dirty Reads." It will mathematically return data from transactions that have not been committed yet, potentially resulting in phantom rows, duplicate rows, or entirely corrupted mathematical reports.
+
+## 6. Production Use Cases
+
+T-SQL is the absolute core of the Microsoft Enterprise Stack (SQL Server, Azure SQL, Synapse Analytics):
+- **Enterprise Stored Procedures:** C# .NET developers often write complex database interactions entirely in T-SQL Stored Procedures. The application simply calls `EXEC sp_ProcessOrder @OrderID = 5`. The T-SQL procedure handles the transaction, verifies inventory, updates the ledger, and returns a success code, ensuring the logic is mathematically bound to the database.
+- **Data Warehousing (ETL):** Massive Azure data warehouses use T-SQL to process billions of rows of telemetry. Data Engineers use T-SQL's advanced Window Functions and `MERGE` statements (which mathematically perform `INSERT`, `UPDATE`, and `DELETE` simultaneously based on source data matching) to load raw data into reporting dashboards.
+- **Dynamic Security Architectures:** Corporations use T-SQL to build Row-Level Security. A DBA writes a T-SQL function that mathematically checks `SUSER_SNAME()` (the Windows Active Directory username of the person running the query) and dynamically restricts the `SELECT` statement to only return rows belonging to that specific user's department.
+
+<Callout icon="warning" title="The Cursor Trap">
+Because T-SQL looks like a programming language, junior developers often write `WHILE` loops and Cursors to process data row-by-row. In T-SQL, Cursors are mathematically devastating to performance. A Set-Based `UPDATE` statement that takes 2 seconds will routinely take 45 minutes if rewritten as a T-SQL Cursor loop. In T-SQL, always think in Sets, never in Loops.
+</Callout>

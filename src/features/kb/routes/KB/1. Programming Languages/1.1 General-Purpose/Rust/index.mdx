@@ -1,45 +1,127 @@
 ---
 title: Rust
-description: A systems programming language focused on memory safety, fearless concurrency, and blazing-fast performance.
+description: "A blazing fast, statically typed systems programming language that guarantees memory safety and thread safety without using a garbage collector."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="Rust"
-  category="Programming Languages"
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/d/d5/Rust_programming_language_black_logo.svg"
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Rust">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Started by Mozilla in 2010, **Rust** was created to solve the 50-year-old nightmare of C and C++: Memory Leaks and Buffer Overflows. It offers the exact same low-level hardware control and blazing speed as C++, but it mathematically guarantees memory safety and thread safety at compile-time.
+Created by Graydon Hoare at Mozilla in 2010, **Rust** was designed to solve the hardest problem in systems programming: Memory Safety. 
 
-For nearly a decade, Rust has been voted the "Most Loved Programming Language" by developers worldwide.
+For 40 years, operating systems and web browsers were written in C and C++ because they offered bare-metal speed. However, they allowed developers to manually manage memory using pointers. One wrong pointer leads to memory leaks, segfaults, and massive security vulnerabilities (like Buffer Overflows). Rust provides the exact same bare-metal speed as C++, but its compiler mathematically guarantees that your program will never encounter a memory segmentation fault. It has been voted the "Most Loved Programming Language" on Stack Overflow for over 8 consecutive years.
 
+## 1. Deep Dive & Mechanics
 
-<Callout icon="success" title="The Borrow Checker">
+Rust achieves memory safety without using a Garbage Collector. 
+In Java or Go, a Garbage Collector runs in the background, pausing your program to clean up memory, which causes latency spikes. Rust uses a completely revolutionary paradigm known as **Ownership and Borrowing**.
 
+In Rust, every piece of data in memory has exactly one "Owner" (a variable). When that variable goes out of scope, the compiler automatically inserts the cleanup code. If you need to pass data to another function, you can't just copy pointers recklessly. You must explicitly transfer Ownership, or you must "Borrow" the data using References (`&`).
 
-  Rust achieves memory safety **without a Garbage Collector**.
-  It uses a revolutionary concept called the **Borrow Checker**. The compiler tracks the "Ownership" and "Lifetimes" of every variable in your code. If two threads try to write to the same memory simultaneously, the compiler simply refuses to compile the code. If your code compiles in Rust, you are mathematically guaranteed to have zero Segfaults and zero Data Races.
+The Rust compiler contains a highly aggressive subsystem called the **Borrow Checker**. It analyzes your code at compile-time and strictly enforces two rules: 
+1. You can have infinite immutable references (read-only pointers).
+2. OR you can have exactly ONE mutable reference (write pointer) at a time.
 
+If your code violates these rules, it mathematically cannot compile.
 
+## 2. Mathematical / Theoretical Foundation
+
+Rust's Borrow Checker is fundamentally an implementation of **Affine Logic (Substructural Type System)**.
+
+In standard logic (and standard programming languages), you can use a variable as many times as you want. In Affine Logic, resources can be used *at most once*. When you pass a variable to a function in Rust, the Ownership is "moved". Mathematically, that variable is now dead in the original scope, and attempting to use it again will result in a compile-time error.
+
+This theoretical constraint miraculously solves **Data Races** in multithreaded programming. Because the Borrow Checker guarantees that only one thread can have a mutable reference to data at any given time, it is mathematically impossible for two threads to overwrite the same memory address simultaneously. Rust provides "Fearless Concurrency."
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating Rust's strict Ownership model, Borrowing, and its powerful algebraic `Result` type for error handling (no Exceptions!).
+
+```rust
+// 1. Defining a Struct (No classes in Rust!)
+struct User {
+    name: String,
+    score: i32,
+}
+
+// 2. We pass a mutable reference (&mut) to borrow the user.
+// We do not take Ownership.
+fn boost_score(user: &mut User) {
+    user.score += 50;
+}
+
+// 3. Using the Result type for safe Error Handling
+fn check_status(score: i32) -> Result<String, String> {
+    if score > 100 {
+        Ok(String::from("Elite Status achieved!"))
+    } else {
+        Err(String::from("Score too low."))
+    }
+}
+
+fn main() {
+    // 'mut' makes the variable mutable
+    let mut player1 = User {
+        name: String::from("Alice"),
+        score: 80,
+    };
+
+    // We pass a mutable borrow. 
+    // The Borrow Checker ensures no one else is reading/writing this data right now.
+    boost_score(&mut player1);
+
+    // 4. Match statements (Pattern Matching) force us to handle both Ok and Err!
+    match check_status(player1.score) {
+        Ok(message) => println!("Success: {}", message),
+        Err(error) => println!("Failed: {}", error),
+    }
+}
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group rust_env(cloud)[Rust Compilation & Borrow Checking]
+
+    service src(document)[Rust Source Code] in rust_env
+    
+    group rustc(server)[rustc Compiler] in rust_env
+    service ast(document)[Syntax Parsing] in rustc
+    service borrow(database)[The Borrow Checker (Affine Logic)] in rustc
+    
+    service llvm(server)[LLVM Backend] in rust_env
+    service bin(disk)[Zero-Cost Native Binary] in rust_env
+
+    src:B --> T:ast
+    ast:B --> T:borrow
+    borrow:R --> L:llvm
+    llvm:B --> T:bin
+```
+
+## 5. Interview Prep
+
+**Q: How does Rust manage memory without a Garbage Collector?**
+**A:** Rust uses a system of Ownership. Every value has a single variable that is its "owner." When the owner goes out of scope (like reaching the end of a function block), the memory is instantly freed. The compiler inserts the `drop` instructions automatically at compile-time, resulting in zero runtime overhead.
+
+**Q: Explain the Borrow Checker.**
+**A:** The Borrow Checker is a compile-time feature that enforces Rust's data aliasing rules. To prevent race conditions and dangling pointers, it enforces that data can either have multiple immutable references (readers) OR exactly one mutable reference (writer), but never both at the same time. If your code violates this, it will not compile.
+
+**Q: How does Rust handle Errors?**
+**A:** Rust does not have `try/catch` exceptions. Instead, it uses algebraic data types. Recoverable errors are handled using the `Result<T, E>` enum, which forces the developer to explicitly handle both the `Ok` (success) and `Err` (failure) cases using Pattern Matching. Unrecoverable errors use the `panic!` macro, which cleanly unwinds the thread and crashes the program.
+
+## 6. Production Use Cases
+
+Rust is rapidly displacing C and C++ across the entire industry:
+- **Operating Systems:** In 2022, Rust was officially integrated into the **Linux Kernel** (the only language other than C to ever achieve this) because of its memory safety guarantees. Microsoft is actively rewriting core parts of the Windows Kernel in Rust.
+- **WebAssembly (WASM):** Because Rust has no massive runtime or garbage collector, it compiles perfectly down to ultra-tiny WebAssembly binaries, allowing C-level speeds running directly inside web browsers (used heavily by Figma and Discord).
+- **High-Performance Tooling:** Massive JavaScript tools (like SWC, TurboPack, and the Deno runtime) are entirely written in Rust. Cloudflare heavily relies on Rust to route millions of HTTP requests per second through their global proxy network.
+
+<Callout icon="warning" title="The Borrow Checker Fight">
+The biggest criticism of Rust is its brutal learning curve. Beginners often find themselves "fighting the Borrow Checker"—spending hours trying to get simple code to compile because they violated a strict memory rule. However, veteran Rust developers argue that if the code finally compiles, you have a mathematical guarantee that it won't crash in production.
 </Callout>
-
-
-## Key Characteristics
-
-1. **Zero-Cost Abstractions**: Like C++, high-level language features compile down to maximally optimized machine code.
-2. **Fearless Concurrency**: Because the compiler prevents data races, developers can aggressively write multi-threaded code without the fear of untraceable production crashes.
-3. **Modern Tooling**: The `cargo` package manager and build system is universally praised as one of the best in the industry.
-4. **Pattern Matching & Result Types**: Rust handles errors natively via the `Result<T, E>` enum rather than throwing exceptions, forcing the developer to explicitly handle both the success and error cases.
-
-## The Learning Curve
-
-Rust has a notoriously brutal learning curve. Fighting the Borrow Checker is a rite of passage. The compiler acts as a strict mentor, forcing you to design your memory architecture perfectly before it allows you to run the code.
-
-## Where is it used?
-
-- **Systems & OS**: Parts of the Linux Kernel and Windows OS are being actively rewritten in Rust.
-- **WebAssembly (WASM)**: Rust is the premier language for compiling high-performance code to run inside the web browser.
-- **Blockchain & Web3**: Foundational language for Solana and Polkadot smart contracts.
-
-</TechnologyTemplate>

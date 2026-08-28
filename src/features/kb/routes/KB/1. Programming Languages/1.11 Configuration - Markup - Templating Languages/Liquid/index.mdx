@@ -1,29 +1,127 @@
 ---
 title: Liquid
-description: An open-source, logic-less template language created by Shopify, used extensively in e-commerce and static site generators.
+description: "An open-source, Ruby-based templating language created by Shopify, designed for safe, customer-facing web template rendering."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Liquid">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by Shopify in 2006 (written in Ruby), Liquid is a safe, customer-facing template language. It is designed so that non-programmers can build beautiful storefronts without the ability to mathematically execute malicious code or crash the Shopify servers.
+**Liquid** is a highly popular, open-source templating language created in 2006 by Tobias Lütke, the founder of Shopify. 
 
-## 1. Safety First
-Because Shopify allows millions of merchants to upload custom code to their servers, the templating language *must* be sandboxed.
-Liquid mathematically prohibits server-side execution, database queries, or infinite loops. A user can only access the specific data objects (like `product.price`) that the server explicitly provides.
+When Shopify was building its e-commerce platform, they encountered a massive architectural problem: they wanted to allow store owners to edit the HTML of their own storefronts, but they couldn't allow them to execute raw Ruby code. If a store owner could execute raw code on Shopify's servers, they could theoretically access the database and steal other stores' data.
 
-## 2. Syntax: Tags, Objects, and Filters
-Liquid uses three mathematical constructs:
-- **Objects**: `{{ product.title }}` outputs data.
-- **Tags**: `{% if user.logged_in %}` executes logic.
-- **Filters**: `{{ "hello" | upcase }}` mathematically modifies the output (converting to "HELLO").
+Liquid was created specifically to solve this. It is a strictly **Sandboxed Templating Engine**. It provides store owners with enough logical power (loops, conditionals, math) to build beautiful, dynamic web pages, but mathematically guarantees that they cannot access the underlying server architecture.
 
-Beyond Shopify, Liquid powers Jekyll, the static site generator that drove the initial explosion of GitHub Pages.
+## 1. Deep Dive & Mechanics
 
+Liquid operates on three fundamental mechanical concepts: **Objects, Tags, and Filters**.
+
+- **Objects (`{{ }}`):** These output data to the screen (e.g., `{{ product.title }}`).
+- **Tags (`{% %}`):** These execute programming logic without outputting anything to the screen (e.g., `{% if user.is_logged_in %}`).
+- **Filters (`|`):** These modify the output of an object mathematically or linguistically (e.g., `{{ product.title | upcase }}`).
+
+Liquid is mathematically completely stateless across different page loads. You can define a variable in Liquid using the `{% assign %}` tag, but that variable is destroyed the millisecond the HTML finishes rendering.
+
+## 2. Mathematical / Theoretical Foundation
+
+Liquid's theoretical foundation relies heavily on **Context Whitelisting (The Drop Pattern)**.
+
+In a normal MVC application, the Controller passes a massive data object to the View. In Liquid, passing raw Ruby objects to a template is dangerous because those objects might have methods like `.save()` or `.delete()`. 
+
+To prevent this, Liquid uses a pattern called `Liquid::Drop`. A Drop is a mathematically sterilized wrapper around a Ruby object. When the Shopify backend passes a `Product` object to the Liquid template, it actually passes a `ProductDrop`. The Drop strictly whitelists which properties the template is allowed to read (like `.title` and `.price`) and mathematically blocks any attempt to mutate the data or call dangerous methods.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating Liquid's syntax, which is heavily inspired by Jinja and Django templates, featuring tags, objects, and chained filters.
+
+```html
+<!-- 1. Objects (Outputting Data) -->
+<div class="product-header">
+  <h1>{{ product.title }}</h1>
+  
+  <!-- 2. Filters -->
+  <!-- We pipe the price through the 'money_with_currency' filter provided by Shopify -->
+  <h2>{{ product.price | money_with_currency }}</h2>
+</div>
+
+<!-- 3. Tags (Logic & Control Flow) -->
+<!-- Liquid supports basic boolean logic -->
+{% if product.available %}
+  <button id="add-to-cart">Add to Cart</button>
+{% else %}
+  <button disabled>Sold Out</button>
+{% endif %}
+
+<div class="product-tags">
+  <h3>Tags:</h3>
+  <ul>
+    <!-- 4. Iteration (Loops) -->
+    {% for tag in product.tags %}
+      <!-- We can chain multiple filters! -->
+      <!-- Replace spaces with hyphens, then convert to lowercase -->
+      <li>
+        <a href="/tags/{{ tag | replace: ' ', '-' | downcase }}">
+          {{ tag }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- 5. Variable Assignment -->
+<!-- You can create isolated local variables during the render cycle -->
+{% assign discount_amount = product.price | times: 0.20 %}
+<p>You save: {{ discount_amount | money }}!</p>
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group liquid_env(cloud)[Liquid Sandboxed Execution]
+
+    service author(server)[Store Owner] in liquid_env
+    service src(document)[theme.liquid] in liquid_env
+    
+    group engine(server)[Ruby Liquid Engine] in liquid_env
+    service parser(document)[Strict AST Parser] in engine
+    service drop(database)[Liquid::Drop (Whitelisted Data)] in engine
+    
+    group backend(database)[Shopify Backend] in liquid_env
+    service db(disk)[PostgreSQL] in backend
+    service models(server)[Raw Ruby Models] in backend
+
+    author:B --> T:src
+    src:B --> T:parser
+    backend:T --> B:drop
+    parser:R --> L:drop
+```
+
+## 5. Interview Prep
+
+**Q: Why was Liquid created instead of just using ERB (Embedded Ruby)?**
+**A:** ERB allows raw Ruby code execution (`<% User.destroy_all %>`). If Shopify allowed external users to upload ERB templates, it would be a catastrophic security breach. Liquid was created to be a secure sandbox. It mathematically prevents any execution of raw Ruby and restricts data access exclusively to the specific `Liquid::Drop` objects provided by the backend.
+
+**Q: What is a Filter in Liquid?**
+**A:** A filter is a method that changes the output of a Liquid object. They are applied using the pipe `|` character. For example, `{{ "hello" | upcase }}` outputs "HELLO". Filters can be chained sequentially, where the output of the first filter becomes the mathematical input of the second filter.
+
+**Q: How does Liquid handle types?**
+**A:** Liquid is dynamically and weakly typed. It natively understands Strings, Numbers, Booleans, Arrays, and Dictionaries. However, type coercion is handled strictly by the underlying Ruby engine, meaning developers must be careful when mathematically comparing strings to numbers inside `{% if %}` tags.
+
+## 6. Production Use Cases
+
+Liquid is the industry standard for any SaaS application that allows user-customizable templates:
+- **Shopify:** Liquid powers the front-end themes of millions of e-commerce stores worldwide. The Shopify ecosystem has extended Liquid with hundreds of custom filters specifically for rendering product variants and shopping carts.
+- **Jekyll (Static Site Generator):** Jekyll, the famous Ruby-based static site generator that powers GitHub Pages, uses Liquid natively to stitch Markdown files and HTML layouts together.
+- **Zendesk & Customer.io:** Major enterprise SaaS platforms use Liquid to allow their customers to write dynamic email templates (e.g., `Hello {{ customer.first_name }}`) without compromising the security of the email servers.
+
+<Callout icon="info" title="Cross-Language Adoption">
+While Liquid was originally written in Ruby, its syntax was so well-received as a standard for secure, customer-facing templating that the engine has been natively ported to almost every major backend language, including Python, Node.js (LiquidJS), PHP, and Go.
+</Callout>

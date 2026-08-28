@@ -1,28 +1,115 @@
 ---
 title: Idris
-description: A general-purpose functional programming language featuring full dependent types, allowing developers to mathematically prove their software is correct.
+description: "A purely functional programming language featuring first-class Dependent Types, allowing developers to mathematically prove their code at compile time."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Idris">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by Edwin Brady, Idris is syntactically very similar to Haskell, but it introduces one of the most advanced mathematical concepts in computer science: **Dependent Types**.
+**Idris** is a purely functional programming language created by Edwin Brady in 2011.
 
-## 1. First-Class Types
-In Idris, Types are first-class citizens. They are not mathematically separate from values.
-You can write a function whose return *type* changes depending on the *value* of the input.
-For example, you can write a function that takes a boolean. If the boolean is `true`, the function mathematically returns the Type `String`. If the boolean is `false`, it returns the Type `Integer`.
+It is heavily inspired by Haskell, sharing much of its syntax, its dedication to purity, and its reliance on algebraic data types. However, Idris was created to solve a massive limitation in Haskell's type system by introducing **First-Class Dependent Types**.
 
-## 2. Theorem Proving as Programming
-Because Types can depend on Values, the compiler can mathematically prove properties of your code.
-In C#, you might write a `sort()` function and write 20 unit tests to verify it works.
-In Idris, you write the mathematical type signature to state: "This function takes an Array of length N, and returns an Array of length N where every element is less than or equal to the next element."
-If your implementation is flawed, the compiler mathematically refuses to compile. By satisfying the compiler, you have definitively proven, via mathematical logic (the Curry-Howard correspondence), that your software has zero bugs.
+While Agda (another dependently typed language) is primarily an academic proof assistant used by mathematicians, Idris was designed specifically to be a *practical* software engineering tool. It compiles to C or JavaScript, allowing developers to build actual, runnable applications (like web servers) that are mathematically proven to be bug-free before they ever execute.
 
+## 1. Deep Dive & Mechanics
+
+The defining feature of Idris is **Dependent Types**.
+
+In a standard language, types (`String`, `Int`) are calculated at compile time, and values (`"Hello"`, `5`) are calculated at runtime. The two worlds never mix.
+In Idris, types are "First-Class". This means types can be mathematically calculated by passing values into functions. 
+
+Because types can depend on values, you can encode incredibly complex business logic directly into the type signature. You can write a type that means *"A list of numbers that is exactly N elements long, where all numbers are greater than zero."* If your code attempts to return a list that violates this mathematical rule, it will fail to compile.
+
+## 2. Mathematical / Theoretical Foundation
+
+Idris bridges the gap between **Software Engineering and Theorem Proving**.
+
+Like Agda, Idris operates on the Curry-Howard Correspondence (where writing a program is mathematically equivalent to writing a formal proof). However, Idris introduces **Totality Checking** specifically for software. 
+
+A "Total Function" is a mathematical function that is guaranteed to:
+1. Cover all possible inputs (no missing edge cases).
+2. Terminate (never enter an infinite loop).
+
+The Idris compiler mathematically analyzes your recursive functions. If it cannot prove that the function will eventually terminate, it throws a warning. This allows developers to mathematically guarantee that their server will never hang in an infinite loop.
+
+## 3. Real-World Implementation
+
+Here is an example of Idris syntax (which is heavily similar to Haskell). It demonstrates the absolute power of Dependent Types by writing an append function where the *length* of the vectors is mathematically verified at compile time.
+
+```idris
+-- 1. Defining a Dependently Typed Vector
+-- A 'Vect' takes two arguments: its exact mathematical length (n), and the Type it holds (elem).
+-- Notice how the length 'n' is a Natural Number (Nat) baked directly into the Type.
+
+-- 2. The Append Function
+-- This type signature is a mathematical proof!
+-- It says: "If you give me a Vector of length 'n', and a Vector of length 'm', 
+-- I MUST return a Vector of length 'n + m'."
+append : Vect n elem -> Vect m elem -> Vect (n + m) elem
+
+-- 3. Implementing the Function
+-- Base Case: If the first vector is Nil (Empty, length 0).
+-- 0 + m = m. We just return the second vector (ys).
+append Nil ys = ys
+
+-- Recursive Case: If the first vector has a head (x) and tail (xs).
+-- We append 'x' to the mathematical result of recursively appending the rest.
+append (x :: xs) ys = x :: append xs ys
+
+-- If you made a typo here, and accidentally returned a vector that was too short,
+-- Idris would mathematically reject the code at COMPILE time, preventing the bug.
+```
+
+### Type-Driven Development (The IDE Integration)
+Because the types in Idris are so mathematically dense, the developer rarely writes the implementation themselves! You write the type signature, and press a button in your IDE. The Idris compiler mathematically analyzes the constraints and literally *writes the code for you*, because there is often only one mathematically valid way to satisfy the type constraints.
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group idris_env(cloud)[Idris Type-Driven Architecture]
+
+    service dev(server)[Developer Writes Type Signature] in idris_env
+    
+    group compiler(server)[Idris Compiler] in idris_env
+    service dep_type(database)[Dependent Type Evaluator] in compiler
+    service totality(document)[Totality Checker (Infinite Loops)] in compiler
+    
+    service ide(disk)[Compiler Generates Source Code] in idris_env
+    service c_code(disk)[Compiles to C / JS] in idris_env
+
+    dev:B --> T:dep_type
+    dep_type:B --> T:totality
+    totality:R --> L:ide
+    totality:B --> T:c_code
+```
+
+## 5. Interview Prep
+
+**Q: How is Idris different from Haskell?**
+**A:** Haskell has a highly advanced type system, but its types and values are fundamentally separated. If you want dependent types in Haskell, you have to use extremely complex, hacky language extensions (like `DataKinds` and `TypeFamilies`). Idris was built from the ground up to support Dependent Types natively as a core feature, making the syntax vastly cleaner.
+
+**Q: What is Type-Driven Development?**
+**A:** In Test-Driven Development (TDD), you write a test, then write code to pass the test. In Type-Driven Development (TDD), you write an incredibly strict mathematical type signature. The type signature *is* the test. You then ask the Idris compiler to generate the code that satisfies the type signature.
+
+**Q: Why don't we use Idris for everything?**
+**A:** Dependent types require a massive amount of mental overhead. For a simple web app, writing a type signature that mathematically proves a string is a valid email address is overkill. Furthermore, proving mathematical theorems at compile time is extremely CPU-intensive; compiling a large Idris project can take an incredibly long time compared to Go or Java.
+
+## 6. Production Use Cases
+
+Idris is primarily used in academic research and cutting-edge software engineering domains where correctness is the absolute highest priority:
+- **State Machine Verification:** Idris is used to model complex network protocols (like TCP or secure handshakes). The type system can mathematically enforce that it is physically impossible to send data over a connection before the connection has reached the `Authenticated` state.
+- **Embedded Systems & C-Interop:** Because Idris natively compiles down to raw, highly efficient C code, it can be used to write firmware for microcontrollers. Developers use Idris to mathematically prove the safety of the algorithms, and then deploy the generated C code to the hardware.
+- **Exploring the Future of Software:** Idris is paving the way for the next generation of programming. Just as generics and lambdas migrated from academia to mainstream languages (Java/C#) decades later, the Dependent Types popularized by Idris are slowly making their way into modern languages like Scala and Rust.
+
+<Callout icon="info" title="Idris 2 and Linear Types">
+The newest version, Idris 2, introduces "Linear Types" (Quantitative Type Theory). This allows the compiler to mathematically track *how many times* a variable is used. You can enforce that a file handle or a network socket is used exactly once, physically preventing developers from double-closing a file or leaving a connection open.
+</Callout>

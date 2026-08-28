@@ -1,28 +1,136 @@
 ---
 title: Datalog
-description: A purely declarative logic programming language derived from Prolog, heavily used in modern database theory and static code analysis.
+description: "A declarative, purely logical query language. The mathematical descendant of Prolog, used to deduce new facts from massive relational datasets via strict formal logic."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Datalog">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Datalog is a declarative logic language mathematically derived from Prolog. While Prolog is a general-purpose programming language (that can mathematically get stuck in infinite loops), Datalog is strictly constrained. It is mathematically guaranteed that any Datalog query will terminate and return an answer.
+**Datalog** is not a commercial product; it is a mathematical subset of **Prolog** that emerged in academic database research in the 1970s. 
 
-## 1. Facts and Rules
-Like Prolog, you do not write commands in Datalog. You mathematically declare a database of Facts, and a set of logical Rules.
-- Fact: `parent(john, mary).`
-- Rule: `ancestor(X, Y) :- parent(X, Y).` (X is the ancestor of Y IF X is the parent of Y).
-- Recursive Rule: `ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).` (X is the ancestor of Y IF X is the parent of Z, AND Z is the ancestor of Y).
+To understand Datalog, you must understand Logic Programming. In a traditional database (SQL), you explicitly tell the database *how* to find the data using `SELECT` and `JOIN`. 
+In Datalog, you do not write instructions. You write **Facts** (data) and **Rules** (logic). You then ask a question, and the Datalog engine uses an automated mathematical Inference Engine to deduce the answer. 
 
-The Datalog engine mathematically processes these rules and dynamically generates a virtual database of all possible ancestors.
+While it remained an academic curiosity for decades, Datalog has seen a massive modern resurgence. Tech giants realized that its pure mathematical deduction capabilities are perfect for tracking massive, complex, recursive systems—like cloud security permissions and static code analysis.
 
-## 2. Modern Resurgence
-For decades, Datalog was just an academic mathematical curiosity. Today, it powers some of the most advanced systems in the world. **Datomic** (a revolutionary immutable database created by the author of Clojure) uses Datalog as its primary query language. Furthermore, AWS uses Datalog mathematically under the hood to analyze and verify complex IAM security policies.
+## 1. Deep Dive & Mechanics
 
+Datalog is defined by **Facts, Rules, and Queries**.
+
+- **Fact:** A true statement about the world. `parent(alice, bob).` (Alice is the parent of Bob).
+- **Rule:** A logical deduction. `grandparent(X, Y) :- parent(X, Z), parent(Z, Y).` (X is the grandparent of Y *IF* X is the parent of Z, *AND* Z is the parent of Y).
+- **Query:** A question asked to the engine. `?- grandparent(alice, Who).`
+
+Notice there are no `for` loops or `if` statements. The engine mathematically substitutes variables (X, Y, Z) and iterates through millions of facts until it proves or disproves the query.
+
+## 2. Mathematical / Theoretical Foundation
+
+Datalog's immense power comes from **Recursion and Termination**.
+
+In standard SQL (prior to modern window functions), querying hierarchical data (like a tree of employees and managers, or a graph of network connections) is mathematically impossible without writing a massive, fragile `WHILE` loop in an external script. 
+
+Datalog handles recursion natively and beautifully. You can define a rule: `ancestor(X,Y) :- parent(X,Y)` and a recursive rule `ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y)`. 
+Unlike Prolog (which is Turing complete and can enter an infinite loop and crash), Datalog is intentionally mathematically restricted. It is guaranteed to always terminate. The engine will deduce every possible ancestor, and the exact millisecond no new facts can be deduced, it mathematically stops.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating Datalog syntax. We will define a network topology, define security rules, and mathematically query the engine to see if a hacker can reach a secure database.
+
+```prolog
+% 1. Facts (The Database)
+% We define the physical connections between servers.
+connected(web_server, app_server).
+connected(app_server, db_server).
+connected(hacker_laptop, web_server).
+
+% We define vulnerabilities
+has_vulnerability(web_server, sql_injection).
+has_vulnerability(app_server, buffer_overflow).
+
+% 2. Rules (The Logic)
+% Rule 1: A machine is compromised IF it has a vulnerability AND a hacker can reach it.
+% The ':-' symbol means "IF". The comma ',' means "AND". Capital letters are Variables.
+compromised(Machine) :- 
+    reaches(hacker_laptop, Machine), 
+    has_vulnerability(Machine, _). % The underscore '_' means we don't care what the vulnerability is.
+
+% Rule 2 (Base Case): Machine A reaches Machine B if they are directly connected.
+reaches(A, B) :- 
+    connected(A, B).
+
+% Rule 3 (Recursive Case): Machine A reaches Machine C IF A is connected to B, AND B reaches C.
+% This is true mathematical recursion, instantly mapping the entire network graph!
+reaches(A, C) :- 
+    connected(A, B), 
+    reaches(B, C).
+
+% 3. The Query
+% We ask the database: "Which machines are compromised?"
+?- compromised(Who).
+
+% The Datalog engine mathematically deduces:
+% 1. hacker_laptop connects to web_server.
+% 2. web_server has sql_injection. 
+% -> Therefore, web_server is compromised.
+% 3. web_server connects to app_server. 
+% 4. Therefore hacker_laptop reaches app_server (via recursion).
+% 5. app_server has buffer_overflow.
+% -> Therefore, app_server is compromised.
+%
+% Output: 
+% Who = web_server
+% Who = app_server
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group datalog_env(cloud)[Datalog Inference Engine]
+
+    group code(server)[Datalog Program] in datalog_env
+    service facts(database)[Facts: connected(A,B)] in code
+    service rules(database)[Rules: reaches(A,B) :- ...] in code
+    
+    group engine(server)[Automated Theorem Prover] in datalog_env
+    service strat(document)[Stratification (Dependency Ordering)] in engine
+    service fix(disk)[Fixed-Point Iteration (Recursion loop)] in engine
+    
+    service query(document)[Query: ?- reaches(hacker, db)] in datalog_env
+    service out(disk)[Result: True / False] in datalog_env
+
+    facts:B --> T:engine
+    rules:B --> T:engine
+    query:R --> L:engine
+    
+    engine:B --> T:out
+```
+
+## 5. Interview Prep
+
+**Q: What is the difference between Prolog and Datalog?**
+**A:** Prolog is a full programming language. It includes complex data structures (Lists, Trees), the Cut operator (which mutates search paths), and it allows infinite loops (Turing completeness). Datalog is a strictly constrained mathematical subset. It only allows flat relational data (no complex structures) and strictly outlaws certain types of negative recursion. This mathematically guarantees that a Datalog query will *always* finish executing in finite time, making it safe for database engines.
+
+**Q: How does the engine actually calculate the answer?**
+**A:** Most modern Datalog engines use "Bottom-Up Evaluation." They take the known Facts and mathematically apply the Rules to generate new facts. They add these new facts to the database and run the rules again. They repeat this cycle (Fixed-Point Iteration) until a cycle occurs where absolutely zero new facts are generated. At that exact point, the database is considered "complete," and it filters the results to answer your query.
+
+**Q: Is Datalog a database?**
+**A:** Datalog is a *language*, not a specific piece of software. It has been implemented in many different systems. Some systems (like Datomic) use a Datalog dialect as their primary query language instead of SQL. Other systems (like Soufflé) compile Datalog logic directly into hyper-fast parallel C++ code for analysis.
+
+## 6. Production Use Cases
+
+Datalog is heavily utilized in scenarios requiring deep, recursive analysis of rules and dependencies:
+- **Cloud Security and Authorization:** AWS (Amazon Web Services) built an automated reasoning engine called *Zelkova* that uses Datalog logic. When you write a massive IAM JSON policy, AWS mathematically translates it into Datalog, and the engine automatically proves whether or not the policy accidentally allows a public user to access a secure S3 bucket.
+- **Datomic Database:** Created by Rich Hickey (the creator of Clojure), Datomic is a revolutionary functional database that stores data as immutable facts over time. Its primary query language is a dialect of Datalog, allowing developers to write incredibly complex, recursive queries over the history of the data seamlessly.
+- **Static Code Analysis:** Large tech companies use Datalog compilers (like Soufflé or GitHub's CodeQL) to hunt for security bugs in massive C++ or Java codebases. The code's Abstract Syntax Tree (AST) is converted into millions of Datalog Facts. The security researchers write Datalog Rules defining what a "Data Leak" looks like, and the engine mathematically recursively traces every variable path in the software to find the vulnerabilities.
+
+<Callout icon="info" title="Stratified Negation">
+Recursion and Negation (NOT) are a mathematically dangerous combination. If you write a rule: `Paradox(X) :- NOT Paradox(X)`, the engine would enter an infinite mathematical contradiction. Datalog solves this via **Stratification**. The engine mathematically analyzes the rules before running. If it detects that a rule recursively negates itself, the compiler will strictly reject the program and refuse to run it.
+</Callout>

@@ -1,26 +1,135 @@
 ---
 title: DAX
-description: Data Analysis Expressions, the mathematical formula language created by Microsoft to power Power BI, Excel Power Pivot, and SQL Server Analysis Services.
+description: "Data Analysis Expressions. Microsoft's incredibly powerful, functional formula language designed specifically to unleash the massive analytical capabilities of Power BI and Analysis Services."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="DAX (Data Analysis Expressions)">
+    <ConceptTemplate title="DAX">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by Microsoft in 2010, DAX is a functional, mathematical formula language. If you look at a DAX formula, it looks almost exactly like a standard Microsoft Excel formula (e.g., `SUM(Table[Column])`), but its underlying architecture is completely different.
+**DAX (Data Analysis Expressions)** was created by Microsoft in 2009 for the PowerPivot add-in in Excel. It later became the absolute foundational language of **Power BI** and SQL Server Analysis Services (SSAS).
 
-## 1. Columnar Memory Architecture
-An Excel formula mathematically calculates data cell-by-cell.
-DAX calculates data **Column-by-Column**.
-DAX operates on top of the VertiPaq engine—an in-memory, highly compressed columnar database. When you run a DAX formula on a dataset of 100 million rows, the engine mathematically vectorizes the calculation across the entire column simultaneously in RAM, returning answers in fractions of a second.
+When business analysts use Excel, they write simple formulas like `=SUM(A1:A10)`. However, Excel physically crashes if you try to sum 50 million rows of sales data. Microsoft built an entirely new database engine (the VertiPaq engine) capable of holding billions of rows of compressed data in RAM. 
 
-## 2. Evaluation Context
-The most complex and powerful mathematical concept in DAX is the **Evaluation Context** (specifically Row Context and Filter Context).
-Unlike SQL, where a `WHERE` clause is explicitly written in the query, DAX calculates formulas dynamically based on what the user is looking at in the Power BI dashboard. If the user clicks a visual chart representing "Year 2023," the DAX engine mathematically applies an invisible Filter Context to all underlying data tables before calculating the `SUM`, allowing non-technical business users to slice and dice massive datasets dynamically without writing database queries.
+DAX is the language designed to query this massive engine. While it was intentionally designed to look exactly like Excel formulas (so business users could learn it quickly), underneath the hood it is a rigorously strict, highly complex functional programming language based heavily on relational database theory and dynamic Filter Contexts.
 
+## 1. Deep Dive & Mechanics
+
+DAX is defined by **The VertiPaq Engine and Columnar Storage**.
+
+In a traditional SQL database (Row-store), if you want to sum up the `SalesAmount` column, the hard drive must physically read the entire row (Customer, Date, Product, Amount) just to get the amount. 
+DAX operates on a **Columnar Database**. Every column is stored mathematically independently and highly compressed. 
+
+When you write a DAX formula to sum the `SalesAmount`, the engine only reads that one specific, hyper-compressed column array in RAM. This allows DAX to mathematically aggregate hundreds of millions of rows in literal milliseconds.
+
+## 2. Mathematical / Theoretical Foundation
+
+The absolute core of DAX—and the reason most beginners fail at it—is **Evaluation Context (Row Context vs. Filter Context)**.
+
+In DAX, formulas do not exist in a vacuum; they exist on a dashboard. If you write a DAX measure: `TotalSales = SUM(Sales[Amount])`, the result mathematically changes depending on where the user places it. 
+If the user drags the measure into a Bar Chart showing "Sales by Country", the DAX engine mathematically applies a **Filter Context**. Before it calculates the `SUM`, it invisibly filters the data table so that the formula only sees the rows for "France", calculates the sum, and then repeats for "Germany".
+
+The legendary `CALCULATE()` function is the only mathematical function in DAX that can intercept, destroy, or rewrite this invisible Filter Context on the fly.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating DAX's Excel-like syntax, and the incredible power of the `CALCULATE` function for modifying filter contexts (Time Intelligence).
+
+```dax
+-- 1. Simple Aggregation (A Measure)
+-- This looks exactly like Excel. It dynamically calculates based on 
+-- whatever filters the user clicked on the dashboard.
+Total Sales = SUM(Sales[SalesAmount])
+
+-- 2. Calculated Columns (Row Context)
+-- This mathematically iterates row-by-row through the table.
+-- It creates a new physical column in the data model.
+Profit Margin = (Sales[SalesAmount] - Sales[TotalCost]) / Sales[SalesAmount]
+
+-- 3. The CALCULATE Function (Modifying Context)
+-- CALCULATE is the most important function in DAX. 
+-- It evaluates an expression in a modified filter context.
+-- Here, we force the calculation to ignore all filters and ONLY return red products.
+Sales of Red Products = 
+CALCULATE(
+    [Total Sales],            -- The expression to evaluate
+    Products[Color] = "Red"   -- The mathematical filter to apply
+)
+
+-- 4. Time Intelligence (The true power of DAX)
+-- Calculating "Year-To-Date" in SQL requires massive, complex JOINs.
+-- In DAX, it is a single, built-in functional command.
+YTD Sales = TOTALYTD([Total Sales], Dates[Date])
+
+-- 5. Complex Context Override (Same Period Last Year)
+-- If a user clicks "October 2024" on the dashboard, this formula uses CALCULATE 
+-- to mathematically shift the invisible filter context back exactly one year, 
+-- returning the sales for "October 2023" for instant comparison.
+Sales Last Year = 
+CALCULATE(
+    [Total Sales],
+    SAMEPERIODLASTYEAR(Dates[Date])
+)
+
+-- 6. Variables
+-- DAX supports variables for readability and massive performance boosts 
+-- (as the variable is only evaluated once).
+YoY Growth % = 
+VAR CurrentSales = [Total Sales]
+VAR LastYearSales = [Sales Last Year]
+RETURN
+    DIVIDE(CurrentSales - LastYearSales, LastYearSales, 0)
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group dax_env(cloud)[The DAX Evaluation Engine]
+
+    service ui(document)[PowerBI Chart (Country = 'France')] in dax_env
+    
+    group calc(server)[CALCULATE(SUM(Sales), Color="Red")] in dax_env
+    service filter_c(database)[Initial Context: Country=France] in calc
+    service filter_n(database)[New Context: France AND Red] in calc
+    
+    group engine(server)[VertiPaq RAM Engine] in dax_env
+    service col(disk)[SalesAmount Column (Compressed)] in engine
+    
+    service result(document)[Return: $450,000] in dax_env
+
+    ui:B --> T:filter_c
+    filter_c:B --> T:filter_n
+    filter_n:R --> L:engine
+    engine:B --> T:result
+```
+
+## 5. Interview Prep
+
+**Q: What is the difference between a Calculated Column and a Measure?**
+**A:** This is the most critical concept in DAX. 
+A **Calculated Column** runs row-by-row when the data is loaded. It permanently takes up physical RAM and mathematically has a "Row Context".
+A **Measure** runs dynamically on the fly when the user interacts with the dashboard. It takes up zero RAM, operates on aggregates (SUM, AVERAGE), and mathematically has a "Filter Context". 
+
+**Q: What does the `DIVIDE()` function do? Why not just use `/`?**
+**A:** In data analysis, dividing by zero is catastrophic (it returns an Infinity error and crashes the entire visual chart). The `DIVIDE(numerator, denominator, alternate_result)` function mathematically checks for a zero denominator first. If it detects a zero, it safely returns a blank (or the alternate result), preventing the dashboard from breaking.
+
+**Q: Why is DAX considered so difficult to master?**
+**A:** Because it is deceptive. The syntax looks exactly like a simple Excel formula. But when a developer writes a DAX formula that isn't producing the expected number, they cannot easily "debug" it or print a console log. The error is almost always caused by invisible Filter Contexts propagating across relationships in the data model, requiring a deep theoretical understanding of relational modeling to fix.
+
+## 6. Production Use Cases
+
+DAX is the exclusive language of Microsoft's massive Business Intelligence stack:
+- **Enterprise Power BI Dashboards:** Global corporations use Power BI to visualize their operations. The entire backend logic—calculating moving averages, year-over-year growth, customer churn rates, and dynamic currency conversions—is written exclusively in DAX measures.
+- **SQL Server Analysis Services (SSAS):** Before a dashboard is even built, data engineers build massive Semantic Models (Tabular Cubes) in SSAS. They use DAX to pre-define the business logic (e.g., "What is our official mathematical definition of Net Profit?"). Hundreds of different Excel and Power BI reports then query this single DAX model, guaranteeing mathematical consistency across the company.
+- **Dynamic Security (Row-Level Security):** DAX is used to write security rules. You can write a DAX formula on the data model that says `[ManagerEmail] = USERPRINCIPALNAME()`. When a manager logs into the dashboard, DAX intercepts the session, evaluates the formula, and mathematically physically hides all rows of data that do not belong to that manager's department.
+
+<Callout icon="warning" title="MDX vs DAX">
+Before DAX, Microsoft's analytical language was MDX (Multidimensional Expressions), used for older OLAP Cubes. MDX was notoriously complex and difficult to write. Microsoft invented DAX specifically to replace MDX with a faster, in-memory, Excel-friendly syntax, though MDX is still supported in legacy systems.
+</Callout>

@@ -1,44 +1,173 @@
 ---
-title: Priority Scheduling
-description: A scheduling algorithm where processes are assigned absolute rankings, ensuring critical tasks are executed before background tasks.
+title: Scheduling Priority (Priority Inversion)
+description: "The mathematical paradox of importance. How giving a thread the highest priority in the Operating System can mathematically guarantee that it starves to death, and how NASA almost lost a Mars Rover because of it."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Priority Scheduling">
+    <ConceptTemplate title="Scheduling Priority (Priority Inversion)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While Round-Robin treats every program fairly, operating systems do not actually want to be fair.
+**Scheduling Priority** is the mathematical mechanism the Operating System uses to decide who gets physical CPU time when multiple programs are competing for it.
 
-The process rendering your mouse cursor *must* get CPU time immediately when you move your hand, otherwise the computer feels broken. Conversely, a background Dropbox sync process can safely wait a few seconds.
+In Linux, priorities (Niceness) range from -20 (Highest Priority, God Mode) to +19 (Lowest Priority, Background Task). 
+If a High-Priority thread and a Low-Priority thread both want to run, the OS Scheduler (CFS) mathematically guarantees the High-Priority thread gets the CPU first. In a Real-Time Operating System (RTOS), this is absolute: the High-Priority thread will preempt the Low-Priority thread in 5 microseconds.
 
-**Priority Scheduling** assigns a strict numerical rank to every process. The Scheduler will always choose the process with the highest priority to run next.
+But this rigid mathematical hierarchy introduces a catastrophic architectural flaw: **Priority Inversion**.
 
-## Preemptive vs Non-Preemptive
+## 1. Deep Dive & Mechanics
 
-- **Non-Preemptive**: If a high-priority process wakes up, it waits patiently in line until the currently running low-priority process finishes its work.
-- **Preemptive**: If a high-priority process wakes up, the Scheduler instantly pauses the low-priority process, kicks it off the CPU mid-calculation, and gives the CPU to the high-priority task. (All modern OSs use preemptive scheduling).
+**Priority Inversion** occurs when a High-Priority thread is mathematically blocked by a Medium-Priority thread, completely shattering the rules of the OS Scheduler.
 
-## The Starvation Problem
+Imagine three threads in an RTOS:
+- **High (H):** Radar Processing.
+- **Medium (M):** MP3 Music Player.
+- **Low (L):** Diagnostic Logger.
 
-Strict Priority Scheduling has a fatal flaw called **Starvation**.
-If a low-priority task is waiting for the CPU, but high-priority tasks keep waking up and demanding CPU time, the low-priority task will literally never execute. It starves to death.
+1. **L** wakes up and acquires a Mutex lock on a Shared Memory Bus.
+2. **H** wakes up. It preempts **L**. **H** tries to acquire the Shared Memory Bus Mutex. 
+3. **H** is mathematically blocked because **L** holds the lock. **H** goes to sleep.
+4. **M** wakes up. Because **M** > **L**, **M** preempts **L**. 
+5. **M** plays MP3 music forever.
 
+Look at the mathematical result: **H** (Radar) is waiting for **L** (Diagnostic) to finish. But **L** cannot finish because **M** (Music) is hogging the CPU! The highest priority thread in the system is mathematically starving to death because a medium priority thread refuses to yield. 
 
-<Callout icon="info" title="The MIT Starvation Incident">
+## 2. Mathematical / Theoretical Foundation
 
+Priority Inversion is solved using a mathematical hack inserted directly into the OS Scheduler called **Priority Inheritance**.
 
-  In 1973, when MIT shut down their massive IBM 7094 mainframe, they found a low-priority process that had been submitted in 1967. It had been starving for 6 years because higher-priority tasks constantly kept it off the CPU.
+When the OS Kernel detects that Thread **H** is blocked waiting for a Mutex held by Thread **L**, the Kernel dynamically alters reality.
+The Kernel mathematically *inherits* (copies) the priority of **H** and pastes it onto **L**. 
 
+**L** is temporarily boosted to High Priority (God Mode).
+Because **L** is now High Priority, **M** (Music) cannot preempt it. **L** rapidly finishes its work, releases the Mutex, and the Kernel instantly drops **L** back to Low Priority. **H** immediately grabs the Mutex and resumes processing the Radar. The system survives.
 
+## 3. Real-World Implementation
+
+Here is a conceptual demonstration of how a Real-Time OS Kernel (like VxWorks or FreeRTOS) mathematically executes Priority Inheritance inside its Mutex implementation.
+
+```c
+#include <stdio.h>
+
+// 1. Thread Structure inside the OS Kernel
+struct thread_control_block {
+    int pid;
+    int base_priority;       // The original mathematical priority (e.g., 10 for Low)
+    int dynamic_priority;    // The current priority used by the CPU Scheduler
+};
+
+// 2. The Mutex Structure
+struct rtos_mutex {
+    int is_locked;
+    struct thread_control_block* owner; // Who holds the lock?
+};
+
+// 3. The Kernel's Mutex Lock Function
+void kernel_mutex_lock(struct rtos_mutex* mtx, struct thread_control_block* current_thread) {
+    
+    if (mtx->is_locked == 1) {
+        // A. The Mutex is already held by someone else!
+        struct thread_control_block* lock_owner = mtx->owner;
+        
+        // B. PRIORITY INVERSION DETECTION
+        if (current_thread->dynamic_priority > lock_owner->dynamic_priority) {
+            
+            printf("KERNEL: Priority Inversion Detected! Thread %d is blocking Thread %d.\n", 
+                   lock_owner->pid, current_thread->pid);
+                   
+            // C. PRIORITY INHERITANCE (The Mathematical Hack)
+            // We violently boost the owner's priority to match the blocked thread.
+            // This forces the CPU Scheduler to run the owner immediately so it can 
+            // finish its work and drop the lock.
+            lock_owner->dynamic_priority = current_thread->dynamic_priority;
+            
+            printf("KERNEL: Boosted Thread %d to Priority %d.\n", 
+                   lock_owner->pid, lock_owner->dynamic_priority);
+                   
+            // Tell the OS CPU Scheduler to immediately re-evaluate who should be on the CPU
+            trigger_cpu_reschedule();
+        }
+        
+        // D. Put the current thread to sleep
+        block_thread(current_thread);
+        
+    } else {
+        // E. Acquire the Lock
+        mtx->is_locked = 1;
+        mtx->owner = current_thread;
+    }
+}
+
+// 4. The Kernel's Mutex Unlock Function
+void kernel_mutex_unlock(struct rtos_mutex* mtx) {
+    struct thread_control_block* lock_owner = mtx->owner;
+    
+    mtx->is_locked = 0;
+    mtx->owner = NULL;
+    
+    // F. RESTORE REALITY
+    // If the thread was boosted, we mathematically drop it back to its original state.
+    if (lock_owner->dynamic_priority != lock_owner->base_priority) {
+        lock_owner->dynamic_priority = lock_owner->base_priority;
+        printf("KERNEL: Restored Thread %d back to Base Priority %d.\n", 
+               lock_owner->pid, lock_owner->base_priority);
+    }
+    
+    // Wake up the highest priority sleeping thread
+    wake_up_threads_waiting_on_mutex(mtx);
+}
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group prio_env(cloud)[Priority Inheritance Architecture]
+
+    group threads(server)[Thread States] in prio_env
+    service H(database)[H (Priority 90) : BLOCKED] in threads
+    service M(disk)[M (Priority 50) : RUNNING] in threads
+    service L(database)[L (Priority 10) : PREEMPTED] in threads
+    
+    group os(server)[OS Scheduler Intervention] in prio_env
+    service mtx(database)[Mutex (Owned by L)] in os
+    service boost(disk)[Boost L to Priority 90] in os
+
+    %% H is blocked by L
+    H:B --> T:mtx
+    mtx:B --> T:L
+    
+    %% M is completely ruining the system by preempting L
+    M:B --> T:L
+    
+    %% OS Kernel intervenes
+    mtx:L --> R:boost
+    boost:R --> L:L
+```
+
+## 5. Interview Prep
+
+**Q: What is Priority Ceiling? How is it different from Priority Inheritance?**
+**A:** Priority Inheritance is *reactive*. The OS waits for High to block on Low, and *then* boosts Low. **Priority Ceiling Protocol (PCP)** is *proactive*. Every Mutex in the system is mathematically assigned a "Ceiling Priority" (equal to the highest priority thread that will *ever* use it). The nanosecond Low acquires the Mutex, the OS instantly boosts Low to the Ceiling Priority, even if High isn't running yet. It prevents Priority Inversion before it even happens, but causes unnecessary CPU context switching.
+
+**Q: In Linux, does `pthread_mutex_t` use Priority Inheritance by default?**
+**A:** **No.** Standard Linux does not care about Priority Inversion because standard Linux (CFS) is designed for fairness, not hard real-time guarantees. If you are writing a C++ robotics application on Linux, you must mathematically force the OS to use Priority Inheritance by manually configuring the Mutex attributes during creation: `pthread_mutexattr_setprotocol(&attr, PTHREAD_PRIO_INHERIT)`. 
+
+**Q: What is "Niceness" in Unix?**
+**A:** In Unix, priority is represented by a mathematical value called `nice`. It ranges from -20 (Most aggressive, highest priority) to +19 (Most polite, lowest priority). It is confusing because a *lower* mathematical number means a *higher* CPU priority. Standard users can only increase their Niceness (make their programs slower). Only the `root` user can assign negative Niceness to a program to mathematically steal CPU time from other users.
+
+## 6. Production Use Cases
+
+Priority mechanics dictate the survival of autonomous systems and the responsiveness of massive UI frameworks:
+- **The Mars Pathfinder Disaster (1997):** The most famous Priority Inversion in history. The NASA Mars Pathfinder rover landed successfully. Days later, it began randomly experiencing total system reboots. NASA engineers diagnosed it remotely from Earth: A low-priority meteorological data-gathering thread grabbed a Mutex. A high-priority bus management thread blocked on the Mutex. A medium-priority communications thread preempted the low-priority thread. The high-priority thread starved. The system's hardware Watchdog Timer realized the high-priority thread hadn't run in 3 seconds, assumed the OS had mathematically crashed, and violently rebooted the Rover. NASA fixed it by sending a C-patch across space to turn on Priority Inheritance in the VxWorks RTOS.
+- **Android UI Thread (Main Thread):** In Android development, the OS mathematically enforces that all UI rendering happens on exactly one thread (The Main Thread, Priority High). If you execute a slow network request on the Main Thread, the OS detects that the UI is freezing and mathematically triggers an ANR (Application Not Responding) crash. Developers must spawn Background Threads (Priority Low) to do the network math. But if the Background Thread acquires a database lock, and the Main Thread needs it to draw the UI, Priority Inversion occurs, causing the phone to stutter violently.
+- **Audio Processing (DAWs like Ableton):** Digital Audio Workstations must process audio buffers every 2 milliseconds to avoid speakers "popping" or "crackling". The Audio Thread is assigned Real-Time mathematical priority (via the Linux `PREEMPT_RT` patch or macOS CoreAudio). If a low-priority UI thread (drawing the volume meter) acquires a lock on a shared audio array, the Audio Thread will block, missing its 2ms deadline. Audio software architects completely ban Mutexes in the Audio Thread, relying entirely on Lock-Free Ring Buffers to mathematically guarantee the Audio Thread never yields the CPU to priority inversion.
+
+<Callout icon="warning" title="The Watchdog Timer">
+In mission-critical embedded systems (Cars, Spacecraft), software math cannot be fully trusted. Hardware engineers install a physical silicon chip called a Watchdog Timer. The Operating System Kernel must mathematically send an electrical pulse to the Watchdog chip every 10 milliseconds. If a Priority Inversion or Deadlock freezes the OS, the pulse stops. The Watchdog chip waits 50 milliseconds, assumes the software is dead, and violently cuts the physical power to the CPU, forcing a hard hardware reboot. It is the ultimate failsafe against mathematical deadlocks.
 </Callout>
-
-
-### The Solution: Aging
-To prevent Starvation, operating systems use a technique called **Aging**. Every minute a process spends waiting in the queue without getting CPU time, the Scheduler artificially boosts its priority. Eventually, even the lowest-priority background task will age into a high-priority task, ensuring it gets at least a brief turn on the CPU.
-

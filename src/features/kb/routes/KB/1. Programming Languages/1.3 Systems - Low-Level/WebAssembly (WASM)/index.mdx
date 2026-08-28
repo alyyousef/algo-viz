@@ -1,27 +1,142 @@
 ---
 title: WebAssembly (WASM)
-description: A binary instruction format for a stack-based virtual machine, designed as a portable compilation target for programming languages.
+description: "A revolutionary, portable binary instruction format that allows high-performance languages like C++, Rust, and Go to run directly inside the web browser at near-native speed."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="WebAssembly (WASM)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="WebAssembly (WASM)">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-WebAssembly (WASM) is a binary instruction format for a stack-based virtual machine. It is designed as a portable compilation target for programming languages, enabling deployment on the web for client and server applications.
+**WebAssembly (WASM)** was announced in 2015 as a collaborative effort by Mozilla, Google, Microsoft, and Apple.
 
+For 25 years, JavaScript was the only language that could run natively inside a web browser. While modern JavaScript engines (like V8) are incredibly fast, they suffer from the fundamental unpredictability of dynamically typed, Garbage-Collected languages. You simply cannot run a AAA video game, a massive video editor, or a 3D CAD program smoothly in pure JavaScript.
 
-<Callout icon="success" title="Near-Native Performance">
+WebAssembly was created to break this monopoly. It is not a programming language you write by hand. It is a **Binary Compilation Target**. You write code in Rust, C++, or Go, compile it mathematically down into a `.wasm` binary file, and the web browser executes that binary safely inside a sandbox at near-native hardware speeds.
 
+## 1. Deep Dive & Mechanics
 
-  Before WASM, JavaScript was the *only* language that could run in a web browser. With WASM, you can write a video editing engine in C++ or Rust, compile it to a tiny WASM binary, and run it in the browser at near-native CPU speeds. (Figma and AutoCAD Web run on WASM).
+WASM is a **Stack-Based Virtual Machine Architecture**.
 
+Unlike x86 or ARM Assembly (which operate on physical hardware registers), WASM is a mathematical abstraction. It operates on a Virtual Stack. When you want to add two numbers, you `push` the numbers onto the stack, call the `add` instruction, and it replaces them with the mathematical result. 
 
+Because it doesn't rely on physical CPU registers, a `.wasm` file is **Completely Portable**. The exact same binary file can be downloaded by an Intel Windows machine or an ARM iPhone. The browser's WASM engine takes the portable binary and does a final, lightning-fast compilation step to map the virtual stack commands down to the specific physical hardware of the user's device.
+
+## 2. Mathematical / Theoretical Foundation
+
+WASM achieves its performance and safety through **Linear Memory and the Sandbox**.
+
+In standard C++, pointers can mathematically access any RAM address in the system (which is why C++ can be a massive security risk). 
+When C++ is compiled to WASM, it cannot touch the host computer's RAM. The browser allocates a single, contiguous block of memory (an `ArrayBuffer` in JavaScript) called **Linear Memory**. 
+
+The WASM binary is mathematically trapped inside this ArrayBuffer. If the C++ code has a Buffer Overflow bug and tries to access memory outside of its sandbox, the browser instantly intercepts the math and terminates the WASM module. This guarantees that running a downloaded WASM binary is just as safe as running standard JavaScript.
+
+## 3. Real-World Implementation
+
+Developers rarely write WebAssembly by hand. They write a language like Rust, and the compiler generates the `.wasm` file (and optionally the `.wat` WebAssembly Text format for human readability).
+
+**1. The Rust Source Code (Fast, safe systems language)**
+```rust
+// We use the #[no_mangle] attribute so JavaScript can find the function name.
+#[no_mangle]
+pub extern "C" fn calculate_fibonacci(n: i32) -> i32 {
+    if n <= 1 {
+        return 1;
+    }
+    return calculate_fibonacci(n - 1) + calculate_fibonacci(n - 2);
+}
+```
+
+**2. The Generated WebAssembly Text (.wat format)**
+```wasm
+;; The Rust compiler mathematically translates the code into stack-based instructions.
+(module
+  (func $calculate_fibonacci (export "calculate_fibonacci") (param $n i32) (result i32)
+    ;; 1. Check if n <= 1
+    local.get $n
+    i32.const 1
+    i32.le_s
+    
+    ;; 2. If true, return 1
+    if (result i32)
+      i32.const 1
+    else
+      ;; 3. Otherwise, recursively push (n-1) and (n-2) to the stack and add
+      local.get $n
+      i32.const 1
+      i32.sub
+      call $calculate_fibonacci
+      
+      local.get $n
+      i32.const 2
+      i32.sub
+      call $calculate_fibonacci
+      
+      i32.add
+    end
+  )
+)
+```
+
+**3. Executing in the Browser (JavaScript)**
+```javascript
+// We fetch the compiled binary file and stream it into the browser's WASM compiler
+WebAssembly.instantiateStreaming(fetch('fibonacci.wasm'))
+  .then(obj => {
+    // We can call the compiled Rust function directly from JavaScript!
+    const result = obj.instance.exports.calculate_fibonacci(40);
+    console.log("The 40th Fibonacci number is:", result);
+  });
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group browser_env(cloud)[Web Browser Execution Environment]
+
+    service dom(document)[HTML / DOM] in browser_env
+    
+    group js_engine(server)[JavaScript V8 Engine] in browser_env
+    service js(document)[JS Code (UI Logic)] in js_engine
+    
+    group wasm_engine(server)[WASM Virtual Machine] in browser_env
+    service wasm(disk)[Downloaded .wasm Binary] in wasm_engine
+    service lin_mem(database)[Linear Memory (ArrayBuffer)] in wasm_engine
+    service cpu(disk)[JIT to Native Machine Code] in wasm_engine
+
+    js:B --> T:wasm
+    wasm:B --> T:lin_mem
+    lin_mem:B --> T:cpu
+    
+    %% JS and WASM communicate via the JS Engine
+    js:L --> R:dom
+    wasm:R --> L:js
+```
+
+## 5. Interview Prep
+
+**Q: Does WebAssembly replace JavaScript?**
+**A:** No. WebAssembly is explicitly designed to *coexist* with JavaScript. WebAssembly currently has no direct access to the HTML DOM. If you want to create a button, you use JavaScript. If you want to run a massive 500-megabyte video processing algorithm when that button is clicked, you use JavaScript to pass the video to a highly optimized WebAssembly module.
+
+**Q: Why is WASM faster than JavaScript?**
+**A:** JavaScript is dynamically typed. When JS runs, the browser's JIT compiler spends massive amounts of CPU cycles mathematically guessing the types of variables and optimizing them on the fly. WebAssembly is strictly typed and already pre-optimized by the Rust/C++ compiler. The browser simply validates the binary and executes it immediately, resulting in predictable, near-native performance without garbage collection pauses.
+
+**Q: What is WASI (WebAssembly System Interface)?**
+**A:** It is the next massive evolution of WASM. Because a `.wasm` binary is perfectly portable and perfectly sandboxed, developers realized it doesn't need to run in a browser. WASI allows WebAssembly modules to run on backend servers (like Docker containers), securely giving the module sandboxed access to the filesystem and network, creating a highly secure, instant-booting microservice architecture.
+
+## 6. Production Use Cases
+
+WebAssembly is revolutionizing what is physically possible to run inside a web browser:
+- **Figma:** The massive collaborative UI design tool is written in C++ and compiled to WebAssembly. This allows Figma to manipulate massive vectors, hundreds of layers, and 3D graphics at 60 frames per second inside the browser—a mathematical feat that would cause standard JavaScript to instantly crash.
+- **Video Games (Unity / Unreal):** Major game engines now export directly to WebAssembly. This allows developers to take massive C++ games (like DOOM or modern 3D shooters) and allow users to play them instantly via a URL, without ever downloading a traditional executable installer.
+- **Serverless Edge Computing (Cloudflare Workers):** Cloudflare allows developers to deploy WebAssembly modules to their edge servers. Because WASM modules are tiny and mathematically secure, Cloudflare can instantly boot up your WASM binary and execute backend logic in less than 5 milliseconds, drastically outperforming heavy backend Docker containers.
+
+<Callout icon="warning" title="Memory Limitations">
+Currently, standard WebAssembly uses 32-bit memory pointers (WASM32), meaning a single WebAssembly module can mathematically only address a maximum of 4 Gigabytes of Linear Memory. For massive desktop applications ported to the web, this can be a severe limitation. WASM64 (64-bit pointers) is actively being standardized to solve this.
 </Callout>
-
-
-## Characteristics
-
-
-<ComparisonTable headers={['Feature', 'Description']} rows={[ ['Format', 'WASM is a binary format (not human readable like JS). It decodes significantly faster than JS can be parsed.'], ['Security', 'It executes in a memory-safe, sandboxed execution environment. It cannot access the DOM or the user\'s hard drive directly.'], ['Language Agnostic', 'C, C++, Rust, Go, and C# can all compile directly to WASM.'] ]} />
-
-
-</TechnologyTemplate>

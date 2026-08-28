@@ -1,25 +1,130 @@
 ---
 title: PureScript
-description: A strongly-typed, purely functional programming language that compiles to clean, readable JavaScript.
+description: "A strongly-typed, purely functional programming language that brings the absolute mathematical rigor of Haskell directly to the web browser."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="PureScript">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by Phil Freeman, PureScript is heavily inspired by Haskell but specifically designed to target the JavaScript ecosystem (and later C++ and Erlang). It brings the mathematical rigor of purely functional programming to frontend development.
+**PureScript** was created in 2013 by Phil Freeman. 
 
-## 1. Strict Evaluation
-Unlike Haskell, which uses Lazy Evaluation (where code mathematically isn't executed until its value is needed), PureScript uses **Strict (Eager) Evaluation**.
-Because JavaScript is strictly evaluated, this mathematical decision prevents the massive memory leaks and unpredictable performance spikes that often occur when compiling lazy languages to the browser.
+As web applications grew increasingly complex, developers sought out functional programming to tame the chaos of JavaScript's mutable state. While Elm provided a highly simplified, restricted functional environment for the web, many developers felt it was *too* restrictive because it lacked advanced academic features like Type Classes. 
 
-## 2. No Runtime
-Languages like Elm and ClojureScript ship a "Runtime" (a massive block of JavaScript code) to the browser to handle their specific data structures.
-PureScript was mathematically designed to compile into standard, idiomatic JavaScript without a heavy runtime. A PureScript record `{ name: "John" }` compiles directly into a native JavaScript object. This makes integrating PureScript into an existing React or Node.js codebase incredibly easy, as the generated code looks almost exactly like hand-written JavaScript.
+PureScript was created to bridge this gap. It is essentially a strict dialect of **Haskell** designed explicitly to compile to clean, readable JavaScript. It brings the full, uncompromising mathematical weight of Category Theory (Monads, Functors, Higher-Kinded Types) to frontend development.
 
+## 1. Deep Dive & Mechanics
+
+PureScript is defined by **Strict Purity and Advanced Type Systems**.
+
+Like Haskell, PureScript is mathematically pure. Functions cannot mutate state, write to the DOM, or make network requests natively. All side effects must be strictly sequenced using the `Effect` monad (similar to Haskell's `IO` monad). 
+
+However, unlike Haskell (which relies on a massive, heavy runtime system to handle Lazy Evaluation), PureScript uses **Strict (Eager) Evaluation**, just like JavaScript. When you call a function in PureScript, it executes immediately. This ensures that the generated JavaScript runs predictably and doesn't suffer from the massive memory issues (Space Leaks) that plague lazy languages.
+
+## 2. Mathematical / Theoretical Foundation
+
+PureScript's crowning mathematical feature is its support for **Type Classes and Higher-Kinded Types**.
+
+Elm famously removed Type Classes to make the language easier to learn, forcing developers to write separate functions for `List.map`, `Array.map`, and `Maybe.map`. 
+PureScript retains Haskell's mathematical abstraction. You can define a Type Class called `Functor`, which mathematically defines the concept of "something that can be mapped over." You then implement this interface for Lists, Arrays, and API Responses. This allows developers to write insanely generic, mathematically proven algorithms that can operate on any data structure that implements the underlying algebraic rules.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating PureScript's Haskell-like syntax, its explicit type signatures, and how it uses the `Effect` monad to handle side effects like writing to the console.
+
+```haskell
+-- 1. Module Declaration
+-- PureScript has a very explicit, clean import system.
+module Main where
+
+import Prelude -- Imports basic math and Type Classes (like Functor)
+import Effect (Effect)
+import Effect.Console (log)
+import Data.Array (filter, map)
+
+-- 2. Pure Functions and Type Signatures
+-- This function mathematically takes an Int and returns a String.
+-- There are absolutely no side effects possible here.
+fizzBuzz :: Int -> String
+fizzBuzz n
+  | mod n 15 == 0 = "FizzBuzz"
+  | mod n 3  == 0 = "Fizz"
+  | mod n 5  == 0 = "Buzz"
+  | otherwise     = show n
+
+-- 3. Data Transformation
+-- We use standard functional techniques (map/filter).
+processNumbers :: Array Int -> Array String
+processNumbers numbers =
+  let 
+    evens = filter (\x -> mod x 2 == 0) numbers
+  in 
+    -- We map our pure fizzBuzz function over the array of evens
+    map fizzBuzz evens
+
+-- 4. The Effect Monad (Impure Code)
+-- 'main' is the entry point. Its type signature explicitly states 
+-- that it will perform side effects (Effect Unit).
+main :: Effect Unit
+main = do
+  -- 'log' is an impure function that writes to the JS console.
+  log "Starting PureScript Application..."
+  
+  let result = processNumbers [1, 2, 3, 4, 5, 6, 15, 30]
+  
+  -- Because 'result' is a PureScript Array, we convert it to a string to log it.
+  log (show result)
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group purescript_env(cloud)[PureScript Compilation Pipeline]
+
+    group pure_src(server)[PureScript Source Code] in purescript_env
+    service ffi(document)[Foreign Function Interface (JS)] in pure_src
+    service puresrc(document)[Main.purs (Pure Math)] in pure_src
+    
+    group compiler(server)[PureScript Compiler (purs)] in purescript_env
+    service typecheck(database)[Type Classes & Higher-Kinded Types] in compiler
+    service codegen(document)[Readable JS Generator] in compiler
+    
+    group runtime(server)[Execution Environment] in purescript_env
+    service bundle(disk)[Optimized bundle.js] in runtime
+    service browser(disk)[Client Web Browser] in runtime
+
+    ffi:B --> T:codegen
+    puresrc:B --> T:typecheck
+    typecheck:B --> T:codegen
+    codegen:B --> T:bundle
+    bundle:B --> T:browser
+```
+
+## 5. Interview Prep
+
+**Q: How does PureScript deal with existing JavaScript libraries (like React)?**
+**A:** PureScript uses an incredibly robust **Foreign Function Interface (FFI)**. You can easily call JavaScript functions from PureScript. However, to maintain mathematical purity, the developer is forced to write a PureScript type signature that wraps the JavaScript function, explicitly declaring whether the JS function has side effects (putting it in the `Effect` monad) so the PureScript compiler can track the "impurity" safely.
+
+**Q: Why use PureScript over Elm?**
+**A:** Elm intentionally caps its complexity to remain accessible. Elm lacks Type Classes, Higher-Kinded Types, and an easy FFI to interact with NPM libraries. If a team of senior functional programmers wants to write a highly complex, mathematically abstracted frontend using advanced Category Theory patterns, Elm is too restrictive, while PureScript provides the full power of Haskell.
+
+**Q: Does PureScript generate readable JavaScript?**
+**A:** Yes. Unlike compilers like ClojureScript or GHCJS (which output massive, unreadable blocks of optimized bytecode-like JavaScript), PureScript was explicitly designed to generate clean, readable, common-JS modules that map very closely to the original source code, making it extremely easy to debug in the browser.
+
+## 6. Production Use Cases
+
+PureScript is primarily adopted by teams who already use Haskell on the backend and want to share the exact same mathematical guarantees on the frontend:
+- **Lumi:** A massive packaging supply chain company famously adopted PureScript for their entire frontend architecture. They built custom PureScript bindings for React, allowing them to build incredibly complex UIs with the mathematical guarantee of zero runtime errors.
+- **Financial & Crypto Dashboards:** Because PureScript eliminates runtime crashes and strictly models data using Algebraic Data Types, it is highly favored by blockchain and fintech startups building complex data visualization dashboards where UI state corruption is unacceptable.
+- **Shared Domain Logic:** Because PureScript code is pure math, companies can define their core business logic (e.g., tax calculation algorithms) in PureScript, and compile it to JavaScript for the browser frontend, and C++ or Erlang (via alternate backends) for the server, guaranteeing the math matches perfectly across the entire stack.
+
+<Callout icon="info" title="No Runtime required">
+Unlike Haskell or ClojureScript, PureScript does not ship a massive "Runtime" to the browser. There is no heavy garbage collector or Virtual Machine attached to your code. PureScript relies entirely on the host browser's JavaScript V8 engine to handle execution and memory, resulting in incredibly small, fast production bundles.
+</Callout>

@@ -1,38 +1,115 @@
 ---
 title: C# (C-Sharp)
-description: A modern, object-oriented, and type-safe programming language developed by Microsoft as part of its .NET initiative.
+description: "A modern, object-oriented, and type-safe programming language developed by Microsoft as the flagship language of the .NET ecosystem."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="C# (C-Sharp)"
-  category="Programming Languages"
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/0/0d/C_Sharp_wordmark.svg"
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="C#">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Created by Microsoft in 2000 (led by Anders Hejlsberg), **C#** was originally designed as Microsoft's answer to Java. Today, it has evolved into a highly expressive, modern, multi-paradigm language running on the open-source, cross-platform **.NET Core** runtime.
+**C# (C-Sharp)** is a powerful, multi-paradigm, general-purpose programming language developed by Microsoft in 2000. Originally spearheaded by Anders Hejlsberg (who also designed TypeScript), C# was created to be the flagship language of the massive .NET framework.
 
+While it initially drew heavy inspiration from Java, C# has evolved into a vastly more feature-rich and modern language, dominating enterprise web development, Windows desktop applications, and game development via Unity.
 
-<Callout icon="info" title="The LINQ Revolution">
+## 1. Deep Dive & Mechanics
 
+C# is a statically typed, managed language. When you write C# code, it is not compiled directly into raw machine code. Instead, the Roslyn compiler translates it into an intermediate format called **CIL (Common Intermediate Language)**. 
 
-  C# is heavily praised for its elegant syntax and rapid adoption of modern features. One of its crown jewels is **LINQ (Language Integrated Query)**, which allows developers to write SQL-like queries directly into the language syntax to filter and map over arrays and databases with absolute type safety.
+When the user runs the application, the .NET runtime (specifically the CLR - Common Language Runtime) uses a **JIT (Just-In-Time) compiler** to translate that CIL into native machine code optimized exactly for the host machine's architecture at runtime. This allows C# binaries to be highly portable while maintaining excellent execution speed.
 
+C# is inherently memory-safe. It utilizes a generational **Garbage Collector (GC)** that automatically handles the allocation and deallocation of heap memory, completely protecting developers from the memory leaks and segmentation faults prevalent in C++.
 
+## 2. Mathematical / Theoretical Foundation
+
+C#'s most significant theoretical innovation over Java was the introduction of **LINQ (Language Integrated Query)** in 2007. 
+
+LINQ brings functional programming and Category Theory concepts (like Monads and Functors) directly into an object-oriented language. Mathematically, LINQ operations map directly to Relational Algebra (used in SQL databases) and Set Theory. It allows developers to query collections, XML, or SQL databases using a unified, mathematically consistent syntax, treating data transformations as lazy-evaluated expression trees.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating modern C# features: **Records** (for immutable data), **LINQ** (for functional querying), and **Async/Await** (for non-blocking concurrency).
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+// 1. Records create immutable, value-based data models (Introduced in C# 9)
+public record Player(string Name, int Score);
+
+public class GameServer
+{
+    public static async Task Main()
+    {
+        List<Player> players = new()
+        {
+            new Player("Alice", 1500),
+            new Player("Bob", 800),
+            new Player("Charlie", 2200)
+        };
+
+        // 2. LINQ: A functional, declarative approach to querying data
+        var topPlayers = players
+            .Where(p => p.Score > 1000)
+            .OrderByDescending(p => p.Score)
+            .Select(p => p.Name);
+
+        Console.WriteLine("Top Players:");
+        foreach (var name in topPlayers)
+        {
+            Console.WriteLine(name);
+        }
+
+        // 3. Async/Await for non-blocking operations
+        await Task.Delay(1000); // Simulate network latency
+        Console.WriteLine("Data sync complete.");
+    }
+}
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group dotnet(cloud)[The .NET Execution Model]
+
+    service src(document)[C# Source Code] in dotnet
+    service roslyn(server)[Roslyn Compiler] in dotnet
+    service cil(disk)[CIL DLL / EXE] in dotnet
+    service clr(server)[CLR JIT Compiler] in dotnet
+    service cpu(database)[Native Machine Code] in dotnet
+
+    src:R --> L:roslyn
+    roslyn:B --> T:cil
+    cil:R --> L:clr
+    clr:B --> T:cpu
+```
+
+## 5. Interview Prep
+
+**Q: Explain the difference between Value Types and Reference Types in C#.**
+**A:** Value Types (like `int`, `bool`, and `struct`) are stored directly on the Stack. They contain their actual data, and assigning them creates a full copy. Reference Types (like `class`, `string`, and `arrays`) store a pointer on the Stack, but the actual object payload is allocated on the Heap. The Garbage Collector only manages the Heap.
+
+**Q: What is the purpose of the `async` and `await` keywords?**
+**A:** They enable asynchronous programming without blocking the main thread. Under the hood, the compiler transforms the method into a highly complex State Machine. When `await` is hit on an I/O operation (like a database call), the thread is immediately released back to the Thread Pool to handle other requests. When the I/O finishes, the state machine resumes execution.
+
+**Q: What are C# Records and why use them over Classes?**
+**A:** Introduced in C# 9, Records are specialized classes designed for immutable data models. Unlike standard classes, which use reference equality (two objects with identical data are not equal if they occupy different memory addresses), Records use value equality (two records with identical data evaluate as equal). This makes them perfect for DTOs (Data Transfer Objects) and functional programming patterns.
+
+## 6. Production Use Cases
+
+C# is a titan of the enterprise world:
+- **Enterprise Web APIs:** ASP.NET Core is one of the fastest web frameworks on the planet, used by massive corporations to build secure, scalable, microservice-based backend architectures.
+- **Game Development:** The Unity Game Engine uses C# as its primary scripting language. The vast majority of mobile games, indie hits, and AR/VR applications are powered by C#.
+- **Cross-Platform Mobile:** With .NET MAUI (formerly Xamarin), developers use C# to write a single codebase that compiles into native iOS and Android applications.
+
+<Callout icon="info" title="The Open Source Revolution">
+For its first 15 years, C# was locked entirely into the Windows ecosystem. In 2014, Microsoft completely open-sourced the compiler (Roslyn) and introduced .NET Core. Today, C# runs blazingly fast on Linux, macOS, and Docker containers, making it a top-tier choice for modern cloud-native Kubernetes deployments.
 </Callout>
-
-
-## Key Characteristics
-
-- **Object-Oriented & Component-Oriented**: Like Java, it is heavily OOP, but adds features like Properties and Events natively to support UI component development.
-- **Managed Execution**: C# compiles to Intermediate Language (IL) which is executed by the Common Language Runtime (CLR), providing automatic Garbage Collection and memory safety.
-- **Async/Await**: C# pioneered the modern `async/await` syntax in 2012, which has since been adopted by JavaScript, Python, and Rust to handle asynchronous I/O cleanly.
-- **Value Types vs Reference Types**: Gives developers fine-grained control over memory, allowing data to be allocated on the Stack (structs) for performance, or the Heap (classes).
-
-## Where is it used?
-
-- **Enterprise Web Backends**: ASP.NET Core is one of the fastest and most popular web frameworks on the market, dominating corporate enterprise software.
-- **Game Development**: The primary scripting language for the **Unity Game Engine**, making it the most used language in indie game development and mobile gaming.
-- **Desktop Applications**: The undisputed standard for building native Windows desktop applications (WPF, WinForms, MAUI).
-
-</TechnologyTemplate>

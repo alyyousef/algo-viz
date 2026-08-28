@@ -1,26 +1,122 @@
 ---
 title: EJS
-description: Embedded JavaScript templating, a simple templating language that lets you generate HTML markup with plain JavaScript.
+description: "Embedded JavaScript (EJS) is a simple, highly popular templating language that lets you generate HTML markup using raw JavaScript logic."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="EJS (Embedded JavaScript)">
+    <ConceptTemplate title="EJS">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-EJS is one of the most popular and straightforward templating engines for Node.js and Express applications. It allows developers to dynamically mathematically inject JavaScript variables directly into HTML files.
+**EJS (Embedded JavaScript)** is a widely used templating engine for the Node.js ecosystem. 
 
-## 1. Syntax and Execution
-Unlike strict templating languages (like Handlebars) that heavily restrict what logic you can write, EJS allows raw, mathematically complete JavaScript loops and conditionals directly inside the template.
-- `<% %>` : Executes JavaScript logic (e.g., `for` loops, `if` statements) without outputting anything to the HTML.
-- `<%= %>` : Evaluates the JavaScript and mathematically outputs the escaped result into the HTML (preventing XSS attacks).
-- `<%- %>` : Evaluates and outputs the raw, unescaped HTML (dangerous if used with user input).
+When building a traditional server-side rendered (SSR) web application, the server needs to dynamically inject data (like a user's name or a list of products) into an HTML file before sending it to the browser. While modern frameworks like React use JSX to solve this, older or simpler Express.js applications rely on templating engines. EJS is famous for its absolute simplicity: it simply allows you to embed raw, unmodified JavaScript directly inside your HTML using `<% %>` tags.
 
-## 2. The Tradeoff
-Because EJS allows raw JavaScript, it is incredibly powerful. However, it violates the architectural principle of separating Logic from View. A poorly written EJS template can quickly degenerate into a tangled mess of complex database queries mathematically mixed directly into HTML tables.
+## 1. Deep Dive & Mechanics
 
+EJS is an **Unrestricted, Logic-Heavy Templating Engine**.
+
+Unlike "Logic-less" engines (like Mustache or Handlebars) which mathematically restrict what you can do inside the template to force separation of concerns, EJS places no restrictions on the developer. Because you are writing raw JavaScript inside the `<% %>` tags, you can execute complex `for` loops, perform mathematical operations, or even call standard JavaScript string manipulation methods (like `.toUpperCase()`) directly inside the HTML file.
+
+The EJS compiler works by mathematically parsing the `.ejs` file, extracting the JavaScript blocks, combining them with the raw HTML text strings, and evaluating the entire file via the V8 JavaScript engine to output a final, static HTML string.
+
+## 2. Mathematical / Theoretical Foundation
+
+EJS operates on the **String Interpolation and Evaluation** model.
+
+It does not generate a virtual DOM, nor does it create a complex Abstract Syntax Tree of the HTML (like Pug does). It treats the HTML purely as a flat text string. 
+When it encounters `<%= user.name %>`, it mathematically evaluates the JS expression `user.name`, converts the result to a string, and concatenates it into the HTML stream. 
+
+This makes EJS incredibly fast and easy to learn, but it also makes it highly susceptible to **Cross-Site Scripting (XSS)** attacks if developers are not careful, which is why EJS provides different tags for escaped vs. unescaped output.
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating an EJS template rendering dynamic variables, executing a `for` loop, and safely escaping data.
+
+```html
+<!-- 1. Include Partials -->
+<!-- EJS allows you to stitch multiple files together (e.g., Headers/Footers) -->
+<%- include('partials/header') %>
+
+<div class="container">
+  <!-- 2. Data Interpolation (Escaped) -->
+  <!-- The '=' sign HTML-escapes the output to prevent XSS attacks -->
+  <h1>Welcome back, <%= user.firstName %>!</h1>
+  
+  <!-- 3. Raw Data Interpolation (Unescaped) -->
+  <!-- The '-' sign outputs raw HTML. DANGEROUS if 'user.bio' comes from user input! -->
+  <div class="bio">
+    <%- user.bioHtml %>
+  </div>
+
+  <h2>Your Shopping Cart</h2>
+  <ul>
+    <!-- 4. Logic Execution (No output) -->
+    <!-- Tags without an '=' or '-' simply execute JavaScript silently -->
+    <% if (cart.items.length === 0) { %>
+      <p>Your cart is empty.</p>
+    <% } else { %>
+      
+      <!-- 5. Loops in EJS -->
+      <!-- You literally just write a standard JS forEach loop, breaking the brackets across lines -->
+      <% cart.items.forEach(function(item) { %>
+        <li>
+          <%= item.name %> - $<%= item.price.toFixed(2) %>
+        </li>
+      <% }); %>
+      
+    <% } %>
+  </ul>
+</div>
+
+<%- include('partials/footer') %>
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group ejs_env(cloud)[EJS SSR Architecture]
+
+    service client(server)[Web Browser] in ejs_env
+    
+    group node(server)[Node.js / Express Server] in ejs_env
+    service db(database)[Database Data] in node
+    service compiler(document)[EJS Engine Evaluator] in node
+    service template(disk)[file.ejs (Template)] in node
+    
+    service html(document)[Rendered HTML String] in ejs_env
+
+    client:B --> T:node
+    db:B --> T:compiler
+    template:T --> B:compiler
+    compiler:B --> T:html
+    html:B --> T:client
+```
+
+## 5. Interview Prep
+
+**Q: What is the difference between `<%= %>` and `<%- %>` in EJS?**
+**A:** `<%= %>` evaluates the JavaScript expression and mathematically escapes any HTML characters (converting `<` to `&lt;`). This prevents Cross-Site Scripting (XSS) attacks and should be used for all user-generated data. `<%- %>` evaluates the expression and outputs the raw, unescaped string. This should only be used when you explicitly want to render trusted HTML (like a sanitized markdown blog post).
+
+**Q: Why use EJS over Handlebars?**
+**A:** Handlebars is a "logic-less" template engine. It prevents you from writing raw JS logic in the HTML, forcing you to do all calculations on the server before passing the data to the view. EJS allows raw JavaScript. This makes EJS much faster to write and prototype with because you don't have to learn a custom templating language—you just write HTML and standard JavaScript.
+
+**Q: Does EJS run on the client or the server?**
+**A:** EJS is primarily a Server-Side Rendering (SSR) engine used within Node.js. It runs on the server, generates a static HTML string, and sends that flat HTML to the browser. (Note: A client-side version of EJS does exist for browser rendering, but it is rarely used in the modern era of React/Vue).
+
+## 6. Production Use Cases
+
+EJS is the default choice for simple Node.js applications:
+- **Express.js Monoliths:** Thousands of traditional MVC (Model-View-Controller) web applications built on Express.js use EJS as their View layer because it requires zero setup and leverages the developers' existing JavaScript knowledge.
+- **Email Generation:** EJS is heavily used by backend services to generate dynamic HTML emails (like receipts or password resets). You pass the user's data to an EJS template, it generates the HTML string, and the server sends it via an SMTP service like SendGrid.
+- **Static Site Generators (SSGs):** Many custom Node-based SSGs use EJS to quickly stitch together Markdown content with HTML layouts to generate static blogs and documentation sites.
+
+<Callout icon="warning" title="The Spaghetti Code Risk">
+Because EJS allows unrestricted JavaScript, junior developers often make the architectural mistake of querying databases or writing massive business logic algorithms directly inside the `.ejs` file. This destroys the MVC pattern. EJS files should only contain logic strictly necessary for presentation (like `if` statements and `for` loops).
+</Callout>

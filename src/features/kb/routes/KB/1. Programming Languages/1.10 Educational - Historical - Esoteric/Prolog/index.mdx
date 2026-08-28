@@ -1,28 +1,128 @@
 ---
 title: Prolog
-description: A groundbreaking logic programming language used heavily in Artificial Intelligence, computational linguistics, and expert systems.
+description: "A declarative, logic-based programming language that revolutionized Artificial Intelligence by using formal mathematical logic to deduce answers."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Prolog">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created in 1972, Prolog (Programming in Logic) completely abandons the imperative programming model (like C or Java, where you tell the computer *how* to do something). Instead, Prolog is a declarative logic language: you mathematically declare the facts and the rules, and you ask the compiler a question.
+Created in 1972 by Alain Colmerauer and Philippe Roussel, **Prolog** (Programming in Logic) completely flipped the traditional paradigm of software development.
 
-## 1. Facts and Rules
-You do not write functions in Prolog. You write a mathematical knowledge base.
-- **Fact**: `parent(john, mary).` (John is the parent of Mary).
-- **Rule**: `grandparent(X, Y) :- parent(X, Z), parent(Z, Y).` (X is the grandparent of Y IF X is the parent of Z, AND Z is the parent of Y).
+In procedural languages (like C or Python), you write algorithms that tell the computer *how* to solve a problem step-by-step. Prolog is a **Declarative** language. You do not write algorithms. Instead, you mathematically describe the known facts of the world, and the rules that govern those facts. You then ask the compiler a question, and the compiler mathematically deduces the answer for you.
 
-## 2. The Inference Engine
-Once you declare the knowledge, you query it: `?- grandparent(john, alice).`
-Prolog uses a mathematical algorithm called **Unification** and **Backtracking**. It searches through all known facts, attempting to mathematically prove the statement. If it hits a dead end, it backtracks and tries another logical path until it either proves the statement true, or exhausts all possibilities and returns false.
+For decades, Prolog was the undisputed king of Artificial Intelligence and Expert Systems, long before the modern era of Deep Learning and Neural Networks.
 
-This makes Prolog astonishingly powerful for writing Expert Systems, pathfinding algorithms, and processing natural language grammars.
+## 1. Deep Dive & Mechanics
 
+Prolog is built entirely on the concept of **First-Order Logic**.
+
+A Prolog program consists of a Knowledge Base made up of two things:
+1. **Facts:** Unconditional truths (e.g., "Socrates is a human.")
+2. **Rules:** Conditional truths (e.g., "If X is a human, then X is mortal.")
+
+When you query the system ("Is Socrates mortal?"), the Prolog execution engine uses a mechanism called **Unification** and **Depth-First Search (Backtracking)**. It mathematically scans the Knowledge Base, attempts to match variables to facts, and traces the logical tree. If it hits a dead end, it automatically backtracks up the tree and tries a different logical path until it either proves the query `true` or exhausts all options and returns `false`.
+
+## 2. Mathematical / Theoretical Foundation
+
+The mathematical engine powering Prolog is called **Horn Clauses**.
+
+A Horn Clause is a specific type of logical formula in propositional logic. A Prolog rule like `mortal(X) :- human(X).` is mathematically equivalent to the Horn clause: `human(X) → mortal(X)`. 
+
+Because Prolog restricts itself specifically to Horn Clauses rather than full First-Order Logic, it can use an incredibly fast algorithm called **SLD Resolution** (Selective Linear Definite clause resolution) to traverse the logical tree. If Prolog allowed full, unrestricted First-Order Logic, proving some theorems could theoretically take an infinite amount of time (the Halting Problem).
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating Prolog's Knowledge Base, Facts, Rules, and how to Query the engine.
+
+```prolog
+% 1. This is a comment in Prolog.
+
+% 2. Defining Facts
+% These are absolute truths in our Knowledge Base.
+parent(john, mary).     % John is the parent of Mary
+parent(john, tom).      % John is the parent of Tom
+parent(mary, ann).      % Mary is the parent of Ann
+parent(tom, bob).       % Tom is the parent of Bob
+
+male(john).
+male(tom).
+male(bob).
+female(mary).
+female(ann).
+
+% 3. Defining Rules
+% The ':-' symbol means "if". The comma ',' means "AND".
+% X is the father of Y IF X is a parent of Y AND X is male.
+father(X, Y) :- parent(X, Y), male(X).
+
+% X is a grandparent of Y IF X is a parent of Z, AND Z is a parent of Y.
+grandparent(X, Y) :- parent(X, Z), parent(Z, Y).
+
+% X and Y are siblings IF they share the same parent Z, AND X is not Y.
+sibling(X, Y) :- parent(Z, X), parent(Z, Y), X \= Y.
+
+% 4. Querying the System (This is done in the REPL/Console)
+% ?- grandparent(john, ann).
+% Engine outputs: true.
+
+% ?- sibling(mary, tom).
+% Engine outputs: true.
+
+% You can also ask Prolog to find variables! 
+% ?- father(X, mary).
+% Engine outputs: X = john.
+
+% ?- grandparent(john, Who).
+% Engine outputs: Who = ann ; Who = bob. (The engine backtracks to find all solutions!)
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group prolog_env(cloud)[Prolog Logical Execution]
+
+    service kb(database)[Knowledge Base] in prolog_env
+    service facts(document)[Facts: parent(john, mary)] in kb
+    service rules(document)[Rules: father(X,Y) :- ...] in kb
+    
+    group engine(server)[Inference Engine] in prolog_env
+    service query(document)[Query: ?- father(X, mary)] in engine
+    service unifier(server)[Unification (Pattern Matching)] in engine
+    service backtrack(server)[SLD Backtracking Search] in engine
+
+    query:B --> T:unifier
+    unifier:R --> L:facts
+    unifier:R --> L:rules
+    unifier:B --> T:backtrack
+    backtrack:R --> L:kb
+```
+
+## 5. Interview Prep
+
+**Q: What is the difference between Declarative and Procedural programming?**
+**A:** In a procedural language (C++), you write the step-by-step instructions (loops, if-statements) on *how* to solve a problem. In a declarative language (Prolog, SQL), you describe *what* the problem is (facts and rules), and the underlying engine figures out the algorithm to solve it.
+
+**Q: What is Backtracking in Prolog?**
+**A:** When resolving a query, Prolog searches its rules from top to bottom. If it chooses a path that leads to a logical contradiction, it doesn't just crash. It mathematically "backtracks" up the execution tree to the last point where it had multiple options, and tries the next option. This is how it exhaustively searches for all possible solutions to a variable.
+
+**Q: Why isn't Prolog used for modern AI?**
+**A:** Prolog is "Symbolic AI" (also known as GOFAI: Good Old-Fashioned AI). It requires a human to manually program absolute, rigid rules into the system. Modern AI (Deep Learning) relies on Statistical AI, where neural networks learn the fluid, probabilistic rules themselves by analyzing massive datasets, which is far more effective for fuzzy problems like image recognition or natural language.
+
+## 6. Production Use Cases
+
+While Deep Learning has replaced Prolog in standard AI, Prolog is still heavily used in domains requiring strict, mathematically provable logic:
+- **Expert Systems:** In the medical and legal fields, where an AI must not only provide an answer but also legally prove *why* it reached that conclusion (Explainable AI), Prolog is used to encode strict legal/medical rules.
+- **Natural Language Parsing:** Prolog was originally designed by Colmerauer specifically to parse human languages. Its Definite Clause Grammars (DCG) are still used to build incredibly complex syntax trees for computational linguistics.
+- **IBM Watson:** When IBM Watson famously won Jeopardy! in 2011, while the machine learning components handled the statistical probabilities, the core natural language parsing and logical deduction engine was written in Prolog.
+
+<Callout icon="info" title="The Closed-World Assumption">
+Prolog operates on the "Closed-World Assumption." This means that if something is not explicitly stated in the Knowledge Base, it is mathematically presumed to be False. If you ask `?- alien(john).`, Prolog returns `false`. It does not return "I don't know," because in its mathematical universe, if it hasn't been defined, it cannot exist.
+</Callout>

@@ -1,25 +1,150 @@
 ---
 title: Move
-description: A highly secure, resource-oriented smart contract language originally developed by Facebook for the Diem blockchain.
+description: "The Resource-Oriented smart contract language. Created by Facebook (Meta) to revolutionize blockchain security by treating digital assets as mathematically physical objects."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Move">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Originally developed by Facebook (Meta) in 2019 for the ill-fated Diem (Libra) project, Move survived the project's cancellation and is now the native mathematical language for advanced blockchains like Aptos and Sui.
+**Move** was created by Facebook (Meta) in 2019 for the ill-fated *Diem* (Libra) blockchain project. When Diem was shut down, the engineers took the open-source Move language and launched two massive new blockchains: **Aptos** and **Sui**.
 
-## 1. Resource-Oriented Programming
-In Solidity, a token (like a stablecoin) is just an integer in a hash map mapping user addresses to balances. If a bug in the code accidentally adds 10 to a balance without subtracting it elsewhere, money is mathematically printed out of thin air.
-Move changes the fundamental mathematics using **Resources**.
-A Resource is a special data type inspired by Linear Logic. If you create a "Token" Resource, the Move compiler mathematically guarantees it can never be copied, cloned, or silently dropped. It can only be mathematically *moved* from one storage location to another.
+To understand Move, you must understand the primary failure of Solidity. In Solidity, a cryptocurrency token is just an integer in a giant spreadsheet (a HashMap). If a bug in the code accidentally adds 10 to a balance without subtracting it from somewhere else, money is mathematically printed out of thin air. 
 
-## 2. Security by Default
-By enforcing linear logic, Move mathematically eliminates the most common and devastating smart contract vulnerabilities. Reentrancy attacks (where a hacker repeatedly withdraws funds before the balance updates) and double-spending are physically prevented by the compiler's strict resource rules, making Move one of the safest languages in Web3.
+Move fundamentally changes this paradigm. It introduces **Resource-Oriented Programming**. In Move, a digital asset (like a token or an NFT) is not an integer. It is a mathematical **Resource**. A Resource behaves like a physical object: it cannot be copied, it cannot be accidentally dropped, and it can only exist in one place at a time. The Move compiler mathematically enforces these rules at the bytecode level, eliminating 90% of the hacks that plague Ethereum.
 
+## 1. Deep Dive & Mechanics
+
+Move is defined by **Linear Logic and the Borrow Checker**.
+
+Move's architecture is heavily inspired by **Rust**. In Move, if a function takes ownership of a Resource (like a Token), it is mathematically responsible for it. 
+If the function finishes executing and the Resource hasn't been explicitly transferred to someone else, destroyed, or returned, the Move compiler instantly throws an error and refuses to compile. You literally cannot "lose" money in Move.
+
+This is enforced by mathematical abilities applied to Structs:
+- `copy`: The object can be cloned.
+- `drop`: The object can be destroyed.
+- `store`: The object can be saved to the blockchain.
+- `key`: The object can be indexed.
+A Token Resource is explicitly *not* given the `copy` or `drop` abilities, making it a mathematically scarce physical object.
+
+## 2. Mathematical / Theoretical Foundation
+
+Move separates data from logic using **Modules and Global Storage**.
+
+In Ethereum, a smart contract physically owns and holds all the tokens in its own central database. 
+In Move, the blockchain is a massive Global Storage tree organized by User Addresses. 
+
+A Move **Module** contains the code (the rules). But the actual Resources (the tokens) physically live inside the User's own wallet address. When a user interacts with a DeFi protocol, the protocol mathematically pulls the Resource out of the user's wallet, processes it, and pushes a new Resource back into the user's wallet. This allows for massive, mathematically sound parallel processing (which is how the Sui blockchain achieves 100,000+ transactions per second).
+
+## 3. Real-World Implementation
+
+Here is an example demonstrating Move's syntax, the mathematical definition of a Resource, and the strict ownership rules enforced by the compiler.
+
+```rust
+// 1. Module Definition
+// Modules define types and functions. They are published under a specific address.
+module 0x42::BasicCoin {
+    use std::signer;
+
+    // 2. Resource Definition
+    // We define a Coin. 
+    // It has the 'key' ability (it can be stored in a user's account).
+    // It does NOT have 'copy' or 'drop'. It is a mathematically scarce resource.
+    struct Coin has key {
+        value: u64,
+    }
+
+    // 3. Error Codes
+    const ENOT_ENOUGH_COINS: u64 = 1;
+
+    // 4. Minting (Creating the Resource)
+    // Only the module owner can call this. It mathematically materializes a Coin out of thin air.
+    public fun mint(module_owner: &signer, amount: u64): Coin {
+        // In a real contract, we would mathematically verify the owner here.
+        // We instantiate the Struct and return it. The caller now OWNS this physical data.
+        Coin { value: amount }
+    }
+
+    // 5. Transferring (Moving the Resource)
+    // We physically move a Coin from the sender's wallet to the receiver's wallet.
+    public fun transfer(sender: &signer, receiver: address, amount: u64) acquires Coin {
+        
+        let sender_addr = signer::address_of(sender);
+        
+        // We mathematically REMOVE the physical Coin resource from the sender's account.
+        // 'borrow_global_mut' gets a mutable reference to the data.
+        let sender_coin_ref = borrow_global_mut<Coin>(sender_addr);
+        
+        // Check for sufficient balance
+        assert!(sender_coin_ref.value >= amount, ENOT_ENOUGH_COINS);
+        
+        // Deduct the value
+        sender_coin_ref.value = sender_coin_ref.value - amount;
+        
+        // We mathematically construct a new Coin resource for the extracted amount.
+        let extracted_coin = Coin { value: amount };
+        
+        // We physically push the extracted coin into the receiver's account.
+        // Wait, receiver might already have a Coin! We have to merge them.
+        let receiver_coin_ref = borrow_global_mut<Coin>(receiver);
+        
+        // We consume the extracted coin, adding its value to the receiver.
+        receiver_coin_ref.value = receiver_coin_ref.value + extracted_coin.value;
+        
+        // MATHEMATICAL ENFORCEMENT:
+        // We just created 'extracted_coin'. It does not have the 'drop' ability.
+        // We MUST explicitly unpack and destroy it, or the compiler will fail!
+        let Coin { value: _ } = extracted_coin;
+    }
+}
+```
+
+## 4. Visualizations
+
+```mermaid
+architecture-beta
+    group move_env(cloud)[Move Resource-Oriented Architecture]
+
+    group user(server)[User Wallet (0xAlice)] in move_env
+    service u_coin(database)[Coin Resource: {value: 50}] in user
+    
+    group mod(server)[Move Module (0x42::BasicCoin)] in move_env
+    service code(disk)[Transfer Logic] in mod
+    
+    group dex(server)[DeFi Exchange (0xBob)] in move_env
+    service d_coin(database)[Coin Resource: {value: 100}] in dex
+
+    %% The resource is physically extracted, not just an integer update
+    user:R --> L:code
+    code:R --> L:dex
+```
+
+## 5. Interview Prep
+
+**Q: What is the difference between Aptos Move and Sui Move?**
+**A:** When Diem collapsed, the Move engineers split into two companies. 
+- **Aptos Move** is the original, pure implementation of Facebook's design. Global storage is heavily utilized, and users must mathematically "register" to receive a specific type of token before it can be sent to them.
+- **Sui Move** is an object-centric fork. They modified the mathematical engine so that everything is an object with a globally unique ID. In Sui Move, you don't use Global Storage; you physically pass Objects directly into functions as arguments, which allows for vastly superior parallel processing speed.
+
+**Q: What is a `signer` in Move?**
+**A:** In Solidity, anyone can read `msg.sender` to see who called a function. In Move, authentication is mathematically explicit. A function can require a `&signer` argument. The only way to get a `signer` object is if the user mathematically cryptographically signed the transaction. This makes authorization un-forgeable at the language level.
+
+**Q: Does Move use the EVM (Ethereum Virtual Machine)?**
+**A:** No. Move requires the **Move Virtual Machine (MoveVM)**. The MoveVM mathematically enforces the Borrow Checker and Resource rules at runtime via a massive Bytecode Verifier. If you tried to run Move on the EVM, the EVM would not understand how to physically prevent a resource from being duplicated.
+
+## 6. Production Use Cases
+
+Move is rapidly becoming the primary challenger to Rust (Solana) and Solidity (Ethereum) for high-performance Web3 applications:
+- **Massive Parallel DeFi (Decentralized Finance):** Because Move resources are physically isolated in user accounts, the MoveVM can mathematically determine that two transactions do not touch the same resources. The Aptos and Sui blockchains use this to execute thousands of DeFi swaps in parallel on 64-core servers, whereas Ethereum must execute them sequentially, one by one.
+- **Dynamic NFTs (Gaming):** In Sui Move, NFTs are explicit Objects. You can mathematically put an Object *inside* another Object. Game developers write Move contracts where a "Sword NFT" is physically placed inside the inventory array of a "Hero NFT." If you sell the Hero, the Sword mathematically travels with it, making highly complex on-chain gaming architectures trivial to build safely.
+- **Enterprise Asset Tokenization:** Financial institutions tokenizing real-world assets (like real estate or bonds) heavily favor Move. The language's strict mathematical inability to accidentally duplicate or burn a `Resource` provides the aerospace-grade auditability that Wall Street requires before placing a billion-dollar bond on a public blockchain.
+
+<Callout icon="info" title="The Move Prover">
+Because Move was designed for financial security, Facebook built the **Move Prover**. It is a mathematical Formal Verification tool integrated directly into the language. A developer can write a mathematical specification (`spec`) at the bottom of their module, and the Move Prover will use mathematical theorem solvers (like Z3) to prove with 100% certainty that the contract cannot be hacked, before it is even compiled.
+</Callout>

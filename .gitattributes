@@ -1,6 +1,16 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# Keep repository text files in LF on every platform
+.gitattributes text eol=lf
+*.md text eol=lf
+*.mdx text eol=lf
+*.json text eol=lf
+*.js text eol=lf
+*.cjs text eol=lf
+*.mjs text eol=lf
+*.css text eol=lf
+
 # Keep TypeScript sources in LF to avoid CRLF warnings on Windows
 *.ts text eol=lf
 *.tsx text eol=lf
