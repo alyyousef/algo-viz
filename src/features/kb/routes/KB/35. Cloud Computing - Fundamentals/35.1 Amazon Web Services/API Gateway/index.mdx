@@ -2,23 +2,146 @@
 title: Amazon API Gateway
 description: A fully managed AWS service that acts as the physical "front door" for applications, providing secure, mathematically scalable HTTP routing, throttling, and authentication for backend microservices.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="Amazon API Gateway"
-  subtitle="The Front Door of AWS"
-  tags={['AWS', 'Networking', 'Serverless', 'API']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Amazon API Gateway">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If you write an AWS Lambda function, it exists in the cloud, but the internet cannot talk to it. API Gateway provides the physical URL and handles the complex mathematical traffic routing required to securely expose that function to the public.
+If you write an AWS Lambda function, it exists securely in the cloud, but the internet physically cannot talk to it. Lambda does not have an IP address exposed to the web. 
+To connect the chaos of the public internet to the security of your backend compute, you need a reverse proxy. 
 
-## 1. Request Routing and Transformation
-API Gateway intercepts every incoming HTTP request.
-It mathematically inspects the URL path (e.g., `/users/123`) and the HTTP Method (`GET`, `POST`). Based on the rules you define, it routes the request to the correct backend (a Lambda function, an EC2 server, or another AWS service).
-Crucially, it can perform **Mapping Templates**. If an old mobile app sends data in XML, API Gateway can mathematically transform the XML payload into JSON before handing it to your modern backend, entirely decoupling the client from the server architecture.
+**Amazon API Gateway** is a fully managed service that acts as the physical "front door" for your architecture. It intercepts raw HTTP requests, mathematically inspects their headers and payloads, enforces security policies, and elegantly routes them to Lambda functions, EC2 instances, or even other AWS services.
 
-## 2. Throttling and Protection
-If a hacker hits your Lambda function 100,000 times a second, AWS will happily auto-scale, and you will receive a $50,000 bill.
-API Gateway prevents this using **Throttling**. You set a mathematical limit (e.g., 1,000 requests per second). If traffic exceeds this, the Gateway mathematically rejects the request, instantly returning a `429 Too Many Requests` error. It acts as an absolute mathematical shield, protecting your expensive backend compute from DDoS attacks and traffic spikes.
+## 1. Deep Dive & Mechanics
 
-</TechnologyTemplate>
+### Request Routing and Transformation
+At its core, API Gateway is a highly advanced routing engine.
+You define RESTful paths mathematically (e.g., `GET /users/{id}`). When a request hits the Gateway, it extracts the `{id}` parameter from the URL.
+
+However, its most powerful feature is **Mapping Templates** (using the VTL language). 
+Imagine you acquire a company whose mobile app sends data in XML, but your backend only understands JSON. Instead of rewriting your entire backend, you configure API Gateway to intercept the XML request, mathematically parse it, transform it into JSON using a VTL template, and hand it to the backend. It completely decouples the client's data structure from the server's data structure.
+
+### Edge vs. Regional Optimization
+API Gateway offers different mathematical routing topologies:
+- **Edge-Optimized:** If you have global users, the API is deployed to CloudFront Edge locations. If a user in Tokyo hits your API hosted in Virginia, their request enters the AWS private fiber-optic network in Tokyo, drastically reducing latency by bypassing the public internet.
+- **Regional:** Used when your clients are in the same region as the API, preventing the mathematical overhead of routing through CloudFront.
+
+## 2. Mathematical / Theoretical Foundation
+
+### Throttling and the Token Bucket Algorithm
+If a hacker hits your Lambda function 100,000 times a second, AWS will happily auto-scale the Lambda functions, and you will receive a $50,000 bill at the end of the month (a Denial of Wallet attack).
+
+API Gateway prevents this using **Throttling**, implemented via the mathematical **Token Bucket algorithm**.
+You configure a limit: Rate = 1,000 requests/sec, Burst = 500. 
+Mathematically, the "bucket" holds 500 tokens. Every millisecond, the bucket is refilled at a rate of 1 token. When a request arrives, it takes a token. If a sudden burst of 500 requests arrives simultaneously, they all pass. If request 501 arrives and the bucket is empty, API Gateway mathematically short-circuits the connection and returns a `429 Too Many Requests` HTTP error. The request *never reaches your Lambda function*, saving your compute budget.
+
+## 3. Real-World Implementation
+
+Here is an AWS CDK implementation demonstrating how to create an API Gateway, attach a Lambda function to it, and strictly configure Throttling and API Keys to monetize the endpoint.
+
+```typescript
+import * as cdk from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+
+export class ApiStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
+    super(scope, id, props);
+
+    // 1. Define the isolated Backend Compute
+    const backendFn = new lambda.Function(this, 'BackendFn', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromInline(`
+        exports.handler = async (event) => {
+          return { statusCode: 200, body: 'Secure Data!' };
+        };
+      `),
+    });
+
+    // 2. Create the API Gateway Front Door
+    const api = new apigateway.RestApi(this, 'MyApi', {
+      restApiName: 'Enterprise Service API',
+      description: 'Front door with mathematical throttling.'
+    });
+
+    // 3. Create a Usage Plan (The mathematical Token Bucket configuration)
+    const plan = api.addUsagePlan('PremiumPlan', {
+      name: 'Premium',
+      throttle: {
+        rateLimit: 100,  // Max 100 sustained requests per second
+        burstLimit: 20   // Allow spikes of 20 concurrent requests
+      },
+      quota: {
+        limit: 100000,   // Max 100,000 requests per month
+        period: apigateway.Period.MONTH
+      }
+    });
+
+    // 4. Require an API Key for authentication
+    const key = api.addApiKey('PremiumApiKey');
+    plan.addApiKey(key);
+    plan.addApiStage({ stage: api.deploymentStage });
+
+    // 5. Wire the HTTP route to the Lambda and enforce the API Key
+    const secureRoute = api.root.addResource('secure-data');
+    secureRoute.addMethod('GET', new apigateway.LambdaIntegration(backendFn), {
+      apiKeyRequired: true // Mathematically block requests without the x-api-key header
+    });
+  }
+}
+```
+
+## 4. Visualizations
+
+```mermaid
+graph TD
+    User1[Hacker (10,000 req/s)] --> GW
+    User2[Premium Client (x-api-key)] --> GW
+    
+    subgraph API Gateway Architecture
+        GW{Amazon API Gateway}
+        
+        GW -->|1. Auth Check| Auth{API Key Valid?}
+        Auth -->|No| 403[HTTP 403 Forbidden]
+        
+        Auth -->|Yes| Throttle{Token Bucket<br/>Rate: 100/s}
+        
+        Throttle -->|Bucket Empty| 429[HTTP 429 Too Many Requests]
+        Throttle -->|Token Available| VTL[VTL Mapping Template<br/>XML to JSON]
+    end
+    
+    subgraph Backend VPC
+        VTL -->|Payload| Lambda[AWS Lambda Function]
+    end
+    
+    style GW fill:#1e1e1e,stroke:#fff,stroke-width:2px
+    style Throttle fill:#772953,stroke:#fff,stroke-width:2px
+    style 429 fill:#c2410c,stroke:#fff,stroke-width:2px
+```
+
+<Callout icon="info" title="REST API vs HTTP API">
+  AWS actually offers two distinct API Gateway products. The **REST API** is the legacy, enterprise-heavy version that supports complex VTL transformations, API Keys, and Usage Plans. The newer **HTTP API** is mathematically optimized for pure speed and cost. It is up to 71% cheaper and 60% faster, but it drops support for heavy features like XML transformations. For modern JSON microservices, you should almost always use the HTTP API.
+</Callout>
+
+## 5. Interview Prep
+
+**Q: Explain how API Gateway handles Authentication.**
+**Answer:** API Gateway provides three primary mechanisms for auth, moving it completely out of your application code:
+1. **IAM (Identity and Access Management):** Used for internal AWS service-to-service communication using mathematical SigV4 signing.
+2. **Cognito User Pools:** Natively integrates with AWS Cognito. If a user logs in via Cognito, they pass a JWT token to the Gateway. The Gateway mathematically cryptographically verifies the JWT signature without ever waking up the backend Lambda.
+3. **Custom Lambda Authorizers:** For custom auth (like OAuth2), API Gateway executes a specialized, lightweight Lambda function whose sole purpose is to return a boolean `Allow` or `Deny` policy before the request is allowed into the main architecture.
+
+**Q: What is a "Cold Start" in relation to API Gateway and Lambda?**
+**Answer:** While API Gateway itself is always warm and responds in milliseconds, if it routes a request to a Lambda function that hasn't been invoked recently, AWS must mathematically provision a new micro-VM and boot the runtime (Node/Python). This takes a few seconds. The client perceives this entire transaction as API latency.
+
+## 6. Production Use Cases
+
+- **Serverless SaaS Platforms:** A SaaS startup uses API Gateway combined with AWS Cognito and Lambda. Because API Gateway handles JWT authentication and Throttling natively at the edge, the backend Lambda functions consist of pure, pristine business logic. The startup pays zero dollars when they have no traffic, but can mathematically scale to handle millions of requests instantly without provisioning a single load balancer.
+- **Legacy System Modernization (Strangler Fig Pattern):** A bank is migrating from an on-premise mainframe to AWS microservices. They put API Gateway in front of the entire infrastructure. They use API Gateway's routing rules to mathematically route `/users` traffic to the new AWS Lambda microservice, while seamlessly routing `/accounts` traffic back to the on-premise mainframe via a VPN. This allows them to modernize the system piece-by-piece with zero downtime or URL changes for the client applications.

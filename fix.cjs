@@ -1,4 +1,5 @@
-const fs = require('fs');
-let c = fs.readFileSync('scripts/deep-dives/generate-batch-017.mjs', 'utf8');
-c = c.split('\\`').join('`');
-fs.writeFileSync('scripts/deep-dives/generate-batch-017.mjs', c);
+const fs = require('fs')
+const file = 'scripts/deep-dives/generate-batch-020.mjs'
+let content = fs.readFileSync(file, 'utf8')
+content = content.split('\\\\"').join('\\"')
+fs.writeFileSync(file, content)
