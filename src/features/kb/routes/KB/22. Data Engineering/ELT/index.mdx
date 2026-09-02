@@ -1,42 +1,20 @@
 ---
-title: ELT (Extract, Load, Transform)
-description: "The modern data integration process where raw data is loaded directly into a data warehouse or lake, and transformations occur inside the target system."
+title: ELT (Redirect)
+description: "Redirecting to Data Lakes & Warehouses."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="ELT (Extract, Load, Transform)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**ELT** represents a massive paradigm shift in Data Engineering, brought about by the rise of cheap cloud storage and highly scalable cloud data warehouses (like Snowflake and BigQuery).
+<Callout icon="info" title="Redirect">
+The architectural shift from ETL to **ELT** (leveraging the infinite compute power of modern cloud data warehouses like Snowflake and BigQuery to transform data *after* it is loaded) is covered in the Deep Dive for **Data Lakes & Warehouses**. 
 
-## 1. How ELT Works
-1. **Extract**: Pull raw data from source systems (often using automated tools like Fivetran or Airbyte).
-2. **Load**: Dump the completely raw, unstructured, or semi-structured data (JSON, Parquet) directly into the Data Warehouse or Data Lake immediately.
-3. **Transform**: Use the massive, elastic computing power of the Data Warehouse itself to run SQL queries that transform the raw data into clean, aggregated models (often using tools like **dbt**).
-
-## 2. Why ELT Won
-Cloud Data Warehouses decoupled compute from storage. You can store petabytes of raw data for pennies (cheap storage). When you need to transform it, you can instantly spin up a massive cluster of servers for 5 minutes, run the SQL transformation, and shut the cluster down (elastic compute).
-
-## 3. ETL vs ELT
-
-
-<ComparisonTable headers={['Feature', 'ETL (Traditional)', 'ELT (Modern)']} rows={[ ['Transformation Location', 'Separate staging server before the warehouse.', 'Inside the warehouse itself.'], ['Flexibility', 'Low. If raw data is dropped, it is gone forever.', 'High. Raw data is always preserved; you can re-transform anytime.'], ['Time to Load', 'Slow (must wait for transforms).', 'Fast (dump immediately).'], ['Tooling', 'Informatica, Talend.', 'Fivetran, Airbyte, dbt, Snowflake.'] ]} />
-
-
-<Callout icon="tip" title="dbt (data build tool)">
-
-
-The shift to ELT birthed **dbt**, the industry standard for the "T" in ELT. It allows data analysts to write simple SQL SELECT statements, which dbt compiles into complex transformation pipelines running directly inside Snowflake or BigQuery.
-
-
+Please navigate to the [Data Lakes & Warehouses](/kb/22.-data-engineering/data-lakes--warehouses) module to explore this paradigm shift.
 </Callout>
-
-

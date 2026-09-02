@@ -4,24 +4,17 @@ description: "A collection of clever mathematical operations that exploit the lo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Bit Tricks"
   subtitle="Hardware-Level Optimization"
   tags={['Algorithms', 'Bit Manipulation', 'Performance', 'Low Level']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Bit tricks bypass standard algebraic arithmetic (like `+`, `-`, `*`, `%`) and mathematically manipulate the raw 1s and 0s inside the CPU registers using bitwise operators (`&`, `|`, `^`, `<<`, `>>`), executing in a single clock cycle.
 
 ## 1. The Most Famous Mathematical Tricks
 - **Check if a number is Even/Odd**: `(x & 1)`. If 1, it's Odd. If 0, it's Even. (Blisteringly faster than `x % 2 == 0`).
-- **Multiply/Divide by 2**: `(x <&lt; 1)` multiplies by 2. `(x >> 1)` divides by 2.
+- **Multiply/Divide by 2**: `(x << 1)` multiplies by 2. `(x >> 1)` divides by 2.
 - **Swap two variables without a temporary variable**:
   ```cpp
   x = x ^ y;
@@ -34,3 +27,4 @@ Bit tricks bypass standard algebraic arithmetic (like `+`, `-`, `*`, `%`) and ma
 - **Turn OFF the rightmost 1-bit**: `x = x & (x - 1)` (Used in Brian Kernighan's algorithm to count set bits).
 - **Isolate the rightmost 1-bit**: `x = x & (-x)` (Mathematically relies on Two's Complement representation; heavily used in Fenwick Trees).
 
+</ConceptTemplate>

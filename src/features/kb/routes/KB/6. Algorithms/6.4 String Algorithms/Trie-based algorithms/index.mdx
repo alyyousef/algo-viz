@@ -4,18 +4,11 @@ description: "A class of algorithms mathematically centered around the Trie (Pre
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Trie-Based Algorithms"
   subtitle="The Prefix Tree"
   tags={['Algorithms', 'Strings', 'Data Structures', 'Search']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 A **Trie** (pronounced "try", from re**trie**val) is a mathematical tree data structure where each node represents a single character. Unlike a binary search tree (where nodes store the whole string), a Trie mathematically stores the string implicitly by the *path* taken to reach a leaf node.
 
@@ -28,3 +21,4 @@ The mathematical Time Complexity is strictly **O(L)**. It is entirely independen
 Because a Trie mathematically groups all strings with the exact same prefix into the same branch, it is the fundamental data structure behind Google Search Autocomplete and mobile phone predictive text.
 When you type "App", the algorithm navigates to the 'p' node. By running a simple BFS/DFS from that specific node, it mathematically retrieves all descendant leaves ("Apple", "Application", "Appetite") instantly, without scanning the rest of the English dictionary.
 
+</ConceptTemplate>

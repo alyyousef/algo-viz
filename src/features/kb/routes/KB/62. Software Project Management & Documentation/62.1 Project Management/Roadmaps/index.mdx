@@ -1,19 +1,35 @@
 ---
-title: Roadmaps
-description: A strategic plan that defines a goal or desired outcome and includes the major steps or milestones needed to reach it.
+title: Product Roadmaps
+description: "A high-level visual summary that maps out the vision and direction of a software product offering over time."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Product Roadmaps">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Product Roadmaps"
+  subtitle="The Strategic Timeline"
+  tags={['Project Management', 'Strategy', 'Product Management']}
+>
 
-A **Roadmap** is a high-level biological map of the future.
+If the Backlog is the microscopic list of daily tasks, the **Product Roadmap** is the macroscopic, strategic vision. It is a high-level visual summary that communicates the "Why" and the "When" of what the team is building over the next several quarters or years.
 
-It does not contain mathematical User Stories or specific Story Points. It contains massive Epics scheduled across Quarters (Q1, Q2, Q3). The biological goal of the roadmap is to align the Engineering team with the Sales and Marketing teams. It allows Marketing to mathematically know that "The New AI Feature" will be ready in Q3, so they can biologically begin preparing ad campaigns 6 months in advance.
+## 1. Purpose of a Roadmap
 
+A roadmap is primarily a communication tool.
+- **For the Engineering Team**: It provides context. Instead of just coding random features, they see how their current work fits into the grand vision of the company.
+- **For the Sales/Marketing Team**: It tells them what features they can promise to customers and when to plan marketing campaigns.
+- **For Stakeholders/Investors**: It proves the team has a coherent strategy for market dominance.
+
+## 2. Types of Roadmaps
+
+- **Timeline/Gantt Roadmaps**: Traditional roadmaps that plot specific features against hard dates (e.g., "Q3: Launch Mobile App"). These are risky in software, as strict deadlines often lead to technical debt.
+- **Now / Next / Later Roadmaps**: A modern Agile approach. It avoids hard dates. 
+  - **Now**: Things actively being worked on (high detail).
+  - **Next**: Things coming in a few months (medium detail).
+  - **Later**: Long-term strategic goals (low detail).
+- **Outcome-Driven Roadmaps**: Instead of listing features ("Add Social Login"), they list business outcomes ("Reduce checkout friction by 20%"). This gives engineering the freedom to find the best technical solution to the business problem.
+
+## 3. The Danger of Feature Factories
+
+A common anti-pattern in project management is treating the roadmap as a guaranteed contract rather than a strategic guide. If a company rigidly sticks to a 12-month roadmap despite changing market conditions or user feedback, they become a "Feature Factory"—blindly shipping code that no one actually wants, simply because it was on the roadmap.
+
+</ConceptTemplate>

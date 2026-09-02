@@ -1,33 +1,52 @@
 ---
 title: Neural Networks
-description: The foundational architecture of modern deep learning, inspired by the human brain.
+description: "A high-level overview of Artificial Neural Networks, the biologically inspired algorithms that form the foundation of Deep Learning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Neural Networks">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Artificial Neural Networks (ANNs) are computing systems inspired by the biological neural networks that constitute animal brains. They are the absolute foundation of all modern Deep Learning, from ChatGPT to self-driving cars.
+An **Artificial Neural Network (ANN)** is a machine learning algorithm loosely inspired by the structure and function of the human brain. It is the foundational technology behind the entire field of **Deep Learning**.
 
+While traditional algorithms (like Decision Trees or Linear Regression) require human engineers to manually extract features from data (e.g., writing code to detect the edges of a stop sign), Neural Networks are capable of **Representation Learning**. If you feed them enough raw data and a clear objective, they will automatically figure out the features on their own.
 
-<Callout icon="info" title="The Biological Inspiration">
+## The Biological Inspiration
 
+In the human brain, billions of neurons are connected by synapses. When a neuron receives electrical signals from its neighbors, it adds them up. If the total signal crosses a certain threshold, the neuron "fires," sending an electrical pulse to the next set of neurons.
 
-  Just as biological neurons receive signals via dendrites, process them in the soma, and pass them on via axons, artificial neurons receive numerical inputs, multiply them by **weights**, sum them up, apply an **activation function**, and pass the result to the next layer.
+An Artificial Neural Network mimics this mathematically:
+1.  **Neurons (Nodes):** Variables that hold a number.
+2.  **Synapses (Weights):** Numbers that represent the strength of the connection between two neurons.
+3.  **Firing (Activation Function):** A mathematical equation that decides whether the neuron's final number is large enough to be passed on to the next layer.
 
+## The Anatomy of a Neural Network
 
+A standard neural network is organized into layers:
+
+*   **Input Layer:** The raw data. If you are analyzing a $28 \times 28$ pixel grayscale image, you will have $784$ input neurons, each holding a number between 0.0 (black) and 1.0 (white).
+*   **Hidden Layers:** This is where the "Deep" in Deep Learning comes from. These layers sit between the input and output. The network uses these layers to slowly build up complex representations (e.g., Layer 1 finds lines, Layer 2 finds shapes, Layer 3 finds faces).
+*   **Output Layer:** The final prediction. For example, 10 neurons representing the probability that an image is the digits $0$ through $9$.
+
+## How they Learn
+
+Neural Networks start off completely stupid. All of their millions of "weights" (synapses) are set to completely random numbers.
+
+They learn through a two-step cycle:
+1.  **Forward Pass:** Data is multiplied by the random weights and passed through the network. The network makes a terrible, random guess. The error of this guess is calculated using a **Loss Function**.
+2.  **Backward Pass (Backpropagation):** The network uses calculus to trace the error backward through the layers, figuring out exactly which weights were responsible for the bad guess. An **Optimizer** (like Gradient Descent) then tweaks those specific weights by a microscopic amount so the network will be slightly more accurate next time.
+
+This cycle is repeated millions of times until the network achieves near-perfect accuracy.
+
+<Callout icon="diagram-project" title="Specialized Architectures">
+While the basic Fully Connected Neural Network (MLP) is foundational, modern Deep Learning relies on highly specialized architectures tailored to specific types of data:
+*   **Images:** Convolutional Neural Networks (CNNs).
+*   **Sequential Data/Time:** Recurrent Neural Networks (RNNs) and LSTMs.
+*   **Language & Generative AI:** Transformers (The architecture behind ChatGPT).
 </Callout>
-
-
-## Core Components
-
-
-<ComparisonTable headers={['Component', 'Description']} rows={[ ['Neuron (Node)', 'The basic computing unit. Holds a mathematical value representing activation.'], ['Weights', 'The learnable parameters. The "strength" of the connection between two neurons. This is where the actual "knowledge" of the network is stored.'], ['Biases', 'An extra parameter added to the neuron\'s sum before the activation function, allowing the activation function to be shifted left or right.'], ['Layers', 'Groups of neurons. Networks typically have an Input Layer, multiple Hidden Layers, and an Output Layer.'] ]} />
-
-

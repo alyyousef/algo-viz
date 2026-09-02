@@ -1,23 +1,54 @@
 ---
 title: FastText
-description: An advanced Word Embedding library developed by Facebook that mathematically represents words as a sum of their sub-word characters, allowing it to understand misspelled or brand new words.
+description: "A guide to FastText, a powerful word embedding model created by Facebook that generates embeddings for words by breaking them down into smaller subwords."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="FastText"
-  subtitle="Sub-word NLP Embeddings"
-  tags={['NLP', 'Machine Learning', 'Facebook', 'Embeddings']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="FastText">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Traditional Word2Vec models are mathematically fragile: if they encounter a word they didn't see during training (Out-Of-Vocabulary), they completely crash because they have no mathematical vector for it. FastText solves this.
+**FastText** is an open-source NLP library created by Facebook's AI Research lab (FAIR) in 2016. 
 
-## 1. Sub-Word N-Grams
-Instead of mathematically mapping the whole word "apple" to a vector, FastText breaks the word into character n-grams (e.g., 3-character chunks): `<ap, app, ppl, ple, le>`.
-During training, the Neural Network mathematically assigns a vector to every single *n-gram*, not the whole word. The final vector for "apple" is mathematically calculated simply by adding the n-gram vectors together.
+It was designed as an upgrade to Google's famous **Word2Vec** model. While Word2Vec was revolutionary for turning words into dense mathematical vectors (Word Embeddings), it suffered from a massive, fatal flaw: **The Out-Of-Vocabulary (OOV) problem.**
 
-## 2. Handling the Unknown
-This mathematical architecture gives FastText a massive advantage in the real world.
-If a user typos the word "appple", a standard NLP model throws an error. FastText simply breaks it down: `<ap, app, ppp, ppl, ple, le>`. Because it recognizes 80% of the mathematical sub-vectors from the original word "apple", it mathematically calculates a vector for "appple" that is nearly identical to "apple," allowing the AI to perfectly understand the typo without needing an explicit spell-checker.
+## The Flaw in Word2Vec
 
-</TechnologyTemplate>
+Word2Vec treats every single word as an isolated, atomic unit. 
+It assigns a unique vector to "run," a unique vector to "running," and a unique vector to "ran." It has absolutely no concept that these words share the same root.
+
+More importantly, if Word2Vec is asked to process a brand new word it has never seen before (e.g., "TensorFlowing"), it completely crashes. Because "TensorFlowing" is not in its dictionary, it has no vector for it.
+
+## The FastText Solution: Subword Information
+
+FastText solves the OOV problem by looking *inside* the words. 
+Instead of just learning a vector for a whole word, FastText breaks every word down into smaller chunks called **character n-grams** (subwords) and learns a vector for each chunk.
+
+For example, if we use an n-gram size of 3, the word "apple" is broken down into:
+`<ap`, `app`, `ppl`, `ple`, `le>` 
+*(The `<` and `>` represent the start and end of the word).*
+
+FastText learns a mathematical vector for every single one of these 3-letter chunks. 
+**The final vector for the word "apple" is simply the sum of all its subword vectors.**
+
+## Why Subwords are Magic
+
+By breaking words down into subwords, FastText gains three massive superpowers:
+
+### 1. Handling Out-Of-Vocabulary Words
+If you feed FastText the completely made-up word **"micro-flugel-ization"**, it doesn't crash. It has never seen the whole word, but it *has* seen the subword `<mic` (from "microscope"), and it *has* seen the subword `tion>` (from "action"). It sums up the vectors of all these familiar subwords to instantly generate a highly accurate vector for the brand new, made-up word.
+
+### 2. Morphological Richness
+Languages like Turkish, Finnish, or German are highly agglutinative—they constantly mash words together to create massive, complex new words. Word2Vec is practically useless for these languages because the vocabulary size would be infinite. FastText thrives on them because it naturally understands the roots and suffixes.
+
+### 3. Handling Typos
+If a user types "appple", Word2Vec crashes. FastText simply breaks it down into subwords (`app`, `ppp`, `ple`). Because 90% of the subwords match the correct spelling, the final vector for "appple" will be almost mathematically identical to "apple."
+
+<Callout icon="bolt" title="FastText Classification">
+Aside from generating word embeddings, the FastText library also includes a built-in text classifier. By utilizing hierarchical softmax and hashing tricks, the FastText classifier can train on massive datasets (like a billion words) in less than ten minutes on a standard CPU, achieving accuracy comparable to deep neural networks that take days to train on GPUs.
+</Callout>

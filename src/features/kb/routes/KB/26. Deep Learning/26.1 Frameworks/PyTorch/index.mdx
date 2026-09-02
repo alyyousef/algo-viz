@@ -1,42 +1,45 @@
 ---
 title: PyTorch
-description: Open source machine learning framework developed by Meta.
+description: "An overview of PyTorch, the undisputed king of deep learning frameworks in AI research."
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="PyTorch">
+export default function Layout({ children }) {
+  return (
+    <TechnologyTemplate title="PyTorch">
+      {children}
+    </TechnologyTemplate>
+  )
+}
 
-PyTorch is a machine learning library based on the Torch library, used for applications such as computer vision and natural language processing. Originally developed by Meta AI (formerly Facebook AI Research), it is now part of the Linux Foundation.
+**PyTorch** is an open-source machine learning framework originally developed by Meta's AI Research lab (FAIR) and now managed by the Linux Foundation. 
 
+Today, PyTorch is the undisputed king of deep learning in both academic research and the Generative AI ecosystem.
 
-<Callout icon="info" title="Dynamic Computational Graph">
+## Why PyTorch Won
 
+When PyTorch was released in 2016, Google's TensorFlow completely dominated the market. However, TensorFlow was built around "static computation graphs," meaning you had to write your code, compile it into an abstract graph, and then run it. This made it incredibly fast for production, but a nightmare to debug.
 
-  Unlike older versions of TensorFlow which used a static graph, PyTorch utilizes a **Dynamic Computational Graph** (define-by-run). This means the graph is built on-the-fly as operations are executed, making debugging much easier and allowing for dynamic control flow (standard Python loops and if statements).
+PyTorch won the minds of researchers by introducing **Dynamic Computation Graphs (Eager Execution)**. 
 
+### 1. Eager Execution (Pythonic Design)
+In PyTorch, code runs exactly as you type it, line-by-line, just like standard Python. You can use standard Python `if` statements, `for` loops, and most importantly, you can use standard Python print statements to debug the exact value of a tensor *during* a calculation. It feels natural to Python developers.
 
+### 2. Autograd (Automatic Differentiation)
+The heart of PyTorch is its `autograd` engine. When you perform math operations on PyTorch tensors, `autograd` secretly records every single operation on a dynamic graph in the background. 
+When you call `loss.backward()`, it traverses this graph backward, instantly calculating all the complex calculus (gradients) needed to update the neural network's weights.
+
+## PyTorch in Production (TorchScript)
+
+For years, the major criticism of PyTorch was that it was great for research but too slow and unoptimized for production deployment (which required C++).
+
+PyTorch solved this with **TorchScript** and the **JIT (Just-In-Time) Compiler**. You can take a dynamic PyTorch model, wrap it in `@torch.jit.script`, and PyTorch will compile it into a static, highly optimized graph that can run independently in a high-speed C++ environment, completely bypassing the slow Python interpreter.
+
+<Callout icon="crown" title="The PyTorch Ecosystem">
+PyTorch's dominance is cemented by its ecosystem. Almost all major AI libraries (Hugging Face Transformers, DeepSpeed, PyTorch Lightning, fastai) are built on top of PyTorch. If an AI lab publishes a new state-of-the-art model today, the reference implementation is almost guaranteed to be written in PyTorch.
 </Callout>
 
+## Summary
 
-## PyTorch vs TensorFlow
-
-
-<ComparisonTable headers={['Feature', 'PyTorch', 'TensorFlow']} rows={[ ['Graph Type', 'Dynamic (Define-by-run)', 'Static (historically) / Dynamic (TF 2.x)'], ['Target Audience', 'Researchers, Academia', 'Industry, Production Deployment'], ['Deployment Tools', 'TorchServe (getting better)', 'TFX, TensorFlow Serving (highly mature)'], ['Primary Language', 'Pythonic and intuitive', 'Has a steeper learning curve without Keras'] ]} />
-
-
-## Tensor Basics
-
-```text
-{`import torch
-
-# Create a tensor initialized with random numbers
-x = torch.rand(5, 3)
-print(x)
-
-# Perform operations, which automatically track gradients for backprop
-y = torch.ones(5, 3, requires_grad=True)
-z = x + y
-print(z)`}
-```
-
-</TechnologyTemplate>
+PyTorch struck the perfect balance between user-friendly, pythonic debuggability and high-performance GPU execution. While TensorFlow still holds ground in some legacy enterprise systems, PyTorch is the de facto standard language for modern deep learning.

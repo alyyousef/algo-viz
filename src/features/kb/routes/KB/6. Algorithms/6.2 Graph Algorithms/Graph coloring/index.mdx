@@ -4,18 +4,11 @@ description: "A mathematical assignment of labels (colors) to the elements of a 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Graph Coloring"
   subtitle="The Mathematics of Map Making"
   tags={['Algorithms', 'Graphs', 'NP-Complete', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 If you want to color a map of the United States such that no two bordering states share the same color, how many colors do you mathematically need?
 
@@ -29,3 +22,4 @@ The absolute minimum number of colors required for a specific graph is its **Chr
 While determining if a graph is 2-colorable is easy (O(V+E) using BFS), determining if a general graph is 3-colorable is mathematically **NP-Complete**. There is no known fast algorithm; the computer must brute-force the possibilities (O(3^V)).
 Because finding the exact Chromatic Number is too slow, engineers use "Greedy Coloring" algorithms. It loops through the vertices, checks the neighbors' colors, and assigns the lowest available color. It is fast (O(V+E)) but mathematically not guaranteed to use the absolute minimum number of colors.
 
+</ConceptTemplate>

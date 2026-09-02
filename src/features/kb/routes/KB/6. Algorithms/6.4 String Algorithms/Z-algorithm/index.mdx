@@ -4,18 +4,11 @@ description: "A linear-time string matching algorithm that mathematically comput
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Z-Algorithm"
   subtitle="The Sibling of KMP"
   tags={['Algorithms', 'Strings', 'Mathematics', 'Performance']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 While KMP uses an LPS (Longest Prefix Suffix) array, the **Z-Algorithm** achieves the exact same O(N + M) string matching using a completely different mathematical construct: the Z-Array.
 
@@ -30,3 +23,4 @@ To build the Z-Array in O(N) time, the algorithm mathematically maintains a "Z-B
 When evaluating a new index `i`, if `i` is mathematically inside the Z-Box, the algorithm looks at the previously computed mirror-image value inside the box. Just like Manacher's Algorithm for palindromes, it mathematically copies the old answer to avoid redundant character comparisons, guaranteeing strict linear time complexity.
 To search for a Pattern in a Text, you simply concatenate them: `Pattern + "$" + Text`, and run the Z-algorithm. Any Z-value equal to the length of the Pattern is a confirmed match!
 
+</ConceptTemplate>

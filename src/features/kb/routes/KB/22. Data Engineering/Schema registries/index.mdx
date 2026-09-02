@@ -1,35 +1,20 @@
 ---
-title: Schema Registries
-description: The mathematical governance layer for streaming architectures, ensuring strict data contracts between decoupled producers and consumers.
+title: Schema Registries (Redirect)
+description: "Redirecting to Apache Kafka."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Schema Registries">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a massively decoupled microservice architecture using Apache Kafka, a Producer (e.g., the Billing Service) emits JSON events, and 50 different Consumers read them.
-If a junior engineer at the Billing Service decides to rename the JSON key from `customer_id` to `client_id`, the 50 downstream microservices will instantly crash, causing a catastrophic company-wide outage.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Schema Registries** (a central system ensuring producers and consumers in event-driven systems agree on the data contract, usually via Avro/Protobuf) is covered in the Deep Dive for **Apache Kafka**. 
 
-The **Schema Registry** mathematically prevents this by enforcing strict Data Contracts.
-
-## 1. The Mathematical Enforcement
-A Schema Registry (like the Confluent Schema Registry) is a standalone web server that stores versions of schemas (typically written in **Apache Avro**, Protobuf, or JSON Schema).
-
-1. **The Contract**: The Billing Service mathematically registers a schema defining exactly what fields must exist (e.g., `customer_id` must be an integer).
-2. **The Serialization**: When the Billing Service tries to send a message to Kafka, its Kafka Client automatically contacts the Registry. The Registry mathematically verifies that the payload perfectly matches the schema.
-3. **The Rejection**: If the payload contains `client_id` instead, the Schema Registry mathematically rejects the payload, throwing an exception *before* the corrupted data is ever written to Kafka.
-
-## 2. Schema Evolution
-Software evolves, so schemas must change. The Schema Registry mathematically governs **Schema Evolution** through strict compatibility rules.
-
-- **Backward Compatibility**: If you add a new column (e.g., `email`), you must provide a default value. This mathematically guarantees that old consumers (who don't know about the email field) can still read the new messages without crashing.
-- **Forward Compatibility**: You mathematically delete a column. Old consumers can still read the new messages because the underlying Avro/Protobuf serialization format is designed to safely ignore missing bytes.
-
-If a developer attempts to make a breaking change (e.g., changing `age` from an Integer to a String), the Schema Registry mathematically blocks the deployment, forcing the organization to negotiate a safe migration path. It is the ultimate guardian of streaming data integrity.
-
+Please navigate to the [Apache Kafka](/kb/22.-data-engineering/kafka) module to explore streaming architecture.
+</Callout>

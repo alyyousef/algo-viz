@@ -1,27 +1,127 @@
 ---
 title: Operator Precedence
-description: The strict mathematical ruleset compilers use to determine the order in which operators are evaluated in complex expressions.
+description: "The mathematical laws of syntax evaluation: analyzing how the compiler constructs Abstract Syntax Trees based on strict, deterministic priority rules."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Operator Precedence">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When a compiler encounters a mathematical expression like `3 + 4 * 5`, it cannot simply evaluate it left-to-right (which would yield 35). It must mathematically adhere to Operator Precedence.
+In pure arithmetic, if you write $2 + 3 \times 4$, the result is exactly 14. It is never 20. This is because multiplication mathematically possesses a higher "priority" than addition. 
+This exact mathematical concept is mirrored in Computer Science as **Operator Precedence**.
 
-## 1. The Precedence Table
-Every programming language mathematically defines a rigid Precedence Table.
-Typically, multiplication (`*`) has higher mathematical precedence than addition (`+`), so the compiler calculates `4 * 5` first.
-Parentheses (`()`) have the absolute highest mathematical precedence. They physically alter the Abstract Syntax Tree (AST), forcing the compiler to evaluate the inner nodes before the outer nodes.
+When a compiler encounters a complex line of code containing multiple operators (e.g., `if (!isValid && x * y > 10)`), it cannot read left-to-right. It must use a strict, mathematically deterministic set of rules to decide which operation executes first, second, and third. Without these rules, code evaluation would be chaotic and unpredictable across different operating systems.
 
-## 2. Associativity
-If two operators have the exact same precedence, the compiler uses **Associativity** to break the tie.
-- **Left-to-Right**: Mathematical operators (`-`, `/`) are evaluated left-to-right. `10 - 5 - 2` is mathematically `(10 - 5) - 2 = 3`.
-- **Right-to-Left**: Assignment operators (`=`) are evaluated right-to-left. In C, `a = b = 5` mathematically means `b = 5` evaluates first, returning 5, which is then assigned to `a`.
+## 1. Deep Dive & Mechanics
 
+At the compiler level, Operator Precedence is enforced during the construction of the **Abstract Syntax Tree (AST)**.
+
+The parser scans the expression and builds a mathematical tree graph. Operators with the highest precedence (like multiplication or function calls) are pushed to the absolute bottom (the "leaves") of the tree.
+When the CPU executes the code, it calculates the AST from the bottom up. 
+Therefore, high-precedence operators are executed *first* to provide their values to the lower-precedence operators residing above them in the tree.
+
+### The Universal Hierarchy
+While every programming language defines its own specific precedence table, 99% of languages follow this strict mathematical architecture (from highest priority to lowest):
+1. **Grouping & Access:** `()` (Parentheses), `.` (Dot notation), `[]` (Array access)
+2. **Unary Operators:** `!x` (Logical NOT), `++` (Increment), `typeof`
+3. **Multiplicative Math:** `*`, `/`, `%`
+4. **Additive Math:** `+`, `-`
+5. **Relational (Comparisons):** `>`, `<`, `>=`
+6. **Equality:** `==`, `!=`, `===`
+7. **Logical AND:** `&&`
+8. **Logical OR:** `||`
+9. **Assignment:** `=`, `+=`, `-=` (Note: Assignments are the only operators that evaluate *Right-to-Left*)
+
+## 2. Mathematical / Theoretical Foundation
+
+The deepest architectural concept intertwined with Precedence is **Associativity**.
+
+Precedence dictates what happens when operators are *different* (`+` vs `*`). But what happens when the operators have the exact same mathematical priority?
+e.g., `let x = 10 / 2 * 5;`
+Both `/` and `*` have the exact same precedence level. 
+
+To break the tie, the compiler uses **Associativity Rules**.
+- **Left-to-Right Associativity:** Most operators are calculated from left to right. `(10 / 2) * 5` evaluates to 25.
+- **Right-to-Left Associativity:** Used for Assignment and Exponentiation. 
+  If you write `a = b = c = 5`, the compiler evaluates this Right-to-Left: `c = 5`, then `b = 5`, then `a = 5`.
+
+## 3. Real-World Implementation
+
+Here is an architectural demonstration of how Operator Precedence can cause catastrophic bugs if misunderstood.
+
+### Paradigm 1: The Logical AND/OR Trap
+*Because `&&` has mathematically higher precedence than `||`, the compiler will restructure your logic if you don't use parentheses.*
+```javascript
+const user = { isAdmin: false, isManager: true };
+const action = "DELETE";
+
+// THE BUG:
+// The developer intends: "If the user is an Admin OR Manager, AND the action is DELETE"
+// The compiler reads: "If (Manager AND DELETE) OR (Admin)"
+if (user.isAdmin || user.isManager && action === "DELETE") {
+    console.log("Access Granted. This is mathematically dangerous.");
+}
+
+// THE FIX:
+// Parentheses have the absolute highest precedence. They mathematically override the AST.
+if ((user.isAdmin || user.isManager) && action === "DELETE") {
+    console.log("Access Granted. Mathematically sound.");
+}
+```
+
+### Paradigm 2: The Unary / Exponentiation Conflict
+*Languages often have hyper-specific rules for operators that sit adjacent to each other without spacing.*
+```python
+# In Python, Exponentiation (**) has higher precedence than the Unary Minus (-)
+result1 = -2 ** 2  
+# The compiler evaluates: -(2 ** 2). The result is -4.
+
+# If the developer wanted to square the number -2:
+result2 = (-2) ** 2 
+# The parentheses override precedence. The result is 4.
+```
+
+## 4. Visualizations
+
+<ComparisonTable
+  title="AST Execution Sequence (Expression: `!valid && a + b > 10`)"
+  headers={["Step", "Sub-Expression", "Operator Type", "Precedence Level"]}
+  rows={[
+    ["1", "`!valid`", "Unary NOT (`!`)", "Level 2 (Highest)"],
+    ["2", "`a + b`", "Additive (`+`)", "Level 4"],
+    ["3", "`(a+b) > 10`", "Relational (`>`)", "Level 5"],
+    ["4", "`(!valid) && (result > 10)`", "Logical AND (`&&`)", "Level 7 (Lowest)"]
+  ]}
+/>
+
+## 5. Interview Prep
+
+**Q: Explain the exact mathematical execution of `let x = 10; let y = x++ + ++x;`**
+**A:** This relies entirely on Unary Operator Precedence and Prefix vs Postfix rules.
+1. `x++` (Postfix) evaluates to the *current* value of `x` (`10`), but instantly mathematically increments `x` to `11` in RAM.
+2. The `+` (Additive) operator prepares to add `10` to the right side.
+3. `++x` (Prefix) grabs `x` from RAM (`11`), mathematically increments it to `12`, and evaluates to `12`.
+4. The final equation is `10 + 12 = 22`. `y` becomes 22, and `x` becomes 12. (Note: Writing code like this in a professional environment is an architectural anti-pattern and will fail code review).
+
+**Q: Why does `new Object().method()` work, but `new Object.method()` crash in JavaScript?**
+**A:** This is a pure Precedence conflict. The Member Access operator (`.`) has a mathematically *higher* precedence than the `new` operator (without arguments). 
+If you write `new Object.method()`, the compiler evaluates `Object.method` first, realizes standard Objects don't have a `.method` property on their constructor, and crashes.
+By writing `new Object()`, you invoke the Highest Precedence operator (the Grouping Parentheses). The `new` keyword executes first, returns the instantiated object, and THEN the Member Access operator (`.`) accesses the method on the newly created object.
+
+## 6. Production Use Cases
+
+- **Bitwise Architecture (C/C++/Rust):** In high-performance Systems Programming, engineers use Bitwise Operators (`&`, `|`, `^`) to manipulate raw binary flags to save RAM. However, Bitwise Operators have a famously bizarre mathematical precedence—they are placed *lower* than Equality Operators (`==`). 
+If an engineer writes `if (flags & 0x01 == 0)`, the compiler mathematically evaluates `0x01 == 0` first (which is `false` or `0`), resulting in `flags & 0`, completely breaking the security check. Systems engineers must religiously wrap bitwise operations in parentheses: `if ((flags & 0x01) == 0)`.
+- **Prettier / Formatters:** A critical architectural tool in modern web development is the Code Formatter (like Prettier). These tools do not just format text; they are mathematical compilers. They generate an AST using the language's exact Precedence Rules, and then re-print the text, automatically injecting or removing Parentheses based on whether they are mathematically redundant, ensuring the code geometry perfectly matches the CPU's execution intent.
+
+<Callout icon="danger" title="The Implicit Type Coercion Nightmare">
+In dynamically typed languages (JS, PHP), Operator Precedence interacts lethally with **Implicit Type Coercion**. 
+If you write `"5" + 2 * 3`, Precedence dictates that `2 * 3` evaluates first (6). Then, `"5" + 6` executes. Because `"5"` is a String, the `+` operator abandons mathematical addition and switches to String Concatenation. The final result is the string `"56"`. Never rely on implicit coercion when combining different operator classes.
+</Callout>

@@ -1,37 +1,20 @@
 ---
-title: Apache Storm
-description: The original pioneer of real-time stream processing, utilizing a topology-based execution architecture.
+title: Apache Storm (Redirect)
+description: "Redirecting to Apache Beam (Batch & Stream)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Apache Storm">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before Apache Flink and Kafka Streams dominated the market, **Apache Storm** (open-sourced by Twitter in 2011) was the undisputed king of real-time stream processing. It was one of the first frameworks to mathematically prove that unbounded data streams could be processed at scale with sub-millisecond latency.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Apache Storm** (one of the earliest distributed real-time computation systems) has largely been superseded by modern engines, covered in the Deep Dive for **Apache Beam**. 
 
-## 1. The Topology Architecture
-In Hadoop Batch processing, jobs execute as a DAG and eventually finish. In Storm, you mathematically define a **Topology**, which is a graph of computation that runs infinitely until it is explicitly killed by an administrator.
-
-The Topology consists of two core components:
-- **Spouts (The Source)**: The mathematical entry point. A Spout connects to a message broker (like Apache Kafka or a Twitter API stream) and emits continuous tuples (records) into the topology.
-- **Bolts (The Processors)**: The computational units. A Bolt receives tuples, executes mathematical logic (filtering, aggregating, connecting to a database), and emits new tuples to downstream Bolts.
-
-## 2. Execution Guarantees
-Storm pioneered the mathematical concept of tracking tuple execution to guarantee data processing.
-
-- **At-Least-Once Guarantee**: When a Spout emits a tuple, Storm mathematically tracks its entire journey through the complex web of Bolts. If any Bolt crashes or fails to acknowledge the tuple, Storm explicitly tells the Spout to replay the exact tuple. This mathematically guarantees no data is lost, but it can result in double-counting if a downstream database isn't idempotent.
-- **Trident**: Because At-Least-Once caused financial issues (double charging), Storm later introduced the **Trident** API, which mathematically bolted micro-batching onto Storm to provide Exactly-Once semantics (similar to Spark Streaming).
-
-## 3. Why Storm Declined
-While revolutionary, Storm possessed fatal architectural limitations:
-1. **Lack of State Management**: Storm had no native mathematical way to handle "State". If you wanted to calculate a 1-hour rolling average, you had to manually store that state in an external Redis database, causing massive network I/O bottlenecks. Flink solved this by embedding the state directly into the local server's memory/disk.
-2. **No Event Time Watermarks**: Storm struggled mathematically with out-of-order data, lacking the sophisticated Event Time Windowing logic that became the hallmark of Apache Flink.
-
-Today, Apache Storm is largely considered legacy, heavily replaced by Flink and Kafka Streams.
-
+Please navigate to the [Apache Beam](/kb/22.-data-engineering/apache-beam) module to explore the physics of unbounded stream processing.
+</Callout>

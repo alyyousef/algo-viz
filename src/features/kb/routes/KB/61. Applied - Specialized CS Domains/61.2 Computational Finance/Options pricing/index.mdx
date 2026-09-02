@@ -1,19 +1,41 @@
 ---
-title: Options pricing
-description: The mathematical process of determining the fair value of an options contract.
+title: Options Pricing
+description: "The highly complex mathematical models used by financial institutions to determine the fair theoretical value of an options contract."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Options Pricing">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Options Pricing"
+  subtitle="The Math of Derivatives"
+  tags={['Computational Finance', 'Mathematics', 'Algorithms', 'Economics']}
+>
 
-While Black-Scholes is famous, it makes strict mathematical assumptions (like assuming volatility is constant, which is biologically false).
+An **Option** is a financial derivative contract that gives the buyer the right (but not the obligation) to buy or sell a stock at a specific price on a specific date. 
+Because the payoff is asymmetrical and occurs in the future, determining exactly how much that contract should cost *today* is one of the most famous problems in computational finance.
 
-Modern **Options Pricing** involves massive computational power. Quants write C++ programs to mathematically solve complex Partial Differential Equations (PDEs) or use Binomial Tree algorithms to calculate the price of "Exotic Options" (contracts with insane biological rules, like "The payoff depends on the average price over the last 30 days, but only if the price never dropped below $50").
+## 1. The Black-Scholes Model
 
+In 1973, Fischer Black, Myron Scholes, and Robert Merton published the **Black-Scholes Equation**, a differential equation that revolutionized Wall Street (and won a Nobel Prize).
+It mathematically proves that you can determine the exact fair price of a European option using five specific variables:
+1. The current stock price.
+2. The strike price of the option.
+3. The time remaining until expiration.
+4. The risk-free interest rate.
+5. **Implied Volatility**: How wildly the market expects the stock to swing.
+
+The algorithm outputs a precise dollar value. If the market is selling the option for less than the Black-Scholes value, a computer algorithm will instantly buy it, knowing it is mathematically underpriced.
+
+## 2. The Greeks
+
+Options pricing models don't just output a price; they calculate "The Greeks", which measure the exact mathematical sensitivity of the option's price to changes in the universe:
+- **Delta ($\\Delta$)**: How much the option price changes if the underlying stock moves by $1.
+- **Theta ($\\Theta$)**: How much value the option loses every single day due to time decay.
+- **Vega ($\mathcal{V}$)**: The sensitivity to changes in market volatility.
+
+## 3. Monte Carlo Simulations
+
+Black-Scholes only works for simple "European" options. For complex "Exotic" options, there is no clean mathematical formula.
+Quants use **Monte Carlo Simulations**. They use massive computing clusters to simulate 10 million possible random paths the stock price could take over the next year (using geometric Brownian motion). They calculate the payoff for all 10 million paths, average them together, and discount it back to today's value, using raw compute power to solve an unsolvable equation.
+
+</ConceptTemplate>

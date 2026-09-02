@@ -45,13 +45,11 @@ async function main() {
     const file = filesToProcess[i]
     console.log(`\n[${i + 1}/${filesToProcess.length}] Processing ${file}...`)
 
-    // Check if backup already exists (meaning we probably already processed it)
-    try {
-      await fs.access(file + '.backup')
-      console.log(`⏩ Skipping ${file} (backup exists, already processed)`)
+    // Check if it has already been expanded by looking for the Layout string
+    const content = await fs.readFile(file, 'utf8')
+    if (content.includes('export default function Layout')) {
+      console.log(`⏩ Skipping ${file} (Layout found, already processed)`)
       continue
-    } catch (e) {
-      // No backup exists, safe to process
     }
 
     const success = await expandTopic(file, apiKey)

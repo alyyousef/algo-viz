@@ -1,37 +1,49 @@
 ---
-title: SentencePiece
-description: A language-independent subword tokenizer that treats spaces as normal characters.
+title: Tokenization (SentencePiece, BPE)
+description: "An overview of how Large Language Models chop human language into tiny mathematical pieces before processing them."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="SentencePiece">
+    <ConceptTemplate title="Tokenization (SentencePiece, BPE)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-SentencePiece is an open-source tokenization library developed by Google. While BPE and WordPiece are algorithms, SentencePiece is a complete software package that can implement either of them.
+Neural networks do not understand human words, letters, or strings. They only understand raw mathematics. 
 
-Its primary innovation is that it is completely language-independent.
+Before you can feed the sentence *"I love AI"* into a Large Language Model, you must pass it through a **Tokenizer**. A Tokenizer is a rigid software dictionary that chops the text into tiny chunks (Tokens) and assigns a unique ID number to each chunk.
 
+## Why not just use words?
 
-<Callout icon="success" title="The Space Problem">
+Why not just make every word in the English dictionary a token? 
+Because language is infinitely complex. If a model encounters a word it has never seen before (like *"supercalifragilistic"* or a complex URL), it would crash. Furthermore, standard dictionaries don't account for prefixes (un-), suffixes (-ing), or punctuation.
 
+## Byte-Pair Encoding (BPE)
 
-  Traditional tokenizers assume that words are separated by spaces. This completely breaks down for languages like Chinese, Japanese, or Thai, which do not use spaces.
+The most popular tokenization algorithm in the world (used by OpenAI for GPT-3/GPT-4) is **BPE (Byte-Pair Encoding)**.
 
+BPE is a data compression algorithm. Instead of hard-coding words, BPE starts by breaking a massive dataset of text down into individual letters. It then scans the data to find the most frequent pairs of characters and mathematically merges them into a new token.
 
+1.  It notices that "e" and "r" appear next to each other millions of times. It merges them into a new token: `"er"`.
+2.  It notices that "t" and "h" appear constantly. It merges them: `"th"`.
+3.  Eventually, it builds up tokens that represent full words (`"apple"`), but it also retains the sub-word chunks (`"pre"`, `"ing"`, `"tion"`).
+
+This means if BPE encounters a completely alien word like *"pretraining"*, it doesn't crash. It simply breaks it down into familiar sub-word tokens: `["pre", "train", "ing"]`.
+
+## SentencePiece
+
+While BPE is brilliant, it has a fatal flaw: it assumes that words are separated by spaces.
+This completely breaks down when processing languages like Chinese or Japanese, which do not use spaces between words, or when processing complex Python code with highly specific whitespace formatting.
+
+**SentencePiece** (developed by Google and used in LLaMA and Mistral) solves this. 
+SentencePiece treats the entire input string (including spaces, tabs, and newlines) as a raw, continuous stream of data. It explicitly treats the "space" character as just another mathematical token (often represented as `_`).
+
+This allows SentencePiece to perfectly tokenize any language, code, or formatting structure without relying on human grammatical rules.
+
+<Callout icon="coins" title="The Economics of Tokenization">
+When you pay for an LLM API (like OpenAI), you do not pay per word; you pay per token. On average, **1 token is roughly 0.75 English words**. However, if you prompt the model in a rare language (like Icelandic), the Tokenizer struggles and often breaks a single word into 5 or 6 separate tokens. This means running AI in non-English languages is often drastically more expensive.
 </Callout>
-
-
-## The SentencePiece Solution
-
-SentencePiece solves the space problem by treating the input as a raw, continuous stream of characters. It replaces all whitespace with a special meta-symbol (usually ` `, U+2581).
-
-- "Hello World" becomes ` Hello World`
-- The algorithm then runs BPE or Unigram on this stream.
-- This allows the model to learn that the space character is just part of the token, and makes tokenization mathematically identical for English and Japanese.
-

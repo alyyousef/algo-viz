@@ -1,39 +1,43 @@
 ---
-title: Search Algorithms
-description: The foundational algorithmic discipline of mathematically exploring vast state spaces to find optimal paths or winning strategies.
+title: Search Algorithms (AI)
+description: "How early AI systems explored massive decision trees to find optimal paths and beat humans at games."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Search Algorithms">
+    <ConceptTemplate title="Search Algorithms (AI)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a Google Maps server needs to calculate the fastest route from New York to Los Angeles, it mathematically analyzes a graph containing billions of roads. This is the domain of **Search Algorithms**, the absolute foundation of classical AI.
+Before the Deep Learning boom of the 2010s, Artificial Intelligence was largely synonymous with **Search**. If you can formulate a problem as an initial state, a set of allowed actions, and a goal state, you can "solve" the problem by searching through a tree of all possible futures.
 
-## 1. Uninformed Search (Blind Search)
-These algorithms have no knowledge of the goal's location. They mathematically blindly explore the graph.
-- **Breadth-First Search (BFS)**: Explores all neighboring nodes first before moving deeper. Mathematically guarantees finding the shortest path (if all roads take the same time), but consumes massive amounts of RAM.
-- **Depth-First Search (DFS)**: Plunges as deep as possible down a single path until it hits a dead end, then backtracks. Uses very little RAM, but mathematically provides zero guarantees of finding an optimal path.
+## 1. Uninformed vs. Informed Search
 
-## 2. Informed Search (Heuristic Search)
-If you are driving to Los Angeles, you don't randomly drive to Canada first. You know LA is West.
-Informed search uses a **Heuristic**—a mathematical "rule of thumb" that estimates how close you are to the goal.
+In an uninformed search, the AI knows nothing about the domain. It just blindly explores.
+- **Breadth-First Search (BFS):** Explores all nodes at depth 1, then depth 2. Guarantees finding the shortest path, but requires massive memory.
+- **Depth-First Search (DFS):** Dives down a single path until it hits a dead end, then backtracks. Uses very little memory, but might get stuck going down an infinitely long, wrong path.
 
-- **A* (A-Star) Search**: The undisputed king of pathfinding algorithms (used in video games and GPS routing). It mathematically evaluates a node based on two functions: $f(n) = g(n) + h(n)$.
-  - $g(n)$: The exact cost to travel from the start to the current node.
-  - $h(n)$: The Heuristic (e.g., straight-line mathematical distance to the goal).
-  As long as the heuristic is mathematically "admissible" (never overestimates the true cost), A* will flawlessly find the mathematically absolute shortest path while ignoring 90% of the irrelevant roads.
+**Informed Search (Heuristics)**
+An informed search uses a **Heuristic** — a rule of thumb that estimates how close a state is to the goal.
+- **A* (A-Star) Search:** The most famous informed search. It evaluates nodes by combining the exact cost taken to reach the node so far ($g(n)$) plus the estimated cost to reach the goal ($h(n)$). Used heavily in video game pathfinding and GPS navigation.
 
-## 3. Adversarial Search (Minimax)
-Used when playing a game against a human opponent (like Chess).
-The AI mathematically generates a massive tree of all possible future moves.
-The **Minimax** algorithm assumes the human will always play perfectly.
-- The AI mathematically attempts to **Maximize** its own score.
-- The AI assumes the human will take the path that **Minimizes** the AI's score.
-Because the game tree for Chess is larger than the number of atoms in the universe, the AI uses **Alpha-Beta Pruning** to mathematically chop off branches of the tree it knows are terrible without ever explicitly evaluating them, saving massive compute.
+## 2. Adversarial Search (Game Playing)
 
+When there is an opponent trying to stop you (like in Chess or Tic-Tac-Toe), standard search fails. You must assume the opponent will make the best possible move to ruin your plan.
+
+- **Minimax Algorithm:** The AI calculates the entire tree of possible moves to the end of the game. It assigns a score (+1 for winning, -1 for losing). It then assumes that at every turn, it will pick the move that **Maximizes** the score, and the opponent will pick the move that **Minimizes** the score.
+- **Alpha-Beta Pruning:** Minimax is too slow for complex games (Chess has more possible games than atoms in the universe). Alpha-Beta Pruning speeds it up by ignoring branches of the tree that it can mathematically prove are worse than a move it has already found.
+
+## 3. The Limits of Search
+
+Search algorithms dominated AI from the 1960s to the 1990s (culminating in IBM's Deep Blue beating Garry Kasparov at Chess in 1997 using Alpha-Beta Pruning). 
+
+However, they failed at Go. The branching factor of Go is so large that Minimax tree search becomes computationally impossible. 
+
+<Callout icon="info" title="The Synthesis: AlphaGo">
+Google DeepMind solved Go in 2016 not by abandoning search, but by combining it with Deep Learning. **AlphaGo** used a Neural Network to evaluate the board (acting as an intuition/heuristic), which massively narrowed down the branches that a search algorithm (Monte Carlo Tree Search) needed to explore.
+</Callout>

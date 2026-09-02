@@ -1,44 +1,46 @@
 ---
 title: Hallucinations
-description: The phenomenon where an LLM confidently generates completely false, fabricated, or mathematically impossible information while presenting it as absolute fact.
+description: "A deep dive into Hallucinations, the most notorious flaw of Large Language Models where they confidently state false information as fact."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Hallucinations">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The most dangerous flaw of Large Language Models is their propensity to **Hallucinate**.
-Because an LLM is not a database of facts, but a probabilistic engine predicting the next statistically likely word, it does not actually "know" what is true. It only knows what sounds plausible.
+An AI **Hallucination** occurs when a Large Language Model (LLM) generates a response that is grammatically perfect, sounds highly confident, but is completely factually incorrect or entirely fabricated.
 
-If you ask an LLM for a biography of a fake historical figure, it will not say "I don't know." It will confidently invent dates, battles, and fake book citations that sound perfectly academic.
+For example, if you ask an LLM: *"Who was the first person to walk on the sun?"*
+An older, unaligned LLM might reply: *"The first person to walk on the sun was astronaut James Carmichael in 1978 during NASA's Apollo 18 mission."*
 
-## 1. Why do they happen?
+This is the single biggest barrier to enterprise adoption of Generative AI. In a legal context, LLMs have notoriously hallucinated fake legal precedents, causing lawyers to submit fake cases to a judge.
 
-- **Compression and Generalization**: An LLM compresses petabytes of internet text into billions of mathematical weights. Exact facts are blurred. The model generalizes patterns, meaning it might merge the attributes of two similar politicians into one fabricated event.
-- **Sycophancy**: Models are fine-tuned using RLHF to be "helpful" to the human. If a human asks a leading question (*"Why did the iPhone 4 have a holographic projector?"*), the model is heavily biased to agree with the premise and will confidently explain how the fake projector worked.
-- **Sparse Data**: If a topic is rarely mentioned in the training data, the model lacks the dense mathematical connections required to predict the right answer, so it defaults to generic, statistically safe (but factually wrong) vocabulary.
+## Why do LLMs Hallucinate?
 
-## 2. Mitigation Strategies
+To understand hallucinations, you must understand a terrifying truth: **LLMs do not know what a "fact" is.**
 
-You cannot completely eliminate hallucinations in a pure LLM. You must build architectural guardrails around the model:
+An LLM is not querying a database of truth. It is a statistical engine. Its only goal is to predict the next statistically likely word based on the patterns it learned from the internet. 
+When asked about walking on the sun, the model doesn't "know" it's impossible. It simply recognizes the pattern: `["first person to walk on"]` is usually followed by `["astronaut"]` and `["NASA"]` and a year. So it generates a mathematically probable (but factually absurd) sentence.
 
-1. **RAG (Retrieval-Augmented Generation)**: The absolute gold standard. You force the LLM to read a verified database document in its context window, and explicitly prompt it: *"Answer the user ONLY using the provided text. If the text does not contain the answer, output 'I do not know'."*
-2. **Temperature Control**: Setting the `temperature` parameter to $0.0$ removes all randomness from the word selection, forcing the model to pick the absolute highest-probability token every time, reducing creative fabrications.
-3. **Chain-of-Thought**: Forcing the model to write out its logic step-by-step prevents it from instantly jumping to a statistically likely, but logically impossible, conclusion.
+### Causes of Hallucination:
+1.  **Training Data Gaps:** If the model wasn't trained on a specific niche topic, it will guess the answer rather than admit it doesn't know.
+2.  **Context Window Overload:** If you paste a 50-page document into the prompt, the model can suffer from "Attention dilution." It might accidentally pull a name from Page 1 and a date from Page 50 and mash them together into a false statement.
+3.  **Sycophancy:** LLMs are trained to be "helpful." If a user asks a highly leading, incorrect question (*"Tell me about the time Abraham Lincoln invented the iPhone"*), the model will often hallucinate a story just to please the user, rather than correcting them.
 
+## How do we fix it?
 
-<Callout icon="error" title="The Danger of Confidence">
+While hallucinations cannot be mathematically reduced to 0%, the AI industry has developed several robust methods to mitigate them:
 
+1.  **RAG (Retrieval-Augmented Generation):** The absolute gold standard for fixing hallucinations. Instead of relying on the LLM's internal memory, you force the LLM to search a real database, retrieve a factual document, and write its answer *strictly* based on that document.
+2.  **Grounding (System Prompts):** Explicitly instructing the model: *"If you do not know the answer with 100% certainty, you must reply 'I do not know.' Do not guess."*
+3.  **Chain-of-Thought Prompting:** Forcing the LLM to write out its step-by-step logic. Often, by writing out the steps, the model catches its own logical errors before it outputs the final hallucinated answer.
 
-  Unlike humans, who usually use tentative language when they are guessing ("I think it might be..."), LLMs are inherently designed to sound authoritative. A hallucination is dangerous specifically because the grammar, tone, and formatting are flawless, easily tricking humans into trusting the output.
-
-
+<Callout icon="triangle-exclamation" title="Intrinsic vs Extrinsic Hallucinations">
+*   **Intrinsic:** The LLM contradicts the specific information you gave it in the prompt. (You pasted a receipt for $5, and the LLM says you spent $10).
+*   **Extrinsic:** The LLM hallucinates extra details that weren't in your prompt, but *might* be true based on its training data. (You ask for a summary of a movie, and it accurately names the director, even though you didn't provide it).
 </Callout>
-
-

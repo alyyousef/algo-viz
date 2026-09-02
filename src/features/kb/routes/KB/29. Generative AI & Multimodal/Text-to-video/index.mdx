@@ -1,26 +1,42 @@
 ---
 title: Text-to-Video
-description: The frontier of Generative AI, requiring networks to mathematically master both 2D spatial coherence (like an image) and strict 3D temporal physics across thousands of sequential frames.
+description: "A deep dive into Text-to-Video generation, the cutting-edge frontier of AI where neural networks synthesize complex moving imagery from simple text prompts."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Text-to-Video">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Generating a single image is mathematically hard. Generating a 10-second video at 30 FPS requires generating 300 images that mathematically obey the laws of physics over time.
+*(Note: This module focuses on the overarching concept of generating video from text. For details on the architecture behind models like Sora, see the **Video Generation** module).*
 
-## 1. Temporal Consistency
-If you ask an image generator to draw "A dog running" 300 times, you will get 300 completely different breeds of dogs in different locations.
-Text-to-Video models (like OpenAI's Sora or Runway Gen-2) introduce **Temporal Attention Layers**.
-When the network is mathematically generating Frame 45, it is explicitly calculating mathematical connections back to Frame 44, Frame 10, and Frame 1. This forces the AI to mathematically remember the specific geometry of the dog it drew in Frame 1, ensuring the fur pattern and lighting remain flawlessly consistent as the dog moves through 3D space.
+**Text-to-Video (T2V)** is the process of generating a completely synthetic video clip from a purely textual description (e.g., *"A golden retriever driving a red sports car through a cyberpunk city"*).
 
-## 2. Spacetime Patches
-Sora revolutionized video generation by treating video not as a sequence of frames, but as a single mathematical block of "Spacetime."
-It mathematically chops the entire 10-second video into 3D cubes (Spacetime Patches), containing width, height, and time duration. By training a massive Diffusion Transformer on these 3D patches, the AI mathematically learns the physics of the real world (e.g., gravity, occlusion, fluid dynamics) without ever being explicitly programmed with a physics engine.
+While Text-to-Image was solved in 2022, Text-to-Video remained incredibly primitive until 2024. Early models generated blurry, warped messes that looked like fever dreams. The challenge was not generating the pixels—it was generating *physics*.
 
+## The Physics Problem
+
+An image generator only has to draw a car once. 
+A video generator drawing a 10-second clip at 30 frames per second has to draw that same car **300 times**.
+
+More importantly, it has to draw it moving through space. It has to understand:
+1.  **Object Permanence:** If the car drives behind a building, the car doesn't cease to exist. It must emerge on the other side of the building looking exactly the same. Early models failed this completely; objects would constantly morph into other objects.
+2.  **3D Geometry:** As the camera pans around the car, the neural network has to mathematically understand how light and shadows change across a 3D surface, even though the AI has never existed in the physical 3D world.
+3.  **Real-world Physics:** If the car hits a puddle, water must splash. The AI has to "hallucinate" the physics of fluid dynamics.
+
+## Current T2V Capabilities
+
+In early 2024, models like OpenAI's **Sora** and Kling AI shattered expectations.
+
+*   **Shot Length:** Early models could only generate 3 seconds of video before collapsing into a glitchy mess. Modern models can generate up to 60 seconds of flawless, temporally consistent video.
+*   **Camera Control:** Users can use prompt engineering to act as cinematographers, explicitly commanding the AI to perform complex drone shots, macro-closeups, or sweeping pans (*"A low-angle tracking shot..."*).
+*   **Hyper-Realism:** The models have become so advanced at simulating light bouncing off water and skin that the resulting videos are completely indistinguishable from real, high-budget Hollywood drone footage.
+
+<Callout icon="clapperboard" title="The Death of B-Roll">
+The immediate, real-world impact of Text-to-Video is the disruption of the stock footage industry (B-Roll). Instead of a video editor paying \$200 to license a stock video of "a man drinking coffee on a rainy day," they can now generate the exact clip they need, with the exact lighting they want, for pennies using AI.
+</Callout>

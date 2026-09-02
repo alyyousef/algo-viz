@@ -1,38 +1,61 @@
 ---
-title: Absolute Positional Encoding
-description: The original mathematical trick used by the 2017 Transformer to understand word order.
+title: Positional Encoding (Absolute vs Relative)
+description: "A deep dive into how Transformers know the order of words in a sentence, and why modern models abandoned Absolute Encoding for Relative Encoding (RoPE)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Absolute Positional Encoding">
+    <ConceptTemplate title="Positional Encoding (Absolute vs Relative)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Because the Transformer processes an entire sentence simultaneously in parallel (unlike the sequential RNN), it naturally has no concept of order. It sees the sentence as a "bag of words."
+One of the biggest flaws of the Transformer's **Self-Attention** mechanism is that it processes all words in a sentence simultaneously. 
+Unlike older RNNs (which read left-to-right), the Transformer has no concept of time or sequence. To a raw Transformer, the sentence *"The dog bit the man"* is mathematically identical to *"The man bit the dog"*.
 
-The original *Attention Is All You Need* paper solved this by mathematically injecting **Absolute Positional Encodings** directly into the word embeddings before they entered the network.
+To fix this, researchers explicitly inject mathematical "timestamps" into the words before they enter the neural network. This is called **Positional Encoding**.
 
+## 1. Absolute Positional Encoding (The Old Way)
 
-<Callout icon="warning" title="The Extrapolation Problem">
+In the original 2017 "Attention is All You Need" paper, the creators used **Absolute Positional Encoding**.
 
+Every position in a sentence was assigned a unique, fixed mathematical vector (generated using complex sine and cosine waves).
+*   Position 1 gets Vector A.
+*   Position 2 gets Vector B.
+*   Position 3 gets Vector C.
 
-  Absolute encodings are rarely used in modern LLMs because they fail at extrapolation. If you train a model on 512 tokens, it learns the absolute encoding for position 512. If you pass it a 600-token prompt during inference, the math breaks down because the model has never seen the encoding for position 513. This was replaced by relative encodings like RoPE.
+When the word *"dog"* is at Position 2, the neural network adds the word's embedding vector to Vector B. 
+**The Flaw:** Absolute encoding breaks down when sentences get long. If the model was trained on 512-word sentences, it only knows the sine-wave math for positions 1 through 512. If you give it a 513th word, it crashes, because there is no "Vector 513" in its memory.
 
+## 2. Relative Positional Encoding (ALiBi / T5)
 
-</Callout>
+Researchers realized that the absolute position of a word doesn't matter; the *distance between words* is what matters.
 
+If the word *"Not"* is directly next to the word *"Good"*, it completely reverses the meaning. It doesn't matter if this happens at the beginning of the sentence (Positions 1 and 2) or the end of the sentence (Positions 900 and 901).
 
-## The Sine and Cosine Math
+**Relative Positional Encoding** mathematically alters the Attention mechanism to care about distance. Techniques like **ALiBi** (Attention with Linear Biases) subtract a penalty from the attention score based on how far apart two words are. Words that are next to each other get high attention, words that are 500 tokens apart get a massive mathematical penalty.
 
-To ensure the model could recognize position mathematically, the creators used alternating sine and cosine functions of different frequencies:
+## 3. Rotary Positional Embeddings (RoPE)
 
-$PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}})$
-$PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}})$
+**RoPE** (invented in 2021) is the current undisputed king of positional encoding. It is the system used by almost all modern LLMs, including Llama-3 and Mistral.
 
-This complex mathematical wave ensures that every single position has a completely unique, deterministic vector, and that the mathematical distance between position 5 and 6 is identical to the distance between position 500 and 501.
+Instead of adding a fixed vector (Absolute) or applying a distance penalty (Relative), RoPE uses complex numbers to mathematically **rotate** the word's embedding vector in 3D space.
+*   Word 1 is rotated by 10 degrees.
+*   Word 2 is rotated by 20 degrees.
+*   Word 3 is rotated by 30 degrees.
 
+When the Self-Attention mechanism compares Word 1 and Word 3, it just calculates the angle between them (20 degrees). It doesn't care about their absolute position; it just mathematically "sees" the angle of rotation, which perfectly preserves the relative distance.
+
+<ComparisonTable
+  title="Positional Encoding Comparison"
+  headers={["Method", "Concept", "Context Extensibility", "Used In"]}
+  rows={[
+    ["Absolute", "Fixed sine/cosine waves for each slot", "Poor (Breaks if exceeded)", "Original Transformer (2017)"],
+    ["ALiBi (Relative)", "Distance penalties applied to attention", "Excellent (Infinite theoretical scaling)", "MPT, BloombergGPT"],
+    ["RoPE (Relative)", "Rotating vectors in multi-dimensional space", "Excellent (Can be mathematically squished)", "Llama 1/2/3, Mistral, PaLM"]
+  ]}
+/>

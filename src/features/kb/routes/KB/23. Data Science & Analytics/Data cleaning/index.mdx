@@ -1,27 +1,20 @@
 ---
-title: Data Cleaning
-description: The rigorous, mathematically essential process of identifying, correcting, or discarding corrupted, inaccurate, or incomplete records from a raw dataset.
+title: Data Cleaning (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Data Cleaning">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-"Garbage In, Garbage Out" is the fundamental mathematical law of Data Science. Even the most advanced neural network in the world will produce catastrophic predictions if the training data is corrupted. Data Cleaning (or Data Wrangling) consumes up to 80% of a Data Scientist's time.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Data Cleaning** (using tools like dbt to transform messy, raw Data Lake JSON into pristine dimensional models) is covered in the Deep Dive for **Business Intelligence (BI)**. 
 
-## 1. Handling Missing Data (Imputation)
-When a dataset has missing values (`NaN`), you cannot mathematically run an algorithm on it. You have two choices:
-- **Deletion**: Drop the entire row. This is mathematically safe but destroys valuable data.
-- **Imputation**: Mathematically guess the missing value. You can fill it with the Mean (average) of the column, the Median, or use advanced Machine Learning (like K-Nearest Neighbors) to predict what the missing value *should* have been based on the surrounding data.
-
-## 2. Outlier Detection
-An Outlier is a data point that mathematically deviates massively from the rest of the dataset.
-If you are analyzing average human height, and one row says a person is 500 feet tall, it will mathematically destroy the Mean calculation.
-Data Scientists use mathematical boundaries, like the **Z-Score** or **Interquartile Range (IQR)**. Any data point that falls outside of 3 Standard Deviations from the Mean is mathematically flagged as an Outlier and removed or investigated before the data is passed to a machine learning model.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore the semantic layer and data transformation.
+</Callout>

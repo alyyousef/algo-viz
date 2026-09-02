@@ -4,18 +4,11 @@ description: "A mathematical path in an undirected or directed graph that visits
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Hamiltonian Path & Circuit"
   subtitle="The Traveling Salesperson's Nightmare"
   tags={['Algorithms', 'Graphs', 'NP-Complete', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Eulerian Paths (visiting every edge once) are mathematically trivial to solve in O(V+E) time. Hamiltonian Paths (visiting every *vertex* exactly once) are mathematically a nightmare.
 
@@ -28,3 +21,4 @@ The Hamiltonian Circuit is the mathematical foundation of the most famous proble
 In a Hamiltonian Circuit, you just want to find *any* path that visits every city once and returns home.
 In TSP, the edges have "weights" (distances), and you want to find the Hamiltonian Circuit with the mathematically *shortest total distance*. Because standard Hamiltonian Circuits are already NP-Complete, TSP is NP-Hard, forcing routing companies (like FedEx and Uber) to rely on heuristic approximation algorithms rather than seeking perfect mathematical answers.
 
+</ConceptTemplate>

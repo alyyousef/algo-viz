@@ -4,18 +4,11 @@ description: "A brilliant linear-time algorithm designed specifically to find th
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Manacher's Algorithm"
   subtitle="The Longest Palindromic Substring"
   tags={['Algorithms', 'Strings', 'Palindromes', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 A Palindrome is a string that reads the same forwards and backwards (e.g., "RACECAR").
 If you want to find the longest palindrome inside a massive text, a naive "Expand Around Center" approach checks every single character and expands outwards, taking mathematically **O(N²)** time.
@@ -31,3 +24,4 @@ You are now calculating the palindrome at index 35.
 Because index 35 is mathematically the "mirror image" of index 25 (relative to the center 30), Manacher's mathematically looks at the answer it previously calculated for index 25. If the palindrome at index 25 has length 5, the palindrome at index 35 is mathematically *guaranteed* to have at least length 5!
 By copying the mirrored answers and only calculating the physical boundaries of the main palindrome, the algorithm never calculates the same character twice, completing in exactly **O(N)** time.
 
+</ConceptTemplate>

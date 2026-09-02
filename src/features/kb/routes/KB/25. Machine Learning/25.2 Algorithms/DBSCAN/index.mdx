@@ -1,36 +1,70 @@
 ---
-title: DBSCAN
-description: A powerful, density-based unsupervised clustering algorithm capable of mathematically discovering arbitrarily shaped clusters and filtering out noise.
+title: DBSCAN (Density-Based Spatial Clustering of Applications with Noise)
+description: "A deep dive into DBSCAN, a powerful clustering algorithm that identifies clusters based on the density of data points."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="DBSCAN">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**DBSCAN (Density-Based Spatial Clustering of Applications with Noise)** is a foundational unsupervised clustering algorithm. While K-Means mathematically assumes all clusters are spherical and forces every single point into a cluster, DBSCAN excels at finding highly complex, twisted geometric shapes and explicitly identifying outliers.
+**DBSCAN** (Density-Based Spatial Clustering of Applications with Noise) is a highly popular unsupervised clustering algorithm. Unlike K-Means, which assumes clusters are spherical and requires you to specify the number of clusters in advance, DBSCAN groups points that are closely packed together (high density) and marks points that lie alone in low-density regions as outliers or noise.
 
-## 1. The Core Mathematical Parameters
-DBSCAN requires no assumption of the number of clusters ($K$). Instead, it relies on two strict mathematical parameters:
-- **Epsilon ($\epsilon$)**: The mathematical radius around a data point.
-- **MinPts**: The minimum number of data points that must exist within the $\epsilon$ radius for that region to be considered a "dense cluster".
+## Core Concepts
 
-## 2. Point Classification
-The algorithm mathematically evaluates every single point in the dataset and assigns it to one of three categories:
-1. **Core Point**: A point that has at least *MinPts* neighbors within its $\epsilon$ radius. It is mathematically the dense heart of a cluster.
-2. **Border Point**: A point that has fewer than *MinPts* neighbors, but is physically within the $\epsilon$ radius of a Core Point. It is the outer edge of the cluster.
-3. **Noise Point (Outlier)**: A point that is mathematically isolated. It is neither a Core point, nor is it close to a Core point. DBSCAN explicitly tags this as an anomaly (-1) and ignores it.
+DBSCAN relies on two crucial hyperparameters to define "density":
 
-## 3. The Algorithmic Flow
-1. DBSCAN picks a random unvisited point.
-2. It mathematically calculates the distance (e.g., Euclidean) to all other points to find its $\epsilon$-neighbors.
-3. If it is a Core Point, a new cluster is born.
-4. The algorithm then mathematically jumps to the neighbors, and then their neighbors, expanding the cluster like a sprawling vine as long as the density holds.
-5. If the density drops, the cluster terminates.
-Because it only cares about local mathematical density, DBSCAN can perfectly cluster a dataset shaped like two interlocking horseshoes, a task where K-Means would fail catastrophically.
+1.  **Epsilon (ε):** The maximum distance (radius) around a data point to consider it as part of a neighborhood.
+2.  **MinPts:** The minimum number of points required within the Epsilon radius to form a dense region (a cluster).
 
+Based on these parameters, DBSCAN categorizes every data point into one of three types:
+
+*   **Core Point:** A point that has at least *MinPts* points (including itself) within its *Epsilon* neighborhood. These points form the interior of a cluster.
+*   **Border Point:** A point that has fewer than *MinPts* within its neighborhood, but is located within the neighborhood of a Core Point. These points form the edges of a cluster.
+*   **Noise Point (Outlier):** A point that is neither a Core Point nor a Border Point. It is not part of any cluster.
+
+## How the Algorithm Works
+
+1.  **Initialization:** The algorithm starts with an arbitrary point that has not been visited.
+2.  **Neighborhood Check:** It extracts the pointTICK1s Epsilon neighborhood.
+3.  **Cluster Formation:**
+    *   If the neighborhood contains fewer than *MinPts*, the point is marked as noise (though this may be updated later if it is found within the neighborhood of a different core point).
+    *   If the neighborhood contains at least *MinPts*, a cluster is started. The starting point and its neighbors are added to the cluster.
+4.  **Expansion:** The algorithm then repeats this process for all points within the newly formed cluster, recursively expanding the cluster until no more points can be added.
+5.  **Iteration:** It proceeds to the next unvisited point in the dataset, repeating the process until all points have been visited.
+
+<Callout icon="chart-line" title="Handling Noise">
+DBSCAN is uniquely powerful because it explicitly identifies noise. Algorithms like K-Means force every point into a cluster, even extreme outliers, which can severely distort the cluster boundaries.
+</Callout>
+
+## Advantages and Disadvantages
+
+### Advantages
+*   Does not require specifying the number of clusters ($k$) beforehand.
+*   Can discover clusters of arbitrary shapes (e.g., a cluster surrounding another cluster), whereas K-Means struggles with anything non-spherical.
+*   Robust to outliers; it isolates them as noise.
+
+### Disadvantages
+*   Struggles with datasets where clusters have significantly different densities, because a single Epsilon and MinPts value cannot capture varying densities well. (An extension called **OPTICS** addresses this).
+*   Can be sensitive to the choice of the distance metric (often Euclidean), especially in high-dimensional spaces (the "Curse of Dimensionality").
+*   Choosing the optimal Epsilon and MinPts requires domain knowledge or careful tuning (e.g., using a k-distance graph).
+
+## Comparison: DBSCAN vs. K-Means
+
+<ComparisonTable
+  title="Clustering Algorithms Comparison"
+  headers={["Feature", "DBSCAN", "K-Means"]}
+  rows={[
+    ["Requires Number of Clusters", "No", "Yes (k)"],
+    ["Cluster Shapes", "Arbitrary", "Spherical / Convex"],
+    ["Handling Outliers", "Identifies as Noise", "Forces into clusters"],
+    ["Varying Densities", "Struggles", "Handles relatively well"],
+    ["Hyperparameters", "Epsilon, MinPts", "k (number of clusters)"]
+  ]}
+/>

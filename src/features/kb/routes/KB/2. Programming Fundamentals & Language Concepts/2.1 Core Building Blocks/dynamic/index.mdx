@@ -1,29 +1,20 @@
 ---
-title: Dynamic Typing
-description: A type system where mathematical type checks occur at runtime, allowing variables to fluidly change their memory representation.
+title: Dynamic Scope (Redirect)
+description: "Redirecting to Scope (Lexical)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Dynamic Typing">
+    <ConceptTemplate title="Dynamic Scope">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a statically typed language (Java, C++), a variable's type is mathematically locked at compile-time. In a dynamically typed language (Python, JavaScript), a variable does not have a type; only the *value* stored in memory has a type.
+<Callout icon="info" title="Redirect">
+The content for **Dynamic Scope** is mathematically and architecturally covered alongside its modern counterpart under the comprehensive Deep Dive for **Scope (Lexical)**. 
 
-## 1. The Memory Overhead
-```javascript
-let x = 5;
-x = "Hello";
-```
-In C, this is a mathematical impossibility. An integer requires 4 bytes; a string requires a pointer and a heap allocation. You cannot physically cram a string into an integer's memory slot.
-In Dynamic languages, `x` is not a raw integer. It is a mathematical **Pointer to a Box** (a variant or boxed object). The Box contains metadata: "I currently hold an Integer." When you reassign `x = "Hello"`, the engine dynamically allocates a new String Box, updates the metadata, and repoints `x` to the new Box. This provides incredible flexibility but introduces massive mathematical overhead compared to bare-metal primitives.
-
-## 2. Duck Typing
-Dynamic languages rely heavily on **Duck Typing**: "If it walks like a duck, and quacks like a duck, it is mathematically a duck."
-When a function calls `obj.quack()`, the compiler does not mathematically care what specific Class `obj` belongs to. At the exact millisecond of execution, the runtime engine mathematically searches the object's memory dictionary for a string named "quack". If it finds it, it executes it. If it doesn't, the program crashes at runtime.
-
+Please navigate to the [Scope (Lexical)](/kb/2.-programming-fundamentals--language-concepts/2.1-core-building-blocks/scope-lexical) module to explore the evolution of memory boundaries in compiler architecture.
+</Callout>

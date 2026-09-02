@@ -1,19 +1,33 @@
 ---
-title: Issues
-description: A great way to keep track of tasks, enhancements, and bugs for your projects on GitHub.
+title: GitHub Issues
+description: "The built-in bug tracker and task management system for GitHub repositories, allowing users to report bugs, request features, and discuss code."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="GitHub Issues">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="GitHub Issues"
+  subtitle="Native Bug Tracking & Discussions"
+  tags={['GitHub', 'Project Management', 'Bug Tracking', 'Open Source']}
+>
 
-**Issues** are the native biological bug tracker built directly into GitHub.
+**GitHub Issues** are the primary communication channel for any GitHub repository. They function as a lightweight, developer-focused ticketing system used to track bugs, request new features, or discuss major architectural changes before writing code.
 
-If a user mathematically encounters a bug in your open-source library, they biologically open an Issue. They describe the error and paste the mathematical stack trace. The engineering team biologically discusses the bug inside the Issue's comment thread, tags it with mathematical labels (`bug`, `high-priority`), and eventually links a Pull Request to mathematically close the Issue once the bug is fixed.
+## 1. The Anatomy of an Issue
 
+An Issue consists of:
+- **Title & Description**: Written in GitHub Flavored Markdown, allowing developers to embed code snippets, images, and tables.
+- **Labels**: Color-coded tags used to categorize the issue (e.g., `bug`, `enhancement`, `good first issue`, `wontfix`).
+- **Assignees**: The specific developer(s) responsible for resolving the issue.
+- **Milestones**: Grouping issues together toward a specific release target (e.g., "v2.0 Beta").
+
+## 2. Issue Templates
+
+In large open-source projects, users often submit useless bug reports like "It doesn't work." 
+To prevent this, maintainers create **Issue Templates** (stored in `.github/ISSUE_TEMPLATE/`). When a user clicks "New Issue", they are forced to fill out a structured form asking for their Operating System, exact steps to reproduce the bug, and the expected vs. actual behavior.
+
+## 3. Cross-Referencing
+
+The true power of GitHub Issues is their tight integration with the codebase.
+If a developer creates a Pull Request and writes `Fixes #42` in the description, GitHub automatically creates a hyperlink between the PR and Issue #42. Furthermore, the exact moment the PR is merged into the main branch, GitHub will autonomously close the Issue, ensuring the bug tracker is always perfectly synchronized with the codebase.
+
+</ConceptTemplate>

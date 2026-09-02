@@ -1,19 +1,34 @@
 ---
 title: Epics
-description: A large body of work that can be broken down into a number of smaller stories, sometimes called "Issues" in Jira or GitLab.
+description: "A large body of work that can be broken down into a number of smaller, manageable user stories."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Epics">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Epics"
+  subtitle="The Macro-Level User Story"
+  tags={['Project Management', 'Agile', 'Scrum']}
+>
 
-You cannot biologically complete "Build a new Payment System" in 2 weeks.
+In Agile project management, an **Epic** is a massive chunk of work that shares a common strategic objective. Because it is too large to be completed in a single Sprint, it is mathematically broken down into dozens of smaller, bite-sized **User Stories**.
 
-In Agile, a massive project is mathematically defined as an **Epic**. The Product Manager biologically writes the high-level business goal of the Epic. The engineering team then mathematically slices the Epic down into 50 tiny, independent **User Stories** (e.g., "Add Stripe API", "Build UI Button"). These individual stories are then scheduled into 2-week Sprints, allowing the team to gradually build the massive Epic piece by piece.
+## 1. Hierarchy of Agile Planning
 
+To understand Epics, you must understand the hierarchy:
+1. **Initiative/Theme**: A massive company-wide goal (e.g., "Enter the Mobile Market").
+2. **Epic**: A large feature set within that theme (e.g., "Build the iOS User Profile System").
+3. **User Story**: A specific piece of the Epic (e.g., "As a user, I want to upload an avatar").
+4. **Task/Sub-task**: Technical steps for developers (e.g., "Configure AWS S3 bucket for images").
+
+## 2. When to Use an Epic
+
+If a product manager writes a User Story and the engineering team estimates it will take 3 months to build, that is not a User Story; that is an Epic. 
+
+By declaring it an Epic, the team is forced into a refinement session. They must slice the massive 3-month feature vertically into 1-week stories. This allows the team to ship the highest-value parts of the Epic first, rather than waiting 3 months to deliver anything.
+
+<Callout type="info" title="Tracking Epics">
+  In tools like Jira or GitHub Projects, Epics act as folders. As developers complete the individual User Stories inside the Epic, a progress bar slowly fills up, giving management a clear, mathematically accurate view of when the massive feature will actually be finished.
+</Callout>
+
+</ConceptTemplate>

@@ -1,33 +1,20 @@
 ---
-title: Union Types
-description: A mathematical type construct that allows a single variable or function to validly accept or return one of several distinct types.
+title: Union Types (Redirect)
+description: "Redirecting to Algebraic Data Types."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Union Types">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A Union Type (often denoted as `A | B`) mathematically declares that a memory location can hold a value of Type A, OR a value of Type B, but not both simultaneously.
+<Callout icon="info" title="Redirect">
+The mathematical logic and structural implementation of **Union Types** (and Discriminated Unions) are covered natively under the Deep Dive for **Algebraic Data Types (ADTs)** (specifically as Sum Types). 
 
-## 1. Untagged Unions (C/C++)
-In C, a `union` mathematically overlays multiple variables onto the exact same physical memory block.
-```c
-union Data {
-    int i;
-    float f;
-};
-```
-If you write to `data.i`, you are mathematically writing 4 bytes to RAM. If you immediately read `data.f`, the CPU reads those exact same 4 bytes but mathematically interprets the bits as an IEEE 754 float, resulting in garbage data. Untagged Unions are mathematically unsafe because the compiler does not track which type is currently occupying the memory.
-
-## 2. Tagged Unions (TypeScript / Rust)
-Modern languages use Tagged Unions (Sum Types).
-In TypeScript, if you declare `let id: string | number;`, you cannot mathematically call `id.toUpperCase()`. The compiler will block you because the value *might* be a number. You are mathematically forced to use **Type Narrowing**:
-`if (typeof id === "string") { id.toUpperCase(); }`.
-The compiler mathematically tracks the control flow, realizes that inside the `if` block the value is guaranteed to be a string, and safely permits the method call.
-
+Please navigate to the [Algebraic Data Types (ADTs)](/kb/2.-programming-fundamentals--language-concepts/2.2-type-systems/algebraic-data-types) module to explore how modern compilers calculate logical boundaries.
+</Callout>

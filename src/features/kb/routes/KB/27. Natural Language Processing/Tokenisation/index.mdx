@@ -1,27 +1,57 @@
 ---
 title: Tokenization
-description: The critical first step in NLP where a continuous string of text is mathematically shattered into discrete, analyzable units (words, sub-words, or characters).
+description: "A guide to Tokenization, the absolute first step of any NLP pipeline where text is chopped into the mathematical units that the AI will process."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Tokenization">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A Neural Network cannot mathematically ingest the raw string `"Don't panic!"`. The string must be physically broken apart into Tokens before any AI processing can begin.
+**Tokenization** is the absolute first step of any Natural Language Processing pipeline. 
 
-## 1. Word and Character Tokenization
-- **Word Tokenization**: Splitting by spaces (`["Don't", "panic!"]`). This is mathematically fragile. It fails to separate the punctuation from the word (treating "panic" and "panic!" as two entirely different mathematical entities), and fails on languages without spaces (like Chinese).
-- **Character Tokenization**: Splitting into individual letters (`["D", "o", "n", "'", "t"]`). This solves the punctuation and Out-of-Vocabulary problem, but mathematically destroys the semantic meaning of the words, forcing the Neural Network to re-learn basic spelling from scratch.
+Machine learning models cannot read continuous strings of text (like `"The cat sat on the mat."`). Before an algorithm can process text, the text must be chopped up into discrete, manageable pieces called **Tokens**. 
 
-## 2. Sub-Word Tokenization (BPE)
-Modern LLMs (like GPT-4) use **Byte-Pair Encoding (BPE)**, a sub-word tokenizer.
-It mathematically analyzes a massive corpus and merges frequent character pairs into single Tokens.
-It might tokenize "unbelievable" into `["un", "believ", "able"]`.
-Because these sub-words are mathematically highly frequent across the English language, the Neural Network can easily learn their semantic meaning, providing a perfect mathematical balance between Vocabulary size and Semantic retention.
+How you choose to chop up the text fundamentally changes how the AI understands language.
 
+## The Three Types of Tokenization
+
+### 1. Word Tokenization (The Old Standard)
+The most intuitive approach: just chop the text at every space and punctuation mark.
+*   **Input:** `"I can't go."`
+*   **Tokens:** `["I", "can", "'t", "go", "."]`
+*   **The Flaw:** This requires you to keep a massive dictionary (vocabulary) of every single word in the English language. If the model encounters a typo (e.g., "awesooome") or a new word it hasn't seen, it crashes because that specific string of characters isn't in its dictionary (the Out-of-Vocabulary problem).
+
+### 2. Character Tokenization (The Extreme)
+Chop the text down to individual letters.
+*   **Input:** `"cat"`
+*   **Tokens:** `["c", "a", "t"]`
+*   **The Flaw:** While this solves the Out-of-Vocabulary problem (because a dictionary of 26 letters covers everything), it destroys semantic meaning. The letter "c" carries absolutely no meaning on its own. Furthermore, processing a 1,000-word essay requires processing 5,000 individual tokens, which overwhelms the memory limits of most neural networks.
+
+### 3. Subword Tokenization (The Modern Standard)
+This is the Goldilocks solution used by almost every modern Large Language Model (including GPT-4, LLaMA, and BERT). 
+Subword tokenization breaks common words into whole words, but breaks rare words down into smaller chunks (syllables or prefixes/suffixes).
+*   **Input:** `"unbelievably"`
+*   **Tokens:** `["un", "believ", "ably"]`
+*   **Why it wins:** It keeps the vocabulary size manageable (usually around 50,000 tokens). Common words like "the" or "dog" stay as single tokens, which is efficient. Rare words (like "unbelievably") are broken down, allowing the model to piece together the meaning of words it has never seen before based on the prefixes and suffixes.
+
+## How Subword Tokenizers are Built (BPE)
+
+The most common algorithm used to create a Subword Tokenizer for modern LLMs is **Byte-Pair Encoding (BPE)**.
+
+BPE is a data compression algorithm. 
+1.  You start by treating every letter in your training dataset as its own token. 
+2.  You look for the two tokens that appear next to each other most frequently (e.g., `t` and `h`). 
+3.  You merge them into a brand new token (`th`).
+4.  You repeat this process tens of thousands of times. Eventually, `th` and `e` merge into the token `the`. 
+
+By the end of the BPE process, the algorithm has automatically figured out which chunks of letters are statistically the most useful for representing the English language.
+
+<Callout icon="coins" title="Tokens and Pricing">
+In the era of LLM APIs (like OpenAI), tokens act as the currency of AI. When you hear that an API costs "$10 per 1 million tokens", you are paying for the computational cost of processing those specific subword chunks. As a general rule of thumb for English, 1 token is roughly equivalent to 3/4ths of a word (or 4 characters).
+</Callout>

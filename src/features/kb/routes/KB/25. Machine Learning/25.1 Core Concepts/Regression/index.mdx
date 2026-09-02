@@ -1,38 +1,72 @@
 ---
 title: Regression
-description: The supervised learning task of mathematically predicting a continuous, infinite numerical output based on input features.
+description: "The machine learning task of predicting a continuous numerical value."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Regression">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In Supervised Machine Learning, if the target variable is a category ("Dog" vs "Cat"), it is Classification. If the target variable is a continuous numerical value (e.g., predicting the exact temperature tomorrow, the price of a house, or the stock market), it is mathematically defined as **Regression**.
+**Regression** is a form of Supervised Learning where the goal is to predict a continuous, quantitative number (e.g., Temperature, Price, Revenue, Age) based on a set of input variables.
+
+Unlike Classification, which predicts a discrete label ("Cat" or "Dog"), Regression predicts an infinite range of possible numbers (e.g., $45,291.54).
 
 ## 1. Linear Regression
-The absolute foundational algorithm of statistics and Machine Learning.
-It attempts to draw a mathematically perfect straight line through a scatter plot of data.
-Equation: $y = mx + b$ (or for multiple variables, $y = w_1x_1 + w_2x_2 + b$).
 
-### Ordinary Least Squares (OLS)
-How does the algorithm mathematically find the perfect line? It uses OLS.
-It calculates the distance (the Residual) from every single data point to the line. It mathematically squares those distances (to remove negative numbers and heavily punish massive outliers), and sums them up. The algorithm adjusts the slope ($w$) until that sum is the absolute mathematical minimum.
+The absolute foundation of predictive modeling, invented long before computers existed (by Legendre and Gauss in the early 1800s). 
 
-## 2. Non-Linear Regression
-Linear Regression assumes the relationship between variables is a straight line. If the data forms a U-shape (e.g., age vs healthcare costs), Linear Regression mathematically fails.
+It assumes that the relationship between the inputs ($X$) and the output ($Y$) is a straight line.
+$$
+Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + ... + \beta_nX_n
+$$
 
-- **Polynomial Regression**: Mathematically squares or cubes the input features ($y = w_1x + w_2x^2 + b$), allowing the model to draw curves instead of straight lines.
-- **Tree-Based Regression**: Algorithms like Random Forest Regressors do not draw lines at all. They mathematically split the data into discrete buckets. If you want to predict a house price, it traverses the tree (Is it > 2000 sqft? Yes. Does it have a pool? No). It reaches a leaf node containing 5 historical houses, and outputs the mathematical average price of those 5 houses.
+The algorithm (usually using Ordinary Least Squares) calculates the $\beta$ coefficients (weights) that minimize the squared distance between the straight line and the actual data points.
 
-## 3. Evaluation Metrics
-You cannot use "Accuracy" to evaluate Regression. (If the house is $500,000 and the model predicts $500,001, it is technically 0% "accurate").
-Instead, you mathematically measure the error distance:
-- **MAE (Mean Absolute Error)**: The average dollar amount the model was off by. Highly interpretable.
-- **RMSE (Root Mean Squared Error)**: Squares the errors before averaging them, mathematically punishing the model heavily for massive outliers.
+**Pros:** 
+- The most interpretable algorithm in existence. If $\beta_1$ (representing "Number of Bedrooms") is 50,000, you can literally tell the business: "Every additional bedroom adds exactly $50,000 to the house price."
+**Cons:** 
+- Highly prone to Underfitting. Very few things in the real world actually follow a perfectly straight line.
 
+## 2. Polynomial Regression
+
+A simple extension of Linear Regression. If the data is curved, you can add polynomial terms (like $X^2$ or $X^3$) to the equation.
+$$
+Y = \beta_0 + \beta_1X + \beta_2X^2
+$$
+The algorithm is still solved using the exact same linear math, but the resulting line drawn on the graph will curve to fit the data.
+
+<Callout icon="warning" title="Runge's Phenomenon">
+Be careful adding high-degree polynomials (e.g., $X^{15}$). The curve will violently zigzag to hit every single training data point perfectly, resulting in catastrophic Overfitting. This is a classic example of High Variance.
+</Callout>
+
+## 3. Non-Linear Regression Algorithms
+
+When standard linear models fail to capture complex relationships, data scientists turn to more advanced algorithms.
+
+<ComparisonTable
+  headers={['Algorithm', 'How it works', 'Pros/Cons']}
+  rows={[
+    [
+      'Decision Tree Regression',
+      'Instead of a line, it splits data into chunks (e.g., Houses > 2000 sqft). The prediction is the average price of the houses in that chunk.',
+      'Pros: Can model extreme non-linearities. Cons: The predictions are step-functions (staircases), not smooth lines.'
+    ],
+    [
+      'Random Forest / XGBoost',
+      'An ensemble of hundreds of decision trees.',
+      'Pros: The industry standard for tabular data. Extremely accurate. Cons: You lose the easy interpretability of Linear Regression.'
+    ],
+    [
+      'Neural Network Regression',
+      'A deep neural network with a single, linear output node at the very end (no Sigmoid/Softmax activation).',
+      'Pros: The only choice for predicting numbers from unstructured data (like predicting a person\'s age from a photograph). Cons: Overkill for simple spreadsheets.'
+    ]
+  ]}
+/>

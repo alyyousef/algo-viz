@@ -4,18 +4,11 @@ description: "A fundamental mathematical algorithm used to find the maximum poss
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Bipartite Matching"
   subtitle="The Maximum Pairing Problem"
   tags={['Algorithms', 'Graphs', 'Matching', 'Flow']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Imagine a bipartite graph: Set A contains 5 Taxi Drivers, and Set B contains 5 Passengers. Edges exist if a driver is willing to take a specific passenger. What is the mathematical maximum number of rides that can occur simultaneously without double-booking a driver or passenger?
 
@@ -30,3 +23,4 @@ This is mathematically solved using an augmenting path algorithm.
 Modern computer science rarely implements the augmenting path algorithm directly. Instead, Bipartite Matching is mathematically reduced to a **Maximum Flow** problem (solved by Ford-Fulkerson or Dinic's).
 You mathematically create a "Super Source" node connected to all Drivers, and a "Super Sink" node connected to all Passengers. You assign a capacity of `1` to every edge in the graph. The Maximum Flow from Source to Sink mathematically equals the Maximum Bipartite Matching.
 
+</ConceptTemplate>

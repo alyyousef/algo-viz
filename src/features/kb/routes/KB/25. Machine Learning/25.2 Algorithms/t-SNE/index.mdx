@@ -1,34 +1,50 @@
 ---
-title: t-SNE
-description: A groundbreaking, highly non-linear dimensionality reduction algorithm mathematically famous for unspooling complex data into beautiful, clustered 2D visualizations.
+title: t-SNE (t-Distributed Stochastic Neighbor Embedding)
+description: "An overview of t-SNE, a powerful algorithm for visualizing high-dimensional data in 2D or 3D."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="t-SNE (t-Distributed Stochastic Neighbor Embedding)">
+    <ConceptTemplate title="t-SNE">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before UMAP, **t-SNE** was the absolute standard for visualizing high-dimensional embeddings (like Deep Learning activations or Word2Vec vectors). While PCA crushes non-linear data into useless overlapping blobs, t-SNE mathematically unspools complex manifolds into stunning, distinct 2D clusters.
+**t-SNE** (t-Distributed Stochastic Neighbor Embedding) is a machine learning algorithm for dimensionality reduction developed by Laurens van der Maaten and Geoffrey Hinton. Unlike PCA, which is a linear technique focused on maximizing variance, t-SNE is a **non-linear** technique specifically designed for **visualization**.
 
-## 1. Stochastic Neighbor Embedding (The Probabilities)
-PCA focuses on preserving mathematical Variance. t-SNE focuses on preserving mathematical **Neighborhoods**.
-1. In the high-dimensional space (1,000 dimensions), t-SNE centers a Gaussian (Normal) distribution over a data point.
-2. It mathematically calculates the probability that Point A would pick Point B as its neighbor. (Close points have incredibly high probabilities; distant points have near-zero probabilities).
-3. It repeats this, building a massive $N \times N$ probability matrix representing the "local neighborhoods" of every single point.
+Its primary goal is to take high-dimensional data (e.g., images with thousands of pixels, or word embeddings with hundreds of dimensions) and map it into a 2D or 3D space so that humans can see the natural clusters and underlying structure.
 
-## 2. The Student's t-Distribution (The Crowding Problem)
-When projecting 1,000 dimensions down to 2 dimensions, you mathematically run out of physical space. In 1000D space, a point can have 500 neighbors that are all exactly equidistant from it. In 2D space, you can only fit ~6 points equidistantly around a center.
-If you try to map the high-dimensional Gaussian probabilities directly to 2D, the points will crush into a single black dot in the center of the graph (The Crowding Problem).
+## How t-SNE Works
 
-t-SNE's mathematical genius is replacing the Gaussian distribution in the 2D space with a **Student's t-Distribution**. The t-distribution has "heavy tails".
-This mathematical trick dictates that for two points to have the exact same low probability in 2D space as they did in high-D space, they must be pushed *much farther apart* in 2D space. This mathematically forces the different clusters to repel each other, exploding the data into beautifully separated visual islands.
+t-SNE works in two main stages, both relying on converting distances into probabilities.
 
-## 3. Kullback-Leibler (KL) Divergence
-To align the 2D map with the high-D map, t-SNE uses Gradient Descent to mathematically minimize the **KL Divergence** between the two probability matrices.
-*Fatal Flaw*: The KL Divergence math heavily punishes placing local neighbors far apart, but it does *not* mathematically punish placing distant clusters close together. Therefore, the distance between the red cluster and the blue cluster on a t-SNE plot is mathematically meaningless.
+### 1. High-Dimensional Space
+First, it calculates the similarity between pairs of points in the high-dimensional space. It uses a Gaussian (Normal) distribution. If two points are very close together, they have a high probability of being "neighbors". If they are far apart, the probability is near zero.
 
+### 2. Low-Dimensional Space
+Next, it maps the points into a low-dimensional space (2D or 3D) randomly. It then calculates the similarities between points in this new space. 
+Crucially, in the low-dimensional space, t-SNE uses a **Student's t-distribution** (specifically with 1 degree of freedom, which looks like a Bell curve but with much "fatter" tails) instead of a Gaussian distribution.
+
+### 3. The Optimization (Minimizing KL Divergence)
+t-SNE then uses an optimization algorithm (Gradient Descent) to move the points around in the 2D space until the probabilities in the 2D space match the probabilities in the high-dimensional space as closely as possible. 
+The mathematical metric it minimizes to achieve this match is called the **Kullback-Leibler (KL) divergence**.
+
+<Callout icon="lightbulb" title="The 'Crowding Problem'">
+Why use a t-distribution in the low-dimensional space? Because there is much less "room" in 2D than in 100D. If you tried to map 100D points into 2D using the same Gaussian distribution, points that were moderately far apart would be crushed together in the center of the 2D map. The "fat tails" of the t-distribution allow t-SNE to place moderately distant points much further apart in 2D, preserving the local cluster structures perfectly.
+</Callout>
+
+## Important Caveats of t-SNE
+
+While t-SNE produces beautiful visualizations, it is notoriously easily misinterpreted if you don't understand its limitations:
+
+1.  **Hyperparameter Sensitivity (Perplexity):** The `perplexity` parameter roughly controls how many nearest neighbors each point considers. Changing this value can radically alter the shape of the visualization. You should always run t-SNE with multiple perplexity values (usually between 5 and 50).
+2.  **Distance is Meaningless:** t-SNE only preserves *local* neighborhood structure, not global structure. The distance between two distinct clusters in a t-SNE plot means almost nothing. Just because Cluster A is near Cluster B on the plot does *not* mean they are similar in the high-dimensional space.
+3.  **Cluster Size is Meaningless:** A dense, tight cluster in t-SNE might actually be spread out in reality. t-SNE expands dense regions and compresses sparse regions to make the visualization look nice.
+4.  **No New Data:** t-SNE cannot be applied to new, unseen data. It is an embedding algorithm, not a predictive model. If you get new data, you have to rerun the entire algorithm from scratch.
+
+## Summary
+
+t-SNE is an unparalleled tool for data exploration and visualizing the local structure of complex datasets. However, it is strictly an exploratory tool; its outputs should never be used as inputs for downstream clustering (like K-Means) or classification models due to its distortion of global distances.

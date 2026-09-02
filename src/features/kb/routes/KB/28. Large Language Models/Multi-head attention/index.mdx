@@ -1,36 +1,56 @@
 ---
 title: Multi-Head Attention
-description: The mechanism allowing Transformers to simultaneously focus on different semantic and syntactic aspects of a sequence.
+description: "A deep dive into Multi-Head Attention, the mathematical mechanism that allows Transformers to understand the multiple, complex meanings of a single word simultaneously."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Multi-Head Attention">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a Transformer only had a single Self-Attention mechanism, it would only be able to focus on one relationship at a time. For example, it might figure out the grammatical structure of a sentence, but completely miss the emotional sentiment.
+**Self-Attention** is the core mechanism of the Transformer architecture. It allows a word to look at every other word in a sentence to figure out the context.
 
-Multi-Head Attention solves this by running multiple self-attention mechanisms (called "Heads") completely in parallel.
+However, a single word can have multiple different relationships in a sentence. 
+Consider the sentence: *"The fierce dog chased the frightened cat."*
+The word *"chased"* has two distinct relationships:
+1.  **Who** did the chasing? (The dog).
+2.  **Who** was chased? (The cat).
 
+If the neural network only has one "Attention Mechanism," it gets confused. It tries to mathematically link *"chased"* to both *"dog"* and *"cat"* simultaneously, mushing the math together into an average that doesn't clearly represent either concept.
 
-<Callout icon="info" title="The Specialization of Heads">
+## The Solution: Multi-Head Attention
 
+The authors of the 2017 Transformer paper solved this by using **Multi-Head Attention**.
 
-  During training, the heads naturally specialize without human intervention. Researchers have found that in a given layer, one head might track pronouns to their subjects, another head might look for negative sentiment words, and another head might purely track punctuation.
+Instead of performing the Self-Attention calculation once, the neural network splits the data and performs the exact same calculation multiple times in parallel. Each parallel calculation is called an **"Attention Head."**
 
+If a model has 8 Attention Heads, the word *"chased"* gets 8 distinct opportunities to look around the sentence. 
 
+### Specialization
+Because the neural network is trained on massive amounts of data, the different "Heads" naturally learn to specialize in different types of linguistic relationships, completely on their own without human intervention.
+
+*   **Head 1** might mathematically dedicate itself to finding the Subject of the sentence (linking *"chased"* to *"dog"*).
+*   **Head 2** might dedicate itself to finding the Object of the sentence (linking *"chased"* to *"cat"*).
+*   **Head 3** might focus entirely on adjectives, linking *"dog"* to *"fierce"*.
+*   **Head 8** might focus entirely on punctuation or physical distance between words.
+
+By having dozens of specialized heads looking at the sentence from different perspectives simultaneously, the model gains an incredibly deep, multi-faceted understanding of the text.
+
+## The Mathematics of the Split
+
+If the neural network is operating in a 512-dimensional space, and it has 8 Attention Heads:
+1.  The model does *not* do the math in 512 dimensions 8 separate times (that would be incredibly slow).
+2.  Instead, it mathematically slices the 512 dimensions into 8 smaller chunks of 64 dimensions each ($512 / 8 = 64$).
+3.  Each of the 8 heads performs the attention calculation in its own tiny 64-dimensional space.
+4.  Once all 8 heads are finished, the results are concatenated (glued) back together into a single 512-dimensional vector.
+
+This brilliant mathematical trick means that Multi-Head Attention takes the exact same amount of computational time as Single-Head attention, but provides vastly superior reasoning capabilities.
+
+<Callout icon="layer-group" title="Modern Scale">
+The original 2017 Transformer used 8 Attention Heads. Modern Large Language Models take this to the extreme. OpenAI's GPT-3 (175B parameters) uses **96 separate Attention Heads** per layer, allowing it to track 96 distinct semantic and syntactic relationships for every single word it processes.
 </Callout>
-
-
-## How it works mathematically
-
-1. The input vector is linearly projected (multiplied by weight matrices) into $h$ different sets of Queries, Keys, and Values, where $h$ is the number of heads.
-2. Standard Scaled Dot-Product Attention is computed independently for each of the $h$ heads in parallel.
-3. The resulting vectors from all heads are concatenated together.
-4. The concatenated vector is multiplied by a final weight matrix to mix the information together before passing it to the feedforward layer.
-

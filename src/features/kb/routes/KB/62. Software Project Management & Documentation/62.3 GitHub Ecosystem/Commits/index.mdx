@@ -1,19 +1,45 @@
 ---
 title: Commits
-description: An individual change to a file (or set of files) in a Git repository, saved with a unique ID and a brief message describing the change.
+description: "An individual change to a file (or set of files) in a Git repository, saved with a unique ID and a brief message describing the change."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="GitHub Commits">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="GitHub Commits"
+  subtitle="The Atomic Unit of Version Control"
+  tags={['Git', 'GitHub', 'Version Control', 'Software Engineering']}
+>
 
-A **Commit** is a mathematical snapshot of your code.
+A **Commit** is a mathematical snapshot of your code at a specific point in time. It is the fundamental building block of version control systems like Git.
 
-When you type `git commit -m "Fix login bug"`, Git mathematically calculates a SHA-1 hash of the exact state of all your files. This creates a permanent, immutable biological save point. If you accidentally delete a critical file 3 weeks later, you can mathematically time-travel back to any previous commit hash and restore the project instantly.
+## 1. The Anatomy of a Commit
 
+When you create a commit, Git mathematically calculates a SHA-1 hash (a 40-character string like `a1b2c3d4...`) representing the exact state of all your files. This hash makes the commit immutable and verifiable.
+
+A commit contains:
+- **The Code Changes (Diff)**: Exactly what lines were added, modified, or deleted compared to the previous commit.
+- **The Metadata**: Who made the change (Author), when it was made (Timestamp), and the parent commit(s).
+- **The Commit Message**: A human-readable description of *why* the change was made.
+
+## 2. Best Practices for Commit Messages
+
+A good commit message is crucial for maintaining a healthy project history.
+
+<Callout type="tip" title="The Seven Rules of a Great Commit Message">
+1. Separate the subject from the body with a blank line.
+2. Limit the subject line to 50 characters.
+3. Capitalize the subject line.
+4. Do not end the subject line with a period.
+5. Use the imperative mood in the subject line (e.g., "Add feature", not "Added feature" or "Adds feature").
+6. Wrap the body at 72 characters.
+7. Use the body to explain *what* and *why* vs. *how*.
+</Callout>
+
+## 3. Atomic Commits
+
+Professional software teams enforce **Atomic Commits**. This means a single commit should represent exactly one logical change.
+If you fix a bug in the login system and also add a new button to the dashboard, those should be two separate commits. 
+Why? Because if the dashboard button breaks production, you can instantly revert its specific commit (`git revert <hash>`) without accidentally reverting the login bug fix.
+
+</ConceptTemplate>

@@ -4,18 +4,11 @@ description: "A powerful, mathematically elegant deterministic finite automaton 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Suffix Automaton"
   subtitle="The Ultimate Substring Machine"
   tags={['Algorithms', 'Strings', 'Automata', 'Advanced']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 A Suffix Trie mathematically stores every single substring of a text. However, a Suffix Trie for a string of length N contains **O(N²)** nodes. For a 1-megabyte text file, the Trie would mathematically consume 1 Terabyte of RAM.
 
@@ -31,3 +24,4 @@ Once built, it is infinitely more powerful than KMP or Boyer-Moore. It can solve
 - "How many times does this word appear?" -> Precompute node weights. O(Word Length).
 - "Find the Longest Common Substring of two texts" -> Build automaton for Text A, trace Text B through it. O(Length of Text B).
 
+</ConceptTemplate>

@@ -1,25 +1,20 @@
 ---
-title: Panics
-description: An unrecoverable, violent termination sequence initiated when a program encounters a mathematical state so corrupted it cannot safely continue execution.
+title: Panics (Redirect)
+description: "Redirecting to Assertions."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Panics">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In modern systems languages (Rust, Go), there is a strict mathematical distinction between an "Error" and a "Panic."
+<Callout icon="info" title="Redirect">
+The architectural mechanism of a **Panic** (the violent, unrecoverable termination of an Operating System thread due to a mathematical impossibility or failed invariant) is covered in the Deep Dive for **Assertions & Contracts**. 
 
-## 1. Expected Errors vs Unrecoverable Panics
-- **Errors**: Expected, routine mathematical failures. A user typed the wrong password. A file doesn't exist. The network dropped. These are handled gracefully via Result Types or standard control flow.
-- **Panics**: A catastrophic mathematical anomaly that the developer explicitly assumed was impossible. An array index is out of bounds. A Null pointer is dereferenced. A thread is deadlocked.
-
-## 2. The Blast Radius
-When a Panic is triggered (`panic!()` in Rust), the program does not attempt to "catch" it and recover. Recovering from a Panic is mathematically dangerous because the program's internal RAM state is definitively corrupted; continuing to run could write that corrupted data to a production database.
-Instead, the Panic immediately halts the thread, prints a highly detailed Stack Trace to the logs, and safely terminates the process. In Cloud Architecture (Kubernetes), it is mathematically safer to Panic, crash the pod, and let the Orchestrator instantly spin up a brand new, clean instance, rather than trying to limp along with corrupted memory.
-
+Please navigate to the [Assertions & Contracts](/kb/2.-programming-fundamentals--language-concepts/2.5-error-handling/assertions) module to explore fail-fast system design.
+</Callout>

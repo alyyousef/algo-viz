@@ -1,49 +1,20 @@
 ---
-title: Pandas
-description: The undisputed titan of Python data manipulation, providing the DataFrame architecture for relational data analysis in memory.
+title: Pandas (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Pandas">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Built by Wes McKinney, **Pandas** is arguably the most famous and widely utilized library in the entire Data Science ecosystem. It provides the mathematical structures necessary to manipulate tabular, relational data (like Excel spreadsheets or SQL tables) directly in Python.
+<Callout icon="info" title="Redirect">
+The operations of **Pandas** (DataFrames, aggregations, and joins in Python) mirror the SQL transformations typically executed in the Data Warehouse. 
 
-## 1. The DataFrame Architecture
-The core mathematical structure of Pandas is the **DataFrame** (heavily inspired by R dataframes).
-A DataFrame is a two-dimensional, mutable table with labeled axes (rows and columns).
-
-Under the hood, Pandas is built entirely on top of **NumPy**. A Pandas DataFrame is essentially a collection of 1-Dimensional NumPy arrays (called Pandas Series) stitched together. Because it uses NumPy, Pandas operations are mathematically vectorized and incredibly fast.
-
-```python
-import pandas as pd
-
-# Loading a CSV into a DataFrame
-df = pd.read_csv("users.csv")
-
-# Mathematical Vectorization (Instantly doubling all incomes)
-df['income'] = df['income'] * 2
-
-# SQL-like filtering and aggregations
-high_earners = df[df['income'] > 100000]
-avg_income_by_city = df.groupby('city')['income'].mean()
-```
-
-## 2. Data Manipulation Power
-Pandas effectively replaces SQL for Data Scientists working in memory. It provides hundreds of mathematical functions to slice, dice, and transform data:
-- **Merging**: Performing complex INNER, OUTER, LEFT, and RIGHT joins between DataFrames.
-- **Pivoting**: Reshaping tables (like Excel Pivot Tables) using `pivot_table()` or `melt()`.
-- **Time Series**: Unparalleled mathematical support for parsing datetime indexes, executing rolling window calculations (e.g., 30-day moving averages), and shifting data.
-
-## 3. The Memory Bottleneck
-While Pandas is brilliant, it has a fatal architectural flaw: **In-Memory Constraints**.
-Pandas mathematically requires the entire dataset to fit into your computer's RAM. In fact, due to its internal memory representations, loading a 5GB CSV file might mathematically consume 20GB of RAM.
-
-If you have a 500GB dataset, Pandas will instantly throw an `Out Of Memory` exception and crash. To solve this, the industry utilizes Big Data engines like **Apache Spark (PySpark)** or modern optimized alternatives like **Polars**.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts manipulate tabular data.
+</Callout>

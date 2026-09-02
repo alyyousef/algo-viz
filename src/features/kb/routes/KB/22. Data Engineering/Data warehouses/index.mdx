@@ -1,33 +1,20 @@
 ---
-title: Data Warehouses
-description: Massive, highly structured, centralized repositories optimized strictly for complex analytical queries (OLAP) rather than transactional processing (OLTP).
+title: Data Warehouses (Redirect)
+description: "Redirecting to Data Lakes & Warehouses."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Data Warehouses">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A production database (like MySQL) is designed for **OLTP (Online Transaction Processing)**. It excels at finding, updating, or inserting a single row of data in milliseconds.
-A **Data Warehouse** (like Snowflake, Amazon Redshift, or Google BigQuery) is designed for **OLAP (Online Analytical Processing)**. It excels at scanning billions of rows of historical data in seconds to generate business intelligence reports.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Data Warehouses** (highly structured, columnar databases optimized for OLAP aggregations) is covered in the Deep Dive for **Data Lakes & Warehouses**. 
 
-## 1. Columnar Storage (The Secret to Speed)
-
-Traditional databases store data row-by-row on the hard drive. If you query `SELECT SUM(price) FROM orders`, a row-based database must physically load the entire row (customer name, address, date) off the hard drive into RAM just to look at the price, wasting 95% of the disk I/O.
-
-Data Warehouses use **Columnar Storage**. They take all the `price` data for every single order and store it sequentially in one contiguous block on the hard drive.
-When you run the `SUM` query, the warehouse reads only the exact block containing the prices, skipping the names and addresses entirely. This makes analytical aggregations incredibly fast.
-
-## 2. Separation of Storage and Compute
-
-Modern cloud data warehouses revolutionized the industry by physically separating the hard drives from the CPUs.
-- **Storage**: All your data lives in cheap object storage (like AWS S3).
-- **Compute**: When you run a query, the warehouse instantly spins up a cluster of 50 temporary CPU nodes, pulls the data from S3, calculates the result in seconds, and then destroys the CPUs so you stop paying for them.
-
-This allows companies to store petabytes of historical data for pennies, while only paying for massive supercomputer power during the exact seconds a query is running.
-
+Please navigate to the [Data Lakes & Warehouses](/kb/22.-data-engineering/data-lakes--warehouses) module to explore Snowflake, BigQuery, and the evolution into Lakehouses.
+</Callout>

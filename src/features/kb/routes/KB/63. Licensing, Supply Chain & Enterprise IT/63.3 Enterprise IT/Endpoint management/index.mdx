@@ -1,19 +1,36 @@
 ---
-title: Endpoint management
-description: A policy-based approach to network security that requires endpoint devices to comply with specific criteria before they are granted access to network resources.
+title: Endpoint Management
+description: "The practice of centrally authenticating and managing the fleet of devices (laptops, phones, tablets) that access a corporate network."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Endpoint Management">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Endpoint Management"
+  subtitle="Securing the Corporate Fleet"
+  tags={['Enterprise IT', 'Security', 'MDM', 'Infrastructure']}
+>
 
-An **Endpoint** is any biological device (Laptop, Phone, Server) that mathematically connects to the corporate network.
+An **Endpoint** is any physical device that connects to the corporate network (an employee's laptop, an iPad, a warehouse barcode scanner, or a smartphone). 
+If a company has 10,000 employees, the IT department cannot manually configure 10,000 laptops. **Unified Endpoint Management (UEM)** is the software architecture used to centrally secure, deploy, and monitor this massive fleet.
 
-**Endpoint Management** is the mathematical discipline of securing them. If an employee biologically loses their corporate iPhone on a train, the IT department must mathematically have the ability to remotely wipe the phone over the internet within seconds.
+## 1. Mobile Device Management (MDM)
 
+MDM is the core technology behind Endpoint Management. Tools like **Microsoft Intune**, **Jamf** (for Apple), and **VMware Workspace ONE** allow IT admins to mathematically enforce policies across thousands of devices simultaneously from a single web dashboard.
+
+Capabilities include:
+- **Zero-Touch Deployment**: A new employee receives a shrink-wrapped MacBook. The moment they connect to Wi-Fi, the MDM automatically takes control, downloads corporate VPN software, configures email profiles, and enforces a lock-screen password policy.
+- **Remote Wipe**: If an employee leaves their laptop in a taxi, the IT admin clicks a button to cryptographically shred the hard drive, protecting company secrets.
+- **Patch Management**: Forcing all 10,000 laptops to silently install the latest Windows/macOS security updates at 2:00 AM.
+
+## 2. BYOD (Bring Your Own Device)
+
+Modern Endpoint Management must handle the **BYOD** nightmare. Employees want to check corporate email on their personal iPhones. 
+IT cannot legally or ethically take full control of an employee's personal device to wipe it. 
+Modern UEM uses **Containerization** (like Android Work Profile or iOS User Enrolment). It creates a cryptographically isolated "Corporate Bubble" on the personal phone. The IT admin can wipe the Corporate Bubble (deleting the email and VPN apps) without touching the employee's personal photos or texts.
+
+<Callout type="warning" title="The Security Perimeter">
+  Historically, the security perimeter was the physical office building (The Firewall). Today, because of remote work, the perimeter has completely dissolved. The Endpoint *is* the new perimeter. If an endpoint is compromised in a coffee shop, the entire corporate network is at risk, making Endpoint Management the absolute most critical layer of modern IT security.
+</Callout>
+
+</ConceptTemplate>

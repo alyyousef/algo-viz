@@ -1,43 +1,20 @@
 ---
-title: Relational Databases (SQL)
-description: The absolute gold standard of data storage, organizing data into strict tables, enforcing relationships through foreign keys, and providing transactional integrity.
+title: Relational Databases (Redirect)
+description: "Redirecting to Database Concepts."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Relational Databases (SQL)">
+    <ConceptTemplate title="Relational Databases">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Relational Database Management Systems (RDBMS) like PostgreSQL, MySQL, and Oracle are the most widely used databases in the world. They organize data into rigid, highly structured tables (rows and columns) and use **SQL (Structured Query Language)** to interact with the data.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Relational Databases (SQL)**, including schema rigidity, mathematical Joins, and strict ACID transaction guarantees, is covered in the Deep Dive for **Database Concepts**. 
 
-## 1. Relational Integrity
-
-The core philosophy of an RDBMS is that data should be mathematically perfect, strictly typed, and completely devoid of duplication.
-
-- **Primary Keys**: Every row in a table must have a unique identifier (e.g., `user_id`).
-- **Foreign Keys**: If a row in the `Orders` table belongs to a user, it stores their `user_id` as a Foreign Key. The database mathematically enforces this link. If you try to delete the user from the `Users` table, the database will aggressively block the deletion and throw an error, preventing you from creating an "orphaned" order.
-- **Strict Schemas**: Before you can insert data, you must define the schema. If you tell the database a column is an `INTEGER`, and you try to insert the string `"Five"`, the database rejects the entire transaction.
-
-## 2. Normalization
-
-Normalization is the process of breaking data apart into smaller, specialized tables to eliminate redundancy.
-Instead of storing a customer's shipping address redundantly on 50 different order rows, you store the address once in an `Addresses` table, and link to it via a Foreign Key.
-
-- **Advantage**: If the customer moves, you only update their address in one single place.
-- **Disadvantage**: To actually view an order with its address, the database must perform a **JOIN**, mathematically stitching the tables back together in RAM, which is computationally expensive.
-
-
-<Callout icon="tip" title="PostgreSQL vs MySQL">
-
-
-  While both are phenomenal, **PostgreSQL** is generally considered the most advanced open-source relational database. It strictly adheres to SQL standards, supports advanced data types (like native JSONB for NoSQL-like capabilities), and handles complex analytical queries better. **MySQL** is slightly more forgiving, historically faster at simple read operations, and easier to set up for basic web apps.
-
-
+Please navigate to the [Database Concepts](/kb/21.-databases---fundamentals/database-concepts) module to explore the engine powering modern financial and enterprise data.
 </Callout>
-
-

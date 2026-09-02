@@ -1,26 +1,50 @@
 ---
 title: Sequence Models
-description: Specialized Neural Network architectures mathematically designed to process temporal, ordered data (like text or audio) where the sequence of inputs fundamentally alters the meaning.
+description: "An overview of Sequence Models, the class of neural architectures designed explicitly to process data where order and time matter."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Sequence Models">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A standard Neural Network (Feed-Forward) assumes every input is mathematically independent. If you feed it the word "Not", it has no memory of the word "Happy" that came before it. Sequence Models possess mathematical Memory.
+**Sequence Models** are a specific category of machine learning architectures designed to process data where the **order** of the data points matters.
 
-## 1. Recurrent Neural Networks (RNN)
-An RNN processes a sentence one word at a time, from left to right.
-When it reads word #2, it mathematically combines the Vector for word #2 with the **Hidden State** (the mathematical memory) generated from word #1. This allows the network to maintain a running mathematical summary of the sentence.
-However, standard RNNs suffer from the **Vanishing Gradient Problem**. During Backpropagation, the mathematical gradients multiply. If the sentence is 50 words long, the gradient mathematically shrinks to exactly 0, causing the network to completely "forget" the beginning of the sentence.
+Standard neural networks (like a Multi-Layer Perceptron) assume that every input is completely independent. If you feed it a picture of a cat, and then a picture of a dog, the network doesn't care about the order. 
 
-## 2. LSTM (Long Short-Term Memory)
-To fix the Vanishing Gradient, engineers invented the LSTM.
-An LSTM introduces mathematical "Gates" (Forget Gate, Input Gate, Output Gate). These gates act as microscopic bouncers, using Sigmoid math (0 or 1) to explicitly decide whether a piece of memory should be kept or deleted. This allows LSTMs to mathematically hold onto important context for hundreds of words, solving the memory bottleneck of early sequence models.
+However, many types of data are strictly sequential:
+1.  **Text (NLP):** Words only make sense in order. ("Dog bites man" is very different from "Man bites dog").
+2.  **Time Series:** Stock market prices or weather data where tomorrow's value depends entirely on yesterday's value.
+3.  **Audio/Video:** Frames of a video only make sense when played sequentially.
 
+Sequence Models are designed specifically to have an internal "memory" that allows them to remember previous inputs in the sequence to understand the current input.
+
+## Classic Architectures
+
+Historically, the field of Sequence Modeling was dominated by one primary architecture:
+
+### Recurrent Neural Networks (RNNs)
+An RNN processes a sequence one item at a time. As it reads "Word 1", it generates a "Hidden State" (a memory). When it reads "Word 2", it mathematically combines "Word 2" with the memory of "Word 1". 
+*   **The Flaw:** Standard RNNs suffered from the *Vanishing Gradient Problem*. By the time they reached Word 100, they completely forgot Word 1. 
+
+### LSTMs and GRUs
+To fix the short-term memory of RNNs, researchers invented **Long Short-Term Memory (LSTM)** networks and **Gated Recurrent Units (GRUs)**. These models introduced complex mathematical "gates" that allowed the network to explicitly choose what information to remember for a long time, and what to instantly forget. LSTMs ruled the NLP world from 2010 to 2017.
+
+## The Paradigm Shift: Attention and Transformers
+
+In 2017, the entire paradigm of Sequence Modeling was turned upside down.
+
+Researchers realized that processing a sequence one step at a time (like an LSTM) was incredibly slow because it could not be parallelized on modern GPUs. You couldn't process word 50 until word 49 was finished.
+
+They invented the **Transformer** architecture. Transformers do *not* process data sequentially. They process the entire sequence (e.g., all 100 words) simultaneously in a massive parallel matrix multiplication. 
+
+To ensure the network still understood the "order" of the sequence, they invented **Positional Encoding**—a technique that mathematically tags every word with a number representing its position in the sentence.
+
+<Callout icon="arrow-right" title="The Current State of the Art">
+Today, LSTMs and RNNs are almost entirely obsolete for Natural Language Processing, having been completely replaced by Transformers (like GPT and BERT). However, LSTMs and highly optimized GRUs are still occasionally used for processing low-level numerical time-series data (like IoT sensor data or basic financial forecasting) where massive compute power is unavailable.
+</Callout>

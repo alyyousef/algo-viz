@@ -1,27 +1,52 @@
 ---
 title: AI Agents
-description: Autonomous software entities driven by Large Language Models, equipped with physical tools, memory, and the mathematical capacity to execute complex, multi-step goals.
+description: "An overview of AI Agents, autonomous systems that combine LLMs with external tools to plan, reason, and execute complex workflows without human intervention."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="AI Agents">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-An AI Agent transforms a static Neural Network into a dynamic, acting entity. It bridges the gap between mathematically predicting the next word, and physically interacting with the real world.
+**AI Agents** represent the shift from Generative AI (talking to a computer) to Autonomous AI (having a computer do work for you).
 
-## 1. The Core Components
-An AI Agent mathematically consists of three architectural pillars:
-- **The Brain (LLM)**: The central processing unit that provides reasoning, planning, and mathematical breakdown of user intents.
-- **Memory**: Short-term memory (the Context Window for the current task) and Long-term memory (Vector Databases mathematically storing past experiences and user preferences for future retrieval).
-- **Tools (Function Calling)**: The APIs the Agent is mathematically authorized to invoke (e.g., executing Python code, reading files, sending emails, browsing the web).
+An LLM on its own (like standard ChatGPT) is a passive text generator. It waits for a prompt, generates text, and stops. 
+An AI Agent is an active system. It is an LLM placed inside an autonomous software loop, given access to external tools, and instructed to work continuously until a high-level goal is met.
 
-## 2. Autonomous Planning
-Unlike a script that executes hardcoded `if/else` logic, an Agent mathematically generates its own plan.
-Given the prompt "Plan a trip to Tokyo," the Agent mathematically decomposes the root node into a Directed Acyclic Graph (DAG) of sub-tasks: 1) Search flights, 2) Search hotels, 3) Check weather. It then autonomously traverses the graph, invoking the Web Search Tool for each node, synthesizing the results, and taking physical action (like booking the ticket) without human intervention.
+## The Core Components of an Agent
 
+To build a true AI Agent, you need three interconnected systems:
+
+### 1. The Brain (LLM)
+The Large Language Model is the reasoning engine. It breaks down complex goals, decides which tools to use, and analyzes the results of those tools. It is heavily reliant on prompting techniques like **ReAct** (Reason + Act).
+
+### 2. The Hands (Tools / Actions)
+An Agent is useless without the ability to interact with the world. You must provide the Agent with API connections to external services.
+*   *Read/Write tools:* Searching the web, querying a database, reading a PDF.
+*   *Action tools:* Sending an email, pushing code to GitHub, booking a flight, executing Python code in a secure sandbox.
+
+### 3. The Memory (State Management)
+Because an Agent might work on a task for 10 minutes, it needs a memory system so it doesn't get confused or repeat actions.
+*   **Short-Term Memory:** The ongoing context window of the current session.
+*   **Long-Term Memory:** A Vector Database (like Pinecone) where the Agent can permanently store facts, past mistakes, and user preferences to retrieve in future sessions.
+
+## The ReAct Loop
+
+The standard behavior pattern of an Agent is the ReAct loop:
+1.  **Goal:** User says, *"Research the top 3 AI news stories today and email me a summary."*
+2.  **Thought:** Agent thinks, *"First, I need to search the web for today's AI news."*
+3.  **Action:** Agent executes the `web_search` tool.
+4.  **Observation:** Agent reads the raw HTML results returned by the tool.
+5.  **Thought:** Agent thinks, *"I have the news. Now I need to draft an email and send it."*
+6.  **Action:** Agent executes the `send_email` tool.
+7.  **Observation:** Tool returns `Success: Email sent`.
+8.  **Completion:** Agent replies to the user, *"I have finished the task."*
+
+<Callout icon="triangle-exclamation" title="Agentic Failure Modes">
+Currently, single-agent systems suffer from the **Infinite Loop of Doom**. If a tool fails (e.g., a website blocks the agent's web scraper), the LLM often panics, tries the exact same tool again, fails again, and gets stuck in an infinite loop until it burns through your entire API credit budget. Robust Agent design requires strict timeout limits and error-handling guardrails.
+</Callout>

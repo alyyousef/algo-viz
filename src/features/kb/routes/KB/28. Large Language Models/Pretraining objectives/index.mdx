@@ -1,33 +1,61 @@
 ---
-title: Pretraining Objectives
-description: The self-supervised mathematical tasks used to train massive foundation models on raw internet text.
+title: Pre-Training Objectives
+description: "An overview of how massive neural networks are initially taught to understand language by playing mathematical guessing games with the internet."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Pretraining Objectives">
+    <ConceptTemplate title="Pre-Training Objectives">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Pretraining is the first, most expensive, and most compute-heavy phase of creating an LLM. Because human-labeled data is too expensive, models are trained using **Self-Supervised Learning** on trillions of words scraped from the internet. The Pretraining Objective defines the exact mathematical game the model plays to learn language.
+**Pre-Training** is the very first (and most expensive) phase of creating a Large Language Model. You take a blank neural network, feed it terabytes of raw text from the internet, and force it to learn grammar, logic, and facts.
 
+But how exactly does a computer "learn" from a Wikipedia page? It learns by playing a massive, automated guessing game called a **Pre-Training Objective**.
 
-<Callout icon="warning" title="Compute Cost">
+There are two dominant pre-training objectives in the history of LLMs: **Masked Language Modeling (MLM)** and **Causal Language Modeling (CLM)**.
 
+## 1. Masked Language Modeling (MLM)
 
-  Pretraining a state-of-the-art model like Llama 3 or GPT-4 requires tens of thousands of GPUs running for months, costing tens of millions of dollars in compute and electricity.
+This was the technique used to train Google's famous **BERT** model (an Encoder-Only architecture). 
 
+**The Game:**
+The engineers take a sentence from Wikipedia: *"The capital of France is Paris."*
+They mathematically "mask" (hide) 15% of the words at random: *"The capital of [MASK] is Paris."*
+They force the neural network to look at the words on the left (*"The capital of"*) and the words on the right (*"is Paris"*) and guess the missing word.
 
+**The Result:**
+Because the model is allowed to look at the entire sentence simultaneously (bidirectional context), it develops an incredibly deep understanding of language structure, grammar, and context. 
+*Use Cases:* BERT is amazing at classification, sentiment analysis, and search ranking. However, because it was trained to fill in blanks in the middle of a sentence, it is terrible at generating *new* text from scratch.
+
+## 2. Causal Language Modeling (CLM)
+
+This is the technique used to train OpenAI's **GPT** family (Decoder-Only architectures). This is the undisputed standard for all modern Generative AI.
+
+**The Game:**
+The engineers take a sentence: *"The capital of France is Paris."*
+They show the model the first word: *"The"*. They ask it to guess the second word.
+They show it: *"The capital"*. They ask it to guess the third word.
+They show it: *"The capital of"*. They ask it to guess the fourth word.
+
+**The Result:**
+This is strictly **Autoregressive** (predicting the future based only on the past). The model is mathematically blind to the words on the right. 
+Because it is trained purely to predict the *next* word, it becomes incredibly powerful at generating net-new text, writing essays, and writing code. 
+
+<ComparisonTable
+  title="MLM vs CLM"
+  headers={["Objective", "Architecture", "How it Learns", "Best For"]}
+  rows={[
+    ["Masked (MLM)", "Encoder-Only (BERT)", "Fills in the blanks using full bidirectional context", "Classification, Search, Sentiment Analysis"],
+    ["Causal (CLM)", "Decoder-Only (GPT, Llama)", "Predicts the next word using only past context", "Chatbots, Code Generation, Essay Writing"]
+  ]}
+/>
+
+<Callout icon="bolt" title="The Bitter Lesson">
+In the early days of AI, researchers spent years trying to craft complex linguistic rules and grammar trees for AI to study. The "Bitter Lesson" of AI (coined by Rich Sutton) is that simple pre-training objectives (like "just guess the next word") combined with massive amounts of compute and data will eventually vastly outperform any complex human-engineered rule system.
 </Callout>
-
-
-## Standard Objectives
-
-
-<ComparisonTable headers={['Objective', 'Model Type', 'Mechanism']} rows={[ ['Causal Language Modeling (CLM)', 'Decoder-Only (GPT, Llama)', 'Given previous tokens, predict the exact next token. The model is penalized via Cross-Entropy Loss if it predicts wrong.'], ['Masked Language Modeling (MLM)', 'Encoder-Only (BERT)', 'Randomly hide 15% of the tokens in a sequence. The model must predict the hidden tokens using bidirectional context.'], ['Span Corruption', 'Encoder-Decoder (T5)', 'Randomly replace sequences of multiple tokens with a single sentinel token. The model must generate the missing sequences.'] ]} />
-
-

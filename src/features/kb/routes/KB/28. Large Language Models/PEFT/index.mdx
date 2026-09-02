@@ -1,35 +1,52 @@
 ---
-title: Parameter-Efficient Fine-Tuning (PEFT)
-description: Techniques to fine-tune massive LLMs on consumer hardware by training only a tiny fraction of parameters.
+title: PEFT (Parameter-Efficient Fine-Tuning)
+description: "An overview of PEFT, the category of algorithms that revolutionized AI by allowing massive models to be fine-tuned on cheap consumer hardware."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Parameter-Efficient Fine-Tuning (PEFT)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Fine-tuning a 70-Billion parameter model requires updating 70 billion weights. The optimizer states and gradients required for this process demand hundreds of gigabytes of VRAM, which is impossible on consumer GPUs.
+**PEFT (Parameter-Efficient Fine-Tuning)** is an umbrella term for a family of machine learning techniques designed to fine-tune massive AI models without needing to update every single weight in the network.
 
-Parameter-Efficient Fine-Tuning (PEFT) solves this by freezing the massive pretrained base model and mathematically injecting a tiny number of trainable parameters.
+## The Problem with Full Fine-Tuning
 
+When an open-source model like LLaMA-3 (70 Billion parameters) is released, it is a generalist. If a hospital wants to fine-tune it to exclusively output medical billing codes, they traditionally use **Full Fine-Tuning**.
+This requires passing medical data through the network and using backpropagation to update all 70 Billion weights.
 
-<Callout icon="tip" title="LoRA (Low-Rank Adaptation)">
+This causes three catastrophic bottlenecks:
+1.  **Hardware:** You need roughly 6 massive NVIDIA A100 GPUs ($100,000+) to hold the optimizer states for 70 Billion parameters.
+2.  **Catastrophic Forgetting:** If you aggressively update all 70B weights on medical data, the model often completely "forgets" how to do basic logic and math. It ruins the base model.
+3.  **Storage:** The output of full fine-tuning is a brand new, massive 140GB file. If you have 10 different tasks, you need to store 1.4 Terabytes of models.
 
+## How PEFT Solves It
 
-  LoRA is the undisputed king of PEFT. It freezes the base model and injects trainable rank-decomposition matrices into the Transformer layers. It can reduce the number of trainable parameters by 10,000x and GPU memory requirements by 3x, allowing a 7B model to be fine-tuned on a single 16GB gaming GPU.
+The core philosophy of all PEFT techniques is the same: **Freeze the massive base model, and only train a tiny fraction of new parameters.**
 
+By only training 1% (or less) of the parameters, PEFT allows you to fine-tune massive LLMs on a single $1,000 gaming GPU. Furthermore, because the original base model weights are frozen, the model retains 100% of its original general intelligence.
 
+## The Major PEFT Techniques
+
+While there are dozens of PEFT algorithms, the industry relies on a few key methods:
+
+### 1. Adapters (The Original)
+Invented in 2019, Adapters were the first major PEFT breakthrough. They work by physically inserting tiny, brand-new neural network layers directly in between the massive layers of the frozen base model. You only train the tiny new layers.
+*Flaw:* Because you added physical layers to the architecture, the data has to travel further, causing the model to run slightly slower during inference.
+
+### 2. Prompt Tuning / Prefix Tuning
+Instead of changing the weights of the model, these techniques train "Soft Prompts." They mathematically inject a series of continuous, trainable vector embeddings directly into the user's prompt before it hits the LLM. 
+*Flaw:* Very difficult to train and generally less accurate than altering the model's weights.
+
+### 3. LoRA (Low-Rank Adaptation)
+LoRA is the undisputed industry standard for PEFT today. Instead of adding new physical layers (like Adapters), LoRA injects tiny matrices *in parallel* to the frozen weights. Once training is complete, the tiny trained matrices are mathematically merged back into the frozen base weights.
+*Advantage:* It is incredibly fast to train, highly accurate, and because the weights are merged, there is **zero inference latency**.
+
+<Callout icon="bolt" title="QLoRA (Quantized LoRA)">
+The ultimate evolution of PEFT is **QLoRA**. Introduced in 2023, QLoRA combines Quantization (compressing the frozen base model from 16-bit to 4-bit to save VRAM) with LoRA (training tiny parallel matrices). QLoRA allows a developer to fine-tune a massive 65-Billion parameter model on a single 48GB GPU, a feat that was considered physically impossible just a year prior.
 </Callout>
-
-
-## Popular PEFT Methods
-
-
-<ComparisonTable headers={['Method', 'Mechanism']} rows={[ ['LoRA', 'Uses low-rank matrix decomposition to approximate the weight updates. The resulting LoRA "adapter" is often just a few megabytes in size and can be hot-swapped at runtime.'], ['QLoRA', 'Quantizes the frozen base model to 4-bit precision, and trains the LoRA adapters in 16-bit precision. This maximizes VRAM efficiency.'], ['Prompt Tuning', 'Appends a sequence of trainable continuous "virtual tokens" to the prompt. Only these virtual tokens are updated during backpropagation.'] ]} />
-
-

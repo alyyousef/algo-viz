@@ -1,40 +1,59 @@
 ---
 title: Naive Bayes
-description: A wildly fast, probabilistic classification algorithm based on Bayes' Theorem that assumes strict mathematical independence between all features.
+description: "An overview of Naive Bayes, a fast, probabilistic classifier based on Bayes' Theorem."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Naive Bayes">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Naive Bayes** is a probabilistic classifier based entirely on **Bayes' Theorem**. It is the absolute foundational algorithm for classical NLP tasks, particularly Spam Filtering and Sentiment Analysis, due to its blazing mathematical speed and ability to handle massive sparse datasets.
+**Naive Bayes** is a family of simple, probabilistic classifiers based on applying **Bayes' Theorem**. Despite its "naive" assumption, it is highly effective, exceptionally fast, and particularly well-suited for high-dimensional datasets like text classification (e.g., spam filtering, sentiment analysis).
 
-## 1. Bayes' Theorem
-The entire algorithm is a direct application of this mathematical equation:
-$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$
+## Bayes' Theorem
 
-If we are classifying an email as Spam ($A$) given the words in the email ($B$):
-- **$P(A|B)$ (Posterior)**: What is the probability this is Spam, given it contains the word "Viagra"?
-- **$P(B|A)$ (Likelihood)**: If we look at all historical Spam emails, how often does the word "Viagra" appear?
-- **$P(A)$ (Prior)**: Overall, what percentage of *all* emails are Spam?
+Bayes' Theorem provides a way to calculate the probability of a hypothesis ($H$) given some observed evidence ($E$):
 
-The algorithm mathematically calculates this probability for both Spam and Not Spam, and assigns the data point to the class with the highest probability.
+$$P(H|E) = \frac{P(E|H) \cdot P(H)}{P(E)}$$
 
-## 2. Why is it "Naive"?
-To calculate the exact probability of an email containing the words "Buy", "Cheap", and "Viagra", the algorithm would mathematically require thousands of historical emails containing that *exact combination* of words. This is computationally impossible (Data Sparsity).
+In the context of machine learning classification:
+*   $P(\text{Class}|\text{Features}) = \frac{P(\text{Features}|\text{Class}) \cdot P(\text{Class})}{P(\text{Features})}$
 
-The algorithm solves this by making a mathematically "Naive" assumption: **Conditional Independence**.
-It assumes that the probability of seeing the word "Cheap" is mathematically completely independent of seeing the word "Viagra". It simply multiplies the individual probabilities together: $P(Buy) \times P(Cheap) \times P(Viagra)$.
-While this assumption is mathematically false in human language, the algorithm works surprisingly flawlessly in practice.
+The model calculates this probability for every possible class and assigns the data point to the class with the highest probability.
 
-## 3. Laplace Smoothing
-There is one fatal mathematical flaw in the Naive assumption. If a new email contains a word the algorithm has *never* seen before, the probability $P(Word|Spam)$ is exactly $0$.
-Because the algorithm multiplies all probabilities together, a single $0$ mathematically destroys the entire equation, forcing the total probability to $0.0$.
-**Laplace Smoothing** mathematically fixes this by adding a tiny baseline value (e.g., $+1$) to all word counts, guaranteeing that no probability ever mathematically reaches exactly zero.
+## The "Naive" Assumption
 
+Calculating $P(\text{Features}|\text{Class})$ exactly requires knowing the joint probability distribution of all features. For a dataset with many features, this is computationally impossible and requires an unimaginable amount of training data.
+
+Naive Bayes solves this by making a massive, "naive" assumption: **It assumes that every feature is conditionally independent of every other feature, given the class.**
+
+Because of this assumption, the joint probability can simply be expressed as the product of the individual probabilities:
+$$P(\text{Feature}_1, \text{Feature}_2 | \text{Class}) = P(\text{Feature}_1 | \text{Class}) \cdot P(\text{Feature}_2 | \text{Class})$$
+
+<Callout icon="exclamation-triangle" title="Is it too naive?">
+In reality, features are almost never completely independent. For example, in text, the word "machine" and the word "learning" often appear together. Despite violating this assumption, Naive Bayes often performs surprisingly well in practice.
+</Callout>
+
+## Types of Naive Bayes Classifiers
+
+The specific type of Naive Bayes algorithm you use depends entirely on the distribution of your data features:
+
+1.  **Gaussian Naive Bayes:** Used when features are continuous (real-valued). It assumes the continuous values associated with each class are distributed according to a normal (Gaussian) distribution.
+2.  **Multinomial Naive Bayes:** Used when features represent discrete counts. It is the standard algorithm for text classification where features are word frequencies (term frequencies).
+3.  **Bernoulli Naive Bayes:** Used when features are independent booleans (binary variables). For text, this means checking only if a word is present (1) or absent (0), ignoring its frequency.
+
+## Advantages and Disadvantages
+
+### Advantages
+*   **Blazing Fast:** Training is simply calculating probabilities (counting occurrences). It is one of the fastest classification algorithms available.
+*   **Low Data Requirements:** It performs surprisingly well with a very small amount of training data compared to models like Neural Networks.
+*   **High Dimensionality:** It scales exceptionally well to datasets with thousands of features (like document vocabularies).
+
+### Disadvantages
+*   **Poor Estimator:** While it is a good *classifier* (it picks the right class), the actual probability outputs from Naive Bayes should not be taken too seriously. It pushes probabilities towards 0 or 1.
+*   **Zero Frequency Problem:** If a categorical variable has a category in the test data that was not observed in the training data, the model will assign a probability of 0, wiping out all other calculations (since we multiply probabilities). This is solved using **Laplace Smoothing**.

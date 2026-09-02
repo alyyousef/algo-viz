@@ -1,39 +1,50 @@
 ---
 title: ALiBi (Attention with Linear Biases)
-description: A positional encoding method that allows models to extrapolate to longer contexts by mathematically penalizing distant tokens.
+description: "A deep dive into ALiBi, a positional encoding method that allows Large Language Models to extrapolate to longer text lengths than they were trained on."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="ALiBi (Attention with Linear Biases)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-ALiBi is a positional encoding technique designed to solve the context window extrapolation problem. While RoPE (Rotary Position Embeddings) mathematically rotates vectors, ALiBi takes a radically simpler approach: it directly manipulates the Attention scores.
+**ALiBi (Attention with Linear Biases)** is an advanced mathematical technique used in the architecture of modern Large Language Models (LLMs) to solve a massive problem with how Transformers handle the order of words.
 
+It is an alternative to standard **Positional Encodings**, famously used in models like MPT and BLOOM.
 
-<Callout icon="tip" title="The Intuition">
+## The Context Window Problem
 
+The original Transformer (from 2017) processes all words in a sentence simultaneously. To ensure the model knows the order of the words, it mathematically injects a "Positional Encoding" (usually a sine/cosine wave) into every word before processing begins.
 
-  The core idea of ALiBi is that words closer together are usually more relevant to each other than words far apart. Therefore, ALiBi mathematically subtracts a penalty from the Attention score between two tokens, and that penalty grows linearly as the distance between the tokens increases.
+**The Flaw:** Standard positional encoding is rigid. If you train an LLM on documents that are exactly 2,048 tokens long, it learns the specific sine/cosine patterns for positions 1 through 2,048. 
+If a user later asks the LLM to read a document that is 2,050 tokens long, the model completely breaks down. It has never seen the positional math for "position 2,049," so it outputs gibberish. This is why older LLMs had strict, unchangeable "Context Limits."
 
+## How ALiBi Works
 
+ALiBi completely throws away the concept of pre-stamping words with sine/cosine waves. 
+
+Instead, ALiBi modifies the core **Self-Attention mechanism** itself.
+When the Transformer is calculating the "Attention Score" between two words (e.g., how much the word "Dog" should care about the word "Bites"), ALiBi applies a simple, linear mathematical penalty based on the physical distance between the two words.
+
+*   If the words are right next to each other (Distance = 1), apply a very small penalty.
+*   If the words are far apart (Distance = 100), apply a massive penalty.
+
+**The Math:** 
+Instead of adding positional embeddings to the input, ALiBi simply subtracts a value proportional to the distance $m \cdot |i - j|$ directly from the attention scores before the softmax function is applied, where $m$ is a fixed, head-specific slope.
+
+## The Magic: Extrapolation
+
+Because ALiBi relies on a simple, continuous mathematical slope (rather than rigid learned embeddings for specific positions), it possesses a superpower: **Extrapolation**.
+
+If you train an ALiBi-equipped LLM strictly on 2,048-token documents, you can immediately turn around and feed it a 4,000-token document during inference. The model doesn't crash. It just continues applying the linear distance penalty exactly as it always has. 
+
+While its accuracy will slowly degrade on text lengths vastly longer than its training data, it allows for incredibly flexible context windows without requiring expensive retraining.
+
+<Callout icon="chart-line" title="ALiBi vs RoPE">
+ALiBi's primary competitor in modern LLMs is **RoPE (Rotary Positional Embeddings)**, which is used by LLaMA and PaLM. While ALiBi is slightly simpler and excels at pure zero-shot extrapolation, RoPE generally provides slightly higher baseline accuracy and has become the de-facto standard for the newest generation of open-source models, often paired with "NTK-Aware Scaling" to achieve the same extrapolation benefits as ALiBi.
 </Callout>
-
-
-## The Mathematics of ALiBi
-
-In standard Attention, the score between a Query and a Key is simply their dot product.
-
-In ALiBi, the Attention score is modified before the softmax is applied:
-$AttentionScore = (Q \cdot K) - (m \times distance)$
-
-- **distance:** The number of tokens separating the Query and Key.
-- **m (slope):** A fixed, head-specific scalar penalty. Some attention heads have a steep penalty (focusing only on adjacent words), while others have a very shallow penalty (allowing them to look far back in the context).
-
-Because ALiBi relies purely on relative distance and requires no complex trigonometric embeddings, a model trained on 1024 tokens can seamlessly be handed a 2048-token prompt during inference without breaking down.
-

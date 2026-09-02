@@ -1,19 +1,34 @@
 ---
-title: Apache 2.0
-description: A permissive free software license written by the Apache Software Foundation.
+title: Apache License 2.0
+description: "A permissive free software license written by the Apache Software Foundation that specifically includes an express grant of patent rights."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Apache License 2.0">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Apache License 2.0"
+  subtitle="Permissive Licensing with Patent Protection"
+  tags={['Licensing', 'Open Source', 'Legal', 'Apache']}
+>
 
-The **Apache 2.0 License** is a permissive license heavily favored by massive enterprise corporations.
+The **Apache License 2.0** is one of the most popular and professional open-source licenses in the world (used by Android, Kubernetes, and TensorFlow). Like MIT and BSD, it is a "permissive" license, meaning you can use the code in closed-source commercial products without giving your modifications back to the community.
 
-It is mathematically very similar to the MIT license (do whatever you want), but it includes a critical biological **Patent Grant**. If a massive company (like Google) releases an Open Source project under Apache 2.0, they mathematically grant you a free license to use any biological patents contained within that code. This legally prevents Google from ever suing you for patent infringement for using their Open Source software.
+However, Apache 2.0 solves massive corporate legal loopholes that older permissive licenses ignored.
 
+## 1. The Patent Grant (The Killer Feature)
+
+The MIT license grants the right to use the *copyright* of the code. But modern software is heavily patented. 
+A malicious corporation could release open-source code under MIT, wait for millions of startups to use it, and then sue them all for *patent* infringement, since the MIT license only covers copyright.
+
+**Apache 2.0 explicitly grants a perpetual, worldwide patent license.** If a corporation licenses their software under Apache 2.0, they mathematically surrender the right to sue users for patent infringement regarding that specific code. 
+Furthermore, it includes a "Patent Retaliation" clause: If *you* try to sue the creators for patent infringement, your license to use the software is instantly terminated.
+
+## 2. State Changes (Modifications)
+
+Unlike the MIT license, which just requires you to keep the copyright notice, Apache 2.0 adds a layer of traceability. 
+If you modify an Apache 2.0 licensed file, you must include a prominent notice stating that *you altered the file*. This protects the reputation of the original creators, ensuring that if you inject a massive bug into the code and sell it, users know the bug was your fault, not the original authors'.
+
+## 3. Trademarks
+
+Apache 2.0 explicitly states that it does *not* grant you the right to use the original creator's trademarks, logos, or names. You can legally take the Android source code and build your own phone, but you are strictly forbidden from calling it an "Android" phone or using the green robot logo.
+
+</ConceptTemplate>

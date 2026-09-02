@@ -1,23 +1,45 @@
 ---
 title: Propositional Logic
-description: "The foundational algebraic system for evaluating truth and falsehood, acting as the bedrock for all computer processors, logic gates, and control flow in programming."
+description: "The branch of mathematical logic concerned with the study of propositions (statements that are either true or false) and their combination using logical operators."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Propositional Logic"
-  subtitle="Boolean Algebra and Truth"
-  tags={['Mathematics', 'Logic', 'Boolean Algebra', 'Hardware']}
+  subtitle="The Algebra of Truth"
+  tags={['Mathematics', 'Discrete Math', 'Logic', 'Computer Architecture']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
-**Propositional Logic** (also called Boolean Algebra) is the mathematics of True and False. It is the absolute foundational theory that allowed engineers to build logic gates out of silicon transistors, birthing the entire computer revolution.
+**Propositional Logic** (also called Boolean Logic) is the absolute foundation of all computer science. Underneath the Python, the C++, and the Operating System, a computer is just billions of microscopic electrical switches calculating Propositional Logic.
 
+## 1. Propositions
 
-\n
+A proposition is a declarative statement that is definitively **True** or **False**, but not both.
+- "The sky is blue" (Proposition: True)
+- "2 + 2 = 5" (Proposition: False)
+- "What time is it?" (Not a proposition, it cannot be True/False).
+
+## 2. Logical Operators
+
+We combine simple propositions into massive, complex circuits using operators:
+- **Conjunction (AND / $\\land$)**: True only if both sides are True.
+- **Disjunction (OR / $\\lor$)**: True if at least one side is True.
+- **Negation (NOT / $\\lnot$)**: Flips True to False, and False to True.
+- **Implication (IF...THEN / $\\rightarrow$)**: "If it rains, then the ground is wet." This is mathematically False *only* when the condition is True but the result is False.
+- **XOR (Exclusive OR / $\\oplus$)**: True if *exactly one* side is True. (Critically used in Cryptography).
+
+## 3. Truth Tables
+
+Because propositions can only be True or False, there are a finite number of possible outcomes for any equation. Mathematicians map every single possible combination in a **Truth Table**.
+
+If you have 3 variables ($P, Q, R$), the Truth Table will have exactly $2^3 = 8$ rows.
+By mapping out Truth Tables, hardware engineers can mathematically prove that a massive, complicated logic circuit is equivalent to a smaller, simpler one, allowing them to optimize the physical silicon inside a CPU.
+
+<Callout type="warning" title="De Morgan's Laws">
+  A critical theorem for software developers trying to simplify messy `if` statements:
+  `!(A || B)` is mathematically identical to `!A && !B`
+  `!(A && B)` is mathematically identical to `!A || !B`
+</Callout>
+
+</ConceptTemplate>

@@ -1,26 +1,20 @@
 ---
-title: Design by Contract
-description: A formal mathematical methodology where functions define strict pre-conditions (requirements) and post-conditions (guarantees) to ensure absolute system correctness.
+title: Contracts (Redirect)
+description: "Redirecting to Assertions."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Design by Contract">
+    <ConceptTemplate title="Contracts (Pre/Post-conditions)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Coined by Bertrand Meyer for the Eiffel programming language, "Design by Contract" treats software components as legally binding mathematical agreements between the Caller (the Client) and the Function (the Supplier).
+<Callout icon="info" title="Redirect">
+The architectural methodology of **Design by Contract** (including Pre-conditions, Post-conditions, and Invariants) is deeply analyzed alongside the mechanism used to enforce them in the Deep Dive for **Assertions**. 
 
-## 1. Pre-Conditions (The Caller's Obligation)
-A Pre-Condition is a mathematical rule that MUST be true before the function is called.
-If `divide(a, b)` has a Pre-Condition that `b != 0`, the function itself is completely absolved of the responsibility to check for zero. The mathematical burden is entirely on the Caller. If the Caller passes `0`, they have violated the Contract, and the program should immediately crash (usually via an Assertion).
-
-## 2. Post-Conditions (The Function's Guarantee)
-A Post-Condition is a mathematical rule that MUST be true exactly when the function returns.
-If a function `sort(array)` finishes, its Post-Condition mathematically guarantees that `array[i] <= array[i+1]`. If the function fails to satisfy this Post-Condition, the Supplier has violated the Contract.
-By mathematically enforcing these boundaries, Design by Contract allows developers to definitively isolate bugs. If a Pre-Condition fails, the bug is in the Caller's code. If a Post-Condition fails, the bug is inside the Function itself.
-
+Please navigate to the [Assertions](/kb/2.-programming-fundamentals--language-concepts/2.5-error-handling/assertions) module to explore how mathematical tripwires prevent silent data corruption.
+</Callout>

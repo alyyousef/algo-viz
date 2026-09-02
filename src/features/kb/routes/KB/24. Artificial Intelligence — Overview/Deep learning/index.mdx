@@ -1,36 +1,60 @@
 ---
-title: Deep Learning (Overview)
-description: A powerful subfield of Machine Learning based on Artificial Neural Networks with multiple hidden layers, capable of modeling highly non-linear functions.
+title: Deep Learning
+description: "How artificial neural networks use backpropagation and gradient descent to learn complex, non-linear representations of data."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Deep Learning (Overview)">
+    <ConceptTemplate title="Deep Learning">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While classical Machine Learning (Random Forests, SVMs) requires humans to manually extract features (Feature Engineering), **Deep Learning** algorithms mathematically learn to extract the features themselves directly from raw data (images, text, audio).
+**Deep Learning** is a subfield of Machine Learning that uses multi-layered Artificial Neural Networks to extract high-level features from raw data.
+While traditional Machine Learning (like Random Forests or SVMs) requires human engineers to manually craft features (Feature Engineering), Deep Learning models learn the features themselves, provided they have enough data and compute.
 
-## 1. The Artificial Neuron
-The foundation of Deep Learning is the mathematical Artificial Neuron (Perceptron).
-It takes multiple inputs ($x_1, x_2$), multiplies them by adjustable Weights ($w_1, w_2$), adds a Bias ($b$), and passes the result through a non-linear **Activation Function** (like ReLU or Sigmoid).
-Equation: $y = \text{ReLU}(\sum (x_i \cdot w_i) + b)$
+## 1. The Core Architecture: The Multilayer Perceptron (MLP)
 
-By stacking hundreds of these neurons into multiple "Hidden Layers", the network becomes a Universal Function Approximator, mathematically capable of learning the relationship between *any* input (a picture of a cat) and *any* output (the word "Cat").
+A neural network is composed of **Neurons** (or nodes) organized in layers:
+1. **Input Layer:** Receives the raw data (e.g., the 784 pixels of a 28x28 image).
+2. **Hidden Layers (The "Deep" part):** Layers between the input and output. A network is "Deep" if it has more than one hidden layer. Each neuron here performs a mathematical operation on the inputs it receives.
+3. **Output Layer:** Produces the final prediction (e.g., a vector of 10 probabilities for digits 0-9).
 
-## 2. The Engine: Backpropagation
-If you initialize a neural network with random weights, it will confidently declare that a picture of a Cat is a "Toaster".
-The network learns through **Backpropagation**:
-1. **Forward Pass**: The image goes through the network, outputting "Toaster" (Error = 100%).
-2. **Loss Function**: The network mathematically calculates how wrong it was.
-3. **Gradient Descent**: Using calculus (the Chain Rule), the network calculates the exact gradient (slope) for every single weight in the network. It mathematically asks: *"If I tweak Weight #523 slightly up, does the error go down?"*
-4. **Update**: It mathematically updates all 50 billion weights simultaneously to slightly reduce the error, repeating this loop millions of times.
+### The Math of a Single Neuron
+Every neuron $j$ in a hidden layer receives inputs $x$ from the previous layer, applies a **Weight** $w$ to each input, sums them up, adds a **Bias** $b$, and passes the result through a non-linear **Activation Function** $f$ (like ReLU or Sigmoid).
+$$
+y_j = f(\sum (w_{ij} \cdot x_i) + b_j)
+$$
 
-## 3. The Need for Massive Compute (GPUs)
-Deep Learning was invented in the 1980s, but failed because CPUs are too slow. A neural network forward pass requires millions of independent matrix multiplications.
-In the 2010s, researchers realized that **GPUs (Graphics Processing Units)**—which were designed to calculate millions of independent pixels for video games—could mathematically calculate neural networks 100x faster than CPUs, sparking the entire modern AI revolution.
+The non-linear activation function is critical. If neural networks only used linear math (addition and multiplication), stacking 100 layers would be mathematically identical to having a single layer. The non-linearity (e.g., ReLU turning negative numbers to 0) allows the network to learn complex, curving boundaries.
 
+## 2. How the Network Learns: Backpropagation
+
+When a neural network is initialized, its weights are completely random. If you feed it an image of a dog, it might predict "Cat". How does it correct itself?
+
+1. **Forward Pass:** The data is pushed through the network, layer by layer, to get a prediction.
+2. **Loss Function:** We calculate how wrong the prediction was compared to the true label (using functions like Mean Squared Error or Cross-Entropy).
+3. **Backpropagation:** Using the **Chain Rule of Calculus**, we work backward from the output layer to the input layer, calculating the *Gradient* (the derivative) of the Loss with respect to every single weight in the network. The gradient tells us: "If I increase this weight by a tiny amount, will the error go up or down?"
+4. **Gradient Descent:** We update the weights by taking a small step in the opposite direction of the gradient (controlled by the Learning Rate).
+
+By repeating this loop millions of times across millions of images, the network slowly carves an optimized path through the mathematical loss landscape, converging on a set of weights that accurately predict dogs vs. cats.
+
+## 3. Specialized Architectures
+
+The basic MLP (where every neuron connects to every neuron in the next layer, called a Dense layer) is highly inefficient for specific types of data.
+
+### Convolutional Neural Networks (CNNs) -> Computer Vision
+Used for images. Instead of flattening a 2D image into a 1D array, a CNN slides a small filter (a Kernel) across the image to detect spatial patterns like edges, curves, and textures. The network learns these filters automatically. Classic architectures include ResNet and VGG.
+
+### Recurrent Neural Networks (RNNs) & LSTMs -> Sequential Data
+Used for time-series data or text. They contain loops, allowing information to persist over time. (Mostly superseded by Transformers for text).
+
+### Transformers -> Large Language Models (LLMs)
+The architecture behind ChatGPT. Uses the **Self-Attention Mechanism** to look at an entire sequence of text at once and understand the context of every word relative to every other word, heavily parallelized on GPUs.
+
+<Callout icon="warning" title="The Curse of Deep Learning">
+Deep Learning models are extreme "Black Boxes". We know the math of backpropagation, but when a 175-billion parameter model predicts a patient has cancer, we cannot point to exactly *why* it made that decision. Furthermore, Deep Learning requires massive amounts of labeled data and specialized hardware (GPUs/TPUs) to compute the millions of matrix multiplications efficiently.
+</Callout>

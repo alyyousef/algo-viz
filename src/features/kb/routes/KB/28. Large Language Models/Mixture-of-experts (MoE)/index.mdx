@@ -1,35 +1,47 @@
 ---
 title: Mixture-of-Experts (MoE)
-description: A neural network architecture that massively scales parameter count while keeping inference compute costs low.
+description: "A guide to MoE, the architectural design that allows massive LLMs like GPT-4 to run extremely fast by only turning on a fraction of their 'brain' at a time."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Mixture-of-Experts (MoE)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Mixture-of-Experts (MoE) is an architectural pattern that replaces standard dense feedforward layers with multiple smaller "Expert" networks and a "Router" network.
+**Mixture-of-Experts (MoE)** is an architectural paradigm used to build massive Large Language Models without incurring the devastating computational costs usually associated with huge neural networks.
 
-During inference, instead of activating every single parameter in the model, the Router mathematically selects only the top 1 or 2 Experts to process a specific token. This allows you to build a 1-Trillion parameter model that runs as fast as a 100-Billion parameter model.
+It is an open secret in the AI industry that OpenAI's **GPT-4** is not a single, massive 1-Trillion parameter model. It is an MoE model, composed of 8 smaller (roughly 220-Billion parameter) models bolted together.
 
+## The Problem: Dense Compute Costs
 
-<Callout icon="info" title="The Open Source MoE Boom">
+In a traditional "Dense" LLM (like Llama-3-70B), every time you ask a question, your data must pass through every single one of the 70 billion parameters. 
+If you want to make the model smarter, you have to increase the parameters to 500 Billion. But if you do that, processing a single word now requires 500 billion mathematical operations, making the model incredibly slow and wildly expensive to host.
 
+## How MoE Solves It
 
-  Mistral\'s **Mixtral 8x7B** proved that open-source MoE models could rival GPT-3.5 while running on consumer hardware. It has 47 billion total parameters, but only uses 12 billion parameters during inference.
+MoE breaks the neural network apart. Instead of one massive, generic block of neurons, the model's Feed-Forward layers are split into several distinct sub-networks called **Experts**.
 
+When you input a prompt, it hits a **Router Network**. 
+The Router's only job is to look at the token and instantly decide which two "Experts" are best suited to handle it.
+*   If the token is the word *"def"*, the Router sends it to Expert 3 (who specializes in Python code) and Expert 7 (who specializes in logic).
+*   If the token is the word *"Bonjour"*, the Router sends it to Expert 1 (French language) and Expert 5 (Grammar).
 
+### Sparse Activation
+
+Because the Router only sends the data to 2 out of the 8 experts, the other 6 experts remain completely dormant. This is called **Sparse Activation**.
+
+If you have an MoE model with 8 experts of 7 Billion parameters each (like Mistral's Mixtral 8x7B):
+*   The total model size is roughly 47 Billion parameters.
+*   However, during generation, only 2 experts are used at a time.
+*   Therefore, the **Active Parameters** are only 13 Billion.
+
+You get the expansive, diverse intelligence of a massive 47B model, but it runs at the blazing fast speed of a tiny 13B model.
+
+<Callout icon="server" title="The VRAM Catch">
+While MoE drastically reduces *Compute* (making text generation very fast), it does not reduce *VRAM* (Memory). Even though 6 experts are dormant during a calculation, all 8 experts must still be physically loaded into the GPU's memory. You cannot run a 47B MoE model on a small laptop just because the active parameters are 13B; you still need the VRAM to hold the entire 47B weight file.
 </Callout>
-
-
-## Core Components
-
-
-<ComparisonTable headers={['Component', 'Function']} rows={[ ['The Router (Gating Network)', 'A small neural network that looks at the current token and outputs a probability distribution over the available Experts.'], ['The Experts', 'Standard feedforward neural networks. In an 8x MoE, there are 8 independent experts. They often naturally specialize (e.g., one expert becomes good at math, another at French) without explicit human direction.'], ['Sparse Activation', 'The defining feature of MoE. The system only executes the math for the top-K experts (usually K=2) chosen by the Router.'] ]} />
-
-

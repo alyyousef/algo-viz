@@ -1,26 +1,50 @@
 ---
 title: Extractive Summarization
-description: A computationally efficient NLP technique that mathematically scores the importance of every sentence in a document and simply copies the top N sentences to form a summary.
+description: "An overview of Extractive Summarization, the NLP technique of creating a summary by selecting the most important sentences directly from the source text."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Extractive Summarization">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Unlike Abstractive Summarization (which requires a massive AI to write brand new text), Extractive Summarization acts like a student with a yellow highlighter. It mathematically identifies the most important sentences and copies them verbatim.
+**Text Summarization** in Natural Language Processing is divided into two entirely different paradigms: **Extractive** and **Abstractive**. 
 
-## 1. Sentence Scoring (TF-IDF)
-To figure out which sentences are important, the algorithm mathematically scores them.
-It calculates the TF-IDF (Term Frequency - Inverse Document Frequency) of every word in the document. Words that appear frequently in this document, but rarely in other documents, receive a massively high mathematical score (they are "keywords").
-The algorithm then mathematically sums the scores of all the words in a sentence. A sentence containing 5 keywords gets a much higher score than a sentence containing mostly "the" and "and."
+**Extractive Summarization** is the older, simpler, and traditionally more reliable method. It works exactly like a student with a yellow highlighter. The algorithm reads a massive document, identifies the 5 most mathematically "important" sentences, and simply copies and pastes those exact 5 sentences into a new paragraph to form the summary. 
 
-## 2. Graph-Based Ranking (TextRank)
-A more advanced mathematical approach is TextRank (derived from Google's PageRank).
-Every sentence in the document becomes a Node in a mathematical Graph. If two sentences share similar vocabulary, an Edge is drawn between them. Sentences that share vocabulary with many other sentences are mathematically calculated to be the "central hubs" of the document's meaning. The algorithm ranks the Nodes by their mathematical centrality and extracts the top 3 as the final summary.
+It does not invent new words, and it does not paraphrase.
 
+## How it Works
+
+Because extractive summarization just selects existing sentences, it is essentially treated as a **Ranking Problem**. The algorithm must score every sentence in the document and return the top-N highest-scoring sentences.
+
+Historically, there are two ways to do this:
+
+### 1. Statistical / Graph-Based Methods (e.g., TextRank)
+The most famous traditional algorithm is **TextRank** (which is just Google's PageRank algorithm applied to words instead of websites).
+1.  Split the document into individual sentences.
+2.  Compare every sentence to every other sentence using a mathematical similarity metric (like Cosine Similarity based on TF-IDF vectors).
+3.  Build a massive web (a graph). If Sentence A and Sentence B share a lot of the same rare words, draw a strong line connecting them.
+4.  Run the PageRank algorithm. A sentence is deemed "important" if it is highly connected to other "important" sentences.
+5.  Extract the top 3 highest-scoring sentences.
+
+### 2. Deep Learning Methods
+Modern extractive systems use deep neural networks (like BERT). 
+You feed the entire document into the neural network, and it performs a simple binary classification on every single sentence: `[1 = Include in Summary]`, `[0 = Do not include]`. Because BERT understands deep semantic context, it is vastly better at ignoring redundant sentences than traditional statistical methods.
+
+## Extractive vs Abstractive
+
+**Abstractive Summarization** (which is what ChatGPT does) involves the AI reading the text and writing a brand new summary from scratch, paraphrasing concepts using words that were never in the original document.
+
+**Why would anyone still use Extractive?**
+1.  **Factual Accuracy (No Hallucinations):** Because an extractive model only copies and pastes existing sentences, it is mathematically impossible for it to hallucinate a fake fact, a fake name, or a fake number. 
+2.  **Speed:** Extractive algorithms (like TextRank) do not require massive GPUs. They can summarize a 1,000-page book on a standard laptop in seconds.
+
+<Callout icon="triangle-exclamation" title="The Cohesion Problem">
+The biggest flaw of Extractive Summarization is a lack of cohesion and flow. Because the algorithm just rips 5 sentences from different parts of a document and jams them together, you frequently end up with jarring summaries like: *"The CEO announced the merger on Tuesday. He said it was a mistake."* (Wait, who is 'He'? The context was in a sentence that the algorithm chose not to extract).
+</Callout>

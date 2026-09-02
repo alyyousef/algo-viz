@@ -1,32 +1,51 @@
 ---
 title: Named Entity Recognition (NER)
-description: A sequence-labeling algorithm that mathematically scans a block of text and categorizes specific nouns into predefined classes like People, Organizations, and Locations.
+description: "A guide to NER, the NLP task of identifying and classifying proper nouns and important entities within unstructured text."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Named Entity Recognition">
+    <ConceptTemplate title="Named Entity Recognition (NER)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you feed a 500-page legal contract into a computer, it just sees 10 million meaningless ASCII characters. NER is the mathematical flashlight that highlights the important data.
+**Named Entity Recognition (NER)** is one of the most commercially useful tasks in traditional Natural Language Processing. It is the process of scanning a sentence and automatically identifying the "who, what, and where."
 
-## 1. Sequence Labeling (BIO Tagging)
-NER is mathematically modeled as a Token Classification problem.
-The sentence is split into words (Tokens). The Neural Network must assign a mathematical label to every single word.
-It uses the BIO format (Begin, Inside, Outside).
-For "Tim Cook is the CEO of Apple Inc":
-- Tim: `B-PER` (Beginning of a Person)
-- Cook: `I-PER` (Inside a Person)
-- is the CEO of: `O` (Outside any entity)
-- Apple: `B-ORG` (Beginning of an Organization)
-- Inc: `I-ORG` (Inside an Organization)
+Specifically, it locates words that represent real-world objects (**Entities**) and categorizes them into predefined labels (like Person, Organization, Location, Time, or Currency).
 
-## 2. Context is Everything
-A simple dictionary lookup cannot solve NER. If the algorithm sees the word "Apple," is it a fruit (`O`) or a corporation (`B-ORG`)?
-Modern NER uses bi-directional mathematical models (like BERT or Bi-LSTMs). The algorithm physically reads the words *before* "Apple" and the words *after* "Apple" simultaneously. By mathematically processing the surrounding context, the model can accurately deduce whether the entity is a piece of fruit or a trillion-dollar tech company.
+## How it Works
 
+Consider the following raw text:
+> *"Tim Cook announced that Apple will build a new headquarters in Austin, Texas in 2025 for $1 billion."*
+
+A trained NER system will read that sentence and output tagged data:
+*   `[Tim Cook]` $\rightarrow$ **PERSON**
+*   `[Apple]` $\rightarrow$ **ORGANIZATION**
+*   `[Austin, Texas]` $\rightarrow$ **LOCATION**
+*   `[2025]` $\rightarrow$ **DATE**
+*   `[$1 billion]` $\rightarrow$ **MONEY**
+
+## Why is it so difficult?
+
+To a human, NER seems trivial (just look for capitalized words). To a computer, it is incredibly difficult because of **Ambiguity**.
+
+1.  **Context is everything:** 
+    *   "I ate an **Apple**." (Fruit - Not an entity)
+    *   "I bought shares in **Apple**." (Organization)
+2.  **Multi-word entities:** The system must know that "New York City" is a single entity, not three separate entities (New, York, City). This is traditionally handled using the **BIO Tagging** scheme (Beginning, Inside, Outside).
+3.  **Unseen entities:** The system must be able to identify that "Zyzzxorp Inc." is an organization purely based on the grammar surrounding it, even if the word is entirely made up.
+
+## Evolution of NER Models
+
+1.  **Rule-Based:** Early systems used massive dictionaries (Gazetteers) and regex rules (e.g., "If word starts with capital letter and is followed by 'Inc', tag as ORG"). These were fast but brittle.
+2.  **Traditional Machine Learning:** In the 2000s, algorithms like **Conditional Random Fields (CRFs)** became the standard. They used statistical probability to guess tags based on the surrounding words.
+3.  **Deep Learning:** In the 2010s, **Bi-LSTMs** connected to CRFs became state-of-the-art, allowing the network to explicitly remember long-distance context before tagging a word.
+4.  **Transformers (LLMs):** Today, models like BERT (for explicit token tagging) or GPT-4 (via simple prompting) achieve near-human accuracy on NER tasks with virtually zero custom training required.
+
+<Callout icon="briefcase" title="Enterprise Use Cases">
+NER is the backbone of automated document processing. It is used by law firms to automatically redact names from legal documents (PII removal), by news agencies to automatically tag articles with relevant stock tickers, and by customer service bots to extract tracking numbers and dates from angry customer emails.
+</Callout>

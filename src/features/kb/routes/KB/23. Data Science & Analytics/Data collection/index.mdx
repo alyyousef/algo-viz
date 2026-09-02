@@ -1,25 +1,20 @@
 ---
-title: Data Collection
-description: The systematic architectural process of gathering massive, raw datasets from distributed sources into a centralized, mathematically analyzable storage system.
+title: Data Collection (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Data Collection">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before any mathematical analysis can begin, the data must be physically acquired. In modern architecture, this involves ingesting Terabytes or Petabytes of data per day.
+<Callout icon="info" title="Redirect">
+The architectural foundations of **Data Collection** (the Ingestion layer of the modern data stack using Kafka, Fivetran, or Snowplow) are covered in the Deep Dive for **Business Intelligence (BI)**. 
 
-## 1. Batch vs. Streaming Ingestion
-- **Batch Processing**: The legacy method. Once a night, a script wakes up, runs a massive SQL query against the production database, and physically copies 10 million rows into the Data Warehouse.
-- **Streaming (Real-Time)**: The modern approach (using Apache Kafka or AWS Kinesis). Every time a user clicks a button, a tiny mathematical Event is instantly fired into a Message Broker. The Data Warehouse mathematically ingests these events in real-time, allowing Data Scientists to analyze user behavior within milliseconds of it happening.
-
-## 2. The Data Lake
-When data is collected, it is often unstructured (raw JSON, server logs, images, audio files).
-You cannot mathematically store this in a rigid SQL database. Instead, the raw data is dumped into a **Data Lake** (like AWS S3). A Data Lake is an incredibly cheap, mathematically infinite object storage system. It acts as the absolute source of truth. Later, ETL pipelines will pull this raw data, mathematically transform it, and load it into a structured Data Warehouse for actual analysis.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore the end-to-end data stack.
+</Callout>

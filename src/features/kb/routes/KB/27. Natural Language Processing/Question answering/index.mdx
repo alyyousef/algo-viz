@@ -1,26 +1,53 @@
 ---
 title: Question Answering (QA)
-description: A highly advanced NLP architecture where an AI mathematically processes a natural language question and extracts or generates the precise factual answer from a text corpus.
+description: "An overview of Question Answering systems in NLP, from traditional extraction methods to modern generative models."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Question Answering">
+    <ConceptTemplate title="Question Answering (QA)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When you ask Google "When was Abraham Lincoln born?", it doesn't give you 10 blue links; it mathematically extracts the exact date (Feb 12, 1809). This requires complex QA architectures.
+**Question Answering (QA)** is a subfield of Natural Language Processing dedicated to building systems that automatically answer questions posed by humans in a natural language.
 
-## 1. Extractive QA
-In Extractive QA (like the famous SQuAD dataset task), the AI is given a Question and a Paragraph of text.
-The Neural Network (usually BERT) mathematically reads both. Instead of generating a new sentence, the network is trained to mathematically predict exactly two numbers: the **Start Index** and the **End Index** of the answer within the provided paragraph. It literally highlights the text. If the mathematical probability of the Start Index is low across the entire paragraph, the model concludes that the answer is not present in the text.
+It is considered one of the ultimate tests of machine intelligence because answering a question correctly requires an algorithm to possess reading comprehension, logical reasoning, and a vast repository of world knowledge.
 
-## 2. Generative QA (RAG)
-Modern Generative QA (like ChatGPT) doesn't just extract text; it synthesizes it.
-However, raw Generative models hallucinate. The industry standard solution is **Retrieval-Augmented Generation (RAG)**.
-First, the system mathematically converts your question into a Vector and searches a massive database to retrieve relevant facts. Second, it mathematically injects those retrieved facts into the prompt of a Generative AI. The AI then synthesizes a perfectly grammatical, mathematically constrained answer based *only* on the provided facts, preventing hallucinations.
+## The Two Main Paradigms of QA
 
+Historically and technically, QA systems are divided into two completely different approaches.
+
+### 1. Extractive QA
+In an Extractive QA system, the AI does not write anything new. Instead, you give the AI a massive document (e.g., a Wikipedia article) and a question. The AI scans the document and simply **highlights the exact span of text** that contains the answer.
+
+*   **Document:** "Barack Obama was born in Honolulu, Hawaii on August 4, 1961."
+*   **Question:** "Where was Obama born?"
+*   **Output:** `[Honolulu, Hawaii]`
+
+Extractive QA was the absolute standard for enterprise NLP for years (popularized by models like **BERT**). It is highly factual and virtually immune to "hallucinations" because it can only output exact quotes from the provided text.
+
+### 2. Generative QA
+In a Generative QA system, the AI reads the document (or relies on its internal training data) and **writes a brand new sentence** from scratch to answer the question.
+
+*   **Document:** "Barack Obama was born in Honolulu, Hawaii on August 4, 1961."
+*   **Question:** "Where was Obama born?"
+*   **Output:** "He was born in the city of Honolulu, which is located in Hawaii."
+
+This is how modern Large Language Models (LLMs) like ChatGPT operate. It sounds vastly more human, but it introduces the risk of the model hallucinating facts that were never in the source document.
+
+## Open-Domain vs Closed-Domain
+
+QA systems are also categorized by *where* they get their knowledge:
+
+*   **Closed-Domain QA:** The system only answers questions about a specific dataset (e.g., A customer service bot that only answers questions based on a company's internal PDF manual).
+*   **Open-Domain QA:** The system must be able to answer questions about literally anything (e.g., Google Search, IBM Watson playing Jeopardy). Open-domain systems usually have a two-step pipeline:
+    1.  **Retriever:** An algorithm that searches through millions of documents to find the 5 articles most likely to contain the answer.
+    2.  **Reader:** An Extractive or Generative QA model that reads those 5 articles and produces the final answer.
+
+<Callout icon="bolt" title="Retrieval-Augmented Generation (RAG)">
+Today, the industry standard for enterprise QA is **RAG**. RAG combines the best of both worlds. When a user asks a question, a Retriever searches a vector database for factual internal documents. Those documents are then pasted into the prompt of a Generative LLM, which uses them to write a fluent, highly accurate answer with citations, completely eliminating the LLM's tendency to hallucinate.
+</Callout>

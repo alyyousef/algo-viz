@@ -287,9 +287,7 @@
     "src/features/kb/routes/KB/12. Linux & Shell Administration/sudo/index.mdx",
     "src/features/kb/routes/KB/12. Linux & Shell Administration/syslog/index.mdx",
     "src/features/kb/routes/KB/12. Linux & Shell Administration/system monitoring/index.mdx",
-    "src/features/kb/routes/KB/12. Linux & Shell Administration/systemctl/index.mdx"
-  ],
-  "pending": [
+    "src/features/kb/routes/KB/12. Linux & Shell Administration/systemctl/index.mdx",
     "src/features/kb/routes/KB/12. Linux & Shell Administration/systemd/index.mdx",
     "src/features/kb/routes/KB/12. Linux & Shell Administration/tar/index.mdx",
     "src/features/kb/routes/KB/12. Linux & Shell Administration/top/index.mdx",
@@ -847,7 +845,9 @@
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Constraint programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Data-oriented programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Dataflow programming/index.mdx",
-    "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Declarative programming/index.mdx",
+    "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Declarative programming/index.mdx"
+  ],
+  "pending": [
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Event-driven programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Functional programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Generic programming/index.mdx",

@@ -1,26 +1,20 @@
 ---
-title: Dynamic Linking
-description: A modularity technique where external libraries are mathematically mapped into a program's memory space at runtime, rather than being hardcoded into the executable.
+title: Dynamic Linking (Redirect)
+description: "Redirecting to Static vs Dynamic Linking."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Dynamic Linking">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When a program uses an external library (like OpenGL), the compiler does not have to physically embed the library's machine code inside your final binary. It can use Dynamic Linking.
+<Callout icon="info" title="Redirect">
+The architectural mechanism of **Dynamic Linking** (where the Operating System loads `.dll` or `.so` files into RAM at runtime rather than embedding them in the binary) is contrasted against Static Linking in the Deep Dive for **Static vs. Dynamic Linking**. 
 
-## 1. Shared Libraries (.dll / .so)
-A Dynamic Library (`.dll` on Windows, `.so` on Linux) is a compiled binary containing functions that sit independently on the hard drive.
-When you compile your program dynamically, the compiler leaves mathematical "stubs" inside your binary. It essentially writes: "When the program reaches this point, ask the Operating System to find `opengl32.dll`, load it into RAM, and jump to its memory address."
-
-## 2. Memory De-duplication
-Dynamic Linking provides massive mathematical efficiency at the OS level.
-If 50 different applications on your computer all use the standard C library (`libc`), Static Linking would physically embed 50 copies of `libc` in your RAM, wasting gigabytes of space.
-With Dynamic Linking, the OS loads `libc.so` into physical RAM exactly once. It then mathematically maps that single physical memory address into the Virtual Memory space of all 50 running applications simultaneously, saving massive amounts of physical RAM.
-
+Please navigate to the [Static vs. Dynamic Linking](/kb/2.-programming-fundamentals--language-concepts/2.4-modularity/static-vs-dynamic-linking) module to explore runtime binary loading.
+</Callout>

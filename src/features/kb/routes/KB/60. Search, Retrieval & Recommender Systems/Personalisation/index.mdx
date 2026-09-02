@@ -1,19 +1,36 @@
 ---
-title: Personalisation
-description: The process of tailoring a service or a product to accommodate specific individuals, sometimes tied to groups or segments of individuals.
+title: Personalization
+description: "The application of machine learning algorithms to tailor a product, interface, or content feed to the specific historical preferences of an individual user."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Personalization">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Personalization"
+  subtitle="Algorithmic Curation"
+  tags={['Recommender Systems', 'Machine Learning', 'Data Science', 'UX']}
+>
 
-**Personalization** is the biological transition from "Search" to "Recommendation".
+In the early days of the web, every user who visited Yahoo.com saw the exact same front page. Today, if 100 million users open TikTok or Netflix, they see 100 million completely unique, dynamically generated interfaces. This is **Personalization**.
 
-If two different users type the exact same query "Apple" into Google, a non-personalized engine mathematically returns the exact same results. A Personalized engine mathematically analyzes the users' embeddings. If User A is a software engineer and User B is a farmer, the system biologically reranks the results, showing the iPhone to User A and fruit orchards to User B.
+## 1. Collaborative Filtering
 
+The most famous algorithm for personalization is **Collaborative Filtering** (famously used by Amazon's "Customers who bought this also bought...").
+It does not look at the actual item; it looks at user behavior.
+If User A and User B both like Movies 1, 2, and 3, the algorithm mathematically maps them as "Neighbors" in a high-dimensional vector space. If User A then watches and likes Movie 4, the algorithm will autonomously recommend Movie 4 to User B, assuming their tastes remain correlated.
+
+## 2. Content-Based Filtering
+
+Instead of looking at other users, **Content-Based Filtering** looks deeply at the metadata of the items themselves. 
+If a user listens to a song on Spotify, the algorithm analyzes the song's audio features (BPM, acousticness, genre tags). It then searches the database for other songs with mathematically similar feature vectors and recommends them to the user. This solves the "Cold Start" problem (recommending a brand new song that nobody else has listened to yet).
+
+## 3. The Filter Bubble
+
+While personalization massively increases user engagement metrics (retention, click-through rates), it introduces severe societal architecture problems. 
+By feeding a user strictly what they want to see (to maximize engagement), personalization algorithms inadvertently create **Filter Bubbles** and Echo Chambers. The algorithm quickly learns that showing a user inflammatory political content they agree with yields a high CTR, mathematically driving users toward polarization and extremism simply as a byproduct of optimizing a reward function.
+
+<Callout type="success" title="Exploration vs. Exploitation">
+  The best personalization systems balance **Exploitation** (showing you more of what they mathematically know you like) with **Exploration** (randomly showing you something completely new to see if your tastes have expanded). Without exploration, the algorithm gets trapped in a local optimum.
+</Callout>
+
+</ConceptTemplate>

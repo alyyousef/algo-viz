@@ -1,28 +1,20 @@
 ---
-title: Result Types (Monadic Error Handling)
-description: The modern mathematical standard for Error Handling, using Algebraic Data Types to force the compiler to verify that errors are handled at compile-time.
+title: Result Types (Redirect)
+description: "Redirecting to Exceptions."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Result Types">
+    <ConceptTemplate title="Result Types (Monads)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Result Types (used in Rust, Haskell, Swift) are the modern mathematical antidote to the unpredictability of Exceptions. They treat Errors not as invisible explosions, but as standard, returned data.
+<Callout icon="info" title="Redirect">
+The modern architectural shift toward **Result Types** (the `Result<T, E>` Monad in Rust and Swift) as a safer, more performant alternative to Stack Unwinding is comprehensively analyzed in the Deep Dive for **Exceptions**. 
 
-## 1. The Sum Type Enum
-A Result Type is mathematically an Enum with exactly two states:
-`enum Result<T, E> { Ok(T), Err(E) }`
-When you call `readFile()`, it does not mathematically return a String. It returns a `Result` object.
-If it succeeded, it returns `Ok(String)`. If it failed, it returns `Err(IOError)`.
-
-## 2. Forcing Exhaustiveness
-Because the return value is mathematically a `Result`, the developer is physically blocked from accessing the String directly.
-They MUST write a `match` statement to unpack the Box.
-The Compiler mathematically forces the developer to write code for the `Err` branch. If they forget, the code refuses to compile. This completely eliminates the problem of silent failures (Error Codes) and the problem of invisible control flow (Exceptions), resulting in incredibly robust, mathematically provable software.
-
+Please navigate to the [Exceptions](/kb/2.-programming-fundamentals--language-concepts/2.5-error-handling/exceptions) module to explore the evolution of error propagation.
+</Callout>

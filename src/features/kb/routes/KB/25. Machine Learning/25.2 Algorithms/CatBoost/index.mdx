@@ -1,33 +1,53 @@
 ---
 title: CatBoost
-description: A state-of-the-art gradient boosting algorithm developed by Yandex, mathematically optimized to handle categorical data flawlessly without preprocessing.
+description: "An overview of CatBoost, a powerful gradient boosting library designed for categorical data."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="CatBoost">
+    <TechnologyTemplate title="CatBoost">
       {children}
-    
-  </ConceptTemplate>
+    </TechnologyTemplate>
   )
 }
 
-**CatBoost (Categorical Boosting)** is a cutting-edge ensemble machine learning algorithm developed by Yandex. Alongside XGBoost and LightGBM, it dominates tabular data competitions on Kaggle. CatBoost's defining mathematical breakthrough is how it handles categorical string data without requiring the human to perform One-Hot Encoding.
+**CatBoost** (Categorical Boosting) is a high-performance open-source gradient boosting on decision trees library developed by Yandex. It is particularly renowned for its exceptional handling of categorical features and its robust performance right out of the box with default hyperparameters.
 
-## 1. The Categorical Encoding Problem
-Algorithms mathematically require numbers. If you have a column for "City" with 10,000 unique cities, standard algorithms require you to One-Hot Encode it, creating 10,000 new sparse binary columns. This triggers the Curse of Dimensionality, destroying memory and training speed.
+## Key Features & Advantages
 
-If you try to use Target Encoding (replacing "New York" with the average target value of New York), you mathematically cause **Target Leakage**, overfitting the model because you used the target variable to encode the feature.
+### 1. Native Categorical Feature Handling
+The most significant advantage of CatBoost is its ability to process categorical variables directly without requiring manual preprocessing like one-hot encoding or label encoding.
 
-## 2. CatBoost's Mathematical Solution (Ordered Target Statistics)
-CatBoost solves Target Leakage flawlessly using **Ordered Target Statistics**.
-Instead of calculating the average target value for "New York" using all rows, CatBoost mathematically artificially shuffles the data to simulate time.
-To encode "New York" for Row 500, CatBoost mathematically *only looks at Rows 1 through 499*. It calculates the average target value based purely on the "past", completely eliminating Target Leakage while providing a hyper-dense, highly predictive numerical feature.
+Instead of standard target encoding, CatBoost uses a technique called **Ordered Target Statistics (Ordered TS)**. It calculates the target statistic for a specific row using only the rows that appeared *before* it in a random permutation of the dataset. This prevents **target leakage** (using the target value of a row to encode its own categorical feature) and significantly reduces overfitting.
 
-## 3. Oblivious Trees
-Most Decision Trees are mathematically asymmetric. The left branch might go 5 layers deep, while the right branch stops at 1 layer. This causes overfitting.
+### 2. Oblivious Trees (Symmetric Trees)
+CatBoost uses oblivious decision trees as base predictors. In an oblivious tree, the same splitting criterion is applied across the entire level of the tree.
+*   **Faster Execution:** Because the splits are uniform, the tree structure can be evaluated extremely quickly using bitwise operations.
+*   **Reduced Overfitting:** The enforced symmetry acts as a natural regularization mechanism, resulting in trees that generalize better.
 
-CatBoost uses **Oblivious Trees (Symmetric Trees)**. In an Oblivious Tree, the exact same mathematical splitting criteria (e.g., Age > 30) is applied across the *entire* level of the tree.
-This results in beautifully balanced, shallow trees. Because the structure is completely uniform, the CPU can mathematically execute the predictions using highly optimized vectorized instructions, making CatBoost's prediction speed (inference) magnitudes faster than XGBoost.
+### 3. Ordered Boosting
+Traditional gradient boosting algorithms calculate gradients and build trees using the same dataset, which can lead to prediction shift. CatBoost introduces **Ordered Boosting**, a modification to the standard gradient boosting algorithm that calculates gradients using a separate, independent subset of data for each step, effectively overcoming the prediction shift problem.
 
+<Callout icon="zap" title="Performance">
+CatBoost is highly optimized for performance, offering fast training on both CPUs and GPUs. It is often faster to train than XGBoost and competitive with LightGBM, especially when datasets contain many categorical features.
+</Callout>
+
+## Comparison with XGBoost and LightGBM
+
+<ComparisonTable
+  title="Gradient Boosting Libraries"
+  headers={["Feature", "CatBoost", "XGBoost", "LightGBM"]}
+  rows={[
+    ["Categorical Handling", "Excellent (Native Ordered TS)", "Requires manual encoding", "Good (Native integer encoding)"],
+    ["Tree Structure", "Oblivious (Symmetric)", "Depth-wise", "Leaf-wise"],
+    ["Tuning Required", "Low (Great defaults)", "High", "High"],
+    ["Training Speed", "Fast (especially on GPU)", "Moderate", "Very Fast"]
+  ]}
+/>
+
+## Summary
+
+CatBoost is an essential tool in a machine learning engineerTICK1s toolkit, especially when dealing with tabular data rich in categorical features. Its combination of robust default parameters, prevention of target leakage, and high-speed execution make it a top contender for winning Kaggle competitions and deploying real-world models.

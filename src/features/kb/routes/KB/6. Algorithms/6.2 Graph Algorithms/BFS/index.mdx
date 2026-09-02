@@ -4,6 +4,7 @@ description: The fundamental graph traversal algorithm that mathematically explo
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { GraphVisualizer } from '@/features/kb/components/visualizations/GraphVisualizer'
 
 export default function Layout({ children }) {
   return (
@@ -13,6 +14,8 @@ export default function Layout({ children }) {
   </ConceptTemplate>
   )
 }
+
+<GraphVisualizer algorithm="bfs" />
 
 **Breadth-First Search (BFS)** is an algorithm for traversing or searching tree and graph data structures. It mathematically guarantees that it explores all neighbor nodes at the present depth prior to moving on to the nodes at the next depth level.
 

@@ -1,42 +1,20 @@
 ---
-title: Data Quality (Great Expectations)
-description: The practice of enforcing mathematical assertions and unit tests on data pipelines to prevent silent data corruption.
+title: Data Quality (Redirect)
+description: "Redirecting to Apache Airflow."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Data Quality">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In traditional Software Engineering, if code breaks, the server throws an explicit 500 Error.
-In Data Engineering, if a pipeline breaks (e.g., an upstream software engineer accidentally changes the API payload from dollars to cents), the pipeline will execute perfectly. It will silently output corrupted data, and the CEO will make catastrophic business decisions based on a false dashboard.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Data Quality** (asserting conditions, running Great Expectations, and preventing bad data from entering the Lake) is covered in the Deep Dive for **Apache Airflow**. 
 
-This is called **Silent Data Corruption**. Data Quality tools mathematically prevent this.
-
-## 1. Great Expectations
-**Great Expectations (GX)** is the absolute industry standard Python framework for Data Quality. It brings strict Software Engineering unit testing directly to data.
-
-You define mathematical assertions (Expectations) about what your data *must* look like:
-- `expect_column_values_to_not_be_null('user_id')`
-- `expect_column_values_to_be_between('age', min_value=0, max_value=120)`
-- `expect_column_values_to_be_in_set('country', ['US', 'CA', 'UK'])`
-
-## 2. Pipeline Integration (The Circuit Breaker)
-These assertions are not run passively; they are mathematically integrated directly into the Airflow DAG as a **Circuit Breaker**.
-
-```python
-# Airflow execution graph
-extract_data >> transform_data >> run_great_expectations >> load_to_dashboard
-```
-
-If the `transform_data` step outputs a table where 5% of the ages are negative numbers, the `run_great_expectations` step mathematically detects the anomaly. It immediately fails the Airflow DAG, preventing the `load_to_dashboard` step from executing. The corrupted data never reaches the business users.
-
-## 3. Data Observability
-While Great Expectations relies on hardcoded rules, modern Data Observability platforms (like Monte Carlo or Anomalo) use Machine Learning to automatically monitor tables.
-They mathematically calculate the historical variance of a table (e.g., "This table usually receives 10,000 rows a day"). If the table suddenly receives 2 rows on a Tuesday, the ML model mathematically flags an anomaly and alerts the Data Engineering team in Slack, even if no explicit rule was written.
-
+Please navigate to the [Apache Airflow](/kb/22.-data-engineering/airflow) module to explore how quality checks are integrated into DAG pipelines.
+</Callout>

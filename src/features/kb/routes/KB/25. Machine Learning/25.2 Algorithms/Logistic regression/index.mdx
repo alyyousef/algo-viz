@@ -1,6 +1,6 @@
 ---
 title: Logistic Regression
-description: The core statistical model for binary classification, utilizing the Sigmoid function and Cross-Entropy loss.
+description: "A comprehensive guide to Logistic Regression, the foundational algorithm for binary classification."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
@@ -9,43 +9,56 @@ export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Logistic Regression">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Despite its name, Logistic Regression is **not** a regression algorithm; it is the fundamental algorithm for **Binary Classification**. It outputs a mathematical probability between 0 and 1.
+Despite having "regression" in its name, **Logistic Regression** is a fundamental supervised machine learning algorithm used primarily for **classification**, not regression. It is the go-to algorithm for predicting categorical outcomes, most commonly binary outcomes (e.g., Yes/No, Spam/Not Spam, Malignant/Benign).
 
-## 1. The Sigmoid Function
-If we used standard Linear Regression for classification, the output could be `-5.2` or `42.7`, which mathematically makes no sense as a probability.
+## The Core Concept: From Linear to Logistic
 
-To fix this, Logistic Regression wraps the linear output `θ^T x` in the **Sigmoid (Logistic) Function**:
+If you try to use Linear Regression ($y = w_0 + w_1x_1 + ...$) for a binary classification problem (where $y$ is 0 or 1), the model will output values less than 0 or greater than 1, which doesn't make sense as a probability.
 
-**`σ(z) = 1 / (1 + e^-z)`**
+Logistic Regression solves this by taking the output of a linear equation and passing it through a mathematical function called the **Sigmoid function** (or Logistic function).
 
-The Sigmoid function asymptotes at exactly 0 and 1. If `σ(z) >= 0.5`, we predict Class 1. If `σ(z) &lt; 0.5`, we predict Class 0.
+### The Sigmoid Function
 
-## 2. The Log Loss (Cross-Entropy) Cost Function
-We cannot use Mean Squared Error (MSE) for Logistic Regression because wrapping MSE with the Sigmoid function creates a non-convex mathematical landscape filled with local minima, trapping Gradient Descent.
+The Sigmoid function squashes any real-valued number into a range exactly between 0 and 1. 
 
-Instead, we use the **Binary Cross-Entropy (Log Loss)** cost function:
+$$\sigma(z) = \frac{1}{1 + e^{-z}}$$
 
-`J(θ) = -1/m * Σ [ y^(i) * log(h_θ(x^(i))) + (1 - y^(i)) * log(1 - h_θ(x^(i))) ]`
+Where $z$ is the linear combination of inputs: $z = w_0 + w_1x_1 + w_2x_2 + ...$
 
-### Why this works:
-- If the true label `y = 1`, the second half of the equation zeros out. The cost becomes `-log(h_θ(x))`. If our model predicts `0.001`, `-log(0.001)` approaches infinity. We massively penalize confident, wrong predictions.
-- If the true label `y = 0`, the first half zeros out, and the inverse logic applies.
+By passing the linear equation through the Sigmoid function, Logistic Regression outputs a value between 0 and 1, which can be interpreted as the **probability** that the given data point belongs to the positive class (class 1).
 
-## 3. Multiclass Classification (Softmax)
-To extend Logistic Regression beyond two classes (e.g., predicting whether an image is a Cat, Dog, or Bird), we mathematically generalize the Sigmoid function into the **Softmax Function**, which converts a vector of raw scores (logits) into a normalized probability distribution where all values sum to 1.
+## Making a Classification Decision
 
+To turn the probability output into a concrete classification, a **decision threshold** is applied. 
+*   If the predicted probability $\ge 0.5$, classify as Class 1.
+*   If the predicted probability $< 0.5$, classify as Class 0.
 
-<Callout icon="tip" title="Linearly Separable Data">
-
-
-Logistic Regression fundamentally draws a single straight line (or hyperplane) to separate classes. If your data is geometrically concentric (e.g., a circle of Class 1 surrounded by a ring of Class 0), Logistic Regression will completely fail without feature engineering (like polynomial features).
-
-
+<Callout icon="lightbulb" title="Adjusting the Threshold">
+The threshold does not have to be 0.5. In medical diagnosis, you might want to avoid False Negatives (missing a disease). You could lower the threshold to 0.2, meaning the model only needs to be 20% confident to flag a patient for further screening, thereby increasing Recall at the expense of Precision.
 </Callout>
 
+## How the Model Learns (Log Loss)
 
+Linear Regression uses Mean Squared Error (MSE) as its cost function. If you use MSE with the Sigmoid function, the resulting cost function becomes non-convex (it has many local valleys), making Gradient Descent ineffective.
+
+Instead, Logistic Regression uses **Log Loss** (also known as Binary Cross-Entropy). 
+Log Loss heavily penalizes the model when it is highly confident but wrong. 
+*   If the true class is 1 and the model predicts 0.99, the penalty is tiny.
+*   If the true class is 1 and the model predicts 0.01, the penalty is massive.
+
+The algorithm uses optimization techniques like Gradient Descent to find the weights that minimize the overall Log Loss across the training data.
+
+## Advantages and Limitations
+
+### Advantages
+*   **Interpretability:** Like Linear Regression, the weights assigned to features are highly interpretable. A positive weight means the feature increases the probability of class 1; a negative weight decreases it.
+*   **Outputs Probabilities:** It doesn't just give a hard "yes/no" answer; it tells you *how confident* it is.
+*   **Fast and Efficient:** It is computationally cheap to train and extremely fast at inference time.
+
+### Limitations
+*   **Linear Decision Boundary:** It assumes the classes can be separated by a single straight line (or flat hyperplane in higher dimensions). It cannot solve non-linear problems (like the XOR problem) without complex feature engineering.
+*   **Multiclass Classification:** While natively binary, it can be extended to multiclass problems using techniques like One-vs-Rest (OvR) or Multinomial Logistic Regression (Softmax), but algorithms like Random Forests are often preferred for complex multiclass tasks.

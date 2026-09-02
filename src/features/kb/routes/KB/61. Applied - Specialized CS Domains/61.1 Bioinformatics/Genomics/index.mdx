@@ -1,19 +1,30 @@
 ---
 title: Genomics
-description: An interdisciplinary field of biology focusing on the structure, function, evolution, mapping, and editing of genomes.
+description: "The computational study of genomes, mapping and analyzing the complete set of DNA within a single cell of an organism."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Genomics">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Genomics"
+  subtitle="Decoding the Source Code of Life"
+  tags={['Bioinformatics', 'Genetics', 'Data Science', 'Algorithms']}
+>
 
-A genome is an organism's complete set of DNA. Human DNA contains roughly 3 billion base pairs (A, C, G, T).
+**Genomics** is the intersection of biology and computer science. It treats the DNA of an organism as a massive, 3-billion-character string of code (written in A, C, T, G), using computational algorithms to search, analyze, and reverse-engineer the biological software.
 
-Mathematically, a human genome is a 3-Gigabyte text file written in a 4-letter alphabet. **Genomics** is the computer science of storing, analyzing, and querying these massive text files. It involves finding "bugs" in the code (genetic mutations) that cause biological diseases, and comparing the text files of different humans to understand genetic diversity.
+## 1. Genome Assembly (The Jigsaw Puzzle)
 
+When DNA is sequenced by a machine in a lab, the machine cannot read the entire 3-billion-letter string from start to finish. Instead, it shreds the DNA into millions of tiny "reads" (e.g., 150 letters long) and reads those.
+
+The computer science problem is **Genome Assembly**. Algorithms must take these 100 million tiny, overlapping strings and stitch them back together into the massive original sequence. This is computationally equivalent to finding the Shortest Superstring, famously solved using **De Bruijn Graphs**. The algorithm maps overlaps as edges on a graph and finds an Eulerian path that reconstructs the genome.
+
+## 2. Variant Calling
+
+Once a human's genome is assembled, it is compared against the "Reference Human Genome". 
+Algorithms perform incredibly fast string-matching (using data structures like the **Burrows-Wheeler Transform**) to find the exact indices where a patient's DNA differs from the reference (a mutation or "variant"). By cross-referencing these variants against medical databases, doctors can computationally predict a patient's risk for specific cancers or hereditary diseases.
+
+## 3. The Big Data Problem
+
+Genomics is one of the largest big data domains on Earth. A single raw human genome sequence is roughly 200 Gigabytes of data. Storing, querying, and running machine learning models over millions of patients' genomes requires massive cloud computing infrastructure, specialized compression algorithms, and distributed computing frameworks like Apache Spark.
+
+</ConceptTemplate>

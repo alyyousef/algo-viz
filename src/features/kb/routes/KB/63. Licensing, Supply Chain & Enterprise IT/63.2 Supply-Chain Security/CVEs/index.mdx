@@ -1,19 +1,35 @@
 ---
-title: CVEs
-description: Common Vulnerabilities and Exposures is a database of publicly disclosed information security issues.
+title: CVEs (Common Vulnerabilities and Exposures)
+description: "A standardized dictionary of publicly known cybersecurity vulnerabilities and exposures, providing a unique identifier for every major security flaw."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="CVE (Common Vulnerabilities and Exposures)">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="CVEs (Common Vulnerabilities and Exposures)"
+  subtitle="The Global Dictionary of Hacks"
+  tags={['Security', 'DevSecOps', 'Cybersecurity', 'Infrastructure']}
+>
 
-When a biological security researcher mathematically discovers a bug in Open Source software that allows hackers to steal data, they do not just post it on Twitter.
+Before 1999, if a researcher found a massive security hole in Microsoft Windows, they might call it "The Windows Buffer Bug." A firewall company might call it "MS-99-Hack." This made it impossible for IT departments to coordinate defenses because everyone was using different names.
 
-They mathematically register it with the **CVE Database**. The vulnerability is assigned a strict biological ID (e.g., `CVE-2021-44228`). This global dictionary allows security tools, SCA scanners, and enterprise firewalls to mathematically synchronize their defenses. A CVE acts as the biological wanted poster for a specific software bug.
+The **CVE System** (maintained by MITRE) solved this by creating a highly standardized, globally recognized dictionary of vulnerabilities.
 
+## 1. The Naming Convention
+
+Every publicly disclosed vulnerability receives a unique ID, formatted as `CVE-YYYY-NNNNNN` (e.g., `CVE-2014-0160`).
+When a researcher discovers a new bug, they submit it to a CVE Numbering Authority (CNA). Once verified, the ID is locked in globally. Now, every single antivirus scanner, firewall, and IT patching system on Earth uses that exact same ID to track the flaw.
+
+## 2. CVSS (The Scoring System)
+
+A CVE is just a name. To know how terrified an IT department should be, the CVE is paired with a **CVSS (Common Vulnerability Scoring System)** score, ranging from 0.0 to 10.0.
+The score is mathematically calculated based on:
+- **Attack Vector**: Can the hacker exploit this remotely over the internet, or do they need physical access to the server?
+- **User Interaction**: Does the victim need to click a malicious link, or does it happen autonomously?
+- **Impact**: Does the hack just crash the system (Availability), or does it allow the hacker to steal the database (Confidentiality) and rewrite code (Integrity)?
+
+<Callout type="warning" title="Critical Vulnerabilities">
+  A CVSS score of 9.0 to 10.0 is considered "Critical". The infamous **Log4Shell** vulnerability (CVE-2021-44228) scored a perfect 10.0 because a hacker could take full remote control of almost any Java server on the internet simply by sending a specific string of text in a chat box, requiring absolutely zero authentication.
+</Callout>
+
+</ConceptTemplate>

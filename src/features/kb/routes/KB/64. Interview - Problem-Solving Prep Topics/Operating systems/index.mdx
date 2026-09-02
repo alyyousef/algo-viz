@@ -1,19 +1,31 @@
 ---
-title: Operating systems
-description: System software that manages computer hardware, software resources, and provides common services for computer programs.
+title: Operating Systems (Interview Prep)
+description: "A summary of the core OS concepts frequently tested in systems engineering and low-level software engineering interviews."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Operating Systems (Interview Prep)">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Operating Systems (Interview Prep)"
+  subtitle="Mastering the Kernel"
+  tags={['Interviews', 'Operating Systems', 'Systems Design']}
+>
 
-Lower-level interviews (like C++ or Go roles) will test your mathematical understanding of the OS kernel.
+While frontend and web development interviews focus heavily on React or JavaScript, backend, infrastructure, and C++/Go/Rust interviews will deeply test your knowledge of Operating Systems. You must understand how the Kernel mathematically interacts with the physical hardware.
 
-You must explain the biological difference between a **Process** (which has its own isolated memory space) and a **Thread** (which shares memory with other threads). You will be tested on mathematical concepts like Virtual Memory, Paging, Context Switching, and how the OS kernel schedules CPU time.
+## 1. Processes vs. Threads
 
+This is the most common OS interview question in the world.
+- **Process**: A program in execution. It has its own totally isolated memory space (Heap), its own File Descriptors, and its own Stack. If Process A crashes, it has zero impact on Process B. However, because they are isolated, processes communicating with each other (IPC) is extremely slow and expensive.
+- **Thread**: The smallest unit of CPU execution. Threads exist *inside* a Process. All threads inside a process share the exact same Heap memory and File Descriptors (though they have their own Stack). Because they share memory, they can communicate instantly, but if two threads try to write to the same memory address simultaneously without a Mutex lock, it causes a catastrophic Race Condition.
+
+## 2. Concurrency vs. Parallelism
+
+- **Concurrency**: The OS is juggling. You have 1 CPU Core, but you are running 10 apps. The OS kernel rapidly context-switches between the apps every few milliseconds. They are not running at the exact same time, but they *appear* to be.
+- **Parallelism**: True simultaneous execution. You have 4 physical CPU Cores, and 4 threads are actively executing physical electrical instructions at the exact same picosecond.
+
+## 3. Virtual Memory & Paging
+
+If your computer has 8GB of physical RAM, how can you run a 12GB video game?
+The OS uses **Virtual Memory**. It gives the video game a fake, mathematical memory address space. The OS's Memory Management Unit (MMU) chunks the physical RAM into 4KB "Pages". It keeps the active parts of the game in physical RAM, and silently writes the inactive 4KB chunks out to the physical Hard Drive (Swapping/Paging). When the game needs that memory again, the OS triggers a "Page Fault" and swaps it back into RAM.
+
+</ConceptTemplate>

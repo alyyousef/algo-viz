@@ -5,6 +5,7 @@ description: The aggressive graph traversal algorithm that plunges as deep as ma
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { GraphVisualizer } from '@/features/kb/components/visualizations/GraphVisualizer'
 
 export default function Layout({ children }) {
   return (
@@ -14,6 +15,8 @@ export default function Layout({ children }) {
   </ConceptTemplate>
   )
 }
+
+<GraphVisualizer algorithm="dfs" />
 
 While BFS ripples outward slowly, **Depth-First Search (DFS)** is mathematically aggressive. It selects a single branch and plunges down it as far as physically possible. When it hits a dead end, it mathematically **backtracks** up the branch and tries the next available path.
 

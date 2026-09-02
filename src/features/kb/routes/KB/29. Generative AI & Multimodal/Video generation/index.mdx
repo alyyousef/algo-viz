@@ -1,27 +1,42 @@
 ---
-title: Video Generation
-description: The overarching field of AI that synthesizes moving imagery, encompassing Text-to-Video, Image-to-Video, and the algorithmic mathematical modeling of temporal fluid dynamics.
+title: Video Generation (Sora)
+description: "An architectural overview of AI video generation, focusing on how models like OpenAI's Sora combine Diffusion and Transformer mathematics to simulate physical reality."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Video Generation">
+    <ConceptTemplate title="Video Generation (Sora)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Video Generation encompasses a wide array of mathematical approaches beyond just Text-to-Video, focusing heavily on manipulating existing frames and predicting future temporal states.
+*(Note: This module focuses on the architecture of video generation. For the conceptual impact of the technology, see the **Text-to-Video** module).*
 
-## 1. Image-to-Video (Animation)
-A more controllable workflow than Text-to-Video is Image-to-Video.
-The user provides a perfectly composed starting image (Frame 1). The AI's mathematical job is purely temporal prediction: "Given this exact physical state, what do the physics look like in Frame 2?"
-By providing motion vectors (e.g., mathematically telling the AI "Pan the camera left" or "Add wind to the hair"), the AI calculates the optical flow and animates the still image with mathematically accurate fluid dynamics (like rippling water or flickering fire).
+For years, AI video generation was locked behind severe limitations. Models could only generate a few seconds of blurry, glitchy footage before breaking down. In February 2024, OpenAI released **Sora**, a model that fundamentally shifted the paradigm by generating 60-second, photorealistic videos that perfectly obeyed the laws of physics.
 
-## 2. Frame Interpolation
-Video Generation is also used to mathematically upscale frame rates.
-If you have a 30 FPS video, and you want 60 FPS slow-motion, standard software just duplicates the frames (resulting in stutter).
-AI Frame Interpolation reads Frame 1 and Frame 2, and mathematically calculates the physical motion vector of every single pixel. It then synthesizes a brand new Frame 1.5, placing the moving objects at the exact mathematical midpoint between the two frames, resulting in flawlessly smooth artificial slow-motion.
+Sora achieved this by combining two massive architectures that had previously been kept separate: **Diffusion** (used in Midjourney) and **Transformers** (used in ChatGPT).
 
+## The Architecture: Diffusion Transformers (DiT)
+
+To understand how Sora works, you have to understand how it views video.
+
+### 1. Spacetime Patches (The Video Tokens)
+When you train a Large Language Model, you break a book down into "Tokens" (chunks of text).
+When OpenAI trained Sora, they broke millions of YouTube videos down into **Spacetime Patches**. 
+
+A Spacetime Patch is a 3D block of data. It contains a small chunk of space (a 16x16 square of pixels) stretching across a small chunk of time (a few frames). Sora treats these 3D chunks of video exactly the same way ChatGPT treats text words.
+
+### 2. The Transformer Engine
+Because Sora treats video chunks like words, it uses a massive Transformer architecture. This allows the model to leverage the same **Attention Mechanism** that makes LLMs so smart.
+If Sora generates a red car in Patch 1, the Attention mechanism ensures that Patch 500 (10 seconds later in the video) mathematically remembers the red car and draws it perfectly, solving the massive problem of Object Permanence that plagued older video models.
+
+### 3. The Diffusion Generator
+While the Transformer handles the "logic" and the timeline of the video, Sora still uses Diffusion (un-NOISING) to actually paint the pixels. 
+Sora starts with a 60-second block of pure, random television static. The Transformer looks at the text prompt, coordinates the timeline, and guides the Diffusion process to slowly remove the static until a photorealistic video emerges.
+
+<Callout icon="globe" title="World Simulators">
+OpenAI does not classify Sora as a video generator; they classify it as a **"World Simulator."** Because Sora was trained on millions of hours of real-world video, the Transformer mathematically reverse-engineered the laws of physics. If you prompt Sora to draw a man taking a bite of a burger, Sora automatically calculates the physics of the bite, generating the correct bite mark on the bun without ever being explicitly programmed to understand what a "bite" is.
+</Callout>

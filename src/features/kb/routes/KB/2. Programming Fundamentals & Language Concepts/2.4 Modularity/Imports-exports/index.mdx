@@ -1,25 +1,20 @@
 ---
-title: Imports and Exports
-description: The mathematical syntax and mechanism used by modern languages to securely expose and consume encapsulated code across file boundaries.
+title: Imports/Exports (Redirect)
+description: "Redirecting to Modules."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Imports and Exports">
+    <ConceptTemplate title="Imports & Exports">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Modern languages (JavaScript ES6, Python, Rust) abandon text-based Header files in favor of mathematically strict Import/Export systems.
+<Callout icon="info" title="Redirect">
+The syntactic implementation of **Imports and Exports** (including ES6 Live Bindings, CommonJS `require`, and Python's `import` mechanics) is thoroughly documented under the Deep Dive for **Modules**. 
 
-## 1. The Export Boundary (Encapsulation)
-By default, every variable and function in a modern file is mathematically private to that file.
-If you write `function calculate() {}` in `math.js`, it is completely invisible to the rest of the application. You must explicitly tag it with the `export` keyword. This forces developers to intentionally design a strict, mathematically limited public API for their module, preventing other files from relying on internal, private state.
-
-## 2. Tree Shaking
-Because `import` statements are mathematically analyzable (unlike dynamic `require()` calls or C-style `#include`s), modern compilers (like Webpack or Rollup) can perform **Tree Shaking**.
-If `math.js` exports 100 functions, but your file only writes `import { add } from './math'`, the compiler's Abstract Syntax Tree can mathematically prove that the other 99 functions are never used anywhere in the entire application. When it generates the final binary or JavaScript bundle, it mathematically deletes the dead code, drastically reducing the file size.
-
+Please navigate to the [Modules](/kb/2.-programming-fundamentals--language-concepts/2.4-modularity/modules) module to explore how compilers construct Dependency Graphs.
+</Callout>

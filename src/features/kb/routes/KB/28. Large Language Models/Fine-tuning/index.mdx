@@ -1,44 +1,45 @@
 ---
-title: Fine-Tuning
-description: The process of taking a massive, pre-trained base model and updating its internal weights on a highly specific, curated dataset to specialize its behavior.
+title: Fine-Tuning (LLMs)
+description: "A deep dive into Fine-Tuning, the process of permanently altering the weights of an LLM to teach it highly specialized, domain-specific tasks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Fine-Tuning">
+    <ConceptTemplate title="Fine-Tuning (LLMs)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Training a foundational Large Language Model from scratch (like GPT-4 or Llama 3) requires tens of thousands of GPUs running for months, costing hundreds of millions of dollars. The resulting "Base Model" is highly intelligent but acts like an unruly autocomplete engine; it just wants to predict the next word of internet text.
+**Fine-Tuning** is the process of taking a massive, pre-trained Large Language Model (like an open-source LLaMA or Mistral model) and permanently altering its neural network weights by training it on a small, highly specialized dataset.
 
-**Fine-Tuning** is the much cheaper, secondary process of taking that pre-trained model and running a smaller, highly controlled training pass over it to teach it a specific skill or format.
+## Why Fine-Tune? (RAG vs Fine-Tuning)
 
-## 1. Why Fine-Tune?
+A common misconception is that Fine-Tuning is used to teach a model *new facts* (e.g., uploading your company's HR handbook). This is incorrect. If you want a model to know new facts, you use **RAG (Retrieval-Augmented Generation)**.
 
-You do **not** fine-tune a model to teach it new facts (that is what RAG is for, as fine-tuning is prone to hallucinations and cannot be easily updated). You fine-tune a model to teach it a **behavior, tone, or format**.
+Fine-Tuning is used to teach a model a **new behavior, a specific tone, or a rigid structural format.**
+*   *Bad Use Case:* Fine-tuning to teach an LLM what happened in the news yesterday.
+*   *Good Use Case:* Fine-tuning an LLM to act exactly like a 19th-century pirate, or fine-tuning it to perfectly convert English questions into complex SQL database queries.
 
-- **Format Compliance**: Teaching the model to strictly output perfectly formatted JSON for an API, rather than chatty English.
-- **Tone/Persona**: Teaching a customer service bot to adopt the exact speaking style and brevity of a specific brand.
-- **Domain Specialization**: Teaching a medical AI the nuanced structural patterns of radiology reports.
+## The Stages of Training
 
-## 2. Instruction Tuning (The Chatbot Transformation)
+To understand Fine-Tuning, you must understand the LLM lifecycle:
 
-The most important type of fine-tuning is **Instruction Tuning**.
-A Base Model fed the prompt *"What is the capital of France?"* might autocomplete it with *"What is the capital of Spain?"* because it thinks it is completing a list of trivia questions from a website.
+1.  **Pre-Training (The Foundation):** The model reads the entire internet for months on a $100 Million supercomputer. It learns grammar, logic, and general world knowledge. It becomes a "Base Model." Base models are useless for chatting; if you prompt a base model with *"What is the capital of France?"*, it might just autocomplete with *"What is the capital of Germany?"*
+2.  **Supervised Fine-Tuning (SFT):** The model is trained on thousands of highly curated, high-quality Q&A pairs written by humans. This teaches the model the *behavior* of being a helpful chatbot. It learns that when a human asks a question, it should provide an answer.
+3.  **Alignment (DPO/RLHF):** The final polish, teaching the model not to curse, not to be racist, and not to help build bombs.
 
-By fine-tuning the model on tens of thousands of specific `Prompt -> Ideal Response` pairs, the model's weights shift. It learns to stop autocompleting documents and instead adopt the persona of a helpful AI assistant that answers instructions directly.
+When enterprise developers "Fine-Tune" an open-source model, they are generally performing their own specialized version of **Step 2 (SFT)**.
 
+## How SFT Works
 
-<Callout icon="success" title="PEFT and LoRA">
+You create a dataset of roughly 1,000 to 10,000 examples of exactly how you want the model to behave.
+You pass this data through the LLM. The LLM generates a prediction, compares it to your perfect example, calculates the error (Loss), and uses **Backpropagation** to slightly adjust the billions of weights inside its network. 
 
+Once finished, the model is permanently changed. It will now naturally default to your specific format or tone without needing complex prompting.
 
-  Historically, fine-tuning required updating all 70 billion weights of a model (Full Fine-Tuning), which required massive GPU clusters. Today, developers use **LoRA (Low-Rank Adaptation)**, which freezes the base model and only trains a tiny, lightweight "adapter" of weights. You can fine-tune a massive Llama model on a single consumer GPU in a few hours using LoRA.
-
-
+<Callout icon="microchip" title="Full Fine-Tuning vs PEFT">
+Historically, developers used **Full Fine-Tuning**, which updated every single parameter in a 70B model (requiring massive clusters of A100 GPUs). Today, almost all fine-tuning is done using **PEFT (Parameter-Efficient Fine-Tuning)**, specifically **LoRA**. LoRA freezes the massive base model and only trains a tiny, mathematically injected sub-network, allowing developers to fine-tune massive LLMs on a single consumer gaming GPU.
 </Callout>
-
-

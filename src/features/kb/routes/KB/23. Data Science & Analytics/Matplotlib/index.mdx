@@ -1,55 +1,20 @@
 ---
-title: Matplotlib
-description: Comprehensive library for creating visualizations in Python.
+title: Matplotlib (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Matplotlib">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Matplotlib">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Matplotlib is a comprehensive library for creating static, animated, and interactive visualizations in Python. It was originally designed to emulate the plotting capabilities of MATLAB.
+<Callout icon="info" title="Redirect">
+The conceptual role of **Matplotlib** (the foundational Python library for creating static, programmatic data visualizations) is closely related to the concepts in **Business Intelligence (BI)**. 
 
-
-<Callout icon="info" title="The Foundation">
-
-
-  Matplotlib is the foundational plotting library in Python. Many higher-level visualization libraries, such as **Seaborn** and Pandas own df.plot(), are actually wrappers built directly on top of Matplotlib.
-
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts present and communicate data.
 </Callout>
-
-
-## The Two Interfaces
-
-Matplotlib provides two different ways to create plots:
-
-
-<ComparisonTable headers={['Interface', 'Style', 'Best For']} rows={[ ['Pyplot (State-based)', 'MATLAB-like, implicit state tracking.', 'Quick scripts, simple interactive plots.'], ['Object-Oriented (OO)', 'Explicitly creating Figure and Axes objects.', 'Complex plots, embedding in applications, multiple subplots.'] ]} />
-
-
-## Object-Oriented Example
-
-```text
-{`import matplotlib.pyplot as plt
-import numpy as np
-
-# Generate data
-x = np.linspace(0, 10, 100)
-y = np.sin(x)
-
-# Create a Figure and an Axes explicitly (OO style)
-fig, ax = plt.subplots()
-
-# Plot data on the Axes
-ax.plot(x, y, label='Sine Wave', color='blue')
-
-# Customize the Axes
-ax.set_title('Simple Plot')
-ax.set_xlabel('X axis')
-ax.set_ylabel('Y axis')
-ax.legend()
-
-# Display the plot
-plt.show()`}
-```
-
-</TechnologyTemplate>

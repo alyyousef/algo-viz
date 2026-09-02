@@ -1,28 +1,54 @@
 ---
 title: Stemming
-description: A fast, mathematically primitive algorithm that uses hardcoded heuristic rules to chop the suffixes and prefixes off words to normalize text.
+description: "A guide to Stemming, the crude, fast, rule-based NLP technique used to chop the suffixes off words to find their root."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Stemming">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before the invention of deep learning and complex Lemmatization dictionaries, search engines needed a mathematically cheap way to normalize text so that searching for "running" would also find documents containing "run."
+**Stemming** is a rudimentary text pre-processing technique used in traditional NLP. Its goal is to take a word and chop off its prefix or suffix to reduce it to its base "stem."
 
-## 1. The Porter Stemmer Algorithm
-The most famous stemming algorithm was invented by Martin Porter in 1980.
-It does not use AI; it uses a rigid sequence of mathematical Regex string-replacements.
-For example, a rule might state: `If a word ends in "sses", replace it with "ss"` (e.g., "caresses" -> "caress").
-Another rule: `If a word ends in "ing", delete "ing"`.
+Before feeding text into an algorithm like Bag of Words, you want the computer to realize that "running," "runs," and "runner" are all essentially the same concept. Stemming achieves this by brutally chopping the ends off the words until they all match.
 
-## 2. Over-stemming and Under-stemming
-Because Stemming is mathematically blind to context, it causes catastrophic linguistic errors.
-- **Over-stemming**: The algorithm chops off too much. It might stem both "University" and "Universe" down to "Univers." A search engine will now mathematically conflate the two concepts, returning articles about outer space when you search for college.
-- **Under-stemming**: The algorithm fails to chop enough. It might stem "Data" to "Data" but "Datum" to "Datum", failing to mathematically recognize that they are the singular and plural forms of the exact same concept.
+## How it Works: The Porter Stemmer
 
+Stemming algorithms do not understand language, and they do not use dictionaries. They are simply massive lists of hard-coded regex rules (IF/THEN statements).
+
+The most famous algorithm is the **Porter Stemmer** (invented by Martin Porter in 1980). It applies a sequential list of rules to the end of a word.
+
+**Example Rules:**
+*   Rule 1: If the word ends in "SSES", replace with "SS" (e.g., `caresses` $\rightarrow$ `caress`)
+*   Rule 2: If the word ends in "IES", replace with "I" (e.g., `ponies` $\rightarrow$ `poni`)
+*   Rule 3: If the word ends in "ING", delete it (e.g., `motoring` $\rightarrow$ `motor`)
+
+## The Flaws of Stemming
+
+Because stemming is blind and algorithmic, it makes massive, comical errors constantly. 
+
+### 1. Over-stemming
+The algorithm chops off too much, merging words that have completely different meanings.
+*   "Universe" $\rightarrow$ `univers`
+*   "University" $\rightarrow$ `univers`
+*(The computer now thinks these two unrelated concepts are the exact same word).*
+
+### 2. Under-stemming
+The algorithm fails to chop enough off, leaving words separate that should be merged.
+*   "Alumnus" $\rightarrow$ `alumnus`
+*   "Alumni" $\rightarrow$ `alumni`
+
+### 3. Irregular Verbs
+Stemming algorithms completely fail on irregular verbs because they just chop endings off; they don't know grammar.
+*   "Go" $\rightarrow$ `go`
+*   "Went" $\rightarrow$ `went`
+*(It has no idea these are the same verb).*
+
+<Callout icon="code" title="Stemming vs Lemmatization">
+Because of these flaws, Stemming is almost always taught alongside its smarter counterpart: **Lemmatization**. Lemmatization actually uses a dictionary and grammatical rules to find the true root word (e.g., converting "went" to "go"). However, stemming is significantly faster to compute, which is why it was the primary choice for massive search engines (like early Google or Elasticsearch) in the 1990s and 2000s when compute power was highly limited.
+</Callout>

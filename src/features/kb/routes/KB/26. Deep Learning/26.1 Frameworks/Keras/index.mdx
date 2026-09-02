@@ -1,26 +1,62 @@
 ---
 title: Keras
-description: A high-level, extremely user-friendly deep learning API that drastically simplified neural network creation, now acting as the official interface for TensorFlow.
+description: "An overview of Keras, the immensely popular high-level API designed for fast experimentation with deep neural networks."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Keras">
+    <TechnologyTemplate title="Keras">
       {children}
-    
-  </ConceptTemplate>
+    </TechnologyTemplate>
   )
 }
 
-In 2015, building a Neural Network required writing hundreds of lines of complex, low-level mathematical C++ and Python code. **Keras** was introduced as an ultra-high-level API that allowed developers to construct massive, mathematically complex models using a beautiful, Lego-like syntax in just 5 lines of code.
+**Keras** is a high-level, deep learning API written in Python. Created by François Chollet, it was designed with a single, driving philosophy: **being as user-friendly and intuitive as possible.**
 
-## 1. The Multi-Backend Magic
-Originally, Keras was not a mathematical execution engine itself. It was a universal API wrapper. You wrote your code in Keras, and Keras would mathematically translate it to run on top of whatever backend you preferred (TensorFlow, Theano, or CNTK). It completely abstracted the horrific mathematical syntax of the underlying engines.
+Keras allows data scientists to build, train, and deploy complex neural networks with just a few lines of highly readable code, hiding the intimidating mathematical boilerplate required by lower-level frameworks.
 
-## 2. Assimilation into TensorFlow
-Keras became so overwhelmingly popular that Google mathematically surrendered. In TensorFlow 2.0, Google completely abandoned their own complex, low-level APIs and officially adopted Keras as the absolute standard, default interface for all TensorFlow development (`tf.keras`).
+## The Evolution of Keras
 
-## 3. Keras 3.0 (The Return of the Multi-Backend)
-In a shocking mathematical pivot, Keras 3.0 was recently released, returning to its roots. You can now write a model in pure Keras syntax, and dynamically choose to execute that exact same code on the **TensorFlow**, **PyTorch**, or **JAX** mathematical engines. It allows Data Scientists to write beautiful code while leveraging the unique mathematical advantages (like JAX's XLA compiler) of whatever framework they choose.
+Understanding Keras requires understanding its history:
 
+1.  **The Backend Era (2015):** Originally, Keras was purely a frontend interface. It didn't do any math itself. You could configure it to use different "backends" (like TensorFlow, Theano, or CNTK) to do the actual heavy lifting.
+2.  **The TensorFlow Merger (2019):** Because it was so incredibly popular, Google officially adopted Keras and merged it directly into TensorFlow 2.0. Keras became `tf.keras`, the default and primary way to interact with TensorFlow.
+3.  **Keras 3.0 / Keras Core (2023):** Keras returned to its roots as a multi-backend framework. You can now write Keras code once, and flawlessly run it on top of **TensorFlow, PyTorch, or JAX**, instantly switching backends by changing a single configuration line.
+
+## Core Features
+
+Keras is famous for its simple, composable building blocks. 
+
+### 1. The Sequential API
+If your neural network is a simple, straight line of layers (Layer 1 feeds into Layer 2, which feeds into Layer 3), you can build it in seconds using the Sequential API:
+
+```python
+import keras
+from keras import layers
+
+model = keras.Sequential([
+    layers.Dense(64, activation="relu"),
+    layers.Dense(64, activation="relu"),
+    layers.Dense(10, activation="softmax")
+])
+```
+
+### 2. The Functional API
+If your network requires a more complex topology (e.g., layers that skip over other layers, like in a ResNet, or models with multiple different inputs/outputs), Keras provides the Functional API. It treats layers like functions that take tensors as inputs and return tensors as outputs.
+
+### 3. `compile` and `fit`
+Keras revolutionized the training loop. Instead of writing custom gradients and optimization loops by hand, Keras reduces training a model to two lines of code:
+
+```python
+# Tell the model how to measure its mistakes and how to fix them
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model on the data
+model.fit(x_train, y_train, epochs=10, batch_size=32)
+```
+
+<Callout icon="users" title="Why Keras?">
+Keras is arguably the best starting point for beginners learning Deep Learning. Its API is so cleanly designed that reading Keras code feels like reading pseudocode. With the release of Keras 3.0 allowing it to run on top of PyTorch, it is seeing a massive resurgence in both enterprise and academic popularity.
+</Callout>

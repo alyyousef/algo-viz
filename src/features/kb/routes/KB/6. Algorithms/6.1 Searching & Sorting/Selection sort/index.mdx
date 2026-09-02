@@ -3,6 +3,7 @@ title: Selection Sort
 description: "An in-place comparison sorting algorithm that divides the input list into two parts: a sorted sublist building up from left to right, and an unsorted sublist occupying the rest of the list."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { SortingVisualizer } from '@/features/kb/components/visualizations/SortingVisualizer'
 
 export default function Layout({ children }) {
   return (
@@ -16,6 +17,8 @@ export default function Layout({ children }) {
   </ConceptTemplate>
   )
 }
+
+<SortingVisualizer algorithm="selection" />
 
 Selection sort is mathematically intuitive but terribly inefficient. It works by constantly searching the unsorted section for the absolute smallest number.
 

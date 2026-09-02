@@ -4,18 +4,11 @@ description: "A highly efficient polynomial-time algorithm for computing the max
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Dinic's Algorithm"
   subtitle="High-Speed Maximum Flow"
   tags={['Algorithms', 'Graphs', 'Network Flow', 'Advanced']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Invented by Yefim Dinitz in 1970, Dinic's Algorithm mathematically solves the Maximum Flow problem much faster than Edmonds-Karp by processing multiple paths simultaneously rather than one at a time.
 
@@ -28,3 +21,4 @@ It assigns a "level" (distance from the Source) to every node. An edge is only v
 Once the Level Graph is established, Dinic's uses DFS to find a **Blocking Flow**. Instead of pushing flow down one single path (like Edmonds-Karp), it mathematically pushes flow down *all possible shortest paths* in the Level Graph simultaneously until every path is saturated.
 It then recalculates the Level Graph and repeats. The Time Complexity is mathematically guaranteed to be **O(V²E)**, making it the standard algorithm for competitive programming and heavy network routing.
 
+</ConceptTemplate>

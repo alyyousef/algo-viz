@@ -1,37 +1,45 @@
 ---
 title: Tool Use (Function Calling)
-description: Empowering LLMs to interact with the external world by triggering APIs and executing code.
+description: "A deep dive into Tool Use, the foundational capability that transforms passive LLMs into active, autonomous AI Agents."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Tool Use (Function Calling)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-By default, an LLM is a frozen mathematical brain trapped in a box. It cannot browse the internet, execute math reliably, or book a flight.
+*(Note: This is an alternate term for Function Calling. Both terms are used interchangeably in the AI industry).*
 
-**Tool Use** (or Function Calling) is the paradigm where the LLM is fine-tuned to recognize when it needs external information, and instead of generating text, it generates a structured JSON object requesting to run a specific tool.
+**Tool Use** is the ability for a Large Language Model to pause text generation, output a structured command (like JSON), and wait for an external software system to execute a task and return the results.
 
+Before Tool Use, an LLM was a "brain in a vat." It could think and speak, but it had no hands and no access to the outside world. If you asked it for today's weather, it would hallucinate an answer because its training data ended months ago.
 
-<Callout icon="success" title="The Agentic Workflow">
+## The Architecture of Tool Use
 
+Tool Use requires a specific handshake between the LLM and your backend server (usually written in Python or Node.js).
 
-  This is the foundation of AI Agents. The model outputs a tool call (e.g., `{"name": "get_weather", "args": {"location": "London"}}`). The backend intercepts this, executes the actual code, and feeds the result back into the LLM\'s context window so it can formulate a final answer.
+1.  **Providing the Toolbox:** When your server sends a user's prompt to the LLM, you also send an array of "Tools." A Tool is simply a JSON Schema describing a Python function on your server.
+    *   *Example Tool:* `name: "search_wikipedia", parameters: { "query": "string" }`
+2.  **The LLM's Decision:** The LLM reads the user's prompt (*"Who won the Super Bowl last night?"*). It realizes it doesn't know the answer. It scans the Toolbox, realizes `search_wikipedia` could find the answer, and generates a structured command instead of an English response.
+3.  **Execution:** Your Python server catches the command, executes the *actual* Wikipedia API call, and gets the result.
+4.  **The Loop:** Your server sends the Wikipedia text back into the LLM as a new message (marked as `role: "tool"`). The LLM reads the text, and finally answers the user's original question.
 
+## The Foundation of Agentic AI
 
+Tool Use is the single technology that makes **AI Agents** possible. 
+
+An Agent is simply an LLM placed inside a `while(true)` loop on your server, given a massive toolbox.
+*   **Tool 1:** `read_file`
+*   **Tool 2:** `write_file`
+*   **Tool 3:** `run_bash_command`
+
+If you give an Agent the prompt *"Build a React app"*, it will loop indefinitely: it will use `write_file` to create `index.js`, use `run_bash_command` to run `npm start`, use `read_file` to read the error logs, use `write_file` to fix the bug, and repeat until the app runs perfectly.
+
+<Callout icon="triangle-exclamation" title="The Danger of Autonomous Tools">
+If you give an LLM access to a tool called `delete_database_table`, and a user maliciously prompts the AI to delete the database, the AI *will* execute the tool. Enterprise systems must always implement **Human-in-the-Loop (HITL)** architecture, where the server pauses the execution of any destructive tool until a human clicks an "Approve" button on a dashboard.
 </Callout>
-
-
-## How Models Learn Tools
-
-Models do not inherently know how to output perfect JSON. They must be explicitly fine-tuned.
-
-
-<ComparisonTable headers={['Phase', 'Description']} rows={[ ['System Prompting', 'The user injects a JSON Schema describing all available tools into the system prompt.'], ['Fine-Tuning', 'The model is trained on thousands of examples where a user asks a question, and the expected assistant output is a perfectly formatted JSON tool call.'], ['Execution Loop', 'The model pauses generation when a tool call is made, waits for the system to append the tool response, and resumes generation.'] ]} />
-
-

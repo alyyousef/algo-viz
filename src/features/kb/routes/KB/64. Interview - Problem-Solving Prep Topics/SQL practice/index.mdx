@@ -1,19 +1,35 @@
 ---
-title: SQL practice
-description: The practice of writing SQL queries to retrieve, manipulate, and analyze data in relational databases.
+title: SQL Practice (Interview Prep)
+description: "A guide to the most common SQL query patterns and database concepts tested in software engineering and data science interviews."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="SQL Practice">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="SQL Practice (Interview Prep)"
+  subtitle="Mastering the Relational Query"
+  tags={['Interviews', 'SQL', 'Databases', 'Data Science']}
+>
 
-Data Engineering and Backend interviews frequently feature a purely mathematical **SQL test**.
+Almost every backend engineering or data science interview will include a live SQL coding round. You are expected to be able to write complex queries on a whiteboard or in a shared CoderPad without relying on an ORM like Prisma or Hibernate.
 
-You will be given the biological schemas of 3 tables (e.g., `Users`, `Orders`, `Products`). You must mathematically write an exact SQL query on a whiteboard that involves an `INNER JOIN`, a `GROUP BY`, and a `HAVING` clause. Advanced interviews will test your mathematical understanding of Window Functions (e.g., `ROW_NUMBER() OVER (PARTITION BY user_id)`) to find the 2nd highest purchase of every user.
+## 1. The Core Operations
 
+You must have these deeply memorized:
+- **GROUP BY & HAVING**: The interviewer will ask: *"Find all departments that have more than 5 employees."* You must know that you cannot use the `WHERE` clause for aggregates. You must `GROUP BY department_id` and use `HAVING COUNT(employee_id) > 5`.
+- **The JOINs**:
+  - `INNER JOIN`: Only returns rows that have a match in both tables.
+  - `LEFT JOIN`: Returns all rows from the left table, and fills with NULLs if there is no match on the right. (Crucial for questions like *"Find all users who have NEVER made a purchase"*).
+
+## 2. Window Functions (The Differentiator)
+
+If you are interviewing for a Senior or Data role, standard GROUP BY is not enough. You will be tested on **Window Functions**.
+*Question: "Find the 2nd highest paid employee in every single department."*
+You cannot easily do this with standard SQL. You must use `DENSE_RANK() OVER (PARTITION BY department_id ORDER BY salary DESC)`. Window functions allow you to perform calculations across a set of rows related to the current row, without actually collapsing the rows like a `GROUP BY` does.
+
+## 3. Indexing and Performance
+
+Backend interviews will test your understanding of Database execution plans:
+- **B-Tree Indexes**: You must explain that creating an Index mathematically creates a B-Tree data structure under the hood, changing a query's search time from $O(N)$ (a Full Table Scan) to $O(\\log N)$.
+- **The Tradeoff**: You must explain to the interviewer that you shouldn't just index every column, because while Indexes make `SELECT` lightning fast, they make `INSERT` and `UPDATE` much slower (because the database now has to physically re-balance the B-Tree structure on the hard drive).
+
+</ConceptTemplate>

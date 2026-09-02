@@ -1,27 +1,20 @@
 ---
-title: Covariance and Contravariance
-description: The complex mathematical rules governing how subtyping relates to generic types and function signatures.
+title: Contravariance (Redirect)
+description: "Redirecting to Variance (Covariance & Contravariance)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Covariance and Contravariance">
+    <ConceptTemplate title="Contravariance">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In Object-Oriented theory, if a `Cat` is a subtype of `Animal`, you can safely pass a `Cat` into a function expecting an `Animal`.
-Variance answers the highly complex mathematical question: If `Cat` is a subtype of `Animal`, is a `List<Cat>` a subtype of `List<Animal>`?
+<Callout icon="info" title="Redirect">
+The mathematical subtyping reversal mechanism of **Contravariance** (particularly regarding write-only generic data structures and Function Arguments) is deeply analyzed alongside Covariance under the primary Deep Dive for **Variance**. 
 
-## 1. Covariance (Preserving the Hierarchy)
-**Covariance** means the generic type mathematically follows the same hierarchy as its inner type.
-If `List` is Covariant, then `List<Cat>` is a subtype of `List<Animal>`.
-This is mathematically safe for **Read-Only** operations. If you have a function that reads animals from a list, passing it a list of cats is perfectly safe (a cat is an animal). However, if the list is mutable, covariance is a mathematical disaster. If the function tries to `add(new Dog())` to the `List<Animal>`, it will physically insert a Dog into your original `List<Cat>` in memory, corrupting the heap.
-
-## 2. Contravariance (Reversing the Hierarchy)
-**Contravariance** means the hierarchy is mathematically reversed.
-It is heavily used in Function Signatures. If a function expects a callback that processes a `Cat` (`Action<Cat>`), you can mathematically pass it a callback that processes an `Animal` (`Action<Animal>`). Because the callback is designed to handle *any* animal, it is mathematically guaranteed to be able to safely handle the `Cat` that the function hands it.
-
+Please navigate to the [Variance (Covariance & Contravariance)](/kb/2.-programming-fundamentals--language-concepts/2.2-type-systems/variance-covariance) module to explore the mathematical limits of Polymorphism.
+</Callout>

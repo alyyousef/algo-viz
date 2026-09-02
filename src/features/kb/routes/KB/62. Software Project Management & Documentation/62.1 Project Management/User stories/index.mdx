@@ -1,19 +1,43 @@
 ---
-title: User stories
-description: An informal, natural language description of one or more features of a software system.
+title: User Stories
+description: "An informal, general explanation of a software feature written from the perspective of the end user, focusing on the value it provides."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="User Stories">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="User Stories"
+  subtitle="Requirements from the User's Perspective"
+  tags={['Project Management', 'Agile', 'Scrum']}
+>
 
-A **User Story** is the atomic biological unit of Agile work.
+In Agile methodologies, a **User Story** is the smallest unit of work. Instead of writing a highly technical requirement like "Update database schema to support OAuth2 tokens," a User Story describes the feature strictly from the perspective of the human being who will use it.
 
-It is explicitly NOT a mathematical technical specification. Instead of writing "Update the SQL schema to include a bio column", a Product Manager writes a biological sentence from the perspective of the customer: *"As a User, I want to add a bio to my profile, so that other people can learn about me."* This mathematically forces the engineer to focus on the biological *value* they are delivering to the human, rather than just the code.
+## 1. The Standard Format
 
+Almost all User Stories follow a strict Mad-Libs style template to ensure the focus remains on business value:
+
+**"As a [persona], I want to [action], so that [benefit/value]."**
+
+- *As a frequent shopper, I want to save my credit card information, so that I can check out faster in the future.*
+- *As a database admin, I want an automated daily backup script, so that I don't lose data during a server crash.*
+
+## 2. Acceptance Criteria
+
+A User Story is just a conversation starter. It must be paired with **Acceptance Criteria**: a checklist of specific conditions that must be mathematically true for the story to be considered "Done."
+
+For the credit card story, Acceptance Criteria might include:
+- Must securely encrypt the card via Stripe API.
+- User must be able to delete a saved card.
+- User must not be able to see the full card number (only the last 4 digits).
+
+## 3. INVEST Principle
+
+A good User Story follows the **INVEST** acronym:
+- **I**ndependent: Can be developed in isolation without relying on other stories.
+- **N**egotiable: Not a rigid contract; developers can suggest better ways to achieve the goal.
+- **V**aluable: Delivers actual value to the customer or business.
+- **E**stimable: Small enough that the team can reasonably guess how long it will take.
+- **S**mall: Can be completed within a single Sprint.
+- **T**estable: The Acceptance Criteria can be definitively verified.
+
+</ConceptTemplate>

@@ -1,23 +1,20 @@
 ---
-title: Jupyter Notebooks
-description: An interactive web-based mathematical environment that allows Data Scientists to weave raw Python code, rich text, and dynamic visualizations into a single document.
+title: Jupyter Notebooks (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="Jupyter"
-  subtitle="Interactive Data Science Notebook"
-  tags={['Python', 'Data Science', 'Analytics', 'Visualization']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Jupyter">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Jupyter (Julia, Python, and R) revolutionized Data Science by replacing traditional, monolithic script execution with a highly interactive, mathematically stateful Cell architecture.
+<Callout icon="info" title="Redirect">
+The workflows associated with **Jupyter Notebooks** (interactive Python/R exploration, pandas, and EDA) are closely related to the concepts in **Business Intelligence (BI)**. 
 
-## 1. The REPL Architecture
-Traditional Python scripts execute top-to-bottom and exit. If an analysis takes 10 minutes to load the data, you must wait 10 minutes every time you tweak the code.
-Jupyter uses a Read-Eval-Print Loop (REPL) backed by a persistent mathematical **Kernel**.
-The notebook is divided into "Cells." You can write code to load a 5GB dataset in Cell 1 and execute it. The Kernel mathematically holds that 5GB object in RAM permanently. You can then write analysis code in Cell 2 and execute it instantly, thousands of times, without ever reloading the data, resulting in massive mathematical efficiency.
-
-## 2. Reproducible Research
-Because Jupyter Notebooks (`.ipynb`) mathematically combine Markdown text, LaTeX equations, raw code, and the actual generated Charts into a single JSON file, they have become the absolute standard for sharing scientific research. A researcher can publish a Notebook, and anyone in the world can mathematically execute the exact same cells to verify the results.
-
-</TechnologyTemplate>
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts interface with data.
+</Callout>

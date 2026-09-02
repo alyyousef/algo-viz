@@ -1,25 +1,20 @@
 ---
-title: Smart Pointers
-description: Wrapper objects that act like raw memory pointers but mathematically guarantee deterministic memory cleanup using RAII principles.
+title: Smart Pointers (Redirect)
+description: "Redirecting to Memory Management (Manual)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Smart Pointers">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In modern C++ and Rust, developers are mathematically discouraged from ever using raw pointers (`*`) and `malloc/new`. Instead, they use Smart Pointers, which are standard Classes that mathematically overload the dereference operator (`->`) but automatically handle memory management.
+<Callout icon="info" title="Redirect">
+The mechanical design of **Smart Pointers** (`std::unique_ptr`, `std::shared_ptr`) and how they utilize RAII to automate the destruction of Heap memory is covered in the Deep Dive for **Memory Management (Manual)**. 
 
-## 1. Unique Pointers (std::unique_ptr)
-A `unique_ptr` enforces the mathematical concept of strict Ownership.
-It allocates the data on the Heap, but the pointer object itself lives on the Stack. Because it mathematically cannot be copied (the copy constructor is physically deleted), only one owner exists. When the `unique_ptr` goes out of scope, its Destructor is called (RAII), and it automatically calls `delete` on the Heap memory. It provides 100% memory safety with absolutely zero runtime overhead compared to a raw pointer.
-
-## 2. Shared Pointers (std::shared_ptr)
-A `shared_ptr` implements automated Reference Counting.
-When it is created, it allocates the data on the Heap, and it mathematically allocates a tiny Control Block next to it containing a thread-safe atomic counter. You can safely pass copies of the `shared_ptr` across 10 different CPU threads. Each copy increments the atomic counter. As the threads finish and their local pointers go out of scope, the counter decrements. The mathematically absolute last pointer to be destroyed reduces the counter to 0 and automatically frees the Heap memory.
-
+Please navigate to the [Memory Management (Manual)](/kb/2.-programming-fundamentals--language-concepts/2.3-memory--execution-model/memory-management-manual) module to explore how modern systems programming mitigates memory leaks without a Garbage Collector.
+</Callout>

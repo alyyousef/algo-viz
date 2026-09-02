@@ -4,27 +4,21 @@ description: "A fundamental theorem in network flow theory stating that the maxi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Max-Flow Min-Cut Theorem"
   subtitle="The Duality of Networks"
   tags={['Algorithms', 'Graphs', 'Network Flow', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 In computer science, many problems have a mathematical "Dual"—two completely different problems that always share the exact same numerical answer. The most famous example is Max-Flow and Min-Cut.
 
 ## 1. The Min-Cut Problem
-Imagine a military general wants to physically destroy the absolute minimum number of enemy supply lines (edges) necessary to completely isolate the enemy capital (Source) from their frontline troops (Sink).
+Imagine a military general wants to physically destroy the absolute minimum number of enemy supply lines (edges) necessary to completely isolate the enemy capital (Source) from their frontline troops (Sink). 
 This is the **Minimum Cut Problem**: finding the set of edges with the smallest total capacity whose removal disconnects the graph.
 
 ## 2. The Mathematical Duality
 Proving the Min-Cut directly is computationally difficult. However, the Max-Flow Min-Cut theorem mathematically proves that you don't need to.
-If you use Ford-Fulkerson or Dinic's Algorithm to find the **Maximum Flow** of the network (e.g., 500 gallons per minute), the theorem guarantees that the Minimum Cut is exactly 500.
+If you use Ford-Fulkerson or Dinic's Algorithm to find the **Maximum Flow** of the network (e.g., 500 gallons per minute), the theorem guarantees that the Minimum Cut is exactly 500. 
 Furthermore, once Ford-Fulkerson finishes, you can mathematically find the exact edges to cut by running a simple BFS from the Source on the final Residual Graph. Any forward edge that the BFS cannot cross (because its residual capacity is 0) is mathematically part of the Minimum Cut.
 
+</ConceptTemplate>

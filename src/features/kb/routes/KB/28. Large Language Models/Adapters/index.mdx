@@ -1,40 +1,44 @@
 ---
-title: Adapters
-description: Small modular neural network blocks inserted into pre-trained LLMs to add specialized knowledge without retraining the base model.
+title: Adapters (Parameter-Efficient Fine-Tuning)
+description: "An overview of Adapters, the foundational PEFT technique that allows fine-tuning massive LLMs without retraining the entire network."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Adapters">
+    <ConceptTemplate title="Adapters (PEFT)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Adapters are the foundational concept behind Parameter-Efficient Fine-Tuning (PEFT). Instead of mathematically updating the billions of weights in a massive foundation model to teach it a new task, you freeze the base model entirely.
+**Adapters** were one of the first major breakthroughs in **Parameter-Efficient Fine-Tuning (PEFT)** for Large Language Models. 
 
-You then insert tiny, trainable neural network modules—**Adapters**—between the existing layers of the Transformer.
+When you want an open-source LLM (like LLaMA-3) to learn a highly specific task—like reading medical records and outputting ICD-10 billing codes—you need to fine-tune it.
 
+## The Flaw of Standard Fine-Tuning
 
-<Callout icon="success" title="Modular Intelligence">
+In standard "Full Fine-Tuning," you pass your medical data through the network and use backpropagation to slightly adjust every single weight in the network.
+If the model has 70 Billion parameters, you are mathematically updating 70 Billion weights. This requires massive clusters of GPUs and generates a brand new 140GB file. If you have 5 different clients who want 5 different tasks, you now have to store five massive 140GB models.
 
+## How Adapters Work
 
-  Because the base model remains frozen, you can train 50 different adapters for 50 different tasks (e.g., Medical Adapter, Legal Adapter, Python Adapter). During inference, you just load the 70B base model into VRAM once, and hot-swap the tiny 50MB adapters in milliseconds depending on the user\'s question.
+The core idea of an Adapter is simple: **Freeze the original model, and insert tiny new neural networks inside of it.**
 
+1.  **Freeze:** You completely lock all 70 Billion original weights of the pre-trained LLM. They will never change.
+2.  **Insert:** You inject tiny, brand-new neural network layers (the "Adapters") directly in between the existing layers of the Transformer block.
+3.  **Train:** You pass your medical data through the network. Because the original weights are frozen, backpropagation *only* updates the weights inside the tiny new Adapters.
 
+### The Bottleneck Architecture
+To make the Adapters as small as possible, they use a "bottleneck" architecture. 
+If the main Transformer layer is 4,096 dimensions wide, the Adapter will forcefully compress the data down to a tiny dimension (e.g., 64 dimensions), process it, and then expand it back to 4,096. This means the Adapter only contains a few million parameters, rather than billions.
+
+## The Benefits
+
+*   **Speed & Hardware:** Because you are only training a few million parameters instead of billions, you can fine-tune massive models on a single consumer GPU in a few hours.
+*   **Storage:** The trained Adapter is just a tiny file (often less than 50MB). You keep one copy of the giant base LLM on your server, and you can instantly hot-swap the tiny 50MB Adapter files depending on which client is using the system.
+
+<Callout icon="arrow-right" title="Adapters vs LoRA">
+While standard Adapters (inserting new layers between existing ones) were revolutionary when introduced in 2019, they introduced a slight "inference latency" (the data had to travel through extra physical layers, slowing the model down slightly). Today, the industry has almost entirely shifted to **LoRA (Low-Rank Adaptation)**, which mathematically injects the new weights *in parallel* to the old weights, achieving the same exact benefits but with zero slowdown during inference.
 </Callout>
-
-
-## Standard Adapter Architecture
-
-The original adapter design (proposed by Houlsby et al.) uses a mathematical "bottleneck" structure:
-
-1. **Down-projection:** A linear layer shrinks the massive incoming dimension (e.g., 4096) down to a tiny dimension (e.g., 64).
-2. **Non-linearity:** A standard activation function (like ReLU or GELU) processes the compressed data.
-3. **Up-projection:** A second linear layer scales the 64-dimension data back up to 4096.
-4. **Residual Connection:** The output is mathematically added back to the original input.
-
-This bottleneck forces the adapter to compress and learn only the most essential task-specific knowledge.
-

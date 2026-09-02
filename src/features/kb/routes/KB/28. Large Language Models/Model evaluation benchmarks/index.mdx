@@ -1,33 +1,55 @@
 ---
 title: Model Evaluation Benchmarks
-description: The standardized tests used to mathematically evaluate and compare the intelligence of LLMs.
+description: "An overview of how the AI industry scientifically measures the intelligence of Large Language Models using standardized academic tests."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Model Evaluation Benchmarks">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-As hundreds of new LLMs are released monthly, the industry requires standardized, mathematical benchmarks to compare their capabilities. However, evaluating an LLM is notoriously difficult because language is highly subjective, and models often "cheat" by having the benchmark data accidentally included in their training sets (Data Contamination).
+Because Generative AI outputs highly variable text, it is incredibly difficult to definitively prove that "Model A is smarter than Model B." 
 
+To solve this, the AI industry relies on **Standardized Benchmarks**. These are massive, open-source datasets of thousands of multiple-choice questions spanning math, law, history, and logic. A model's "intelligence" is quantified by the percentage of questions it gets correct.
 
-<Callout icon="tip" title="The LMSYS Chatbot Arena">
+## The Most Famous Benchmarks
 
+If you read an announcement for a new LLM (like GPT-4o or Llama-3), the company will always publish a table showing how their model scored on these specific tests.
 
-  Because static benchmarks are often "gamed" by models, the community largely relies on the **LMSYS Chatbot Arena**. It is a blind, crowdsourced A/B testing platform where a human provides a prompt, two anonymous models generate answers, and the human votes on the winner. The models are then ranked using the mathematical Elo rating system (like in Chess).
+### 1. MMLU (Massive Multitask Language Understanding)
+The undisputed gold standard for measuring general intelligence. MMLU consists of 15,908 multiple-choice questions across 57 academic subjects (ranging from elementary mathematics to college-level physics, law, and medicine). 
+*   *Human Average:* ~34.5%
+*   *Expert Human:* ~89.8%
+*   *GPT-4 Score:* ~88.7%
 
+### 2. HumanEval
+The standard benchmark for measuring a model's ability to write code. It was created by OpenAI. It contains 164 complex Python programming problems. The model is given the instructions, and it must write the correct Python function to pass hidden unit tests.
 
-</Callout>
+### 3. GSM8K (Grade School Math 8K)
+A dataset of 8,500 high-quality grade school math word problems. This benchmark specifically tests the model's ability to use **Chain-of-Thought reasoning** to solve multi-step mathematical logic, rather than just reciting facts.
 
+### 4. Chatbot Arena (LMSYS)
+Academic benchmarks have a major flaw: they don't test how "likable" a model is in a real conversation.
+**Chatbot Arena** is a crowdsourced leaderboard. You go to a website, type a prompt, and two anonymous AI models (e.g., Claude 3 vs GPT-4) generate an answer side-by-side. You vote on which answer is better. Based on hundreds of thousands of human votes, the models are ranked on an Elo rating system (just like chess).
 
-## Standard Static Benchmarks
+<ComparisonTable
+  title="Major LLM Benchmarks"
+  headers={["Benchmark", "Focus Area", "Format", "Difficulty"]}
+  rows={[
+    ["MMLU", "General Knowledge", "Multiple Choice", "College Level"],
+    ["HumanEval", "Coding", "Code Generation", "Advanced"],
+    ["GSM8K", "Mathematics", "Word Problems", "Grade School"],
+    ["MATH", "Advanced Mathematics", "Equation Solving", "Competition Level"],
+    ["HellaSwag", "Commonsense Reasoning", "Sentence Completion", "Moderate"]
+  ]}
+/>
 
-
-<ComparisonTable headers={['Benchmark', 'Domain', 'Description']} rows={[ ['MMLU (Massive Multitask Language Understanding)', 'General Knowledge', 'The gold standard. 57 subjects across STEM, humanities, and others. Evaluates if the model possesses world knowledge and problem-solving ability.'], ['HumanEval', 'Coding', 'A set of 164 hand-written programming problems. The model must write a Python function, which is then executed against hidden unit tests. Measures actual logic, not just syntax.'], ['GSM8K', 'Mathematics', 'Grade School Math word problems. Tests the model\'s ability to perform multi-step mathematical reasoning.'] ]} />
-
-
+## The "Data Contamination" Problem
+The biggest crisis in AI evaluation today is **Data Contamination**.
+Because models are trained by scraping the entire internet, it is highly likely that the model accidentally memorized the exact answers to the MMLU test during its training phase. If a model scores 95% on a math test, it's almost impossible to prove if the model is actually a genius at math, or if it simply memorized the answer key it found on GitHub.

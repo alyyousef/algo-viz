@@ -1,49 +1,55 @@
 ---
-title: Transformers
-description: The neural network architecture that powers modern Generative AI.
+title: Transformers (NLP)
+description: "A deep dive into the Transformer architecture, the revolutionary neural network design that completely redefined Natural Language Processing."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Transformers">
+    <ConceptTemplate title="Transformers (NLP)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Introduced by Google in the 2017 paper *"Attention Is All You Need"*, the Transformer is a deep learning architecture that relies entirely on a mechanism called **Self-Attention** to draw global dependencies between input and output.
+The **Transformer** is a deep learning architecture introduced by Google researchers in 2017 in the landmark paper *"Attention Is All You Need."*
 
+Prior to 2017, the NLP world was entirely dominated by Recurrent Neural Networks (RNNs and LSTMs). Transformers completely eradicated RNNs and became the foundational architecture for literally every modern Large Language Model (GPT-4, BERT, LLaMA, Claude).
 
-<Callout icon="tip" title="Why it matters">
+## The Flaw of Previous Models (RNNs)
 
+To understand why Transformers are revolutionary, you must understand the flaw of RNNs: **Sequential Processing.**
+If an RNN reads a 100-word sentence, it *must* read word 1, then word 2, then word 3. It cannot process word 50 until word 49 is finished. 
+This meant RNNs were incredibly slow and completely incapable of utilizing the massive parallel processing power of modern GPUs. Furthermore, by the time an RNN reached word 100, it had often "forgotten" the context of word 1.
 
-  Before Transformers, NLP relied heavily on Recurrent Neural Networks (RNNs) and LSTMs. Transformers process entire sequences simultaneously rather than sequentially, enabling massive parallelization and the creation of Large Language Models (LLMs) like GPT-4.
+## How Transformers Fixed It
 
+Transformers threw away the concept of sequential processing entirely. A Transformer processes the *entire 100-word sentence at the exact same time* using massive parallel matrix multiplication.
 
+It achieves this through two core innovations:
+
+### 1. Positional Encoding
+If you process all the words at the exact same time, how does the neural network know the order of the sentence? ("Dog bites man" vs "Man bites dog"). 
+Transformers solve this by mathematically injecting a **Positional Encoding** into every word. Before the word enters the network, a unique mathematical frequency (a combination of sine and cosine waves) is added to it, essentially stamping the word with a permanent ID tag that says *"I am word #4."*
+
+### 2. Self-Attention
+This is the heart of the Transformer. **Self-Attention** is a mathematical mechanism that allows every word in a sentence to look at *every other word* in the sentence simultaneously, and figure out which words are most relevant to its own meaning.
+
+Consider the sentence: *"The animal didn't cross the street because **it** was too tired."*
+What does the word "it" refer to? The animal or the street?
+A human instantly knows "it" refers to the animal. Through Self-Attention, the neural network learns to mathematically link the word "it" heavily to the word "animal", and weakly to the word "street." 
+
+By doing this across millions of documents, the model learns the deep syntactic and semantic structures of human language without any explicit grammatical rules.
+
+## The Encoder-Decoder Structure
+
+The original 2017 Transformer was built for Language Translation and had two halves:
+1.  **The Encoder:** Reads the English sentence and uses Self-Attention to compress it into a massive mathematical representation of pure "context."
+2.  **The Decoder:** Takes that "context" and generates the French translation one word at a time, using a slightly modified version called *Masked* Self-Attention.
+
+<Callout icon="code-branch" title="The Fork in the Road (BERT vs GPT)">
+Shortly after the Transformer was invented, the AI industry split it in half:
+*   **BERT (Google):** Took just the **Encoder** half. It excels at reading entire documents and understanding deep context (perfect for Search, Sentiment Analysis, and Extractive QA).
+*   **GPT (OpenAI):** Took just the **Decoder** half. It excels at predicting the next word based on prior context, making it the king of Generative AI and chatbots.
 </Callout>
-
-
-## Core Mechanism
-
-
-<ComparisonTable headers={['Component', 'Function']} rows={[ ['Self-Attention', 'Allows the model to weigh the importance of different words in a sentence relative to one another.'], ['Multi-Head Attention', 'Runs multiple self-attention layers in parallel to capture different types of relationships.'], ['Positional Encoding', 'Injects information about the position of the tokens in the sequence since the model has no inherent sense of order.'] ]} />
-
-
-## Architecture
-
-<ArchitectureDiagram chart={`
-graph TD
-  Input(Input Tokens) --> Embed(Embedding + Positional Encoding)
-
-  subgraph Encoder Block
-    Embed --> MHA1(Multi-Head Attention)
-    MHA1 --> AddNorm1(Add & Norm)
-    AddNorm1 --> FF1(Feed Forward)
-    FF1 --> AddNorm2(Add & Norm)
-  end
-
-  AddNorm2 --> Output(To next block / Output)
-`} />
-

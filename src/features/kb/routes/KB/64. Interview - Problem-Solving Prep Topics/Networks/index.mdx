@@ -1,19 +1,35 @@
 ---
-title: Networks
-description: A collection of computers, servers, mainframes, network devices, peripherals, or other devices connected to one another to allow the sharing of data.
+title: Networks (Interview Prep)
+description: "A summary of the core computer networking concepts frequently tested in backend, infrastructure, and SRE interviews."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Networks (Interview Prep)">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Networks (Interview Prep)"
+  subtitle="Mastering Internet Protocols"
+  tags={['Interviews', 'Networking', 'Systems Design']}
+>
 
-Interviewers often test your biological understanding of how the internet actually works.
+If you are interviewing for a Backend, DevOps, or Site Reliability Engineering (SRE) role, you will be deeply tested on exactly how data physically travels across the internet. 
 
-You may be asked the classic question: *"What mathematically happens when you type google.com into your browser?"* You must explain DNS resolution, the TCP 3-way handshake (`SYN, SYN-ACK, ACK`), TLS encryption negotiation, and HTTP request rendering. Understanding the OSI model mathematically proves you are not just a high-level framework developer.
+## 1. TCP vs. UDP
 
+This is the absolute most common networking interview question. You must know the tradeoffs:
+- **TCP (Transmission Control Protocol)**: A connection-oriented protocol. It performs a "3-Way Handshake" (SYN, SYN-ACK, ACK) before sending data. It guarantees delivery (if a packet is dropped, TCP autonomously retransmits it), guarantees order, and prevents network congestion. Used for HTTP (Websites), Emails, and File Downloads where dropping a single byte corrupts the file.
+- **UDP (User Datagram Protocol)**: A connectionless protocol. It just blindly blasts packets at the IP address as fast as possible. No handshakes, no guarantee of delivery, no ordering. Used for Video Calls (Zoom) and Multiplayer Gaming, where speed is critical and if a packet drops, you don't care, you just drop the video frame and move on.
+
+## 2. The OSI Model
+
+You are often asked to explain the 7 layers of the OSI model, or at least the critical ones:
+- **Layer 2 (Data Link)**: MAC Addresses. Switches. How data moves physically across a local office room.
+- **Layer 3 (Network)**: IP Addresses. Routers. How data finds its way across the global internet (BGP).
+- **Layer 4 (Transport)**: TCP and UDP. Ports (80, 443).
+- **Layer 7 (Application)**: HTTP, HTTPS, DNS, SSH, WebSockets.
+
+## 3. DNS (Domain Name System)
+
+*Question: "What happens exactly when you type google.com into your browser?"*
+You must explain the DNS resolution process. The browser checks its local cache. If empty, it asks the OS. The OS asks the ISP's DNS Resolver. The Resolver recursively queries the global Root Name Servers, then the `.com` Top-Level Domain servers, and finally Google's Authoritative Name Server to mathematically map `google.com` to the IP Address `142.250.190.46`.
+
+</ConceptTemplate>

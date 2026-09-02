@@ -1,35 +1,20 @@
 ---
-title: Supervised Learning
-description: The dominant mathematical paradigm of Machine Learning where algorithms map inputs to outputs by learning from explicitly labeled training data.
+title: Supervised Learning (Redirect)
+description: "Redirecting to Machine Learning Overview."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Supervised Learning">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Supervised Learning** is the workhorse of the modern AI industry. It is the mathematical process of deriving a function that maps an input to an output based on example input-output pairs.
+<Callout icon="info" title="Redirect">
+**Supervised Learning** is the most common paradigm in Machine Learning, where algorithms learn from explicitly labeled training data.
 
-In this paradigm, a human acts as the "Supervisor", providing the algorithm with the exact correct mathematical answers during training.
-
-## 1. The Mathematical Objective
-You are given a dataset $D$ consisting of $N$ pairs of inputs ($X$) and targets ($Y$).
-$D = \{(x_1, y_1), (x_2, y_2), ..., (x_N, y_N)\}$
-
-The goal is to mathematically learn a function $f(X) \approx Y$.
-During training, the algorithm predicts a value $\hat{y}$. The **Loss Function** mathematically measures the distance between the prediction $\hat{y}$ and the true label provided by the human supervisor $y$. Optimization algorithms (like Gradient Descent) adjust the function $f$ until the Loss is mathematically minimized.
-
-## 2. Classification vs Regression
-Supervised Learning is split into two massive sub-branches depending on the mathematical shape of the target variable $Y$.
-- **Regression**: The target $Y$ is a continuous, infinite number (e.g., Predicting the price of a house: $543,211). Algorithms: Linear Regression, XGBoost Regressor.
-- **Classification**: The target $Y$ is a discrete category (e.g., Predicting if a transaction is Fraud or Not Fraud). Algorithms: Logistic Regression, Random Forest Classifier, Support Vector Machines.
-
-## 3. The Data Bottleneck
-Because Supervised Learning relies entirely on the mathematical ground truth ($Y$), it is severely bottlenecked by human labor.
-To train an autonomous vehicle using pure Supervised Learning, humans must manually draw strict mathematical bounding boxes around every single pedestrian, stop sign, and vehicle across 10 million video frames. This economic constraint led to the rise of Self-Supervised and Reinforcement Learning.
-
+Please navigate to the [Machine Learning Overview](/kb/24.-artificial-intelligence-%E2%80%94-overview/machine-learning) module for a comprehensive breakdown of Supervised vs. Unsupervised vs. Reinforcement Learning.
+</Callout>

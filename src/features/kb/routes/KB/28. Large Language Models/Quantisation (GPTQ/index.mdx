@@ -1,33 +1,58 @@
 ---
-title: Post-Training Quantization (GPTQ)
-description: A revolutionary mathematical compression technique to shrink LLMs so they fit on consumer GPUs.
+title: Quantization (GPTQ, AWQ)
+description: "An overview of Quantization, the brutal mathematical compression techniques used to shrink massive LLMs so they can run on consumer hardware."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Post-Training Quantization (GPTQ)">
+    <ConceptTemplate title="Quantization (GPTQ, AWQ, GGUF)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A 70-Billion parameter model stored in standard 16-bit precision requires over 140GB of VRAM just to load the weights. This requires a server with multiple $40,000 Nvidia H100 GPUs.
+**Quantization** is the process of compressing the massive file size of a neural network by reducing the precision of the numbers that make up its weights.
 
-**Quantization** mathematically compresses the weights from 16-bit floating-point numbers down to 8-bit, 4-bit, or even 2-bit integers, drastically reducing memory usage with surprisingly little loss in "smartness".
+When researchers train a model like Llama-3, the billions of connections (weights) are stored as highly precise 16-bit floating-point numbers (FP16). 
+*   *Example:* `0.12345678`
+A 70-Billion parameter model stored in FP16 takes up **140 Gigabytes** of hard drive space and requires 140GB of GPU VRAM just to run.
 
+Quantization brutally rounds these numbers down to 8-bit, 4-bit, or even 2-bit integers.
+*   *Example:* `0.12`
+By rounding the numbers, the file size shrinks from 140GB down to just **40GB**, allowing the massive model to run on standard consumer hardware. 
 
-<Callout icon="success" title="The GPTQ Algorithm">
+## The Accuracy Trade-Off
 
+When you round numbers, you lose information. 
+If you aggressively quantize a model from 16-bit to 4-bit, you are stripping away millions of tiny mathematical nuances. Historically, this caused "Quantization Collapse," where the model became incredibly stupid and output gibberish.
 
-  GPTQ is a specific, highly advanced quantization algorithm. It doesn\'t just blindly round numbers. It analyzes the model\'s activation patterns on a calibration dataset and uses second-order mathematical approximations (Hessian matrices) to intelligently adjust the remaining weights to compensate for the precision lost during rounding.
+Modern quantization algorithms (like GPTQ and AWQ) use advanced mathematics to figure out *which* specific weights are critical for intelligence, and which weights are useless, allowing them to shrink the model by 70% while only losing ~2% of the model's accuracy.
 
+## The Major Quantization Formats
 
-</Callout>
+If you browse HuggingFace to download an open-source LLM, you will see the exact same model offered in several different quantization formats. You must choose the right format for your hardware.
 
+### 1. AWQ (Activation-Aware Weight Quantization)
+AWQ is the modern standard for running models on **NVIDIA GPUs**. 
+Instead of blindly rounding all weights, AWQ passes a small amount of text through the network to see which weights "activate" the most. It realizes that only 1% of the weights are truly critical for generating good text. It keeps that 1% at high precision, and aggressively compresses the remaining 99%. AWQ is incredibly fast during text generation.
 
-## Why Quantization Works
+### 2. GPTQ (Post-Training Quantization)
+GPTQ is the older sibling to AWQ. It uses a complex mathematical algorithm (Hessian matrices) to adjust the surviving weights to compensate for the data lost during compression. While GPTQ produces highly accurate models, it is slightly slower to run than AWQ.
 
-Neural networks are incredibly robust to noise. A weight of `0.81234` (16-bit) might be rounded to `0.8` (4-bit). The exact precision rarely matters for the final output logic. The bottleneck in LLM inference is **memory bandwidth** (moving weights from VRAM to the processor), not compute. By shrinking the weights, you move them 4x faster, actually increasing text generation speed on consumer hardware.
+### 3. GGUF (For CPUs and MacBooks)
+If you do not have an NVIDIA GPU, you cannot use AWQ or GPTQ. You must use **GGUF**. 
+GGUF is a highly specialized quantization format designed to run on standard System RAM (DDR5) and Apple's unified Metal memory. It allows you to run massive models entirely on a MacBook M-series chip or a standard Windows CPU.
 
+<ComparisonTable
+  title="Which format should you download?"
+  headers={["Hardware", "Recommended Format", "Pros", "Cons"]}
+  rows={[
+    ["Cloud NVIDIA GPU (A100, H100)", "AWQ or EXL2", "Blazing fast VRAM inference", "Requires massive GPU memory"],
+    ["Local Desktop (RTX 4090/3090)", "AWQ or EXL2", "Maximizes local GPU power", "Fails if model exceeds VRAM limit"],
+    ["MacBook (M1/M2/M3)", "GGUF", "Uses Apple Unified Memory perfectly", "Slower than dedicated NVIDIA GPUs"],
+    ["CPU Only (No GPU)", "GGUF", "Can run on any standard computer", "Extremely slow text generation"]
+  ]}
+/>

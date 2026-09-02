@@ -1,30 +1,46 @@
 ---
 title: Agentic Workflows
-description: Advanced architectural patterns where LLMs are not just passive text generators, but active decision-makers that can mathematically route tasks, use tools, and loop autonomously.
+description: "A deep dive into advanced Agentic Workflows, the architectural patterns used to chain multiple AI agents together to solve incredibly complex enterprise tasks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Agentic Workflows">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you ask a standard LLM to "deploy my website," it simply prints out a list of instructions. In an Agentic Workflow, the LLM physically executes the deployment.
+As AI developers quickly discovered, a single AI Agent given a massive, complex task (like *"Write an entire video game in Python"*) will almost always fail. It gets confused, forgets its original goal, and gets trapped in infinite loops.
 
-## 1. The ReAct Pattern (Reason + Act)
-The foundational mathematical pattern for Agents is **ReAct**.
-The Agent operates in a mathematically strict loop:
-1. **Thought**: The LLM analyzes the current state and reasons about what to do next.
-2. **Action**: The LLM outputs a specific, parseable command (like `call_function("search_web", "AWS deployment")`).
-3. **Observation**: The system physically executes the command and feeds the raw mathematical output back into the LLM's context window.
-The loop mathematically repeats until the LLM determines the overarching goal has been achieved.
+To solve this, developers moved from single-agent systems to **Agentic Workflows** (Multi-Agent Systems). Instead of one mega-brain doing everything, you create a virtual corporation of specialized mini-agents.
 
-## 2. Multi-Agent Orchestration
-Advanced systems (like AutoGen or CrewAI) do not rely on a single Agent. They mathematically partition the logic.
-You spawn a "Researcher Agent" (prompted to be skeptical and thorough) and a "Coder Agent" (prompted to write optimized Python).
-The Orchestrator mathematically routes data between them. The Coder writes the code, hands it to the Researcher, who physically runs it, observes a crash, and hands the error log back to the Coder. This multi-agent debate mathematically reduces Hallucinations and dramatically increases complex task success rates.
+## The 4 Standard Agentic Design Patterns
 
+According to AI researcher Andrew Ng, there are four dominant design patterns for building reliable Agentic Workflows.
+
+### 1. Reflection (Self-Correction)
+Never trust the first draft of an LLM. In a Reflection workflow, you use two prompts:
+1.  **The Generator:** Writes the code.
+2.  **The Critic:** Reads the generated code, looks for bugs, and explicitly outputs a list of flaws.
+The flawed code and the Critic's notes are sent *back* to the Generator to write a V2. This loop runs 3 or 4 times before the user ever sees the result, drastically increasing quality.
+
+### 2. Tool Use
+*(Covered extensively in the Tool Use module).* Providing the LLM with a robust suite of deterministic APIs (search, math calculators, code execution) to ground its logic in reality.
+
+### 3. Planning (Plan-and-Solve)
+For massive tasks, an LLM will fail if it tries to act immediately. In a Planning workflow, the Agent is strictly forbidden from using tools during Step 1. 
+Instead, it must output a highly detailed, markdown-formatted **Implementation Plan** breaking the goal into 10 sub-tasks. Only after the plan is generated (and potentially approved by a human) does the execution phase begin, checking off tasks one by one.
+
+### 4. Multi-Agent Collaboration
+The most advanced pattern. You instantiate multiple unique personas using frameworks like **AutoGen** or **CrewAI**.
+*   *Agent A (The Coder):* Prompted to write Python code.
+*   *Agent B (The QA Tester):* Prompted to write Unit Tests and try to break the Coder's work.
+*   *Agent C (The Project Manager):* Reads the conversation between A and B, keeps them on topic, and decides when the task is officially finished.
+These agents talk to *each other* in a virtual group chat until the task is complete.
+
+<Callout icon="users" title="The Power of Personas">
+Multi-Agent systems work because they mathematically force the LLM to change its internal probability distributions. If you ask one generic LLM to code and test, it uses a generic distribution. By explicitly forcing the LLM to roleplay as a "Ruthless QA Tester", it activates entirely different pathways in the neural network, allowing it to find bugs it would have completely ignored as a generic assistant.
+</Callout>

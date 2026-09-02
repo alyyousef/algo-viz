@@ -1,37 +1,106 @@
 ---
-title: Wi-Fi Standards (IEEE 802.11)
-description: The ubiquitous set of protocols dictating how local devices connect wirelessly over the unlicensed 2.4GHz, 5GHz, and 6GHz bands.
+title: Wi-Fi Standards (802.11)
+description: "The mathematical evolution of the IEEE 802.11 wireless local area networking standard, governing how devices communicate over the 2.4 GHz, 5 GHz, and 6 GHz bands."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Wi-Fi Standards (IEEE 802.11)">
+    <ConceptTemplate title="Wi-Fi Standards (802.11)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Wi-Fi is simply the wireless equivalent of Ethernet, governed by the **IEEE 802.11** working group.
-Because it is designed for consumer use, it operates in the "Unlicensed" ISM radio bands (Industrial, Scientific, and Medical). Because these bands are unlicensed, anyone can use them, meaning they are incredibly crowded and prone to massive interference from microwave ovens and baby monitors.
+**Wi-Fi (IEEE 802.11)** is a marvel of mathematical cooperation. 
+In a wired Ethernet network, a switch is a dictator; it decides exactly which packet goes to which cable. In a Wi-Fi network, the airspace is a chaotic, shared medium. If two laptops transmit at the exact same millisecond, their radio waves mathematically collide in the air, corrupting both packets (a Collision). 
 
-## The Evolution of 802.11
+The entire evolution of Wi-Fi standards over the last 25 years has been a mathematical war against physics: finding new ways to avoid collisions, pack more bits onto a single radio wave, and utilize higher frequencies.
 
-The IEEE naming scheme became too complex for consumers, so the Wi-Fi Alliance officially rebranded them into simple generational numbers:
+## 1. Deep Dive: The Generations
 
-- **Wi-Fi 4 (802.11n)**: Released in 2009. Introduced **MIMO** (Multiple-Input Multiple-Output), allowing routers to use multiple antennas simultaneously to bounce radio waves off walls, drastically increasing speed.
-- **Wi-Fi 5 (802.11ac)**: Released in 2014. Exclusively used the wider **5 GHz** band to achieve gigabit speeds, though sacrificing physical range (as 5 GHz cannot penetrate walls as well as 2.4 GHz).
-- **Wi-Fi 6 (802.11ax)**: Released in 2019. Did not focus on raw speed; instead focused entirely on **Congestion**. It introduced OFDMA (borrowed from Cellular networks), allowing a router to talk to 30 different IoT devices and laptops in the exact same millisecond, rather than forcing them to wait in a queue.
-- **Wi-Fi 7 (802.11be)**: Released in 2024. Introduces MLO (Multi-Link Operation). Your laptop can connect to the 2.4 GHz, 5 GHz, and new 6 GHz bands *all at the exact same time*, combining their speeds for virtually zero latency.
+**802.11b / 11g / 11n (Wi-Fi 1, 3, 4 - The 2.4 GHz Era):**
+- Early Wi-Fi operated exclusively in the crowded 2.4 GHz band (competing with microwaves and Bluetooth). 
+- To avoid collisions, it uses **CSMA/CA (Carrier-Sense Multiple Access with Collision Avoidance)**. Before transmitting, a laptop mathematically "listens" to the air. If someone else is talking, it generates a random mathematical backoff timer (e.g., 50ms). It waits, listens again, and if clear, transmits. This makes early Wi-Fi fundamentally **Half-Duplex** (only one device can talk at a time).
 
+**802.11ac (Wi-Fi 5 - The 5 GHz Era):**
+- **The Math:** Introduced mandatory 5 GHz support. 5 GHz provides massive bandwidth but struggles to penetrate walls.
+- **Key Innovation:** Introduced **MU-MIMO** (Multi-User, Multiple Input, Multiple Output) on the downlink. For the first time, a router with 4 antennas could mathematically blast 4 distinct, parallel streams of data to 4 different laptops at the *exact same time* using spatial multiplexing, drastically increasing network capacity.
 
-<Callout icon="warning" title="WPA3 Security">
+**802.11ax (Wi-Fi 6 / 6E - The Efficiency Era):**
+- **The Math:** Previous versions were fast for *one* device, but choked in a stadium with 10,000 phones. Wi-Fi 6 adopted 4G Cellular math: **OFDMA (Orthogonal Frequency-Division Multiple Access)**.
+- **Key Innovation:** Instead of making 10 phones wait in line to use the entire 80 MHz channel one at a time, OFDMA mathematically slices the channel into microscopic "Resource Units". The router can transmit data to all 10 phones simultaneously on different microscopic frequencies. 
+- *Note: Wi-Fi 6E simply takes this exact same math and applies it to the brand new, pristine 6 GHz frequency band.*
 
+## 2. Mathematical / Theoretical Foundation
 
-  In 2017, the legendary "KRACK" vulnerability proved that the WPA2 encryption standard was mathematically broken, allowing hackers to decrypt Wi-Fi traffic. **WPA3** is now the mandatory standard. It replaces the old pre-shared key handshake with SAE (Simultaneous Authentication of Equals), rendering offline brute-force dictionary attacks completely impossible.
+How does Wi-Fi 6 achieve 9.6 Gbps speeds compared to Wi-Fi 4's 600 Mbps? **Quadrature Amplitude Modulation (QAM)**.
 
+Wi-Fi transmits data by altering the shape (Amplitude and Phase) of the radio wave.
+- Wi-Fi 4 used **64-QAM**. There are 64 distinct wave shapes. $2^6 = 64$. Therefore, every single pulse of the radio wave mathematically carries exactly **6 bits** of data.
+- Wi-Fi 5 used **256-QAM**. ($2^8 = 256$). Every pulse carries **8 bits**.
+- Wi-Fi 6 introduced **1024-QAM**. ($2^{10} = 1024$). Every pulse carries **10 bits**.
 
+However, detecting 1,024 microscopic variations in a radio wave requires perfect mathematical clarity. If you are 50 feet away from the router behind a brick wall, the Signal-to-Noise Ratio (SNR) drops. The receiver's math fails to distinguish between wave shape #500 and #501. The router mathematically detects this error rate and aggressively downshifts back to 64-QAM or 16-QAM, instantly slashing your speeds by 80% to maintain a stable connection.
+
+## 3. Real-World Implementation
+
+As developers, we rarely touch the 802.11 MAC layer. However, networking engineers must mathematically configure Channel Widths in enterprise deployments to balance speed vs. interference.
+
+```bash
+# Conceptually mapping Channel Widths (e.g., in a Cisco WLC or OpenWrt router)
+
+# 20 MHz Width (The default): 
+# Highly stable, low interference. Max speed is mathematically capped (e.g., 144 Mbps).
+
+# 40 MHz Width (Channel Bonding):
+# Mathematically glues two 20 MHz channels together. Doubles the speed.
+# Danger: In 2.4 GHz, doing this consumes 66% of the entire available spectrum, 
+# virtually guaranteeing catastrophic interference with neighbors.
+
+# 80 MHz / 160 MHz Width (Wi-Fi 5 / Wi-Fi 6):
+# Glues 4 or 8 channels together for Gigabit speeds. 
+# Only possible in 5 GHz or 6 GHz bands where massive spectrum is available.
+# If a neighbor uses the same 160 MHz block, you will both suffer massive collision latency.
+```
+
+## 4. Visualizations
+
+```mermaid
+graph TD
+    subgraph Wi-Fi 5 (OFDM - The Delivery Truck)
+        Router5[Router] -->|Packet 1 (Full 80MHz)| Phone1(Phone 1 - 50ms wait)
+        Router5 -.->|Packet 2 (Full 80MHz)| Phone2(Phone 2 - 100ms wait)
+        Router5 -.->|Packet 3 (Full 80MHz)| Phone3(Phone 3 - 150ms wait)
+        Note over Router5,Phone3: Devices must wait in line.<br/>(High Latency in crowds)
+    end
+
+    subgraph Wi-Fi 6 (OFDMA - The Delivery Van)
+        Router6[Router]
+        Router6 -->|Sub-channel 1 (20MHz)| Phone4(Phone 4 - 0ms wait)
+        Router6 -->|Sub-channel 2 (20MHz)| Phone5(Phone 5 - 0ms wait)
+        Router6 -->|Sub-channel 3 (20MHz)| Phone6(Phone 6 - 0ms wait)
+        Note over Router6,Phone6: Mathematically slices the spectrum.<br/>Transmits to all 3 simultaneously.
+    end
+```
+
+## 5. Interview Prep
+
+**Q: What is WPA3 and how does it mathematically differ from WPA2?**
+**A:** WPA2 (2004) used a 4-Way Handshake that was mathematically vulnerable to offline dictionary attacks (the KRACK attack). If a hacker captured your Wi-Fi handshake from the air, they could take it home and run millions of password guesses against it on a GPU cluster. WPA3 (2018) replaces this with **SAE (Simultaneous Authentication of Equals)**. Based on the Dragonfly Key Exchange, it mathematically forces the attacker to interact with the router live for *every single password guess*, making brute-forcing physically impossible.
+
+**Q: What is a Wi-Fi Mesh Network (e.g., Eero, Google Nest)?**
+**A:** A traditional Wi-Fi extender is terrible. It receives a packet on Channel 6, and rebroadcasts it on Channel 6. Because Wi-Fi is half-duplex, it mathematically cuts your bandwidth in half instantly. A true **Mesh Network** uses dedicated **Wireless Backhaul**. The satellite node talks to your laptop on 2.4 GHz, but it uses a completely separate, dedicated 5 GHz radio mathematically reserved *only* for blasting the data back to the main router, preventing radio collisions and maintaining gigabit speeds.
+
+**Q: Why do enterprise networks (like a University) use WPA2-Enterprise instead of a standard password?**
+**A:** In WPA2-Personal, everyone shares the same password. If an employee is fired, you have to change the password on 500 devices. In WPA2-Enterprise (802.1X), there is no Wi-Fi password. The router forwards the connection attempt to an internal RADIUS server (like Active Directory). The user logs in with their individual corporate username and password. The RADIUS server mathematically generates a unique, session-specific encryption key for that specific laptop. When the employee is fired, you just disable their Active Directory account.
+
+## 6. Production Use Cases
+
+- **High-Density Warehouses:** Amazon fulfillment centers deploy hundreds of barcode scanners running on Wi-Fi. In the Wi-Fi 4 era, 50 scanners trying to connect to a single router would mathematically trigger constant CSMA/CA backoffs, causing the scanners to lag and freeze. By upgrading to Wi-Fi 6 (OFDMA), the router coordinates the airspace perfectly, allowing all 50 scanners to transmit their tiny 1KB JSON payloads simultaneously without a single collision.
+- **Location Tracking (Wi-Fi RTT):** Wi-Fi isn't just for data. The modern 802.11mc standard introduces **Round-Trip Time (RTT)**. By mathematically timing exactly how many nanoseconds it takes a radio wave to bounce between your phone and 3 different enterprise access points in the ceiling, a shopping mall app can calculate your exact indoor position (X, Y coordinates) to an accuracy of 1 meter, providing indoor turn-by-turn navigation where GPS satellites cannot reach.
+
+<Callout icon="info" title="Target Wake Time (TWT)">
+A massive feature in Wi-Fi 6 designed for IoT. Previously, a battery-powered Wi-Fi smart lock had to wake up constantly to check if the router had messages for it, draining the battery in weeks. TWT allows the router and the smart lock to mathematically negotiate a schedule: *"Go to sleep, turn off your radio, and wake up exactly at 14:00:05.000 for 10 milliseconds."* This allows Wi-Fi IoT devices to last for years on a single battery, competing directly with Bluetooth LE.
 </Callout>
-
-

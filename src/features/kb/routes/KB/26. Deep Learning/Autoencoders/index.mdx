@@ -1,49 +1,51 @@
 ---
 title: Autoencoders
-description: Unsupervised neural networks that learn to compress and reconstruct data.
+description: "A deep dive into Autoencoders, a type of neural network used for unsupervised learning, dimensionality reduction, and generative modeling."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Autoencoders">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Autoencoders">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-An Autoencoder is a specific type of artificial neural network used to learn efficient codings of unlabeled data (unsupervised learning). The goal of an autoencoder is to learn a representation (encoding) for a set of data, typically for dimensionality reduction, by training the network to ignore signal "noise."
+An **Autoencoder** is a specific type of artificial neural network primarily used for unsupervised learning tasks. 
 
+Unlike a standard classification network that tries to predict a label (e.g., mapping an image of a dog to the word "Dog"), an autoencoder tries to predict *its own input*. Its goal is to take a piece of data, compress it down into a tiny, dense representation, and then reconstruct the original data as accurately as possible from that compressed form.
 
-<Callout icon="info" title="Compression vs Autoencoders">
+## Architecture
 
+An autoencoder consists of two main parts, joined by a central bottleneck:
 
-  Autoencoders are similar to compression algorithms like JPEG or MP3, but they are data-specific. An autoencoder trained on pictures of faces would do a terrible job compressing pictures of trees because the features it learned are specific to faces.
+### 1. The Encoder
+The encoder is a series of neural network layers that take the high-dimensional input data (like a $256 \times 256$ image) and gradually compress it down. With each layer, the number of neurons decreases. 
 
+### 2. The Bottleneck (Latent Space)
+The encoder compresses the data into a single, low-dimensional layer called the **bottleneck**. The values in this layer are known as the **Latent Representation** (or latent code). 
 
+If you feed a $1024$-pixel image into an autoencoder with a bottleneck of just $32$ neurons, the network is forced to learn only the absolute most critical, fundamental features of that image (like the presence of edges, curves, or specific shapes) to store in those $32$ numbers.
+
+### 3. The Decoder
+The decoder is the mirror image of the encoder. It takes the $32$ numbers from the bottleneck and gradually expands them back out, attempting to reconstruct the original $1024$-pixel image perfectly.
+
+## How it Learns
+
+Autoencoders are trained using standard backpropagation. The Loss Function is simply the difference between the original input and the reconstructed output (usually measured using Mean Squared Error). 
+
+If the reconstructed image is blurry or missing details, the loss is high, and the network adjusts its weights to compress and decompress more efficiently next time.
+
+<Callout icon="chart-scatter" title="Autoencoders vs PCA">
+Standard Autoencoders are often compared to Principal Component Analysis (PCA). Both are used for dimensionality reduction. However, PCA can only learn *linear* relationships. Because Autoencoders use non-linear activation functions (like ReLU), they can learn highly complex, non-linear manifolds in the data, making them vastly superior for complex data like images.
 </Callout>
-
-
-## The Architecture
-
-An autoencoder consists of two main parts joined by a central bottleneck:
-
-1. **The Encoder**: Compresses the high-dimensional input into a lower-dimensional latent space representation.
-2. **The Bottleneck**: The layer that contains the compressed representation of the input data (the latent variables).
-3. **The Decoder**: Reconstructs the input data from the compressed latent representation.
-
-<ArchitectureDiagram chart={`
-graph LR
-  Input[Input Data] --> Encoder
-  Encoder --> Bottleneck((Latent Space))
-  Bottleneck --> Decoder
-  Decoder --> Output[Reconstructed Data]
-`} />
-
-The network is trained to minimize the **Reconstruction Loss**—the difference between the original input and the reconstructed output (e.g., using Mean Squared Error).
-
-## Why the Bottleneck?
-
-If an autoencoder didn't have a bottleneck (if the hidden layers were wider than the input), it could simply memorize the input by passing it through the network unaltered (the identity function). By forcing the data through a smaller bottleneck, the network is forced to learn the most important, fundamental features (patterns, edges, structures) to successfully reconstruct the data on the other side.
 
 ## Types of Autoencoders
 
+While standard autoencoders are great for compression and denoising, several variations have been developed for specialized tasks:
 
-<ComparisonTable headers={['Type', 'Use Case']} rows={[ ['Denoising Autoencoder', 'Trained by deliberately adding noise to the input, but evaluating the loss against the original clean image. Forces the model to learn how to remove noise.'], ['Sparse Autoencoder', 'Adds a sparsity penalty to the loss function, forcing only a few nodes in the bottleneck to activate at once, encouraging the learning of distinct features.'], ['Variational Autoencoder (VAE)', 'A generative model that learns the probability distribution of the latent space, allowing it to generate entirely new, similar data.'] ]} />
-
-
-</TechnologyTemplate>
+*   **Denoising Autoencoders:** Instead of feeding the original image into the encoder, you feed in a *corrupted, noisy* version of the image. You then calculate the loss against the *clean* original image. This forces the network to learn how to remove noise from data.
+*   **Sparse Autoencoders:** Instead of using a tiny physical bottleneck, these use a large latent space but apply a mathematical penalty to the loss function that forces most of the neurons in the latent space to be exactly $0$. This forces the network to learn robust, independent features.
+*   **Variational Autoencoders (VAEs):** The most famous variant. Instead of compressing an image into a single point in the latent space, it compresses the image into a *probability distribution* (a mean and a standard deviation). This turns the autoencoder into a **Generative Model**. You can sample a random point from the latent space, feed it to the decoder, and generate an entirely new, fake image that looks completely real.

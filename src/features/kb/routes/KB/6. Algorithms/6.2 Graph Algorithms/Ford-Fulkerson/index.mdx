@@ -4,18 +4,11 @@ description: "A foundational mathematical method for computing the maximum flow 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Ford-Fulkerson Method"
   subtitle="The Foundation of Max Flow"
   tags={['Algorithms', 'Graphs', 'Network Flow', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Imagine a network of water pipes of varying widths connecting a water treatment plant (Source) to a city (Sink). What is the absolute mathematical maximum gallons of water per minute you can push through the network? This is the Max-Flow problem.
 
@@ -32,3 +25,4 @@ The algorithm is mathematically simple:
 4. Repeat until no more augmenting paths exist.
 (Note: It is called a "Method" rather than an "Algorithm" because it does not specify *how* to find the path. If BFS is used, it becomes the Edmonds-Karp algorithm).
 
+</ConceptTemplate>

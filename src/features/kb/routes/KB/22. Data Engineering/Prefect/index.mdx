@@ -1,56 +1,20 @@
 ---
-title: Prefect
-description: A modern Python orchestrator focused on dynamic, data-aware execution, offering a mathematically robust alternative to Airflow.
+title: Prefect (Redirect)
+description: "Redirecting to Apache Airflow."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Prefect">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While Apache Airflow is the legacy standard for orchestration, it was designed in an era where pipelines were static. Airflow requires you to mathematically define the exact DAG structure *before* the pipeline runs. If you need to dynamically spin up 50 tasks based on an API response, Airflow struggles.
+<Callout icon="info" title="Redirect">
+The architectural paradigm of **Data Orchestration** (managing complex Directed Acyclic Graphs of data tasks), pioneered by Airflow and evolved by modern tools like Prefect and Dagster, is covered in the Deep Dive for **Apache Airflow**. 
 
-**Prefect** was engineered specifically to solve this, adopting a philosophy of "Negative Engineering"—handling all the infrastructure failures so you can focus on Python code.
-
-## 1. Dynamic DAGs and Pythonic Syntax
-Prefect abandons Airflow's rigid mathematical DAG declaration. In Prefect, your DAG is literally just standard Python code using decorators.
-
-```python
-from prefect import flow, task
-
-@task(retries=3)
-def fetch_data(api_endpoint):
-    return requests.get(api_endpoint).json()
-
-@task
-def process_data(data):
-    return [d * 2 for d in data]
-
-# The @flow decorator mathematically constructs the DAG at runtime
-@flow
-def my_dynamic_pipeline(endpoints):
-    results = []
-    # Dynamic iteration: Airflow cannot easily do this natively
-    for endpoint in endpoints:
-        raw = fetch_data(endpoint)
-        clean = process_data(raw)
-        results.append(clean)
-    return results
-
-if __name__ == "__main__":
-    my_dynamic_pipeline(["api/v1/users", "api/v1/sales"])
-```
-
-Because execution is dynamic, Prefect mathematically constructs the graph on the fly, allowing for incredibly complex, conditional looping architectures that are impossible in rigid Airflow DAGs.
-
-## 2. Hybrid Execution Model
-One of Prefect's most significant architectural innovations is its hybrid execution model.
-In Airflow, the central server must have access to all your secrets, API keys, and private networks to execute the code.
-
-In Prefect, the central UI (Prefect Cloud) only handles the **Metadata** (scheduling, state tracking). The actual physical execution happens on **your** infrastructure (e.g., your private AWS Kubernetes cluster) via a Prefect Agent. The Agent polls the cloud for work, executes the Python code locally using your secure VPC secrets, and only sends the mathematical *Status* (Success/Fail) back to the UI. Your proprietary data never touches Prefect's servers.
-
+Please navigate to the [Apache Airflow](/kb/22.-data-engineering/airflow) module to explore task dependencies and idempotency.
+</Callout>

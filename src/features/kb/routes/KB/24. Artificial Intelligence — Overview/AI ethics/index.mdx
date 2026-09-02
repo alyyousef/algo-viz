@@ -1,33 +1,20 @@
 ---
-title: AI Ethics
-description: The socio-technical discipline of ensuring AI systems are fair, unbiased, transparent, and respect human rights in deployment.
+title: AI Ethics (Redirect)
+description: "Redirecting to AI Alignment."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="AI Ethics">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While AI Alignment focuses on the existential threat of superintelligence, **AI Ethics** focuses on the immediate, tangible harms caused by AI systems currently deployed in the real world (e.g., biased hiring algorithms, racist facial recognition, and automated prison sentencing).
+<Callout icon="info" title="Redirect">
+The philosophical and technical frameworks of **AI Ethics** (bias, fairness, accountability, and safety) are covered in the Deep Dive for **AI Alignment**. 
 
-## 1. Algorithmic Bias
-Machine Learning models are mathematically objective, but they are trained on highly biased historical human data.
-
-- **COMPAS (Predictive Policing)**: A famous risk-assessment algorithm used in the US justice system to predict if a defendant would reoffend. An investigation proved the algorithm was heavily biased against Black defendants. Because the algorithm was trained on historical arrest records (which were influenced by systemic racism), the AI mathematically learned to replicate and scale that racism.
-- **Amazon's Hiring AI**: Amazon built an AI to screen resumes. Because historically most tech resumes belonged to men, the AI mathematically penalized any resume containing the word "women's" (e.g., "Women's Chess Club Captain"). Amazon was forced to scrap the project.
-
-## 2. Mathematical Definitions of Fairness
-Ethicists and Computer Scientists have attempted to mathematically define "Fairness", but discovered it is often mathematically impossible to satisfy all definitions simultaneously.
-- **Demographic Parity**: The algorithm must mathematically accept the exact same percentage of applicants from Group A and Group B.
-- **Equal Opportunity**: The algorithm must have the exact same True Positive Rate (accuracy) for both Group A and Group B.
-Mathematical proofs (like the Chouldechova impossibility theorem) show that if the base rates of two groups differ, you mathematically *cannot* achieve Demographic Parity and Equal Opportunity at the same time. You must make a philosophical choice.
-
-## 3. Privacy and Surveillance
-The deployment of Computer Vision has created an AI Ethics crisis regarding mass surveillance.
-Authoritarian governments utilize AI-powered facial recognition across millions of CCTV cameras to track citizens in real-time, completely obliterating the concept of anonymity in public spaces. Ethical frameworks argue for strict limitations on biometric AI to prevent dystopian surveillance states.
-
+Please navigate to the [AI Alignment](/kb/24.-artificial-intelligence-%E2%80%94-overview/ai-alignment) module to explore how models are trained to reflect human values.
+</Callout>

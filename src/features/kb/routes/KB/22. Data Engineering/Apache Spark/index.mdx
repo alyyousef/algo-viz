@@ -1,6 +1,6 @@
 ---
-title: Apache Spark
-description: "An open-source, unified analytics engine for large-scale data processing, dominant in Data Engineering and Machine Learning."
+title: Apache Spark (Redirect)
+description: "Redirecting to Apache Beam (Batch & Stream)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
@@ -9,35 +9,12 @@ export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Apache Spark">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Apache Spark** is the undisputed king of distributed data processing. If you need to transform a 500-gigabyte CSV file, you can't do it on your laptop using Pandas—you will run out of RAM. You need to distribute that work across 20 different servers. Spark handles the complex coordination of dividing that work, executing it in parallel, and combining the results.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Apache Spark** (the primary execution engine for massive distributed map-reduce and batch processing) is covered in the Deep Dive for **Apache Beam**. 
 
-## 1. The Successor to Hadoop MapReduce
-Before Spark, the industry used Hadoop MapReduce, which wrote intermediate data to physical hard drives between every single computation step. This was incredibly slow.
-Spark revolutionized the industry by executing computations entirely **in-memory** (in RAM), making it up to 100x faster than MapReduce for certain workloads.
-
-## 2. Core Concepts
-- **Resilient Distributed Datasets (RDDs)**: The fundamental, low-level data structure of Spark. An immutable collection of objects partitioned across a cluster.
-- **DataFrames**: The modern abstraction built on top of RDDs. Similar to Python Pandas or SQL tables, DataFrames allow you to manipulate distributed data using standard SQL or functional programming (`.filter()`, `.groupBy()`).
-- **Driver and Executors**: A Spark application consists of a central **Driver** node (which figures out the execution plan) and dozens of **Executor** nodes (which actually hold the data in memory and run the computations).
-
-## 3. The Spark Ecosystem
-Spark is a unified engine containing multiple libraries:
-- **Spark SQL**: For querying structured data using standard SQL syntax.
-- **Spark Streaming**: For processing real-time data using micro-batches.
-- **MLlib**: For distributed machine learning (training a random forest on a cluster of machines).
-
-
-<Callout icon="tip" title="PySpark">
-
-
-While Spark is written in Scala (a JVM language), the vast majority of modern Data Engineers interact with it using **PySpark**, a Python API that allows data scientists to write Python code that is translated into optimized distributed JVM execution plans.
-
-
+Please navigate to the [Apache Beam](/kb/22.-data-engineering/apache-beam) module to explore how execution engines handle massive parallel data collections.
 </Callout>
-
-

@@ -4,22 +4,15 @@ description: "A specialized mathematical ordering of the binary numeral system w
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Gray Code"
   subtitle="The Reflected Binary Code"
   tags={['Algorithms', 'Bit Manipulation', 'Hardware', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 In standard Binary counting (0, 1, 2, 3), the transition from 3 to 4 looks like this:
 `011` (3) -> `100` (4).
-Mathematically, **three distinct bits physically flipped at the exact same time**.
+Mathematically, **three distinct bits physically flipped at the exact same time**. 
 
 ## 1. The Hardware Race Condition
 In mechanical engineering and digital sensors (like a rotating dial), transistors do not flip at the exact mathematical same picosecond. If a sensor transitions from 3 to 4, it might read `011 -> 111 -> 101 -> 100` as the bits settle. For a fraction of a millisecond, the sensor reads "7" and "5", causing a catastrophic software error.
@@ -33,3 +26,4 @@ Because only one bit physically flips at any given time, intermediate states mat
 The conversion is blisteringly fast using bitwise operators:
 - **Binary to Gray**: `gray = num ^ (num >> 1)`.
 
+</ConceptTemplate>

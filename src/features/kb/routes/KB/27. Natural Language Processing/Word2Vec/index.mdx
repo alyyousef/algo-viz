@@ -1,24 +1,60 @@
 ---
 title: Word2Vec
-description: The pioneering Neural Network architecture created by Google that first popularized Word Embeddings by mathematically predicting surrounding words based on context.
+description: "A deep dive into Word2Vec, the legendary 2013 algorithm by Google that proved words could be represented as mathematical vectors."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="Word2Vec"
-  subtitle="Neural Word Embeddings"
-  tags={['NLP', 'Machine Learning', 'Google', 'Embeddings']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Word2Vec">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Created by Tomas Mikolov at Google in 2013, Word2Vec changed the trajectory of Artificial Intelligence forever by proving that shallow Neural Networks could capture deep semantic meaning.
+**Word2Vec** is arguably one of the most important algorithms in the history of Natural Language Processing. Invented by a team of researchers at Google (led by Tomas Mikolov) in 2013, it was the algorithm that proved to the world that you could mathematically capture the semantic meaning of human language using deep learning.
 
-## 1. CBOW (Continuous Bag of Words)
-Word2Vec is actually two different mathematical algorithms.
-The first is CBOW. The Neural Network is given the surrounding context words (e.g., "The cat sat on the ___") and must mathematically predict the missing target word ("mat"). By forcing the network to guess the middle word millions of times, the internal weights of the network mathematically adjust to represent the semantic meaning of the words.
+It is a specific technique for generating **Word Embeddings**.
 
-## 2. Skip-Gram
-The second algorithm is Skip-Gram, which is the exact mathematical inverse of CBOW.
-The network is given a single target word (e.g., "mat") and must mathematically predict all the surrounding context words ("The", "cat", "sat", "on").
-Skip-Gram is mathematically much harder, but it produces vastly superior embeddings for rare words. The final resulting weights from the network's hidden layer become the 300-dimensional Word Embeddings that can be exported and used in any other NLP system.
+## The Core Philosophy
 
-</TechnologyTemplate>
+Word2Vec operates on a very simple linguistic hypothesis: **Words that appear in similar contexts share similar meanings.**
+
+If you see a sentence with a blank: *"I put the \_\_\_\_\_\_ in the microwave to heat it up."*
+You instantly know the blank is probably "food" or "coffee." It is definitely not "car" or "democracy." The surrounding words (the context) mathematically dictate the meaning of the central word.
+
+## The Two Architectures
+
+Word2Vec is actually not a single algorithm; it is a package that offers two distinct neural network architectures to train the embeddings.
+
+### 1. Continuous Bag-of-Words (CBOW)
+In the CBOW architecture, the neural network is forced to **guess the missing center word based on the surrounding context.**
+
+*   **Input:** `["The", "quick", "brown", "jumps", "over"]`
+*   **Target Output:** `"fox"`
+
+The network looks at the context, makes a guess, checks if it was right, and adjusts its internal weights.
+
+### 2. Skip-Gram
+Skip-Gram is the exact opposite of CBOW. The neural network is given a single center word, and forced to **guess the surrounding context words.**
+
+*   **Input:** `"fox"`
+*   **Target Output:** `["The", "quick", "brown", "jumps", "over"]`
+
+*(Note: Skip-Gram is generally slower to train but performs significantly better at accurately mapping rare words than CBOW).*
+
+## The Genius of the "Fake" Task
+
+Here is the brilliant part about Word2Vec: **The neural network is a complete throwaway.**
+
+Google researchers didn't actually care about building a neural network that was good at guessing missing words. They set up the neural network with a "hidden layer" of 300 neurons. As the network trained on billions of Wikipedia sentences, the weights inside that hidden layer constantly adjusted to help the network guess the words better.
+
+When the training was finished, the researchers literally threw the neural network away. All they kept were the final 300 weights associated with each word in the hidden layer. Those 300 weights *became* the Word Embedding for that word.
+
+Through this simple "fake" task, Word2Vec naturally organized words into a multidimensional geometric space where similar words were clustered together, completely changing the trajectory of AI research.
+
+<Callout icon="triangle-exclamation" title="The Problem with Word2Vec">
+While groundbreaking, Word2Vec had one massive, fatal flaw: **It generated static embeddings.**
+In Word2Vec, the word "Apple" only gets *one* vector. It doesn't matter if the sentence is "I ate an Apple" or "I bought Apple stock." Because the vector is static, the math for the fruit and the tech company are permanently mashed together. This flaw was eventually solved in 2018 by the invention of **Transformers (BERT)**, which generate dynamic, contextual embeddings on the fly.
+</Callout>

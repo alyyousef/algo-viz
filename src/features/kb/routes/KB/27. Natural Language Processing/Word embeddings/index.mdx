@@ -1,26 +1,57 @@
 ---
 title: Word Embeddings
-description: The revolutionary mathematical paradigm where words are transformed into dense, continuous vectors in a high-dimensional space, capturing their deepest semantic and syntactic meanings.
+description: "An overview of Word Embeddings, the mathematical technique of mapping human words into a continuous, multi-dimensional geometric space."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Word Embeddings">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before Embeddings, NLP used "One-Hot Encoding", where every word was a massive vector of zeros with a single 1. Mathematically, the distance between "Dog" and "Cat" was exactly the same as the distance between "Dog" and "Car." Embeddings fixed this catastrophic flaw.
+**Word Embeddings** represent the fundamental bridge between human language and machine learning. 
 
-## 1. The High-Dimensional Latent Space
-In a Word Embedding model, every word is mathematically projected into a dense vector space (e.g., 300 dimensions).
-These dimensions are not human-readable (e.g., Dimension 4 isn't explicitly "Fluffiness"), but they mathematically represent abstract semantic concepts learned from reading billions of sentences.
+Computers cannot do math on letters. If you want a neural network to process the word "Apple," you must convert it into numbers. Word Embeddings are the modern, standard method for converting text into dense arrays (vectors) of real numbers in such a way that the *semantic meaning* of the word is preserved geometrically.
 
-## 2. Mathematical Semantics
-Because words are just points in a 300-dimensional coordinate system, you can use standard Geometry (Cosine Similarity) to measure their meaning.
-The mathematical distance (angle) between the vector for "Dog" and "Cat" is incredibly small (they appear in similar contexts). The distance between "Dog" and "Car" is massive.
-Furthermore, the mathematical *relationships* are preserved. If you calculate the vector path from "Man" to "King", and apply that exact same mathematical trajectory starting from "Woman", you land precisely on the vector for "Queen". The Neural Network has mathematically codified human logic.
+## The Old Way: One-Hot Encoding
 
+Before embeddings, engineers used **One-Hot Encoding**. If your dictionary had 10,000 words, the word "Apple" was represented as a list of 10,000 numbers, where one number was a `1` and the other 9,999 were `0`s.
+
+**The Flaw:**
+One-Hot vectors carry zero semantic meaning. Geometrically, the distance between "Apple" and "Banana" is exactly the same as the distance between "Apple" and "Carburetor." The computer has no idea that Apple and Banana are related. Furthermore, the vectors are massively inefficient (sparse).
+
+## The Breakthrough of Embeddings
+
+A Word Embedding compresses the word into a much smaller, dense vector (e.g., 300 dimensions) of floating-point numbers.
+
+`Apple` $\rightarrow$ `[0.45, -0.12, 0.88, ... 300 total numbers]`
+
+The absolute magic of Word Embeddings is that they map these vectors into a geometric space where **words with similar meanings are physically grouped close together.**
+
+If you plot these 300-dimensional vectors on a graph:
+*   The vector for "Apple" will be placed right next to "Banana" and "Orange."
+*   The vector for "Carburetor" will be placed millions of miles away in the "Mechanical Parts" sector.
+
+### Capturing Relationships (Vector Math)
+Because the words are now just coordinates in a geometric space, you can actually perform algebra on them to uncover linguistic relationships.
+
+The most famous example in all of NLP is:
+$$\text{Vector}(\text{"King"}) - \text{Vector}(\text{"Man"}) + \text{Vector}(\text{"Woman"}) \approx \text{Vector}(\text{"Queen"})$$
+
+The embedding mathematically learned that the relationship between King and Man (royalty and gender) is geometrically identical to the relationship between Queen and Woman.
+
+## How are they built?
+
+Word embeddings are trained, not hard-coded. The underlying philosophy for training them was famously stated by linguist John Rupert Firth in 1957: *"You shall know a word by the company it keeps."*
+
+If an algorithm scans Wikipedia and notices that the word "Apple" is constantly surrounded by words like "eating," "delicious," and "pie," and the word "Banana" is surrounded by those exact same words, the algorithm mathematically concludes that Apple and Banana must mean very similar things, and adjusts their coordinates to be close to each other.
+
+<Callout icon="history" title="The Evolution of Embeddings">
+*   **Word2Vec (2013):** The algorithm by Google that popularized embeddings. It was revolutionary but static (the word "Bank" always had the same vector, whether it was a river bank or a financial bank).
+*   **GloVe (2014):** Stanford's version, built using massive global co-occurrence matrices.
+*   **Contextual Embeddings (2018+):** Introduced by ELMo and BERT. Today, vectors are no longer static. A Transformer dynamically recalculates the embedding for the word "Bank" based entirely on the surrounding sentence, solving the ambiguity problem.
+</Callout>

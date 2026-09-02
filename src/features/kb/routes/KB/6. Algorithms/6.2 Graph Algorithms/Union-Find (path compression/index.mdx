@@ -4,18 +4,11 @@ description: "A highly optimized mathematical data structure that tracks a set o
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Union-Find (Disjoint-Set)"
   subtitle="Tracking Network Connectivity"
   tags={['Algorithms', 'Graphs', 'Data Structures', 'Trees']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 If you have 1 million users on a social network, and you want to mathematically determine if User A is in the same friend group as User B, running BFS/DFS is too slow (O(V+E)). Union-Find solves this in nearly **O(1)** time.
 
@@ -30,3 +23,4 @@ A naive implementation uses a flat array where each index points to its parent, 
 2. **Path Compression**: When you call `Find(X)`, the algorithm traverses up the tree to find the Root. Before returning, it mathematically rewires X (and all nodes it passed) to point *directly* to the Root. Next time you call `Find(X)`, it executes in 1 step.
 Together, these optimizations drop the amortized Time Complexity to the **Inverse Ackermann Function, α(N)**, which is mathematically less than 5 for any conceivable integer in the universe, making it effectively O(1).
 
+</ConceptTemplate>

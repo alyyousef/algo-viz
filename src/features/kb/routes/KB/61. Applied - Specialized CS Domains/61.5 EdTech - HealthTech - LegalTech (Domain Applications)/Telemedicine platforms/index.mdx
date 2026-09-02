@@ -1,19 +1,33 @@
 ---
-title: Telemedicine platforms
-description: The distribution of health-related services and information via electronic information and telecommunication technologies.
+title: Telemedicine Platforms
+description: "The software infrastructure that enables the remote delivery of healthcare services, including clinical consultations, via telecommunications technology."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Telemedicine Platforms">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Telemedicine Platforms"
+  subtitle="Engineering Remote Healthcare"
+  tags={['HealthTech', 'WebRTC', 'Compliance', 'Architecture']}
+>
 
-**Telemedicine** is the mathematical bridge between biological healthcare and distributed web systems.
+A **Telemedicine Platform** is not just a standard video-conferencing app like Zoom. It is a highly specialized SaaS architecture that must combine real-time communication with extreme legal compliance, medical record integrations, and specialized hardware support.
 
-It combines WebRTC video streaming with strict biological regulatory compliance (like HIPAA in the US). These platforms must mathematically guarantee end-to-end encryption, ensuring that a patient's biological video feed and medical history cannot be intercepted by hackers or even mathematically read by the platform's own database administrators.
+## 1. WebRTC for Encrypted Video
 
+The core of a telemedicine visit is the video stream. This is almost universally powered by **WebRTC** (Web Real-Time Communication), an open-source protocol that allows peer-to-peer video streaming directly in the browser without plugins.
+WebRTC provides built-in end-to-end encryption (DTLS and SRTP), ensuring that the video stream between the doctor and patient cannot be intercepted, a critical requirement for medical privacy.
+
+## 2. HIPAA Compliance (USA)
+
+In the United States, telemedicine platforms must strictly adhere to the **HIPAA** (Health Insurance Portability and Accountability Act) regulations.
+From a software engineering perspective, this requires:
+- **Audit Logging**: Every time a doctor views a patient's file, the database must log the timestamp, IP address, and user ID.
+- **Data Encryption**: All database volumes must be encrypted at rest (AES-256), and all API traffic must be encrypted in transit (TLS 1.2+).
+- **BAAs (Business Associate Agreements)**: You cannot just use standard AWS or Heroku. The cloud provider must sign a legal contract guaranteeing they meet HIPAA security standards for the physical servers.
+
+<Callout type="info" title="EHR Integration">
+  A telemedicine app is useless if the doctor has to manually re-type their notes into the hospital's main database. Telemedicine platforms use standards like **HL7** or **FHIR** (Fast Healthcare Interoperability Resources)—which are essentially standardized REST APIs for healthcare—to push the video visit summary directly into the hospital's massive Electronic Health Record (EHR) system like Epic or Cerner.
+</Callout>
+
+</ConceptTemplate>

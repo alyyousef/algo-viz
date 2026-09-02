@@ -1,26 +1,20 @@
 ---
-title: Just-In-Time (JIT) Compilation
-description: A hybrid execution model that mathematically observes interpreted code running and dynamically compiles "hot" paths into native machine code on the fly.
+title: JIT Compilation (Redirect)
+description: "Redirecting to Compilation vs Interpretation."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Just-In-Time (JIT) Compilation">
+    <ConceptTemplate title="JIT Compilation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-JIT Compilation is the mathematical engine behind the V8 JavaScript Engine and the Java Virtual Machine. It attempts to mathematically combine the portability of Interpretation with the raw speed of AOT Compilation.
+<Callout icon="info" title="Redirect">
+The mechanical architecture of **Just-In-Time (JIT) Compilation** (including runtime profiling and hot-path optimization) is thoroughly analyzed in the Deep Dive for **Compilation vs Interpretation**. 
 
-## 1. The Tiered Execution Model
-When a JavaScript program starts, the V8 engine does not compile it. It runs it through a fast Interpreter (Ignition) so the program starts instantly.
-As the program runs, a Profiler mathematically tracks which functions are called the most (the "Hot" paths).
-If a `for` loop runs 50,000 times, the JIT Compiler (TurboFan) mathematically intervenes in the background. It takes the Bytecode for that loop, compiles it down to highly optimized Native Machine Code, and physically hot-swaps the memory pointer. The 50,001st iteration of the loop executes at bare-metal C++ speed.
-
-## 2. Deoptimization
-Because JavaScript is dynamically typed, the JIT Compiler has to make mathematical assumptions. It assumes, "This loop has only ever seen Integers, so I will compile it to native Integer addition."
-If, on the 60,000th iteration, you suddenly pass a String into that loop, the compiled Machine Code mathematically fails. The V8 Engine instantly performs a **Deoptimization (Bailout)**. It throws away the compiled Machine Code and mathematically falls back to the slow Interpreter to safely handle the String addition.
-
+Please navigate to the [Compilation vs Interpretation](/kb/2.-programming-fundamentals--language-concepts/2.3-memory--execution-model/compilation-vs-interpretation) module to explore how the JVM and V8 engines hybridize these two execution models.
+</Callout>

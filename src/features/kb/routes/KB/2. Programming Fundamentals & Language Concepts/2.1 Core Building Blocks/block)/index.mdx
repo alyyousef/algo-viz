@@ -1,24 +1,20 @@
 ---
-title: Blocks and Scoping
-description: The fundamental mathematical concept of grouping statements together and how compilers calculate the lifespan and visibility of variables.
+title: Block Scope (Redirect)
+description: "Redirecting to Scope (Lexical)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Blocks and Scoping">
+    <ConceptTemplate title="Block Scope">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In computer science, a Block (often denoted by curly braces `{}` or indentation) is a lexical structure that mathematically groups a sequence of statements together into a single compound statement.
+<Callout icon="info" title="Redirect">
+The content for **Block Scope** is mathematically and architecturally covered under the comprehensive Deep Dive for **Scope (Lexical)**. 
 
-## 1. The Mathematical Boundary
-Blocks create mathematical boundaries for the compiler. If an `if` statement evaluates to true, the compiler must know exactly which instructions to execute. By wrapping 10 instructions in a block, the compiler mathematically treats all 10 instructions as a single, atomic execution unit tied to that condition.
-
-## 2. Lexical Scoping
-Blocks fundamentally define **Scope**—the mathematical visibility and lifespan of a variable in memory.
-When a compiler encounters a new block, it mathematically pushes a new frame onto the Stack. Any variable created inside that block (Local Scope) is mathematically bound to that frame. When the block ends, the compiler pops the frame, and the memory is instantly destroyed. This prevents a variable named `index` in one `for` loop from mathematically corrupting a variable named `index` in another function.
-
+Please navigate to the [Scope (Lexical)](/kb/2.-programming-fundamentals--language-concepts/2.1-core-building-blocks/scope-lexical) module to explore how modern compilers construct invisible boundaries in RAM to isolate state.
+</Callout>

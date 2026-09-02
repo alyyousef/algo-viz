@@ -1,37 +1,51 @@
 ---
-title: Lasso Regression (L1)
-description: A variant of Linear Regression that mathematically utilizes an absolute value penalty to automatically perform feature selection by shrinking coefficients to zero.
+title: Lasso Regression (L1 Regularization)
+description: "An overview of Lasso regression, a technique that adds an L1 penalty to linear regression, driving some coefficients exactly to zero."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Lasso Regression (L1)">
+    <ConceptTemplate title="Lasso Regression">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Lasso (Least Absolute Shrinkage and Selection Operator)** is a powerful Linear Regression algorithm designed to solve datasets that have massive amounts of irrelevant features, by applying L1 Regularisation.
+**Lasso Regression** (Least Absolute Shrinkage and Selection Operator) is a type of linear regression that uses shrinkage. Shrinkage is where data values are shrunk towards a central point, like the mean. Lasso is highly favored because it performs both regularization and automated feature selection.
 
-## 1. The Mathematical Objective
-Standard Linear Regression minimizes the Mean Squared Error (MSE). Lasso modifies this objective function by adding a mathematical penalty:
-$Loss = MSE + \lambda \sum |w_i|$
+## The Objective Function
 
-- **$\lambda$ (Alpha)**: The hyperparameter controlling the strength of the penalty.
-- **$|w_i|$**: The absolute value of the mathematical weights (slopes) of the features.
+In standard Linear Regression (Ordinary Least Squares), the goal is to find the weights ($w$) that minimize the Residual Sum of Squares (RSS).
 
-## 2. The Geometry of Feature Selection (Why weights go to zero)
-L2 Regularisation (Ridge) shrinks weights, but rarely to zero. L1 (Lasso) shrinks weights to *exactly* zero. Why? It is pure geometry.
+Lasso modifies this by adding a penalty term equivalent to the **absolute value of the magnitude of the coefficients** (this is known as the **L1 penalty**).
 
-Imagine a 2D graph of the Loss Function.
-- The L2 penalty is mathematically a smooth **Circle**. When the gradient descent optimizer expands to touch the circle, it usually hits the edge (meaning both $w_1$ and $w_2$ have non-zero values).
-- The L1 penalty is mathematically a sharp **Diamond** (because of the absolute value function). The diamond has sharp, pointed corners exactly on the axes. When the optimizer expands to touch the diamond, it almost mathematically always hits a sharp corner.
-If it hits the corner on the $y$-axis, the $x$-coordinate is strictly $0.0$. The algorithm has mathematically deleted that feature.
+$$L = \text{RSS} + \lambda \sum_{j=1}^{p} |w_j|$$
 
-## 3. Production Use Cases
-Lasso is absolutely vital in fields like Bioinformatics (Genomics).
-If you are predicting a disease, you might have 50,000 columns (representing 50,000 genes), but only 100 patients. Standard regression mathematically crashes (infinite solutions).
-Lasso flawlessly handles this. The mathematical diamond penalty aggressively forces 49,990 genes to exactly 0.0, outputting a highly interpretable model that explicitly tells the doctors which 10 genes actually cause the disease.
+Where:
+*   $w_j$ are the feature weights.
+*   $\lambda$ (lambda) is the tuning parameter (hyperparameter) that controls the strength of the penalty. 
+    *   If $\lambda = 0$, you get standard Linear Regression.
+    *   As $\lambda \to \infty$, the penalty dominates, and all coefficients are forced to zero.
 
+## Feature Selection (Sparsity)
+
+The defining characteristic of Lasso, and the reason it is so widely used, is that it forces the coefficients of less important features to become **exactly zero**. 
+
+This happens because the L1 penalty creates a diamond-shaped constraint region in the parameter space. The objective function (the RSS contours) is highly likely to intersect this diamond at its sharp corners (where one or more coefficients are zero).
+
+<Callout icon="lightbulb" title="Why is this useful?">
+By driving coefficients to zero, Lasso performs **automatic feature selection**. If you start with 1,000 features, a well-tuned Lasso model might end up using only 20 of them, ignoring the rest. This creates a "sparse" model that is much easier to interpret, requires less memory, and is significantly less prone to overfitting than a standard linear model.
+</Callout>
+
+## Limitations of Lasso
+
+While powerful, Lasso has specific weaknesses where Ridge Regression or Elastic Net might perform better:
+
+1.  **Correlated Features:** If two or more features are highly correlated with each other, Lasso will essentially pick one at random, keep its coefficient, and drive the others to zero. It doesn't care which one it keeps.
+2.  **High Dimensionality ($p > n$):** If the number of features ($p$) is strictly greater than the number of observations ($n$), Lasso can only select a maximum of $n$ features before the model saturates.
+
+## Summary
+
+Lasso Regression is a powerful tool in a data scientist's arsenal when dealing with high-dimensional datasets where feature selection is required. It simultaneously prevents overfitting (via regularization) and produces a simpler, more interpretable model by eliminating useless predictors.

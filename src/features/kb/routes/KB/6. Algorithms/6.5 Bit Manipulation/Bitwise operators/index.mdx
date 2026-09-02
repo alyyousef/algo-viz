@@ -4,18 +4,11 @@ description: "The fundamental hardware-level instructions (AND, OR, XOR, NOT, Sh
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Bitwise Operators"
   subtitle="The Algebra of the CPU"
   tags={['Algorithms', 'Bit Manipulation', 'Fundamentals', 'Low Level']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 While software engineers think in Base-10 (Decimal) and algebra, the CPU physically consists of microscopic transistors that only understand Base-2 (Binary). Bitwise operators are the exact mathematical gates used to manipulate those transistors.
 
@@ -28,6 +21,7 @@ These operators mathematically compare two integers bit-by-bit.
 
 ## 2. The Shift Operators
 These operators physically move the bits left or right inside the CPU register.
-- **Left Shift ( `<<` )**: Shifts all bits to the left, padding the right with zeroes. `(5 <&lt; 1)` mathematically shifts `0101` to `1010` (10). This is equivalent to multiplying by 2^N.
+- **Left Shift ( `<<` )**: Shifts all bits to the left, padding the right with zeroes. `(5 << 1)` mathematically shifts `0101` to `1010` (10). This is equivalent to multiplying by 2^N.
 - **Right Shift ( `>>` )**: Shifts bits to the right. This is equivalent to integer division by 2^N. (Note: Java has both `>>` for Signed shift which preserves negative numbers, and `>>>` for Unsigned logical shift).
 
+</ConceptTemplate>

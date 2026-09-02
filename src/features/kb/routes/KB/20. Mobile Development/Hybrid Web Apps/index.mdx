@@ -1,33 +1,20 @@
 ---
-title: Hybrid Web Apps (Ionic & Capacitor)
-description: The legacy of Cordova and the modern standard of wrapping standard React/Vue websites inside a native WebView using Capacitor.
+title: Hybrid Web Apps (Redirect)
+description: "Redirecting to Cross-Platform Development."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Hybrid Web Apps (Ionic & Capacitor)">
+    <ConceptTemplate title="Hybrid Web Apps">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-What if you don't want to learn Swift, Kotlin, Dart, or even React Native? What if you literally just want to take an existing HTML/CSS/JS website (like a Next.js or Nuxt app) and put it on the App Store?
+<Callout icon="info" title="Redirect">
+The architectural approach of **Hybrid Web Apps** (wrapping HTML/JS in a native WebView via Cordova or Ionic) and how it compares to native bridge architectures is covered in the Deep Dive for **Cross-Platform Development**. 
 
-This is called a **Hybrid Web App**. The app is simply a full-screen, invisible browser window (a **WebView**) that loads your local HTML files.
-
-## 1. The Legacy: PhoneGap / Cordova
-In the early 2010s, Adobe PhoneGap (open-sourced as Apache Cordova) was massive. It provided a Javascript bridge that allowed your HTML/JS code to access the phone's camera or GPS.
-However, mobile browsers back then were extremely slow. Cordova apps felt incredibly sluggish, janky, and obviously fake.
-
-## 2. The Modern Standard: Capacitor
-Built by the Ionic team, **Capacitor** is the modern successor to Cordova.
-You drop Capacitor into any standard web project (React, Vue, Angular). It generates an Xcode and Android Studio project containing a highly-optimized modern WebView. It exposes a beautiful TypeScript API to access native hardware (`Camera.getPhoto()`). Because modern phone processors are insanely fast, Capacitor apps often perform flawlessly for 90% of standard B2B or content apps.
-
-## 3. Ionic Framework
-Capacitor simply provides the WebView and hardware bridge. It doesn't provide UI.
-If you put a standard HTML button on an iPhone, it looks like a website, not an app.
-**Ionic Framework** is a massive library of Web Components (written in HTML/CSS) that mathematically mimic Native UI.
-If you use an `<IonButton>`, it will render looking exactly like a flat Material Design button on Android, and will magically transform to look exactly like a rounded Apple button on iOS.
-
+Please navigate to the [Cross-Platform Development](/kb/20.-mobile-development/cross-platform) module to explore the compromises of WebView rendering.
+</Callout>

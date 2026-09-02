@@ -1,0 +1,143 @@
+---
+title: CSS Grid
+description: "The two-dimensional mathematical layout engine built into the browser's C++ core, enabling the complex orchestration of rows, columns, and absolute geometry on the web."
+---
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CSS Grid Layout">
+      {children}
+    </ConceptTemplate>
+  )
+}
+
+For two decades, CSS mathematically lacked a true layout system. Engineers built layouts by hijacking HTML `<table`> tags, abusing `float: left` intended for text-wrapping around images, or writing terrifying JavaScript algorithms to calculate `absolute` pixel coordinates.
+
+In 2017, all major browsers simultaneously launched **CSS Grid**. It is the most complex, mathematically rigorous layout engine ever integrated into the web. 
+
+While **Flexbox** was engineered for *One-Dimensional* layout (aligning items strictly in a single horizontal row or a single vertical column), **CSS Grid** was engineered for *Two-Dimensional* layout, allowing you to mathematically lock elements into precise Cartesian coordinates across both X (Columns) and Y (Rows) axes simultaneously.
+
+## 1. Deep Dive & Mechanics
+
+When you apply `display: grid` to a container, you activate the mathematical layout engine. You must then explicitly define the structural geometry of the matrix using `grid-template-columns` and `grid-template-rows`.
+
+The most revolutionary mathematical invention of CSS Grid is the **Fractional Unit (`fr`)**.
+Historically, developers used percentages (`33.333%`), which mathematically broke the moment a 1px border or 10px gap was introduced, causing the layout to overflow by 11 pixels and shatter.
+The `fr` unit represents a *mathematical fraction of the available free space remaining in the container*. The C++ engine subtracts all fixed pixels, gaps, and borders *first*, and then perfectly divides the exact remaining pixels among the `fr` units.
+
+## 2. Mathematical / Theoretical Foundation
+
+CSS Grid mathematically separates the **Grid Container** from the **Grid Items**.
+
+By default, the browser's auto-placement algorithm automatically drops Grid Items into the next available cell in the matrix, flowing left-to-right, top-to-bottom. 
+
+However, you can explicitly mathematically command a Grid Item to hijack the geometry. A Grid is composed of **Grid Lines** (the invisible lines between the tracks). If you have 3 columns, you have 4 vertical Grid Lines. You can instruct a child element to start at Grid Line 1 and span all the way to Grid Line 4, mathematically forcing it to consume the entire row, completely regardless of its physical order in the HTML DOM.
+
+## 3. Real-World Implementation
+
+Here is how you mathematically architect a classic "Holy Grail" application layout (Header, Sidebar, Main Content, Footer) using CSS Grid.
+
+```html
+<div class="app-layout">
+  <header class="header">Top Navigation</header>
+  <aside class="sidebar">Left Menu</aside>
+  <main class="content">Main Dashboard UI</main>
+  <footer class="footer">Legal & Copyright</footer>
+</div>
+```
+
+```css
+/* 1. Initialize the Mathematical Engine */
+.app-layout {
+  display: grid;
+  height: 100vh;
+  gap: 16px; /* Mathematically injects exactly 16px of negative space between all tracks */
+
+  /* 2. Define the Matrix Geometry */
+  /* Two columns: Sidebar is strictly locked at 250px. Content consumes 100% of the remaining space (1fr) */
+  grid-template-columns: 250px 1fr;
+  
+  /* Three rows: Header locked at 60px. Footer locked at 40px. Content consumes the rest. */
+  grid-template-rows: 60px 1fr 40px;
+}
+
+/* 3. Explicit Cartesian Placement */
+.header {
+  background: #3b82f6;
+  
+  /* Mathematically command the header to start at Col Line 1, and span to Col Line 3 (the end) */
+  /* It now physically covers both the sidebar and the main content columns. */
+  grid-column: 1 / 3;
+  
+  /* Row defaults to Auto-Placement, so it sits in Row 1 */
+}
+
+.sidebar {
+  background: #1f2937;
+  /* Auto-placed into Row 2, Column 1 */
+}
+
+.content {
+  background: #f3f4f6;
+  /* Auto-placed into Row 2, Column 2 */
+}
+
+.footer {
+  background: #9ca3af;
+  
+  /* Mathematically force the footer to span the entire bottom row */
+  grid-column: 1 / 3;
+  /* We could also write grid-column: 1 / -1 (where -1 mathematically means the absolute last line) */
+}
+```
+
+## 4. Visualizations
+
+```mermaid
+graph TD
+    subgraph Grid Line Mathematics (3 Columns = 4 Lines)
+        Line1[Line 1] --- Col1[250px Track] --- Line2[Line 2]
+        Line2 --- Col2[1fr Track] --- Line3[Line 3]
+        Line3 --- Col3[1fr Track] --- Line4[Line 4 / -1]
+    end
+    
+    subgraph Layout Execution
+        Head[Header<br/>grid-column: 1 / 4]
+        Side[Sidebar<br/>grid-column: 1 / 2]
+        Main[Content<br/>grid-column: 2 / 4]
+    end
+    
+    Line1 -.-> Head
+    Line4 -.-> Head
+```
+
+## 5. Interview Prep
+
+**Q: What is the difference between `grid-template-areas` and explicit line placement?**
+**A:** `grid-template-areas` is a mathematically brilliant syntactic sugar that allows you to "draw" the layout using ASCII-style strings in the CSS. 
+```css
+.container {
+  grid-template-areas: 
+    "header header header"
+    "sidebar main main"
+    "footer footer footer";
+}
+.header { grid-area: header; }
+```
+The browser's C++ engine parses these strings, calculates the underlying mathematical grid lines automatically, and snaps the named items into their defined coordinate zones.
+
+**Q: Explain the mathematical magic of `repeat(auto-fit, minmax(200px, 1fr))`.**
+**A:** This single line of CSS mathematically eradicates the need for Media Queries when building responsive card grids. 
+- `minmax(200px, 1fr)` tells the engine: "A card must never be smaller than 200px. If it is, give it 1fr so it grows."
+- `auto-fit` tells the engine: "Calculate the physical pixel width of the user's screen. Mathematically divide it by 200px. If the screen is 1000px, generate 5 columns. If the screen is 400px, generate 2 columns." It achieves perfect, fluid mathematical responsiveness without a single `@media` breakpoint.
+
+## 6. Production Use Cases
+
+- **Complex Application Dashboards:** Flexbox is mathematically incapable of perfectly aligning items both vertically and horizontally at the exact same time if the items are of varying heights (they will wrap haphazardly). Grid allows enterprise data tables, kanban boards, and analytics dashboards to lock their elements into absolute, rigid 2D alignment regardless of how much text is injected into the cells.
+- **Overlapping Elements (Z-Axis Matrix):** Historically, to place text over an image, engineers used `position: absolute`, which mathematically removes the text from the document flow, often causing it to break out of its container and overlap other UI elements catastrophically. In CSS Grid, you can mathematically place two different elements into the *exact same Grid Cell* (e.g., `grid-row: 1; grid-column: 1;`). The browser will simply render them on top of each other. You can then use `z-index` to control the depth, all while both elements mathematically remain perfectly in the document flow, respecting the height and width of the container.
+
+<Callout icon="danger" title="The Subgrid Problem">
+The core limitation of CSS Grid is that the mathematical matrix does not penetrate DOM nodes. If a `<div class="card">` is a grid item, its children (`<h2>` and `<p>`) mathematically have absolutely no knowledge of the parent's grid lines, making it impossible to align the `<h2>` of Card A perfectly with the `<h2>` of Card B. The CSS Working Group released `subgrid` to fix this, allowing children to inherit the parent's mathematical grid matrix, but Safari (WebKit) delayed its implementation for years, breaking cross-browser production usage until 2023.
+</Callout>

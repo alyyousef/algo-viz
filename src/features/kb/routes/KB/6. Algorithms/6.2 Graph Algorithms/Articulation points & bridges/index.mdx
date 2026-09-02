@@ -4,18 +4,11 @@ description: "Mathematical graph concepts representing critical nodes (Articulat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Articulation Points & Bridges"
   subtitle="Finding Network Vulnerabilities"
   tags={['Algorithms', 'Graphs', 'DFS', 'Networks']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 If a graph represents a country's highway system, an **Articulation Point** is a city, and a **Bridge** is a physical highway. If destroying one specific city or one specific highway physically splits the country into two disconnected halves, you have found a single point of failure.
 
@@ -31,3 +24,4 @@ If you are at Node U, looking down an edge to Node V:
 - **Bridge**: If `low[V] > disc[U]`, it mathematically proves that V has absolutely no "back-edges" connecting it to any ancestors of U. The edge U-V is the *only* way to reach V. Therefore, U-V is a Bridge.
 - **Articulation Point**: If `low[V] >= disc[U]` (and U is not the root), U is an Articulation Point.
 
+</ConceptTemplate>

@@ -1,70 +1,145 @@
 ---
-title: Variables & Tokens
-description: "CSS Custom Properties, providing dynamic, cascading variables native to the browser without requiring a preprocessor."
+title: CSS Variables & Design Tokens
+description: "The mathematical integration of dynamic runtime values into the CSS Object Model, enabling global theming, real-time JavaScript interpolation, and enterprise design system tokenization."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  name="Variables & Tokens"
-  icon="code"
->
+    <ConceptTemplate title="CSS Variables & Design Tokens">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-For years, developers had to use tools like Sass or LESS to use variables. Today, **CSS Custom Properties** (native CSS variables) are universally supported and are significantly more powerful because they exist in the browser at runtime.
+Historically, CSS was mathematically completely static. If a company changed its primary brand color from `#0055ff` to `#0044ee`, engineers had to execute a Find-and-Replace across thousands of CSS files, leading to catastrophic visual regressions. 
 
-## Defining and Using Variables
+Sass and LESS introduced variables (`$primary-color: blue`), but these were mathematically executed at **Compile Time**. When the Sass compiled into raw CSS, the variable was physically destroyed and replaced with a static string. You could not change a Sass variable dynamically using JavaScript in the browser.
 
-Variables are prefixed with two dashes (`--`). They are usually defined on the `:root` pseudo-class so they are globally accessible.
+**CSS Custom Properties (CSS Variables)** fundamentally changed the web architecture. They are mathematical values stored natively in the browser's **CSS Object Model (CSSOM)** in real-time. This allows them to mathematically cascade down the DOM tree and be dynamically overwritten by JavaScript at runtime, without requiring a massive CSS recompilation step.
+
+## 1. Deep Dive & Mechanics
+
+A CSS Variable is mathematically defined using a double-hyphen prefix (`--`) and accessed using the `var()` function.
 
 ```css
 :root {
-  --primary-color: #3b82f6;
+  /* Mathematically stored at the very top of the DOM tree (the <html> node) */
+  --color-primary: #3b82f6;
   --spacing-md: 16px;
 }
 
 .button {
-  background-color: var(--primary-color);
+  /* The C++ engine mathematically references the CSSOM to resolve the color */
+  background-color: var(--color-primary);
   padding: var(--spacing-md);
 }
 ```
 
-## Design Tokens and Theming
-Variables are the foundation of modern **Design Systems** and **Dark Mode**. Because native CSS variables cascade, you can change a variable's value on a specific container or state, and the UI updates instantly without rewriting classes.
+The true power of CSS Variables is the **Cascade**. If you define `--color-primary: red` on the `:root`, every button in the app is red. If you define `--color-primary: blue` specifically on the `.footer` class, the C++ engine mathematically executes the cascade. The variable changes to blue, but *only* for children inside the footer.
 
+## 2. Mathematical / Theoretical Foundation
+
+CSS Variables solve the mathematical problem of **State-Driven Styling without Layout Thrashing**.
+
+If you are building an interactive 3D card that rotates based on the user's mouse position (X and Y coordinates), doing this with React state is mathematically catastrophic. Setting React state 60 times a second triggers the entire React Virtual DOM Reconciliation algorithm, which will instantly drop the browser framerate to 5fps.
+
+Instead, you bypass React entirely. You use raw JavaScript to pipe the integer coordinates directly into a CSS Variable in the CSSOM.
+
+```javascript
+// Fires 60 times a second
+document.addEventListener('mousemove', (e) => {
+  // We mathematically inject the raw integers directly into the DOM node's inline styles.
+  // We are NOT changing CSS classes or forcing massive layout recalculations.
+  card.style.setProperty('--mouse-x', e.clientX);
+  card.style.setProperty('--mouse-y', e.clientY);
+});
+```
 ```css
-:root {
-  --bg-color: #ffffff;
-  --text-color: #111827;
-}
-
-/* Dark Mode Implementation */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #0f172a;
-    --text-color: #f8fafc;
-  }
-}
-
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+.card {
+  /* The CSS mathematically executes the calculation on the GPU at 60fps */
+  transform: rotateX(calc(var(--mouse-y) * 1deg)) rotateY(calc(var(--mouse-x) * 1deg));
 }
 ```
 
+## 3. Real-World Implementation
 
-<Callout icon="tip" title="JavaScript Interaction">
+Here is how you engineer a mathematically robust Enterprise Dark Mode toggle utilizing CSS Variables.
 
+```css
+/* 1. The Light Theme (Mathematical Default) */
+:root {
+  --bg-color: #ffffff;
+  --text-color: #111827;
+  --surface-color: #f3f4f6;
+  --border-color: #e5e7eb;
+}
 
-Because they exist in the DOM at runtime, JavaScript can read and write CSS variables effortlessly. This is how you implement dynamic drag-and-drop elements or scroll-linked animations: `element.style.setProperty('--mouse-x', event.clientX + 'px')`.
+/* 2. The Dark Theme (Mathematical Override) */
+/* When the 'dark' class is dynamically appended to the <html> tag, */
+/* the C++ engine instantly cascades these new values through the CSSOM */
+:root.dark {
+  --bg-color: #0f172a;
+  --text-color: #f8fafc;
+  --surface-color: #1e293b;
+  --border-color: #334155;
+}
 
+/* 3. The Implementation */
+/* Notice there are NO media queries or conditional logic here. */
+/* The UI mathematically binds itself strictly to the variables. */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease;
+}
 
+.card {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+}
+```
+
+## 4. Visualizations
+
+```mermaid
+graph TD
+    subgraph The Sass/Compile-Time Fallacy
+        Sass[$color: blue] --> Compile[Sass Compiler]
+        Compile --> Out1[.btn { color: blue }]
+        Compile --> Out2[.card { color: blue }]
+        JS1[JS wants to change to Red] -.->|Mathematically Impossible| Out1
+    end
+    
+    subgraph The CSS Variables Runtime Truth
+        Root[:root { --color: blue }] --> CSSOM[Browser CSSOM]
+        CSSOM --> Node1[.btn { color: var(--color) }]
+        CSSOM --> Node2[.card { color: var(--color) }]
+        
+        JS2[document.body.style.setProperty<br/>'--color', 'red'] --> CSSOM
+        Note2[Instantly re-renders the entire application in 1ms]
+    end
+```
+
+## 5. Interview Prep
+
+**Q: What is the purpose of the second argument in `var()`?**
+**A:** `var(--primary-color, #000000)` provides a mathematical fallback value. If a developer forgets to define `--primary-color` on the `:root`, or a typo occurs, the C++ engine mathematically defaults to black. This is critical in Design Systems where a component might be injected into an unknown host application that doesn't provide the correct CSS variables.
+
+**Q: Can you use a CSS Variable inside a Media Query declaration?**
+**A:** No. You cannot write `@media (min-width: var(--tablet))`. This is a mathematical impossibility. Media queries are resolved *before* the CSS Cascade is calculated. Because CSS Variables rely on the Cascade (they can be redefined at different levels of the DOM), the engine cannot mathematically know the value of `--tablet` until *after* the media queries have already been evaluated.
+
+## 6. Production Use Cases
+
+- **Design System Tokens (Figma to Code):** Massive enterprise companies do not use hex codes in their codebase. Designers work in Figma, generating "Design Tokens" (Semantic names for mathematical values). A script mathematically extracts these tokens from Figma and compiles them into a `tokens.css` file (`:root { --sys-color-primary-500: #123456; }`). The React engineers strictly consume the `var(--sys-color-primary-500)` variables. When the design team updates Figma, the CI/CD pipeline dynamically regenerates the CSS file, updating the entire application's color palette without a single engineer touching the source code.
+- **Container Queries / Contextual Math:** You have a `.button` that is usually blue. But if it is placed inside a `.danger-zone` container, it must be red. Instead of writing complex CSS overrides (`.danger-zone .button { background: red }`), you mathematically redefine the variable locally.
+  ```css
+  .button { background: var(--btn-color, blue); }
+  .danger-zone { --btn-color: red; }
+  ```
+  This mathematically decouples the Button's internal CSS from the external architectural layout, strictly adhering to component isolation principles.
+
+<Callout icon="danger" title="The Sub-Pixel Rendering Bug">
+You cannot mathematically combine CSS Variables with partial strings inside standard CSS properties. For example, if you define `--size: 20`, you CANNOT write `width: var(--size)px;`. The C++ engine parses this as an invalid mathematical token (`20px` is not the same as `20 px`). You must use the `calc()` function to mathematically coerce the integer into a physical pixel value: `width: calc(var(--size) * 1px);`.
 </Callout>
-
-

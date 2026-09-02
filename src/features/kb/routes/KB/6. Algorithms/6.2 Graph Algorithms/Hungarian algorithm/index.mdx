@@ -4,18 +4,11 @@ description: "A highly complex combinatorial optimization algorithm mathematical
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Hungarian Algorithm"
   subtitle="Optimal Cost Assignment"
   tags={['Algorithms', 'Graphs', 'Optimization', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 You have 3 Workers (Alice, Bob, Charlie) and 3 Tasks (Clean, Cook, Drive).
 Alice demands $10 to clean, $15 to cook, $20 to drive. Bob and Charlie have different price charts.
@@ -32,3 +25,4 @@ The algorithm does not use standard graph traversal. It places the costs into a 
 3. It draws the minimum number of mathematical lines required to cover all the $0s.
 4. If the number of lines equals N, the $0s represent the mathematically perfect assignment! If not, it performs another shift on the matrix and tries again.
 
+</ConceptTemplate>

@@ -1,28 +1,51 @@
 ---
-title: Layer Normalisation
-description: The absolute standard normalization technique for Transformers, calculating mean and variance across the features of a single data point rather than across the batch.
+title: Layer Normalization
+description: "An overview of Layer Normalization, the crucial technique used to stabilize training in Transformers and Recurrent Neural Networks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Layer Normalisation">
+    <ConceptTemplate title="Layer Normalization">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While **Batch Normalisation** is the standard for Computer Vision (CNNs), it mathematically collapses in Natural Language Processing.
-In NLP, sequences have variable lengths, and batch sizes are often tiny due to massive model sizes. Batch Normalisation relies on calculating averages *across the batch*. If the batch size is 2, the variance calculation is mathematically chaotic. **Layer Normalisation** is the architectural fix that makes Transformers (like GPT) possible.
+**Layer Normalization** (LayerNorm) is a technique used to stabilize and accelerate the training of deep neural networks. 
 
-## 1. The Mathematical Pivot
-Instead of calculating the mean and variance for one specific feature across 32 different images, Layer Normalisation calculates the mean and variance for *all features* across *one single sequence*.
+While **Batch Normalization (BatchNorm)** is the undisputed king for Convolutional Neural Networks (CNNs) processing images, **Layer Normalization** is the absolute standard for Recurrent Neural Networks (RNNs) and **Transformers** processing text sequences.
 
-If a sentence is embedded into a vector of 512 numbers, Layer Normalisation mathematically looks only at those 512 numbers. It finds their mean, finds their variance, and normalizes them.
-Because it mathematically isolates each data point from the rest of the batch, Layer Normalisation functions perfectly even if the batch size is exactly 1.
+## The Flaw in Batch Normalization
 
-## 2. Pre-Norm vs Post-Norm
-In the original Transformer paper, Layer Normalisation was applied *after* the self-attention mechanism (Post-Norm).
-Modern LLMs (like LLaMA and GPT-4) mathematically flipped this to **Pre-Norm** (applying Layer Normalisation immediately *before* self-attention). This seemingly minor architectural tweak mathematically stabilizes the gradients in ultra-deep networks, preventing the model from collapsing during the early stages of training.
+To understand LayerNorm, you must understand why BatchNorm fails for text.
 
+Batch Normalization calculates the mean and variance across the *batch dimension*. If you have a batch of 32 images, it looks at the top-left pixel of all 32 images and calculates an average. 
+This works perfectly for images because every image is exactly the same size (e.g., $256 \times 256$).
+
+However, text sequences (sentences) are highly variable in length. One sentence might be 5 words, another might be 50 words. If you try to calculate an average across a batch of sentences, the math breaks down on the longer sentences because many of the other sentences in the batch don't even have a 50th word to average against. Furthermore, BatchNorm fails completely if the batch size is too small (e.g., a batch size of 1).
+
+## How Layer Normalization Works
+
+Layer Normalization completely ignores the batch dimension. Instead, it calculates the mean and variance across the **feature dimension** for *each individual piece of data independently*.
+
+If you pass a sentence into a Transformer, each word is represented by a vector (an embedding) of, say, 512 numbers.
+LayerNorm takes the first word, looks at those 512 numbers, calculates their average, and normalizes them so they have a mean of 0 and a variance of 1. It then does the exact same thing for the second word, entirely independently.
+
+### The Math
+For a single input vector $x$:
+1.  **Calculate Mean:** Average of all the features in $x$.
+2.  **Calculate Variance:** Variance of all the features in $x$.
+3.  **Normalize:** Subtract the mean, divide by the variance.
+4.  **Scale and Shift:** Multiply by a learnable parameter $\gamma$ and add a learnable parameter $\beta$. (Just like BatchNorm, this allows the network to "undo" the normalization if it mathematically wants to).
+
+## Why it matters for Transformers
+
+Transformers (like GPT-4) are incredibly deep networks. Without normalization, the values inside the network would explode to infinity or vanish to zero as they passed through dozens of layers of Attention and Dense matrix multiplications. 
+
+By applying LayerNorm before or after every single Attention block, the network ensures that the activations always remain in a healthy, stable numerical range (usually between -3 and 3), allowing the optimizer to find the optimal weights smoothly.
+
+<Callout icon="bolt" title="Pre-Norm vs Post-Norm">
+Originally, the famous "Attention Is All You Need" paper applied LayerNorm *after* the residual connection (Post-Norm). However, researchers quickly discovered that this made deep Transformers incredibly unstable and required a massive "warmup" phase. Modern Transformers (like GPT-3 and LLaMA) use **Pre-Norm** (applying LayerNorm *before* the Attention block), which drastically improves stability and allows training to begin immediately.
+</Callout>

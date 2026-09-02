@@ -1,36 +1,20 @@
 ---
-title: Mutual Recursion
-description: A complex mathematical pattern where two or more functions recurse by calling each other in an alternating cycle.
+title: Mutual Recursion (Redirect)
+description: "Redirecting to Recursion (Direct)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Mutual Recursion">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Standard recursion occurs when Function A mathematically calls Function A.
-**Mutual Recursion** occurs when Function A calls Function B, and Function B calls Function A, creating an alternating mathematical cycle.
+<Callout icon="info" title="Redirect">
+The architectural principles of **Mutual Recursion** (where two or more functions call each other in a cyclical pattern) are covered under the foundational Deep Dive for **Recursion (Direct)**. 
 
-## 1. State Machine Modeling
-Mutual recursion is mathematically elegant for modeling State Machines.
-For example, determining if a number is even or odd without using the modulo operator:
-```javascript
-function isEven(n) {
-  if (n === 0) return true;
-  return isOdd(n - 1);
-}
-function isOdd(n) {
-  if (n === 0) return false;
-  return isEven(n - 1);
-}
-```
-The mathematical state bounces back and forth between the two functions until the base case is reached.
-
-## 2. The Stack Overflow Danger
-Mutual recursion is mathematically dangerous in languages that do not support Tail-Call Optimization (like Java or Python). Because Function A cannot mathematically finish until Function B finishes, and Function B cannot finish until Function A finishes, the Call Stack grows exponentially with every bounce. If you pass `10000` into `isEven`, the compiler will mathematically blow up the Stack and crash the program.
-
+Please navigate to the [Recursion (Direct)](/kb/2.-programming-fundamentals--language-concepts/2.1-core-building-blocks/recursion-direct) module to explore how the Call Stack manages deeply nested, self-referential execution flows.
+</Callout>

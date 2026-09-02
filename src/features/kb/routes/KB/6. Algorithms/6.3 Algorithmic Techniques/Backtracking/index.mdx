@@ -4,18 +4,11 @@ description: "A general algorithmic technique that considers searching every pos
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Backtracking"
   subtitle="Intelligent Brute Force"
   tags={['Algorithms', 'Techniques', 'DFS', 'Recursion']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Backtracking is mathematically a refined form of brute-force search. It is most famously used to solve constraint satisfaction problems like Sudoku, the N-Queens problem, and generating permutations.
 
@@ -29,3 +22,4 @@ If the rules of Sudoku are mathematically violated, the algorithm immediately st
 If you brute-force an empty 9x9 Sudoku board blindly, there are 9^81 possible combinations, which would take millions of years to compute.
 Backtracking is mathematically viable solely because of **Pruning**. By checking the constraints (e.g., "Is this number already in the row?") *before* going deeper into the recursion, it mathematically chops off massive sections of the decision tree, reducing the 9^81 combinations down to a manageable few thousand, solving the puzzle in milliseconds.
 
+</ConceptTemplate>

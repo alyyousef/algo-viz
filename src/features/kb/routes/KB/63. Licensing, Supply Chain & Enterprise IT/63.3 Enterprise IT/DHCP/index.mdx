@@ -1,19 +1,36 @@
 ---
 title: DHCP
-description: The Dynamic Host Configuration Protocol is a network management protocol used on Internet Protocol networks.
+description: "Dynamic Host Configuration Protocol, the network management protocol used to dynamically assign IP addresses and other network configuration parameters to devices."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="DHCP">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="DHCP"
+  subtitle="Dynamic IP Address Assignment"
+  tags={['Networking', 'Enterprise IT', 'Infrastructure', 'Protocols']}
+>
 
-When a new employee plugs their biological laptop into the corporate wall jack, how do they mathematically get an IP address?
+The **Dynamic Host Configuration Protocol (DHCP)** is a fundamental networking service. Without DHCP, a network administrator would have to manually walk up to every single computer, phone, and printer in an office and manually type in a unique, non-overlapping IP address. 
 
-They broadcast a **DHCP Discover** packet. The corporate **DHCP Server** mathematically responds, leasing the laptop a temporary IP address (`10.0.0.42`), providing the IP of the Subnet Mask, and crucially, pointing the laptop to the internal DNS server. Without DHCP, a System Admin would have to biologically type a static IP address into every single device on the network.
+DHCP automates this completely. When a device connects to a network, the DHCP server dynamically hands it a mathematical configuration lease, allowing it to communicate with the internet instantly.
 
+## 1. The DORA Process
+
+When a laptop connects to Wi-Fi, it runs a 4-step handshake known as **DORA**:
+
+1. **Discover**: The laptop yells blindly into the local network (via a broadcast MAC address): *"Is there a DHCP server out there? I need an IP address!"*
+2. **Offer**: The DHCP server hears the yell, checks its pool of available IP addresses, and replies: *"I am a DHCP server. I can offer you the IP address 192.168.1.50."*
+3. **Request**: The laptop replies: *"I accept the offer for 192.168.1.50."* (This step exists because there might be multiple DHCP servers on a network, and the laptop is officially requesting the specific offer it liked best).
+4. **Acknowledge (ACK)**: The server finalizes the transaction, officially registering the IP address to the laptop's MAC address in its database, and hands over the Subnet Mask, Default Gateway (Router IP), and DNS Servers.
+
+## 2. Leases
+
+DHCP does not give away IP addresses forever; it **leases** them. 
+A standard office lease might be 8 days. If the laptop is shut down and taken home, the lease eventually expires. The DHCP server reclaims `192.168.1.50` and puts it back into the available pool for another device to use. This mathematically prevents the network from permanently running out of IP addresses.
+
+<Callout type="info" title="DHCP Reservations">
+  Sometimes you *do* want a device to have the exact same IP address forever (like a networked office printer or a server). Instead of disabling DHCP on the printer, the IT admin creates a **DHCP Reservation**. The server is mathematically instructed: *"Whenever you see the MAC address of this specific printer, ALWAYS give it 192.168.1.100, and never give that IP to anyone else."*
+</Callout>
+
+</ConceptTemplate>

@@ -1,36 +1,44 @@
 ---
 title: Recurrent Neural Networks (RNNs)
-description: Neural networks designed to handle sequential data by maintaining an internal state (memory).
+description: "A guide to RNNs, the foundational architecture designed to process sequential data like text, audio, and time-series."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Recurrent Neural Networks (RNNs)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Recurrent Neural Networks (RNNs) are a class of neural networks designed to process sequential data (like time series, text, or audio). Unlike standard feedforward networks, RNNs have loops in them, allowing information to persist.
+A **Recurrent Neural Network (RNN)** is a class of artificial neural network designed specifically to handle **sequential data**—data where the order of the inputs matters deeply, such as text sentences, audio waveforms, or stock market prices over time.
 
+## The Flaw in Standard Networks (MLPs)
 
-<Callout icon="warning" title="The Vanishing Gradient Problem">
+If you feed the sentence "The cat sat on the mat" into a standard Multi-Layer Perceptron (MLP), the network processes all the words simultaneously, but independently. 
 
+A standard MLP has absolutely no concept of time or memory. When it processes the word "mat," it has completely forgotten that the word "cat" appeared 4 steps earlier. This makes it impossible to understand grammar or context.
 
-  Standard RNNs suffer catastrophically from the **Vanishing Gradient Problem**. During Backpropagation Through Time (BPTT), gradients are multiplied repeatedly. If the gradients are slightly less than 1, they exponentially shrink to zero, meaning the RNN mathematically cannot learn long-term dependencies (it "forgets" earlier parts of the sequence).
+## How RNNs Work: The Hidden State
 
+RNNs solve this by introducing a "memory" mechanism called the **Hidden State**.
 
+Instead of processing the entire sentence at once, an RNN processes it in a loop, one step (word) at a time. 
+1.  It takes in **Word 1** ("The"). It does some math, creates an initial memory (Hidden State 1), and makes a prediction.
+2.  It takes in **Word 2** ("cat"). *Crucially, it also takes in Hidden State 1.* It combines the new word with the old memory, does some math, and outputs a new memory (Hidden State 2).
+3.  It repeats this loop. By the time it reaches the word "mat," the RNN is combining the current word with a Hidden State that contains the compressed mathematical memory of the entire sentence leading up to that point.
+
+## The Fatal Flaw: Vanishing Gradients
+
+While standard ("Vanilla") RNNs are elegant in theory, they fail catastrophically in practice on long sequences (like a paragraph of text).
+
+This is due to the **Vanishing Gradient Problem**. 
+If a sentence is 100 words long, the RNN must update its Hidden State 100 times. During backpropagation, the Chain Rule requires multiplying gradients together 100 times. If the gradients are small (e.g., $0.1$), multiplying $0.1 \times 0.1 \dots$ 100 times results in a number infinitesimally close to zero.
+
+Because the gradient shrinks to zero as it travels backward through time, the network completely fails to learn long-term dependencies. It might remember the previous 5 words, but it will have completely forgotten the beginning of the paragraph.
+
+<Callout icon="arrow-right" title="The Evolution of Sequence Models">
+Because Vanilla RNNs are virtually useless for long sequences, they were quickly replaced by **LSTMs (Long Short-Term Memory)** and **GRUs**, which use complex "gates" to safely carry memory across long distances without the gradient vanishing. Today, almost all RNN architectures (including LSTMs) have been superseded by the **Transformer** architecture (which uses Attention).
 </Callout>
-
-
-## How they maintain state
-
-In a standard MLP, $Output = Activation(Weights \times Input)$.
-
-In an RNN, the output depends not just on the current input, but on the hidden state from the *previous* time step:
-$HiddenState_t = Activation(Weights_{input} \times Input_t + Weights_{hidden} \times HiddenState_{t-1})$
-
-This means an RNN processing the word "World" in the sentence "Hello World" mathematically "remembers" that it just saw the word "Hello". This made them the dominant architecture for Natural Language Processing before Transformers were invented.
-

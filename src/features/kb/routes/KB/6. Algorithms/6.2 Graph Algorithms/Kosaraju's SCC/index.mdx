@@ -4,25 +4,18 @@ description: "A linear-time algorithm to find the Strongly Connected Components 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Kosaraju's Algorithm"
   subtitle="Finding Strongly Connected Components"
   tags={['Algorithms', 'Graphs', 'DFS', 'SCC']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 In a directed graph, a **Strongly Connected Component (SCC)** is a subset of vertices where every vertex can mathematically reach every other vertex in that same subset.
 
 ## 1. The Two-Pass DFS
 Kosaraju's Algorithm mathematically isolates these components using a clever trick of reversing the edges.
 **Pass 1**: Run DFS on the original graph. As the recursive DFS *finishes* exploring a node (when it hits a dead end and returns), push that node onto a Stack.
-**Pass 2**: Mathematically reverse the direction of every single edge in the graph (creating the Transpose Graph).
+**Pass 2**: Mathematically reverse the direction of every single edge in the graph (creating the Transpose Graph). 
 Now, pop a node off the Stack. Run a new DFS from that node on the reversed graph. Every node reached during this single DFS run mathematically belongs to the exact same Strongly Connected Component.
 
 ## 2. Mathematical Proof
@@ -30,3 +23,4 @@ Why does reversing the edges work?
 If Node A can reach Node B in the original graph (A -> B), they are only in the same SCC if Node B can *also* reach Node A (B -> A).
 When you reverse the graph, the edge becomes (B -> A). By popping from the Stack (which mathematically orders nodes by their topological finish time), the second DFS is guaranteed to trap itself inside the SCC, unable to leak out into other components. The Time Complexity is strictly **O(V + E)**.
 
+</ConceptTemplate>

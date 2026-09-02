@@ -1,23 +1,36 @@
 ---
-title: DIP (Dependency Inversion Principle)
-description: A redirect to the core Dependency Inversion Principle concept, representing the final pillar of the SOLID object-oriented design methodology.
+title: Dependency Inversion Principle (DIP)
+description: "The 'D' in SOLID, stating that high-level modules should not depend on low-level modules, but both should depend on abstractions."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
-  title="DIP"
-  subtitle="See: Dependency Inversion Principle"
-  tags={['SOLID', 'OOP', 'Architecture']}
+<ConceptTemplate
+  title="Dependency Inversion Principle (DIP)"
+  subtitle="Decoupling Architecture"
+  tags={['OOP', 'Design Patterns', 'Architecture', 'SOLID']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
-*This topic is fully covered under the **Dependency Inversion** section.*
+The **Dependency Inversion Principle (DIP)** is the "D" in the famous SOLID principles of Object-Oriented Programming. It is the core architectural rule that allows large-scale enterprise software to remain flexible and easily testable.
 
-DIP is the foundational mathematical rule that prevents "spaghetti code" by forcing all dependencies to point inward toward abstract interfaces, rather than outward toward concrete implementations.
+## 1. The Rule
 
+The principle states two things:
+1. High-level modules (business logic) should not depend on low-level modules (databases, APIs, UI). Both should depend on **Abstractions** (Interfaces).
+2. Abstractions should not depend on details. Details should depend on abstractions.
+
+## 2. The Bad Way (Tight Coupling)
+
+Imagine a `CheckoutService` that calculates cart totals. Inside the class, you write `const stripe = new StripeAPI()`.
+The high-level checkout logic is now hard-coded and tightly coupled to the low-level Stripe API. If the company decides to switch to PayPal next year, you have to rip open the core business logic file and rewrite it, risking massive bugs. Furthermore, you cannot run automated Unit Tests on the checkout logic without accidentally charging a real credit card.
+
+## 3. The Good Way (Inversion)
+
+Instead, you create an Interface called `IPaymentGateway` with a `charge()` method.
+You rewrite the `CheckoutService` so it only accepts the Interface via its constructor (Dependency Injection).
+
+Now, the CheckoutService has no idea what "Stripe" is. It just knows it has *some* object that fulfills the IPaymentGateway contract.
+- To run production, you pass in the Stripe class.
+- To switch to PayPal, you pass in a new PayPal class. The CheckoutService file remains 100% untouched.
+- To run automated tests, you pass in a "FakePaymentGateway" that just returns `true`, allowing instant testing without hitting the internet.
+
+</ConceptTemplate>

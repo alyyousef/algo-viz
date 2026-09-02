@@ -1,25 +1,45 @@
 ---
-title: Inpainting & Outpainting
-description: The targeted mathematical alteration of an image, allowing AI to seamlessly erase and replace objects inside an image (Inpainting) or expand the canvas beyond its original borders (Outpainting).
+title: Inpainting and Outpainting
+description: "An overview of Inpainting and Outpainting, the powerful editing techniques that allow AI to seamlessly alter or infinitely expand existing images."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Inpainting & Outpainting">
+    <ConceptTemplate title="Inpainting and Outpainting">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Unlike generating an image from scratch, Inpainting and Outpainting force the Generative AI to mathematically respect existing pixel boundaries, making them powerful tools for photo editing.
+**Inpainting** and **Outpainting** are specialized forms of Image-to-Image translation. Instead of repainting the entire image, they allow users to surgically edit specific parts of an image, or expand an image beyond its original borders.
 
-## 1. Inpainting (Masking)
-If a tourist ruins your photograph, you want to remove them.
-You draw a physical Mask (a binary mathematical matrix where 1 = tourist, 0 = background) over the person. The Diffusion model is fed the original image and the mask. The mathematical rules of the model explicitly freeze the unmasked pixels; they cannot be altered. The AI is only allowed to run the Diffusion denoising process on the masked pixels, forcing it to hallucinate a background that mathematically blends perfectly with the frozen edges.
+These techniques were popularized by DALL-E 2 and are now built natively into professional software like Adobe Photoshop (as "Generative Fill").
 
-## 2. Outpainting
-Outpainting is the exact same mathematics, but reversed.
-You provide an image, and you expand the canvas, leaving the new outer edges completely blank (or filled with static noise). The original image is mathematically frozen. The Diffusion model denoises the outer borders, seamlessly expanding the environment (e.g., taking the Mona Lisa and mathematically generating the rest of the room she is sitting in) while maintaining perfect lighting and perspective.
+## 1. Inpainting (Surgical Editing)
 
+Inpainting is the process of replacing a specific chunk of an image with brand new AI-generated content that seamlessly matches the surrounding lighting and context.
+
+**The Workflow:**
+1.  **The Mask:** You upload a photo of a man standing in a field. You use a brush tool to paint a black "Mask" over the man's head.
+2.  **The Void:** The AI mathematically deletes all the pixels underneath the mask, leaving a void.
+3.  **The Prompt:** You type: *"A man wearing a cowboy hat."*
+4.  **The Generation:** The Diffusion model fills the void with 100% random mathematical noise. Crucially, the AI is mathematically forced to look at the *unmasked* pixels (the field and the man's shoulders) while it denoises the void. 
+
+Because the AI is constantly comparing the void to the surrounding pixels during the generation process, it ensures that the sunlight hitting the new cowboy hat perfectly matches the sunlight hitting the original shoulders.
+
+## 2. Outpainting (Infinite Canvas)
+
+Outpainting is the exact reverse of Inpainting. Instead of filling a hole inside an image, it expands the image infinitely outward.
+
+**The Workflow:**
+1.  **The Expansion:** You upload a standard square portrait of the Mona Lisa. You increase the canvas size, creating empty white space to the left and right of the painting.
+2.  **The Prompt:** You type: *"A beautiful Italian countryside landscape, Renaissance painting style."*
+3.  **The Generation:** Just like Inpainting, the AI fills the empty white space with noise, and denoises it while explicitly looking at the edge pixels of the original Mona Lisa.
+
+The AI will perfectly extend the background scenery, continuing the colors, brushstrokes, and perspective of the original painting indefinitely. You can outpaint an image infinitely in all directions to create a massive mural from a single starting photo.
+
+<Callout icon="wand-magic-sparkles" title="Adobe's Monopoly on Generative Fill">
+In 2023, Adobe integrated Inpainting into Photoshop under the name **Generative Fill**. It became an overnight sensation because Adobe trained their proprietary AI model (Firefly) exclusively on Adobe Stock images. This legally guaranteed that enterprises could use Generative Fill for commercial advertising without fear of being sued for copyright infringement (a massive issue with open-source tools like Stable Diffusion).
+</Callout>

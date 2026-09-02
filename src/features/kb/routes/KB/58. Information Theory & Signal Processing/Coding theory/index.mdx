@@ -1,19 +1,32 @@
 ---
-title: Coding theory
-description: The study of the properties of codes and their respective fitness for specific applications.
+title: Coding Theory
+description: "The mathematical study of the properties of codes and their respective fitness for specific applications, focusing heavily on data compression and error correction."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Coding Theory">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Coding Theory"
+  subtitle="The Math of Data Transmission"
+  tags={['Information Theory', 'Mathematics', 'Algorithms', 'Networking']}
+>
 
-**Coding Theory** is the mathematical umbrella that covers both how to compress data (Source Coding) and how to protect data from errors (Channel Coding).
+In computer science, a "Code" is not just a programming language. **Coding Theory** (pioneered by Claude Shannon and Richard Hamming) is the deep mathematical study of how we encode information into bits (1s and 0s) to achieve two massive, often contradictory goals: Compression and Error Correction.
 
-If you are biologically transmitting a 4K video from a satellite orbiting Mars back to Earth, the data will mathematically suffer from radiation, cosmic noise, and packet loss. Coding theory provides the mathematical frameworks to ensure the video arrives both small enough to transmit quickly, and robust enough to survive the terrifying radiation of deep space.
+## 1. Source Coding (Data Compression)
 
+Source Coding algorithms attempt to mathematically squash data to use the absolute minimum number of bits possible, removing all redundancy.
+- **Huffman Coding**: A famous algorithm that looks at the frequency of characters. Instead of giving every letter 8 bits, it assigns very short codes (like `01`) to common letters like 'E', and very long codes to rare letters like 'Z'.
+- **LZ77 (ZIP/GZIP)**: Finds repeated sequences of data (like the word "algorithm" appearing 10 times in a file) and replaces them with a tiny pointer to the first occurrence.
+
+## 2. Channel Coding (Error Correction)
+
+While Source Coding removes redundancy, Channel Coding mathematically *adds* redundancy. 
+If you beam a compressed photo from a satellite to Earth, cosmic radiation will flip random bits from 1 to 0 (noise). If the file is perfectly compressed, flipping one bit destroys the entire image.
+Channel Coding algorithms (like **Hamming Codes**, **Reed-Solomon Codes**, and **Parity Bits**) interlace mathematical checksums throughout the data. If the satellite transmission gets slightly corrupted, the receiver's computer can use the mathematical relationships of the checksums to not only detect the error, but actively calculate exactly which bit was flipped and repair it.
+
+<Callout type="info" title="The Fundamental Tradeoff">
+  This is the core tension of Information Theory. You want maximum compression (Source Coding) to save bandwidth, but if you compress too much, a single flipped bit destroys the data. You must carefully add back exact mathematical redundancies (Channel Coding) to ensure the data survives the noisy physical world.
+</Callout>
+
+</ConceptTemplate>

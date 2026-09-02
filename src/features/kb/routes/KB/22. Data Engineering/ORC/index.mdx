@@ -1,33 +1,20 @@
 ---
-title: Apache ORC
-description: The Optimized Row Columnar format, deeply integrated into the Hadoop ecosystem to provide massive mathematical compression and fast reads.
+title: Apache ORC (Redirect)
+description: "Redirecting to Data Lakes & Warehouses."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Apache ORC (Optimized Row Columnar)">
+    <ConceptTemplate title="Apache ORC">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Apache ORC** is a highly efficient, mathematically compressed columnar storage format. It is the direct rival to Apache Parquet, engineered primarily by Hortonworks to provide blistering fast execution specifically for **Apache Hive**.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Apache ORC** (Optimized Row Columnar, a highly compressed columnar file format designed for Hadoop and Hive) is covered in the Deep Dive for **Data Lakes & Warehouses**. 
 
-## 1. Columnar Compression
-Like Parquet, ORC is column-oriented. If you query `SELECT age FROM users`, the disk mathematically skips all names, addresses, and emails, reading only the continuous block of integers representing the ages.
-
-ORC applies aggressive mathematical compression:
-- **Run-Length Encoding (RLE)**: If a column has 10,000 rows of the string "Active", ORC does not write the string 10,000 times. It mathematically writes `("Active", 10000)`, shrinking megabytes of data into a few bytes.
-- **Dictionary Encoding**: It scans a column, assigns an integer to every unique string, and stores the massive array as tiny integers, drastically reducing file size.
-
-## 2. ORC vs Parquet
-ORC and Parquet are architecturally very similar, but they won different ecosystem wars.
-
-- **Ecosystem Integration**: ORC is mathematically optimized for **Apache Hive** and **Presto/Trino**. Parquet is mathematically optimized for **Apache Spark**.
-- **Data Types**: Parquet relies heavily on a flattened, heavily nested schema model (using repetition and definition levels). ORC handles complex nested data (Arrays, Maps, Structs) slightly differently, often resulting in marginally better compression ratios for highly nested JSON-like data, though Parquet is generally faster for flat analytics.
-- **ACID Support**: ORC was the foundational file format required to enable the original ACID transaction support within Apache Hive.
-
-Because Apache Spark overwhelmingly won the execution engine war against Hive, **Parquet** became the de facto industry standard, but ORC remains heavily utilized in massive enterprise Hadoop clusters.
-
+Please navigate to the [Data Lakes & Warehouses](/kb/22.-data-engineering/data-lakes--warehouses) module to explore columnar storage physics.
+</Callout>

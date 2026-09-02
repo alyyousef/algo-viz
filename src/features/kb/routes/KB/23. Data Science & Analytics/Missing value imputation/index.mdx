@@ -1,35 +1,20 @@
 ---
-title: Missing Value Imputation
-description: The mathematical and statistical strategies used to handle null or missing data in datasets before feeding them to Machine Learning algorithms.
+title: Missing Value Imputation (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Missing Value Imputation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Machine Learning algorithms are purely mathematical equations (like $y = mx + b$). If a user forgets to fill out the "Age" field on a signup form, the resulting `NaN` (Not a Number) value will mathematically crash the entire algorithm. You cannot multiply a string or a null.
+<Callout icon="info" title="Redirect">
+The statistical techniques of **Missing Value Imputation** (handling null data via mean/median filling, interpolation, or predictive modeling) are foundational to both Data Analysis and Machine Learning. 
 
-Data Scientists must meticulously handle missing data through **Imputation**.
-
-## 1. Types of Missing Data
-Before you fix the missing data, you must mathematically diagnose *why* it is missing:
-- **MCAR (Missing Completely at Random)**: A server glitch dropped 5% of all rows randomly. The missing data has zero mathematical relationship to the other columns.
-- **MAR (Missing at Random)**: Men are less likely to fill out a "Depression Score" survey than women. The missingness mathematically correlates with the "Gender" column.
-- **MNAR (Missing Not at Random)**: People with incredibly low incomes refuse to fill out the "Income" field. The missingness is mathematically caused by the very value that is missing. This is incredibly dangerous to impute.
-
-## 2. Deletion Strategies
-- **Listwise Deletion (Drop Rows)**: If a row has a missing value, you mathematically delete the entire row. This is safe for MCAR, but if the data is MNAR, deleting the rows will mathematically destroy the model (e.g., deleting all poor people from a financial model).
-- **Drop Columns**: If the "Hair Color" column is 95% null, you mathematically delete the entire column because it holds no predictive power.
-
-## 3. Imputation Strategies
-Replacing the missing `NaN` with a calculated mathematical value.
-- **Mean/Median Imputation**: Replacing all missing ages with the mathematical Average age (e.g., 34). This preserves the row, but it mathematically reduces the variance of the dataset, artificially compressing the distribution.
-- **Forward Fill (Time Series)**: If a stock price tracker fails at 10:05 AM, you mathematically copy the price from 10:04 AM forward.
-- **Algorithmic Imputation (KNN or MICE)**: Using Machine Learning to predict the missing values based on the other columns. If a row is missing "Age", but the user is a "Vice President" with a $300k income, the KNN algorithm will mathematically impute an older age rather than the global mean of 34.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts clean and prepare data.
+</Callout>

@@ -1,34 +1,66 @@
 ---
 title: Dimensionality Reduction
-description: The mathematical process of compressing a massive number of input features (dimensions) into a smaller, dense representation while preserving the critical underlying signal.
+description: "Techniques for reducing the number of input variables in a dataset while preserving the underlying mathematical structure."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Dimensionality Reduction">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you feed a Machine Learning model an image that is 1000x1000 pixels, that represents 1,000,000 mathematical dimensions. The algorithm will likely crash due to the **Curse of Dimensionality** (the mathematical phenomenon where the volume of the space increases so exponentially that the available data becomes uselessly sparse).
+**Dimensionality Reduction** is an unsupervised learning technique used to compress data. 
 
-**Dimensionality Reduction** mathematically shrinks 1,000,000 dimensions down to 100 dimensions, while retaining 95% of the important information.
+If you have a dataset describing houses with 500 different columns (Square Footage, Number of Bathrooms, Proximity to Highway, Distance to Grocery Store, etc.), you have 500 "Dimensions". 
 
-## 1. Feature Elimination vs Extraction
-- **Elimination**: Literally deleting columns that don't matter (e.g., deleting "Hair Color" when predicting "Credit Score").
-- **Extraction**: Mathematically creating entirely new, dense columns by blending the old ones. (e.g., Compressing 1,000,000 raw pixels into a 100-number vector that represents the "essence" of a face).
+High-dimensional data is extremely difficult for machine learning algorithms to process efficiently, a phenomenon known as the **Curse of Dimensionality**.
 
-## 2. Principal Component Analysis (PCA)
-PCA is the absolute mathematical king of linear dimensionality reduction.
-It relies on linear algebra (Eigenvectors and Eigenvalues). It mathematically rotates the high-dimensional axes to find the direction that contains the absolute maximum variance (spread) in the data. This direction becomes "Principal Component 1". It then finds a second, mathematically orthogonal (90 degree) direction for PC2.
+## The Curse of Dimensionality
 
-You can drop a 1,000-column dataset down to just PC1 and PC2, which might mathematically capture 90% of all the variance in the original 1,000 columns, allowing you to easily plot it on a 2D graph.
+1. **Distance Metrics Break Down:** In 2D or 3D space, Euclidean distance works perfectly. In 500D space, the math breaks down: the distance between any two random points starts to look exactly the same. Clustering algorithms that rely on distance (like K-Means) become useless.
+2. **Overfitting:** If you have 500 columns but only 1,000 rows of data, a model has enough mathematical "wiggle room" to perfectly memorize the training data (overfit), ruining its ability to generalize.
+3. **Computation:** Training a model on 500 dimensions requires exponentially more compute than 50 dimensions.
 
-## 3. Non-Linear Reduction (t-SNE and UMAP)
-PCA is linear. If the data is twisted like a mathematical Swiss Roll, PCA will crush it and destroy the structure.
+## Feature Selection vs. Feature Extraction
 
-**t-SNE** (t-Distributed Stochastic Neighbor Embedding) and **UMAP** are mathematically designed for highly non-linear data. They calculate the probability that two points are neighbors in high-dimensional space, and then mathematically force them to be neighbors in a new 2D space. They are the industry standard for visualizing massive datasets (like millions of Word Embeddings) in 2D scatter plots.
+There are two ways to reduce dimensions:
 
+1. **Feature Selection:** Simply throwing away the columns that don't matter. For example, dropping the `House_Color` column because it has 0 correlation with `House_Price`.
+2. **Feature Extraction:** Creating entirely new, compressed columns by mathematically combining the original ones. (e.g., Combining `Square_Footage` and `Lot_Size` into a new, single variable called `Overall_Size`).
+
+## Core Algorithms (Feature Extraction)
+
+<ComparisonTable
+  headers={['Algorithm', 'Type', 'How it works']}
+  rows={[
+    [
+      'PCA (Principal Component Analysis)',
+      'Linear',
+      'Projects the data onto a lower-dimensional flat plane that maximizes the variance. It finds the "axes" along which the data is most spread out.'
+    ],
+    [
+      't-SNE (t-Distributed Stochastic Neighbor Embedding)',
+      'Non-Linear',
+      'Focuses on local structure. It ensures that points that were close together in high-dimensional space remain close together in 2D/3D space. Heavily used for visualization.'
+    ],
+    [
+      'UMAP (Uniform Manifold Approximation and Projection)',
+      'Non-Linear',
+      'A modern competitor to t-SNE. Much faster, and better at preserving global structure alongside local structure.'
+    ],
+    [
+      'Autoencoders',
+      'Neural Network',
+      'An hourglass-shaped neural network trained to compress data into a small bottleneck layer, and then reconstruct the original data from that bottleneck.'
+    ]
+  ]}
+/>
+
+<Callout icon="warning" title="Interpretability Loss">
+The biggest downside to Feature Extraction algorithms like PCA is the loss of human interpretability. If you use PCA to reduce 50 columns into 5 "Principal Components", your model might become highly accurate. But if the business asks "Which variable is driving the prediction?", you can only answer "Principal Component #1", which is an unreadable mathematical blend of all 50 original columns.
+</Callout>

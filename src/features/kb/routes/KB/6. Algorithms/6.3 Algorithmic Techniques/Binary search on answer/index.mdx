@@ -4,18 +4,11 @@ description: "An advanced algorithmic technique where the problem does not ask t
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Binary Search on Answer"
   subtitle="Searching the Solution Space"
   tags={['Algorithms', 'Techniques', 'Binary Search', 'Optimization']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Standard Binary Search is used to find a number inside a sorted array. **Binary Search on Answer** is a profound mathematical paradigm shift: you use Binary Search to guess the answer to a complex optimization problem.
 
@@ -31,3 +24,4 @@ If you can successfully cut boards of length 10 (True), you can mathematically a
 4. If it works, you know the true answer is 500 or higher. You set `Low = 501`. If it fails, you set `High = 499`.
 Instead of an O(N²) complex DP solution, you mathematically solve it in **O(N log(Range))** time.
 
+</ConceptTemplate>

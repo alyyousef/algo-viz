@@ -1,36 +1,20 @@
 ---
-title: Computer Vision (Overview)
-description: The foundational AI discipline of mathematically extracting high-level understanding and spatial semantics from digital images and videos.
+title: Computer Vision (Redirect)
+description: "Redirecting to Deep Learning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Computer Vision (Overview)">
+    <ConceptTemplate title="Computer Vision">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-To a computer, an image is not a picture of a cat; it is a massive 2D matrix of numbers representing pixel intensities (0-255). **Computer Vision** is the mathematical discipline of teaching an algorithm to extract spatial meaning from those matrices.
+<Callout icon="info" title="Redirect">
+The architectural foundations of **Computer Vision** (Convolutional Neural Networks, ResNets, and Image Segmentation) are covered in the Deep Dive for **Deep Learning**. 
 
-## 1. Classical Computer Vision
-Before Deep Learning, Computer Vision required Data Scientists to manually construct mathematical filters to find features.
-- **Edge Detection (Sobel Filters)**: Mathematically dragging a 3x3 matrix over an image to calculate the gradient (the sudden change in pixel intensity), which perfectly isolates the sharp edges of objects.
-- **SIFT (Scale-Invariant Feature Transform)**: A brilliant algorithm that mathematically identifies "keypoints" on an object (like the corners of a book) that remain identical even if the image is rotated, scaled, or darkened.
-These manual features were then fed into classical Machine Learning algorithms like Support Vector Machines (SVMs) to classify the image.
-
-## 2. The Deep Learning Revolution (CNNs)
-In 2012, AlexNet destroyed classical computer vision in the ImageNet competition, proving that **Convolutional Neural Networks (CNNs)** were infinitely superior.
-
-Instead of a human manually writing a math formula to detect an edge, a CNN initializes thousands of random 3x3 matrices (Filters). Through Backpropagation, the network mathematically *learns* the optimal filters itself.
-- **Early Layers**: Mathematically learn to detect basic lines, edges, and colors.
-- **Middle Layers**: Combine the edges to detect complex shapes (circles, squares, textures).
-- **Deep Layers**: Combine the shapes to detect high-level semantic concepts (eyes, wheels, faces).
-
-## 3. Core Tasks in Computer Vision
-- **Image Classification**: "Is this an image of a Dog or a Cat?" (Outputs a single label).
-- **Object Detection**: "Where are the dogs in this image?" (Draws mathematical Bounding Boxes around every dog, outputting X/Y coordinates).
-- **Semantic Segmentation**: The most complex task. It mathematically classifies *every single pixel* in the image. (e.g., Pixels 1-500 are "Road", Pixels 501-900 are "Pedestrian"). This is the absolute foundation of self-driving cars.
-
+Please navigate to the upcoming **Deep Learning** modules to explore how neural networks process spatial data.
+</Callout>

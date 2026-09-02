@@ -2,23 +2,135 @@
 title: Graph RAG
 description: A cutting-edge retrieval architecture that augments standard Vector Search by mathematically mapping the entities within the documents into a structured, interconnected Knowledge Graph.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="Graph RAG"
-  subtitle="Knowledge Graph Augmented Retrieval"
-  tags={['RAG', 'Knowledge Graph', 'AI', 'Architecture']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Graph RAG">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Standard Vector RAG is excellent at answering direct questions ("What is the capital of France?"). However, it mathematically fails at multi-hop reasoning ("Which company was founded by the person who invested in OpenAI?"). Graph RAG solves this.
+Retrieval-Augmented Generation (RAG) fundamentally changed how LLMs interact with private data. However, standard Vector Search (Dense Retrieval) has a severe mathematical limitation: it is purely semantic. It is phenomenal at answering direct questions ("What is the capital of France?"), but it fails catastrophically at **Multi-Hop Reasoning**.
 
-## 1. The Entity Extraction Phase
-During the ingestion of documents, Graph RAG does not just blindly create Vectors. It uses an LLM to mathematically parse every sentence and extract **Entities** (People, Companies, Locations) and **Relationships** (Founded, Invested In, Located In).
-It stores this data in a Graph Database (like Neo4j), creating a massive, interconnected web of physical Nodes and Edges, running parallel to the standard Vector chunks.
+If you ask: *"Which company was founded by the person who invested heavily in OpenAI?"*, a Vector Database mathematically struggles because the text chunk explaining OpenAI's investors is physically separate from the text chunk explaining what company that specific investor founded. The semantic overlap of the entire sentence is low.
 
-## 2. Multi-Hop Graph Traversal
-When the user asks a complex question, the system queries the Graph.
-It mathematically locates the Node for "OpenAI". It then physically traverses the mathematical Edge labeled "Invested By", arriving at the Node "Microsoft". It then traverses the Edge "Founded By", arriving at the Nodes "Bill Gates" and "Paul Allen".
-The system extracts these specific Nodes, converts their structured data back into text, and feeds it into the LLM as context. By mathematically tracing the exact relationships across thousands of documents, Graph RAG achieves a level of deep, deductive reasoning that pure Vector Similarity search cannot mathematically accomplish.
+**Graph RAG** solves this by physically lifting the unstructured text into a highly structured, mathematical **Knowledge Graph**.
 
-</TechnologyTemplate>
+## 1. Deep Dive & Mechanics
+
+### The Ingestion Pipeline (Entity Extraction)
+Standard RAG pipelines blindly embed chunks of text into a vector database. 
+A Graph RAG pipeline adds a massive, computationally expensive preprocessing step: **Entity Extraction via LLM**.
+
+As documents are ingested, a smaller, fast LLM mathematically parses every single sentence. It performs Named Entity Recognition (NER) to extract:
+1. **Nodes (Entities)**: People, Companies, Locations, Products (e.g., `[Bill Gates]`, `[Microsoft]`, `[Seattle]`).
+2. **Edges (Relationships)**: The strict mathematical connections between the Nodes (e.g., `[FOUNDED]`, `[HEADQUARTERED_IN]`).
+
+This data is written directly into a **Graph Database** (like Neo4j or Memgraph), creating a massive interconnected web. Crucially, each Node mathematically stores a reference back to the original text chunk it was extracted from.
+
+### Cypher Queries and Multi-Hop Traversal
+When a user asks a complex question, the Graph RAG engine does not just perform a Cosine Similarity search. It performs a structured Graph Traversal.
+1. The user's query is mathematically parsed to extract the root Entities (e.g., `[OpenAI]`).
+2. The engine generates a **Cypher Query** (the SQL of Graph Databases).
+3. The database mathematically hops across the edges. It starts at `[OpenAI]`, traverses the `[INVESTED_IN]` edge backward to find `[Microsoft]`, and then traverses the `[FOUNDED_BY]` edge to find `[Bill Gates]`.
+4. The system aggregates these specific Nodes, converts their structured data into plain text, and feeds it into the LLM as perfect, noise-free context.
+
+## 2. Mathematical / Theoretical Foundation
+
+### The Mathematics of Graph Traversal (Breadth-First Search)
+Graph RAG mathematically relies on graph traversal algorithms, fundamentally grounded in Breadth-First Search (BFS) or Dijkstra's Algorithm if edges are weighted.
+
+Let $G = (V, E)$ be the Knowledge Graph. 
+In a standard Vector Database, finding the connection between A and C requires a full scan or highly complex intersection logic.
+In a Graph Database, adjacency lists mathematically guarantee that traversing from Node A to Node B is an $O(1)$ operation (a direct pointer dereference in RAM). Therefore, a 3-hop query (A $\rightarrow$ B $\rightarrow$ C $\rightarrow$ D) executes in $O(k)$ time, where $k$ is the number of hops. This mathematical structure allows the RAG engine to deductively reason across thousands of documents without hallucinating.
+
+### The Hybrid Architecture (Graph + Vector)
+Modern Graph RAG does not replace Vector DBs; it mathematically merges with them.
+The Nodes in the Graph Database physically store their own **Vector Embeddings**. 
+When a user searches for "AI Research Labs", the system first performs a standard Cosine Similarity search across the Vectors of the Nodes in the Graph DB. It finds the Node `[OpenAI]` via vector similarity, and *then* executes the strict Graph Traversal. This hybrid approach perfectly blends semantic flexibility with strict mathematical relationships.
+
+## 3. Real-World Implementation
+
+Here is an architectural example of using **Neo4j** and **LangChain** to execute a Graph RAG query. This code assumes the Knowledge Graph has already been populated with Entities and Relationships during ingestion.
+
+```python
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import GraphQAChain
+from langchain.graphs import Neo4jGraph
+
+# 1. Initialize the connection to the Graph Database (Neo4j)
+graph = Neo4jGraph(
+    url="bolt://localhost:7687", 
+    username="neo4j", 
+    password="password"
+)
+
+# 2. Initialize the LLM that will convert the user's question into Cypher
+llm = ChatOpenAI(temperature=0, model_name="gpt-4")
+
+# 3. Create the Graph QA Chain
+# This chain mathematically bridges natural language and Graph Traversal.
+chain = GraphQAChain.from_llm(llm, graph=graph, verbose=True)
+
+# 4. Execute a Multi-Hop Query
+# The LLM will mathematically parse this, generate the Cypher query:
+# MATCH (a:Company)-[:INVESTED_IN]->(o:Company {name: 'OpenAI'}),
+#       (p:Person)-[:FOUNDED]->(a)
+# RETURN p.name
+question = "Which company was founded by the person whose company invested heavily in OpenAI?"
+
+response = chain.run(question)
+print(response)
+# Output: "Bill Gates and Paul Allen founded Microsoft, which invested heavily in OpenAI."
+```
+
+## 4. Visualizations
+
+```mermaid
+graph TD
+    subgraph Standard Vector RAG (Fails Multi-Hop)
+        A[Query: "Who founded the company that invested in OpenAI?"] -.->|Cosine Similarity| B(Chunk 1: Microsoft invested in OpenAI)
+        A -.->|Cosine Similarity| C(Chunk 2: Bill Gates founded Microsoft)
+        
+        B -.->|Low semantic overlap| X((Fails to connect chunks))
+    end
+    
+    subgraph Graph RAG Architecture
+        D[Query] -->|Extract Entity| E((OpenAI))
+        
+        E -->|Edge: INVESTED_IN| F((Microsoft))
+        F -->|Edge: FOUNDED_BY| G((Bill Gates))
+        F -->|Edge: FOUNDED_BY| H((Paul Allen))
+        
+        G -->|Extract Node Data| I[LLM Context]
+        H -->|Extract Node Data| I
+    end
+    
+    style E fill:#1e1e1e,stroke:#00a676,stroke-width:2px
+    style F fill:#1e1e1e,stroke:#00a676,stroke-width:2px
+    style G fill:#772953,stroke:#fff,stroke-width:2px
+    style H fill:#772953,stroke:#fff,stroke-width:2px
+```
+
+<Callout icon="warning" title="The Cost of Ingestion">
+  Graph RAG provides incredible retrieval accuracy, but the ingestion phase is mathematically brutal. Instead of just running an embedding model (which costs fractions of a cent), you must pass every single paragraph of your corpus through a massive LLM (like GPT-4) to accurately extract Entities and Relationships. Ingesting a 10,000-page enterprise manual into a Graph Database can easily cost hundreds of dollars in API fees, compared to $2 for standard Vector embedding.
+</Callout>
+
+## 5. Interview Prep
+
+**Q: In Graph RAG, why don't we just use SQL JOINs on a relational database instead of a Graph Database?**
+**Answer:** Relational databases are mathematically optimized for fixed schemas. To perform a 4-hop query in SQL (e.g., Person $\rightarrow$ Company $\rightarrow$ Subsidiary $\rightarrow$ Product), you must execute 4 massive `JOIN` operations. In a database with a billion rows, a 4-way JOIN creates a catastrophic Cartesian product that will time out the query. In a Graph Database (like Neo4j), relationships are physically stored as pointers on the disk (Index-Free Adjacency). Traversing 4 hops mathematically requires merely chasing 4 pointers in RAM, taking microseconds regardless of the total database size.
+
+**Q: Explain the concept of "Community Summarization" in Graph RAG.**
+**Answer:** Microsoft Research introduced a profound Graph RAG technique called Community Summarization. After building the massive Knowledge Graph, the system runs the **Leiden Algorithm** to mathematically detect dense "Communities" of highly interconnected nodes. It then uses an LLM to generate a plain-text summary of that entire Community. When a user asks a highly generic question ("What is the overall theme of this book?"), standard RAG fails. Graph RAG solves this by mathematically retrieving and aggregating the pre-computed Community Summaries.
+
+**Q: What is a Cypher Query?**
+**Answer:** Cypher is the declarative query language created specifically for Neo4j and Graph Databases. Unlike SQL, which focuses on tables and columns, Cypher is mathematically designed to match ASCII-art patterns. For example, `MATCH (p:Person)-[:LOVES]->(t:Technology)` mathematically instructs the database engine to find all Nodes labeled "Person" connected by a specific directed Edge labeled "LOVES" to a Node labeled "Technology".
+
+## 6. Production Use Cases
+
+- **Microsoft (GraphRAG Framework):** Microsoft officially open-sourced their GraphRAG framework, highly optimizing the pipeline for enterprise documentation. They use it internally to allow employees to query millions of pages of HR, technical, and legal documents. The Graph ensures that when an employee asks about a specific internal Project Code, the system mathematically retrieves not just the project description, but the exact org-chart of every engineer connected to that project.
+- **Pharmaceutical Research (Drug Discovery):** Major pharmaceutical companies use Graph RAG to ingest tens of thousands of medical research papers. By mapping Proteins, Diseases, and Chemical Compounds into a Graph, researchers can ask the LLM complex deductive queries: *"Which compounds have been shown to inhibit Protein X, which is mathematically linked to Disease Y?"* The Graph RAG system traverses the biomedical edges, uncovering hidden connections that a human (or standard vector search) would never find.

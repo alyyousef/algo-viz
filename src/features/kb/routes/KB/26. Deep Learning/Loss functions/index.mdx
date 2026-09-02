@@ -1,33 +1,59 @@
 ---
-title: Loss Functions
-description: The mathematical objective functions that neural networks attempt to minimize during training.
+title: Loss Functions in Deep Learning
+description: "A guide to Loss Functions, the mathematical equations used to measure how 'wrong' a neural network's predictions are."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Loss Functions">
+    <ConceptTemplate title="Loss Functions in Deep Learning">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A Loss Function (or Cost Function) is a mathematical algorithm that evaluates how well your algorithm models your dataset. It outputs a single scalar value representing the "Error". The entire goal of training a neural network via Backpropagation and Gradient Descent is to find the weights that minimize this Loss Function.
+A **Loss Function** (or Cost Function/Objective Function) is the mathematical core of machine learning. 
 
+If a neural network is a student taking a math test, the Loss Function is the teacher grading the exam. It looks at the network's prediction, compares it to the actual true answer (the ground truth), and calculates a single number: the **Loss**. 
 
-<Callout icon="warning" title="Choosing the Wrong Loss">
+*   A high Loss means the network's prediction was terrible.
+*   A Loss of $0$ means the prediction was absolutely perfect.
 
+The entire goal of training a neural network (via Backpropagation and Gradient Descent) is to adjust the weights until the Loss is as close to $0$ as possible.
 
-  If you use Mean Squared Error (MSE) for a classification problem, the mathematics of the gradients will be extremely unstable and the network may fail to learn entirely. You must pair the mathematical objective with the specific problem type.
+## Classification vs Regression
 
+The type of Loss Function you use depends entirely on the type of problem you are solving. There are two main categories: **Regression** (predicting a continuous number) and **Classification** (predicting a category).
 
+## 1. Regression Loss Functions
+
+Use these when predicting a specific number (e.g., "What will the price of this house be in dollars?").
+
+### Mean Squared Error (MSE)
+**Formula:** $L = \frac{1}{n} \sum (y_{true} - y_{pred})^2$
+MSE calculates the difference between the prediction and the true answer, squares it, and averages it across the batch. 
+*   **Why square it?** Squaring ensures all errors are positive (so guessing $\$10$ too high doesn't cancel out guessing $\$10$ too low). More importantly, squaring heavily penalizes *massive* errors. If the network is off by $1$, the penalty is $1$. If it's off by $10$, the penalty is $100$.
+
+### Mean Absolute Error (MAE)
+**Formula:** $L = \frac{1}{n} \sum |y_{true} - y_{pred}|$
+MAE simply takes the absolute value of the error. It is much more robust to outliers than MSE. If a dataset has a few crazy anomalies that the model guesses wildly wrong, MSE will explode, whereas MAE will remain relatively stable.
+
+## 2. Classification Loss Functions
+
+Use these when predicting categories (e.g., "Is this a picture of a Dog or a Cat?"). 
+Neural networks don't output words; they output probabilities (e.g., "90% Dog, 10% Cat").
+
+### Cross-Entropy Loss (Log Loss)
+Cross-Entropy is the undisputed gold standard for almost all classification tasks. It measures the divergence between two probability distributions (the model's predicted probabilities vs the actual true probabilities).
+
+If the true answer is "Dog" (100% Dog, 0% Cat), and the model predicts 99% Dog, the Cross-Entropy loss is near $0$. 
+However, because it uses logarithms, if the model predicts 1% Dog (it is highly confident that it is a Cat), the Loss explodes towards infinity. Cross-Entropy heavily punishes a model for being confidently wrong.
+
+### Binary vs Categorical Cross-Entropy
+*   **Binary Cross-Entropy (BCE):** Used when there are only two classes (e.g., Spam vs Not Spam). Usually paired with a **Sigmoid** activation function on the final layer.
+*   **Categorical Cross-Entropy:** Used when there are 3+ classes (e.g., predicting 1 of 10 digits). Usually paired with a **Softmax** activation function on the final layer.
+
+<Callout icon="triangle-exclamation" title="Custom Loss Functions">
+In cutting-edge research, designing a custom loss function is often the key to solving a problem. For example, in Object Detection (like YOLO), the loss function is a massive, custom equation that combines MSE (to penalize drawing the bounding box in the wrong place) with Cross-Entropy (to penalize guessing the wrong animal inside the box).
 </Callout>
-
-
-## Standard Loss Functions
-
-
-<ComparisonTable headers={['Loss Function', 'Problem Type', 'Mechanism']} rows={[ ['Mean Squared Error (MSE)', 'Regression (Predicting continuous numbers like house prices)', 'Calculates the average of the squared differences between the predicted values and the actual values. Heavily penalizes large outliers.'], ['Binary Cross-Entropy (Log Loss)', 'Binary Classification (e.g., Spam vs Not Spam)', 'Measures the performance of a classification model where the prediction is a probability value between 0 and 1. Punishes confident but wrong predictions severely.'], ['Categorical Cross-Entropy', 'Multi-class Classification (e.g., identifying 10 different types of animals)', 'The standard loss for networks outputting probabilities across multiple mutually exclusive classes (usually paired with a Softmax output layer).'] ]} />
-
-

@@ -1,32 +1,45 @@
 ---
 title: Tanh Activation Function
-description: The hyperbolic tangent function, a mathematical improvement over Sigmoid that centers outputs strictly around zero.
+description: "A guide to Tanh (Hyperbolic Tangent), a classic activation function that centers data around zero."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Tanh (Hyperbolic Tangent)">
+    <ConceptTemplate title="Tanh Activation Function">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The **Tanh** (Hyperbolic Tangent) activation function looks mathematically identical to Sigmoid (an S-shaped curve), but with one massive architectural improvement: it is **Zero-Centered**.
+**Tanh** (Hyperbolic Tangent) is a classic mathematical activation function. It is very closely related to the Sigmoid function, but it solves one of Sigmoid's major mathematical annoyances by centering its output perfectly around zero.
 
-## 1. The Mathematical Shift
-- Sigmoid squashes inputs between $0$ and $1$.
-- Tanh mathematically squashes inputs between $-1$ and $+1$.
-  - $	anh(0) = 0$
-  - $	anh(10) approx +1$
-  - $	anh(-10) approx -1$
+## The Shape and the Math
 
-## 2. Why Zero-Centered Matters
-In a Deep Neural Network, if you use Sigmoid, every single activation passing to the next layer is mathematically guaranteed to be a positive number.
-During Backpropagation, if all inputs to a neuron are positive, the mathematical gradients passed backward will always be *entirely positive* or *entirely negative*. This forces the weights to update in a highly erratic, zig-zagging trajectory.
-Because Tanh outputs a healthy mix of positive and negative numbers (centered at 0), the gradients can flow freely in any direction, meaning Tanh mathematically converges significantly faster than Sigmoid.
+**Formula:** $f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$
 
-## 3. The Shared Flaw
-Despite being superior to Sigmoid, Tanh still suffers from the exact same fatal mathematical flaw: the **Vanishing Gradient Problem**. At the edges of the curve (near $+1$ or $-1$), the mathematical derivative is extremely flat ($0$). This instantly kills the gradient, which is why Tanh was ultimately replaced by ReLU in modern hidden layers.
+If you graph the Tanh function, it looks almost exactly like the S-shaped curve of the Sigmoid function, but with one critical difference in scale:
+*   **Sigmoid** squashes numbers between $0$ and $1$.
+*   **Tanh** squashes numbers between **$-1$ and $1$**.
 
+If the input is $0$, Tanh outputs exactly $0$.
+
+## Why Tanh is better than Sigmoid (for hidden layers)
+
+In the 1990s and early 2000s, Tanh was the absolute standard activation function for the hidden layers of neural networks, almost entirely replacing Sigmoid.
+
+The reason is **Zero-Centering**. 
+If you use Sigmoid in hidden layers, every single neuron outputs a positive number (between $0$ and $1$). Because all outputs are positive, the gradients calculated during backpropagation will also all be the exact same sign (all positive or all negative). This forces the optimizer to update all weights in the exact same direction, causing it to zigzag inefficiently toward the optimal solution.
+
+Because Tanh outputs numbers between $-1$ and $1$, the average output of a hidden layer tends to stay very close to $0$. This allows gradients to naturally flow in both positive and negative directions, making Gradient Descent significantly faster and more stable.
+
+## The Fatal Flaw: Vanishing Gradients
+
+Just like Sigmoid, Tanh suffers heavily from the **Vanishing Gradient Problem**.
+
+Look at the extreme left or right of the Tanh curve. If a neuron's value gets pushed to $+5$ or $-5$, the Tanh curve is perfectly flat. A flat curve means a gradient of zero. During backpropagation, these zero-gradients multiply together, instantly freezing the network and preventing it from learning.
+
+<Callout icon="arrow-right" title="Where is it used today?">
+Because of the vanishing gradient problem, Tanh has been almost entirely replaced by **ReLU** (and its variants) for the hidden layers of deep networks. However, Tanh is still heavily used inside the mathematical guts of **LSTMs** and **GRUs**, where it is used to squish the "Candidate Memory" safely between $-1$ and $1$ before it is added to the Cell State.
+</Callout>

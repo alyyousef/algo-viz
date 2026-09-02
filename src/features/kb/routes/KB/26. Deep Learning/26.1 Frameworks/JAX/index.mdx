@@ -1,28 +1,58 @@
 ---
 title: JAX
-description: Google's high-performance numerical computing framework that supercharges standard NumPy with extreme mathematical differentiation and XLA compilation.
+description: "An overview of JAX, Google's high-performance numerical computing library that is heavily used in modern AI research."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="JAX">
+    <TechnologyTemplate title="JAX">
       {children}
-    
-  </ConceptTemplate>
+    </TechnologyTemplate>
   )
 }
 
-While PyTorch and TensorFlow were built strictly for Deep Learning, **JAX** is something mathematically purer. Built by Google, JAX is technically not a Deep Learning framework; it is an ultra-high-performance mathematical engine that can execute arbitrary Python code at blistering speeds on massive TPU clusters.
+**JAX** is a high-performance numerical computing library developed by Google Research. While it is often compared to PyTorch and TensorFlow, it is fundamentally different: JAX is **not** a deep learning framework.
 
-## 1. Autograd (Automatic Differentiation)
-The core magic of JAX is its ability to mathematically take the derivative of *any* native Python function.
-If you write a standard Python loop using NumPy, you can wrap it in `jax.grad()`. JAX will mathematically tear apart your Python code and perfectly calculate the exact gradient, allowing you to optimize bizarre mathematical structures that traditional Deep Learning frameworks cannot handle.
+Instead, JAX is an optimized version of NumPy that can run on GPUs and TPUs, combined with an incredibly powerful automatic differentiation system. 
 
-## 2. XLA (Accelerated Linear Algebra)
-JAX uses Google's **XLA Compiler**. When you wrap a function in `@jax.jit` (Just-In-Time compilation), JAX mathematically fuses all your separate math operations (like multiplying a matrix, then adding a bias, then applying ReLU) into one single, monolithic mathematical kernel. This mathematically eliminates memory bottlenecks and allows the code to run terrifyingly fast on GPUs and TPUs.
+Researchers use JAX to build deep learning frameworks (like Flax or Haiku) on top of it, but JAX itself is just a system for doing extremely fast, differentiable math.
 
-## 3. The Functional Paradigm
-Unlike PyTorch, which is highly Object-Oriented (using classes and states), JAX mathematically forces you to write **Pure Functional Code**. Functions cannot have "side effects," and arrays are strictly mathematically immutable (you cannot modify them in place).
-While this makes JAX notoriously difficult to learn, this strict mathematical purity is exactly what allows the XLA compiler to safely distribute the code across 10,000 TPUs perfectly. Today, JAX is heavily favored by Google DeepMind for cutting-edge AI research.
+## The Three Pillars of JAX
 
+JAX achieves its extreme performance and flexibility through three core functional transformations:
+
+### 1. `grad` (Automatic Differentiation)
+Like PyTorch's Autograd, JAX can automatically calculate the derivative (gradient) of almost any Python function.
+However, JAX does this using **forward-mode** and **reverse-mode** autodiff, meaning you can take the derivative of a derivative of a derivative with almost no performance penalty. 
+
+### 2. `jit` (Just-In-Time Compilation)
+This is JAX's superpower. When you wrap a standard Python/NumPy function in `@jax.jit`, JAX traces your code, translates it into **XLA** (Accelerated Linear Algebra), and compiles it directly into optimized machine code for your specific GPU or TPU.
+
+```python
+import jax.numpy as jnp
+from jax import jit
+
+@jit
+def slow_function(x):
+    # This will be compiled into lightning-fast GPU code
+    return jnp.dot(x, x.T) * 2.0
+```
+XLA aggressively fuses operations together. If you multiply, then add, then apply a sigmoid, PyTorch will write the array to the GPU's memory three separate times. JAX's XLA compiler will fuse them into a single GPU kernel, drastically reducing memory bandwidth bottlenecks.
+
+### 3. `vmap` (Vectorization)
+Writing code that operates on batches of data (like a batch of 64 images) can lead to messy, hard-to-read code full of confusing tensor dimensions. 
+With `vmap`, you write your function as if it only processes a **single** image. You then wrap it in `vmap`, and JAX automatically parallelizes it to run across an entire batch of data flawlessly and optimally.
+
+## Functional Purity
+
+The biggest hurdle when learning JAX is its strict adherence to **Functional Programming**.
+
+Unlike PyTorch, where you can modify a tensor in place (e.g., `tensor[0] = 5`), JAX arrays are **immutable**. You cannot change them once created. Furthermore, JAX functions must be **pure**: they cannot have side effects, and they must always return the exact same output given the exact same input. 
+
+This means JAX does not have a concept of global "state" (like a neural network's weights hidden inside a class). You have to explicitly pass the model weights and the random seed into every single function call.
+
+<Callout icon="building-columns" title="Who uses JAX?">
+Because of its functional purity and steep learning curve, JAX is rarely used in typical enterprise engineering. However, it absolutely dominates **cutting-edge AI research**, particularly at Google DeepMind. If a researcher is inventing a completely new, mathematically bizarre neural network architecture, they are likely using JAX.
+</Callout>

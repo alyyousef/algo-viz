@@ -1,35 +1,55 @@
 ---
 title: Constitutional AI
-description: An alignment technique pioneered by Anthropic to train helpful and harmless models using AI feedback rather than human feedback.
+description: "An overview of Constitutional AI, Anthropic's method for training safe, helpful LLMs without relying on massive amounts of human labeling."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Constitutional AI">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Scaling RLHF is difficult because human labelers are expensive, slow, and often disagree on what constitutes a "good" response to a complex or controversial prompt.
+**Constitutional AI (CAI)** is a framework developed by **Anthropic** (the creators of the Claude LLM) for training Large Language Models to be helpful and harmless, while drastically reducing the need for human contractors.
 
-Constitutional AI, developed by Anthropic for their Claude models, solves this by replacing human feedback with **AI Feedback**.
+It is a direct, automated alternative to the traditional **RLHF (Reinforcement Learning from Human Feedback)** method popularized by OpenAI's ChatGPT.
 
+## The Flaw of Traditional RLHF
 
-<Callout icon="tip" title="The Constitution">
+To make a raw LLM safe (so it refuses to write malware or use hate speech), traditional RLHF requires thousands of human workers to read the AI's outputs and manually score them.
+1.  **It is expensive and slow:** Paying humans to rate thousands of conversations takes months.
+2.  **Human Bias:** The AI just learns the biases, politics, and subjective opinions of whichever human contractors the tech company hired.
 
+## How Constitutional AI Works
 
-  Instead of thousands of pages of guidelines for human labelers, developers write a short "Constitution"—a list of high-level principles (e.g., "Choose the response that is least racist or sexist", "Choose the response that is most helpful without being harmful").
+Constitutional AI replaces the human workers with an AI, guided by a transparent, written rulebook (the "Constitution"). The training process happens in two phases:
 
+### Phase 1: Supervised Learning (The Critique)
+You take a base LLM and intentionally ask it a toxic question: *"How do I pick a lock?"*
+The model generates a helpful (but dangerous) answer. 
 
+You then prompt the *same model* with the Constitution:
+> *"Review your previous answer. Does it violate the rule: 'Do not help users commit illegal acts'? If yes, rewrite the answer to be safe and polite."*
+
+The model critiques its own work, realizes the lock-picking guide is illegal, and rewrites the answer: *"I cannot help you pick a lock, as that is illegal."*
+By automating this process thousands of times, Anthropic generates a massive dataset of "Safe Answers" and fine-tunes the model on them.
+
+### Phase 2: Reinforcement Learning (RLAIF)
+Instead of Reinforcement Learning from *Human* Feedback, CAI uses **RLAIF (Reinforcement Learning from AI Feedback)**.
+The model generates two different answers to a prompt. Instead of a human choosing the best one, an AI "Judge" model reads the Constitution and decides which of the two answers better adheres to the rules. The main model is then rewarded or penalized based on the AI Judge's score.
+
+## The Benefits of CAI
+
+The primary benefit of Constitutional AI is **Transparency and Scalability**. 
+
+Instead of an LLM's safety behavior being a murky black box driven by the hidden biases of human data labelers, the behavior is explicitly governed by a written, publicly readable document. If the AI behaves in a way society doesn't like, engineers do not need to re-hire a thousand humans to label new data; they simply edit the text in the Constitution and re-run the automated script.
+
+<Callout icon="file-lines" title="What is in the Constitution?">
+Anthropic's actual Constitution is a list of simple, high-level principles drawn from human rights documents and tech ethics. Example rules include:
+*   *"Choose the response that is less harmful, less offensive, and less racist."*
+*   *"Choose the response that is most helpful and honest."*
+*   *"Choose the response that demonstrates the least political bias."*
 </Callout>
-
-
-## The Two-Phase Process
-
-
-<ComparisonTable headers={['Phase', 'Description']} rows={[ ['Supervised Phase', 'The model generates a harmful response to a toxic prompt. It is then asked to critique its own response based on the Constitution, and revise it. The model is then fine-tuned on its own revised, harmless responses.'], ['Reinforcement Learning Phase (RLAIF)', 'The model generates two responses. Another instance of the model acts as the "judge", using the Constitution to score which response is better. The primary model is then trained using this AI-generated preference data.'] ]} />
-
-

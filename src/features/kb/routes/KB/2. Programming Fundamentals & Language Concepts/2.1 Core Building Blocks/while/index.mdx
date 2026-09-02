@@ -1,25 +1,20 @@
 ---
-title: While Loops
-description: The fundamental mathematical structure for indefinite iteration, continuously executing a block of code based on a dynamic boolean condition.
+title: While Loops (Redirect)
+description: "Redirecting to Loops."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="While Loops">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A `while` loop is the mathematical standard for Indefinite Iteration—used when the CPU cannot mathematically know in advance exactly how many times the loop should execute.
+<Callout icon="info" title="Redirect">
+The architectural principles of the **while** loop are fundamentally covered under the primary Deep Dive for **Loops**. 
 
-## 1. Event-Driven Architecture
-`while` loops are the mathematical bedrock of all modern operating systems, video games, and server architectures.
-A web server does not execute a `for` loop 10 times and shut down. It utilizes an Infinite Loop: `while(true) { listen_for_request(); }`.
-The loop mathematically spins forever, handing off execution to the OS scheduler when it is idle, and instantly waking up when the network interface card receives a TCP/IP packet.
-
-## 2. The Danger of Infinite Loops
-Because a `while(condition)` loop relies entirely on the programmer to mathematically mutate the state of the `condition` variable inside the loop block, it is inherently dangerous. If a network socket silently drops, and the loop is waiting for a specific byte to flip the condition to `false`, the loop will spin endlessly (an Infinite Loop). This mathematically pins the CPU core to 100% utilization, freezing the thread permanently until the OS forcefully kills the process.
-
+Please navigate to the [Loops (for, while, do-while)](/kb/2.-programming-fundamentals--language-concepts/2.1-core-building-blocks/loops-for) module to explore how execution boundaries are managed in algorithmic architecture.
+</Callout>

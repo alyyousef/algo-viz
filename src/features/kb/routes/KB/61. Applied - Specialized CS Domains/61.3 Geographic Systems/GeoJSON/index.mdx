@@ -1,19 +1,49 @@
 ---
 title: GeoJSON
-description: An open standard format designed for representing simple geographical features, along with their non-spatial attributes.
+description: "An open standard format designed for representing simple geographical features, along with their non-spatial attributes, using JavaScript Object Notation (JSON)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="GeoJSON">
-      {children}
-    
-  </ConceptTemplate>
-  )
+<ConceptTemplate
+  title="GeoJSON"
+  subtitle="The JSON Standard for Maps"
+  tags={['GIS', 'Data Formats', 'Web Development', 'Geography']}
+>
+
+**GeoJSON** is the undisputed industry standard for transmitting geographic data over the web. Built entirely on standard JSON, it allows developers to pass complex mapping data (like the borders of a country or the route of a delivery truck) through REST APIs just like any other JavaScript object.
+
+## 1. The Geometry Types
+
+A GeoJSON object must contain a `geometry` field, which supports a specific set of mathematical shapes based on longitude and latitude arrays:
+
+- **Point**: A single coordinate (e.g., a restaurant). `[longitude, latitude]`.
+- **LineString**: An array of connected points (e.g., a highway).
+- **Polygon**: An array of closed LineStrings representing a filled area (e.g., the border of France). It also supports "holes" (e.g., a lake inside the country).
+- **MultiPolygon**: For complex entities like the State of Hawaii (multiple disconnected islands acting as one political entity).
+
+## 2. Features and FeatureCollections
+
+A raw geometry isn't very useful by itself. GeoJSON introduces the **Feature** object, which bundles a Geometry with **Properties** (metadata).
+
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-73.985, 40.748]
+  },
+  "properties": {
+    "name": "Empire State Building",
+    "height_meters": 443
+  }
 }
+```
 
-When a server mathematically sends map data to a browser (like Google Maps), it uses **GeoJSON**.
+APIs usually return a **FeatureCollection**, which is simply an array of these Feature objects, allowing a web frontend (like Mapbox or Leaflet) to instantly loop through and render thousands of pins on a map.
 
-It is literally just standard JSON, but strictly formatted to hold geometric math. You declare a `type` (like "Polygon" or "Point") and provide an array of `coordinates`. It allows frontend JavaScript libraries (like Leaflet or Mapbox) to effortlessly parse the biological data and mathematically render borders, roads, and markers onto an interactive HTML canvas.
+## 3. The Coordinate System
 
+By strict specification (RFC 7946), GeoJSON uses the **WGS 84** coordinate reference system.
+This is a critical standardization. It guarantees that coordinates are always written as `[Longitude, Latitude]` (X, Y). Many developers mistakenly write them as Latitude, Longitude, which causes the GeoJSON parser to render the map completely sideways or in the middle of the ocean.
+
+</ConceptTemplate>

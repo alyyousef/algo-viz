@@ -1,19 +1,34 @@
 ---
 title: Phylogenetics
-description: The study of the evolutionary history and relationships among or within groups of organisms.
+description: "The study of evolutionary relationships among biological entities, using computational algorithms to construct evolutionary trees from genetic data."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Phylogenetics">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Phylogenetics"
+  subtitle="Computing the Tree of Life"
+  tags={['Bioinformatics', 'Genetics', 'Algorithms', 'Data Science']}
+>
 
-**Phylogenetics** is the mathematical construction of the "Tree of Life".
+**Phylogenetics** is the computational science of discovering how different species (or viruses, or genes) are related to each other evolutionarily. By treating DNA sequences as massive strings of text, computer scientists can calculate the mathematical "edit distance" between species to draw a family tree (a Phylogenetic Tree).
 
-By taking the DNA sequences of 100 different species and running massive sequence alignments, computer scientists mathematically calculate the exact genetic distance between every species. They then use clustering algorithms to draw a biological tree graph (a Phylogeny) that mathematically proves exactly when humans diverged from chimpanzees millions of years ago.
+## 1. The Computational Problem
 
+If you have the DNA sequence of a Human, a Chimp, and a Banana, you want to know which two are most closely related. 
+In computer science terms, this is a **Multiple Sequence Alignment (MSA)** problem. The algorithm aligns the strings of ATCGs and looks for mutations, insertions, or deletions. 
+If the human and chimp sequences have a 98% match, and the human and banana have a 60% match, the algorithm mathematically deduces that the human and chimp share a much more recent common ancestor.
+
+## 2. Distance Matrix Methods
+
+One of the most common algorithms used is **Neighbor-Joining (NJ)**. 
+1. The algorithm calculates the pairwise genetic distance between every single species in the dataset, creating a massive $N \\times N$ Distance Matrix.
+2. It finds the two species with the shortest distance (the closest neighbors) and merges them into a single "Node" representing their common ancestor.
+3. It recalculates the matrix to find the distance from this new ancestor node to all other species, recursively repeating until a single Root node is found.
+
+## 3. Real-World Application: Epidemiology
+
+Phylogenetics isn't just for studying dinosaurs; it is a critical tool in modern epidemiology.
+During the COVID-19 pandemic, scientists used phylogenetic algorithms (like the *Nextstrain* project) to track the real-time evolution of the virus. By sequencing the RNA of the virus from patients around the world and drawing a phylogenetic tree, they could computationally prove exactly how the virus mutated and which geographic routes it took to spread across the globe.
+
+</ConceptTemplate>

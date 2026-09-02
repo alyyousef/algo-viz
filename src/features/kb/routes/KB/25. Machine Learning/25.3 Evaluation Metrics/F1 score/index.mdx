@@ -1,41 +1,52 @@
 ---
 title: F1 Score
-description: The harmonic mean of Precision and Recall, providing a single, robust mathematical metric that heavily punishes extreme imbalances in classification models.
+description: "An overview of the F1 Score, the harmonic mean of Precision and Recall, used for evaluating models on imbalanced datasets."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="F1 Score">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When evaluating a classification model on imbalanced data, you cannot use Accuracy. You must use **Precision** and **Recall**.
-However, Precision and Recall are mathematically opposed. If you tweak the model's threshold to increase Precision, Recall will mathematically plunge, and vice versa.
+The **F1 Score** is a widely used metric for evaluating the performance of classification models, particularly when the dataset has a highly uneven class distribution (imbalanced classes).
 
-The **F1 Score** mathematically combines them into a single metric, forcing you to balance both.
+It combines two competing metrics—**Precision** and **Recall**—into a single, easy-to-compare number.
 
-## 1. The Harmonic Mean
-The F1 Score is mathematically defined as the **Harmonic Mean** of Precision and Recall.
-$F1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$
+## The Problem with the Arithmetic Mean
 
-Why use the Harmonic Mean instead of a simple Arithmetic Mean (Average)?
-- **Arithmetic Mean Flaw**: If a model has 100% Precision and 0% Recall, the standard average is 50%. The model is completely broken, but 50% looks acceptable.
-- **Harmonic Mean Brilliance**: The Harmonic Mean heavily mathematically punishes extreme disparities. If a model has 1.0 Precision and 0.0 Recall, the numerator becomes $1.0 \times 0.0 = 0$. The entire equation mathematically collapses to exactly $0.0$, instantly flagging the model as useless. To get a high F1 score, both Precision and Recall must be mathematically high simultaneously.
+Why not just take the simple average (the arithmetic mean) of Precision and Recall?
 
-## 2. When to Optimize for F1
-F1 Score is the absolute industry standard metric when:
-1. You have heavily imbalanced data (e.g., Fraud Detection, rare diseases).
-2. The mathematical cost of a False Positive (Precision error) and a False Negative (Recall error) are relatively similar, and you want a model that performs robustly across both fronts.
+Imagine a terrible model that predicts "Positive" for everything. 
+*   Its Recall is 1.0 (it caught all positives).
+*   Its Precision is 0.01 (it flagged almost everything incorrectly).
+*   The arithmetic mean would be $(1.0 + 0.01) / 2 = 0.505$.
 
-## 3. F-Beta Score (Adjusting the Balance)
-If the costs are *not* perfectly symmetrical, you use the generalized **$F_\beta$ Score**.
-$F_\beta = (1 + \beta^2) \times \frac{Precision \times Recall}{(\beta^2 \times Precision) + Recall}$
+A score of 0.505 suggests the model is mediocre, but in reality, it is completely useless. The arithmetic mean masks terrible performance in one of the metrics.
 
-- **$\beta = 1$**: This is the standard F1 Score. Precision and Recall are weighted equally.
-- **$\beta = 2$ (F2 Score)**: Mathematically weights Recall twice as heavily as Precision. Used in cancer detection where minimizing False Negatives is critical.
-- **$\beta = 0.5$ (F0.5 Score)**: Mathematically weights Precision twice as heavily as Recall. Used in spam filters where minimizing False Positives is paramount.
+## The Harmonic Mean (The F1 Formula)
 
+The F1 Score uses the **Harmonic Mean** instead. The harmonic mean strongly punishes extreme values. If *either* Precision or Recall is very low, the F1 Score will also be very low.
+
+$$\text{F1 Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$$
+
+Using the previous example (Precision 0.01, Recall 1.0):
+*   $\text{F1} = 2 \cdot \frac{(0.01 \cdot 1.0)}{(0.01 + 1.0)} = 2 \cdot \frac{0.01}{1.01} = 0.0198$
+
+An F1 score of ~0.02 accurately reflects that the model is terrible. To get a high F1 score, a model must have *both* high precision and high recall.
+
+<Callout icon="lightbulb" title="F-Beta Score">
+The F1 score weights Precision and Recall equally. However, in some business cases, one is much more important than the other. The generalized **F-Beta Score** allows you to attach more weight to Recall ($\beta > 1$) or more weight to Precision ($\beta < 1$).
+</Callout>
+
+## Multiclass F1 Scores
+
+If you have a multiclass classification problem (e.g., 5 different classes), calculating a single F1 score requires aggregating the F1 scores of each individual class. There are three common ways to do this:
+
+1.  **Macro-F1:** Calculate the F1 score for each class separately, then take the unweighted average. This treats all classes equally, making it highly sensitive to the model's performance on rare minority classes.
+2.  **Weighted-F1:** Calculate the F1 score for each class separately, then average them, weighting each class by its support (the number of true instances in the dataset). This is preferred if you want a metric that accounts for class imbalance overall.
+3.  **Micro-F1:** Aggregate the global total of True Positives, False Positives, and False Negatives across all classes, then calculate Precision, Recall, and F1. (Note: For multiclass classification, Micro-F1 is mathematically identical to overall Accuracy).

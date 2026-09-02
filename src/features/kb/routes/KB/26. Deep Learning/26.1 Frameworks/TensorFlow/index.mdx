@@ -1,48 +1,60 @@
 ---
 title: TensorFlow
-description: End-to-end open source machine learning platform by Google.
+description: "An overview of TensorFlow, Google's pioneering deep learning framework that brought AI into enterprise production."
 ---
 import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="TensorFlow">
+export default function Layout({ children }) {
+  return (
+    <TechnologyTemplate title="TensorFlow">
+      {children}
+    </TechnologyTemplate>
+  )
+}
 
-TensorFlow is an open-source software library for machine learning and artificial intelligence. It can be used across a range of tasks but has a particular focus on training and inference of deep neural networks. It was developed by the Google Brain team for internal Google use in research and production.
+**TensorFlow** is an end-to-end, open-source machine learning platform developed by the Google Brain team. Released in 2015, it was the first truly mainstream deep learning framework and is largely responsible for ushering in the modern era of deep learning in enterprise software.
 
+While PyTorch has largely overtaken it in academic research, TensorFlow remains a massive, deeply entrenched powerhouse in enterprise production environments.
 
-<Callout icon="tip" title="Tensors">
+## The Static Graph (TensorFlow 1.0)
 
+To understand TensorFlow, you have to understand how it was originally designed. 
 
-  The name TensorFlow derives from the operations that such neural networks perform on multidimensional data arrays, which are referred to as **tensors**.
+TensorFlow 1.0 used **Static Computation Graphs**. You did not write standard Python code that executed line-by-line. Instead, you wrote Python code to construct an abstract blueprint (a graph) of your neural network.
 
+```python
+# Pseudo-code of TF 1.0
+a = tf.placeholder(tf.float32)
+b = tf.placeholder(tf.float32)
+c = tf.add(a, b) # Nothing happens here. We just drew a line on a blueprint.
 
-</Callout>
-
-
-## Ecosystem
-
-
-<ComparisonTable headers={['Tool', 'Purpose', 'Deployment Environment']} rows={[ ['TensorFlow Core', 'Developing and training models.', 'Desktop, Cloud, Server'], ['TensorFlow Lite', 'Running inference on mobile and IoT devices.', 'iOS, Android, Raspberry Pi'], ['TensorFlow.js', 'Training and deploying models in the browser.', 'Web Browsers, Node.js'], ['TensorFlow Extended (TFX)', 'Deploying production ML pipelines.', 'Cloud, Enterprise Servers'] ]} />
-
-
-## Keras API
-
-TensorFlow 2.x heavily relies on **Keras** as its high-level API. Keras makes building neural networks extremely intuitive by stacking layers.
-
-```text
-{`import tensorflow as tf
-from tensorflow.keras import layers, models
-
-# Build a simple sequential model
-model = models.Sequential([
-  layers.Dense(128, activation='relu', input_shape=(784,)),
-  layers.Dropout(0.2),
-  layers.Dense(10, activation='softmax')
-])
-
-# Compile the model
-model.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])`}
+# Later, you create a "Session" to run data through the graph
+with tf.Session() as sess:
+    result = sess.run(c, feed_dict={a: 3.0, b: 4.0})
 ```
 
-</TechnologyTemplate>
+**The Pros:** Once the graph was built, TensorFlow's C++ backend could aggressively optimize it. It could fuse operations, allocate memory perfectly, and seamlessly ship the graph to mobile phones, servers, or custom hardware (like Google's TPUs) to run blazingly fast.
+**The Cons:** It was an absolute nightmare to debug. You couldn't use standard Python `print()` statements to check a variable's value because the variables didn't actually hold values until the `Session` was run.
+
+## Eager Execution (TensorFlow 2.0)
+
+In 2019, seeing the massive popularity of PyTorch's intuitive, line-by-line execution, Google released TensorFlow 2.0.
+
+TF 2.0 fundamentally changed the framework:
+1.  **Eager Execution by Default:** Code now runs line-by-line, exactly like PyTorch and standard Python, making it infinitely easier to debug.
+2.  **Keras Integration:** Google officially adopted **Keras** as the high-level API for TensorFlow. You no longer had to write low-level graph math; you could build complex neural networks in a few lines of Keras code (`tf.keras`).
+3.  **`@tf.function`:** To retain the speed of the old static graphs, you can simply add the `@tf.function` decorator above your Python function. TensorFlow will automatically trace it and compile it into a highly optimized graph behind the scenes.
+
+## The TensorFlow Ecosystem
+
+TensorFlow's strongest selling point today is its unrivaled, mature ecosystem for deploying models into the real world:
+
+*   **TensorFlow Serving:** A robust server system to deploy models to production via REST APIs or gRPC.
+*   **TensorFlow Lite (TFLite):** An incredibly optimized version for running models on mobile devices (iOS/Android) and IoT edge devices.
+*   **TensorFlow.js (TFJS):** Allows you to train and run machine learning models directly inside a web browser using JavaScript.
+*   **TensorBoard:** The gold standard for visualizing training metrics, loss curves, and model architecture. (It is so good that PyTorch users often use it too).
+
+<Callout icon="building" title="TensorFlow vs PyTorch in Industry">
+If you are doing cutting-edge research, you use PyTorch. If you are an enterprise company that needs to reliably deploy a model to a server, an Android app, a web browser, and an embedded microchip simultaneously, TensorFlow's mature ecosystem makes it the safer choice.
+</Callout>

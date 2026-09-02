@@ -3,6 +3,7 @@ title: Insertion Sort
 description: "A simple sorting algorithm that builds the final sorted array one item at a time by mathematically taking the next element and 'inserting' it into its correct position among the already-sorted elements."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { SortingVisualizer } from '@/features/kb/components/visualizations/SortingVisualizer'
 
 export default function Layout({ children }) {
   return (
@@ -16,6 +17,8 @@ export default function Layout({ children }) {
   </ConceptTemplate>
   )
 }
+
+<SortingVisualizer algorithm="insertion" />
 
 Insertion sort is mathematically identical to how a human sorts a hand of playing cards. You hold the sorted cards in your left hand, pick up a new card with your right hand, and slide it into the correct position in your left hand.
 

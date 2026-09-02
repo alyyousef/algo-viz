@@ -1,36 +1,45 @@
 ---
 title: WordPiece Tokenization
-description: The subword tokenization algorithm popularized by Google's BERT.
+description: "An overview of WordPiece, the subword tokenization algorithm that powered Google's BERT and revolutionized early Natural Language Processing."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="WordPiece Tokenization">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Language models do not read human text; they process arrays of numbers (Tokens). Before text enters the neural network, it must be chopped into pieces and converted into IDs.
+**WordPiece** is a subword tokenization algorithm developed by Google. It is most famous for being the tokenization engine behind **BERT**, the legendary 2018 model that revolutionized how search engines understand human language.
 
-WordPiece is a subword tokenization algorithm developed by Google for voice search and famously used in BERT. It strikes a balance between character-level (too long) and word-level (too many out-of-vocabulary words).
-
-
-<Callout icon="info" title="The Subword Advantage">
-
-
-  If the model sees the word "unhappiness", it might split it into `un`, `##happi`, and `##ness`. This allows the model to mathematically understand the prefix "un-" across thousands of different words, vastly improving generalization.
-
-
-</Callout>
-
+Like its sibling BPE (Byte-Pair Encoding), WordPiece was designed to solve the **Out-Of-Vocabulary (OOV)** problem—the issue where an AI crashes if it reads a word it has never seen before.
 
 ## How WordPiece Works
 
-1. **Initialization:** Start with a vocabulary of all individual characters in the training data.
-2. **Merging:** Look at the training corpus and find pairs of tokens that frequently appear together.
-3. **The Math:** Unlike BPE (which merges the absolute most frequent pairs), WordPiece merges the pair that maximizes the mathematical likelihood of the training data.
-4. **Prefixing:** Subwords that do not start a word are prefixed with `##` to indicate they are a continuation.
+WordPiece sits directly between character-level tokenization (too slow, no inherent meaning) and word-level tokenization (too rigid, crashes on rare words). It chops text into subwords.
 
+If WordPiece encounters the word *"unbelievable"*, it might chop it into:
+`["un", "##believ", "##able"]`
+
+*(Note: The `##` is the classic WordPiece notation. It explicitly tells the neural network: "This chunk is the middle or end of a word, it should be attached to the token before it.")*
+
+### The Training Algorithm (Max Likelihood)
+
+While WordPiece and BPE look identical in practice, the way they *build* their dictionaries is mathematically different.
+
+1.  **BPE (Frequency-based):** BPE builds its dictionary by blindly merging the two chunks that appear next to each other most frequently.
+2.  **WordPiece (Probability-based):** WordPiece trains a language model on the data. It only merges two chunks together if the merge *increases the overall probability (Likelihood) of the training data*. It asks: "If I merge 'un' and 'believable', does it make my language model better at predicting the text?"
+
+## WordPiece vs BPE vs SentencePiece
+
+In the modern Generative AI era (2023+), WordPiece has largely fallen out of favor.
+
+*   **BPE** (used by OpenAI for GPT-4) won the battle for standard English tokenization because it is slightly simpler to train and handles diverse web data incredibly well.
+*   **SentencePiece** (used by Llama-3 and Mistral) is technically a wrapper, but it won the open-source battle because it natively handles spaces (unlike WordPiece, which assumes spaces separate words). This makes SentencePiece infinitely better at parsing code and non-English languages like Chinese.
+
+<Callout icon="magnifying-glass" title="The Legacy of BERT">
+While you rarely see WordPiece used in modern Generative Chatbots, it is still quietly powering the backend of the internet. Because BERT (and its WordPiece tokenizer) is so incredibly fast and efficient at classifying text, it is still heavily used by Google Search to understand user queries, and by enterprise systems for sentiment analysis and spam filtering.
+</Callout>

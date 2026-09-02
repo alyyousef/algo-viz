@@ -1,32 +1,76 @@
 ---
 title: Classification
-description: The supervised learning task of mathematically assigning an input data point to one of several predefined discrete categories.
+description: "The machine learning task of predicting a discrete category or label for a given input."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Classification">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In Supervised Machine Learning, if the target variable you are trying to predict is a continuous number (e.g., Price), it is Regression. If the target variable is a discrete category (e.g., "Dog", "Cat", "Spam"), it is **Classification**.
+**Classification** is a form of Supervised Learning where the goal is to predict which discrete category (class) a new observation belongs to, based on a training dataset containing observations whose category membership is known.
 
-## 1. Binary Classification
-The simplest and most mathematically common form of classification, where there are exactly two possible outcomes (0 or 1).
-- *Examples*: "Is this email Spam or Not Spam?", "Does this patient have Cancer or No Cancer?"
-- **Mathematical Output**: The algorithm (like Logistic Regression) typically does not output a hard "1". It outputs a continuous probability between 0.0 and 1.0 (e.g., 0.85). A human-defined **Decision Threshold** (usually 0.5) is applied to mathematically snap the probability into a hard categorical prediction.
+Unlike Regression, which predicts a continuous number (like $245,000 for a house), Classification predicts a label (like "Spam" or "Not Spam").
 
-## 2. Multi-Class Classification
-Classification where there are three or more possible categories, but each data point mathematically belongs to *exactly one* category.
-- *Example*: An AI reading handwritten digits (MNIST). The image must be exactly one number between 0 and 9. It cannot be both a 3 and a 4.
-- **Mathematical Output**: The neural network uses a **Softmax** activation function on the final layer. Softmax mathematically forces the probabilities of all 10 possible classes to sum perfectly to 1.0. The network predicts the class with the highest probability.
+## 1. Types of Classification
 
-## 3. Multi-Label Classification
-Classification where a single data point can mathematically belong to *multiple* categories simultaneously.
-- *Example*: A movie genre classifier. A single movie like "The Matrix" can be classified as ["Action", "Sci-Fi", "Thriller"] simultaneously.
-- **Mathematical Output**: Instead of Softmax, the network uses a **Sigmoid** activation function on every single output node independently. The probability of "Action" being 0.9 does not mathematically reduce the probability of "Sci-Fi" also being 0.9.
+- **Binary Classification:** Only two possible outcomes. (e.g., Disease vs. No Disease, Fraud vs. Legitimate, Churn vs. Retain).
+- **Multi-class Classification:** More than two possible outcomes, but each instance belongs to exactly one category. (e.g., Classifying an animal image as a Dog, Cat, OR Bird).
+- **Multi-label Classification:** Each instance can be assigned multiple categories simultaneously. (e.g., A movie can be classified as both "Action" AND "Comedy").
 
+## 2. Common Algorithms
+
+<ComparisonTable
+  headers={['Algorithm', 'How it works', 'Best For']}
+  rows={[
+    [
+      'Logistic Regression',
+      'Uses the Sigmoid function to squash a linear equation into a probability between 0 and 1.',
+      'Simple, interpretable binary classification.'
+    ],
+    [
+      'Decision Trees',
+      'Splits the data based on a series of IF-THEN rules (e.g., IF age > 30 AND salary > 50k).',
+      'Highly interpretable, but prone to overfitting.'
+    ],
+    [
+      'Random Forest',
+      'An ensemble of hundreds of decision trees voting on the final outcome.',
+      'Robust, accurate, handles non-linear tabular data beautifully.'
+    ],
+    [
+      'Support Vector Machines (SVM)',
+      'Finds the hyper-plane that maximizes the margin (distance) between the two classes.',
+      'High-dimensional spaces with clear margins.'
+    ],
+    [
+      'Neural Networks',
+      'Passes data through multiple layers of non-linear transformations.',
+      'Complex, unstructured data like images or text.'
+    ]
+  ]}
+/>
+
+## 3. Evaluation Metrics
+
+Accuracy (total correct / total predictions) is often a terrible metric for classification, especially with **Imbalanced Data**. If 99% of credit card transactions are legitimate and 1% are fraud, a model that just hardcodes "Legitimate" for every transaction will be 99% accurate, but utterly useless.
+
+Instead, we use the Confusion Matrix and its derivatives:
+
+- **True Positives (TP):** Model predicted Fraud, and it was Fraud.
+- **False Positives (FP):** Model predicted Fraud, but it was Legitimate (Type 1 Error).
+- **False Negatives (FN):** Model predicted Legitimate, but it was Fraud (Type 2 Error).
+
+From these, we calculate:
+- **Precision:** Out of all the transactions the model flagged as Fraud, how many actually were? ($TP / (TP + FP)$)
+- **Recall (Sensitivity):** Out of all the actual Fraud in the dataset, how many did the model catch? ($TP / (TP + FN)$)
+
+<Callout icon="warning" title="The Precision-Recall Tradeoff">
+You cannot maximize both simultaneously. If you want to catch 100% of terrorists boarding a plane (100% Recall), you will inevitably flag thousands of innocent grandmothers (Low Precision). If you only want to flag someone when you are 99.9% sure they are a terrorist (High Precision), you will inevitably let some slip through (Low Recall). The business context dictates which error is worse.
+</Callout>

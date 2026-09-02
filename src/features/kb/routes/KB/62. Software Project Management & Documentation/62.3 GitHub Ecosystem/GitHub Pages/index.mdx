@@ -1,19 +1,36 @@
 ---
 title: GitHub Pages
-description: A static site hosting service that takes HTML, CSS, and JavaScript files straight from a repository and publishes a website.
+description: "A static site hosting service that takes HTML, CSS, and JavaScript files straight from a repository on GitHub, optionally runs the files through a build process, and publishes a website."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="GitHub Pages">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="GitHub Pages"
+  subtitle="Free Static Hosting"
+  tags={['GitHub', 'Hosting', 'Web Development', 'CI/CD']}
+>
 
-If you build a biological documentation website (like Docusaurus or MkDocs), you mathematically need a server to host it.
+**GitHub Pages** is a free, native web hosting service provided by GitHub. It allows developers to instantly publish static websites directly from a GitHub repository, completely bypassing the need to configure web servers or databases.
 
-**GitHub Pages** hosts static HTML/CSS files for mathematically free. You configure GitHub Actions to compile your Markdown into HTML, and GitHub Pages instantly biologically hosts that HTML on a public URL (`https://yourname.github.io/project`). It is the industry standard for hosting open-source documentation.
+## 1. How It Works
 
+GitHub Pages only hosts **Static Content** (HTML, CSS, JavaScript, images). It cannot run server-side languages like PHP, Python, or Node.js databases natively.
+
+When you enable GitHub Pages on a repository, GitHub provisions a URL (usually `https://<username>.github.io/<repository-name>`). Any code pushed to the designated branch (often `gh-pages` or `main`) is automatically served to the public web via GitHub's global Content Delivery Network (CDN).
+
+## 2. Jekyll Integration
+
+While you can write raw HTML, GitHub Pages natively integrates with **Jekyll**, a Ruby-based static site generator. 
+If you push Markdown files to your repository, GitHub's servers will automatically run Jekyll behind the scenes, convert your Markdown into styled HTML, and publish the resulting website. This is how millions of developers host their technical blogs and documentation.
+
+## 3. Modern CI/CD Workflows
+
+Historically, GitHub Pages only supported serving files from a specific branch. With the advent of **GitHub Actions**, the paradigm has shifted.
+You can now build a React, Vue, or Next.js (Static Export) application using a GitHub Actions workflow, and the action will automatically push the compiled `dist` or `build` folder directly to GitHub Pages servers.
+
+<Callout type="info" title="Custom Domains">
+  While the default URL is `github.io`, GitHub Pages allows you to route a custom domain (e.g., `www.myproject.com`) to your repository for free, automatically providing and renewing SSL certificates (HTTPS) via Let's Encrypt.
+</Callout>
+
+</ConceptTemplate>

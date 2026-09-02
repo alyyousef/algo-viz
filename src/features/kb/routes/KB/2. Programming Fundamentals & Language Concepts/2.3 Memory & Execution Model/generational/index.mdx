@@ -1,27 +1,20 @@
 ---
-title: Generational Garbage Collection
-description: A highly optimized memory management strategy based on the mathematical hypothesis that most objects die extremely young.
+title: Generational GC (Redirect)
+description: "Redirecting to Garbage Collection (Mark-and-Sweep)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Generational Garbage Collection">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A standard Mark-and-Sweep Garbage Collector must mathematically pause the entire application, scan every single object in RAM, and delete the unused ones. As RAM sizes grew to gigabytes, these "Stop-the-World" pauses became unacceptably long. Generational GC mathematically solves this.
+<Callout icon="info" title="Redirect">
+The performance optimizations of **Generational Garbage Collection** (specifically the separation of the Heap into the Nursery/Young Generation and the Old Generation based on the Infant Mortality Hypothesis) are covered in the Deep Dive for **Garbage Collection (Mark-and-Sweep)**. 
 
-## 1. The Generational Hypothesis
-Computer Scientists observed a strict mathematical pattern in almost all software: **The Infant Mortality Rate of objects is extremely high.**
-If an object survives its initial creation (e.g., a local variable inside a function), it will likely live for the entire duration of the application (e.g., a Database Connection pool).
-Therefore, mathematically scanning the Database Connection pool every 50 milliseconds is a massive waste of CPU cycles.
-
-## 2. The Segregated Heap
-A Generational GC mathematically splits the Heap into distinct zones:
-- **The Nursery (Young Generation)**: All new objects are allocated here. When the Nursery fills up, a "Minor GC" occurs. It only scans this tiny mathematical segment. It instantly deletes the 95% of objects that died, and mathematically promotes the 5% that survived into the older generation.
-- **The Old Generation (Tenured)**: Objects that have survived multiple Minor GCs live here. The GC rarely scans this massive mathematical area (a "Major GC"), drastically reducing the CPU overhead and eliminating noticeable application pauses.
-
+Please navigate to the [Garbage Collection (Mark-and-Sweep)](/kb/2.-programming-fundamentals--language-concepts/2.3-memory--execution-model/garbage-collection-mark-and-sweep) module to explore how modern VMs minimize Stop-The-World pauses.
+</Callout>

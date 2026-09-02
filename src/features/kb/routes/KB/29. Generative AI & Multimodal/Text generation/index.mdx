@@ -1,29 +1,45 @@
 ---
-title: Text Generation
-description: The mathematical process of Autoregressive Language Modeling, where an AI synthesizes human-like text by iteratively calculating the probability distribution of the next word.
+title: Text Generation (LLMs)
+description: "A high-level overview of Text Generation, the core capability of Large Language Models that allows them to write essays, code, and poetry."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Text Generation">
+    <ConceptTemplate title="Text Generation (LLMs)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-An LLM like ChatGPT does not "think." It executes a massive mathematical loop called Autoregressive Generation, predicting exactly one Token at a time until it reaches a special `<STOP>` token.
+*(Note: This module provides a high-level overview of the Generative AI application layer. For the deep mathematical architecture, see the **Large Language Models** category).*
 
-## 1. The Softmax Probability Distribution
-When the AI is given the prompt "The sky is", it processes those vectors through billions of parameters.
-The final layer of the network is a massive **Softmax Layer** containing every single word in the English vocabulary. The network mathematically outputs a probability for every word:
-- "blue" (95.0%)
-- "dark" (4.0%)
-- "falling" (0.9%)
-- "apple" (0.0001%)
+**Text Generation** is the most widespread and economically impactful application of Generative AI. It encompasses any software that uses a Large Language Model (LLM) to produce human-readable text, ranging from ChatGPT writing an essay to GitHub Copilot generating a block of Python code.
 
-## 2. Temperature and Sampling
-If the AI always picks the 95% word (Greedy Decoding), it sounds extremely robotic and repetitive.
-To make it sound human, engineers use **Temperature Sampling**. If you increase the Temperature variable in the math equation, it mathematically flattens the probability curve. "Blue" might drop to 60%, and "falling" might rise to 15%. The AI then rolls a mathematical dice and randomly selects a word based on these new probabilities. This controlled mathematical randomness is what gives Generative AI its "creativity."
+## The Illusion of Thought
 
+When a human reads a beautifully generated poem from an LLM, it feels like the machine is "thinking." It is vital to remember that LLMs do not think, feel, or plan ahead.
+
+Text generation is, at its absolute core, an advanced game of **autocomplete**. 
+The model looks at all the text generated so far and runs a mathematical probability calculation across its massive neural network to answer a single question: *"Given all the words in the context window, what is the single most statistically likely word to appear next?"*
+
+It predicts that one word, adds it to the document, and repeats the process.
+
+## The Decoding Strategies (Temperature)
+
+Because text generation relies on probabilities, developers have immense control over *how* the AI chooses the next word. These are called Decoding Strategies, the most famous of which is **Temperature**.
+
+Imagine the AI is trying to complete the sentence: *"The boy kicked the ____"*
+The internal probabilities might look like this:
+*   `ball` (90%)
+*   `bucket` (8%)
+*   `moon` (2%)
+
+If you set the **Temperature to 0.0 (Greedy Decoding)**, the AI will *always* pick the #1 most probable word (`ball`). The output will be highly predictable, safe, and boring. This is perfect for generating code or legal documents where creativity is dangerous.
+
+If you set the **Temperature to 1.0 (High Entropy)**, the AI uses a weighted dice roll. It will usually pick `ball`, but 2% of the time, it will randomly pick `moon`. This injects mathematical randomness into the generation, causing the AI to write highly creative, unexpected, and poetic sentences.
+
+<Callout icon="brain" title="Chain-of-Thought (CoT)">
+Because LLMs only predict the *next* word, they are historically terrible at math. If you ask an LLM `124 * 732`, it tries to instantly guess the final answer and usually fails. Researchers discovered **Chain-of-Thought** prompting: If you force the LLM to write out its work step-by-step (*"Let's think step by step. First, multiply 4 by 2..."*), the act of generating the intermediate text physically changes the context window, drastically increasing the probability that the final generated answer will be correct.
+</Callout>

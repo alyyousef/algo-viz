@@ -1,32 +1,60 @@
 ---
-title: UMAP (Uniform Manifold Approximation)
-description: The modern state-of-the-art non-linear dimensionality reduction algorithm that mathematically preserves both local and global data topology vastly better than t-SNE.
+title: UMAP (Uniform Manifold Approximation and Projection)
+description: "A deep dive into UMAP, a state-of-the-art non-linear dimensionality reduction technique."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="UMAP (Uniform Manifold Approximation and Projection)">
+    <ConceptTemplate title="UMAP">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While PCA is fantastic for linear compression, visualizing massive, non-linear text or image embeddings requires topology. For years, t-SNE was the standard, but it was notoriously slow and destroyed global structure. **UMAP** has entirely replaced t-SNE. Based heavily on algebraic topology, it mathematically guarantees a vastly superior compression of space.
+**UMAP (Uniform Manifold Approximation and Projection)** is a relatively recent, highly impactful machine learning algorithm for non-linear dimensionality reduction. It is most commonly used for visualizing high-dimensional data in 2D or 3D, and as a preprocessing step to boost the performance of clustering algorithms like HDBSCAN.
 
-## 1. The Mathematical Foundation (Riemannian Geometry)
-UMAP assumes that the dataset is mathematically distributed uniformly, but on a complex, twisted, high-dimensional **Manifold** (like a wrinkled sheet of paper).
-Because the real data is not uniform, UMAP mathematically defines a custom Riemannian geometry for every single point, distorting the concept of "distance" so that the data appears uniform.
+UMAP is built upon a rigorous mathematical foundation in Riemannian geometry and algebraic topology, making it both theoretically sound and highly effective in practice.
 
-It constructs a **Fuzzy Simplicial Complex** (a complex mathematical web connecting the points). In this web, local neighbors are connected by thick, high-probability edges, while distant points have thin, low-probability edges.
+## How UMAP Works (Conceptually)
 
-## 2. The Low-Dimensional Projection
-Once the high-dimensional mathematical web is built, UMAP initializes a random 2D scatter plot.
-It builds a second fuzzy mathematical web in the 2D space.
-It then uses **Cross-Entropy Optimization (Stochastic Gradient Descent)** to forcefully push and pull the 2D points until the 2D web mathematically perfectly matches the complex high-dimensional web.
+UMAP essentially builds two fuzzy topological representations (graphs) of the data and tries to make them match as closely as possible.
 
-## 3. UMAP vs t-SNE
-- **Speed**: t-SNE requires calculating dense probabilities, making it $O(N^2)$ and mathematically catastrophic for datasets > 100k rows. UMAP uses mathematical graph theory approximations, running vastly faster.
-- **Global Structure**: t-SNE mathematically prioritizes *local* structure. It clusters similar points beautifully, but the distance between two clusters on a t-SNE plot is mathematically meaningless. UMAP preserves *global* topology. If Cluster A is closer to Cluster B than Cluster C on a UMAP plot, it mathematically means they are genuinely closer in the massive 1000-dimensional raw data. This makes UMAP a vastly superior tool for real scientific analysis.
+1.  **Constructing the High-Dimensional Graph:** 
+    UMAP calculates distances between points in the original high-dimensional space. However, instead of assuming the data is uniformly distributed, it assumes the data lies on a complex **manifold** (a curved shape). 
+    It creates a "fuzzy" graph by connecting points to their nearest neighbors. The "fuzziness" means that the edge weights (the connection strength) decrease as points get further apart. Crucially, UMAP forces every point to be connected to at least its closest neighbor, preventing isolated points and ensuring the local structure is perfectly captured.
+2.  **Constructing the Low-Dimensional Graph:**
+    UMAP initializes the points in a low-dimensional space (often using Spectral Embedding or simply randomly) and constructs a similar fuzzy graph.
+3.  **Optimization:**
+    UMAP then uses stochastic gradient descent to move the points in the low-dimensional space. The objective is to minimize the **cross-entropy** between the high-dimensional graph and the low-dimensional graph. It pulls points together if they are strongly connected in high-dimensional space, and pushes them apart if they are not.
 
+## Key Hyperparameters
+
+UMAP is highly tunable, allowing you to balance local and global structure:
+
+*   **`n_neighbors`:** This determines the size of the local neighborhood UMAP looks at. 
+    *   *Low values* force UMAP to focus on very local structure (tiny clusters).
+    *   *High values* push UMAP to look at the broader, global structure of the entire dataset.
+*   **`min_dist`:** Controls how tightly UMAP is allowed to pack points together in the low-dimensional space.
+    *   *Low values* (e.g., 0.0) create tightly packed, dense clusters, which is fantastic for subsequent clustering algorithms.
+    *   *High values* (e.g., 0.5) spread the points out, allowing you to see the internal structure of the clusters better.
+
+## Comparison: UMAP vs. t-SNE vs. PCA
+
+<ComparisonTable
+  title="Dimensionality Reduction Comparison"
+  headers={["Feature", "UMAP", "t-SNE", "PCA"]}
+  rows={[
+    ["Type", "Non-linear (Topological)", "Non-linear (Probabilistic)", "Linear"],
+    ["Global Structure Preservation", "Excellent", "Poor", "Excellent"],
+    ["Local Structure Preservation", "Excellent", "Excellent", "Poor"],
+    ["Speed and Scalability", "Very Fast (scales well)", "Slow (struggles with large N)", "Blazing Fast"],
+    ["Can apply to new data?", "Yes", "No (only transforms training data)", "Yes"]
+  ]}
+/>
+
+<Callout icon="lightbulb" title="Why UMAP over t-SNE?">
+While t-SNE was the gold standard for visualization for years, UMAP has largely replaced it. UMAP is significantly faster, preserves global data structure far better (meaning the distances between distinct clusters actually mean something), and can embed new, unseen data into an existing projection.
+</Callout>

@@ -1,29 +1,20 @@
 ---
-title: Concurrency
-description: The ability of different parts or units of a program to be executed out-of-order or in partial order.
+title: Concurrency (Redirect)
+description: "Redirecting to Asynchronous Programming."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Concurrency">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Concurrency">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Concurrency is the execution of multiple instruction sequences at the same time. It happens in the operating system when there are several process threads running in parallel.
+<Callout icon="info" title="Redirect">
+The architectural mechanism of **Concurrency** (and how it differs mathematically from true Multi-Core Parallelism) is analyzed deeply in the Deep Dive for **Asynchronous Programming**. 
 
-
-<Callout icon="error" title="Concurrency vs Parallelism">
-
-
-  Rob Pike famously said: "Concurrency is about dealing with a lot of things at once. Parallelism is about doing a lot of things at once."
-
-  A single-core CPU can be **Concurrent** (by rapidly switching between two tasks so fast it *looks* simultaneous). Only a multi-core CPU can be **Parallel** (literally executing two tasks at the exact same physical nanosecond).
-
-
+Please navigate to the [Asynchronous Programming](/kb/2.-programming-fundamentals--language-concepts/2.6-concurrency-basics/asynchronous-programming) module to explore the Event Loop and concurrent state machines.
 </Callout>
-
-
-## Concurrency Models
-
-
-<ComparisonTable headers={['Model', 'Description']} rows={[ ['Shared Memory (Threads)', 'Multiple threads read and write to the same memory space. Requires strict locking (Mutexes). Fast but prone to Deadlocks.'], ['Actor Model (Erlang/Akka)', 'Independent "Actors" hold their own private state and only communicate by passing immutable messages to each other. No locks required.'], ['CSP (Go Channels)', 'Communicating Sequential Processes. "Do not communicate by sharing memory; instead, share memory by communicating."'] ]} />
-
-
-</TechnologyTemplate>

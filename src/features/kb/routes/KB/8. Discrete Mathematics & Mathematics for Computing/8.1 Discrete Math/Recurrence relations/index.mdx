@@ -3,19 +3,35 @@ title: Recurrence Relations
 description: "Mathematical equations that recursively define a sequence based on its previous terms, fundamentally used to calculate the Time Complexity of recursive algorithms."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Recurrence Relations"
   subtitle="The Mathematics of Recursion"
   tags={['Mathematics', 'Discrete Math', 'Algorithms', 'Big O']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
-Test.
+A **Recurrence Relation** is an equation that recursively defines a mathematical sequence. Instead of giving you a formula for the $n^{th}$ term directly, it defines the $n^{th}$ term as a function of the preceding terms. 
 
+In computer science, they are the absolute most critical tool for determining the $O(N)$ Time Complexity of recursive algorithms like Merge Sort or Binary Search.
+
+## 1. The Fibonacci Sequence
+
+The most famous recurrence relation in the world is the Fibonacci sequence:
+$F_n = F_{n-1} + F_{n-2}$ (with base cases $F_0 = 0$, $F_1 = 1$).
+
+If you write a naive recursive function to calculate Fibonacci, the time complexity of the algorithm *is* this exact recurrence relation. Solving this relation mathematically proves that the time complexity is $O(2^N)$, which is exponential and terrible.
+
+## 2. Solving Recurrences for Algorithms
+
+When analyzing an algorithm (like Merge Sort), you write its runtime as a recurrence relation:
+$T(n) = 2T(n/2) + O(n)$
+
+This translates to: *"The total time to sort $n$ items is equal to the time it takes to sort two halves of size $n/2$, plus $O(n)$ time to merge them back together."*
+
+To solve this equation and find the final Big O notation, computer scientists use three methods:
+1. **The Substitution Method**: Guess the mathematical answer and prove it using Mathematical Induction.
+2. **The Recursion Tree Method**: Draw the algorithm execution as a tree, sum up the time taken at each level, and calculate the sum of the series.
+3. **The Master Theorem**: A "cheat code" formula that instantly solves almost all standard Divide-and-Conquer recurrence relations. (Using the Master Theorem instantly proves that $T(n) = 2T(n/2) + O(n)$ evaluates to $O(N \\log N)$).
+
+</ConceptTemplate>

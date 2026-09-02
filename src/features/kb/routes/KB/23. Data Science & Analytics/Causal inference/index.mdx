@@ -1,25 +1,20 @@
 ---
-title: Causal Inference
-description: The advanced mathematical field that seeks to prove a definitive cause-and-effect relationship between variables, moving beyond simple statistical correlation.
+title: Causal Inference (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Causal Inference">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-"Correlation does not imply causation." Causal Inference is the rigorous mathematical framework (championed by Judea Pearl) used to prove that A actually *causes* B, rather than A and B just happening to occur at the same time.
+<Callout icon="info" title="Redirect">
+The mathematical foundations of **Causal Inference** (determining if X actually caused Y, rather than just being correlated) and A/B Testing are covered in the Deep Dive for **Business Intelligence (BI)**. 
 
-## 1. Confounding Variables
-If a data scientist analyzes a dataset and finds a massive mathematical correlation between "Ice Cream Sales" and "Shark Attacks," a naive algorithm would conclude that eating ice cream attracts sharks.
-Causal Inference introduces the concept of a **Confounder** (e.g., "Summer Weather"). Hot weather independently causes both ice cream sales and beach visits (which lead to shark attacks). The math must mathematically isolate and control for the Confounder to prove the true causal link between the two target variables is actually zero.
-
-## 2. Causal Diagrams (DAGs)
-To solve these problems, scientists use Directed Acyclic Graphs (DAGs).
-A DAG is a mathematical model where variables are nodes, and arrows represent assumed causal direction. By applying "Do-Calculus" (simulating a physical intervention, like `P(Y | do(X))`), algorithms can mathematically sever the confounding pathways in the graph. This allows Data Scientists to extract true causal effects from raw observational data, even in situations where a randomized A/B test is physically or ethically impossible.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts derive mathematical truth from product data.
+</Callout>

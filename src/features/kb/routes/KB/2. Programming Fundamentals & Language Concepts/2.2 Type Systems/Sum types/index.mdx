@@ -1,28 +1,20 @@
 ---
-title: Sum Types (Tagged Unions)
-description: A fundamental Algebraic Data Type that mathematically restricts a variable to hold exactly one type from a predefined set of variants.
+title: Sum Types (Redirect)
+description: "Redirecting to Algebraic Data Types."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Sum Types (Tagged Unions)">
+    <ConceptTemplate title="Sum Types">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In Type Theory, a Sum Type (also known as a Tagged Union, Variant, or advanced Enum) is a data structure that can mathematically hold a value that takes on exactly *one* of several different types.
+<Callout icon="info" title="Redirect">
+The architectural and mathematical principles of **Sum Types** (Enums, Unions, Variants) are comprehensively covered alongside Product Types under the Deep Dive for **Algebraic Data Types (ADTs)**. 
 
-## 1. The Mathematics of "Sum"
-If you define a Sum Type in Rust: `enum Status { Active(Boolean), ErrorCode(Byte) }`.
-- A `Boolean` has 2 states.
-- A `Byte` has 256 states.
-The total number of mathematical states this Enum can represent is `2 + 256 = 258` states. The state space is mathematically *added* together (Sum). It is physically impossible for the `Status` to hold both the Boolean and the Byte simultaneously.
-
-## 2. Memory Layout and Tags (The Discriminant)
-How does the CPU mathematically know which type is currently in the Sum Type?
-The compiler physically adds a hidden "Tag" (a Discriminant) to the memory layout.
-If the Tag is `0`, the CPU mathematically interprets the following bytes as a Boolean. If the Tag is `1`, it interprets them as a Byte. The compiler ensures that a `match` statement physically checks this hidden Tag before allowing the developer to read the underlying data, guaranteeing absolute mathematical memory safety.
-
+Please navigate to the [Algebraic Data Types (ADTs)](/kb/2.-programming-fundamentals--language-concepts/2.2-type-systems/algebraic-data-types) module to explore how modern compilers utilize mathematical geometry to prevent impossible states from compiling.
+</Callout>

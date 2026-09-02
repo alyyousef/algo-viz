@@ -1,19 +1,35 @@
 ---
-title: Time-series analysis
-description: Methods for analyzing time series data in order to extract meaningful statistics and other characteristics of the data.
+title: Time-Series Analysis
+description: "A statistical technique used to analyze sequence data points collected over specific time intervals, crucial for algorithmic trading and forecasting."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Time-Series Analysis">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Time-Series Analysis"
+  subtitle="Forecasting the Future of Data"
+  tags={['Computational Finance', 'Data Science', 'Statistics', 'Machine Learning']}
+>
 
-A stock price chart is just a **Time-Series**—a sequence of data points mathematically indexed in time order.
+In computational finance, almost all data is a **Time-Series**: a sequence of data points indexed in time order (e.g., the price of Apple stock recorded every minute for 5 years). 
+Analyzing this data requires entirely different algorithms than standard relational data, because the *order* of the rows fundamentally matters.
 
-Quants use Time-Series Analysis to find biological patterns. They use mathematical models like ARIMA or GARCH to detect seasonality, momentum, and volatility. The mathematical goal is to prove that the sequence of numbers is not a random walk, and that the past 10 minutes of data statistically constrain the probability of the next 1 minute of data.
+## 1. Stationarity and Autocorrelation
 
+Before running predictive models, quants must analyze the mathematical properties of the time-series:
+- **Stationarity**: A time-series is stationary if its statistical properties (mean, variance) remain constant over time. Stock prices are notoriously non-stationary (they drift upwards). Data scientists often transform the data by calculating the *daily percentage change* rather than the raw price to make it stationary.
+- **Autocorrelation**: Measuring how correlated a variable is with delayed (lagged) versions of itself. If today's stock volume is highly correlated with yesterday's volume, the series has high autocorrelation.
+
+## 2. Traditional Models (ARIMA)
+
+For decades, the gold standard for time-series forecasting was the **ARIMA** (AutoRegressive Integrated Moving Average) model.
+It mathematically combines three ideas:
+1. **AR**: Predicting the next point based on a linear combination of past points.
+2. **I**: Differencing the data (subtracting today from yesterday) to force it to be stationary.
+3. **MA**: Using past forecast errors to adjust the current prediction.
+
+## 3. Deep Learning (LSTMs)
+
+In modern quantitative finance, deep learning has largely taken over. 
+Standard neural networks fail at time-series because they have no "memory". **LSTMs (Long Short-Term Memory networks)** are a specialized Recurrent Neural Network architecture designed specifically for time-series. They contain mathematical "gates" that learn which historical data points are important to remember for the long term, and which recent noise should be forgotten, making them incredibly powerful for algorithmic trading models.
+
+</ConceptTemplate>

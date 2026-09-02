@@ -1,19 +1,38 @@
 ---
-title: Projects
-description: An adaptable spreadsheet, task-board, and roadmapping tool that integrates with your issues and pull requests on GitHub.
+title: GitHub Projects
+description: "A highly customizable project management tool integrated directly into GitHub, allowing teams to track issues, pull requests, and ideas in kanban boards or spreadsheets."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="GitHub Projects">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="GitHub Projects"
+  subtitle="Integrated Project Management"
+  tags={['GitHub', 'Project Management', 'Agile', 'Kanban']}
+>
 
-As covered in the Project Management section, **GitHub Projects** transforms raw GitHub Issues into a massive biological Agile Kanban board.
+**GitHub Projects** is a powerful planning and tracking tool built natively into GitHub. It serves as a modern alternative to external tools like Jira or Trello, specifically optimized for software development teams.
 
-It mathematically links directly to the code. If an engineer moves a Pull Request from `Draft` to `Ready for Review`, the associated Issue mathematically slides across the biological Kanban board automatically, completely eliminating the need for a separate Jira subscription.
+## 1. Core Mechanics
 
+Instead of duplicating data across a codebase and a separate project management tool, GitHub Projects pulls live data directly from your repositories.
+
+- **Dynamic Items**: A task on a Project board isn't just text; it is natively linked to a GitHub Issue or Pull Request. If a PR is merged, the associated task can automatically move to the "Done" column.
+- **Views**: Teams can visualize the exact same data in multiple ways:
+  - **Kanban Boards**: Drag-and-drop columns (e.g., Todo, In Progress, Review, Done).
+  - **Table/Spreadsheet**: A dense, sortable list of tasks, perfect for backlog grooming.
+  - **Roadmap**: A Gantt-chart timeline view for planning large features over months.
+
+## 2. Custom Fields
+
+Unlike simple issue trackers, GitHub Projects allows infinite customization through Custom Fields. You can add fields for:
+- **Priority**: High, Medium, Low.
+- **T-Shirt Size**: Estimate effort (S, M, L, XL).
+- **Target Date**: When the task must be completed.
+- **Iteration**: Assigning tasks to specific 2-week Sprint cycles.
+
+## 3. Automation
+
+GitHub Projects includes a built-in workflow engine to automate tedious project management tasks. 
+For example, you can set a rule: *When an Issue is closed, automatically change its Status field to "Done" and remove it from the "Current Sprint" iteration.* This ensures the project board perfectly reflects the actual state of the codebase with zero manual administrative work.
+
+</ConceptTemplate>

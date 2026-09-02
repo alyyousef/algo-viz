@@ -1,29 +1,20 @@
 ---
-title: Parallelism
-description: Executing multiple tasks simultaneously on multiple physical processing cores.
+title: Parallelism (Redirect)
+description: "Redirecting to Concurrency vs. Parallelism."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate title="Parallelism">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Parallelism">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Parallelism refers to techniques to make programs faster by performing several computations at the exact same time. This requires hardware with multiple processing units (multi-core CPUs or GPUs).
+<Callout icon="info" title="Redirect">
+The physical hardware execution of **Parallelism** (utilizing multiple CPU cores simultaneously via OS Threads) and how it strictly differs from software task interleaving is covered in the Deep Dive for **Concurrency vs. Parallelism**. 
 
-
-<Callout icon="tip" title="Data vs Task Parallelism">
-
-
-  **Data Parallelism**: Applying the exact same operation to a massive array of data simultaneously (e.g., adding 1 to every pixel in an image using a GPU).
-
-  **Task Parallelism**: Running completely different functions simultaneously (e.g., Core 1 plays audio, Core 2 renders graphics).
-
-
+Please navigate to the [Concurrency vs. Parallelism](/kb/2.-programming-fundamentals--language-concepts/2.4-concurrency--parallelism/concurrency-vs-parallelism) module to explore the physics of simultaneous execution.
 </Callout>
-
-
-## Amdahl's Law
-
-Amdahl's Law is a formula which gives the theoretical speedup in latency of the execution of a task at fixed workload that can be expected of a system whose resources are improved.
-
-If a program is 90% parallelizable, and 10% strictly sequential, you can never speed up the program by more than 10x, even if you throw a million CPU cores at it.
-
-</TechnologyTemplate>

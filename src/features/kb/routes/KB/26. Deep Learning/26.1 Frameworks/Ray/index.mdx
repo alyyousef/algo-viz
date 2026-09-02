@@ -1,29 +1,55 @@
 ---
 title: Ray
-description: A unified compute framework designed specifically to scale AI Python workloads from a single laptop to a massive Kubernetes cluster effortlessly.
+description: "An overview of Ray, an open-source unified compute framework that makes it easy to scale AI and Python applications."
 ---
-import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Ray">
+    <TechnologyTemplate title="Ray">
       {children}
-    
-  </ConceptTemplate>
+    </TechnologyTemplate>
   )
 }
 
-Writing Python code that mathematically executes on a single CPU is easy. Writing Python code that mathematically orchestrates thousands of GPUs across 100 physical servers to train an AI is a distributed systems nightmare. **Ray** solves this.
+**Ray** is an open-source unified compute framework developed by UC Berkeley's RISELab and maintained by Anyscale. 
 
-## 1. The Distributed Primitive
-Ray replaces Python's standard multiprocessing with a highly advanced, ultra-low latency distributed engine. By adding a single simple Python decorator (`@ray.remote`) above a function or class, Ray mathematically hijacks that object and executes it on any available CPU or GPU in the cluster. It automatically handles the complex mathematical serialization, memory management, and network routing in the background.
+While deep learning frameworks like PyTorch and TensorFlow are great at doing math on a single GPU (or a small cluster of tightly coupled GPUs), **Ray is designed to scale any Python code—especially machine learning workloads—across massive clusters of thousands of machines seamlessly.**
 
-## 2. The AI Ecosystem (Ray Train & Ray Serve)
-While Ray can execute any Python script, it is specifically designed to be the ultimate infrastructure layer for AI:
-- **Ray Train**: Automatically wraps PyTorch or TensorFlow code, mathematically distributing the training process across thousands of GPUs using Data Parallelism.
-- **Ray Tune**: A hyperparameter optimization engine that mathematically orchestrates thousands of simultaneous training runs to discover the perfect architecture (NAS).
-- **Ray Serve**: A highly scalable inference engine that allows you to mathematically deploy massive models (like LLaMA) in production, dynamically auto-scaling the hardware based on traffic.
+If you have a Python script that runs on your laptop, Ray allows you to run that exact same script on a 100-node AWS cluster with minimal code changes.
 
-## 3. Industry Dominance
-Ray is the absolute industry standard for massive AI scaling. It was famously the core infrastructure used by OpenAI to mathematically distribute the Reinforcement Learning training process of ChatGPT across their massive Azure supercomputer.
+## Why Ray is Necessary
 
+Modern AI is severely bottlenecked by compute. Training a massive language model (like GPT-4) or running a hyperparameter search across millions of combinations cannot be done on one machine.
+
+Historically, distributed computing was incredibly hard. You had to use complex tools like Apache Spark (which is great for data processing but bad for the stateful, iterative nature of deep learning) or write custom MPI (Message Passing Interface) code, which requires an entire team of distributed systems engineers.
+
+Ray provides a simple, Pythonic API to solve this.
+
+## The Core API
+
+At its lowest level, Ray introduces two simple concepts to parallelize Python code:
+
+### 1. Tasks (Stateless)
+You can take any standard Python function and add the `@ray.remote` decorator to it. When you call that function, Ray will immediately ship it off to be executed on an available worker node anywhere in the cluster, returning a "future" (a promise for the result).
+
+### 2. Actors (Stateful)
+You can take any standard Python Class and add the `@ray.remote` decorator. Ray will instantiate that class on a remote machine. You can then call methods on that remote class, and it will retain its state (memory) between calls. This is critical for things like Reinforcement Learning, where an "Agent" needs to remember its past experiences.
+
+## The Ray Ecosystem (Libraries)
+
+While the Core API is powerful, most data scientists interact with Ray through its high-level libraries, which provide out-of-the-box scaling for specific AI workflows:
+
+*   **Ray Train:** Distributed deep learning. It integrates with PyTorch, TensorFlow, and Hugging Face to instantly scale training jobs across hundreds of GPUs.
+*   **Ray Tune:** Distributed hyperparameter tuning. It can run thousands of training experiments in parallel to find the perfect model architecture.
+*   **Ray Serve:** Model serving. It allows you to deploy your trained models as scalable web APIs that can handle massive traffic spikes.
+*   **RLlib:** One of the world's most popular open-source libraries for Reinforcement Learning, built entirely on top of Ray.
+
+<Callout icon="bolt" title="OpenAI and Ray">
+Ray gained massive mainstream attention when OpenAI revealed that they used Ray to orchestrate the distributed training of their flagship Large Language Models, including GPT-3 and GPT-4.
+</Callout>
+
+## Summary
+
+Ray is rapidly becoming the standard operating system for AI clusters. It abstracts away the excruciating difficulty of distributed systems engineering, allowing data scientists to write simple Python code that scales infinitely across the cloud.

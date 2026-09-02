@@ -1,34 +1,20 @@
 ---
-title: AI Safety
-description: The broad discipline encompassing both near-term robustness and long-term alignment, ensuring AI systems operate reliably under extreme conditions.
+title: AI Safety (Redirect)
+description: "Redirecting to AI Alignment."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="AI Safety">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**AI Safety** is the umbrella term that covers everything from ensuring a self-driving car doesn't crash in the rain, to ensuring Artificial General Intelligence (AGI) doesn't destroy humanity (AI Alignment). It focuses on mathematically guaranteeing the robustness and reliability of AI systems.
+<Callout icon="info" title="Redirect">
+The technical mechanisms for ensuring models are harmless and mathematically constrained (AI Safety) are covered in the Deep Dive for **AI Alignment**. 
 
-## 1. Robustness and Adversarial Attacks
-Modern Neural Networks are mathematically brilliant, but incredibly fragile.
-
-In a famous **Adversarial Attack**, researchers took an image of a Panda, which the AI recognized with 99% confidence. They mathematically generated a layer of invisible static (noise) and added it to the image. To the human eye, it still looked exactly like a Panda. But the AI mathematically classified it as a Gibbon with 99% confidence.
-
-In the real world, researchers proved they could place three small pieces of black tape on a Stop Sign, and mathematically trick a self-driving car's Computer Vision into thinking it was a 45 MPH Speed Limit sign.
-AI Safety involves mathematically hardening models against these adversarial perturbations.
-
-## 2. Out-of-Distribution (OOD) Failures
-An AI model is only mathematically valid within the distribution of its training data.
-If you train a medical AI to diagnose X-Rays using only machines from Hospital A, it might achieve 99% accuracy. If you deploy it to Hospital B, which uses a slightly different X-Ray machine (creating a slightly different image contrast), the AI's accuracy might mathematically plummet to 10%.
-
-AI Safety research focuses on **Uncertainty Quantification**: forcing the AI to mathematically output "I don't know" when it encounters data that falls outside its training distribution, rather than confidently outputting a fatal error.
-
-## 3. Red Teaming
-Adopted from cybersecurity, Red Teaming involves paying teams of engineers (or using specialized AI models) to actively try and break a deployed model. They use complex prompt engineering (like roleplaying as a Linux terminal or a deceased grandmother) to bypass the safety filters of models like ChatGPT, forcing it to generate malicious code or bomb-making instructions. The model is then patched before public release.
-
+Please navigate to the [AI Alignment](/kb/24.-artificial-intelligence-%E2%80%94-overview/ai-alignment) module to explore the alignment problem.
+</Callout>

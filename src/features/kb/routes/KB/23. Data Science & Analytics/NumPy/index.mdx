@@ -1,45 +1,20 @@
 ---
-title: NumPy (Numerical Python)
-description: The absolute foundational mathematical library of the Python data science ecosystem, bringing C-level speeds to massive matrix operations.
+title: NumPy (Redirect)
+description: "Redirecting to Machine Learning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="NumPy (Numerical Python)">
+    <ConceptTemplate title="NumPy">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Python is a fantastic language, but it is dynamically typed and mathematically slow. If you write a standard Python `for` loop to multiply 10 million integers, it will take several seconds.
+<Callout icon="info" title="Redirect">
+The computational engine of **NumPy** (vectorization, broadcasting, and N-dimensional arrays in C/C++) forms the absolute bedrock of AI and Data Science. 
 
-**NumPy** is the absolute foundation of modern Machine Learning. It mathematically bridges the ease of Python with the blistering execution speed of C.
-
-## 1. The Ndarray (N-Dimensional Array)
-The core architecture of NumPy is the `ndarray`.
-A standard Python list can hold multiple types: `[1, "hello", True]`. Because of this, Python must store complex memory pointers for every single item, ruining cache locality.
-
-A NumPy array mathematically forces all items to be the exact same Data Type (e.g., all 64-bit integers). Because they are identical, NumPy stores them in a single, continuous, highly-dense block of C-memory. This allows the CPU to fetch them instantly.
-
-## 2. Mathematical Vectorization
-NumPy completely eliminates the need for slow Python loops through **Vectorization**.
-
-If you have two arrays (A and B) with 10 million numbers each, and you want to add them together:
-```python
-import numpy as np
-
-# A NumPy Vectorized Addition
-A = np.array([1, 2, 3])
-B = np.array([4, 5, 6])
-C = A + B  # Result: [5, 7, 9]
-```
-When you execute `A + B`, the operation drops out of the slow Python interpreter completely. NumPy mathematically pushes the execution down into highly-optimized C and Fortran code, utilizing SIMD (Single Instruction, Multiple Data) CPU architecture to calculate all 10 million additions simultaneously in milliseconds.
-
-## 3. Broadcasting
-NumPy allows mathematical operations between arrays of different shapes through **Broadcasting**.
-If you multiply a massive 100x100 matrix by a scalar `5`, NumPy mathematically "broadcasts" (stretches) the 5 across the entire matrix seamlessly in C-memory, without explicitly copying the number 10,000 times, saving massive amounts of RAM.
-
-Almost every single Data Science library (Pandas, Scikit-Learn, TensorFlow, PyTorch) mathematically builds directly on top of NumPy's underlying C-architecture.
-
+Please navigate to the upcoming **Machine Learning** modules in the AI section to explore how models use matrices to compute gradients.
+</Callout>

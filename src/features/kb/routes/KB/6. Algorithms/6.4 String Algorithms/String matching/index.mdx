@@ -4,18 +4,11 @@ description: "The overarching class of mathematical algorithms tasked with findi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="String Matching"
   subtitle="The Search for Text"
   tags={['Algorithms', 'Strings', 'Fundamentals', 'Search']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 String matching (or String Searching) is one of the most heavily researched domains in computer science, forming the backbone of text editors, database queries, web search engines, and DNA sequencing.
 
@@ -30,3 +23,4 @@ To mathematically break the O(N * M) barrier, computer scientists developed high
 - **Boyer-Moore**: Pre-processes the Pattern (O(M)) to search right-to-left, mathematically skipping over characters that don't exist in the pattern. Best Case: O(N / M).
 - **Suffix Trees / Suffix Arrays**: Pre-processes the massive *Text* (O(N)). Once built, you can search for *any* pattern of length M in exactly O(M) time, regardless of how massive the text is. This is the mathematical foundation of Google Search.
 
+</ConceptTemplate>

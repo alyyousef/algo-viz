@@ -1,6 +1,6 @@
 ---
 title: Support Vector Machines (SVM)
-description: A mathematically rigorous classifier that maximizes the geometric margin between classes and utilizes the Kernel Trick for non-linear boundaries.
+description: "A comprehensive guide to Support Vector Machines, a powerful algorithm for both classification and regression tasks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
@@ -9,43 +9,52 @@ export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Support Vector Machines (SVM)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Support Vector Machines (SVM)** are mathematically elegant models that find the optimal hyperplane to separate classes by maximizing the geometric margin.
+**Support Vector Machines (SVMs)** are a set of supervised learning methods used for classification, regression, and outlier detection. They are highly renowned in the machine learning community for their strong theoretical foundations and exceptional performance, particularly on complex, high-dimensional datasets.
 
-## 1. The Maximum Margin Hyperplane
-Logistic Regression simply draws any line that separates the classes. SVM goes further: it mathematically guarantees finding the specific line that maximizes the distance (margin) to the nearest data points of both classes.
+## The Core Concept: Finding the Hyperplane
 
-These closest data points are called the **Support Vectors**.
-Astonishingly, once the Support Vectors are identified, every other data point in the dataset could be deleted, and the exact same boundary would mathematically remain.
+The objective of an SVM (in a classification context) is to find a **hyperplane** in an $N$-dimensional space (where $N$ is the number of features) that distinctly classifies the data points.
 
-## 2. The Soft Margin (C Hyperparameter)
-In real-world data, classes are never perfectly linearly separable; there are outliers.
-SVM introduces a slack variable (`ξ`) and a regularization hyperparameter **C**.
+*   In 2D space, a hyperplane is a simple line.
+*   In 3D space, it's a flat plane.
+*   In higher dimensions, it's a hyperplane.
 
-- **High C**: Strict. The model heavily penalizes misclassifications, resulting in a narrow margin and a highly complex boundary (Risk of Overfitting).
-- **Low C**: Soft. The model prioritizes a wider margin, gracefully ignoring extreme outliers (Risk of Underfitting).
+### Maximizing the Margin
 
-## 3. The Kernel Trick (Non-Linear Separability)
-If data is arranged in a concentric circle (e.g., Class A is an inner ring, Class B is an outer ring), no 2D line can separate them.
+For any linearly separable dataset, there are technically an infinite number of lines that could separate the classes. How does SVM choose the best one? 
 
-SVMs utilize the **Kernel Trick**. Mathematically, they project the 2D data into a highly complex 3D or Infinite-Dimensional space where the data *does* become linearly separable by a flat 2D plane. When projected back down to 2D, the boundary appears as a complex, non-linear circle.
+SVM chooses the hyperplane that **maximizes the margin** between the classes. 
+*   **The Margin:** The distance between the separating hyperplane and the nearest data point(s) of any class.
+*   **Support Vectors:** The specific data points that lie exactly on the edge of the margin. They are called "support vectors" because they literally "support" or define the hyperplane. If you deleted all other data points in the dataset except the support vectors, the hyperplane would remain exactly the same.
 
-### Common Kernels:
-- **Linear Kernel**: For data already linearly separable.
-- **Polynomial Kernel**: Projects data into `d`-dimensional space.
-- **RBF (Radial Basis Function)**: The most powerful kernel. Mathematically, it projects data into an *infinite-dimensional* space, measuring the distance from every point to every other point.
-
-
-<Callout icon="warning" title="Computational Complexity">
-
-
-SVMs are mathematically beautiful, but their runtime complexity is generally `O(n^2)` to `O(n^3)`. They are phenomenally effective on small, high-dimensional datasets (like text classification), but absolutely catastrophic on datasets with millions of rows.
-
-
+<Callout icon="shield-check" title="Why Maximize the Margin?">
+Maximizing the margin provides the greatest possible buffer zone between the classes. A larger margin reduces the generalization error of the model, meaning it is more likely to correctly classify new, unseen data points that fall slightly outside the strict boundaries of the training set.
 </Callout>
 
+## Handling Non-Linear Data: The Kernel Trick
 
+What happens if the data is *not* linearly separable (you can't draw a straight line between the classes)? 
+
+This is where SVMs truly shine. They use a technique called the **Kernel Trick**. 
+Instead of trying to draw a complex, squiggly boundary in the current dimension, the Kernel Trick mathematically transforms the data into a *higher dimension* where a flat hyperplane *can* separate them.
+
+Common Kernels:
+*   **Linear:** Used when data is already linearly separable.
+*   **Polynomial:** Maps data into a polynomial feature space.
+*   **RBF (Radial Basis Function):** The most popular kernel. It maps data into an infinite-dimensional space, capable of handling highly complex, non-linear relationships.
+
+## Advantages and Disadvantages
+
+### Advantages
+*   **Highly Effective in High Dimensions:** SVMs perform exceptionally well when the number of dimensions (features) exceeds the number of samples ($p > n$).
+*   **Memory Efficient:** Because the final model only relies on the Support Vectors (a small subset of the training data), it uses very little memory during inference.
+*   **Versatile:** The Kernel Trick allows it to model incredibly complex, non-linear boundaries.
+
+### Disadvantages
+*   **Computationally Expensive:** Training an SVM (especially with an RBF kernel) on a massive dataset (e.g., >100,000 rows) can be extremely slow, taking $O(n^2)$ or $O(n^3)$ time.
+*   **Not Probabilistic:** SVMs output a direct class prediction (based on which side of the hyperplane a point falls). They do not natively output probability estimates (though these can be calculated using expensive methods like Platt scaling).
+*   **Sensitive to Noise:** If the dataset has overlapping classes and heavy noise, the margin calculations can become unstable.

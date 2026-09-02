@@ -1,39 +1,20 @@
 ---
-title: Azure Synapse Analytics
-description: Microsoft's unified enterprise analytics service that mathematically merges Data Warehousing, Big Data, and Data Integration into a single platform.
+title: Synapse Analytics (Redirect)
+description: "Redirecting to Data Lakes & Warehouses."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Azure Synapse Analytics">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Historically, deploying an enterprise data architecture required duct-taping disparate tools together: using Azure Data Factory for pipelines, Azure Databricks for Spark processing, and Azure SQL Data Warehouse for BI.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Azure Synapse Analytics** (Microsoft's highly distributed enterprise Data Warehouse) is covered in the Deep Dive for **Data Lakes & Warehouses**. 
 
-**Azure Synapse Analytics** was engineered by Microsoft to mathematically unify these distinct architectures into a single, cohesive pane of glass. It is the direct evolution of the legacy Azure SQL Data Warehouse.
-
-## 1. The Unified Analytics Platform
-Synapse mathematically blends the two opposing paradigms of Data Engineering: The relational Data Warehouse and the unstructured Data Lake.
-
-It achieves this through a unified workspace that offers multiple specialized mathematical compute engines running over the exact same data in Azure Data Lake Storage (ADLS Gen2):
-
-- **Dedicated SQL Pool (The Warehouse)**: The traditional, massively parallel processing (MPP) engine. You provision dedicated compute nodes to execute blazing-fast, highly structured SQL queries against rigid tables.
-- **Serverless SQL Pool (The Lakehouse)**: A dynamically scaling, pay-per-query engine. It allows Data Analysts to write standard SQL directly against raw Parquet or CSV files sitting in the Data Lake, without ever formally importing the data into a database.
-- **Apache Spark Pool**: A fully managed Spark engine built directly into Synapse, allowing Data Scientists to execute complex Python/Scala Machine Learning pipelines against the exact same Data Lake files.
-
-## 2. Synapse Pipelines
-Synapse integrates **Azure Data Factory** directly into its core.
-You can mathematically construct complex Directed Acyclic Graphs (DAGs) using a drag-and-drop visual interface to orchestrate the movement of data. A pipeline can extract data from an on-premise Oracle database, trigger a Spark notebook to cleanse the data, and finally trigger a Dedicated SQL Pool stored procedure to aggregate it.
-
-## 3. Competitive Landscape
-Synapse is Microsoft's answer to the fierce cloud analytics war.
-- It directly competes with **Snowflake** and **Google BigQuery** in the Cloud Data Warehouse space.
-- It directly competes with **Databricks** in the Data Lakehouse / Apache Spark space.
-
-By unifying ETL, Spark, and SQL into a single deeply integrated Microsoft ecosystem, it is heavily favored by massive enterprises already entrenched in the Azure ecosystem.
-
+Please navigate to the [Data Lakes & Warehouses](/kb/22.-data-engineering/data-lakes--warehouses) module to explore cloud-native analytics platforms.
+</Callout>

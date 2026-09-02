@@ -1,15 +1,42 @@
+---
+title: Bayes Theorem
+description: "A mathematical formula for determining conditional probability, describing the probability of an event based on prior knowledge of conditions that might be related to the event."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Bayes theorem">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Bayes Theorem"
+  subtitle="The Math of Updating Beliefs"
+  tags={['Mathematics', 'Probability', 'Machine Learning', 'Data Science']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+**Bayes' Theorem** is arguably the single most important equation in probability theory and modern Artificial Intelligence. It provides a mathematical framework for updating our beliefs (probabilities) when we are presented with new, real-world evidence.
 
+## 1. The Formula
 
+The theorem is mathematically defined as:
+
+$$ P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)} $$
+
+Where:
+- **$P(A|B)$ (Posterior)**: The probability that hypothesis A is true, *given* that we just observed evidence B.
+- **$P(A)$ (Prior)**: Our initial belief that A was true, *before* we saw the evidence.
+- **$P(B|A)$ (Likelihood)**: If hypothesis A is actually true, what is the probability we would have seen evidence B?
+- **$P(B)$ (Marginal)**: The total probability of seeing evidence B under all possible circumstances.
+
+## 2. A Practical Example: Medical Testing
+
+Imagine a disease affects 1% of the population ($P(Disease) = 0.01$).
+A test for this disease is 99% accurate ($P(Positive | Disease) = 0.99$).
+If you test positive, what is the probability you actually have the disease?
+
+Most humans instinctively answer "99%". Bayes' Theorem proves this is completely wrong. 
+Because the disease is rare (the Prior is only 1%), the vast majority of positive tests in a massive population will actually be **False Positives**. When you plug the numbers into Bayes' equation, the actual probability you are sick if you test positive is only roughly **50%**.
+
+## 3. Naive Bayes in Machine Learning
+
+In Computer Science, Bayes' Theorem is the foundation of the **Naive Bayes Classifier**, heavily used in spam filters.
+If an email contains the word "Viagra" (Evidence), the algorithm uses Bayes' Theorem to calculate the probability that the email is Spam (Hypothesis). It is called "Naive" because it mathematically assumes that the presence of every word in the email is completely independent of every other word, which is false in human language, but works incredibly well in practice for basic NLP classification.
+
+</ConceptTemplate>

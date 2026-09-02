@@ -1,45 +1,101 @@
 ---
-title: VLAN (Virtual LAN)
-description: A technology that logically splits a single physical switch into multiple isolated, independent virtual networks.
+title: VLAN (Virtual Local Area Network)
+description: "A logical grouping of devices on one or more physical LANs, allowing for network segmentation without requiring separate physical hardware."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="VLAN (Virtual LAN)">
+    <ConceptTemplate title="VLAN (Virtual Local Area Network)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Imagine an enterprise office with 100 employees: 50 in HR, and 50 in Engineering.
-For security, HR computers should never be able to talk to Engineering computers.
+A **VLAN (Virtual Local Area Network)** is a software-defined layer of network isolation operating at Layer 2 (Data Link Layer). 
 
-Historically, you would have to buy two physical Switches and run two completely separate wiring infrastructures. **VLANs (Virtual Local Area Networks - IEEE 802.1Q)** solve this in software.
+Historically, if an enterprise wanted to completely separate their Accounting department's network from the Guest Wi-Fi network for security reasons, they had to buy two entirely separate physical switches and run separate physical cables. VLANs solve this by logically slicing a single physical 48-port switch into multiple independent "virtual switches." 
 
-## How VLANs Work
+Ports 1-10 can be assigned to VLAN 10 (Accounting), and Ports 11-20 to VLAN 20 (Guest). Even though they share the same physical silicon, a computer on Port 1 mathematically cannot send a Layer 2 Ethernet frame to a computer on Port 11.
 
-You can take a single 48-port physical switch and logically slice it in half.
-- You assign Ports 1-24 to **VLAN 10 (HR)**.
-- You assign Ports 25-48 to **VLAN 20 (Engineering)**.
+## 1. Deep Dive & Mechanics
 
-If a computer on Port 5 (HR) tries to send a broadcast message to the entire office, the switch's internal logic will trap that message and *only* send it to other ports inside VLAN 10. The switch guarantees that Layer 2 traffic cannot cross VLAN boundaries.
+VLANs are standardized under the **IEEE 802.1Q** protocol.
 
-## Trunking (802.1Q)
+When a standard Ethernet frame enters a switch port that is configured as a specific VLAN (an **Access Port**), the switch's internal ASICs mathematically inject a 4-byte **VLAN Tag** directly into the Ethernet header. 
 
-What if the HR department spans across three different floors, using three different physical switches? You don't want to run 10 separate cables between the switches for each VLAN.
+This tag contains a 12-bit VLAN Identifier (VID). As the frame moves through the internal backplane of the switch, the hardware enforces strict isolation: this frame is only allowed to exit out of other ports that share the same 12-bit VID. Before the frame is pushed out of the destination Access Port to the final PC, the switch strips the tag off. The PCs are completely unaware that VLANs even exist.
 
-You use a **Trunk Port**.
-A Trunk is a single physical cable connecting two switches. When data leaves a switch via a Trunk, the switch forcibly injects a **4-byte VLAN Tag** into the middle of the Ethernet frame. The receiving switch reads the tag (e.g., "This data belongs to VLAN 10"), strips the tag off, and forwards the data to the correct HR computer.
+## 2. Mathematical / Theoretical Foundation
 
+The 12-bit VLAN Identifier (VID) dictates the theoretical limits of network segmentation.
 
-<Callout icon="info" title="Inter-VLAN Routing">
+Because $2^{12} = 4096$, a single Ethernet network can mathematically support a maximum of **4,096 distinct VLANs** (with VLAN 0 and 4095 being reserved, leaving 4,094 usable). 
 
+In traditional corporate environments, 4,000 subnets are more than enough. However, in massive modern cloud data centers (like AWS or Azure) hosting tens of thousands of different tenants, this 12-bit mathematical limit was a severe architectural bottleneck. This directly led to the invention of **VXLAN (Virtual Extensible LAN)**, which encapsulates Layer 2 frames inside Layer 4 UDP packets and uses a 24-bit identifier, expanding the limit to 16 million virtual networks.
 
-  VLANs provide perfect Layer 2 isolation. If a manager in HR legitimately needs to send a file to Engineering, they cannot do it through the switch. The traffic must be sent up to a **Layer 3 Router** (often using a "Router on a Stick" topology or a Layer 3 Switch). The router inspects the IP addresses, applies firewall rules, and routes the traffic down into the other VLAN.
+## 3. Real-World Implementation
 
+Configuring VLANs requires managing two types of switch ports: **Access Ports** and **Trunk Ports**.
 
+- **Access Port:** Connects to an end device (PC, printer). The switch adds the tag when data enters, and removes it when data exits.
+- **Trunk Port:** Connects to another switch or a router. The switch *leaves the 802.1Q tags intact* when sending data out this port, allowing traffic for dozens of different VLANs to traverse a single physical cable.
+
+```bash
+# Example configuration on a Cisco IOS Switch
+
+# 1. Create a VLAN
+Switch(config)# vlan 20
+Switch(config-vlan)# name GUEST_WIFI
+
+# 2. Assign a port to the VLAN (Access Port)
+Switch(config)# interface GigabitEthernet0/1
+Switch(config-if)# switchport mode access
+Switch(config-if)# switchport access vlan 20
+
+# 3. Configure a port connecting to another switch (Trunk Port)
+Switch(config)# interface GigabitEthernet0/48
+Switch(config-if)# switchport mode trunk
+Switch(config-if)# switchport trunk allowed vlan 10,20,30
+```
+
+## 4. Visualizations
+
+```mermaid
+graph TD
+    subgraph Switch 1
+        A(Port 1 - PC A) -.-> |Access: Untagged| V10[Internal VLAN 10]
+        B(Port 2 - PC B) -.-> |Access: Untagged| V20[Internal VLAN 20]
+    end
+
+    V10 ==> |Trunk: Tagged 10| TrunkLink((802.1Q Trunk Cable))
+    V20 ==> |Trunk: Tagged 20| TrunkLink
+
+    subgraph Switch 2
+        TrunkLink ==> |Trunk: Tagged 10| V10_2[Internal VLAN 10]
+        TrunkLink ==> |Trunk: Tagged 20| V20_2[Internal VLAN 20]
+        V10_2 -.-> |Access: Untagged| C(Port 1 - PC C)
+        V20_2 -.-> |Access: Untagged| D(Port 2 - PC D)
+    end
+```
+
+## 5. Interview Prep
+
+**Q: Can a device in VLAN 10 communicate with a device in VLAN 20?**
+**A:** Not directly at Layer 2. By definition, VLANs represent separate broadcast domains. To communicate between them, you must use a Layer 3 device (a Router or a Multilayer Switch). The process is called **Inter-VLAN Routing**. The traffic must leave VLAN 10, hit the router, the router inspects the IP address, makes a routing decision, and pushes it back down into VLAN 20.
+
+**Q: What is a "Native VLAN"?**
+**A:** On an 802.1Q Trunk port, multiple tagged VLANs travel across the wire. The Native VLAN (usually VLAN 1 by default) is the one exception: traffic belonging to the Native VLAN is sent across the trunk *without* a tag. This was historically necessary for backward compatibility with legacy hubs that didn't understand 802.1Q headers. Security best practices dictate changing the Native VLAN to an unused ID to prevent VLAN Hopping attacks.
+
+**Q: What is "Router on a Stick"?**
+**A:** A network design pattern where a single physical router is connected to a switch via a single physical Trunk Cable. The router's physical interface is mathematically split into multiple "Sub-interfaces" (e.g., `eth0.10` and `eth0.20`), each acting as the default gateway for a different VLAN, handling all the Inter-VLAN routing through one cable.
+
+## 6. Production Use Cases
+
+- **VoIP Isolation:** In corporate offices, desk phones and PCs often share the same ethernet cable (the PC plugs into the phone, the phone plugs into the wall). Switches use a feature called Voice VLAN to logically separate the traffic. The phone tags its audio traffic (VLAN 50), while the PC sends untagged data traffic (VLAN 10). The switch prioritizes the Voice VLAN to prevent choppy phone calls while someone is downloading a large file.
+- **Hypervisor Networking:** In VMware ESXi or Proxmox, virtual machines are connected to a Virtual Switch inside the server. The physical NIC on the server is configured as an 802.1Q Trunk to the physical Top-of-Rack switch. This allows the virtualization admin to instantly place VM-A in the Database VLAN and VM-B in the Web VLAN purely through software.
+
+<Callout icon="danger" title="VLAN Hopping (Double Tagging)">
+A classic Layer 2 security vulnerability. If an attacker's PC is connected to an access port that happens to belong to the Native VLAN, they can mathematically craft a malicious Ethernet frame with *two* 802.1Q tags. The first switch strips the outer Native tag and forwards it down the trunk. The second switch receives the frame, reads the inner (forged) tag, and blindly forwards the attacker's traffic into a highly secure VLAN that they shouldn't have access to.
 </Callout>
-
-

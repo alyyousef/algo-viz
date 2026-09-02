@@ -1,29 +1,20 @@
 ---
-title: Class Invariants
-description: Mathematical truths about the internal state of an Object that must absolutely remain valid for the entire lifespan of the Object.
+title: Invariants (Redirect)
+description: "Redirecting to Assertions."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Class Invariants">
+    <ConceptTemplate title="Invariants">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In Object-Oriented theory, an Invariant is a mathematical condition that defines the logical integrity of an Object.
+<Callout icon="info" title="Redirect">
+The mathematical enforcement of **Invariants** (the architectural truth that an object's state must remain mathematically valid before and after every public method call) is covered in the Deep Dive for **Assertions & Contracts**. 
 
-## 1. The Mathematical Boundary
-If you have a `Fraction` class with two integers: `numerator` and `denominator`.
-The mathematical Invariant of this class is: `denominator != 0`.
-If the denominator ever becomes 0, the Object is no longer a valid Fraction; its mathematical existence is corrupted.
-
-## 2. Encapsulation as the Enforcer
-How do you mathematically guarantee an Invariant is never broken? **Encapsulation**.
-You make `denominator` completely `private`.
-The Constructor mathematically enforces the Invariant upon creation (if the user passes 0, it throws an error).
-Any public method (like `setDenominator(int v)`) mathematically checks the input (`if (v == 0) throw;`) *before* it mutates the private state.
-Because the outside world cannot physically touch the memory of the `denominator`, the Class Invariant is mathematically locked and guaranteed to remain true from the moment the Object is constructed until the moment the Garbage Collector destroys it.
-
+Please navigate to the [Assertions & Contracts](/kb/2.-programming-fundamentals--language-concepts/2.5-error-handling/assertions) module to explore Design by Contract.
+</Callout>

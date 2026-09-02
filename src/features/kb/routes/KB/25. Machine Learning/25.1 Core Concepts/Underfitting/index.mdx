@@ -1,35 +1,20 @@
 ---
-title: Underfitting
-description: The mathematical failure state where a Machine Learning model is too simplistic to capture the underlying patterns in the training data.
+title: Underfitting (Redirect)
+description: "Redirecting to the Bias-Variance Tradeoff."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Underfitting">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While Overfitting is the model memorizing the noise, **Underfitting (High Bias)** occurs when the mathematical architecture of the model is simply not powerful enough to capture the true underlying signal of the data.
+<Callout icon="info" title="Redirect">
+**Underfitting** (when a model is too simple to capture the underlying patterns in the data, resulting in high bias) is half of the most fundamental tradeoff in machine learning.
 
-## 1. The Mathematical Symptoms
-You can mathematically diagnose underfitting by tracking the Loss Function (Error) during training.
-- **Training Error**: Remains stubbornly high. No matter how long you train, the model cannot mathematically reduce the error.
-- **Validation Error**: Also remains high, closely matching the Training Error.
-
-The model is failing to learn. If you try to predict housing prices using only a single feature ("Number of Windows"), the model will underfit. The mathematical reality is that housing prices are highly complex, and a single variable is mathematically insufficient to capture that variance.
-
-## 2. Causes of Underfitting
-- **Model is Too Simple**: Using a strict Linear Regression model (which can only draw straight lines) on data that is mathematically shaped like a sine wave. The straight line will fail catastrophically.
-- **Excessive Regularisation**: If you set the L1/L2 penalty ($\lambda$) too high, you are mathematically suffocating the model. The optimizer is so terrified of the penalty that it forces all weights to 0.0, rendering the model useless.
-- **Too Few Epochs**: You terminated the mathematical training loop (Gradient Descent) before it had time to converge on the optimal weights.
-
-## 3. Mathematical Solutions
-Fixing underfitting is straightforward: give the model more mathematical power.
-- **Increase Complexity**: Switch from a Linear model to a Non-Linear model (like a Random Forest or Deep Neural Network).
-- **Feature Engineering**: Mathematically combine features (e.g., $x_1 \times x_2$) to expose more complex patterns to the algorithm.
-- **Reduce Regularisation**: Mathematically lower the penalty terms, allowing the model weights to grow and capture more variance.
-
+Please navigate to the [Bias-Variance Tradeoff](/kb/25.-machine-learning/25.1-core-concepts/bias-variance-tradeoff) module for a deep dive into underfitting and overfitting.
+</Callout>

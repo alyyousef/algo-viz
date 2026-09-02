@@ -1,36 +1,59 @@
 ---
 title: R² (Coefficient of Determination)
-description: The ultimate statistical metric indicating exactly what percentage of the variance in the target variable is mathematically explained by the Regression model's features.
+description: "A comprehensive guide to R-squared, a key metric that explains how much variance a regression model captures."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="R² (Coefficient of Determination)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-RMSE and MAE tell you exactly how many dollars or degrees your model is off by. But is an error of $50,000 good or bad? (If predicting the price of a $100M mansion, $50k is incredible. If predicting a $60k car, it is terrible).
+**R² (R-squared)**, also known as the Coefficient of Determination, is a statistical metric used to evaluate regression models. 
 
-**$R^2$** mathematically normalizes the error into a percentage, making it universally interpretable regardless of the scale of the data.
+While metrics like MSE or MAE tell you exactly *how wrong* your predictions are in absolute terms, R² tells you *how much better* your model is than simply guessing the average value. It measures the proportion of the variance in the dependent variable (the thing you are predicting) that is predictable from the independent variables (your features).
 
-## 1. The Mathematical Equation
-$R^2$ compares your complex Machine Learning model against the absolute dumbest model possible (a model that just predicts the exact Average Mean of the dataset every single time).
+## How R² Works
 
-$R^2 = 1 - \frac{\text{Sum of Squared Errors (Your Model)}}{\text{Total Sum of Squares (Mean Model)}}$
+To understand R², you have to compare your machine learning model to a baseline "dumb" model.
 
-- If $R^2 = 1.0$: Your model is mathematical perfection. It explains 100% of the variance. Every single prediction is exactly correct.
-- If $R^2 = 0.0$: Your massive Deep Neural Network is mathematically no better than a script that just outputs the average value of the dataset.
-- If $R^2 < 0$: Your model is mathematically worse than just guessing the average. (You have severely overfit or inverted the logic).
+*   **The Baseline Model:** The simplest possible model is one that ignores all features and simply predicts the **mean (average) value** of the target for every single data point.
+*   **Your Model:** A linear regression (or neural network) that uses features (like square footage, location, etc.) to make specific predictions.
 
-## 2. Interpretation (Explained Variance)
-An $R^2$ of **0.85** mathematically states: *"85% of the variance in house prices is perfectly explained by the features in our dataset (Square Footage, Zip Code). The remaining 15% is due to random noise or missing variables (like the color of the paint)."*
+R² essentially calculates: **How much did your model reduce the error compared to just guessing the average?**
 
-## 3. The Flaw (Adjusted R²)
-$R^2$ has a fatal mathematical flaw. If you add completely random, useless columns to your dataset (like the homeowner's "Favorite Movie"), standard $R^2$ will mathematically *always increase* (or stay flat), never decrease. This encourages Data Scientists to dump 10,000 garbage columns into the model to artificially inflate the score.
+### The Formula
 
-**Adjusted $R^2$** mathematically fixes this. It introduces a massive algebraic penalty for every new column added to the model. If you add a column and it doesn't significantly improve the predictions, Adjusted $R^2$ will mathematically *drop*, punishing you for increasing the complexity of the model without merit.
+$$\text{R}^2 = 1 - \frac{\text{Sum of Squared Residuals (SSR)}}{\text{Total Sum of Squares (SST)}}$$
 
+Where:
+*   **SSR (Sum of Squared Residuals):** The sum of the squared errors of *your* model's predictions. (How wrong is your model?)
+*   **SST (Total Sum of Squares):** The sum of the squared errors of the *baseline* model (guessing the mean). (How much natural variance is in the data?)
+
+## Interpreting the Score
+
+R² is usually expressed as a percentage between 0 and 1 (or 0% to 100%).
+
+*   **R² = 1.0 (100%):** A perfect model. Your model explains 100% of the variance in the data. Every prediction is exactly correct.
+*   **R² = 0.0 (0%):** A useless model. Your model is exactly as bad as just guessing the average every time. It learned nothing from the features.
+*   **R² < 0.0 (Negative):** A catastrophic model. Your model is actually *worse* than just predicting the average. This usually only happens if you force a linear regression line through the wrong intercept or overfit a non-linear model terribly.
+
+<Callout icon="chart-pie" title="Example">
+If you are predicting house prices and your model gets an R² of 0.80, you can formally say: *"80% of the variance in house prices can be explained by the features (size, location, age) used in my model."* The remaining 20% is unexplained noise or missing features.
+</Callout>
+
+## The Problem with R²: Adding Features
+
+R² has one major mathematical flaw: **it can never decrease when you add new features to your model.**
+
+Even if you add a completely random, useless feature (like "the color of the homeowner's socks") to your house-pricing model, the R² will either stay exactly the same or go up slightly just due to random chance matching. This encourages building overly complex models with hundreds of useless features.
+
+### The Solution: Adjusted R²
+
+To fix this, statisticians created **Adjusted R²**. This metric mathematically penalizes the score for every additional feature you add to the model. 
+
+If you add a new feature, the Adjusted R² will only increase if that feature improves the model *more than would be expected by random chance*. If you add a useless feature, the Adjusted R² will go down. When evaluating multiple regression models with different numbers of features, you should always look at the Adjusted R², not the standard R².

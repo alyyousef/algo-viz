@@ -1,34 +1,20 @@
 ---
-title: Outlier Detection
-description: The mathematical algorithms used to identify anomalous data points that deviate so drastically from the norm that they threaten model integrity.
+title: Outlier Detection (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Outlier Detection">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you calculate the average net worth of 10 random people in a coffee shop, it might be $50,000. If Elon Musk walks in, the average mathematically skyrockets to $20 Billion. Elon Musk is an **Outlier**.
+<Callout icon="info" title="Redirect">
+The statistical techniques of **Outlier Detection** (Z-scores, IQR, and isolation forests) are used extensively during EDA. 
 
-Machine Learning models (especially linear regressions) are incredibly sensitive to outliers. A single corrupted data point (e.g., someone typing their age as 999) will pull the mathematical line of best fit entirely off course, destroying the model's accuracy for normal users.
-
-## 1. Statistical Methods (Z-Score & IQR)
-For normally distributed data, Data Scientists use pure mathematics.
-- **Z-Score**: You mathematically calculate how many Standard Deviations a data point is from the Mean. If a data point has a Z-Score greater than 3 (meaning it is further out than 99.7% of the data), you flag it as an outlier and mathematically drop it.
-- **Interquartile Range (IQR)**: A more robust mathematical method. You calculate the 25th percentile (Q1) and the 75th percentile (Q3). The IQR is Q3 - Q1. Any data point that lies outside `Q1 - 1.5 * IQR` or `Q3 + 1.5 * IQR` is mathematically flagged.
-
-## 2. Machine Learning Methods (Isolation Forests)
-In complex, high-dimensional data, a user might have a normal Age, and a normal Income, but having that specific Age *with* that specific Income is anomalous. Simple statistics fail here.
-
-**Isolation Forests** are the industry standard ML algorithm for anomaly detection (widely used in credit card fraud).
-The algorithm mathematically builds a random Decision Tree. Because normal data is clustered closely together, it takes many mathematical splits to isolate a normal data point into a leaf node.
-However, because outliers are far away from the cluster, they are mathematically isolated in just 1 or 2 splits. The algorithm uses this "path length" to score anomalies.
-
-## 3. Domain Knowledge
-Not all outliers are errors. If a credit card registers a $50,000 transaction, it might be mathematically anomalous, but it is real data representing a massive fraud event. Dropping it would destroy the exact signal you are trying to learn. Outlier Detection requires intense business context.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts identify anomalies in product data.
+</Callout>

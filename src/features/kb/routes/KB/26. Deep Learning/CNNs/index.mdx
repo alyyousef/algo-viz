@@ -1,33 +1,57 @@
 ---
 title: Convolutional Neural Networks (CNNs)
-description: The specialized neural network architecture that revolutionized Computer Vision.
+description: "A comprehensive guide to Convolutional Neural Networks, the architecture that revolutionized computer vision."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Convolutional Neural Networks (CNNs)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A Convolutional Neural Network (CNN) is a class of deep neural networks heavily utilized for analyzing visual imagery. Before CNNs, attempting to feed raw pixels into a standard Multi-Layer Perceptron required an astronomical amount of weights, making image processing practically impossible.
+A **Convolutional Neural Network (CNN)** is a class of deep neural network that is specifically designed to process data with a grid-like topology, most notably images. 
 
+Before CNNs became dominant (around 2012 with AlexNet), researchers spent years manually writing code to detect edges and shapes in images. CNNs replaced this entire field by learning to detect visual features entirely on their own.
 
-<Callout icon="success" title="The ImageNet Breakthrough">
+## The Problem with Standard Networks
 
+If you try to feed a $1000 \times 1000$ pixel color image into a standard, fully-connected neural network, the very first layer would require **3 million inputs** ($1000 \times 1000 \times 3$ color channels). If the first hidden layer has 1000 neurons, you instantly have **3 billion weights** just in the first layer. 
 
-  In 2012, a CNN named **AlexNet** decimated all non-deep-learning competitors in the ImageNet visual recognition challenge. This moment single-handedly ignited the modern Deep Learning boom.
+The network would be impossible to train, incredibly prone to overfitting, and critically, it would have no concept of "spatial awareness." A dog in the top-left corner would look mathematically completely different than a dog in the bottom-right corner.
 
+## The Convolution Operation
 
+CNNs solve this using **Filters** (also called Kernels). 
+
+Instead of connecting every pixel to every neuron, a CNN slides a small window (e.g., a $3 \times 3$ grid of weights) across the entire image. At each step, it multiplies the pixels in the window by the weights in the filter. 
+
+Because the exact same $3 \times 3$ filter is dragged across the entire image, the CNN possesses **Translation Invariance**. If the filter learns to detect a dog's ear, it will detect that ear whether it is in the top-left or the bottom-right of the image.
+
+### Feature Maps
+When a filter slides across an image, it outputs a new 2D grid of numbers called a **Feature Map**. 
+*   In the **first layer**, filters learn to detect very simple things, like horizontal lines, vertical lines, or basic color gradients.
+*   In the **middle layers**, filters combine the lines from the previous layer to detect shapes, like circles or corners.
+*   In the **final layers**, filters combine shapes to detect highly complex objects, like dog faces, car wheels, or human eyes.
+
+## Key Components of a CNN Architecture
+
+A standard CNN is built by stacking three main types of layers:
+
+### 1. Convolutional Layers
+This is the core building block where the filters slide across the image to extract features. Modern CNNs might have hundreds of filters in a single layer.
+
+### 2. Pooling Layers (Downsampling)
+After a convolutional layer extracts features, a **Pooling Layer** shrinks the size of the feature map. The most common technique is **Max Pooling**. 
+If you have a $2 \times 2$ window, Max Pooling simply looks at the 4 pixels and keeps only the highest number, discarding the other 3. This reduces the computational load by 75% and forces the network to care only about whether a feature exists, not its exact, pixel-perfect location.
+
+### 3. Fully Connected Layers (The Classifier)
+After the image has been passed through dozens of Convolution and Pooling layers, it has been compressed into a dense list of high-level features (e.g., "Contains fur," "Contains snout," "Contains wheels"). 
+This list is flattened into a 1D array and fed into a standard, fully-connected neural network to make the final classification (e.g., outputting "99% Dog").
+
+<Callout icon="lightbulb" title="Modern Alternatives">
+While CNNs (like ResNet) dominated computer vision for a decade, they are currently being challenged by **Vision Transformers (ViTs)**. ViTs chop images into patches and process them using the Attention mechanism originally designed for text.
 </Callout>
-
-
-## Core Operations
-
-
-<ComparisonTable headers={['Operation', 'Description']} rows={[ ['Convolution', 'Sliding a small matrix (a filter/kernel) across the image to mathematically detect features like edges, curves, and textures. This shares weights across the image, drastically reducing computation.'], ['Pooling (Subsampling)', 'Shrinking the dimensions of the feature maps (e.g., Max Pooling keeps only the brightest pixel in a 2x2 grid). This makes the network invariant to small shifts and distortions.'], ['Fully Connected Layers', 'After multiple rounds of convolution and pooling, the 2D feature maps are flattened into a 1D vector and fed into standard dense layers to make the final classification.'] ]} />
-
-

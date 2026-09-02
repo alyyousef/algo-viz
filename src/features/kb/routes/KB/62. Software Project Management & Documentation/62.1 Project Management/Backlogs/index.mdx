@@ -1,19 +1,40 @@
 ---
-title: Backlogs
-description: A prioritized list of work for the development team that is derived from the roadmap and its requirements.
+title: The Product Backlog
+description: "An ordered, centralized list of everything that is known to be needed in the product, serving as the single source of requirements for any changes to be made."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="The Backlog">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="The Product Backlog"
+  subtitle="The Master To-Do List"
+  tags={['Project Management', 'Agile', 'Scrum', 'Product Management']}
+>
 
-The **Backlog** is the mathematical graveyard of good ideas.
+In Agile software development, the **Product Backlog** is the ultimate source of truth for what a team needs to build. It is a prioritized list of features, bug fixes, technical debt, and knowledge acquisition (research) required to build the product.
 
-It is a massive list of every single User Story, bug fix, and technical debt item the company biologically wants to build. The Product Manager's biological job is to ruthlessly rank this list mathematically, putting the highest-value items at the absolute top. During Sprint Planning, the engineers only look at the top 10 items. Items at the bottom of the Backlog are mathematically ignored and usually never get built.
+## 1. Ownership and Prioritization
 
+The Backlog is exclusively owned by the **Product Owner (PO)**. 
+While anyone (developers, users, stakeholders) can add items to the backlog, the Product Owner has the final say on priority. 
+Items at the top of the backlog must be highly detailed, estimated, and ready to be worked on immediately. Items at the very bottom are often vague ideas ("Add AI integration") that won't be analyzed until they move up in priority.
+
+## 2. Backlog Grooming (Refinement)
+
+A backlog is a living document. If left unmanaged, it becomes a graveyard of thousands of outdated ideas.
+Teams hold regular **Backlog Grooming** sessions where they:
+- **Delete** irrelevant items.
+- **Break down** massive features into smaller, manageable chunks (Epics into User Stories).
+- **Estimate** the effort required for the top items using Story Points.
+- **Re-prioritize** based on shifting business needs.
+
+## 3. Sprint Backlog vs Product Backlog
+
+- **Product Backlog**: The master list of *everything*.
+- **Sprint Backlog**: A small subset of items pulled from the top of the Product Backlog that the engineering team commits to completing during the current 2-week Sprint. Once the Sprint starts, the Sprint Backlog is locked, protecting developers from changing requirements.
+
+<Callout type="warning" title="The Icebox">
+  Many teams maintain an "Icebox" or "Someday/Maybe" list separate from the active backlog. If an idea is good but not relevant for the next 6-12 months, it goes in the Icebox to prevent it from cluttering the active Product Backlog.
+</Callout>
+
+</ConceptTemplate>

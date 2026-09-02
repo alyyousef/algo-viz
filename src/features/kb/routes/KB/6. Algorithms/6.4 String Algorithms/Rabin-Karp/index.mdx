@@ -4,18 +4,11 @@ description: "A string-searching algorithm that mathematically uses a Rolling Ha
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Rabin-Karp Algorithm"
   subtitle="Searching Strings with Hashes"
   tags={['Algorithms', 'Strings', 'Hashing', 'Mathematics']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 In a standard string search (like looking for "APPLE" inside a massive book), the algorithm compares characters one by one. The **Rabin-Karp algorithm** compares *Hashes* instead.
 
@@ -28,3 +21,4 @@ If the hashes don't match, the algorithm mathematically "rolls" the window one c
 Because the algorithm compares integers instead of strings, you can use a Hash Set to search for 1,000 different words simultaneously!
 Rabin-Karp is the mathematical foundation of Plagiarism Detection software. It chops a student's essay into thousands of 5-word chunks, calculates their rolling hashes, and instantly compares them against a database of 10 billion known internet hashes in O(1) time per chunk.
 
+</ConceptTemplate>

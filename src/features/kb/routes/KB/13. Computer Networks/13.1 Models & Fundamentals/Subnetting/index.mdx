@@ -1,54 +1,99 @@
 ---
 title: Subnetting
-description: The mathematical process of logically dividing a single large IP network into multiple smaller, isolated networks to improve security and performance.
+description: "The mathematical practice of dividing a single large IP network into multiple smaller, logically isolated sub-networks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Subnetting">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a massive university puts all 50,000 of its computers on a single network, the network will instantly collapse. Every time a computer uses ARP or DHCP, it sends a broadcast message to all 50,000 computers. This "Broadcast Storm" will overwhelm the switches.
+**Subnetting** is arguably the most critical and mathematically intensive skill in foundational networking. It is the process of taking a large block of IP addresses provided by an ISP or cloud provider and slicing it into smaller, manageable chunks (subnets).
 
-**Subnetting** is the mathematical process of taking a large block of IP addresses and slicing it into smaller, isolated "Subnets." Computers in Subnet A cannot natively talk to computers in Subnet B without passing through a router (which blocks broadcast traffic).
+Why subnet? 
+1. **Security:** You isolate networks. Your database servers go in one subnet, and public web servers go in another, separated by a firewall.
+2. **Performance:** If you put 5,000 computers on a single network, the Layer 2 ARP broadcast traffic would cripple the network switches. Subnetting limits the scope of broadcasts.
 
-## 1. The Subnet Mask
+## 1. Deep Dive & Mechanics
 
-An IP address (like `192.168.1.50`) actually contains two pieces of information:
-1. **The Network ID**: Which neighborhood the computer lives in.
-2. **The Host ID**: The specific house number of the computer.
+An IPv4 address (32 bits) is split into a **Network ID** and a **Host ID**. 
 
-The **Subnet Mask** is a mathematical filter (like `255.255.255.0`) that tells the computer exactly where the Network ID ends and the Host ID begins.
-If a computer's IP is `192.168.1.50` with a mask of `255.255.255.0`, the computer inherently knows that the network is `192.168.1` and its specific ID is `50`.
+When you subnet, you perform **bit borrowing**. You "borrow" bits from the Host portion of the address and reassign them to the Network portion. By doing this, you increase the number of available subnets, but mathematically decrease the number of host IP addresses available inside each of those subnets.
 
-## 2. CIDR Notation (Classless Inter-Domain Routing)
+The boundary is controlled by the **Subnet Mask**, typically written in CIDR notation (e.g., `/24`).
 
-Writing out `255.255.255.0` is tedious. Modern networking uses **CIDR Notation**, which simply counts the number of "1" bits in the subnet mask.
-- A mask of `255.255.255.0` has exactly 24 ones in binary.
-- In CIDR notation, this is written as **`/24`**.
+## 2. Mathematical / Theoretical Foundation
 
-### Common CIDR Blocks:
-- **`/24`**: Provides exactly 256 IP addresses (254 usable). Perfect for a small office or home.
-- **`/16`**: Provides 65,536 IP addresses. Used by large corporations.
-- **`/8`**: Provides 16.7 million IP addresses. Used by massive ISPs.
+Subnetting relies entirely on base-2 (Binary) mathematics. 
 
-## 3. Why Subnet?
+**Key Formulas:**
+1. **Number of Subnets created:** $2^s$ (where $s$ is the number of bits borrowed).
+2. **Number of Usable Hosts per subnet:** $2^h - 2$ (where $h$ is the number of host bits remaining). We subtract 2 because the all-zeros address is reserved for the Network ID, and the all-ones address is reserved for the Broadcast Address.
 
-1. **Performance**: Smaller subnets reduce broadcast traffic, keeping the network fast.
-2. **Security**: If the HR department and the Engineering department are on different subnets, you can put a firewall router between them and strictly control which databases they are allowed to access. (If they were on the same subnet, traffic flows directly through the switch, bypassing the firewall entirely).
+**Example Scenario:**
+You are given `192.168.1.0 /24` (256 total IPs). You need to split this into 4 smaller networks.
+- To get 4 subnets, you need to borrow 2 bits ($2^2 = 4$).
+- The new prefix is `/24 + 2 = /26`.
+- You have $32 - 26 = 6$ host bits remaining.
+- Hosts per subnet: $2^6 - 2 = 64 - 2 = 62$ usable hosts.
 
+Your 4 new subnets are:
+1. `192.168.1.0 /26` (IPs: 1-62)
+2. `192.168.1.64 /26` (IPs: 65-126)
+3. `192.168.1.128 /26` (IPs: 129-190)
+4. `192.168.1.192 /26` (IPs: 193-254)
 
-<Callout icon="error" title="The Subnet Math Trap">
+## 3. Real-World Implementation
 
+In cloud architecture (like AWS or Terraform), you configure subnets using CIDR strings. You do not manually type out binary.
 
-  In any subnet, the very first IP address is ALWAYS reserved for the "Network Address" (used for routing tables), and the very last IP address is ALWAYS reserved for the "Broadcast Address". Therefore, a `/24` subnet gives you 256 addresses, but you can only assign 254 of them to actual computers.
+```bash
+# Example Terraform configuration for an AWS VPC Subnet
+resource "aws_subnet" "database_subnet" {
+  vpc_id     = aws_vpc.main.id
+  
+  # The VPC is 10.0.0.0/16 (65,536 IPs). 
+  # We carve out a /24 subnet (256 IPs) specifically for databases.
+  cidr_block = "10.0.1.0/24"
+  
+  availability_zone = "us-east-1a"
+  tags = {
+    Name = "Private-DB-Subnet"
+  }
+}
+```
 
+## 4. Visualizations
 
+```mermaid
+pie title Subnetting a /24 Network into /26s
+    "Subnet 1: .0/26 (64 IPs)" : 64
+    "Subnet 2: .64/26 (64 IPs)" : 64
+    "Subnet 3: .128/26 (64 IPs)" : 64
+    "Subnet 4: .192/26 (64 IPs)" : 64
+```
+
+## 5. Interview Prep
+
+**Q: You are given a `/29` subnet. How many usable IP addresses does it contain?**
+**A:** A `/29` means 29 bits are used for the network, leaving 3 bits for the host. $2^3 = 8$ total IPs. Subtract 2 for the Network and Broadcast addresses, leaving exactly **6 usable IP addresses**. `/29`s are frequently used for Point-to-Point router links or small public IP blocks given by an ISP.
+
+**Q: What is a `/31` subnet used for?**
+**A:** Mathematically, $32 - 31 = 1$ host bit. $2^1 = 2$ IPs. If you subtract 2, you get 0 usable IPs. However, RFC 3021 created a special exception for Point-to-Point links between two routers. Because there are only two devices on the wire, there is no need for a Broadcast address. A `/31` allows exactly 2 usable IPs, saving address space.
+
+**Q: In AWS, if you create a `10.0.1.0/24` subnet, how many IPs are actually usable by EC2 instances?**
+**A:** Standard math dictates $256 - 2 = 254$. However, AWS reserves the first 4 IPs and the last IP (Network, VPC Router, Amazon DNS, Future Use, and Broadcast). Therefore, you have $256 - 5 = 251$ usable IPs.
+
+## 6. Production Use Cases
+
+- **VPC Design:** A standard Cloud Architecture best practice is to deploy a `/16` VPC, and then subnet it across 3 Availability Zones. Each zone gets a `/24` Public Subnet (for Load Balancers), a `/24` Private Subnet (for App Servers), and a `/24` Database Subnet. Subnetting allows strict Security Group and Network ACL rules to govern traffic between these layers.
+- **Data Center Segmentation:** A hospital might subnet their internal network to place all medical imaging machines (MRIs, X-Rays) in a `10.50.x.x` subnet, physically isolated from the guest Wi-Fi subnet `192.168.x.x` to comply with HIPAA regulations.
+
+<Callout icon="info" title="The Subnet Cheat Code">
+Network Engineers rarely do the binary math by hand in production. They use the "Magic Number" trick. Subtract the interesting octet of the subnet mask from 256. If your mask is `255.255.255.224`, the magic number is $256 - 224 = 32$. This instantly tells you that your subnets increment by 32 (e.g., .0, .32, .64, .96).
 </Callout>
-
-

@@ -1,19 +1,32 @@
 ---
-title: Quantitative finance
-description: The use of mathematical models and extremely large datasets to analyze financial markets and securities.
+title: Quantitative Finance
+description: "The application of mathematical models, statistics, and massive computing power to analyze financial markets and securities."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Quantitative Finance">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Quantitative Finance"
+  subtitle="Algorithms on Wall Street"
+  tags={['Computational Finance', 'Machine Learning', 'Algorithms', 'Data Science']}
+>
 
-The stock market is no longer run by human traders yelling on a biological trading floor. It is a massive, distributed computer system.
+**Quantitative Finance** (or "Quant") is the domain where Wall Street meets Silicon Valley. Instead of humans reading news articles and looking at balance sheets, Quants use pure mathematics, stochastic calculus, and C++ algorithms to find tiny, highly profitable inefficiencies in global financial markets.
 
-**Quantitative Finance** (Quant) is the application of hardcore computer science, statistics, and physics to financial markets. "Quants" mathematically model the probability of a stock going up or down. They do not care about a company's CEO or their biological products; they only care about the mathematical signals hidden in the massive streams of market data.
+## 1. Alpha Generation
 
+The ultimate goal of a Quant is to find "Alpha"—a mathematical edge that allows them to beat the market. 
+They do this by feeding massive datasets into Machine Learning models. 
+- **Alternative Data**: Instead of just looking at stock prices, Quants will train computer vision algorithms on satellite imagery of Walmart parking lots to predict their quarterly earnings before the official report is released, allowing their algorithms to buy or sell the stock milliseconds before the rest of the world reacts.
+
+## 2. High-Frequency Trading (HFT)
+
+A major sub-domain of Quantitative Finance is HFT. 
+HFT algorithms do not hold stocks for years; they hold them for microseconds. The algorithms act as market makers, providing liquidity and making fractions of a penny on millions of trades per second.
+This is a domain of extreme low-latency engineering. Quants write code in highly optimized C++ or program logic directly into hardware **FPGAs** (Field Programmable Gate Arrays) because the time it takes an electric signal to travel through a standard CPU architecture is considered "too slow."
+
+## 3. Risk Management
+
+Quants don't just predict profits; they mathematically model catastrophe.
+Using **Value at Risk (VaR)** models, computational finance algorithms simulate worst-case scenarios (e.g., "What happens to our portfolio if oil drops 20% and the Euro crashes simultaneously?"). If the algorithmic risk crosses a specific threshold, the computers will autonomously hedge the portfolio by automatically buying insurance (options) in the derivatives market.
+
+</ConceptTemplate>

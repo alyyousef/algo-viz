@@ -1,36 +1,52 @@
 ---
-title: Byte-Pair Encoding (BPE)
-description: The industry standard tokenization algorithm used by GPT, Llama, and almost all modern LLMs.
+title: Tokenisation (BPE)
+description: "A deep dive into Byte-Pair Encoding (BPE), the algorithm used by GPT-4 to compress raw human language into mathematical tokens."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Byte-Pair Encoding (BPE)">
+    <ConceptTemplate title="Tokenization (BPE)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Byte-Pair Encoding (BPE) is a simple data compression technique from 1994 that was ingeniously adapted for Natural Language Processing. It is the dominant tokenization strategy used by OpenAI (tiktoken) and Meta (Llama).
+*(Note: This module focuses specifically on the algorithmic mechanics of Byte-Pair Encoding. For a broader overview of tokenization techniques, see the **SentencePiece** module).*
 
-Instead of operating on Unicode characters, modern BPE operates directly on **raw bytes**. This guarantees that the model can process absolutely any text, in any language, or any random string of code, with a completely fixed vocabulary size and zero "Unknown" (`<UNK>`) tokens.
+**Byte-Pair Encoding (BPE)** is the most widely used tokenization algorithm in modern Generative AI, forming the bedrock of OpenAI's GPT-3, GPT-4, and Anthropic's Claude. 
 
+Originally invented in 1994 as a data compression algorithm (to make files smaller on hard drives), BPE was co-opted by AI researchers to solve a massive problem in Natural Language Processing: how do we handle words the AI has never seen before?
 
-<Callout icon="tip" title="The Glitch Tokens">
+## The Problem: Out-Of-Vocabulary (OOV)
 
+In early AI, researchers used **Word-Level Tokenization**. They created a dictionary of the 50,000 most common English words. 
+*   "Apple" = Token 1
+*   "Car" = Token 2
 
-  Because BPE relies on frequency, it sometimes creates strange tokens. For example, if a specific Reddit username appeared thousands of times in the training data, BPE might merge it into a single token. If that token isn\'t trained well, asking the model about it can cause bizarre "glitch" hallucinations.
+If a user typed *"I bought an AppleCar"*, the AI would crash. The word *"AppleCar"* was not in its 50,000-word dictionary. This is called the Out-Of-Vocabulary (OOV) problem.
 
+## How BPE Solves OOV
 
+BPE ignores the concept of "words" entirely. Instead, it builds its dictionary statistically from the ground up, starting with single characters.
+
+### The Training Algorithm
+1.  **Start with Bytes:** BPE starts by breaking down a massive training dataset (e.g., all of Wikipedia) into individual characters (a, b, c, d).
+2.  **Find the Most Frequent Pair:** BPE scans the entire dataset and finds the two characters that appear next to each other most often. Let's say "e" and "r" appear together 10 million times.
+3.  **Merge:** BPE permanently merges "e" and "r" into a new, single token: `"er"`. It adds `"er"` to its vocabulary list.
+4.  **Repeat:** It scans the dataset again. It finds that `"t"` and `"h"` appear together often. It merges them into `"th"`.
+5.  **Build Subwords:** After thousands of loops, it starts merging larger chunks. It merges `"th"` and `"e"` to create the full word token `"the"`. It merges `"play"` and `"ing"` to create `"playing"`.
+
+The engineers tell the algorithm to stop when the vocabulary list reaches exactly 100,000 tokens (this is the size of GPT-4's tokenizer, called `tiktoken`).
+
+### The Result (Subword Tokenization)
+
+Because BPE contains full words (`"apple"`), common suffixes (`"ing"`), and single characters (`"c"`, `"a"`, `"r"`), it is mathematically impossible for it to encounter an OOV error.
+
+If you give GPT-4 the made-up word *"SuperAppleCarFast"*, the tokenizer won't crash. It simply uses its BPE dictionary to mathematically chop the alien word into the largest recognizable chunks it has in its memory:
+`["Super", "Apple", "Car", "Fast"]`
+
+<Callout icon="bug" title="The Tokenization Flaw (Why AI can't spell)">
+If you ask ChatGPT to *"Write a word with 4 'r's in it"*, it often fails completely. This is a direct result of BPE. The LLM does not see letters; it sees tokens. If the word is "Strawberry", BPE might tokenize it as `["Straw", "berry"]`. Because the letters 'r' are hidden inside the mathematical token for `"berry"`, the neural network is literally blind to the individual letters, making spelling tasks incredibly difficult.
 </Callout>
-
-
-## The BPE Algorithm
-
-1. Treat every individual byte in the training corpus as a separate token.
-2. Find the most frequently adjacent pair of tokens (e.g., `t` and `h`).
-3. Merge them into a new single token (`th`).
-4. Repeat this process until you reach your target vocabulary size (usually around 32,000 to 128,000 tokens).
-

@@ -1,39 +1,88 @@
 ---
 title: AI Agents
-description: Autonomous software entities that perceive their environment, execute logic, and take actions using tools to achieve long-term goals.
+description: "How Large Language Models are augmented with tools, memory, and planning to take autonomous actions in the real world."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="AI Agents">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-For decades, AI models were strictly passive. You gave a Neural Network an image, it classified it, and it stopped.
-An **AI Agent** is an active, autonomous system. It does not just classify data; it mathematically pursues a goal over time, taking actions, observing the results, and adjusting its strategy.
+An **Agent** is an AI system that does not just passively answer questions in a chat window, but actively interacts with its environment to achieve a goal. 
+If an LLM is the "brain", an Agent provides it with "hands" (tools), a "notepad" (memory), and a "loop" (reasoning architecture) to execute complex workflows autonomously.
 
-## 1. The Agent Architecture (PEAS)
-In classical AI, Agents are defined by the **PEAS** framework:
-- **Performance Measure**: The mathematical metric for success (e.g., getting a high score in Pac-Man).
-- **Environment**: The world the agent operates in (e.g., the Pac-Man grid).
-- **Actuators**: The mechanisms the agent uses to take action (e.g., moving Up, Down, Left, Right).
-- **Sensors**: How the agent perceives the world (e.g., reading the pixel coordinates of the ghosts).
+## 1. The Anatomy of an Agent
 
-## 2. LLM-Based Agents (Modern Era)
-In the modern era, Large Language Models (LLMs) act as the "brain" of the agent.
+To convert a standard text-completion model into an autonomous Agent, four components are required:
 
-When given a goal ("Analyze our Q3 revenue and email the summary to the CEO"), the LLM Agent utilizes a framework like **ReAct (Reason + Act)**:
-1. **Thought**: The LLM writes out a plan: "First, I need to fetch the Q3 data from the PostgreSQL database."
-2. **Action (Tool Use)**: The LLM generates a SQL query and mathematically triggers an external API (a Tool) to execute it.
-3. **Observation**: The database returns the raw revenue numbers.
-4. **Thought**: The LLM reads the numbers and realizes: "Now I need to use the Email API to send this."
+### 1. The Core LLM (Reasoning Engine)
+The foundation of the agent. The LLM processes the current state, analyzes what needs to be done, and decides which tool to call. Advanced models like GPT-4 or Claude 3.5 are typically required, as "weak" models struggle to format tool calls perfectly (e.g., in JSON) or recover from errors.
 
-By looping through Thought -> Action -> Observation, the Agent can autonomously operate a computer, browse the internet, and write code to achieve massive, multi-step goals.
+### 2. Tools (Actions)
+The API functions the agent is allowed to execute. For example:
+- `search_web(query: str) -> str`
+- `execute_python(code: str) -> str`
+- `send_email(to: str, body: str) -> bool`
 
-## 3. Challenges: Hallucination and Drifting
-Agents are incredibly powerful, but they suffer from drifting. Over a 50-step task, a slight hallucination in Step 4 can cause the Agent to mathematically diverge completely from the goal, resulting in an infinite loop of API errors. Fixing this requires complex memory systems (Vector Databases) and strict deterministic state machines.
+The LLM is prompted with a list of these tool signatures. Instead of returning text to the user, the LLM outputs a structured command to call a tool. The system executes the tool, and feeds the output back into the LLM's context.
 
+### 3. Memory (State)
+Agents need to remember what they have done.
+- **Short-Term Memory:** The current context window (the ongoing chat history, containing the scratchpad of recent thoughts and tool outputs).
+- **Long-Term Memory:** External databases (often Vector Databases using RAG) where the agent can store and retrieve facts across multiple sessions.
+
+### 4. Planning (The Loop)
+Agents operate in a loop. The most famous early architecture is **ReAct** (Reasoning and Acting).
+1. **Thought:** The agent analyzes the problem ("I need to find the weather in Tokyo. I should use the weather API.")
+2. **Action:** The agent outputs a tool call (`get_weather("Tokyo")`).
+3. **Observation:** The system executes the API and returns `72°F, Sunny`.
+4. **Thought:** ("Now I have the weather. I can answer the user.")
+5. **Final Answer:** "It is currently 72°F in Tokyo."
+
+## 2. Advanced Agentic Architectures
+
+While single-agent loops (like ReAct) are powerful, they often get stuck in infinite loops if a tool fails. Modern architectures use multi-agent systems and state machines.
+
+### Multi-Agent Frameworks (e.g., AutoGen, CrewAI)
+Instead of one massive agent trying to do everything, you spin up a "Software Company" of specialized agents:
+- **Agent 1 (The Planner):** Breaks the user's request into 5 sub-tasks.
+- **Agent 2 (The Researcher):** Has web-search tools to find information.
+- **Agent 3 (The Coder):** Has terminal and file-writing tools to build a prototype.
+- **Agent 4 (The Reviewer):** Reads the code and critiques it, sending it back to the Coder if there are bugs.
+
+### Graph-Based Agents (e.g., LangGraph)
+Instead of a simple while-loop, the agent's workflow is defined as a Directed Acyclic Graph (DAG) or a State Machine.
+- The graph strictly dictates the flow of control (e.g., "The Coder can only pass state to the Reviewer. The Reviewer can pass state to the User for approval, or back to the Coder"). This drastically improves reliability.
+
+## 3. Real-World Implementation
+
+Building an agent involves constructing a massive metaprompt (system prompt) that defines its persona, rules, and tool schemas.
+
+```python
+# Conceptual example of a tool definition sent to an LLM
+tools = [
+    {
+        "name": "read_file",
+        "description": "Reads the contents of a local file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "filepath": {"type": "string", "description": "Absolute path to the file"}
+            },
+            "required": ["filepath"]
+        }
+    }
+]
+
+# The LLM receives the tools, and outputs a JSON blob:
+# { "function": "read_file", "args": { "filepath": "/src/main.py" } }
+```
+
+<Callout icon="warning" title="The Context Window Bottleneck">
+Agents suffer from "Context Bloat". Every time the agent thinks, acts, and receives a massive block of text as an observation (e.g., scraping a webpage or catting a 500-line file), that text is permanently appended to the prompt. If the agent acts 20 times, the prompt might grow to 100,000 tokens, causing the LLM to become confused and "forget" its original instructions.
+</Callout>

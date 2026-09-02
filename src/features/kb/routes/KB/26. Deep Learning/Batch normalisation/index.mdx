@@ -1,36 +1,61 @@
 ---
-title: Batch Normalisation
-description: A transformative technique that stabilizes deep neural networks by mathematically normalizing the inputs of each layer across the mini-batch during training.
+title: Batch Normalization
+description: "A detailed look at Batch Normalization, a technique that stabilizes and accelerates the training of deep neural networks."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Batch Normalisation">
+    <ConceptTemplate title="Batch Normalization">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a Deep Neural Network, Layer 5 relies on the outputs of Layer 4. But as the network trains, Layer 4 is constantly updating its weights, meaning the distribution of the data it passes to Layer 5 is constantly shifting. This is mathematically known as **Internal Covariate Shift**. It makes training deep networks painfully slow and unstable.
+**Batch Normalization** (often abbreviated as BatchNorm) is a mathematical operation applied to the hidden layers of a neural network. Introduced in 2015, it drastically changed deep learning by allowing researchers to train vastly deeper networks much faster than before.
 
-## 1. The Mathematical Solution
-**Batch Normalisation (BatchNorm)** adds a mathematical operation between layers.
-For every mini-batch of data passing through the layer, it:
-1. Calculates the **Mean** ($mu$) of the batch.
-2. Calculates the **Variance** ($sigma^2$) of the batch.
-3. Mathematically normalizes the batch so the mean is $0$ and the standard deviation is $1$.
+Before BatchNorm, training deep networks was notoriously difficult because they were hyper-sensitive to initialization, required tiny learning rates, and often suffered from gradients vanishing or exploding.
 
-By mathematically guaranteeing that Layer 5 will *always* receive data perfectly centered at $0$, the network is stabilized and can be trained with vastly higher Learning Rates.
+## The Problem: Internal Covariate Shift
 
-## 2. The Gamma and Beta Parameters
-If we strictly force the data to a mean of $0$ and variance of $1$, we mathematically destroy the expressive power of the network. (Maybe the network *wants* the data to be shifted to the right to trigger a specific ReLU activation).
-BatchNorm introduces two learnable parameters:
-- **Gamma ($gamma$)**: Scales the variance.
-- **Beta ($eta$)**: Shifts the mean.
-The network can mathematically learn to restore the original distribution if it is optimal, but it now has full algebraic control over the flow.
+Imagine a factory assembly line with 10 workers (layers in a network). Worker 1 hands a part to Worker 2, who hands it to Worker 3. 
 
-## 3. The Flaw (Small Batches)
-Because BatchNorm relies on statistical averages, it mathematically collapses if the batch size is too small. If your batch size is 2, the mean and variance are statistically meaningless, and the network will rapidly destabilize. For tasks requiring tiny batches (like massive LLMs), **Layer Normalisation** is used instead.
+If Worker 1 suddenly starts passing parts that are upside down, Worker 2 has to completely change how they operate to fix it. Once Worker 2 adapts, their output changes, forcing Worker 3 to adapt. 
 
+In a neural network, this is called **Internal Covariate Shift**. As the network trains, the weights in Layer 1 change. This changes the numerical distribution of the outputs that Layer 1 feeds into Layer 2. Layer 2 is constantly trying to learn, but the data it is receiving keeps shifting around wildly.
+
+## How Batch Normalization Works
+
+BatchNorm solves this by acting as a strict quality control manager between the workers.
+
+During training, data is passed through the network in "batches" (e.g., 32 images at a time). 
+Before passing the data from Layer 1 to Layer 2, a BatchNorm layer intercepts it and performs the following operations:
+
+1.  **Calculate the Mean:** It finds the average value of the 32 inputs.
+2.  **Calculate the Variance:** It calculates how spread out those 32 inputs are.
+3.  **Normalize:** It subtracts the mean and divides by the variance. This forces the data to be centered perfectly at exactly **$0$**, with a standard deviation of exactly **$1$**.
+
+By doing this, Layer 2 is guaranteed to always receive data in the exact same format, no matter how wildly Layer 1's weights change.
+
+### The Gamma and Beta Parameters
+
+If we *only* normalized the data to $0$ and $1$, we would severely limit what the network could learn. Sometimes, the optimal distribution for a specific layer *shouldn't* be centered at $0$.
+
+To fix this, BatchNorm introduces two highly crucial, learnable parameters:
+*   **$\gamma$ (Gamma):** A scale factor.
+*   **$\beta$ (Beta):** A shift factor.
+
+After normalizing the data to $0$ and $1$, the BatchNorm layer multiplies it by $\gamma$ and adds $\beta$. Because $\gamma$ and $\beta$ are learned during backpropagation, the network can actually choose to undo the normalization entirely if it mathematically determines that normalization is harming its accuracy. 
+
+<Callout icon="chart-line" title="The Unintended Benefit: Regularization">
+Because BatchNorm calculates the mean and variance based on a small, random batch of 32 images, its calculations are slightly noisy and imperfect compared to calculating the mean of the entire dataset. This slight noise acts as a fantastic regularization technique (similar to Dropout), actively preventing the network from overfitting to the training data.
+</Callout>
+
+## BatchNorm during Inference (Testing)
+
+During training, BatchNorm calculates the mean and variance of the *current batch*. 
+
+However, during inference (when you deploy the model to the real world), you might only pass a *single* image through the network. You cannot calculate the mean and variance of a single image.
+
+To solve this, during training, the BatchNorm layer secretly keeps a **running average** of the means and variances it has seen across all batches. When you switch the model to inference mode (e.g., `model.eval()` in PyTorch), it freezes those running averages and uses them to normalize incoming real-world data.

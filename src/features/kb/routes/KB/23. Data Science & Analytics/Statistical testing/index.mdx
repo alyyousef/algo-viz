@@ -1,43 +1,20 @@
 ---
-title: Statistical Testing
-description: The rigorous mathematical methodology of Hypothesis Testing, calculating p-values and confidence intervals to validate scientific assertions.
+title: Statistical Testing (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Statistical Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Hypothesis Testing** is the mathematical engine that powers all scientific discovery and A/B testing. It provides a rigid framework to determine if an observed anomaly is real, or just random mathematical noise.
+<Callout icon="info" title="Redirect">
+The mathematical foundations of **Statistical Testing** (A/B testing, T-tests, ANOVA, and Chi-Square) are covered in the Deep Dive for **Business Intelligence (BI)**. 
 
-## 1. The Core Framework
-1. **Null Hypothesis ($H_0$)**: The mathematical assumption that nothing interesting is happening. (e.g., "The new drug has exactly zero effect on blood pressure").
-2. **Alternative Hypothesis ($H_A$)**: Your assertion. (e.g., "The new drug lowers blood pressure").
-3. **The Test Statistic**: You execute the trial, calculate the difference, and mathematically map it to a standardized score (like a T-score or Z-score).
-4. **The P-Value**: The probability of observing this result *if the Null Hypothesis were true*. If p = 0.03, there is a 3% chance this is just random noise. Since 3% is less than the standard 5% threshold ($alpha = 0.05$), we reject the Null Hypothesis.
-
-## 2. Types of Statistical Tests
-Data Scientists select different mathematical tests based on the shape and type of the data.
-
-### T-Test (Comparing Means)
-Used to mathematically compare the averages of two groups.
-- *Example*: Comparing the average checkout value of Group A vs Group B.
-- It relies on Student's T-distribution, which adjusts mathematically for the uncertainty of having a small sample size.
-
-### Chi-Square Test (Categorical Data)
-Used for discrete, categorical data (counts and percentages) rather than continuous numbers.
-- *Example*: Comparing the conversion rate (Yes/No) of a red button vs a blue button. It mathematically calculates the difference between the "Expected" clicks and the "Observed" clicks.
-
-### ANOVA (Analysis of Variance)
-Used when comparing the means of **three or more groups** simultaneously.
-If you have a Red, Blue, and Green button, running three separate T-Tests mathematically increases the chance of a false positive (Type I error). ANOVA mathematically analyzes the variance *between* the groups versus the variance *within* the groups in a single test.
-
-## 3. Type I vs Type II Errors
-- **Type I Error (False Positive)**: Mathematically rejecting the Null Hypothesis when it was actually true. (Telling a healthy patient they have a disease). Controlled by $alpha$.
-- **Type II Error (False Negative)**: Mathematically accepting the Null Hypothesis when it was actually false. (Telling a diseased patient they are healthy). Controlled by $eta$ (Statistical Power).
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore experimentation in analytics.
+</Callout>

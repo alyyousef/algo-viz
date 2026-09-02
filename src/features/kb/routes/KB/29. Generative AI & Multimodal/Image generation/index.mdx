@@ -1,25 +1,52 @@
 ---
-title: Image Generation
-description: The computational process of synthesizing completely novel, high-resolution pixel matrices from text prompts, driven primarily by Diffusion architectures.
+title: Image Generation (Midjourney, Stable Diffusion)
+description: "An overview of how modern AI translates English text into photorealistic art in seconds using Diffusion models."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Image Generation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-AI Image Generation has mathematically evolved from generating blurry 32x32 pixel approximations to rendering 4K, award-winning, photorealistic art in seconds.
+*(Note: This module provides a high-level industry overview. For the exact mathematics of how these models work, see the **Diffusion Models** module).*
 
-## 1. The Latent Space
-Modern image generators (like Stable Diffusion) do not mathematically operate in Pixel Space.
-Operating on a 1024x1024 RGB image requires calculating 3.1 million parameters per step, which would melt a standard GPU. Instead, the AI mathematically compresses the image into a **Latent Space** (e.g., a 64x64 grid). The Diffusion process (adding and removing noise) happens entirely in this compressed mathematical realm. Once the AI finishes generating the latent vector, a mathematical Decoder massively upscales it back into the 1024x1024 physical Pixel Space, reducing compute time by 99%.
+The field of AI Image Generation exploded into the mainstream in late 2022. By typing a simple English sentence (a prompt), users can generate photorealistic, award-winning art in seconds. 
 
-## 2. Text Conditioning (Cross-Attention)
-How does the AI know to generate "A Cyberpunk City"?
-The text prompt is converted into an NLP Vector. During the Diffusion process, the Neural Network uses a mathematical **Cross-Attention Mechanism**. It physically weaves the NLP Vector into the Image Vectors at every single step of the denoising process. This mathematical fusion ensures the resulting pixels explicitly align with the semantic meaning of the words.
+The industry is currently dominated by three major models, each built on variations of **Diffusion** architecture, but serving very different use cases.
 
+## The Big Three Models
+
+### 1. Midjourney (The Artist)
+Created by an independent research lab, Midjourney is universally considered to produce the most aesthetically beautiful, cinematic, and artistic images in the world. 
+*   **Architecture:** Closed-source, accessible only via Discord or their proprietary web interface.
+*   **Pros:** Unmatched artistic quality, gorgeous lighting, handles abstract concepts beautifully.
+*   **Cons:** Very poor at reading strict instructions (e.g., it struggles to place specific text on a sign or adhere to exact multi-character requests).
+
+### 2. Stable Diffusion (The Open-Source Workhorse)
+Created by Stability AI (and researchers at LMU Munich), Stable Diffusion revolutionized the industry by releasing their weights to the public for free.
+*   **Architecture:** Open-source **Latent Diffusion**. Because it operates in compressed latent space, it is the only major model that can run locally on a consumer GPU (like an RTX 3060).
+*   **Pros:** Infinite control. Developers use tools like **ControlNet** to force the AI to perfectly mimic human poses or preserve edge lines from a sketch. It is completely uncensored.
+*   **Cons:** Very difficult to install and use (requires complex UI tools like ComfyUI). The base model looks much worse than Midjourney without heavy prompting.
+
+### 3. DALL-E 3 (The Rule Follower)
+Created by OpenAI and integrated directly into ChatGPT.
+*   **Architecture:** Closed-source, accessed via API or ChatGPT.
+*   **Pros:** Incredible **Prompt Adherence**. If you ask for *"a red cube next to a blue sphere with the word 'HELLO' on it"*, DALL-E 3 will do it perfectly. ChatGPT secretly rewrites your prompts for you to guarantee good results.
+*   **Cons:** The images often look "plastic" or overly airbrushed. It is heavily censored by OpenAI's safety filters.
+
+## Advanced Control (ControlNet and LoRA)
+
+Generating a random cool image is easy. Generating an exact, specific image for a corporate ad campaign is incredibly hard because Diffusion models are inherently random.
+
+The industry relies on two major open-source hacks to force the AI to behave:
+1.  **LoRA (Low-Rank Adaptation):** A tiny 50MB file that you attach to Stable Diffusion. If you train a LoRA on 20 pictures of your own face, the AI will learn your exact facial structure and allow you to generate pictures of yourself as an astronaut or a knight.
+2.  **ControlNet:** A neural network layer that locks the composition of an image in place. You can feed ControlNet a stick-figure drawing, and it will force the AI to generate a photorealistic human in that exact pose.
+
+<Callout icon="gavel" title="The Copyright Wars">
+Image Generation is currently the center of massive global lawsuits. Midjourney, OpenAI, and Stability AI trained their models by downloading billions of copyrighted images from art websites (like ArtStation or Getty Images) without paying or crediting the original human artists. The courts are currently deciding if training a neural network on copyrighted data falls under "Fair Use" or if it constitutes massive, systematic copyright infringement.
+</Callout>

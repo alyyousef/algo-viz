@@ -1,34 +1,50 @@
 ---
 title: Perceptrons
-description: The simplest and oldest model of an artificial neuron, invented in 1957.
+description: "A guide to the Perceptron, the simplest type of artificial neural network and the mathematical building block of modern deep learning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Perceptrons">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The Perceptron, invented by Frank Rosenblatt in 1957, is a mathematical model of a biological neuron and the earliest form of a neural network. It is a binary classifier that takes a vector of inputs, multiplies them by weights, sums them, and passes them through a step function.
+A **Perceptron** is the simplest, most fundamental building block of an artificial neural network. Invented in 1957 by Frank Rosenblatt, it is a mathematical model of a single biological neuron.
 
+While a single perceptron is incredibly weak on its own, stacking millions of perceptrons together creates the deep neural networks that power modern AI.
 
-<Callout icon="warning" title="The XOR Problem">
+## The Architecture of a Perceptron
 
+A single perceptron takes multiple inputs, performs a simple mathematical calculation, and produces exactly one binary output (e.g., $1$ or $0$, Yes or No).
 
-  In 1969, Marvin Minsky and Seymour Papert proved mathematically that a single-layer perceptron is completely incapable of learning the XOR logical operation because XOR is not "linearly separable." This devastating revelation caused the first "AI Winter," freezing funding for neural network research for over a decade.
+It consists of four parts:
+1.  **Inputs ($x$):** The data you are feeding it (e.g., the features of a dataset).
+2.  **Weights ($w$):** Every input is assigned a weight. A high weight means that specific input is highly important to the final decision.
+3.  **Bias ($b$):** A constant number added to the calculation. It acts as an anchor, allowing the perceptron to shift its decision boundary up or down independently of the inputs.
+4.  **Activation Function:** A threshold function (originally a step function) that looks at the final calculation and decides if the neuron should "fire" (output $1$) or stay dormant (output $0$).
 
+## The Math
 
+The mathematical operation of a perceptron is a simple **Weighted Sum**, followed by an activation.
+
+1. Multiply every input by its corresponding weight: $(x_1 \times w_1) + (x_2 \times w_2) + \dots$
+2. Add the bias: $+ b$
+3. Pass the total sum through the Step Function. If the total is $> 0$, output $1$. Otherwise, output $0$.
+
+Because this is a linear equation ($y = mx + b$), a single perceptron acts as a **Linear Classifier**. If you plot your data on a graph, a perceptron can only draw a perfectly straight line to separate the classes.
+
+## The XOR Problem (The Fall of the Perceptron)
+
+In the 1960s, perceptrons generated massive hype in the AI community. However, in 1969, Marvin Minsky and Seymour Papert published a famous book proving a fatal flaw: **A single perceptron cannot solve the XOR (Exclusive OR) problem.**
+
+The XOR logic gate outputs $1$ if the inputs are different, and $0$ if they are the same. If you plot XOR on a graph, it is mathematically impossible to draw a single straight line that separates the $1$s from the $0$s. Because a perceptron can only draw a straight line, it completely fails.
+
+This realization caused the "AI Winter," where funding for neural network research completely dried up for over a decade. 
+
+<Callout icon="bolt" title="The Solution: Multi-Layer Perceptrons">
+The solution to the XOR problem was incredibly simple: stack multiple perceptrons together into hidden layers (a **Multi-Layer Perceptron**, or MLP) and use non-linear activation functions. This allows the network to draw curved, highly complex decision boundaries. However, researchers in the 1970s didn't know how to train these multi-layer networks, because the **Backpropagation** algorithm hadn't been popularized yet.
 </Callout>
-
-
-## How it works
-
-1. **Input:** Takes real-valued inputs (e.g., $x_1, x_2$).
-2. **Weights:** Multiplies inputs by their respective weights (e.g., $w_1, w_2$).
-3. **Summation:** Adds all the weighted inputs together, plus a bias ($b$).
-4. **Activation:** If the sum is greater than 0, output 1. Otherwise, output 0. (The Heaviside Step Function).
-

@@ -1,36 +1,20 @@
 ---
-title: Explainable AI (XAI)
-description: The mathematical discipline of peering inside the "Black Box" of Deep Learning to understand exactly why a model made a specific prediction.
+title: Explainable AI (XAI) (Redirect)
+description: "Redirecting to AI Alignment."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Explainable AI (XAI)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a linear regression algorithm denies a user a mortgage, you can look at the mathematical weights: (Income * 0.5) - (Debt * 0.9). It is perfectly interpretable.
+<Callout icon="info" title="Redirect">
+The technical frameworks for **Explainable AI** (Mechanistic Interpretability, SHAP values, and attempting to look inside the "Black Box" of Neural Networks) are closely tied to the safety concepts covered in the Deep Dive for **AI Alignment**. 
 
-If a Deep Neural Network with 50 billion parameters denies a mortgage, it is a **Black Box**. Even the engineers who built the AI cannot mathematically explain *why* it made that decision. In highly regulated industries (Healthcare, Finance), deploying a Black Box is illegal. **Explainable AI (XAI)** attempts to solve this.
-
-## 1. SHAP (SHapley Additive exPlanations)
-Based on cooperative Game Theory, SHAP is the industry standard for mathematical explainability.
-If a model predicts a house is worth $500,000, SHAP calculates the exact mathematical contribution of every feature.
-
-It does this by mathematically removing the "Square Footage" feature and seeing how much the prediction drops. It then does this for every possible combination of features.
-The output is a brilliant chart that explicitly states: *"The baseline price was $300k. The Zip Code pushed it up $100k, the Square Footage pushed it up $150k, but the Age of the house pushed it down $50k."*
-
-## 2. LIME (Local Interpretable Model-agnostic Explanations)
-Neural Networks are highly non-linear and mathematically impossible to explain globally.
-LIME mathematically bypasses this by explaining the model *locally*.
-
-If the Neural Network denies User A a loan, LIME mathematically generates 1,000 "fake" users that are very similar to User A (slightly changing their income and age). It watches how the Black Box model predicts on these fake users, and then trains a simple, easily-explainable Linear Regression model *only* on that tiny local neighborhood. This provides an accurate explanation for User A's specific denial.
-
-## 3. Saliency Maps (Computer Vision)
-If a CNN classifies an X-Ray as "Cancer", the doctor needs to know exactly where the cancer is.
-XAI utilizes **Saliency Maps** (like Grad-CAM). By mathematically tracing the gradients backward from the final classification layer to the original image, the algorithm highlights (in red heatmaps) the exact pixels on the X-Ray that mathematically forced the network to predict "Cancer".
-
+Please navigate to the [AI Alignment](/kb/24.-artificial-intelligence-%E2%80%94-overview/ai-alignment) module to explore the challenge of understanding complex models.
+</Callout>

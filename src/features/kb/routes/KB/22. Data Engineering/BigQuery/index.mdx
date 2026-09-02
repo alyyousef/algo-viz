@@ -1,48 +1,20 @@
 ---
-title: Google BigQuery
-description: Google's serverless, highly-scalable, mathematically decoupled Cloud Data Warehouse architecture.
+title: BigQuery (Redirect)
+description: "Redirecting to Data Lakes & Warehouses."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Google BigQuery">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**BigQuery** is Google Cloud's fully managed, serverless enterprise Data Warehouse. Alongside Snowflake, it mathematically revolutionized the Data Engineering industry by fundamentally changing how Compute and Storage interact.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **BigQuery** (a serverless, highly distributed columnar Data Warehouse designed for petabyte-scale analytics) is covered in the Deep Dive for **Data Lakes & Warehouses**. 
 
-## 1. Serverless Architecture
-In a legacy Data Warehouse (like Amazon Redshift originally), you had to explicitly provision a cluster. You rented 10 massive servers. If you ran a query, those 10 servers executed it. If you ran zero queries, you still paid for 10 servers.
-
-BigQuery is entirely **Serverless**. You do not provision hardware.
-When you execute a SQL query, Google's mathematical resource manager (Borg) instantly allocates thousands of CPU cores from Google's global, multi-tenant fleet to your query, executes it in 3 seconds, and de-allocates the CPUs. You are billed purely for the gigabytes of data mathematically scanned during those 3 seconds.
-
-## 2. Decoupled Compute and Storage
-The secret to BigQuery's infinite scale is the physical separation of Compute and Storage, connected by Google's massive Petabit-scale optical network (Jupiter).
-
-- **Storage (Colossus)**: Data is physically stored in Colossus (Google's global distributed file system). It is stored in a heavily compressed, proprietary columnar format called **Capacitor**.
-- **Compute (Dremel)**: When you run a query, the Dremel engine dynamically spins up a massive Execution Tree.
-- **The Network**: The CPUs physically read the data from the Colossus storage nodes across the Jupiter network. Because the network is so mathematically fast (1 Petabit/sec bisection bandwidth), moving the data to the CPUs is not a bottleneck.
-
-## 3. Advanced Features
-
-### Nested and Repeated Fields
-Unlike legacy RDBMS systems that force strict First Normal Form (1NF), BigQuery mathematically embraces semi-structured data. You can natively store JSON arrays directly inside a column (`ARRAY<STRUCT>`) and mathematically unnest them during a query using the `UNNEST()` function. This avoids horrific JOINs.
-
-### BigQuery ML
-BigQuery allows Data Analysts to train massive Machine Learning models using standard SQL, without moving the data out of the warehouse.
-
-```sql
--- Training a K-Means clustering model directly in SQL
-CREATE MODEL `my_dataset.customer_clusters`
-OPTIONS(model_type='kmeans', num_clusters=5) AS
-SELECT age, total_purchases, account_balance FROM `my_dataset.users`;
-```
-
-### Real-Time Streaming Inserts
-While BigQuery is an OLAP warehouse, it mathematically supports streaming ingestion. You can stream up to millions of rows per second directly into BigQuery tables, and the data is available for SQL querying within milliseconds, blurring the line between batch and stream processing.
-
+Please navigate to the [Data Lakes & Warehouses](/kb/22.-data-engineering/data-lakes--warehouses) module to explore modern OLAP architectures.
+</Callout>

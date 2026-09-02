@@ -1,35 +1,140 @@
 ---
-title: Mobile Architecture & Storage
-description: Explains local mobile databases (SQLite, Core Data, Room, Realm), Deep Linking, and Push Notifications.
+title: Mobile Architecture
+description: "The architectural patterns of mobile clients: analyzing MVC, MVP, MVVM, and the transition to Unidirectional Data Flow (MVI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Mobile Architecture & Storage">
+    <ConceptTemplate title="Mobile Architecture (MV*)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Mobile apps have complex architectural requirements that do not exist on the web, specifically regarding offline data storage, state management, and OS integrations.
+Mobile applications present a unique architectural challenge compared to backend servers. A backend server receives a request, processes it, and dies (stateless). A mobile application is a long-lived, highly stateful entity. The user can background the app, lose network connectivity, rotate the screen, and interact with complex animations—all while the app must maintain data integrity and prevent the UI thread from freezing.
 
-## 1. Local Storage & Databases
-A web app stores data on the backend. A mobile app must store data on the phone so it works in Airplane Mode.
+To prevent apps from turning into "Massive View Controllers" (where 5,000 lines of spaghetti code handle both database queries and UI animations in a single file), architects have aggressively evolved presentation patterns over the last decade.
 
-- **SQLite**: The underlying C-based relational database that exists natively on every iOS and Android device in the world. However, writing raw SQL queries in mobile apps is error-prone.
-- **Core Data (iOS)**: Apple's native Object Graph and Persistence framework. It is notoriously complex with a massive learning curve, but heavily integrated into the Apple ecosystem.
-- **Room (Android)**: Google's official ORM layer over SQLite. It uses Kotlin annotations (`@Entity`) and mathematically validates SQL queries at compile time.
-- **Realm**: A highly-popular third-party, NoSQL-like object database optimized specifically for mobile. It is massively faster than SQLite for certain operations and supports reactive live-updating queries.
+## 1. Deep Dive & Mechanics
 
-## 2. The ViewModel Architecture (MVVM)
-In mobile development, the UI is constantly being destroyed and recreated (e.g., when an Android user rotates their phone from Portrait to Landscape, the entire Activity is killed and restarted).
-If you store data inside the UI class, the data is deleted on rotation.
-The industry standard is **MVVM (Model-View-ViewModel)**. The ViewModel is a separate class that mathematically survives UI rotation. The View simply "observes" the ViewModel (using LiveData or StateFlow).
+The evolution of Mobile Architecture is a battle to separate concerns and increase testability.
 
-## 3. Deep Linking & Universal Links
-How does clicking a link in an email open a specific screen *inside* your app instead of the Safari browser?
-- **Deep Links**: Custom URL schemes (`myapp://profile/123`). Heavily insecure because any app can register that scheme.
-- **Universal Links (iOS) / App Links (Android)**: Standard HTTP URLs (`https://myapp.com/profile/123`). The OS mathematically verifies ownership by checking a hidden JSON file hosted on your actual web server. If the app is installed, the OS intercepts the click and opens the app; otherwise, it opens the website.
+### The Dark Ages: MVC (Massive View Controller)
+In early iOS (UIKit) and Android, developers used Model-View-Controller. 
+The fatal flaw of Apple and Google's MVC implementation was that the "Controller" (the `UIViewController` or `Activity`) was tightly physically coupled to the "View". 
+Developers shoved network calls, database queries, and UI updates directly into the UI file. Because the business logic was trapped inside an OS-level UI class, it was mathematically impossible to write Unit Tests for it without spinning up a heavy, slow hardware emulator.
 
+### The Renaissance: MVP (Model-View-Presenter)
+To make code testable, architects invented MVP. 
+The UI (`Activity`) became extremely dumb. It implemented a pure interface (e.g., `interface LoginView { showLoader(); }`). 
+All business logic was moved into a pure Kotlin/Swift class called the **Presenter**. The Presenter had no idea what Android or iOS was. It just called `view.showLoader()`. Because the Presenter was pure code, you could write lightning-fast Unit Tests for it.
+
+### The Modern Standard: MVVM (Model-View-ViewModel)
+MVP was great, but it required writing hundreds of repetitive interfaces. 
+MVVM leverages **Reactive Programming** (RxJava, Combine, StateFlow). 
+Instead of the ViewModel telling the View what to do (`view.showLoader()`), the ViewModel simply exposes a stream of state (`isLoading = true`). The UI passively observes this stream and automatically reacts to changes.
+
+## 2. Mathematical / Theoretical Foundation
+
+The current state-of-the-art architecture is **MVI (Model-View-Intent)**, which enforces a strict **Unidirectional Data Flow (UDF)**.
+
+In highly complex screens (like a chat app), having 15 different reactive streams (`isLoading`, `messages`, `error`, `isTyping`) causes race conditions. 
+MVI mathematically merges all state into a single, immutable State Object. 
+1. **Intent:** The user clicks a button. The View fires an Intent to the ViewModel (e.g., `SendMessageIntent`).
+2. **Model (Reducer):** The ViewModel processes the Intent, talks to the database, and returns an entirely new, immutable State Object.
+3. **View:** The View blindly renders whatever the current State Object looks like. 
+Data only ever flows in one single direction, making impossible states (like showing a loader AND an error message at the same time) mathematically unrepresentable.
+
+## 3. Real-World Implementation
+
+Here is a conceptual look at how MVVM with Unidirectional Data Flow is structured in modern Android (Kotlin).
+
+### The Immutable State
+```kotlin
+// The UI can only be in exactly one of these states.
+data class LoginState(
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val isSuccess: Boolean = false
+)
+```
+
+### The ViewModel (Business Logic)
+```kotlin
+class LoginViewModel(private val repository: AuthRepository) : ViewModel() {
+    
+    // The private mutable state stream
+    private val _uiState = MutableStateFlow(LoginState())
+    // The public immutable state stream that the UI observes
+    val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
+
+    // The "Intent" triggered by the View
+    fun loginClicked(email: String, pass: String) {
+        _uiState.value = _uiState.value.copy(isLoading = true) // Emit Loading State
+
+        viewModelScope.launch {
+            val result = repository.login(email, pass)
+            if (result.isSuccess) {
+                _uiState.value = LoginState(isSuccess = true) // Emit Success State
+            } else {
+                _uiState.value = LoginState(errorMessage = "Login Failed") // Emit Error State
+            }
+        }
+    }
+}
+```
+
+### The View (Passive Observer)
+```kotlin
+@Composable
+fun LoginScreen(viewModel: LoginViewModel) {
+    // Passively observe the state stream
+    val state by viewModel.uiState.collectAsState()
+
+    // Pure UI rendering logic. No database or network logic here.
+    if (state.isLoading) {
+        CircularProgressIndicator()
+    } else if (state.isSuccess) {
+        NavigateToDashboard()
+    } else {
+        Button(onClick = { viewModel.loginClicked("u@a.com", "pass") }) {
+            Text("Login")
+        }
+        state.errorMessage?.let { Text(it, color = Color.Red) }
+    }
+}
+```
+
+## 4. Visualizations
+
+<ComparisonTable
+  title="Architectural Patterns (MV*)"
+  headers={["Pattern", "View's Role", "Logic Layer", "Data Flow", "Testability"]}
+  rows={[
+    ["MVC (Massive VC)", "Tightly coupled to logic", "Controller (Fat)", "Bidirectional / Chaotic", "Terrible (Requires Emulator)"],
+    ["MVP", "Dumb interface implementer", "Presenter (Pure code)", "Bidirectional (Interfaces)", "Excellent"],
+    ["MVVM", "Passive Observer", "ViewModel (State streams)", "Reactive / Event-driven", "Excellent"],
+    ["MVI (UDF)", "Pure function of State", "ViewModel/Reducer", "Strict Unidirectional Loop", "Perfect (Time-travel debugging possible)"]
+  ]}
+/>
+
+## 5. Interview Prep
+
+**Q: Why is it dangerous to pass a UI View (like a `TextView`) directly into a ViewModel?**
+**A:** This breaks the core architectural boundary of MVVM and causes a **Memory Leak**. The ViewModel's lifecycle is longer than the View's. If the user rotates their phone, the OS destroys the Activity and the `TextView`. If the ViewModel holds a hard reference to that destroyed `TextView`, the Garbage Collector cannot clean it up. The app will quickly run out of RAM and crash. The ViewModel must *never* know about the UI; it should only expose pure data that the UI observes.
+
+**Q: What is the "Clean Architecture" pattern (Domain Layer) in mobile?**
+**A:** For massive apps, MVVM isn't enough. Architects introduce a **Domain Layer (Use Cases / Interactors)** between the ViewModel and the Repository. 
+Instead of the `ProfileViewModel` directly asking the `UserRepository` for data, it calls a `FormatUserForProfileUseCase`. This Use Case contains the pure business rules (e.g., capitalizing the name, calculating age from birthdate). This prevents the ViewModel from getting bloated with formatting math, keeping it strictly focused on managing UI State.
+
+## 6. Production Use Cases
+
+- **Offline-First Apps (Repository Pattern):** Modern apps (like Spotify or Evernote) must work on airplanes. The UI never talks to the network directly. The ViewModel asks the `Repository` for data. The Repository acts as a traffic cop: it immediately returns cached data from the local SQLite database to the UI, while simultaneously spinning up a background thread to fetch fresh data from the network. Once the network returns, the Repository updates the SQLite database, which automatically triggers a reactive stream update to the UI.
+- **Jetpack Compose / SwiftUI:** The industry-wide shift from imperative UI (XML/Storyboards) to declarative UI (Compose/SwiftUI) forced the death of MVP and MVC. Because declarative UIs are literally written as functions that take State as an argument and return a UI Tree, they mathematically require MVVM or MVI architectures to function.
+
+<Callout icon="danger" title="The Lifecycle Trap">
+In Mobile Architecture, async operations are deeply dangerous. If the user clicks a "Download" button, and then instantly hits the "Back" button, the UI is destroyed. If the network call finishes 5 seconds later and tries to update the now-destroyed UI, the app will crash (`NullPointerException`). Mobile architectures use lifecycle-aware coroutines (`viewModelScope` or `Task`) that mathematically auto-cancel all pending network requests the exact millisecond the View is destroyed.
+</Callout>

@@ -4,18 +4,11 @@ description: "A greedy algorithm that finds a Minimum Spanning Tree (MST) for a 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Prim's Algorithm"
   subtitle="Growing the Minimum Spanning Tree"
   tags={['Algorithms', 'Graphs', 'MST', 'Greedy']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Prim's Algorithm is one of the standard ways to find a Minimum Spanning Tree (along with Kruskal's). It is mathematically very similar to Dijkstra's Shortest Path algorithm.
 
@@ -30,3 +23,4 @@ Prim's Algorithm is one of the standard ways to find a Minimum Spanning Tree (al
 If implemented naively by scanning an array of edges every time, Prim's runs in O(V²), which is acceptable for dense graphs (like an adjacency matrix).
 However, for modern sparse networks, engineers use a **Min-Priority Queue** (Heap). When a node is added to the MST, all its outgoing edges are mathematically pushed into the Heap. Extracting the cheapest edge takes O(log V). This drops the Time Complexity to **O(E log V)**, making it highly efficient.
 
+</ConceptTemplate>

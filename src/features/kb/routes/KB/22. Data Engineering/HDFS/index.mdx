@@ -1,40 +1,20 @@
 ---
-title: HDFS (Hadoop Distributed File System)
-description: The pioneering distributed file system that spawned the Big Data era, designed to store massive datasets across thousands of commodity servers.
+title: HDFS (Redirect)
+description: "Redirecting to Data Lakes & Warehouses."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="HDFS (Hadoop Distributed File System)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before Cloud Object Storage (like AWS S3) existed, storing a 5-Petabyte dataset was a mathematical impossibility for a standard enterprise. The largest single hard drive could only hold a few Terabytes.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **HDFS** (the pioneer of distributed, fault-tolerant block storage for big data) has largely been superseded by cloud object stores (like AWS S3), which are covered in the Deep Dive for **Data Lakes & Warehouses**. 
 
-**HDFS (Hadoop Distributed File System)**, heavily inspired by the Google File System (GFS) paper, revolutionized the industry by allowing software to mathematically treat 1,000 separate commodity hard drives as one single, colossal file system.
-
-## 1. Master-Worker Architecture
-HDFS abstracts the complexity of distributed storage through two distinct node types:
-
-### The NameNode (The Master)
-The NameNode does not store any actual data. It stores the mathematical **Metadata**. It acts as the directory tree, tracking exactly which physical servers hold which pieces of a file. If the NameNode crashes, the entire cluster mathematically dies (this Single Point of Failure was later fixed with High Availability architectures).
-
-### The DataNodes (The Workers)
-The physical commodity servers (often thousands of them). When you upload a massive 1 Terabyte file to HDFS, it does not fit on one server. HDFS mathematically slices the file into **128 MB Blocks**, and scatters those blocks across the DataNodes.
-
-## 2. Mathematical Fault Tolerance (Replication)
-Because HDFS runs on cheap commodity hardware, hard drives mathematically fail every single day.
-HDFS solves this through strict **Replication**.
-By default, every single 128 MB block is replicated exactly **3 times** on three different physical servers (often ensuring they are on different physical power racks).
-
-If a hard drive catches fire, the NameNode instantly detects the heartbeat failure, mathematically identifies the missing blocks, and dynamically instructs the remaining servers to re-copy the surviving replicas to maintain the 3x guarantee. The system heals itself without human intervention.
-
-## 3. The Move to Cloud Object Storage
-While HDFS created the Big Data industry, managing thousands of physical hard drives is an operational nightmare.
-
-Today, HDFS is largely being replaced by Cloud Object Storage (AWS S3, Google Cloud Storage). S3 provides the same infinite scale and replication guarantees as HDFS, but is entirely serverless, allowing companies to physically shut down their HDFS racks.
-
+Please navigate to the [Data Lakes & Warehouses](/kb/22.-data-engineering/data-lakes--warehouses) module to explore the evolution of distributed storage.
+</Callout>

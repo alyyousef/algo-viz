@@ -1,38 +1,20 @@
 ---
-title: Polars
-description: A blazing-fast DataFrame library written in Rust, utilizing Apache Arrow and multithreading to mathematically destroy Pandas performance benchmarks.
+title: Polars (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Polars">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-For a decade, Pandas was the undisputed king of Python data analysis. However, as datasets grew larger, Pandas' reliance on single-threaded execution and inefficient memory mapping became a massive mathematical bottleneck.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Polars** (a blazingly fast DataFrame library written in Rust that supersedes Pandas for large-scale operations) is heavily utilized in modern Analytics workflows. 
 
-**Polars** is the modern successor. It is a DataFrame library written entirely in **Rust**, explicitly engineered to be the fastest data processing engine available on a single machine.
-
-## 1. Apache Arrow In-Memory Format
-Pandas mathematically relies on NumPy for its underlying architecture, which is brilliant for matrices but terrible for Strings and Missing Values.
-Polars is built directly on top of **Apache Arrow**, a modern, cross-language columnar memory format. This provides immense mathematical advantages:
-- Strings are stored continuously in C-memory (unlike Pandas, which stores slow Python object pointers).
-- Missing data (Nulls) are mathematically tracked using extremely fast bitmaps.
-
-## 2. Multi-threaded Execution
-Python is fundamentally limited by the **GIL (Global Interpreter Lock)**, meaning a standard Python script can only utilize one CPU core at a time. If you have a 16-core laptop, Pandas will use 1 core, and 15 cores will sit idle.
-
-Because Polars is written in Rust, it completely bypasses the Python GIL.
-When you execute a Polars calculation (like summing revenue by country), Polars mathematically slices the data and distributes the workload across all 16 CPU cores in parallel, regularly running 10x to 50x faster than Pandas.
-
-## 3. Lazy Evaluation and Query Optimization
-In Pandas, execution is **Eager**. If you load a 10GB CSV and then filter it down to 1GB, Pandas mathematically loads the entire 10GB into RAM first, potentially crashing your machine.
-
-Polars supports **Lazy Evaluation**.
-You build a complex execution graph, but nothing runs until you call `.collect()`.
-Before execution, Polars utilizes a mathematical Query Optimizer. It scans the graph and performs **Predicate Pushdown**. It mathematically realizes you only need 1GB of data, so it pushes the filter directly down into the CSV parser, ensuring the other 9GB is never even read from disk, saving your RAM.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts query and transform data.
+</Callout>

@@ -1,40 +1,63 @@
 ---
 title: NDCG (Normalized Discounted Cumulative Gain)
-description: The most advanced mathematical metric for evaluating Recommender Systems, heavily punishing models that place highly relevant items lower in the ranking.
+description: "A deep dive into NDCG, the premier evaluation metric for search engines and recommendation systems."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="NDCG (Normalized Discounted Cumulative Gain)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When evaluating a search engine (like Google) or a Recommender System (like Netflix), it is not enough to simply ask "Are these movies relevant?" (Precision). You must mathematically ask: "Are the *most* relevant movies at the absolute top of the list?"
-**NDCG** is the mathematical standard for evaluating ranked lists with graded relevance.
+**NDCG** (Normalized Discounted Cumulative Gain) is a highly specialized evaluation metric designed specifically for **Information Retrieval** (search engines) and **Recommender Systems**.
 
-## 1. Graded Relevance (CG)
-Unlike MAP (Mean Average Precision) which assumes relevance is binary (1 or 0), NDCG assumes relevance is a gradient (e.g., 0 to 3).
-- $3$: Perfect match (The exact movie the user searched for).
-- $2$: Highly relevant (A movie in the exact same franchise).
-- $1$: Marginally relevant (A movie in the same broad genre).
-- $0$: Irrelevant.
+If a user searches for "best action movies," a search engine returns a ranked list of results. Metrics like Precision simply ask "How many of these movies are actually action movies?" 
 
-**Cumulative Gain (CG)** simply sums the mathematical relevance of the top $K$ results. If the top 3 results are [3, 1, 2], the CG is $6$.
-*Flaw*: CG doesn't care about order. A ranking of [1, 2, 3] also gets a score of $6$, even though putting the best movie last is terrible.
+NDCG asks a much more complex, realistic question: **"Are the most highly relevant movies at the very top of the list, and are the mildly relevant movies pushed further down?"**
 
-## 2. The Discount Factor (DCG)
-**Discounted Cumulative Gain (DCG)** introduces a mathematical penalty based on the Rank (position) in the list.
-$DCG = \sum \frac{relevance_i}{log_2(i + 1)}$
+## How NDCG Works (Step-by-Step)
 
-By dividing the relevance by the mathematical logarithm of its rank ($i$), the algorithm brutally discounts items found lower in the list.
-If a perfectly relevant movie (score 3) is at Rank 1, its value is barely touched. If that same movie is buried at Rank 10, the logarithmic denominator mathematically crushes its value down to almost nothing.
+NDCG is built up in three stages.
 
-## 3. Normalization (NDCG)
-If one user searches for "Star Wars" (which has 10 highly relevant movies) and another searches for a niche indie film (which only has 1 relevant movie), their raw DCG scores will be mathematically incomparable.
+### 1. Cumulative Gain (CG)
+First, every document in your dataset must be assigned a **relevance score** (usually by human raters). 
+For example: 3 (Highly Relevant), 2 (Relevant), 1 (Marginally Relevant), 0 (Not Relevant).
 
-**Normalized DCG** calculates the *Ideal DCG (IDCG)* by manually sorting the results into perfect descending order [3, 3, 2, 1, 0] and calculating the DCG of that perfect list. It then divides the model's actual DCG by the IDCG, resulting in a perfect, standardized mathematical metric between 0.0 and 1.0 that can be averaged across millions of diverse users.
+The Cumulative Gain is simply the sum of the relevance scores of the top $p$ results returned by the model.
+If the top 3 results have relevance scores of [3, 0, 2], the CG@3 is $3 + 0 + 2 = 5$.
 
+*Flaw:* CG doesn't care about order. A model returning [3, 0, 2] gets the same CG as a model returning [0, 2, 3]. But putting the highly relevant item at the bottom is a much worse user experience.
+
+### 2. Discounted Cumulative Gain (DCG)
+DCG fixes the order problem by applying a **logarithmic discount**. The further down the list a relevant document appears, the less its relevance score contributes to the total.
+
+The formula divides the relevance score by the logarithm of its rank position:
+
+$$\text{DCG}_p = \sum_{i=1}^{p} \frac{rel_i}{\log_2(i + 1)}$$
+
+*   Rank 1: Relevance / $\log_2(2)$ = Relevance / 1 (No discount)
+*   Rank 2: Relevance / $\log_2(3)$ = Relevance / 1.58 (Moderate discount)
+*   Rank 10: Relevance / $\log_2(11)$ = Relevance / 3.45 (Heavy discount)
+
+Now, putting the "3" score at rank 1 yields a much higher DCG than putting it at rank 10.
+
+### 3. Normalized Discounted Cumulative Gain (NDCG)
+Search queries vary wildly. A query for "Star Wars movies" might have 11 highly relevant results in the database. A query for "1994 obscure indie sci-fi" might only have 1 relevant result. 
+Because of this, DCG scores vary wildly between different queries, making it impossible to average them together to evaluate the overall model.
+
+We need to **normalize** the score between 0.0 and 1.0.
+
+To do this, we calculate the **Ideal DCG (IDCG)**. The IDCG is the DCG score you would get if the model perfectly sorted the results (e.g., [3, 3, 2, 1, 0, 0]).
+
+Finally:
+$$\text{NDCG}_p = \frac{\text{DCG}_p}{\text{IDCG}_p}$$
+
+## Summary
+
+NDCG is the gold standard for ranking evaluation because it elegantly handles two critical realities of search and recommendation:
+1.  Relevance is not binary (Yes/No); it exists on a graded scale.
+2.  Users rarely look past the first few results, so relevant items must be heavily penalized if they are pushed down the list.

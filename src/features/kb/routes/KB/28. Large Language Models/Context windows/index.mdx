@@ -1,46 +1,46 @@
 ---
 title: Context Windows
-description: The absolute cognitive limit of an LLM, defining the maximum number of tokens it can hold in its short-term memory at one time during a conversation.
+description: "An overview of Context Windows, the strict short-term memory limit that defines how much text an LLM can read and remember at one time."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Context Windows">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-An LLM does not have long-term memory. It does not "remember" you from yesterday. Every time you send a message, the entire chat history must be bundled up and sent to the model so it understands the context of the conversation.
+The **Context Window** is the strict upper limit on the amount of text a Large Language Model (LLM) can process in a single interaction. 
 
-The **Context Window** is the maximum physical capacity of tokens (words/sub-words) that the LLM's architecture can process in a single request.
+It acts as the model's absolute short-term memory. If an LLM has a context window of 4,000 tokens, it can only "see" a document up to 4,000 tokens long. If you paste a 5,000-token document into the prompt, the model will literally delete the first 1,000 tokens from its memory before it begins reading. It will have absolutely no idea what the beginning of the document said.
 
-## 1. The Quadratic Cost of Context
+## Why are Context Windows limited?
 
-Why didn't early models like GPT-3 have massive context windows? Because the core mechanism of the Transformer architecture (**Self-Attention**) scales *quadratically*.
-If you double the context window, the computational power (and RAM) required to process it doesn't double; it quadruples.
+The context window limitation is a direct result of the core mathematics behind the **Transformer** architecture, specifically the **Self-Attention Mechanism**.
 
-- A 4,000 token context window requires X amount of VRAM.
-- A 128,000 token context window requires roughly 1,024 times more VRAM to compute the attention matrix.
+In a Transformer, every single word in a sentence must mathematically compare itself to *every other word* in the sentence to understand the context.
+*   If you have 10 words, the computer performs $10^2$ (100) calculations.
+*   If you have 1,000 words, the computer performs $1,000^2$ (1,000,000) calculations.
+*   If you have 100,000 words, the computer performs **10 Billion** calculations.
 
+This is known as **Quadratic Scaling ($O(N^2)$)**. As you increase the size of the text linearly, the amount of GPU RAM required to process it explodes exponentially. Historically, researchers capped context windows at 2,048 or 4,096 tokens simply because they ran out of physical VRAM on their supercomputers.
 
-<Callout icon="warning" title="Lost in the Middle">
+## The Evolution of Context Sizes
 
+1.  **GPT-3 (2020):** 2,048 tokens (Roughly 1,500 words, or 3 pages of a book).
+2.  **GPT-4 (Early 2023):** 8,000 tokens (Roughly 6,000 words, or 12 pages).
+3.  **Claude 2 / GPT-4 Turbo (Late 2023):** 100,000 - 128,000 tokens (An entire 300-page novel).
+4.  **Gemini 1.5 Pro (2024):** 1,000,000 - 2,000,000 tokens (Multiple massive books, or 1-2 hours of raw video footage).
 
-  Even if a model advertises a massive 200,000 token context window, they often suffer from the "Lost in the Middle" phenomenon. Research shows that LLMs accurately retrieve information from the very beginning and the very end of a massive prompt, but severely degrade and hallucinate when trying to pull facts buried in the exact middle of the context window.
+## The "Needle in a Haystack" Problem
 
+Just because an LLM accepts a massive 128K context window does not mean it can actually *remember* all 128K tokens accurately.
 
+In 2023, researchers discovered the **"Lost in the Middle"** phenomenon. If you hide a specific fact (a "needle") in the exact middle of a 100,000-token document (the "haystack"), many LLMs completely fail to find it when asked. Models tend to heavily focus on the very beginning of a prompt and the very end of a prompt, while completely blurring or forgetting the information trapped in the middle.
+
+<Callout icon="bolt" title="How did they fix Quadratic Scaling?">
+How did models like Gemini jump from 8K to 2 Million tokens without requiring infinite RAM? Researchers developed advanced engineering techniques like **FlashAttention** (which rewrites the physical memory read/write logic on the GPU hardware level to avoid storing massive $N \times N$ matrices in slow memory) and **Ring Attention** (which mathematically splits the massive attention calculation across dozens of separate GPUs in a cluster).
 </Callout>
-
-
-## 2. Modern Expansions
-
-Through architectural breakthroughs (like FlashAttention, Ring Attention, and Rotary Positional Embeddings), modern context windows have exploded:
-- **2020 (GPT-3)**: 2,048 tokens (~3 pages of text).
-- **2023 (GPT-4)**: 128,000 tokens (~300 pages of text).
-- **2024 (Gemini 1.5 Pro)**: 2,000,000 tokens (~2 hours of video or 5,000 pages of text).
-
-When a conversation exceeds the context window, the oldest messages must be permanently truncated (deleted) from the prompt, causing the LLM to instantly "forget" the beginning of the conversation.
-

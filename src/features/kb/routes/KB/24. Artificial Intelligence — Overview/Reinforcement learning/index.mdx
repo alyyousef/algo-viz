@@ -1,35 +1,20 @@
 ---
-title: Reinforcement Learning (Overview)
-description: A paradigm of Machine Learning where agents mathematically learn to achieve optimal strategies by interacting with an environment and receiving rewards or punishments.
+title: Reinforcement Learning (Redirect)
+description: "Redirecting to Machine Learning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Reinforcement Learning (Overview)">
+    <ConceptTemplate title="Reinforcement Learning">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Supervised Learning teaches an AI to recognize a picture of a car. **Reinforcement Learning (RL)** teaches the AI how to physically *drive* the car. It is the closest mathematical approximation to how biological brains learn through trial and error.
+<Callout icon="info" title="Redirect">
+**Reinforcement Learning (RL)** is one of the three primary paradigms of learning from data (alongside Supervised and Unsupervised learning).
 
-## 1. The Mathematical Framework (MDPs)
-RL is formally modeled as a **Markov Decision Process (MDP)**.
-1. The Agent observes the current **State** (e.g., the exact pixel layout of the Super Mario screen).
-2. The Agent takes an **Action** (e.g., press Jump).
-3. The Environment mathematically calculates the result, moving the Agent to a new State, and dispensing a **Reward** (e.g., +100 points for hitting a coin, -1,000 points for hitting a Goomba).
-
-The AI's singular mathematical objective is to maximize the cumulative reward over time.
-
-## 2. Exploration vs. Exploitation
-A critical mathematical dilemma in RL.
-If the AI discovers that walking to the right yields +10 points, it might greedily exploit that knowledge, walking to the right forever. But if it never jumps, it will never discover the hidden pipe that yields +10,000 points.
-The algorithm must mathematically balance **Exploitation** (using known good strategies) with **Exploration** (taking random, suboptimal actions in hopes of discovering a massive future payoff).
-
-## 3. Deep Reinforcement Learning (AlphaGo)
-Historically, RL algorithms (like Q-Learning) mathematically memorized the exact value of every possible state in a lookup table. This works for Tic-Tac-Toe (which has a tiny state space). It is mathematically impossible for Chess or Go.
-
-In 2016, DeepMind combined Deep Learning with RL to create **AlphaGo**. Instead of a lookup table, it used a massive Deep Neural Network to mathematically estimate the value of the board state. By playing millions of games against clones of itself (Self-Play), the AI discovered mathematical strategies completely alien to humanity, decisively defeating the human world champion of Go.
-
+Please navigate to the [Machine Learning](/kb/24.-artificial-intelligence-%E2%80%94-overview/machine-learning) module to explore how agents learn optimal policies through trial, error, and reward maximization.
+</Callout>

@@ -4,18 +4,11 @@ description: "A highly optimized algorithmic technique that mathematically uses 
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Bitmask DP"
   subtitle="State Compression via Binary"
   tags={['Algorithms', 'Techniques', 'Dynamic Programming', 'Bitwise']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 In many algorithmic problems (like the Traveling Salesperson Problem), you must keep track of a "State" representing which items you have visited and which you haven't.
 
@@ -27,8 +20,9 @@ Instead of passing arrays, your DP function just takes the integer `20`. The ent
 
 ## 2. O(1) Bitwise Transitions
 Because the state is an integer, transitioning between states is done using blisteringly fast, hardware-level bitwise operations (O(1) time):
-- **Check if City N is visited**: `(mask & (1 <&lt; N)) > 0`
-- **Mark City N as visited**: `mask | (1 <&lt; N)`
-- **Toggle City N**: `mask ^ (1 <&lt; N)`
+- **Check if City N is visited**: `(mask & (1 << N)) > 0`
+- **Mark City N as visited**: `mask | (1 << N)`
+- **Toggle City N**: `mask ^ (1 << N)`
 By combining this with Memoization, a recursive function like `solve(currentCity, mask)` can quickly cache its results in a simple 2D array, mathematically reducing factorial O(N!) time complexities down to exponential **O(N² * 2^N)** time complexities.
 
+</ConceptTemplate>

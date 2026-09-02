@@ -1,39 +1,67 @@
 ---
 title: Model Evaluation
-description: The critical mathematical discipline of rigorously assessing a trained Machine Learning model to guarantee its real-world generalizability and correctness.
+description: "The statistical metrics used to quantify how well a machine learning model is performing."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Model Evaluation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a Data Scientist trains an AI, looks at the "Accuracy", and pushes it to production, the project will almost certainly fail. **Model Evaluation** is the strict mathematical discipline of verifying that a model has learned the true underlying signal, rather than memorizing the training noise (Overfitting).
+Before deploying a Machine Learning model into production, you must rigorously quantify its performance. The metrics you choose depend entirely on whether the task is **Regression** (predicting a continuous number) or **Classification** (predicting a discrete label).
 
-## 1. The Train/Test Split Fallacy
-The absolute baseline of evaluation is splitting the dataset into Training data and Testing data.
-However, this leads to a mathematical flaw: **Information Leakage**.
+## 1. Regression Metrics
 
-If you train a model, test it on the Test Set, and get 80% accuracy, you might tweak the Hyperparameters and train it again. It gets 85%. You tweak again, it gets 90%.
-By repeatedly tweaking the model based on the Test Set results, the human has mathematically leaked the Test Set knowledge into the model. The 90% is a lie.
+When predicting numbers (like house prices), you measure the distance between the predicted number ($\hat{y}$) and the true number ($y$).
 
-The mathematical solution is a 3-way split: **Train, Validation, and Holdout Test**. You tune the model using the Validation set, and the final Holdout Test set is mathematically locked in a vault, executed exactly *once* at the very end of the project to provide the true unbiased metric.
+<ComparisonTable
+  headers={['Metric', 'Meaning', 'Pros & Cons']}
+  rows={[
+    [
+      'Mean Absolute Error (MAE)',
+      'The average of the absolute differences between predictions and actual values.',
+      'Pros: Highly interpretable (e.g., "The model is off by $10,000 on average"). Cons: Does not heavily penalize large outliers.'
+    ],
+    [
+      'Mean Squared Error (MSE)',
+      'The average of the squared differences.',
+      'Pros: Mathematically smooth, easy to use in gradient descent. Cons: Because it squares the errors, massive outliers pull the score drastically. Units are squared (e.g., "$^2$"), which is unreadable.'
+    ],
+    [
+      'Root Mean Squared Error (RMSE)',
+      'The square root of the MSE.',
+      'Pros: Brings the metric back to the original unit (e.g., "$"). Heavily penalizes large errors.'
+    ],
+    [
+      'R-Squared (R²)',
+      'The proportion of the variance in the target variable that is explained by the model.',
+      'Ranges from 0 to 1 (or negative if the model is worse than just guessing the mean). Pro: A great relative metric.'
+    ]
+  ]}
+/>
 
-## 2. Choosing the Right Metric
-"Accuracy" is often a mathematically catastrophic metric.
-If you are building an AI to detect a rare disease that affects 1 in 10,000 people, a broken AI that simply prints "Healthy" for every single person will mathematically achieve **99.99% Accuracy**.
+## 2. Classification Metrics
 
-Evaluation requires choosing the mathematically correct metric for the business context:
-- **Precision**: If I predict you have the disease, how mathematically certain am I? (Crucial when false positives are fatal).
-- **Recall**: Out of all the people who actually have the disease, how many did the AI mathematically find? (Crucial when false negatives are fatal, e.g., missing a cancer diagnosis).
+When predicting categories, simple Accuracy is often deeply misleading, especially if the data is imbalanced (e.g., 99% healthy patients, 1% sick patients).
 
-## 3. The ROC Curve and AUC
-For Binary Classification, models output a probability (e.g., 0.85).
-The **ROC Curve (Receiver Operating Characteristic)** mathematically plots the model's performance across *every single possible probability threshold* (0.0 to 1.0).
-It plots the True Positive Rate against the False Positive Rate. The **AUC (Area Under the Curve)** collapses that graph into a single mathematical number from 0 to 1. An AUC of 1.0 is a mathematically perfect model; an AUC of 0.5 is a coin flip.
+- **Precision:** Out of all the positive predictions the model made, how many were actually positive?
+- **Recall (Sensitivity):** Out of all the actual positives in reality, how many did the model find?
+- **F1-Score:** The Harmonic Mean of Precision and Recall. Used when you need a single metric to balance the two.
 
+### The ROC Curve & AUC
+
+Most classification models don't actually output "Spam" or "Not Spam". They output a probability (e.g., "0.87 chance of Spam"). 
+By default, we set a **Threshold** of 0.5. If probability > 0.5, it's Spam.
+
+The **Receiver Operating Characteristic (ROC)** curve plots the True Positive Rate against the False Positive Rate across *every possible threshold* (from 0.0 to 1.0). 
+The **Area Under the Curve (AUC)** gives a single number (from 0.5 to 1.0) describing how well the model separates the two classes, regardless of the threshold chosen. 
+
+<Callout icon="lightbulb" title="Moving the Threshold">
+In medical diagnoses (where missing a cancer case is fatal, but a false positive just requires another blood test), you want extremely high Recall. You achieve this by lowering the decision threshold from 0.5 down to 0.1. The model will flag almost everyone, catching 100% of the cancers, but causing many false alarms.
+</Callout>

@@ -1,19 +1,38 @@
 ---
 title: Creative Commons
-description: One of several public copyright licenses that enable the free distribution of an otherwise copyrighted "work".
+description: "A set of public copyright licenses that enable the free distribution of an otherwise copyrighted work, primarily used for media, art, and documentation."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Creative Commons (CC)">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Creative Commons (CC)"
+  subtitle="Open Source for Media and Art"
+  tags={['Licensing', 'Copyright', 'Media', 'Legal']}
+>
 
-While MIT and GPL are mathematically designed for source code, they are biologically terrible for images, videos, and music.
+While the GPL and MIT licenses were specifically mathematically designed for software source code, they do not work well for photographs, music, videos, or written articles. 
 
-**Creative Commons** provides licenses for non-software media. A photographer can license an image as `CC BY` (You can use it if you biologically credit me), `CC BY-NC` (You can use it, but mathematically not for commercial profit), or `CC0` (Public Domain, mathematically destroying all copyright entirely).
+**Creative Commons (CC)** is an international non-profit organization that provides standardized, easy-to-understand licenses specifically designed for creative media. It allows creators to legally share their work with the public while retaining specific levels of control.
 
+## 1. The Building Blocks
+
+All CC licenses are built by combining four specific conditional modules:
+
+- **BY (Attribution)**: The core of almost all CC licenses. You can use the work, but you MUST give appropriate credit to the original author.
+- **SA (ShareAlike)**: The "Copyleft" module. If you remix or alter the work (e.g., using a CC song in your YouTube video), you must license your *new* video under the exact same terms.
+- **NC (NonCommercial)**: You can use the work for free, but you cannot use it to make money (e.g., you can't put a CC-NC photo on a t-shirt and sell it).
+- **ND (NoDerivatives)**: You can share the exact, unmodified original work, but you are legally prohibited from remixing, altering, or building upon it.
+
+## 2. Common Combinations
+
+By snapping these modules together, creators define exact legal permissions:
+- **CC BY**: The most permissive. Do whatever you want, even commercially, just credit the author. (Wikipedia uses a variant of this).
+- **CC BY-NC-SA**: You can remix it, you must credit the author, you must share your remix under the same license, and you *cannot* make money off it.
+- **CC0 (Public Domain Dedication)**: The creator mathematically relinquishes all copyright, dedicating the work entirely to the public domain. No attribution is required whatsoever.
+
+## 3. Usage in the Tech Industry
+
+In software engineering, CC licenses are heavily used for **Documentation** and **Assets**. 
+If a developer builds a video game, the C++ code is licensed under the MIT License, but the 3D models, sound effects, and the wiki documentation are licensed under CC-BY.
+
+</ConceptTemplate>

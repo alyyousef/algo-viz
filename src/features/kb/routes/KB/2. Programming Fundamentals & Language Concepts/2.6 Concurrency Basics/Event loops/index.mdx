@@ -1,29 +1,20 @@
 ---
-title: Event Loops
-description: A mathematically continuous loop that acts as the absolute orchestrator of all asynchronous tasks, executing callbacks synchronously as hardware events complete.
+title: Event Loops (Redirect)
+description: "Redirecting to Asynchronous Programming."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Event Loops">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The Event Loop is the beating mathematical heart of single-threaded asynchronous architectures like Node.js, the Browser (JavaScript), and Python's `asyncio`.
+<Callout icon="info" title="Redirect">
+The architectural engine of the **Event Loop** (the infinite `while` loop that orchestrates the Task Queue and Call Stack in single-threaded environments like Node.js and the Browser) is covered in the Deep Dive for **Asynchronous Programming**. 
 
-## 1. The Single-Threaded Illusion
-JavaScript has exactly one CPU thread. How can it download 10 files simultaneously?
-The Event Loop relies on the Operating System's multithreaded Kernel (via `epoll` in Linux or `kqueue` in Mac). When you execute `fetch(url)`, the Event Loop mathematically hands the work off to the OS and continues running your code.
-The OS uses its own hidden threads to download the files. When a file finishes, the OS places the result (and your Callback) into the **Task Queue**.
-
-## 2. The Loop Mechanics
-The Event Loop executes a mathematically infinite `while(true)` cycle:
-1. Is the Call Stack completely empty?
-2. If yes, pull the oldest Callback out of the Task Queue.
-3. Push it onto the Call Stack and execute it completely (Run-to-Completion).
-This mathematical guarantee (Run-to-Completion) means that while your Callback is executing, no other JavaScript code in the universe can interrupt it. You never have to worry about data races or Mutex locks, but if you accidentally write an infinite `while` loop in your Callback, you mathematically block the Event Loop, freezing the entire application forever.
-
+Please navigate to the [Asynchronous Programming](/kb/2.-programming-fundamentals--language-concepts/2.6-concurrency-basics/asynchronous-programming) module to explore the mechanics of the event tick.
+</Callout>

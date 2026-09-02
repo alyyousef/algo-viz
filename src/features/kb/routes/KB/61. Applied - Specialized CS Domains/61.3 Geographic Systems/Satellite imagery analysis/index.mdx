@@ -1,19 +1,32 @@
 ---
-title: Satellite imagery analysis
-description: The use of computer vision algorithms to extract meaningful data from images of the Earth taken by satellites.
+title: Satellite Imagery Analysis
+description: "The computational extraction of meaningful information from raw pixel data captured by earth-observation satellites, heavily utilizing computer vision."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Satellite Imagery Analysis">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Satellite Imagery Analysis"
+  subtitle="Computer Vision from Orbit"
+  tags={['GIS', 'Computer Vision', 'Machine Learning', 'Big Data']}
+>
 
-Satellites biologically photograph the entire Earth every single day, generating Petabytes of raw visual data.
+Satellites generate petabytes of images of the Earth every single day. Human analysts cannot possibly look at all of it. **Satellite Imagery Analysis** is the specialized application of Computer Vision and Deep Learning designed to autonomously extract data from massive geospatial rasters.
 
-Computer scientists mathematically feed these images into massive Convolutional Neural Networks (CNNs). The AI mathematically counts the number of biological cars in Walmart parking lots to predict retail stock prices, measures the health of agricultural crops using Infrared frequencies, and biologically detects illegal deforestation in the Amazon rainforest in real-time.
+## 1. The Data Structure (Rasters)
 
+Unlike a standard iPhone photo (which just has Red, Green, and Blue channels), satellite imagery is **Multispectral**. 
+A single pixel might contain 10 different bands of data, including Near-Infrared (NIR) and Shortwave-Infrared (SWIR). This means a satellite image isn't just a picture; it is a massive 3D matrix of scientific data. By mathematically combining these invisible bands, algorithms can detect things human eyes cannot see, like the exact moisture content of a cornfield.
+
+## 2. Convolutional Neural Networks (CNNs)
+
+The primary tool for analyzing this data is the **CNN**. 
+- **Semantic Segmentation**: Algorithms like U-Net are trained to classify every single pixel in a satellite image. They can take an image of a city and autonomously draw perfect vector polygons around every single building footprint, road, and tree.
+- **Object Detection**: CNNs are used to count discrete objects from space, such as counting the number of cargo ships in a port, or tracking the migration of elephant herds in Africa.
+
+## 3. Change Detection (Temporal Analysis)
+
+Because satellites pass over the exact same spot on Earth every few days, computers can perform **Automated Change Detection**.
+By perfectly aligning an image from Monday and an image from Thursday, the algorithm subtracts the matrices. The AI can instantly alert human operators to illegal deforestation in the Amazon, the construction of new military bases, or the exact spread of a wildfire over 24 hours.
+
+</ConceptTemplate>

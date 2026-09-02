@@ -1,19 +1,32 @@
 ---
-title: ITSM
-description: Information Technology Service Management are the activities that are performed by an organization to design, build, deliver, operate and control information technology services offered to customers.
+title: ITSM (IT Service Management)
+description: "The strategic approach to designing, delivering, managing, and improving the way IT is used within an organization, ensuring IT services align with business needs."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="ITSM">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="ITSM (IT Service Management)"
+  subtitle="Running IT as a Business"
+  tags={['Enterprise IT', 'ITIL', 'Management', 'ServiceNow']}
+>
 
-**ITSM** is the biological implementation of ITIL.
+Historically, the IT department was viewed simply as "the people who fix the printers." **ITSM** is the massive paradigm shift that treats IT as a formal Service Provider to the rest of the business, applying strict processes, metrics, and workflows to every technological action.
 
-If an employee's biological laptop breaks, they mathematically submit an ITSM "Incident Ticket". If the company needs to buy 50 new laptops, they submit an ITSM "Service Request". ITSM is the mathematical software layer that tracks the SLAs (Service Level Agreements), ensuring that the biological Help Desk mathematically resolves the ticket within 4 hours.
+## 1. ITIL (The Framework)
 
+ITSM is the *concept*, but **ITIL** (Information Technology Infrastructure Library) is the actual *framework*. It is a set of books detailing the exact best practices for running an IT department. ITIL categorizes all IT work into highly structured "Processes".
+
+## 2. Core ITSM Processes
+
+- **Incident Management**: How do we restore normal service operation as quickly as possible? (e.g., The Wi-Fi is down, fix it *now*, figure out why later).
+- **Problem Management**: The root-cause analysis. (e.g., The Wi-Fi has gone down 4 times this month. Let's dig into the switch logs to find out the underlying architectural flaw so it never happens again).
+- **Change Management**: A highly bureaucratic process to prevent self-inflicted damage. If a network engineer wants to update the firewall on a Friday afternoon, they must submit a "Change Request". A Change Advisory Board (CAB) reviews the risk, the rollout plan, and the rollback plan before approving it.
+- **Service Request Management**: Standard, predictable requests (e.g., "I need a new laptop", "Reset my password").
+
+## 3. ServiceNow
+
+You cannot run ITSM on sticky notes. The undisputed king of ITSM software is **ServiceNow**. 
+It is a massive enterprise SaaS platform that digitizes the entire ITIL framework. When an employee spills coffee on their laptop, they go to the ServiceNow portal, submit a ticket, and the platform autonomously routes the ticket to the correct hardware technician, tracks the SLA (Service Level Agreement) timer, and updates the corporate inventory database when a replacement is issued.
+
+</ConceptTemplate>

@@ -1,19 +1,31 @@
 ---
 title: Proteomics
-description: The large-scale study of proteins.
+description: "The large-scale computational study of proteomes—the entire set of proteins that is produced or modified by an organism or system."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Proteomics">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Proteomics"
+  subtitle="Computing the Machinery of Life"
+  tags={['Bioinformatics', 'Biology', 'Data Science', 'Machine Learning']}
+>
 
-DNA is just the static instruction manual. Proteins are the biological nanomachines that actually do the work in a cell.
+If Genomics is the study of the "blueprint" (DNA), **Proteomics** is the study of the actual "machinery" (Proteins) that the blueprint builds. 
+While a human has roughly 20,000 genes, those genes can produce over 1,000,000 different proteins through complex folding and modifications. Studying this massive, dynamic dataset requires intense computational power.
 
-**Proteomics** is the study of these proteins. While DNA is a simple 1D text string, a protein is a complex 3D shape that folds in on itself. The biological function of a protein is dictated entirely by its 3D physical shape. Mathematically predicting exactly how a 1D string of amino acids will physically fold into a 3D structure is one of the hardest problems in physics, recently revolutionized by DeepMind's AlphaFold.
+## 1. The Protein Folding Problem
 
+For 50 years, the grand challenge of computational biology was the Protein Folding Problem. 
+Proteins are long chains of amino acids. However, a protein only functions based on its 3D physical shape. Determining how a 1D string of amino acids will magnetically and chemically fold itself into a complex 3D nanostructure is a physics simulation that would take traditional supercomputers thousands of years to calculate for a single protein.
+
+## 2. AlphaFold (The Deep Learning Revolution)
+
+In 2020, Google DeepMind solved the Protein Folding Problem using AI. 
+Their neural network, **AlphaFold**, bypassed the brute-force physics simulations. Instead, it was trained on the massive database of known protein structures. By using deep learning attention mechanisms, AlphaFold learned the hidden patterns of how amino acids interact, predicting the 3D structure of almost every known protein in the universe with atomic accuracy in a matter of minutes.
+
+<Callout type="success" title="Impact on Drug Discovery">
+  Proteomics is the foundation of modern pharmacology. Almost all drugs work by physically binding to a specific protein in the body (like a key fitting into a lock). By computationally knowing the exact 3D shape of a disease-causing protein, supercomputers can rapidly screen millions of chemical compounds to find the one molecule that perfectly slots into the protein's receptor site, cutting drug development time by years.
+</Callout>
+
+</ConceptTemplate>

@@ -4,18 +4,11 @@ description: "An elegant, single-pass mathematical algorithm for finding the Str
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Tarjan's SCC Algorithm"
   subtitle="Single-Pass Component Isolation"
   tags={['Algorithms', 'Graphs', 'DFS', 'SCC']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 While Kosaraju's Algorithm finds Strongly Connected Components using *two* DFS passes, Robert Tarjan mathematically solved it using only a **single DFS pass**.
 
@@ -29,3 +22,4 @@ Because all nodes in an SCC can reach each other, they will mathematically all s
 When the recursive DFS finishes exploring a node, it checks: `Is my low-link value equal to my discovery time?`
 If YES, this node is mathematically the root of an SCC. The algorithm instantly pops nodes off the Stack until it pops the root node itself. Everything it just popped is guaranteed to form a single, isolated Strongly Connected Component. The Time Complexity is an optimal **O(V + E)**.
 
+</ConceptTemplate>

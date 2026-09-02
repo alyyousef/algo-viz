@@ -4,18 +4,11 @@ description: "A mathematical algorithm design paradigm for discrete and combinat
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Branch and Bound"
   subtitle="Mathematically Pruning the Tree"
   tags={['Algorithms', 'Techniques', 'Optimization', 'Trees']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 Backtracking just blindly explores a decision tree until a rule is violated. **Branch and Bound** is mathematically smarter: it explores a decision tree while constantly keeping track of the "Best Score So Far," using it to mathematically prove that certain branches are not worth exploring.
 
@@ -29,3 +22,4 @@ Because 550 > 500, you mathematically know this branch can NEVER beat the curren
 Backtracking strictly uses DFS. Branch and Bound can mathematically use a Priority Queue (Best-First Search).
 Instead of diving deep into the tree, it calculates the Lower Bound for all child nodes, puts them in a Heap, and explores the most mathematically promising node first. This increases the chances of finding an extremely low Upper Bound early on, which in turn drastically increases the pruning power for the rest of the algorithm.
 
+</ConceptTemplate>

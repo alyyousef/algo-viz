@@ -1,29 +1,20 @@
 ---
-title: Data Visualization
-description: The mathematical translation of massive numerical datasets into visual geometry (graphs, charts, maps) to leverage human cognitive pattern recognition.
+title: Data Visualization (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Data Visualization">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A mathematical model that predicts a stock price with 99% accuracy is useless if an executive cannot understand the output. Data Visualization bridges the gap between complex mathematics and human cognition.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Data Visualization** (building dashboards in Looker, Tableau, or Superset on top of a Semantic Layer) is covered in the Deep Dive for **Business Intelligence (BI)**. 
 
-## 1. The Grammar of Graphics
-Modern visualization (like Python's `ggplot` or D3.js) is built on the mathematical theory called "The Grammar of Graphics."
-Instead of just calling `drawPieChart()`, developers mathematically map Data variables to visual Aesthetics.
-- **X/Y Coordinates**: Mapped to Continuous mathematical variables (e.g., Time, Price).
-- **Color/Hue**: Mapped to Categorical variables (e.g., Region, Product Type).
-- **Size**: Mapped to Magnitude (e.g., Total Sales Volume).
-By defining these strict mathematical mappings, complex, multi-dimensional data can be rendered into a single, highly readable image.
-
-## 2. Avoiding Visualization Bias
-Data Visualization can easily be mathematically manipulated to lie.
-If a bar chart's Y-Axis starts at 50 instead of 0, a 5% difference between two bars will visually look like a 500% difference. Data Scientists must adhere to strict mathematical integrity when designing visualizations, ensuring that the physical area or slope of the visual geometry accurately and proportionally represents the underlying mathematics.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts present mathematical truth to stakeholders.
+</Callout>

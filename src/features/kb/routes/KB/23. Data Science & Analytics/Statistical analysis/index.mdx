@@ -1,42 +1,20 @@
 ---
-title: Statistical Analysis
-description: The mathematical foundation of Data Science, providing the rigorous frameworks to summarize data, calculate probability, and infer truths about populations.
+title: Statistical Analysis (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Statistical Analysis">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Machine Learning is not magic; it is simply applied Statistics executing at massive scale. **Statistical Analysis** is the mathematical foundation of all Data Science. It is divided into two primary disciplines: Descriptive Statistics and Inferential Statistics.
+<Callout icon="info" title="Redirect">
+The mathematical foundations of **Statistical Analysis** (mean, variance, hypothesis testing, and p-values) are covered in the Deep Dive for **Business Intelligence (BI)**. 
 
-## 1. Descriptive Statistics
-Descriptive Statistics mathematically summarizes the *exact dataset* you possess. It makes no predictions.
-
-- **Measures of Central Tendency**:
-  - **Mean**: The mathematical average. (Highly sensitive to outliers).
-  - **Median**: The exact middle value when sorted. (Robust to outliers).
-- **Measures of Dispersion (Spread)**:
-  - **Variance**: The mathematical average of the squared differences from the Mean.
-  - **Standard Deviation ($sigma$)**: The square root of the Variance. It mathematically dictates the width of the bell curve. In a normal distribution, exactly 68% of the data lies within 1 Standard Deviation, and 99.7% lies within 3 Standard Deviations (The Empirical Rule).
-
-## 2. Inferential Statistics
-You cannot mathematically survey the height of all 8 billion humans on Earth (The Population). You can only survey 1,000 humans (The Sample).
-Inferential Statistics is the mathematical discipline of using that tiny Sample to confidently infer the true height of the massive Population.
-
-### The Central Limit Theorem (CLT)
-The CLT is the most critical mathematical theorem in Statistics.
-It states that if you take enough samples from a population, the *averages* of those samples will mathematically form a perfect, normal Bell Curve, **even if the underlying population is not a bell curve at all**.
-Because we know it forms a normal distribution, we can use probability math to accurately estimate the true population mean.
-
-## 3. Probability Distributions
-Data Science heavily relies on mapping real-world chaos to mathematical probability functions:
-- **Normal (Gaussian) Distribution**: The classic bell curve (heights, IQ scores).
-- **Binomial Distribution**: The mathematical probability of discrete success/failure events (e.g., getting exactly 6 heads in 10 coin flips).
-- **Poisson Distribution**: The mathematical probability of events occurring in a fixed interval of time (e.g., how many users will click the "Buy" button in the next 5 minutes).
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts derive mathematical truth from product data.
+</Callout>

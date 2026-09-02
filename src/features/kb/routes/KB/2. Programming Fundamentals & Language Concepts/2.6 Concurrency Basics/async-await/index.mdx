@@ -1,26 +1,20 @@
 ---
-title: Async/Await
-description: Syntactic sugar that mathematically transforms asynchronous, non-blocking code into a structure that looks and behaves like synchronous code.
+title: async/await (Redirect)
+description: "Redirecting to Asynchronous Programming."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Async / Await">
+    <ConceptTemplate title="async / await">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before `async/await`, handling asynchronous operations required chaining Promises (`.then().catch()`) or using deep Callback chains. `async/await` mathematically flattens this complexity.
+<Callout icon="info" title="Redirect">
+The architectural syntax of **async/await** (which mathematically compiles asynchronous code into a synchronous-looking State Machine) is comprehensively covered in the Deep Dive for **Asynchronous Programming**. 
 
-## 1. The Mathematical Illusion
-When you write `let data = await fetch(url);`, the compiler plays a mathematical trick.
-It does not actually halt the CPU thread (which would freeze the entire application). Instead, the `await` keyword acts as an invisible **Generator `yield`**. The compiler mathematically slices your function into two parts right at the `await` line. It saves all your local variables to the Heap, exits the function entirely, and hands control back to the Event Loop.
-When the network request finishes 50 milliseconds later, the Event Loop calls the second half of your function, pushing your variables back onto the Stack, maintaining the mathematical illusion that the function just "paused."
-
-## 2. The Color of Functions
-`async/await` introduces a mathematical problem known as "Function Coloring."
-If Function A is tagged as `async`, it is mathematically fundamentally different from a normal function (it returns a Promise, not raw data). Therefore, if Function B calls Function A, Function B *must* also become `async` to use `await`. This mathematical infection spreads all the way up the Call Stack, forcing the entire architecture to be written asynchronously.
-
+Please navigate to the [Asynchronous Programming](/kb/2.-programming-fundamentals--language-concepts/2.6-concurrency-basics/asynchronous-programming) module to explore non-blocking Continuations.
+</Callout>

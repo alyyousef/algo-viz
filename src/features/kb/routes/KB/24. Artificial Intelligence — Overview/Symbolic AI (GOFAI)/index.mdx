@@ -1,38 +1,20 @@
 ---
-title: Symbolic AI (GOFAI)
-description: Good Old-Fashioned AI, the dominant paradigm of the 20th century, focused on explicitly programming human logic using strict mathematical symbols and rules.
+title: Symbolic AI (GOFAI) (Redirect)
+description: "Redirecting to Machine Learning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Symbolic AI (GOFAI)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Symbolic AI**, often referred to as **GOFAI (Good Old-Fashioned AI)**, was the absolute dominant architecture of Artificial Intelligence from its inception in the 1950s until the Deep Learning revolution of the 2010s.
+<Callout icon="info" title="Redirect">
+**Symbolic AI**, often referred to as Good Old-Fashioned AI (GOFAI), attempted to achieve human-level intelligence by hardcoding millions of logical rules and symbols.
 
-## 1. The Core Philosophy
-Modern Deep Learning is a mathematical "Black Box" based on probability and statistics.
-GOFAI researchers vehemently rejected probability. They believed that human intelligence was fundamentally the manipulation of symbols according to strict logical rules.
-
-If you wanted to teach an AI to play Chess, you did not show it millions of games and ask it to find statistical patterns. You explicitly programmed the mathematical rules of how the Knight moves, and gave it an evaluation function based on pure logic.
-
-## 2. Physical Symbol System Hypothesis
-Proposed by Allen Newell and Herbert Simon (AI pioneers), this hypothesis mathematically stated:
-*"A physical symbol system has the necessary and sufficient means for general intelligent action."*
-
-They believed that by creating a vast, hierarchical web of IF-THEN rules and manipulating them using Boolean logic, LISP code, and tree-search algorithms, they would mathematically achieve Artificial General Intelligence (AGI).
-
-## 3. The Downfall of GOFAI
-GOFAI achieved massive early successes. It mathematically proved geometry theorems, solved algebra word problems, and defeated the human world champion in Chess (IBM's Deep Blue in 1997 was essentially a massive GOFAI search algorithm).
-
-However, GOFAI hit a catastrophic mathematical wall: **The Real World**.
-You can easily write strict IF-THEN rules for Chess. You mathematically *cannot* write strict IF-THEN rules for facial recognition.
-How do you write a rule to detect a dog? "IF it has 4 legs AND fur THEN Dog". What if the dog lost a leg in an accident? The strict Boolean logic fails instantly.
-
-Because the real world is messy, chaotic, and probabilistic, rigid Symbolic AI was ultimately abandoned for perception tasks, completely usurped by the statistical probability engines of Deep Neural Networks.
-
+While successful in narrow domains, it failed to scale to the messy, ambiguous real world. Please navigate to the upcoming **Machine Learning** modules to see how the field transitioned from hardcoded logic to statistical learning.
+</Callout>

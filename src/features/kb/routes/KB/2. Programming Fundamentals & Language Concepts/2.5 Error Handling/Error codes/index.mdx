@@ -1,26 +1,20 @@
 ---
-title: Error Codes
-description: The legacy, C-style method of error handling where functions return a specific integer to mathematically indicate success or the type of failure.
+title: Error Codes (Redirect)
+description: "Redirecting to Exceptions."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Error Codes">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before modern Exceptions were invented, Error Codes were the only mathematical way a function could communicate failure back to the caller.
+<Callout icon="info" title="Redirect">
+The architectural pattern of returning **Error Codes** (and the modern evolution into Monadic `Result` types in Rust/Go) is analyzed comprehensively in contrast to traditional `throw/catch` paradigms in the Deep Dive for **Exceptions**. 
 
-## 1. The Integer Contract
-Because a C function can only mathematically return one value, if it needs to return data, how does it return an error?
-Standard convention dictates that functions return `0` for mathematical success, and a negative integer (e.g., `-1`) for failure. If the function needs to return actual data, it returns a Memory Pointer. If the pointer is mathematically exactly `0x0` (Null), it indicates failure.
-
-## 2. The errno Global
-If a function returns `-1`, how do you know *why* it failed?
-Operating Systems (like POSIX/Linux) utilize a massive global variable named `errno`. If a system call fails, the OS mathematically writes a specific Error Code into `errno` (e.g., `2` for "File Not Found", `13` for "Permission Denied").
-The caller must instantly check the `errno` global variable. This is mathematically dangerous in multi-threaded environments, because if Thread B triggers an error exactly one millisecond after Thread A, Thread B will overwrite `errno`, and Thread A will read the wrong mathematical error code.
-
+Please navigate to the [Exceptions](/kb/2.-programming-fundamentals--language-concepts/2.5-error-handling/exceptions) module to explore how modern languages structure failure propagation.
+</Callout>

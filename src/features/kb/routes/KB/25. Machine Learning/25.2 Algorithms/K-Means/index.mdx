@@ -1,48 +1,51 @@
 ---
 title: K-Means Clustering
-description: An unsupervised learning algorithm that partitions datasets into K distinct, non-overlapping mathematical clusters.
+description: "A comprehensive guide to K-Means, one of the simplest and most popular unsupervised clustering algorithms."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="K-Means Clustering">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**K-Means** is the most widely used **Unsupervised Learning** algorithm. Unlike classification, there are no labels in the dataset. The algorithm mathematically discovers hidden geometric groupings (clusters) on its own.
+**K-Means** is a foundational unsupervised machine learning algorithm used for clustering. Its goal is to partition a dataset into $K$ distinct, non-overlapping subgroups (clusters) where each data point belongs to the cluster with the nearest mean (centroid).
 
-## 1. The Algorithm
-The goal is to mathematically minimize the **Inertia** (Within-Cluster Sum of Squares) — the sum of squared distances between each point and its cluster's center (Centroid).
+## How the Algorithm Works
 
-1. **Initialization**: Randomly drop `K` centroids into the geometric space.
-2. **Assignment Step**: Iterate through every data point. Mathematically calculate its Euclidean distance to all `K` centroids. Assign the point to the closest centroid.
-3. **Update Step**: Calculate the mathematical mean (average) of all points assigned to a specific centroid. Move the centroid to this exact new coordinate.
-4. **Repeat**: Repeat steps 2 and 3 until the centroids mathematically stop moving (Convergence).
+K-Means is an iterative algorithm that follows a straightforward process called Lloyd's Algorithm:
 
-## 2. Choosing K (The Elbow Method)
-The algorithm requires the engineer to define `K` manually. To find the optimal `K`, we use the **Elbow Method**:
-1. Run K-Means for `K=1` through `K=10`.
-2. Plot the resulting Inertia for each `K`.
-3. The curve will drop rapidly and then plateau. The point where the curve violently bends (the "elbow") represents the mathematically optimal number of clusters, balancing variance reduction with simplicity.
+1.  **Initialization:** Randomly select $K$ data points to act as the initial cluster centers (centroids). 
+2.  **Assignment Step:** Iterate through every data point in the dataset. Calculate the distance (usually Euclidean distance) between the point and all $K$ centroids. Assign the point to the cluster of the closest centroid.
+3.  **Update Step:** Once all points are assigned, recalculate the centroid of each cluster by taking the mean of all data points currently assigned to that cluster.
+4.  **Repeat:** Repeat Steps 2 and 3 until **convergence**. Convergence happens when the assignments no longer change, or the centroids stop moving significantly.
 
-## 3. Limitations of K-Means
-
-
-<ComparisonTable headers={['Limitation', 'Mathematical Reason']} rows={[ ['Assumes Spherical Clusters', 'It relies exclusively on Euclidean distance from a central point. If data is shaped like concentric rings, K-Means fails catastrophically (use DBSCAN instead).'], ['Requires Feature Scaling', 'If Feature A ranges from 0-1 and Feature B ranges from 0-1000, Feature B will mathematically dominate the Euclidean distance calculation. You MUST apply StandardScaler.'], ['Local Minima Trap', 'If the initial random centroids are poorly placed, the algorithm can get mathematically trapped in a terrible local minimum. (Solved by using the K-Means++ initialization algorithm).'] ]} />
-
-
-<Callout icon="info" title="Time Complexity">
-
-
-Lloyd's Algorithm (the standard K-Means implementation) runs in `O(n * K * I * d)` where `I` is iterations and `d` is dimensions. It is extremely fast and scalable to massive datasets.
-
-
+<Callout icon="exclamation-triangle" title="The Initialization Problem">
+The random initialization in Step 1 means K-Means can get stuck in a local optimum, yielding poor clusters. To solve this, the **K-Means++** initialization algorithm is almost universally used today. It chooses the first centroid randomly, but subsequent centroids are chosen with a probability proportional to their squared distance from the closest existing centroid, spreading them out intelligently.
 </Callout>
 
+## Choosing the Right $K$
 
+The biggest drawback of K-Means is that you must specify the number of clusters ($K$) *before* running the algorithm. Since it's unsupervised, you rarely know the "correct" number. 
+
+Two common heuristics for finding a good $K$ are:
+
+*   **The Elbow Method:** Run K-Means for a range of $K$ values (e.g., 1 to 10). For each run, calculate the Within-Cluster Sum of Squares (WCSS), also known as inertia. Plot WCSS against $K$. The plot looks like an arm; the "elbow" (where the rate of decrease sharply shifts) represents a good choice for $K$.
+*   **The Silhouette Score:** A metric that measures how similar an object is to its own cluster (cohesion) compared to other clusters (separation). It ranges from -1 to 1. A high average Silhouette Score indicates well-separated, dense clusters.
+
+## Assumptions and Limitations
+
+K-Means works beautifully when its underlying assumptions are met, but fails spectacularly when they are not:
+
+1.  **Spherical Clusters:** K-Means assumes clusters are spherical and have roughly the same radius. It struggles with elongated or complex shapes (like concentric circles).
+2.  **Similar Densities:** It assumes clusters have similar densities. If one cluster is very dense and another is very sparse, K-Means will often split the sparse cluster incorrectly.
+3.  **Sensitivity to Outliers:** Because it uses the mean to calculate centroids, extreme outliers can drag the centroid far away from the true center of mass.
+4.  **Curse of Dimensionality:** In very high-dimensional spaces, the concept of Euclidean distance loses meaning (all points become roughly equidistant), severely degrading K-Means' performance.
+
+## Summary
+
+Despite its limitations, K-Means remains a go-to clustering algorithm because it is incredibly fast, simple to understand, and highly scalable to massive datasets. It serves as an excellent baseline model for any unsupervised clustering task.

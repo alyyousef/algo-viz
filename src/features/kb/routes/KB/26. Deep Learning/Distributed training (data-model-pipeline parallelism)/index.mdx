@@ -1,35 +1,57 @@
 ---
-title: Distributed Training (Parallelism)
-description: The extreme engineering architecture required to mathematically split and train massive foundation models across thousands of GPUs simultaneously.
+title: Distributed Training
+description: "A guide to the three primary paradigms of Distributed Training: Data Parallelism, Tensor Parallelism, and Pipeline Parallelism."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Distributed Training">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-You cannot train GPT-4 on a single GPU. It mathematically requires tens of thousands of GPUs working in perfect synchronization. Because a single 70B model requires hundreds of gigabytes of VRAM just to exist, researchers must use highly advanced mathematical splitting techniques (Parallelism).
+**Distributed Training** is the process of training a single deep learning model across multiple GPUs or multiple physical servers simultaneously. 
+
+Ten years ago, you could train a state-of-the-art model on a single GPU in a few weeks. Today, training a massive Large Language Model (LLM) like GPT-4 requires thousands of GPUs working in perfect synchronization for months. 
+
+To achieve this, engineers use three primary forms of parallelism. Usually, all three are combined to train massive models (often called **3D Parallelism**).
 
 ## 1. Data Parallelism (DDP)
-The simplest approach. The model is small enough to completely fit inside the VRAM of a single GPU.
-1. You mathematically clone the exact same model onto 8 different GPUs.
-2. You split your massive dataset into 8 chunks.
-3. Every GPU calculates the mathematical gradients on its own chunk of data.
-4. Before updating the weights, the GPUs synchronize over the network, mathematically average their gradients together, and update simultaneously.
+
+**The Problem:** The model easily fits in the memory of a single GPU, but the *dataset* is so massively huge that training would take 5 years.
+
+**The Solution:** 
+1.  You copy the exact same model onto 8 different GPUs.
+2.  You take your dataset and split it into 8 chunks.
+3.  Each GPU trains its copy of the model on its specific chunk of data.
+4.  Crucially, before any GPU actually updates its weights, they all pause, communicate across the network to average their gradients together, and then all update their weights identically.
+
+**Summary:** Every GPU holds the same model, but processes different data. This is the most common and simplest form of distributed training (e.g., PyTorch `DistributedDataParallel`).
 
 ## 2. Tensor (Model) Parallelism
-What if the model is so massive (e.g., a 100B parameter Transformer) that it physically cannot fit inside the VRAM of a single GPU?
-**Tensor Parallelism** mathematically slices the actual matrices inside the network.
-If a layer has a $1000 	imes 1000$ matrix, you slice it in half. GPU 1 holds the left half. GPU 2 holds the right half. When data flows through, GPU 1 calculates the math for its half, GPU 2 calculates its half, and they instantly synchronize over extremely high-speed interconnects (NVLink) to mathematically fuse the final answer.
+
+**The Problem:** The model is so massive (e.g., a 70-Billion parameter LLM) that a single copy of the model cannot physically fit inside the VRAM of a single GPU. 
+
+**The Solution:** You take the actual mathematical matrices of the neural network and slice them in half. 
+If you have a massive matrix multiplication occurring in a Transformer layer, you give the left half of the matrix to GPU 1, and the right half of the matrix to GPU 2. They both do half of the math simultaneously, and then quickly communicate to stitch the final answer back together.
+
+**Summary:** The model's layers are sliced vertically across GPUs. This requires incredibly fast communication between the GPUs (like NVLink), so Tensor Parallelism is almost always restricted to GPUs sitting inside the exact same physical server box. (Popularized by NVIDIA's Megatron-LM).
 
 ## 3. Pipeline Parallelism
-If slicing individual matrices is too complex, **Pipeline Parallelism** slices the model by layers.
-GPU 1 holds Layers 1-10. GPU 2 holds Layers 11-20.
-GPU 1 calculates the mathematical forward pass and hands the activation vector to GPU 2.
-*The Flaw (The Bubble)*: While GPU 1 is calculating, GPU 2 is doing absolutely nothing. To fix this mathematical inefficiency, frameworks use "Micro-batches" to constantly keep data flowing through the pipeline like an assembly line, virtually eliminating idle time.
 
+**The Problem:** The model is too big for one GPU, and you want to scale across multiple physical servers where the network connection is too slow for Tensor Parallelism.
+
+**The Solution:** You split the model horizontally by layer. 
+If you have a 100-layer network, you put Layers 1-25 on GPU 1, Layers 26-50 on GPU 2, etc. GPU 1 processes the data, finishes its math, and then sends the intermediate activations over the network to GPU 2. 
+
+**The "Bubble" Problem:** If GPU 1 is processing data, GPUs 2, 3, and 4 are sitting completely idle waiting for the data to arrive. To fix this, we use **Micro-batching**. GPU 1 breaks its batch into tiny chunks. As soon as it finishes chunk A, it sends it to GPU 2 and immediately starts working on chunk B. This keeps all GPUs relatively busy, like an assembly line.
+
+<Callout icon="layers" title="3D Parallelism Example">
+If you have a cluster of 1,024 GPUs, you might use:
+*   **Tensor Parallelism (x8):** Splitting the model math across the 8 GPUs inside a single physical server box.
+*   **Pipeline Parallelism (x8):** Chaining 8 servers together to hold the entire massive model from layer 1 to 100.
+*   **Data Parallelism (x16):** Taking that entire 64-GPU setup, copying it 16 times, and feeding different data to each of the 16 clusters.
+</Callout>

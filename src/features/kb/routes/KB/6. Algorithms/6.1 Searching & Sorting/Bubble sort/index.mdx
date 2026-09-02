@@ -3,6 +3,7 @@ title: Bubble Sort
 description: "A mathematically simple but highly inefficient sorting algorithm that repeatedly steps through a list, compares adjacent elements, and swaps them if they are in the wrong order."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { SortingVisualizer } from '@/features/kb/components/visualizations/SortingVisualizer'
 
 export default function Layout({ children }) {
   return (
@@ -16,6 +17,8 @@ export default function Layout({ children }) {
   </ConceptTemplate>
   )
 }
+
+<SortingVisualizer algorithm="bubble" />
 
 Bubble Sort is the first algorithm taught in computer science because its mathematical logic perfectly mimics human intuition, but it is almost never used in production software due to its catastrophic performance.
 

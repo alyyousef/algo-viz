@@ -1,41 +1,62 @@
 ---
 title: Accuracy
-description: The simplest and most widely misunderstood evaluation metric, measuring the mathematical percentage of correct predictions across the entire dataset.
+description: "An overview of Accuracy, the simplest but often most misleading evaluation metric in machine learning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Accuracy">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Accuracy** is the most intuitive metric in Machine Learning, but is mathematically catastrophic if used blindly in production environments.
+**Accuracy** is the most intuitive and commonly understood performance metric for classification models. It simply measures the proportion of total predictions that the model got correct.
 
-## 1. The Mathematical Equation
-The formula is incredibly simple. It uses the components of the Confusion Matrix:
-- **True Positives (TP)**
-- **True Negatives (TN)**
-- **False Positives (FP)**
-- **False Negatives (FN)**
+## The Formula
 
-$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$
+The formula for accuracy is straightforward:
 
-It is literally just: (Total Correct Predictions) / (Total Predictions).
+$$\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total Number of Predictions}}$$
 
-## 2. The Imbalanced Data Fallacy (The Accuracy Paradox)
-If you are building an AI to predict credit card fraud, the dataset is massively imbalanced. 99.9% of transactions are legitimate, and 0.1% are fraud.
+In the context of binary classification (using a Confusion Matrix), it is expressed as:
 
-If a Data Scientist writes a broken Python script that mathematically ignores the data and just prints `"Legitimate"` for every single transaction, the script will achieve **99.9% Accuracy**.
-If a CEO looks only at Accuracy, they will deploy the script, and the company will lose billions to the 0.1% of fraud that slipped through. This is the **Accuracy Paradox**. Accuracy is mathematically meaningless unless the target classes are perfectly 50/50 balanced.
+$$\text{Accuracy} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{TP} + \text{TN} + \text{False Positives (FP)} + \text{False Negatives (FN)}}$$
 
-## 3. When to Actually Use Accuracy
-You should only rely on Accuracy when:
-1. The dataset is mathematically perfectly balanced (e.g., 5,000 pictures of Dogs and 5,000 pictures of Cats).
-2. The mathematical cost of a False Positive is exactly identical to the cost of a False Negative. (If predicting "Cat" when it's a "Dog" is just as harmless as predicting "Dog" when it's a "Cat").
+## When is Accuracy a Good Metric?
 
-If identifying the positive class is highly critical (like cancer detection), Accuracy must be discarded in favor of Precision, Recall, and F1 Score.
+Accuracy is a perfectly fine metric **ONLY** when your dataset is perfectly **balanced** and the cost of false positives and false negatives are roughly the same.
 
+For example, if you are classifying images of cats and dogs, and exactly 50% of your images are cats and 50% are dogs, an accuracy of 90% is a genuinely good indicator of the model's performance.
+
+## The Problem: The Accuracy Paradox
+
+Accuracy becomes highly misleading—even dangerous—when dealing with **imbalanced datasets**.
+
+<Callout icon="exclamation-triangle" title="The Accuracy Paradox Example">
+Imagine you are building a model to detect a rare disease that affects exactly 1 in 10,000 people (0.01% of the population).
+
+You build a completely "dumb" model that simply predicts "Healthy" for every single person, regardless of their symptoms.
+
+What is the accuracy of this dumb model?
+**99.99%**
+
+If you only look at accuracy, you might think you've built the greatest medical AI in history. In reality, your model is completely useless and will fail to identify the 1 person who actually has the disease.
+</Callout>
+
+This phenomenon is known as the Accuracy Paradox. The model optimizes for the majority class and completely ignores the minority class, yet still achieves an incredibly high score.
+
+## What to use instead?
+
+Whenever your classes are imbalanced (e.g., fraud detection, spam filtering, rare disease diagnosis, click-through rate prediction), you must use metrics that look deeper than raw accuracy:
+
+*   **Precision:** Out of all the positive predictions we made, how many were actually positive?
+*   **Recall (Sensitivity):** Out of all the actual positive cases, how many did we successfully find?
+*   **F1 Score:** The harmonic mean of Precision and Recall. A much better single-number metric for imbalanced data.
+*   **ROC-AUC:** Measures the model's ability to rank positive instances higher than negative instances across all thresholds.
+
+## Summary
+
+Accuracy is a trap for beginners. While it is easy to understand, it should almost never be the sole metric used to evaluate a machine learning model unless you are absolutely certain your class distribution is balanced.

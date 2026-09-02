@@ -1,28 +1,20 @@
 ---
-title: Promises / Futures
-description: Mathematical proxy objects that act as a placeholder for a value that is currently unknown but is guaranteed to be resolved at some point in the future.
+title: Promises/Futures (Redirect)
+description: "Redirecting to Asynchronous Programming."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Promises / Futures">
+    <ConceptTemplate title="Promises & Futures">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Promises (JavaScript) and Futures (Rust, Java, C++) are the mathematical objects used to escape Callback Hell. They provide a standardized structure for handling asynchronous state.
+<Callout icon="info" title="Redirect">
+The architectural abstraction of **Promises (JavaScript) and Futures (Rust/Java)**—objects representing the eventual completion of a non-blocking operation—is comprehensively covered in the Deep Dive for **Asynchronous Programming**. 
 
-## 1. The Three Mathematical States
-A Promise is a State Machine. It can only mathematically exist in one of three states:
-1. **Pending**: The async operation is still running in the background.
-2. **Fulfilled (Resolved)**: The operation succeeded, and the Promise mathematically locks in the resulting data.
-3. **Rejected**: The operation failed, and the Promise mathematically locks in the Error object.
-Because this state transition is mathematically one-way, a Promise can never change its value once it is resolved, making it incredibly predictable and thread-safe.
-
-## 2. Monadic Chaining
-Unlike Callbacks, Promises are mathematically composable (like Monads).
-When you call `promise.then(callback)`, it does not mutate the original Promise. It mathematically generates and returns a brand new Promise. This allows you to chain operations sequentially: `fetch().then(parse).then(save)`. If an error occurs at any point in the chain, it mathematically skips the remaining `.then()` blocks and falls perfectly into the single `.catch()` block at the end, restoring centralized, linear error handling to asynchronous code.
-
+Please navigate to the [Asynchronous Programming](/kb/2.-programming-fundamentals--language-concepts/2.6-concurrency-basics/asynchronous-programming) module to explore the evolution of async control flow.
+</Callout>

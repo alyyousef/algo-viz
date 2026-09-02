@@ -4,18 +4,11 @@ description: "A powerful mathematical data representation technique where indivi
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Bitmasking"
   subtitle="Compressing Arrays into Integers"
   tags={['Algorithms', 'Bit Manipulation', 'Data Structures', 'Performance']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 If a video game character has 8 possible status effects (Poison, Stun, Silence, etc.), you could store them in an array of 8 booleans (which mathematically takes 8 bytes of RAM).
 **Bitmasking** stores them all in a single 8-bit integer (1 byte of RAM).
@@ -27,8 +20,9 @@ This single integer mathematically represents an exact subset of the status effe
 
 ## 2. Interacting with the Mask
 You modify the mask using Bitwise Operators and Bit Shifting (`<<`):
-- **Set a Flag (Turn ON)**: To inflict Status #4, you use Bitwise OR: `mask = mask | (1 <&lt; 4)`.
-- **Clear a Flag (Turn OFF)**: To cure Status #4, you use Bitwise AND with a NOT: `mask = mask & ~(1 <&lt; 4)`.
-- **Check a Flag**: To see if Status #4 is active: `if ((mask & (1 <&lt; 4)) > 0)`.
+- **Set a Flag (Turn ON)**: To inflict Status #4, you use Bitwise OR: `mask = mask | (1 << 4)`.
+- **Clear a Flag (Turn OFF)**: To cure Status #4, you use Bitwise AND with a NOT: `mask = mask & ~(1 << 4)`.
+- **Check a Flag**: To see if Status #4 is active: `if ((mask & (1 << 4)) > 0)`.
 Because the CPU can execute these bitwise operations in hardware, Bitmasking mathematically guarantees absolute maximum performance and minimal memory footprint, making it the standard for low-level system flags (like Linux file permissions: `chmod 777`).
 
+</ConceptTemplate>

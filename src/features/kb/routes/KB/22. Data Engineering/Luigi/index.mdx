@@ -1,53 +1,20 @@
 ---
-title: Luigi
-description: A Python package built by Spotify for orchestrating complex batch jobs, focusing heavily on explicit file dependency resolution.
+title: Luigi (Redirect)
+description: "Redirecting to Apache Airflow."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Luigi">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before Apache Airflow became the absolute dominant industry standard, Spotify engineered **Luigi** to mathematically orchestrate their massive Hadoop data pipelines.
+<Callout icon="info" title="Redirect">
+The architectural foundation of **Luigi** (a Python module built by Spotify to orchestrate batch jobs and dependencies) has largely been superseded by **Apache Airflow**. 
 
-## 1. The Target-Based Architecture
-Unlike Airflow, which is fundamentally a **Task-based** orchestrator (Task A triggers Task B), Luigi is a **Target-based** orchestrator.
-
-In Luigi, you do not write a DAG that says "Run script 1, then run script 2".
-Instead, you mathematically define the end-goal: *"I want the file `final_report.parquet` to exist."*
-
-Luigi's engine mathematically calculates the dependency chain backwards:
-1. Does `final_report.parquet` exist? No.
-2. The code says `final_report.parquet` requires `cleaned_data.parquet`. Does that exist? No.
-3. The code says `cleaned_data.parquet` requires `raw_data.csv`. Does that exist? Yes.
-4. Luigi executes the code to create `cleaned_data.parquet`, then executes the code to create `final_report.parquet`.
-
-```python
-import luigi
-
-class CleanDataTask(luigi.Task):
-    def requires(self):
-        return RawDataTask()
-
-    def output(self):
-        return luigi.LocalTarget("cleaned_data.parquet")
-
-    def run(self):
-        # Read the raw data and create the cleaned data
-        pass
-```
-
-## 2. Why Luigi was Surpassed
-Luigi was revolutionary for its time, but it had mathematical limitations that caused Airflow to overtake it:
-
-- **No Built-in Scheduler**: Luigi does not know *when* to run. You have to trigger Luigi jobs using a rigid linux cron job. Airflow has a mathematically robust, native scheduler daemon.
-- **Distributed Execution**: Luigi originally struggled to distribute tasks across thousands of workers dynamically, whereas Airflow's CeleryExecutor made horizontal scaling trivial.
-- **Visualizing the DAG**: Airflow's UI for visualizing the Directed Acyclic Graph before execution was significantly superior to Luigi's tracking.
-
-Today, Luigi is largely considered legacy, superseded by Airflow, Dagster, and Prefect.
-
+Please navigate to the [Apache Airflow](/kb/22.-data-engineering/airflow) module to explore the modern standard for Directed Acyclic Graphs (DAGs) and data orchestration.
+</Callout>

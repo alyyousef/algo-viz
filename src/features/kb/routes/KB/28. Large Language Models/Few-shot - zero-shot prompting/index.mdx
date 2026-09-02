@@ -1,37 +1,49 @@
 ---
-title: Zero-Shot & Few-Shot Prompting
-description: Techniques to steer the behavior of an LLM at inference time without modifying its internal weights.
+title: Few-Shot vs Zero-Shot Prompting
+description: "A guide to the foundational prompting techniques used to steer the behavior of Large Language Models without requiring fine-tuning."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Zero-Shot & Few-Shot Prompting">
+    <ConceptTemplate title="Few-Shot vs Zero-Shot Prompting">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before massive LLMs, getting a machine learning model to perform a new task (like sentiment analysis) required gathering thousands of examples and fine-tuning the model\'s weights.
+In the era of Generative AI, developers rarely write code to solve text-based problems. Instead, they write "Prompts" to instruct a pre-trained Large Language Model (LLM) to solve the problem for them.
 
-Modern LLMs possess the emergent ability of **In-Context Learning**. They can learn how to perform a new task purely from the text provided in the prompt, entirely at runtime.
+The two most fundamental methods for prompting an LLM are **Zero-Shot** and **Few-Shot**.
 
+## Zero-Shot Prompting
 
-<Callout icon="info" title="Zero-Shot vs Few-Shot">
+**Zero-Shot** prompting is exactly what it sounds like: you ask the model to perform a task without giving it a single example of how to do it. You are relying entirely on the generalized knowledge the model learned during its pre-training phase on the internet.
 
+*   **Prompt:** `"Classify the sentiment of this review as Positive, Negative, or Neutral: 'The food was terrible.'"`
+*   **Response:** `"Negative."`
 
-  **Zero-Shot:** You give the model the task with no examples. ("Translate 'Hello' to French:")
+This works beautifully on modern, massive models (like GPT-4) for general tasks. However, if the task requires a highly specific output format (e.g., outputting JSON with specific keys) or requires specialized domain logic, Zero-Shot often fails because the model has no reference point for exactly what you want.
 
-  **Few-Shot:** You provide 2-5 examples of the task being completed correctly before asking the actual question. This drastically increases accuracy and enforces specific formatting.
+## Few-Shot Prompting
 
+**Few-Shot** (also known as In-Context Learning) solves the unreliability of Zero-Shot. Instead of just asking the question, you provide the LLM with 2 to 5 highly curated examples of the *exact* input-output pairs you expect, *before* asking your real question.
 
+*   **Prompt:** 
+    `"Review: I loved it! -> Sentiment: Positive"`
+    `"Review: Waste of money. -> Sentiment: Negative"`
+    `"Review: It was okay. -> Sentiment: Neutral"`
+    `"Review: The service was extremely slow and rude. -> Sentiment: "`
+*   **Response:** `"Negative"`
+
+### Why Few-Shot is Magical
+When you provide examples in the prompt, you are not permanently changing the weights of the neural network (like you do in Fine-Tuning). 
+
+Instead, because the LLM is an autoregressive pattern-matching engine, it reads your examples, temporarily identifies the mathematical pattern in its context window, and strictly applies that pattern to your final question. The moment you clear the chat, the model forgets the pattern entirely.
+
+<Callout icon="lightbulb" title="Best Practices for Few-Shot">
+1.  **Variety:** Ensure your examples cover all edge cases (e.g., if you only provide examples of 'Positive' and 'Negative', the model will likely fail if the real answer is 'Neutral').
+2.  **Formatting:** The AI will aggressively copy your exact formatting. If your examples use single quotes, the AI will use single quotes. If your examples are bulleted, the AI will use bullets.
+3.  **Order Matters:** Research shows LLMs suffer from "Recency Bias." They tend to heavily weight the very last example you provided before your real question.
 </Callout>
-
-
-## The Mathematics of In-Context Learning
-
-When you provide a Few-Shot prompt, you are not permanently changing the model. You are simply altering the dense representation (the KV Cache) that the attention mechanism uses.
-
-The attention heads mathematically recognize the pattern in your examples (e.g., "Input -> Output") and apply that exact pattern to the final, unanswered query. As soon as the generation is complete, the prompt is discarded and the model retains no memory of the examples.
-

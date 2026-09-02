@@ -1,33 +1,51 @@
 ---
 title: Decoder-Only Models
-description: Autoregressive transformer architectures designed for generative AI, popularized by the GPT family.
+description: "An overview of Decoder-Only architectures, the specific flavor of the Transformer responsible for the modern Generative AI boom."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Decoder-Only Models">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Decoder-only models use just the decoder stack of the Transformer architecture. They are autoregressive, meaning they predict the very next token in a sequence based only on the preceding tokens. This is the architecture that powers the modern Generative AI revolution.
+A **Decoder-Only Model** is a specific structural variation of the Transformer architecture. 
 
+It is the engine that powers almost every single modern Large Language Model (including GPT-4, LLaMA, Claude, and Mistral). When people say "Generative AI," they are almost always referring to a Decoder-Only model.
 
-<Callout icon="info" title="The GPT Paradigm">
+## The Original Split
 
+The original 2017 Transformer (designed for language translation) had two halves:
+1.  **The Encoder:** Read the input text, understood the deep context, and converted it into a mathematical representation. (Uses full bidirectional self-attention—it can look forward and backward in the sentence).
+2.  **The Decoder:** Looked at the Encoder's output, and generated the translated text one word at a time. (Uses **Masked Self-Attention**—it is blindfolded and can only look backward at the words it has already generated).
 
-  OpenAI bet heavily on the Decoder-only architecture with the Generative Pre-trained Transformer (GPT) series. They discovered that if you make a decoder-only model massive enough and feed it enough text, it develops emergent abilities like reasoning, coding, and translation without specific fine-tuning.
+Shortly after 2017, the AI industry realized they didn't need both halves for every task.
+*   Google took just the Encoder half and created **BERT** (perfect for reading and classifying text).
+*   OpenAI took just the Decoder half and created **GPT (Generative Pre-trained Transformer)**.
 
+## Why Decoder-Only Won the AI Race
 
+The goal of a Decoder-Only model is incredibly simple: **Predict the next word.**
+
+Because the Decoder uses Masked Self-Attention, it is explicitly designed for autoregressive generation. If you give it the phrase *"The quick brown..."*, it looks at those three words, calculates the statistical probability of the entire English dictionary, and outputs *"fox."* 
+It then feeds *"The quick brown fox"* back into itself to predict the next word.
+
+In 2020, with the release of GPT-3, researchers discovered a massive paradigm shift. If you train a Decoder-Only model to simply predict the next word on a large enough dataset (the entire internet), it doesn't just learn grammar. It is forced to learn logic, facts, coding, and reasoning in order to accurately predict that next word.
+
+The simple task of "predicting the next word" became the universal interface for artificial intelligence.
+
+## The Flaw: Inefficiency in Reading
+
+While Decoder-Only models are the undisputed kings of writing, they are technically inefficient at reading. 
+
+Because they use Masked Attention (they can only look backward), when they are reading the beginning of a 10-page document, they cannot look forward to see the end of the document to gain context. An Encoder model (like BERT) can read the entire document forward and backward simultaneously, giving it a much deeper structural understanding of the text. 
+
+However, because Decoder models scaled so well with massive amounts of GPU compute, the industry simply made them larger and larger until their sheer size overpowered the architectural reading advantages of Encoders.
+
+<Callout icon="diagram-project" title="Encoder-Decoder Models Today">
+While Decoder-Only models dominate text generation, the full Encoder-Decoder architecture is still heavily used today for specific translation tasks (like Google Translate), Speech-to-Text (like OpenAI's Whisper, which uses an Audio Encoder and a Text Decoder), and early generation open-source models like T5 (Text-to-Text Transfer Transformer).
 </Callout>
-
-
-## Core Characteristics
-
-
-<ComparisonTable headers={['Characteristic', 'Description']} rows={[ ['Attention Mechanism', 'Masked Self-Attention. A token is mathematically blocked from "looking at" any token that comes after it, ensuring it only uses past context to predict the future.'], ['Pretraining Objective', 'Next-Token Prediction (Causal Language Modeling). Given a sequence "The cat sat on the", predict the highest probability for the next word (e.g., "mat").'], ['Primary Use Cases', 'Chatbots, code generation, creative writing, and any generative AI application.'] ]} />
-
-

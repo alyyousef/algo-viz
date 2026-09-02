@@ -1,24 +1,58 @@
 ---
-title: GloVe (Global Vectors)
-description: A groundbreaking NLP algorithm developed by Stanford that mathematically calculates Word Embeddings by analyzing the global co-occurrence matrix of a massive text corpus.
+title: GloVe (Global Vectors for Word Representation)
+description: "A deep dive into GloVe, the famous word embedding algorithm from Stanford that captures the meaning of words using global statistical matrices."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="GloVe"
-  subtitle="Global Word Embeddings"
-  tags={['NLP', 'Machine Learning', 'Stanford', 'Embeddings']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GloVe (Global Vectors for Word Representation)">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While Word2Vec uses a local, sliding window (a Neural Network looking at 5 words at a time) to learn embeddings, GloVe (Global Vectors for Word Representation) uses massive, global matrix mathematics.
+**GloVe** (Global Vectors for Word Representation) is a famous word embedding algorithm developed by researchers at Stanford University in 2014. 
 
-## 1. The Co-occurrence Matrix
-GloVe starts by building a gigantic mathematical table.
-If the vocabulary has 100,000 words, it builds a 100k x 100k matrix. It scans Wikipedia, and every time the word "Ice" appears near the word "Solid," it increments that specific cell in the matrix.
-After scanning billions of words, this matrix contains the absolute mathematical probability of every word appearing next to every other word.
+Alongside Google's Word2Vec, GloVe was one of the two foundational algorithms that defined the era of dense Word Embeddings, permanently replacing older, sparser techniques like Bag of Words or TF-IDF.
 
-## 2. Dimensionality Reduction
-A 100k x 100k matrix is mathematically too massive to use in real-time AI.
-GloVe uses advanced linear algebra (similar to Singular Value Decomposition) to compress this massive matrix down into a dense 300-dimensional vector for each word. The resulting vectors possess incredible mathematical properties. If you take the GloVe vector for "King," subtract the vector for "Man," and add the vector for "Woman," the resulting mathematical coordinates will land almost exactly on the vector for "Queen." The math has physically mapped human semantic meaning.
+## Word2Vec vs GloVe
 
-</TechnologyTemplate>
+Both algorithms have the exact same goal: take a dictionary of words and assign a dense vector of numbers (e.g., 300 numbers) to each word, such that words with similar meanings are mathematically close to each other in vector space.
+
+However, they accomplish this using entirely different philosophies:
+*   **Word2Vec** uses a *predictive*, local neural network. It slides a tiny window across a sentence and tries to guess the next word based on its immediate neighbors. It only looks at local context.
+*   **GloVe** uses a *count-based*, global statistical matrix. It explicitly looks at the entire dataset at once to see the grand, global statistics of how often words appear together.
+
+## How GloVe Works
+
+GloVe is built on a massive spreadsheet called a **Co-occurrence Matrix**. 
+
+### 1. Build the Matrix
+Imagine taking the entire English Wikipedia. You create a massive grid where every word is a row, and every word is a column. You slide a window across the text. Every time the word "Ice" appears near the word "Solid," you add $1$ to their intersecting cell in the grid. 
+
+By the end, you have a massive matrix filled with global statistics. The cell for "Ice" and "Solid" will have a massive number (e.g., $10,000$). The cell for "Ice" and "Gas" will have a tiny number. 
+
+### 2. The Ratio of Probabilities
+The Stanford researchers realized that the raw counts aren't what matters; the *ratio* of the counts is where the true meaning of words is hidden.
+
+*   Probability of "Solid" appearing near "Ice" = High
+*   Probability of "Solid" appearing near "Steam" = Low
+*   **The Ratio** (Ice/Steam) = Very High
+
+If the ratio is near $1$, the words are irrelevant (e.g., the word "Water" appears equally near both "Ice" and "Steam", so the ratio is 1). The extreme ratios are what define the semantic meaning of the words.
+
+### 3. Matrix Factorization
+Finally, GloVe uses an optimization algorithm to compress this massive, unmanageable matrix down into small, dense, 300-dimensional vectors. It adjusts the numbers inside the 300-D vectors until the mathematical dot product of any two vectors perfectly matches the logarithm of their probability ratio from the massive spreadsheet.
+
+## The Result: Linear Substructures
+
+Because GloVe is explicitly built on ratios, the resulting vector space has incredible, almost magical mathematical properties. The geometric distance between words explicitly represents their semantic relationship.
+
+This is what allows for the famous vector arithmetic:
+`Vector("King") - Vector("Man") + Vector("Woman") = Vector("Queen")`
+
+<Callout icon="chart-line" title="The Decline of Static Embeddings">
+Both GloVe and Word2Vec are **Static Embeddings**. The word "bank" gets exactly one vector, regardless of whether the sentence is about a river or a financial institution. Because of this, GloVe and Word2Vec have been almost entirely replaced by contextual embeddings (like **BERT** and modern **Transformers**), which dynamically calculate a brand new, unique vector for a word every single time it is used, based on the surrounding sentence.
+</Callout>

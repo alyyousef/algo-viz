@@ -1,15 +1,40 @@
+---
+title: Sets
+description: "A well-defined collection of distinct mathematical objects, considered as an object in its own right, forming the foundation of modern mathematics and database theory."
+---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="Sets">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="Sets"
+  subtitle="The Foundation of Mathematics"
+  tags={['Mathematics', 'Discrete Math', 'Data Structures', 'Databases']}
+>
 
-> [!NOTE]
-> This page has been scaffolded and is part of the expanded knowledge taxonomy. Comprehensive content is currently being generated.
+In mathematics and computer science, a **Set** is an unordered collection of distinct, unique objects. It is arguably the most fundamental concept in modern mathematics (Set Theory), serving as the foundational building block for relations, functions, and relational databases (SQL).
 
+## 1. Core Properties
 
+Unlike an Array or a List, a Set has two strict mathematical rules:
+1. **Unordered**: The Set $\\{1, 2, 3\\}$ is mathematically identical to $\\{3, 1, 2\\}$. There is no concept of an "index".
+2. **Unique**: A Set cannot contain duplicates. If you attempt to add the number $2$ to $\\{1, 2, 3\\}$, the Set remains $\\{1, 2, 3\\}$.
+
+## 2. Set Operations
+
+Sets are highly useful because of the mathematical operations you can perform on them:
+
+- **Union ($A \\cup B$)**: Combines all elements from both Sets. If $A = \\{1, 2\\}$ and $B = \\{2, 3\\}$, $A \\cup B = \\{1, 2, 3\\}$. (Equivalent to SQL `FULL OUTER JOIN`).
+- **Intersection ($A \\cap B$)**: Only the elements that exist in *both* Sets. $A \\cap B = \\{2\\}$. (Equivalent to SQL `INNER JOIN`).
+- **Difference ($A - B$)**: Elements in A that are *not* in B. $A - B = \\{1\\}$. (Equivalent to SQL `LEFT JOIN WHERE B IS NULL`).
+- **Subset ($A \\subseteq B$)**: A Boolean operation. Is every element in A also found inside B?
+
+## 3. Usage in Computer Science
+
+Every modern programming language has a native `Set` data structure (e.g., `new Set()` in JavaScript, `set()` in Python).
+They are typically implemented under the hood as Hash Tables. This means checking if an item exists in a Set (`mySet.has(x)`) is an $O(1)$ operation, making them vastly superior to Arrays ($O(N)$) for checking memberships or instantly removing duplicates from a dataset.
+
+<Callout type="info" title="Russell's Paradox">
+  In 1901, Bertrand Russell broke mathematics by asking: *"Does the set of all sets that do not contain themselves, contain itself?"* If it does, it doesn't. If it doesn't, it does. This paradox destroyed the original "Naive Set Theory", forcing mathematicians to invent the highly strict Zermelo-Fraenkel (ZFC) axioms to prevent self-referential paradoxes in computer logic.
+</Callout>
+
+</ConceptTemplate>

@@ -1,34 +1,56 @@
 ---
-title: METEOR
-description: An advanced NLP evaluation metric designed to mathematically solve the fatal flaws of BLEU by incorporating semantic synonyms, stemming, and exact word alignment.
+title: METEOR (Metric for Evaluation of Translation with Explicit ORdering)
+description: "An overview of METEOR, an advanced NLP metric designed to fix the semantic flaws of the BLEU score."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="METEOR">
+    <ConceptTemplate title="METEOR Score">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**METEOR (Metric for Evaluation of Translation with Explicit ORdering)** was engineered specifically to address the catastrophic mathematical failures of the BLEU score. Where BLEU acts like a rigid, mindless string-matching algorithm, METEOR attempts to mathematically inject linguistic intelligence into the evaluation.
+**METEOR** (Metric for Evaluation of Translation with Explicit ORdering) is an evaluation metric for Natural Language Processing, primarily used to assess Machine Translation.
 
-## 1. The Mathematical Failure of BLEU
-BLEU relies entirely on exact string overlap.
-- Reference: "The cat is furious."
-- AI Output: "The feline is angry."
-BLEU mathematically gives this a score of 0.0, because none of the nouns or adjectives match exactly.
+It was developed specifically to address the major flaws of the **BLEU** score. While BLEU is rigid and only looks for exact word matches, METEOR is flexible and understands that humans use synonyms and different word forms to express the exact same idea.
 
-## 2. The METEOR Alignment Pipeline
-METEOR solves this by mathematically calculating a **Monolingual Alignment** between the AI's output and the reference text. It attempts to map every word in the output to a word in the reference, using a 3-stage fallback pipeline:
-1. **Exact Match**: Do the strings match perfectly? (e.g., "The" -> "The").
-2. **Stemming Match**: If they don't match, it applies a Porter Stemmer to strip prefixes/suffixes. It mathematically realizes that "computers" and "computing" both share the stem "comput", and scores them as a match.
-3. **Synonym Match**: If stemming fails, it mathematically queries the **WordNet** lexical database. It discovers that "feline" is an explicit synonym for "cat", and "angry" is a synonym for "furious", establishing a perfect mathematical alignment.
+## The Flaw of BLEU
 
-## 3. Precision, Recall, and the Chunk Penalty
-Once the words are aligned, METEOR mathematically calculates Precision and Recall. Unlike BLEU (which is heavily biased toward Precision), METEOR uses a Harmonic Mean that heavily mathematically weights **Recall** (typically 9x more than Precision).
+Suppose the human reference translation is: *"The quick automobile."*
+If the machine translation outputs: *"The fast car."*
 
-Finally, it applies a **Fragmentation Penalty**. If the AI output the exact correct words, but they were completely out of order (high fragmentation into tiny chunks), METEOR mathematically punishes the score, ensuring that the grammatical structure and fluency of the sentence are strictly enforced.
+A human would give this a perfect score. They mean the exact same thing. 
+However, BLEU only looks for exact string matches. Because "fast" != "quick" and "car" != "automobile", BLEU would give this translation a terrible score (0% beyond the word "The").
 
+## How METEOR Fixes This
+
+METEOR aligns the machine translation (hypothesis) with the human translation (reference) in stages, using increasingly flexible matching criteria:
+
+1.  **Exact Match:** Just like BLEU, it first tries to match exact strings (e.g., "The" == "The").
+2.  **Stem Match:** If words don't match exactly, it reduces words to their root stem using a stemmer (like the Snowball stemmer). It will successfully match "computer" with "computing" or "computers".
+3.  **Synonym Match:** It uses external lexical databases (like **WordNet**) to check if the unmatched words are synonyms. This allows it to successfully match "automobile" with "car", or "fast" with "quick".
+
+### Calculating the Score
+
+Once the alignment is complete, METEOR calculates a score based on precision and recall. 
+
+Crucially, **METEOR heavily favors Recall** over Precision. (In its default configuration, recall is weighted 9 times heavier than precision). The creators of METEOR found through empirical testing that a high recall correlates much more strongly with human judgment than a high precision.
+
+### The Fragmentation Penalty
+
+METEOR also includes a penalty for bad word order. If the machine outputs the correct words but they are scrambled completely out of order, the alignment will be "fragmented" into many small, disconnected chunks. 
+
+The fewer contiguous chunks there are (meaning the word order closely matches the reference), the higher the final score.
+
+<Callout icon="thumbs-up" title="Why isn't METEOR used everywhere?">
+Despite correlating much better with human judgment than BLEU, METEOR is less universally used for two reasons:
+1. It is mathematically much more complex and slower to calculate.
+2. Because it relies on stemming and WordNet, it is **language-dependent**. It only works for languages that have a well-developed WordNet database (like English, French, Spanish, etc.), whereas BLEU can theoretically be run on any language.
+</Callout>
+
+## Summary
+
+METEOR is a massive improvement over BLEU when you want an evaluation metric that actually attempts to capture the *meaning* of the translation rather than just checking if the strings are identical. It remains a highly respected metric in modern NLP evaluation suites.

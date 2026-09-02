@@ -1,33 +1,51 @@
 ---
 title: Encoder-Only Models
-description: Transformer architectures designed to understand text context bidirectionally, famously popularized by BERT.
+description: "A guide to Encoder-Only models, the architecture behind BERT that excels at reading, searching, and understanding deep linguistic context."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Encoder-Only Models">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Encoder-only models use just the encoder stack of the original Transformer architecture. They are designed to build a deep, bidirectional mathematical understanding of an entire input sequence simultaneously. They are terrible at generating text, but incredible at understanding it.
+An **Encoder-Only Model** is a specific structural variation of the Transformer architecture. It throws away the text-generating half of the Transformer and focuses 100% of its compute power on *reading comprehension*.
 
+The absolute most famous Encoder-Only model is **BERT** (Bidirectional Encoder Representations from Transformers), released by Google in 2018.
 
-<Callout icon="success" title="The BERT Revolution">
+## How it Works: Bidirectional Attention
 
+The superpower of an Encoder-Only model is **Bidirectional Self-Attention**.
 
-  In 2018, Google released **BERT** (Bidirectional Encoder Representations from Transformers). It achieved state-of-the-art results on 11 different NLP tasks simultaneously and revolutionized how Google Search understood complex human queries.
+When an Encoder reads a sentence, it looks at the entire sequence of words simultaneously. If it is trying to understand the 5th word in a sentence, it looks backward at words 1-4, and it explicitly looks *forward* at words 6-10. 
 
+Because it can look into the future of the sentence, it gains a vastly deeper structural and semantic understanding of the grammar and context than a Generative AI model (which is mathematically blindfolded and can only look backward).
 
+## What are they used for?
+
+Because they do not have a Decoder, **Encoder-Only models cannot write text.** You cannot have a conversation with BERT. You cannot ask BERT to write a poem. 
+
+Instead, Encoder-Only models are used to read text and output structured data. They dominate the "traditional" NLP tasks:
+
+1.  **Text Classification:** Reading an email and outputting a `1` (Spam) or a `0` (Not Spam).
+2.  **Sentiment Analysis:** Reading a massive movie review and scoring the emotion.
+3.  **Extractive Question Answering:** Reading a 50-page PDF and highlighting the exact sentence containing the answer to a question.
+4.  **Semantic Search (Embeddings):** Compressing a massive document into a dense mathematical vector so it can be instantly searched in a Vector Database.
+
+## How are they trained? (Masked Language Modeling)
+
+You cannot train an Encoder to "predict the next word" because its bidirectional attention allows it to simply look at the next word and cheat.
+
+Instead, BERT was trained using a brilliant technique called **Masked Language Modeling (MLM)**.
+Google took millions of Wikipedia articles and randomly replaced 15% of the words with a blank `[MASK]` token. 
+*   *"The quick brown `[MASK]` jumps over the lazy dog."*
+
+The Encoder was forced to read the sentence and guess the missing word in the middle. To do this successfully, the model had to learn the deep context of the words on the left *and* the right of the blank space. 
+
+<Callout icon="server" title="Enterprise Efficiency">
+While chat-based Generative AI (Decoder models) get all the media hype, Encoder-Only models (like BERT or RoBERTa) remain the absolute workhorses of enterprise backend systems. If a bank needs to automatically categorize 10 million daily transactions, they will not use a massive, slow, expensive 70-Billion parameter GPT model. They will use a tiny, blazing fast 100-Million parameter BERT model that processes thousands of texts per second on a single GPU.
 </Callout>
-
-
-## Core Characteristics
-
-
-<ComparisonTable headers={['Characteristic', 'Description']} rows={[ ['Attention Mechanism', 'Unmasked Self-Attention. Every token in the sequence is allowed to mathematically "look at" every other token, both before and after it.'], ['Pretraining Objective', 'Masked Language Modeling (MLM). 15% of the words are hidden (e.g., "The cat sat on the [MASK]"). The model must predict the hidden word based on the surrounding context.'], ['Primary Use Cases', 'Sentiment analysis, text classification, named entity recognition (NER), and semantic search embeddings.'] ]} />
-
-

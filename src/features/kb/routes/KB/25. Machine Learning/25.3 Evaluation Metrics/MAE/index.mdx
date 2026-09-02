@@ -1,39 +1,53 @@
 ---
 title: MAE (Mean Absolute Error)
-description: The most mathematically intuitive metric for Regression models, calculating the raw, unweighted average distance between predictions and true values.
+description: "A comprehensive guide to Mean Absolute Error, a simple and highly interpretable metric for regression models."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="MAE (Mean Absolute Error)">
+    <ConceptTemplate title="Mean Absolute Error (MAE)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When predicting continuous numbers (Regression), you must mathematically measure how far off the prediction was from the true value. **Mean Absolute Error (MAE)** is the most robust, highly interpretable metric for this task.
+**Mean Absolute Error (MAE)** is one of the simplest and most commonly used evaluation metrics for regression models (models that predict a continuous numerical value, like price or temperature).
 
-## 1. The Mathematical Equation
-$MAE = \frac{1}{n} sum_{i=1}^{n} |y_i - \hat{y}_i|$
+It measures the average magnitude of the errors in a set of predictions, without considering their direction (i.e., whether the prediction was too high or too low).
 
-1. The algorithm predicts a house price ($\hat{y} = $300k$). The true price is ($y = $350k$).
-2. The mathematical error (Residual) is $-$50k$.
-3. It takes the **Absolute Value** ($|$50k|$), mathematically converting all negative errors into positive numbers so they don't cancel each other out.
-4. It sums up all the absolute errors across the entire dataset, and divides by $n$ (the total number of rows) to find the mean (average).
+## The Formula
 
-## 2. The Advantage: Perfect Interpretability
-MAE is heavily favored in business environments because it maps perfectly to human intuition.
-If you build a model to predict the stock market, and the MAE is $5.00, you can walk into a boardroom and confidently state: *"On average, our AI is off by exactly $5.00."*
+The formula for MAE is very straightforward:
 
-Unlike RMSE (which squares the numbers and distorts the units), MAE maintains the exact mathematical units of the target variable.
+$$\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|$$
 
-## 3. Robustness to Outliers
-MAE's greatest mathematical strength is that it treats all errors linearly.
-If a model makes three errors of $10, $10, and $1000:
-- MAE mathematically views the $1000 error as exactly 100x worse than the $10 error.
-- RMSE squares the errors, viewing the $1000 error as 10,000x worse, causing the metric to explode and warping the entire evaluation based on a single outlier.
+Where:
+*   $n$ is the total number of observations.
+*   $y_i$ is the actual, true value.
+*   $\hat{y}_i$ is the model's predicted value.
+*   $|y_i - \hat{y}_i|$ is the absolute value of the error. (If the true value is 10 and you predict 12, the error is $|10 - 12| = |-2| = 2$).
 
-Because MAE does not square the errors, it is mathematically **hyper-robust to outliers**. If your dataset contains a few massive anomalies (like a billionaire's mansion in a normal neighborhood), MAE will cleanly evaluate the model's performance on the median data without being dragged to infinity by the anomaly.
+## Key Characteristics of MAE
 
+### 1. High Interpretability
+The biggest advantage of MAE is that it is highly interpretable because it is on the **same scale** as the data being predicted. 
+
+If you are building a model to predict the price of houses in dollars, and your MAE is 15,000, you can literally say: "On average, my model's predictions are off by $15,000." This is incredibly easy to explain to non-technical stakeholders.
+
+### 2. Robustness to Outliers
+Unlike MSE (Mean Squared Error), MAE treats all errors equally, regardless of their size. An error of 10 is penalized exactly twice as much as an error of 5.
+
+Because it does not square the errors, MAE is **robust to outliers**. If your dataset has a few massive anomalies (e.g., one house that sold for $100 million when the rest are $500k), those anomalies will not disproportionately drag the MAE score up. 
+
+<Callout icon="scale-balanced" title="When to use MAE vs MSE?">
+*   **Use MAE** when your dataset contains outliers that are likely data entry errors or flukes that you want the model to largely ignore.
+*   **Use MSE** when large errors are disproportionately worse than small errors and you want the model to be heavily penalized for making massive mistakes, even if they are rare.
+</Callout>
+
+## Disadvantages of MAE
+
+The main mathematical disadvantage of MAE comes up during model training (specifically when using Gradient Descent). 
+
+Because the MAE formula uses the absolute value function, its derivative is not continuous. It has a sharp "V" shape at zero, meaning the gradient is undefined exactly at zero. While there are workarounds (like subgradients), it makes optimizing for MAE slightly mathematically clumsier than optimizing for the smooth, convex bowl of MSE.

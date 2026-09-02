@@ -1,22 +1,49 @@
 ---
 title: Midjourney
-description: A proprietary, state-of-the-art Generative AI service accessed via Discord, famous for its unparalleled mathematical optimization of artistic aesthetics and photorealism.
+description: "A deep dive into Midjourney, the enigmatic, independent AI lab that consistently produces the most beautiful and artistic AI images in the world."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="Midjourney"
-  subtitle="Aesthetic-First Image Generation"
-  tags={['AI', 'Generative', 'Art', 'Diffusion']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Midjourney">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While open-source models like Stable Diffusion require intense manual prompt engineering and negative prompting to achieve good results, Midjourney is mathematically tuned to default to breathtaking artistry.
+*(Note: This module focuses specifically on Midjourney's unique position in the market. For a broader overview of image generation, see the **Image Generation** module).*
 
-## 1. RLHF for Aesthetics
-Most Image Generators are trained purely on minimizing the mathematical loss between the image and the text caption. If the prompt is "A car," and the AI draws a boring, badly-lit car, the mathematical loss is 0 (it successfully drew a car).
-Midjourney utilizes massive **RLHF (Reinforcement Learning from Human Feedback)**. Millions of users on Discord mathematically vote on which images they prefer. Midjourney's engineers use this data to mathematically fine-tune the model to not just draw the object, but to prioritize specific cinematic lighting, composition rules (Rule of Thirds), and highly detailed textures, ensuring almost every generation is a masterpiece.
+Founded in 2022 by David Holz (co-founder of Leap Motion), **Midjourney** is an independent, self-funded AI research lab based in San Francisco. 
 
-## 2. Continuous Latent Refinement
-Midjourney is renowned for its specific rendering engine. While the exact architecture is closed-source, it heavily utilizes advanced continuous latent refinement, where the V5 and V6 models mathematically preserve intricate details (like readable text and perfect human hands) that earlier Diffusion architectures mathematically destroyed during the denoising process.
+Despite having a fraction of the budget and employees of massive tech giants like Google and OpenAI, Midjourney has consistently maintained its crown as the premier AI image generator in the world, renowned for its unparalleled artistic quality, lighting, and cinematic composition.
 
-</TechnologyTemplate>
+## The Midjourney Philosophy (Default to Beauty)
+
+The biggest difference between Midjourney and its competitors (DALL-E, Stable Diffusion) is its foundational philosophy: **Default to Beauty**.
+
+If you give DALL-E the prompt *"a dog"*, it will generate a very generic, boring stock photo of a dog. DALL-E is designed to be literal.
+If you give Midjourney the prompt *"a dog"*, it will generate a breathtaking, cinematic, volumetric-lit portrait of a dog shot on a 35mm lens with perfect color grading. 
+
+Midjourney achieves this through **Aggressive Fine-Tuning on Aesthetics**. The developers spend vast amounts of time and resources training the model specifically on artistic theory, composition, and human aesthetic preferences (which they gather through massive rating systems from their users).
+
+## The Discord Interface
+
+For the first two years of its existence, the only way to access Midjourney was through the chat app **Discord**. There was no website and no API.
+Users had to join the official Midjourney Discord server, type `/imagine` followed by their prompt into a public chat room, and wait for a bot to reply with their images.
+
+While incredibly clunky for enterprise use, this was a genius growth hack:
+1.  **Massive Social Learning:** Because all generations were public, users constantly learned advanced prompt engineering by reading what other users were typing. 
+2.  **Free RLHF Data:** Every time a user upscale a specific image in the Discord channel, it provided Midjourney with free Reinforcement Learning data on which images humans preferred, allowing them to rapidly fine-tune the model's aesthetics.
+
+## Key Features and Commands
+
+Midjourney relies heavily on command-line parameters to control the model:
+*   `--ar 16:9` (Aspect Ratio): Forces the model to generate widescreen or cinematic shapes.
+*   `--stylize 1000` (Stylize): Tells the model how aggressively it should apply its own "artistic flair" to your prompt.
+*   `--cref` (Character Reference): A massive breakthrough that allows users to upload a photo of a specific person's face and force the AI to maintain that exact face across dozens of different generated scenes, solving the consistency problem for comic book and game developers.
+
+<Callout icon="scale-unbalanced" title="The Lack of an API">
+Midjourney notoriously refuses to release an official API. If a developer wants to integrate Midjourney into their own software, they have to use incredibly fragile "Discord Scraper" bots that violate Midjourney's Terms of Service. This has forced almost all enterprise software to integrate DALL-E 3 instead, despite Midjourney having vastly superior image quality.
+</Callout>

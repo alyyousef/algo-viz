@@ -1,27 +1,20 @@
 ---
-title: A/B Testing
-description: The rigorous mathematical process of comparing two versions of a system (A and B) to determine which performs statistically better in a live environment.
+title: A/B Testing (Redirect)
+description: "Redirecting to Business Intelligence (BI)."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="A/B Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In modern software engineering, you do not guess if a red button is better than a blue button. You use A/B Testing to mathematically prove it using live user data and statistical significance.
+<Callout icon="info" title="Redirect">
+The foundational concepts of **A/B Testing** (statistical significance, p-values, and experimental design for product analytics) are covered in the Deep Dive for **Business Intelligence (BI)**. 
 
-## 1. Randomized Control Trials
-A/B Testing is essentially a medical clinical trial applied to software.
-The system mathematically routes 50% of incoming users to the Control Group (Version A - the current blue button), and 50% to the Treatment Group (Version B - the new red button).
-The system tracks a specific mathematical KPI (e.g., Click-Through Rate). If Version A gets a 5% CTR, and Version B gets a 5.5% CTR, is Version B actually better, or is that 0.5% difference just random noise?
-
-## 2. Statistical Significance (P-Value)
-To answer that, Data Scientists calculate the **P-Value**.
-The P-Value mathematically calculates the probability that the 0.5% increase was purely a random coincidence.
-If the P-Value is 0.02 (2%), it means there is a 98% mathematical certainty that the red button physically caused the increase in clicks. The industry standard threshold for Statistical Significance is a P-Value of &lt; 0.05. Only when this mathematical threshold is crossed does the engineering team permanently deploy the red button to 100% of the user base.
-
+Please navigate to the [Business Intelligence](/kb/23.-data-science--analytics/business-intelligence-(bi)) module to explore how analysts derive mathematical truth from product data.
+</Callout>

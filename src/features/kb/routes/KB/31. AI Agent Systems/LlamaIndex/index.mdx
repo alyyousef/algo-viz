@@ -2,24 +2,144 @@
 title: LlamaIndex
 description: A specialized, highly advanced framework focused entirely on the Data Ingestion and Retrieval layer of AI applications, acting as the mathematical bridge between LLMs and enterprise data.
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 
-<TechnologyTemplate
-  title="LlamaIndex"
-  subtitle="Data Framework for LLMs"
-  tags={['AI', 'LlamaIndex', 'RAG', 'Data Pipelines']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LlamaIndex (Data Framework for LLMs)">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While LangChain focuses on what the LLM *does* (Agents/Tools), LlamaIndex focuses obsessively on what the LLM *knows* (RAG Pipelines).
+While LangChain is an expansive framework focused on what an LLM *does* (creating Agents, executing Tools, building chains), **LlamaIndex** focuses obsessively on what an LLM *knows*.
 
-## 1. Advanced Indexing Algorithms
-If you dump 10,000 PDFs into a Vector Database, standard retrieval algorithms mathematically degrade. LlamaIndex introduces advanced Indexing geometries.
-- **Tree Index**: Mathematically summarizes chunks into parent summaries, building a massive hierarchical tree. When queried, it traverses the tree from the root, branching down to the most mathematically relevant specific chunk, saving massive amounts of tokens.
-- **Keyword Table Index**: Mathematically routes queries based on exact terminology, bypassing vector math entirely for specific use cases.
+LlamaIndex is the absolute industry standard for **Data Ingestion and RAG (Retrieval-Augmented Generation)**. It provides mathematically optimized algorithms to ingest massive enterprise datasets (PDFs, Notion, SQL databases), chunk them intelligently, structure them into highly navigable indices, and retrieve exactly the right context to eliminate LLM hallucinations.
 
-## 2. Query Engines and Data Agents
-LlamaIndex mathematically automates Context Construction.
-When you query the index, it doesn't just return chunks. The **Query Engine** automatically generates the prompt, injects the optimal chunks, and synthesizes the final response.
-Furthermore, it introduces **Data Agents**—specialized LLM agents that possess Tools specifically designed for mathematically querying different indexes (e.g., An Agent that can dynamically choose between executing a SQL query on a relational database or a Vector search on a PDF database based on the user's prompt).
+## 1. Deep Dive & Mechanics
 
-</TechnologyTemplate>
+### The Ingestion Pipeline (Nodes & Documents)
+LlamaIndex mathematically standardizes the parsing of unstructured data.
+When you load a 500-page PDF, LlamaIndex treats it as a `Document` object. It runs the document through a mathematically strict pipeline of `Transformations` (like a `SentenceSplitter`). The document is sliced into `Nodes` (the fundamental chunk of data in LlamaIndex).
+Crucially, LlamaIndex automatically manages the mathematical relationships between these Nodes. It records `next_node` and `previous_node` pointers, allowing the retrieval engine to seamlessly reconstruct the original document structure during complex queries.
+
+### Advanced Mathematical Indices
+If you dump 1,000 PDFs into a standard flat Vector Database, Cosine Similarity retrieval mathematically degrades (returning highly semantic but factually irrelevant paragraphs). LlamaIndex solves this by physically structuring the data into advanced geometries before embedding.
+
+- **Vector Store Index**: The standard. It embeds every Node into a high-dimensional vector.
+- **Tree Index**: Mathematically summarizes chunks into parent summaries, building a massive hierarchical tree. When queried, the engine traverses the tree from the root, branching down mathematically to the most relevant specific chunk, isolating the signal from the noise.
+- **Keyword Table Index**: Mathematically extracts precise keywords from every Node. It routes queries based on exact terminology, bypassing vector math entirely (useful for highly specific technical documentation where Semantic Search fails).
+
+## 2. Mathematical / Theoretical Foundation
+
+### The Sub-Question Query Engine (Divide and Conquer)
+One of LlamaIndex's most powerful mathematical breakthroughs is its ability to handle complex, multi-faceted questions.
+
+If a user asks: *"Compare the Q3 Revenue of Apple in 2022 vs Microsoft in 2023"*, a standard RAG pipeline will mathematically fail. It will embed the entire question, query the vector database, and return a chaotic mix of Apple and Microsoft documents, confusing the LLM.
+
+LlamaIndex utilizes the **Sub-Question Query Engine**. It uses an LLM to mathematically break the complex query down into atomic, independent variables:
+1. `Sub-Question A`: "What is Apple's Q3 Revenue in 2022?"
+2. `Sub-Question B`: "What is Microsoft's Q3 Revenue in 2023?"
+
+The engine mathematically parallelizes these independent queries, executes them against the specific data sources, retrieves the precise atomic facts, and then synthesizes the final comparison. This guarantees $O(1)$ accuracy per sub-topic.
+
+### Routing and Data Agents
+LlamaIndex introduces **Router Query Engines**. You mathematically define multiple indices (e.g., a SQL Database for financial numbers, and a Vector Database for corporate policies). When the user asks a question, the Router Engine mathematically classifies the intent and routes the query exclusively to the correct database.
+Taking this further, **Data Agents** are specialized LLMs that treat these Query Engines as Tools. The Agent can mathematically decide to query the SQL database, store the result in memory, query the Vector Database for context, and combine the knowledge autonomously.
+
+## 3. Real-World Implementation
+
+Here is a modern Python implementation using LlamaIndex to build a highly optimized RAG pipeline. It demonstrates intelligent chunking, Vector Index creation, and setting up an advanced Query Engine.
+
+```python
+import os
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.core.node_parser import SemanticSplitterNodeParser
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.core import Settings
+
+# 1. Global Settings for the Mathematics
+# Enforce a specific embedding model and chunking strategy globally
+Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+
+# Instead of blindly cutting every 500 tokens, use a Semantic Splitter.
+# This mathematically embeds sentences during chunking and only cuts when the topic changes.
+Settings.node_parser = SemanticSplitterNodeParser(
+    buffer_size=1, breakpoint_percentile_threshold=95, embed_model=Settings.embed_model
+)
+
+# 2. Ingest Data (The "Document" phase)
+# Reads all PDFs, CSVs, and TXTs in the data directory
+documents = SimpleDirectoryReader("./enterprise_data").load_data()
+
+# 3. Create the Mathematical Index
+# This automatically runs the SemanticSplitter, generates embeddings, and builds the Vector Graph
+print("Mathematically indexing documents...")
+index = VectorStoreIndex.from_documents(documents)
+
+# 4. Instantiate the Query Engine
+# Configure it to use 'similarity_top_k' to return the 3 closest mathematical nodes
+query_engine = index.as_query_engine(similarity_top_k=3)
+
+# 5. Execute a complex RAG query
+response = query_engine.query("What were the specific security policies implemented in Q4?")
+print(response)
+
+# Deep dive into the mechanics: Show exactly which physical source nodes were retrieved
+for source_node in response.source_nodes:
+    print(f"Retrieved Node Score: {source_node.score:.4f}")
+    print(f"Node Text: {source_node.text[:50]}...")
+```
+
+## 4. Visualizations
+
+```mermaid
+graph TD
+    subgraph LlamaIndex Ingestion Pipeline
+        A[Raw PDF / Confluence] -->|SimpleDirectoryReader| B(Document Object)
+        B -->|SemanticSplitterNodeParser| C[Node 1]
+        B -->|SemanticSplitterNodeParser| D[Node 2]
+        
+        C -.->|next_node pointer| D
+        
+        C -->|Embedding API| E[(VectorStore Index)]
+        D -->|Embedding API| E
+    end
+    
+    subgraph Advanced Query Execution (Sub-Question)
+        F[Query: "Compare X and Y"] -->|LLM Decomposer| G[Sub-Query X]
+        F -->|LLM Decomposer| H[Sub-Query Y]
+        
+        G -->|Search| E
+        H -->|Search| E
+        
+        E -->|Fact X| I(Response Synthesizer)
+        E -->|Fact Y| I
+        
+        I -->|Final LLM Pass| J[Final Answer]
+    end
+    
+    style E fill:#00a676,stroke:#fff,stroke-width:2px
+    style I fill:#772953,stroke:#fff,stroke-width:2px
+```
+
+<Callout icon="info" title="LlamaParse">
+  Parsing PDFs is notoriously difficult for Data Engineering. A PDF table is physically just lines and floating text; a standard text extractor turns it into a garbled string, destroying the mathematical structure. LlamaIndex created **LlamaParse**, a proprietary, vision-based parsing API that mathematically understands complex tables, charts, and hierarchical layouts in PDFs and converts them into perfect Markdown, vastly improving downstream RAG accuracy.
+</Callout>
+
+## 5. Interview Prep
+
+**Q: Explain the difference between LlamaIndex and LangChain. When would you use which?**
+**Answer:** LangChain is a general-purpose orchestrator. It is best used when you need an autonomous Agent that makes API calls, interacts with external software, or runs complex state machines (via LangGraph). LlamaIndex is highly specialized for Data. If your primary goal is to ingest 100,000 enterprise documents, chunk them brilliantly, and build a world-class RAG search pipeline that doesn't hallucinate, you use LlamaIndex. Most modern enterprise stacks actually use both: LlamaIndex handles the Data Retrieval, and LangChain handles the Agent logic that *calls* the LlamaIndex retrieval tools.
+
+**Q: What is a `NodePostprocessor` in LlamaIndex?**
+**Answer:** In a RAG pipeline, the Vector Search might return 10 nodes based on mathematical Cosine Similarity. However, you shouldn't blindly feed all 10 to the LLM. A `NodePostprocessor` intercepts the retrieved nodes *before* they hit the LLM. Common processors include **Metadata Replacement** (swapping the small retrieved chunk with its massive parent document) or **Reranking** (using a specialized, slower model like Cohere ReRank to mathematically re-evaluate and re-sort the top 10 nodes for hyper-accuracy).
+
+**Q: Why does LlamaIndex emphasize "Document Hierarchies" rather than just raw chunks?**
+**Answer:** If you chunk a book blindly into 500-token vectors, you lose the macro-context. The chunk might say "The King died," but the model has no idea what chapter or book it came from. LlamaIndex enforces document hierarchies. A chunk is mathematically linked to its parent `Document`. When retrieving, LlamaIndex can seamlessly extract the Title, Author, and Chapter metadata from the Parent and inject it into the LLM prompt alongside the specific text chunk, providing perfect contextual grounding.
+
+## 6. Production Use Cases
+
+- **Legal Tech (Contract Analysis):** Enterprise legal firms use LlamaIndex to process thousands of 200-page NDAs and contracts. Standard RAG fails because legal clauses reference other clauses on different pages. LlamaIndex's hierarchical parsing and `Node` pointers allow the system to mathematically preserve the strict structure of the contract. When a lawyer asks, "What is the penalty for breaching Section 4?", LlamaIndex precisely retrieves Section 4 alongside all its mathematically linked parent definitions.
+- **Financial Compliance Chatbots:** Banks use LlamaIndex's Router Query Engines. When an auditor asks a compliance bot, "Show me the exact internal policy for wire transfers over $1M, and confirm if John Doe executed any last week," the Router mathematically splits the query. It sends the policy half to a Vector Index (searching PDF employee handbooks) and the execution half to a SQL Data Agent (querying the Snowflake transactional database), synthesizing a mathematically perfect, legally compliant answer.

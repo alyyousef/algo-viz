@@ -1,19 +1,36 @@
 ---
-title: BSD
-description: A family of permissive free software licenses, imposing minimal restrictions on the use and distribution of covered software.
+title: BSD Licenses
+description: "A family of highly permissive free software licenses, imposing minimal restrictions on the use and redistribution of covered software."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate title="BSD License">
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
+<ConceptTemplate
+  title="BSD Licenses"
+  subtitle="Permissive Open Source"
+  tags={['Licensing', 'Open Source', 'Legal', 'BSD']}
+>
 
-The **BSD License** (Berkeley Software Distribution) is the ancestor of modern permissive licenses.
+The **BSD (Berkeley Software Distribution) Licenses** are a family of permissive open-source licenses. Unlike "copyleft" licenses (like the GPL) which aggressively force derived works to also be open-source, the BSD license is incredibly loose. It essentially says: *"You can do whatever you want with this code, including using it in closed-source commercial products, as long as you keep this copyright notice."*
 
-It mathematically comes in multiple variants (2-Clause, 3-Clause). The famous biological "3-Clause BSD" is almost identical to MIT, but adds a strict **Non-Endorsement Clause**. It mathematically states: *"You can use my code, but you cannot legally use my biological name to advertise your product without my permission."*
+## 1. The Variants
 
+There are three primary versions of the BSD license:
+
+### The 2-Clause BSD (Simplified)
+The most permissive variant. It only requires two things:
+1. If you distribute the source code, you must include the original copyright notice.
+2. If you distribute compiled binaries, you must include the copyright notice in the documentation.
+
+### The 3-Clause BSD (New/Revised)
+It contains the same rules as the 2-Clause, but adds a **Non-Endorsement Clause**: 
+You cannot use the name of the original author or contributors to endorse or promote your derived product without prior written permission. (e.g., You can use code from UC Berkeley, but you can't advertise your app as "Powered by UC Berkeley").
+
+### The 4-Clause BSD (Original)
+Historically, it included an "Advertising Clause" requiring all advertising materials for derived works to display an acknowledgment of the original developers. This became a logistical nightmare for large projects (imagine an OS having to list 10,000 contributors in every TV commercial), so it was largely deprecated in 1999.
+
+## 2. Why Corporations Love BSD
+
+Corporate entities heavily favor permissive licenses like BSD, MIT, and Apache over the GPL. 
+If a company uses GPL code, they are legally forced to release their own proprietary modifications to the public. If they use BSD code, they can take the open-source code, modify it, compile it, and sell it as a million-dollar proprietary enterprise product without ever giving their source code back to the community (e.g., Apple taking the open-source BSD kernel and turning it into macOS).
+
+</ConceptTemplate>

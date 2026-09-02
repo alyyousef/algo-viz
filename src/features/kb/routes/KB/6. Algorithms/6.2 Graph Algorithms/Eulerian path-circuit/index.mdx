@@ -4,18 +4,11 @@ description: "A mathematical trail in a finite graph that visits every single ed
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 
-export default function Layout({ children }) {
-  return (
-    <ConceptTemplate
+<ConceptTemplate
   title="Eulerian Path & Circuit"
   subtitle="The Seven Bridges of Königsberg"
   tags={['Algorithms', 'Graphs', 'Mathematics', 'History']}
 >
-      {children}
-    
-  </ConceptTemplate>
-  )
-}
 
 In 1736, Leonhard Euler invented Graph Theory to solve a mathematical puzzle: *"Can you walk through the city of Königsberg, crossing all seven bridges exactly once?"*
 
@@ -29,3 +22,4 @@ The **Degree** of a vertex is the number of edges connected to it.
 If the mathematical conditions are met, you can physically find the circuit using Hierholzer's Algorithm (O(V+E) time).
 You start at any node and randomly walk across unused edges until you get stuck (which mathematically must be back at the starting node, completing a sub-circuit). You then pick a node on that sub-circuit that still has unused edges, walk a new sub-circuit, and splice them together.
 
+</ConceptTemplate>
