@@ -1,26 +1,96 @@
 ---
-title: Short-Term Memory (Agents)
-description: The algorithmic mechanism of maintaining state within the finite Token Context Window of a single conversational session, mathematically constrained by hardware limitations.
+title: Short-Term Memory
+description: "Keeping the current episode in the context window: buffers, sliding windows, and rolling summaries before you overflow the token budget."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Short-Term Memory">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-During a conversation, an LLM must remember what was said 5 minutes ago. Because the LLM itself is mathematically stateless, the Application framework must manage Short-Term Memory by repeatedly feeding the entire conversation history back into the LLM on every single API call.
+The model has no session. **Short-term memory** is whatever you **resend** on the next call: system prompt, recent turns, tool scratchpad. It dies when the request ends unless you persist it (then it is becoming long-term). The constraint is the **context window** and the **price** of filling it.
 
-## 1. The Context Window Constraint
-Every LLM has a mathematical limit (e.g., 128,000 tokens). This is the absolute physical size of its Short-Term Memory.
-If you append every single chat message to an Array and pass the entire Array to the LLM, the Array will eventually exceed 128,000 tokens. The API will mathematically reject the call (Context Overflow). Furthermore, processing 128,000 tokens is incredibly expensive and slow.
+Sibling pages: **long-term** (facts across weeks) and **episodic** (whole past runs). This page is *this conversation, right now*.
 
-## 2. Sliding Windows and Rolling Summaries
-To prevent Overflow, frameworks use mathematical truncation algorithms.
-- **Sliding Window**: The simplest approach. It mathematically deletes Message 1 when Message 101 is added, always maintaining a strict maximum of the most recent $N$ messages. The AI abruptly forgets older context.
-- **Rolling Summary**: A sophisticated mathematical approach. When the memory buffer hits 8,000 tokens, a secondary, cheaper LLM is triggered. It reads the oldest 4,000 tokens and mathematically compresses them into a dense 200-token summary (e.g., "User and AI discussed Python syntax"). The original 4,000 tokens are deleted, and the dense summary is prepended to the memory buffer, mathematically preserving the core context while freeing up massive amounts of token space.
+## 1. Deep Dive and Mechanics
 
+**Raw buffer.** Append every user/assistant/tool message. Trivial. Hits the wall at 8k–200k tokens depending on the model. Also hits **lost-in-the-middle** long before the hard cap.
+
+**Sliding window.** Keep the last N turns or last T tokens. Oldest messages drop. The agent forgets the original goal if that was turn 1 — so *pin* the goal and the system prompt outside the slider.
+
+**Rolling summary.** When the buffer crosses a threshold, a cheap model compresses the oldest slice into a paragraph ("User wants a FastAPI service; we chose Postgres"). Delete the slice, keep the summary + recent raw turns. Distortion is the failure mode (summaries drop numbers).
+
+**Scratchpad vs chat.** Tool observations are huge. Store raw logs in a sidecar; put a 2-line digest in the window. Do not keep four full HTML pages in "short-term memory."
+
+<Callout icon="warning" title="Pin the invariants">
+If the slider can drop "never email the customer" or the ticket id, you will violate policy. Separate *policy and IDs* (always present) from *chitchat* (slidable).
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Short-term memory is a **lossy codec** from event log → token sequence under budget B. Sliding window is a rectangular window. Summarisation is a learned compressor with no bit-rate guarantee. You can measure *reconstruction*: can a judge recover the goal and constraints from the packed prompt? If not, the codec is too lossy.
+
+<ComparisonTable
+  headers={['Policy', 'Forgets', 'Cost']}
+  rows={[
+    ['Full buffer', 'Nothing until overflow', 'Grows without bound'],
+    ['Last N turns', 'Early constraints', 'Bounded'],
+    ['Summary plus tail', 'Details in the summary', 'Bounded, extra LLM call'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def pack_short_term(messages, max_tokens, encode, pin):
+    tail = []
+    used = encode(pin)
+    for m in reversed(messages):
+        cost = encode(m)
+        if used + cost > max_tokens:
+            break
+        tail.append(m)
+        used += cost
+    return pin + list(reversed(tail))
+```
+
+Run summarisation on the messages that did not fit, and prepend that as a pinned system note.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Log[Full event log] --> Pin[Pinned goal and policy]
+    Log --> Tail[Recent raw turns]
+    Log --> Sum[Optional summary of the rest]
+    Pin --> Prompt
+    Tail --> Prompt
+    Sum --> Prompt
+```
+
+## 5. Interview Prep
+
+**Q: Is a 1M context window the end of memory engineering?**
+**A:** No. Attention quality and cost still punish dumping a month of Slack. Retrieve, do not staple.
+
+**Q: Buffer memory vs knowledge graph?**
+**A:** Buffer is short-term tokens. A KG is long-term structure. Do not store "user is vegan" only in a 20-turn slider.
+
+**Q: Where does the ReAct scratchpad live?**
+**A:** Short-term. Trim tool payloads or the next thought drowns.
+
+## 6. Production Use Cases
+
+- **Chat UIs:** last k turns + summary.
+- **Agent loops:** last observations + pinned goal.
+- **Voice:** tighter windows; summarise aggressively.
+
+<Callout icon="tip" title="Token-account the turn">
+Log prompt tokens *by section* (system, pin, summary, tail, tools). When a ticket is expensive, you will see which section ate the budget.
+</Callout>

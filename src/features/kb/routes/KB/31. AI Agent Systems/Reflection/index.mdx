@@ -1,28 +1,94 @@
 ---
 title: Agent Reflection
-description: A recursive mathematical process where an AI Agent intentionally reviews its own previous actions or outputs, critiques them for errors, and autonomously generates a corrected version.
+description: "A second pass where the model critiques its own output or trajectory and revises, often as a separate critic role or node."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Agent Reflection">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Humans rarely write perfect code on the first try; we write, we read it, we see a bug, and we fix it. Agent Reflection forces an LLM to mathematically execute this exact self-correction loop.
+First drafts are wrong. **Reflection** (Reflexion, Self-Refine, critic–actor setups) makes that explicit: a **generator** produces work; a **critic** (same weights, different prompt — or a stronger model) lists faults; the generator revises. Repeat until the critic is quiet or the iteration cap hits.
 
-## 1. The Critic Pattern
-Reflection relies on a mathematical duality within the prompt or the Agent architecture.
-- **Generator**: The LLM writes a Python script.
-- **Critic**: The exact same LLM is mathematically re-prompted: *"You are a senior engineer. Review the script above. Find any logic errors or syntax bugs and output a list of required fixes."*
-Because the Critic prompt shifts the mathematical weights of the neural network toward "bug-finding" rather than "creating," the LLM will reliably find errors in its own work.
+This is not "the model is sentient." It is a second sample from a distribution tilted toward *finding bugs*.
 
-## 2. Self-Correction Loop
-Once the Critic generates the list of errors, the data is mathematically piped back into the Generator.
-*"Here is your previous code. Here are the errors found. Rewrite the code perfectly."*
-This loop (Generate $\rightarrow$ Reflect $\rightarrow$ Correct) mathematically continues until the Critic outputs `No errors found`. Reflection drastically increases the mathematical accuracy of an Agent, completely eliminating the need for the human to point out obvious mistakes.
+## 1. Deep Dive and Mechanics
 
+**Self-refine.** One model, two prompts. Pass 1: write the function. Pass 2: "list defects." Pass 3: "apply the list." Cheap and effective for style and obvious bugs.
+
+**Reflexion.** Verbal feedback is stored in **episodic memory** so the *next* episode starts with "last time tests failed because of X." Learning across runs without gradient updates.
+
+**Separate critic.** A model that cannot see the user's charm, only the artifact + spec + test log. Reduces the generator cheering for itself.
+
+**Ground the critic.** The best critic is *not* an LLM: compilers, linters, unit tests, NLI against sources. Use the LLM critic for what tests cannot see (unclear API, missing edge case in prose).
+
+<Callout icon="warning" title="Agreeable critics">
+If you ask "is this good?" the model says yes. Ask for a *numbered list of defects* and require `NONE` as the only success token. Empty flattery is a failed critic.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Reflection is iterative local search: state = current artifact, neighbor = revision given a critique. No guarantee of a global optimum; you can cycle (fix A, break B, fix B, break A). Cap iterations and keep the best scoring artifact (tests + critic score).
+
+Self-consistency (sample many, vote) is a cousin that does not edit — it picks. Reflection *edits*. Combine: generate k, critic-rank, refine the winner.
+
+<ComparisonTable
+  headers={['Loop', 'Feedback source', 'Persists across sessions']}
+  rows={[
+    ['Self-refine', 'Same model', 'No'],
+    ['Reflexion', 'LLM plus memory write', 'Yes, if stored'],
+    ['Test-driven', 'Compiler / tests', 'Via the repo'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def refine(llm, spec, draft, rounds=3):
+    work = draft
+    for _ in range(rounds):
+        critique = llm(f'Spec:\n{spec}\n\nWork:\n{work}\n\nList defects or NONE.')
+        if critique.strip() == 'NONE':
+            return work
+        work = llm(f'Revise to fix:\n{critique}\n\nCurrent:\n{work}')
+    return work
+```
+
+Add `pytest` between rounds when the artifact is code.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    G[Generate] --> C[Critic]
+    C -->|defects| G
+    C -->|NONE| Out[Accept]
+    C -->|max rounds| Out
+```
+
+## 5. Interview Prep
+
+**Q: Reflection vs reranking?**
+**A:** Rerank picks among candidates. Reflection mutates one candidate. Use rerank when generation is cheap; reflect when one item is expensive (a full PR).
+
+**Q: Why does self-critique miss security bugs?**
+**A:** The generator and critic share blind spots. Pair with static analysis and human review for authz.
+
+**Q: Is chain-of-thought already reflection?**
+**A:** CoT happens *before* the first answer. Reflection happens *after* an artifact exists. Different timing.
+
+## 6. Production Use Cases
+
+- **Code agents:** generate → test → reflect on stderr.
+- **Writing:** outline → draft → editor pass.
+- **RAG:** answer → faithfulness critic → regenerate ungrounded sentences.
+
+<Callout icon="tip" title="Budget the loop">
+Two refine rounds catch most cheap errors. Five rounds burn tokens and start oscillating. Log which round first passed tests.
+</Callout>

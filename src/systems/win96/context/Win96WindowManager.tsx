@@ -38,20 +38,35 @@ function sortRootFolders<T extends { id: string }>(folders: T[]): T[] {
   return [...ordered, ...rest]
 }
 
-export interface WindowState {
+interface WindowStateBase {
   id: string
-  kind: 'folder'
-  nodeId: string
   title: string
   isMinimized: boolean
   zIndex: number
   initialPosition: { x: number; y: number }
+}
+
+export interface FolderWindowState extends WindowStateBase {
+  kind: 'folder'
+  nodeId: string
   path: string[]
   history: string[][]
   forwardHistory: string[][]
 }
 
-export type FolderWindowState = WindowState
+export interface TopicWindowState extends WindowStateBase {
+  kind: 'topic'
+  route: string
+  initialSize: { width: number; height: number }
+}
+
+export type WindowState = FolderWindowState | TopicWindowState
+
+export const isFolderWindow = (win: WindowState): win is FolderWindowState => win.kind === 'folder'
+
+export const isTopicWindow = (win: WindowState): win is TopicWindowState => win.kind === 'topic'
+
+const TOPIC_WINDOW_SIZE = { width: 980, height: 640 }
 
 interface ManagerState {
   windows: WindowState[]
@@ -68,6 +83,7 @@ export const INITIAL_STATE: ManagerState = {
 
 type ManagerAction =
   | { type: 'OPEN_FOLDER_WINDOW'; nodeId: string }
+  | { type: 'OPEN_TOPIC_WINDOW'; route: string; title: string }
   | { type: 'FOCUS_WINDOW'; windowId: string }
   | { type: 'CLOSE_WINDOW'; windowId: string }
   | { type: 'MINIMIZE_WINDOW'; windowId: string }
@@ -120,7 +136,9 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
         return state
       }
 
-      const existing = state.windows.find((win) => win.nodeId === action.nodeId)
+      const existing = state.windows.find(
+        (win) => isFolderWindow(win) && win.nodeId === action.nodeId,
+      )
       if (existing) {
         const baseState = existing.isMinimized
           ? {
@@ -145,7 +163,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       const pathIds = entry.pathEntries.map((node) => node.id)
       const initialHistory = pathIds.length > 1 ? [pathIds.slice(0, -1)] : []
 
-      const newWindow: WindowState = {
+      const newWindow: FolderWindowState = {
         id: windowId,
         kind: 'folder',
         nodeId: action.nodeId,
@@ -156,6 +174,47 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
         history: initialHistory,
         forwardHistory: [],
         initialPosition: makePosition(offset),
+      }
+
+      return {
+        ...nextState,
+        windows: [...nextState.windows, newWindow],
+        activeWindowId: windowId,
+      }
+    }
+
+    case 'OPEN_TOPIC_WINDOW': {
+      const existingTopic = state.windows.find(isTopicWindow)
+      if (existingTopic) {
+        const baseState = {
+          ...state,
+          windows: state.windows.map((win) =>
+            win.id === existingTopic.id
+              ? {
+                  ...win,
+                  route: action.route,
+                  title: action.title,
+                  isMinimized: false,
+                }
+              : win,
+          ),
+        }
+
+        return withFocusedWindow(baseState, existingTopic.id)
+      }
+
+      const windowId = createWindowId()
+      const offset = (state.nextOffset + 24) % 72
+      const [nextState, zIndex] = bumpZIndex({ ...state, nextOffset: offset })
+      const newWindow: TopicWindowState = {
+        id: windowId,
+        kind: 'topic',
+        route: action.route,
+        title: action.title,
+        isMinimized: false,
+        zIndex,
+        initialPosition: makePosition(offset),
+        initialSize: TOPIC_WINDOW_SIZE,
       }
 
       return {
@@ -214,7 +273,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId) {
+          if (win.id !== action.windowId || !isFolderWindow(win)) {
             return win
           }
 
@@ -235,7 +294,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId) {
+          if (win.id !== action.windowId || !isFolderWindow(win)) {
             return win
           }
 
@@ -270,7 +329,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId) {
+          if (win.id !== action.windowId || !isFolderWindow(win)) {
             return win
           }
 
@@ -305,7 +364,7 @@ export const reduceManager = (state: ManagerState, action: ManagerAction): Manag
       return {
         ...state,
         windows: state.windows.map((win) => {
-          if (win.id !== action.windowId || win.path.length <= 1) {
+          if (win.id !== action.windowId || !isFolderWindow(win) || win.path.length <= 1) {
             return win
           }
 
@@ -346,6 +405,7 @@ interface WindowManagerValue {
   restoreWindow: (windowId: string) => void
   toggleMinimize: (windowId: string) => void
   openFolderWindow: (nodeId: string) => void
+  openTopicWindow: (route: string, title: string) => void
   navigateToChild: (windowId: string, nodeId: string) => void
   navigateBack: (windowId: string) => void
   navigateForward: (windowId: string) => void
@@ -407,6 +467,10 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
     dispatch({ type: 'OPEN_FOLDER_WINDOW', nodeId })
   }, [])
 
+  const openTopicWindow = useCallback((route: string, title: string) => {
+    dispatch({ type: 'OPEN_TOPIC_WINDOW', route, title })
+  }, [])
+
   const navigateToChild = useCallback((windowId: string, nodeId: string) => {
     dispatch({ type: 'NAVIGATE_TO_CHILD', windowId, nodeId })
   }, [])
@@ -442,6 +506,7 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
       restoreWindow,
       toggleMinimize,
       openFolderWindow,
+      openTopicWindow,
       navigateToChild,
       navigateBack,
       navigateForward,
@@ -459,6 +524,7 @@ export const Win96WindowManagerProvider = ({ children }: Win96WindowManagerProvi
       restoreWindow,
       toggleMinimize,
       openFolderWindow,
+      openTopicWindow,
       navigateToChild,
       navigateBack,
       navigateForward,

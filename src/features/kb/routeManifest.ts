@@ -295,6 +295,15 @@ kbOrderedRouteDefinitions.forEach((route, index) => {
   })
 })
 
+export const getKbRouteByPath = (pathname: string): KbRouteDefinition | null => {
+  const currentIndex = kbRouteIndexByPath.get(pathname)
+  if (currentIndex === undefined) {
+    return null
+  }
+
+  return kbOrderedRouteDefinitions[currentIndex] ?? null
+}
+
 export const getAdjacentKbRoutes = (pathname: string): AdjacentKbRoutes => {
   const currentIndex = kbRouteIndexByPath.get(pathname)
 

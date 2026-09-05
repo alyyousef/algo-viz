@@ -1,28 +1,88 @@
 ---
-title: Depth Estimation (Monocular)
-description: The highly complex AI process of mathematically predicting the 3D distance of every object in a scene using only a single, flat 2D image without stereo cameras or LiDAR.
+title: Depth Estimation
+description: "Per-pixel distance from the camera: stereo matching, monocular networks, and the scale ambiguity you cannot wish away."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Depth Estimation (Monocular)">
+    <ConceptTemplate title="Depth Estimation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A single photograph mathematically destroys depth. A small car up close and a massive truck far away take up the exact same amount of pixels. Monocular Depth Estimation forces an AI to hallucinate the missing Z-axis based purely on visual context.
+**Depth** is a map `Z(u,v)` (metres) or a **disparity** `d` (pixels) related by `Z = fB / d` for a calibrated stereo pair with baseline B and focal length f. **Stereo** measures; **monocular** infers from size, perspective, and data priors. **Multi-view / SfM** sits with 3D vision and SLAM.
 
-## 1. Visual Cues and Deep Learning
-To estimate depth from one lens, a Neural Network (often a U-Net or a Vision Transformer) mathematically learns to detect the same physical cues humans use:
-- **Occlusion**: If Object A blocks Object B, Object A is closer.
-- **Perspective**: Parallel lines mathematically converge in the distance.
-- **Texture Gradients**: Textures become mathematically denser and blurrier the further away they are.
-The AI processes the 2D image and outputs a **Depth Map**, where the physical value of every pixel is a float representing its estimated distance in meters from the camera lens.
+## 1. Deep Dive and Mechanics
 
-## 2. Self-Supervised Training
-Historically, training these networks required strapping expensive LiDAR rigs to cars to get absolute "Ground Truth" depth data.
-Modern models use **Self-Supervised Learning**. You mount two cheap cameras on a car (stereo). You only train the network to look at the Left camera, but you mathematically penalize the network by forcing it to try and reconstruct the image from the Right camera. To successfully synthesize the Right image, the network *must* mathematically figure out the depth of the objects. Once trained, you throw away the Right camera, and the AI can estimate depth perfectly from a single lens.
+**Stereo.** Rectify so matches are 1-D along epipolar lines. Cost volume (SAD, census, or a learned correlation) plus a smoother (SGM, RAFT-Stereo, CREStereo). Occlusions and textureless walls are the pain.
 
+**Monocular.** Eigen et al. then MiDaS / DPT / Depth Anything: a net trained on mixed datasets to predict **relative** depth. Metric depth needs extra constraints (camera intrinsics, an object of known size, or a scale head trained on metric data — ZoeDepth, Metric3D).
+
+**RGB-D sensors.** iPhone LiDAR, RealSense, Kinect: active depth you still must fuse and denoise. The "estimation" problem becomes completion and alignment.
+
+**Temporal.** Video depth (consistent) vs single-frame (flicker). SLAM uses depth or stereo as a landmark source.
+
+<Callout icon="warning" title="Monocular scale">
+A monocular net can swap a dollhouse and a building if both fill the frame. Do not close a robot loop on MiDaS metres unless you calibrated scale that day.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Pinhole: `x = f X / Z`. Stereo disparity is the horizontal pixel shift of a 3D point. Ambiguity: monocular is defined up to scale (and often shift) unless the training loss pins metric. Common losses: L1 on disparity, scale-invariant (Eigen), gradient matching, and multi-view reprojection (self-supervised monodepth).
+
+<ComparisonTable
+  headers={['Cue', 'Metric?', 'Weakness']}
+  rows={[
+    ['Stereo / RGB-D', 'Yes if calibrated', 'Baseline, occlusions'],
+    ['Monocular relative', 'No', 'Scale, novel optics'],
+    ['Monocular metric', 'If trained / cued', 'Domain shift'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Pseudo: MiDaS-style relative depth
+pred = depth_net(rgb)  # higher = closer or farther: READ THE CARD
+# For stereo: disparity = stereo_net(left, right); Z = f * B / disparity
+```
+
+Invert carefully: some models output inverse depth.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    L[Left] --> St[Stereo matcher]
+    R[Right] --> St
+    St --> D[Disparity]
+    D --> Z[Z equals f B over d]
+    RGB[Single RGB] --> Mono[Mono net]
+    Mono --> Zr[Relative or metric Z]
+```
+
+## 5. Interview Prep
+
+**Q: Disparity vs depth?**
+**A:** Disparity is image-space match. Depth is metres. Convert with intrinsics and baseline. Errors in `d` explode at large Z (1/d).
+
+**Q: Why is monocular self-sup so popular?**
+**A:** You can train on video with warp-and-photometric loss, no LiDAR. It fails on dynamic objects unless masked.
+
+**Q: AbsRel, RMSE, δ1?**
+**A:** Standard depth metrics. δ1 is % of pixels with max(pred/gt, gt/pred) < 1.25. Quote the protocol (capped depth).
+
+## 6. Production Use Cases
+
+- **AR** occlusion.
+- **Robot obstacle** (prefer stereo/LiDAR).
+- **Bokeh / portrait** (relative is enough).
+- **Novel view** as a geometry prior.
+
+<Callout icon="tip" title="Align conventions">
+Plot a colourbar and a known-height object. If the person is 12 metres tall, your "metric" head is in inverse-depth land or the baseline is wrong.
+</Callout>

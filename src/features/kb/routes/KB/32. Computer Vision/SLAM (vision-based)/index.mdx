@@ -1,25 +1,90 @@
 ---
-title: V-SLAM (Visual Simultaneous Localization and Mapping)
-description: The highly advanced mathematical algorithm that allows a robot or AR headset to use a single camera to build a 3D map of an unknown environment while simultaneously tracking its exact physical location within that map.
+title: Vision-Based SLAM
+description: "Simultaneous localisation and mapping from cameras: track pose while building a map, with loop closure so drift does not win."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="V-SLAM (Visual SLAM)">
+    <ConceptTemplate title="SLAM (Vision-Based)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a drone wakes up in an unknown room, it has two problems: It needs a 3D Map of the room so it doesn't crash, and it needs to know its exact $(X,Y,Z)$ coordinates on that map. V-SLAM solves both mathematical problems simultaneously in real-time.
+**SLAM** estimates the sensor **pose** and a **map** at once. Vision-based SLAM uses monocular, stereo, or RGB-D cameras (often plus IMU: VIO). ORB-SLAM, VINS-Mono, Kimera, RTAB-Map, and commercial ARKit/ARCore are this problem engineered. Without **loop closure**, you walk a square and the map is a spiral.
 
-## 1. Feature Tracking and Odometry
-As the camera moves, the SLAM algorithm extracts mathematically distinct physical features (corners of tables, patterns on the wall) using algorithms like ORB or SIFT.
-By tracking exactly how many pixels these features move between Frame 1 and Frame 2, the algorithm mathematically calculates the physical motion vector of the camera lens (Visual Odometry). It deduces, *"The camera just moved 2 inches forward and rotated 5 degrees right."*
+## 1. Deep Dive and Mechanics
 
-## 2. Loop Closure and Graph Optimization
-Visual Odometry suffers from mathematical drift. If the math is off by 0.1% every frame, after 10 minutes, the drone will think it is in the next room.
-SLAM solves this with **Loop Closure**. The algorithm mathematically memorizes the visual fingerprint of the room. If the drone flies in a circle and sees the starting wall again, the algorithm mathematically recognizes it. It realizes, *"I am back where I started, but my coordinates say I am 5 feet away."* It then executes a massive mathematical algorithm (Bundle Adjustment) to snap the entire 3D map and the flight trajectory back into physical alignment, eliminating the drift entirely.
+**Front-end.** Detect and match features (ORB, SuperPoint) or track photometric residuals (DSO, SVO). Output is a relative pose guess and inliers.
 
+**Back-end.** Optimise a pose graph or a full BA window (g2o, GTSAM, Ceres). Keyframes, not every frame.
+
+**Loop closure.** Place recognition (DBoW2, NetVLAD) proposes "I have been here." Add a constraint, the graph snaps. False loops wreck the map — ratio tests and geometric verify.
+
+**Monocular.** Scale is free to drift (or is fused from IMU / stereo). Pure mono SLAM is up to scale.
+
+**Dynamic scenes.** People walking through the map are moving outliers. Detect and mask, or use robust kernels.
+
+<Callout icon="warning" title="White walls">
+Feature SLAM needs texture. A hospital corridor can kill tracking. Have a recovery (relocalise) and a sensor backup (wheel, IMU, depth).
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+State: camera poses T_k ∈ SE(3), map points X_j. Measurements: reprojection `π(T^{-1} X)`. Factor graphs encode odometry, IMU preintegration, and loop factors. Gauge: first pose (and scale if mono) pinned.
+
+<ComparisonTable
+  headers={['Flavour', 'Map', 'Scale']}
+  rows={[
+    ['Mono feature', 'Sparse points', 'Unknown / drifted'],
+    ['Stereo / RGB-D', 'Sparse or TSDF', 'Metric'],
+    ['VIO', 'Sparse plus IMU', 'Metric if IMU biased well'],
+    ['NeRF-SLAM', 'Radiance / Gaussians', 'Research + some products'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+Typical ORB-SLAM3 flow:
+track features → local BA on a window → insert keyframe
+→ bag-of-words loop query → pose-graph optimise → (optional) full BA
+```
+
+ROS + a recorded bag is how you debug, not a live demo first.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Cam[Frames] --> FE[Front-end track]
+    FE --> BE[Local BA]
+    FE --> LC[Loop detect]
+    LC --> PG[Pose graph]
+    BE --> Map[Map]
+    PG --> Map
+```
+
+## 5. Interview Prep
+
+**Q: SLAM vs odometry?**
+**A:** Odometry is dead-reckoning (drift OK). SLAM builds a reusable map and closes loops.
+
+**Q: Why IMU?**
+**A:** Fast motion, textureless frames, and metric scale for mono. IMU bias estimation is the tax.
+
+**Q: Relocalisation vs tracking?**
+**A:** Tracking is frame-to-frame. Relocalise is global place recognition after you got lost.
+
+## 6. Production Use Cases
+
+- **Warehouse AMRs** (usually lidar-first, vision as helper).
+- **AR** persistent content.
+- **Drones** indoor.
+
+<Callout icon="tip" title="Log the covariance">
+A pose without uncertainty is a lie. Downstream planners need to know when tracking is "confident" vs "we are guessing."
+</Callout>

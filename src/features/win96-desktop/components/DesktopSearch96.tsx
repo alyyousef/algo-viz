@@ -373,7 +373,7 @@ export default function DesktopSearch96({
     <div ref={searchRef} className="win96-search" role="dialog" aria-label="Desktop search">
       <div className="win96-search__titlebar">
         <div className="win96-search__titlecopy">
-          <span className="win96-search__title">Route Search</span>
+          <span className="win96-search__title">Find</span>
           <span className="win96-search__shortcut">Ctrl/Cmd+K</span>
         </div>
         <button
@@ -387,14 +387,14 @@ export default function DesktopSearch96({
       </div>
       <div className="win96-search__body">
         <label className="win96-search__label" htmlFor={`${listboxId}-query`}>
-          Search or scroll all {desktopSearchEntries.length} DSA routes
+          Search titles or page text across {desktopSearchEntries.length} topics
         </label>
         <input
           id={`${listboxId}-query`}
           ref={inputRef}
           type="text"
           className="win96-search__input"
-          placeholder="Type a topic, domain, or route fragment, or scroll the full list"
+          placeholder="Search a topic, phrase, or idea — titles and page text"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={handleSearchInputKeyDown}
@@ -435,7 +435,11 @@ export default function DesktopSearch96({
                     >
                       <span className="win96-search__result-title">{result.title}</span>
                       <span className="win96-search__result-breadcrumb">{result.breadcrumb}</span>
-                      <span className="win96-search__result-route">{result.routeLabel}</span>
+                      {result.snippet ? (
+                        <span className="win96-search__result-snippet">{result.snippet}</span>
+                      ) : (
+                        <span className="win96-search__result-route">{result.routeLabel}</span>
+                      )}
                     </button>
                   )
                 })

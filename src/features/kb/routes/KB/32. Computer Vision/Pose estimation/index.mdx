@@ -1,25 +1,89 @@
 ---
 title: Pose Estimation
-description: The highly complex AI task of mathematically locating and connecting the physical biomechanical keypoints (joints) of a human body in 2D or 3D space from a standard image or video.
+description: "Predicting body or object keypoints — heatmaps or direct regression — for people, hands, and 6-DoF industrial parts."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Pose Estimation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you want to track an athlete's golf swing, you don't need to segment the pixels of their shirt. You need the exact spatial coordinates of their wrists, elbows, and shoulders.
+**Pose** here means **keypoints** (human skeleton, hand, face mesh) or **6-DoF object pose** (R, t in the camera). Human pose: OpenPose, HRNet, ViTPose, RTMPose, MediaPipe. Object pose: PVNet, CosyPose, FoundationPose. Do not confuse with "camera pose" (that is SLAM / PnP).
 
-## 1. Top-Down vs. Bottom-Up Approaches
-- **Top-Down (Two-Stage)**: First, an Object Detector (like YOLO) mathematically finds the person and crops a bounding box. Then, a second network analyzes the cropped box to find the joints. It is highly accurate but mathematically scales linearly with the number of people; if there are 50 people in the crowd, it runs 50 times slower.
-- **Bottom-Up (Single-Stage)**: The AI (like OpenPose) mathematically searches the entire uncropped image for *all* joints simultaneously (finding 50 left elbows and 50 left wrists). It then uses a mathematical graph algorithm (Part Affinity Fields) to figure out which elbow physically connects to which wrist. This is much harder to train but mathematically runs at the same speed regardless of how many people are in the frame.
+## 1. Deep Dive and Mechanics
 
-## 2. Heatmap Regression
-To predict where a wrist is, the network does not output a raw $[x, y]$ coordinate.
-Instead, it outputs a **Heatmap** (a 2D matrix representing the physical image). The matrix is entirely 0, except for a mathematically smooth 2D Gaussian curve peaking at 1.0 exactly where the wrist is. Predicting a physical Heatmap provides a much smoother, more stable mathematical gradient during backpropagation than trying to predict raw integer coordinates.
+**Top-down.** Detect persons, crop, run a single-person pose net. Accurate, cost grows with crowd size. The usual COCO winner path (HRNet, ViTPose).
 
+**Bottom-up.** Predict all joints and group them into people (OpenPose PAFs, HigherHRNet). Better when people overlap and boxes fail.
+
+**Heatmaps vs regression.** Heatmaps: a Gaussian target per joint, take argmax (plus DARK / UDP sub-pixel). Regression: direct (x,y) — faster, often less precise unless carefully designed (SimCC).
+
+**3D pose.** From 2D lifting (Videopose3d) or volumetric heatmaps. Absolute 3D needs camera or a bone-length prior. Object 6-DoF uses correspondences + PnP or a pose-CNN.
+
+<Callout icon="info" title="COCO 17 is not a body">
+No palms, no spine chain, no feet toes. Whole-body (133) and SMPL meshes are different products. Match the skeleton to the application.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+OKS (object keypoint similarity) is COCO's analog of IoU, with per-keypoint sigmas. mAP on OKS is the headline. For 6-DoF, ADD / ADD-S and projection error. PnP solves `min_R,t Σ ||π(RX+t) - x||` given 2D–3D matches.
+
+<ComparisonTable
+  headers={['Style', 'First step', 'Crowd behaviour']}
+  rows={[
+    ['Top-down', 'Person detector', 'N times pose net'],
+    ['Bottom-up', 'All joints', 'Grouping is the hard part'],
+    ['One-stage (YOLO-pose)', 'Joint detect', 'Realtime compromise'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Conceptual heatmap decode
+heat = model(crop)           # J x H x W
+ys, xs = argmax2d(heat)
+# refine with 1/4-pixel shift from neighbour cells
+```
+
+MediaPipe / MMPose are the practical stacks, not a from-scratch heatmap.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Im[Image] --> Det[Person boxes]
+    Det --> Crop[Crops]
+    Crop --> HM[Heatmaps]
+    HM --> KP[Keypoints]
+    Im --> BU[Bottom-up joints]
+    BU --> Grp[Group into people]
+```
+
+## 5. Interview Prep
+
+**Q: Why heatmaps not raw xy?**
+**A:** Spatial softmax is well-behaved; xy regression from a global pool loses resolution. SimCC and some transformers close the gap.
+
+**Q: Occluded joints?**
+**A:** Predict a visibility bit. Do not force a heatmap peak on a hidden elbow; eval protocols specify "visible only" vs "occluded annotated."
+
+**Q: Multi-person ID over time?**
+**A:** That is tracking (ByteTrack + pose, or pose-based ReID). Single-frame pose has no identity.
+
+## 6. Production Use Cases
+
+- **Fitness / retail analytics** (privacy!).
+- **AR avatars** and filters.
+- **Bin picking** 6-DoF.
+- **Sports** broadcast overlays.
+
+<Callout icon="warning" title="Biometrics adjacent">
+Body pose in a store is still personal data in many jurisdictions. Face+pose is worse. Design retention like you mean it.
+</Callout>

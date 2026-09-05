@@ -1,10 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { getAdjacentKbRoutes } from '@/features/kb/routeManifest'
+import { formatKbTitle } from '@/features/kb/utils/labels'
 
 import type { JSX } from 'react'
-
-const getRouteLabel = (segments: string[]): string => segments[segments.length - 1] ?? 'Page'
 
 export default function TopicPageNavigation(): JSX.Element | null {
   const location = useLocation()
@@ -14,6 +13,9 @@ export default function TopicPageNavigation(): JSX.Element | null {
   if (!previous && !next) {
     return null
   }
+
+  const previousLabel = previous ? formatKbTitle(previous.segments) : null
+  const nextLabel = next ? formatKbTitle(next.segments) : null
 
   const goToPath = (pathname: string | null) => {
     if (!pathname) {
@@ -30,28 +32,26 @@ export default function TopicPageNavigation(): JSX.Element | null {
         className="bin98-button bin98-page-nav-button"
         onClick={() => goToPath(previous?.path ?? null)}
         disabled={!previous}
-        aria-label={
-          previous
-            ? `Previous page: ${getRouteLabel(previous.segments)}`
-            : 'Previous page unavailable'
-        }
-        title={
-          previous
-            ? `Previous page: ${getRouteLabel(previous.segments)}`
-            : 'Previous page unavailable'
-        }
+        aria-label={previousLabel ? `Previous page: ${previousLabel}` : 'Previous page unavailable'}
+        title={previousLabel ? `Previous page: ${previousLabel}` : 'Previous page unavailable'}
       >
-        Previous Page
+        <span className="bin98-page-nav-label bin98-page-nav-label--full">
+          {previousLabel ? `← ${previousLabel}` : 'Previous Page'}
+        </span>
+        <span className="bin98-page-nav-label bin98-page-nav-label--short">← Prev</span>
       </button>
       <button
         type="button"
         className="bin98-button bin98-page-nav-button"
         onClick={() => goToPath(next?.path ?? null)}
         disabled={!next}
-        aria-label={next ? `Next page: ${getRouteLabel(next.segments)}` : 'Next page unavailable'}
-        title={next ? `Next page: ${getRouteLabel(next.segments)}` : 'Next page unavailable'}
+        aria-label={nextLabel ? `Next page: ${nextLabel}` : 'Next page unavailable'}
+        title={nextLabel ? `Next page: ${nextLabel}` : 'Next page unavailable'}
       >
-        Next Page
+        <span className="bin98-page-nav-label bin98-page-nav-label--full">
+          {nextLabel ? `${nextLabel} →` : 'Next Page'}
+        </span>
+        <span className="bin98-page-nav-label bin98-page-nav-label--short">Next →</span>
       </button>
     </nav>
   )

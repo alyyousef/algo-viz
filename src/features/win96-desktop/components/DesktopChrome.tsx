@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, type JSX } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { useWin96WindowManager } from '@/systems/win96/context/Win96WindowManager'
+import { isTopicWindow, useWin96WindowManager } from '@/systems/win96/context/Win96WindowManager'
 import Button97 from '@/systems/win97/components/Button97'
 import Taskbar97 from '@/systems/win97/components/Taskbar97'
 
 import DesktopSearch96 from './DesktopSearch96'
-import { FolderIcon } from './DesktopShellIcons'
+import { FolderIcon, VisualizationIcon } from './DesktopShellIcons'
 import StartMenu96 from './StartMenu96'
 
 function DesktopClock(): JSX.Element {
@@ -82,7 +82,7 @@ export default function DesktopChrome(): JSX.Element {
         key={win.id}
         size="sm"
         className={classes}
-        iconLeft={<FolderIcon size="sm" />}
+        iconLeft={isTopicWindow(win) ? <VisualizationIcon size="sm" /> : <FolderIcon size="sm" />}
         data-state={isActive ? 'active' : win.isMinimized ? 'minimized' : 'inactive'}
         onClick={() => toggleMinimize(win.id)}
       >

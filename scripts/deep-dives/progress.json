@@ -845,9 +845,7 @@
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Constraint programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Data-oriented programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Dataflow programming/index.mdx",
-    "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Declarative programming/index.mdx"
-  ],
-  "pending": [
+    "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Declarative programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Event-driven programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Functional programming/index.mdx",
     "src/features/kb/routes/KB/3. Programming Paradigms & Language Theory/3.1 Paradigms/Generic programming/index.mdx",
@@ -930,7 +928,9 @@
     "src/features/kb/routes/KB/32. Computer Vision/Semantic segmentation/index.mdx",
     "src/features/kb/routes/KB/32. Computer Vision/U-Net/index.mdx",
     "src/features/kb/routes/KB/32. Computer Vision/Vision Transformers (ViT)/index.mdx",
-    "src/features/kb/routes/KB/32. Computer Vision/YOLO/index.mdx",
+    "src/features/kb/routes/KB/32. Computer Vision/YOLO/index.mdx"
+  ],
+  "pending": [
     "src/features/kb/routes/KB/33. Reinforcement Learning/Actions/index.mdx",
     "src/features/kb/routes/KB/33. Reinforcement Learning/Actor-critic methods/index.mdx",
     "src/features/kb/routes/KB/33. Reinforcement Learning/Agents/index.mdx",

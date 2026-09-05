@@ -12,6 +12,7 @@ const baseSlugify = (segment) =>
   segment
     .trim()
     .toLowerCase()
+    .replace(/\+/g, ' plus ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '') || 'section'
@@ -26,6 +27,20 @@ const normalizeText = (value) =>
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
+
+const BODY_LIMIT = 4000
+
+const extractSearchBody = (source) =>
+  source
+    .replace(/^---[\s\S]*?---\s*/, '')
+    .replace(/^import\s[\s\S]*?from\s+['"][^'"]+['"];?\s*/gm, '')
+    .replace(/^export\s.+$/gm, '')
+    .replace(/```[\w+-]*\n([\s\S]*?)```/g, ' $1 ')
+    .replace(/<\/?[A-Za-z][^>]*>/g, ' ')
+    .replace(/[#>*_`[\]()|]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, BODY_LIMIT)
 
 async function walk(dir) {
   let results = []
@@ -48,31 +63,33 @@ async function buildIndex() {
   const files = await walk(ROUTE_DIR)
   const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
 
-  const entries = files.map((filePath) => {
-    // e.g. src/features/kb/routes/KB/1. Core Data Structures/index.tsx
-    const relativePath = path.relative(ROUTE_DIR, filePath).replace(/\\/g, '/')
-    const segments = relativePath.replace(/\/index\.(tsx|mdx)$/, '').split('/')
-    if (segments.length === 1 && segments[0] === '') segments.pop()
+  const entries = await Promise.all(
+    files.map(async (filePath) => {
+      const relativePath = path.relative(ROUTE_DIR, filePath).replace(/\\/g, '/')
+      const segments = relativePath.replace(/\/index\.(tsx|mdx)$/, '').split('/')
+      if (segments.length === 1 && segments[0] === '') segments.pop()
 
-    const routePath = `/kb/${segments.map(slugifySegment).join('/')}`
-    const labels = segments.map(cleanSegmentLabel)
-    const title = labels[labels.length - 1] ?? routePath
-    const breadcrumb = labels.slice(0, -1).join(' / ')
-    const routeLabel = routePath.replace(/^\/kb\//, 'kb/')
-    const matchText = normalizeText(`${labels.join(' ')} ${routePath}`)
+      const source = await fs.readFile(filePath, 'utf8')
+      const body = extractSearchBody(source)
+      const routePath = `/kb/${segments.map(slugifySegment).join('/')}`
+      const labels = segments.map(cleanSegmentLabel)
+      const title = labels[labels.length - 1] ?? routePath
+      const breadcrumb = labels.slice(0, -1).join(' / ')
+      const routeLabel = routePath.replace(/^\/kb\//, 'kb/')
+      const matchText = normalizeText(`${labels.join(' ')} ${routePath} ${body}`)
+      const importPath = `./routes/KB/${relativePath}`
 
-    // Create a mock import path that matches the previous format if needed
-    const importPath = `./routes/KB/${relativePath}`
-
-    return {
-      id: importPath,
-      title,
-      breadcrumb,
-      route: routePath,
-      routeLabel,
-      matchText,
-    }
-  })
+      return {
+        id: importPath,
+        title,
+        breadcrumb,
+        route: routePath,
+        routeLabel,
+        matchText,
+        body,
+      }
+    }),
+  )
 
   entries.sort((left, right) => {
     const breadcrumbComparison = collator.compare(left.breadcrumb, right.breadcrumb)

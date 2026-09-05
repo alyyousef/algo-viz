@@ -1,26 +1,85 @@
 ---
-title: Vision Transformers (ViT)
-description: A paradigm-shifting architecture that proved the Transformer—originally designed for natural language—can mathematically dominate Convolutional Neural Networks (CNNs) in pure Computer Vision tasks.
+title: Vision Transformers
+description: "Images as a sequence of patches plus a CLS token, processed with self-attention instead of a deep conv stack."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Vision Transformers (ViT)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-For a decade, CNNs (ResNet, VGG) were the undisputed kings of vision. They mathematically forced the AI to look at localized patches (convolutions). Vision Transformers destroyed this assumption, proving that massive Attention mechanisms are superior.
+**ViT** (Dosovitskiy et al., 2020) cuts an image into a grid of patches (e.g. 16×16), linearly embeds each patch, adds **position embeddings**, and runs a standard transformer encoder. A **CLS** token (or global average of patch tokens) becomes the image vector. No convolution is required — though hybrids still sneak convs in the stem.
 
-## 1. Patches as Words (Tokens)
-A Transformer expects a sequence of words (Tokens). You cannot feed it a sequence of 3 million pixels; the $O(N^2)$ mathematical complexity of the Attention mechanism will instantly exhaust all VRAM.
-ViT solves this by mathematically chopping the image into a grid of 16x16 pixel squares (**Patches**).
-It flattens each $16 \times 16$ patch into a 1D Vector, exactly as if it were a word in a sentence. It then feeds this sequence of Patches directly into a standard NLP Transformer.
+## 1. Deep Dive and Mechanics
 
-## 2. Global vs. Local Receptive Fields
-A CNN is mathematically nearsighted. A filter only looks at a 3x3 grid. To understand that a dog's head is connected to a dog's tail, the CNN must stack 50 layers to mathematically widen its "Receptive Field."
-A Vision Transformer has a **Global Receptive Field** from Layer 1. The mathematical Attention mechanism immediately calculates the relationship between Patch 1 (top left corner) and Patch 256 (bottom right corner). This allows ViT to learn global spatial patterns much faster. However, because ViT lacks the hardcoded "inductive bias" of a CNN, it requires astronomically more data (hundreds of millions of images) to mathematically deduce the basic physics of the visual world.
+**Tokens.** A 224 image / 16 patch → 196 tokens. Attention is O(n²), so high-res detection needs windowed attention (Swin), pyramidal designs, or a conv neck.
 
+**Inductive bias.** CNNs bake in locality. ViT learns locality from data. On ImageNet-scale data a vanilla ViT lags ResNet; on JFT-300M it wins. DeiT showed distillation and stronger aug can close the gap on ImageNet-1k.
+
+**Variants.** Swin: shifted windows + hierarchy (good for dense tasks). MAE: reconstruct masked patches (excellent SSL). DINOv2: teacher-student features that transfer without labels. SAM's encoder is a heavy ViT.
+
+**Position.** Learned 1-D embeddings do not naturally interpolate to a new resolution; many impls use 2-D interpolation of pos-embed at fine-tune.
+
+<Callout icon="info" title="CLS vs GAP">
+Original ViT uses a CLS token. Some modern recipes mean-pool patch tokens (like a conv GAP). Both work if you train that way. Do not mix a CLS-trained weight with GAP at inference.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Same transformer block as NLP: LN → MHSA → residual → LN → MLP. MHSA lets every patch talk to every other from layer 1 — a huge receptive field immediately, unlike a 3×3 stack. The cost is quadratic memory and weaker locality prior.
+
+<ComparisonTable
+  headers={['Model', 'Attention', 'Dense tasks']}
+  rows={[
+    ['ViT-B/16', 'Global', 'Needs a head / FPN'],
+    ['Swin', 'Windowed, hierarchical', 'Natural for detect/seg'],
+    ['ConvNeXt', 'None (conv)', 'CNN that borrowed ViT training'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# timm or torchvision
+import timm
+model = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=10)
+```
+
+Keep the exact train-time resize (often 224 or 336) and ImageNet/CLIP norm.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Im[Image] --> Pat[Split patches]
+    Pat --> Emb[Linear embed plus pos]
+    Emb --> Tr[Transformer blocks]
+    Tr --> Out[CLS or pooled z]
+```
+
+## 5. Interview Prep
+
+**Q: Why patch 16 not patch 4?**
+**A:** Finer patches → more tokens → quadratic blowup. Patch 4 is a different architecture (or a conv stem). 16 was the compute sweet spot for 224².
+
+**Q: Is attention the reason ViT works?**
+**A:** Scale + recipe matter as much. ConvNeXt got far with convs and ViT-like training. Attention helps long-range and flexible resolution more than it "replaces convolution" as a slogan.
+
+**Q: How do you segment with ViT?**
+**A:** Per-patch tokens as a coarse map, then upsample (SETR) or use a hierarchical backbone (Swin + UPerNet) or a mask decoder (SAM).
+
+## 6. Production Use Cases
+
+- **Foundation vision** (CLIP, DINOv2, MAE).
+- **High-accuracy classify** when you can afford a ViT-L and 384 input.
+- **Backbones** in DETR-like detectors.
+
+<Callout icon="tip" title="Watch the pos-embed interpolate">
+Serving 512² with weights trained at 224² without interpolating positions will look "mysteriously worse." It is not mysterious.
+</Callout>

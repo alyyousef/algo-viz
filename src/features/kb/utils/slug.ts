@@ -2,6 +2,7 @@ const baseSlugify = (segment: string): string =>
   segment
     .trim()
     .toLowerCase()
+    .replace(/\+/g, ' plus ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '') || 'section'

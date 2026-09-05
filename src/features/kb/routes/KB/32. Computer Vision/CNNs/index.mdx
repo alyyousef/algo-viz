@@ -1,30 +1,103 @@
 ---
-title: Convolutional Neural Networks (CNNs)
-description: The foundational deep learning architecture of Computer Vision that mathematically detects visual patterns by sliding filters across a pixel matrix to extract hierarchical spatial features.
+title: Convolutional Neural Networks
+description: "Layers that slide learned filters over images so nearby pixels share weights — the default backbone for classification, detection, and dense prediction."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Convolutional Neural Networks (CNNs)">
+    <ConceptTemplate title="Convolutional Neural Networks">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you feed a 1080p image into a standard Neural Network, it requires 2 million input neurons. The math instantly breaks. CNNs solve this by not looking at the whole image at once; they look at tiny patches using Convolutions.
+A fully connected net on a 224×224×3 image would have tens of millions of weights in the first layer and no notion of *place*. A **CNN** slides small **kernels** across the grid. The same 3×3 filter that finds an edge in the top-left can find it in the bottom-right. That **weight sharing** plus **local connectivity** is why ConvNets (LeNet, AlexNet, VGG, ResNet, ConvNeXt) still sit under most production vision stacks, even after ViTs.
 
-## 1. The Convolution Operation
-A Convolution is a mathematical matrix multiplication.
-The network learns a **Filter** (a tiny 3x3 grid of numbers). It physically slides this Filter across the massive 1080p image pixel by pixel (the Stride). At every step, it mathematically multiplies the Filter numbers by the underlying pixel values and sums them.
-If the Filter is mathematically optimized to detect vertical lines, the output of the Convolution will physically highlight every vertical line in the image, ignoring the rest.
+## 1. Deep Dive and Mechanics
 
-## 2. Hierarchical Feature Extraction
-A CNN stacks dozens of these Convolutional layers on top of each other, interspersed with **Pooling layers** (which mathematically shrink the image to save RAM).
-- Layer 1 detects raw edges and colors.
-- Layer 5 combines edges to detect shapes (circles, squares).
-- Layer 20 combines shapes to detect complex textures (fur, scales).
-- Layer 50 combines textures to detect "Dog."
-This mathematical hierarchy perfectly mirrors how the human visual cortex processes light from the retina.
+**Convolution.** A kernel of size k×k×C_in produces one output channel by a dot product at each spatial location. Stack C_out kernels to get a feature map. Stride skips pixels; padding keeps size. Dilation (atrous) widens the receptive field without extra weights.
 
+**Nonlinearity and pooling.** ReLU (or GELU) after conv. Max/average pool downsample, buying translation tolerance and a larger receptive field. Modern nets often replace pool with strided conv.
+
+**Batch norm and residuals.** ResNet's skip `y = F(x) + x` lets gradients take a highway. Without skips, very deep stacks fail to train. Inception / MobileNet / EfficientNet change the *block* (depthwise separable, inverted residuals) to hit a FLOPs budget.
+
+**Receptive field.** After enough stride and k×k, a unit "sees" most of the image. Detection and segmentation need **feature pyramids** (FPN) so small objects still have high-resolution maps.
+
+<Callout icon="info" title="Not just RGB">
+The same math runs on spectrograms, medical volumes (3D conv), and videos (3D or factorised 2+1D). A CNN is a translation-equivariant feature extractor, not an "image-only" spell.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Discrete convolution (correlation in frameworks):
+
+`(K * X)[i,j] = Σ_u Σ_v Σ_c K[u,v,c] X[i+u, j+v, c]`
+
+Equivariance: shift the input, the feature map shifts. Pooling and global average pool break that into invariance for classification. Parameter count of a conv is `k*k*C_in*C_out`, independent of H×W — unlike a dense layer's `H*W*C_in*C_out`.
+
+Inductive bias: locality + stationarity. ViTs drop that bias and need more data (or distillation) to catch up.
+
+<ComparisonTable
+  headers={['Block', 'Idea', 'Use']}
+  rows={[
+    ['VGG-style', 'Stack 3x3, then pool', 'Teaching, old transfer'],
+    ['ResNet', 'Skip around F(x)', 'Default backbone'],
+    ['Depthwise separable', 'Spatial then 1x1', 'Mobile'],
+    ['ConvNeXt', 'Modernised conv, ViT tricks', 'Strong CNN baseline'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import torch.nn as nn
+
+class TinyCNN(nn.Module):
+    def __init__(self, n_classes: int):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Conv2d(3, 32, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
+            nn.Conv2d(32, 64, 3, padding=1), nn.ReLU(), nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(), nn.Linear(64, n_classes),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+```
+
+In production you start from `resnet50(weights="IMAGENET1K_V2")` and swap the last linear layer.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Img[HxWx3] --> C1[Conv plus ReLU]
+    C1 --> P[Pool / stride]
+    P --> C2[Deeper convs]
+    C2 --> GAP[Global pool]
+    GAP --> FC[Logits]
+```
+
+## 5. Interview Prep
+
+**Q: Why 3×3 stacked instead of one 7×7?**
+**A:** Two 3×3 have a 5×5 receptive field with fewer weights and two nonlinearities. VGG's lesson; still valid.
+
+**Q: What does a first-layer filter look like?**
+**A:** Oriented edges and colour blobs — Gabor-like. Deeper layers compose textures, then parts, then objects (when you visualise).
+
+**Q: CNN vs ViT for a 5k-image medical set?**
+**A:** CNN / ConvNeXt or a ViT with strong augmentation and transfer. Plain ViT from scratch will overfit.
+
+## 6. Production Use Cases
+
+- **Backbones** for detect / segment / pose.
+- **On-device** MobileNet / EfficientNet.
+- **Industrial inspection** on modest GPUs.
+
+<Callout icon="tip" title="Normalise like the checkpoint">
+ImageNet weights expect a specific mean/std and often 224 resize-crop. Wrong preprocess silently kills transfer accuracy.
+</Callout>

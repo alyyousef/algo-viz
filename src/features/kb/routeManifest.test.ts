@@ -5,6 +5,7 @@ import {
   kbOrderedRouteDefinitions,
   kbRouteDefinitions,
   getAdjacentKbRoutes,
+  getKbRouteByPath,
 } from '@/features/kb/routeManifest'
 
 describe('kbRouteDefinitions', () => {
@@ -55,6 +56,25 @@ describe('kbRouteDefinitions', () => {
       '/kb/3-algorithmic-paradigms/9-two-pointers-and-sliding-window',
       '/kb/3-algorithmic-paradigms/10-greedy-proof-techniques-exchange-argument',
     ])
+  })
+})
+
+describe('getKbRouteByPath', () => {
+  it('returns null for unknown paths', () => {
+    expect(getKbRouteByPath('/kb/definitely-not-a-real-topic')).toBeNull()
+  })
+
+  it('resolves a loaded route and its alternate paths', () => {
+    const sample =
+      kbRouteDefinitions.find((route) => route.alternatePaths.length > 0) ?? kbRouteDefinitions[0]
+    if (!sample) {
+      return
+    }
+
+    expect(getKbRouteByPath(sample.path)?.path).toBe(sample.path)
+    sample.alternatePaths.forEach((alternatePath) => {
+      expect(getKbRouteByPath(alternatePath)?.path).toBe(sample.path)
+    })
   })
 })
 

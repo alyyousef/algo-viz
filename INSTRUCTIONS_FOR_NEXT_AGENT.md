@@ -1,65 +1,77 @@
 # Instructions for the Next Agent
 
-Hello! If you are reading this, you are picking up where the previous agents left off in building the **Win96 Algorithm Visualizer / Knowledge Base (algo-viz)**.
+You are continuing **deep-dive upgrades** of the AlgoViz knowledge base (`src/features/kb/routes/KB/`). Do not start a new MEGA-scaffold pass. Most pages already exist as short stubs; the job is to rewrite them to the deep-dive template and tick the tracker.
 
-The user wants you to continue the massive, autonomous hydration of the Knowledge Base taxonomy. Here is exactly what we have done so far, and how you should proceed.
+**The user paused on 2026-09-05.** Resume when they ask to continue filling pages.
 
-## Context and Goal
+## Where we stand (2026-09-05)
 
-The `algo-viz` project contains a massive MDX-based knowledge base (`src/features/kb/routes/KB/`). We generated thousands of empty/placeholder `.mdx` files representing a complete Computer Science curriculum.
-Your primary goal is to systematically "hydrate" these empty `.mdx` files with high-quality, comprehensive content.
+|                      |                              Count |
+| -------------------- | ---------------------------------: |
+| Completed deep dives |                            **929** |
+| Still pending        |                           **1694** |
+| Source of truth      | `scripts/deep-dives/progress.json` |
 
-## The Workflow (The "MEGA Batch" Pattern)
+**Last completed section:** 32. Computer Vision (all 24 pages).
 
-We have found that generating content one file at a time is too slow. Instead, we use "MEGA Batches" (generating 10+ pages per turn via a Node script). You should continue this exact pattern:
+**Next section:** 33. Reinforcement Learning.
 
-1. **Identify Unimplemented Pages:**
-   - Run a PowerShell command like `Get-ChildItem -Recurse src\features\kb\routes\KB -Filter *.mdx | Select-Object FullName | Select-String "TopicName"` to find paths for a specific theme (e.g., Cryptography, WebGL, Machine Learning).
-2. **Create a Generator Script:**
-   - Create a file at `scripts/generate-mega11.mjs` (incrementing the number from 10).
-   - Use the standard script template (see below) to write the content map and use `fs/promises` to bulk-write the files.
-3. **Format and Components:**
-   - Every MDX file MUST have frontmatter (`title` and `description`).
-   - Every MDX file MUST import and wrap the content in `<TechnologyTemplate>`:
-     ```mdx
-     import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
-     <TechnologyTemplate title="Your Title"> ... </TechnologyTemplate
+**First pending path:**
 
-     >
-     ```
-   - Use custom components to make the design WOW the user:
-     - `<Callout icon="info|success|warning|error|tip" title="Title">...</Callout>`
-     - `<ComparisonTable headers={['A', 'B']} rows={[['A1', 'B1']]} />`
-   - **CRITICAL MDX RULE:** Be extremely careful with unescaped single quotes (`'`) inside inline code blocks (`` `...` ``) or array literals, as Acorn will throw a parsing error during the Vite build.
+```
+src/features/kb/routes/KB/33. Reinforcement Learning/Actions/index.mdx
+```
 
-4. **Execute and Archive:**
-   - Run the script: `node scripts/generate-mega11.mjs`
-   - Move it to the archive: `Move-Item scripts/generate-mega11.mjs scripts/archive/`
-5. **Verify:**
-   - You MUST run `npm run build` after your batch to ensure you didn't introduce any MDX syntax errors that break the Vite compiler. If it fails, fix the quoting errors in the generated files.
+Work through `pending` in order (or by whole numbered section). After each batch, move those paths from `pending` to `completed`. Do not invent a second tracker.
 
-6. **Track Progress:**
-   - Keep the local `task.md` and `walkthrough.md` artifacts updated with your progress.
+This session already deep-dived:
 
-## What has been done so far
+- 3.1 Programming Paradigms (10)
+- 3.2 Language Design & Theory (15)
+- 30. RAG & Retrieval (15)
+- 31. AI Agent Systems (19)
+- 32. Computer Vision (24)
 
-We have successfully run MEGA Batches 1 through 10 (covering roughly 100 pages).
-Themes already covered:
+Earlier work (other agents) already completed large stretches of sections 1–14 and other domains; those paths are already in `completed`.
 
-- **Batch 1-5:** Algorithms, Data Structures, OOP, Databases, Cybersecurity, System Design, GraphQL, WebAssembly.
-- **Batch 6:** Software Engineering, Agile, Docker, K8s, Design Patterns.
-- **Batch 7:** Git, Linux Administration, Virtual Memory, Deadlocks.
-- **Batch 8:** Microservices, Event-Driven Arch, Kafka, Redis, Webhooks.
-- **Batch 9:** Web Frameworks (React, Vue, Angular, Next.js), JS Event Loop, Promises, Streams, DOM XSS.
-- **Batch 10:** Cloud Wars (AWS vs Azure vs GCP), EC2, S3, DynamoDB, DNS, CDNs, Virtual Machines.
+## Deep-dive page shape
 
-## Your Immediate Next Steps
+Follow `DEEP_DIVE_PLAN.md`. Each page should include:
 
-When you are initialized, begin by searching for empty pages in domains we haven't fully fleshed out yet. Good targets include:
+1. Overview
+2. Deep dive and mechanics
+3. Mathematical / theoretical foundation
+4. Real-world implementation (code)
+5. Mermaid diagram
+6. Interview prep
+7. Production use cases
+8. Callouts
 
-- AI & Machine Learning (Transformers, CNNs, LLMs)
-- Advanced Networking (TCP/IP, BGP, OSI Model)
-- Cryptography (RSA, AES, Hashing)
-- Advanced Data Structures (B-Trees, Tries, Bloom Filters)
+**Template and components (current codebase):**
 
-Just keep generating MEGA batches, verifying the builds, and wowing the user!
+- Wrap with `ConceptTemplate` + `export default function Layout`.
+- `import { Callout } from '@/features/kb/components/mdx/Callout'` — `icon` is only `info | warning | error | tip` (not `success`).
+- `import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'`.
+
+**MDX pitfalls:**
+
+- Do not put `{...}` in prose or inline backticks; Acorn treats `{` as JS.
+- Do not put raw `<tag>` in prose (use words or fenced code).
+- Fenced code blocks are fine.
+
+## Workflow
+
+1. Read the next slice of `pending` (a whole section is a good batch, ~10–24 pages).
+2. Skip or lightly keep pages that are already long deep dives (~140+ lines with the full structure); still mark them completed if they are on `pending`.
+3. Rewrite the short stubs in place.
+4. Update `progress.json` (filter `pending`, append `completed`).
+5. Verify: if the Vite dev server is up (`http://localhost:8889`), fetch each `index.mdx` and confirm `export default`. Otherwise `npm run build` (slow; whole KB).
+6. Update this file and `DEEP_DIVE_PLAN.md` if you finish another section.
+
+Dev server port is **8889**.
+
+## Do not
+
+- Do not clone other git repos into this working tree.
+- Do not commit unless the user asks.
+- Do not continue autonomous batches if the user said to stop or pause.

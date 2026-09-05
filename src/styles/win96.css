@@ -2,6 +2,7 @@
 
 .win96-window {
   position: absolute;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   background-color: #c3c7cb;
@@ -15,6 +16,18 @@
   min-width: 240px;
   min-height: 180px;
   user-select: none;
+}
+
+.win96-window[data-maximized='true'] {
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  width: auto !important;
+  height: auto !important;
+  transform: none !important;
+  max-width: none;
+  max-height: none;
 }
 
 .win96-window[data-interaction='dragging'] .win96-window__title-bar {
@@ -99,6 +112,36 @@
   border-bottom: 2px solid #f5f5f5;
   padding: 12px;
   overflow: auto;
+  min-height: 0;
+}
+
+.win96-window--topic .win96-window__body {
+  padding: 0;
+  overflow: hidden;
+  background: #c0c0c0;
+}
+
+.win96-window--topic .bin98-help-page,
+.win96-window--topic .bin98-window {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.win96-window--topic .bin98-window {
+  flex: 1;
+}
+
+.win96-window--topic .bin98-titlebar {
+  display: none;
+}
+
+.win96-window--topic .bin98-help-page,
+.win96-window--topic .bin98-content,
+.win96-window--topic .bin98-toc {
+  user-select: text;
+  touch-action: pan-x pan-y;
 }
 
 .win96-window__status-bar {
@@ -327,6 +370,7 @@
 }
 
 .win96-desktop--scaled {
+  position: relative;
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -358,22 +402,26 @@
   overflow: hidden;
   overscroll-behavior: none;
   display: flex;
-  align-items: flex-start;
-  /* Keep the scaled desktop pinned to the left so viewport-height scaling
-     does not create large empty gutters on wider displays. */
-  justify-content: flex-start;
+  align-items: stretch;
+  justify-content: stretch;
   background: linear-gradient(135deg, #008080 0%, #000080 100%);
 }
 
 .win96-desktop-scale-outer {
   display: block;
-  flex: none;
+  flex: 1 1 auto;
+  width: 100%;
+  height: calc(100% - var(--win96-taskbar-total-height));
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
 }
 
 .win96-desktop-scale {
-  transform-origin: top left;
   display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: top left;
 }
 
 .win96-desktop-chrome {
@@ -415,6 +463,8 @@
 .win96-window-layer {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
 
@@ -662,7 +712,8 @@
   border-color: #404040 #fff #fff #404040;
   background: #fff;
   color: #000;
-  font: inherit;
+  font-family: inherit;
+  font-size: 16px;
 }
 
 .win96-search__input:focus {
@@ -815,27 +866,33 @@
 
 .win96-search__result-breadcrumb,
 .win96-search__result-route,
+.win96-search__result-snippet,
 .win96-search__empty {
   font-size: 11px;
 }
 
 .win96-search__result-title,
 .win96-search__result-breadcrumb,
-.win96-search__result-route {
+.win96-search__result-route,
+.win96-search__result-snippet {
   overflow-wrap: anywhere;
 }
 
 .win96-search__result-breadcrumb,
-.win96-search__result-route {
+.win96-search__result-route,
+.win96-search__result-snippet {
   color: rgba(0, 0, 0, 0.74);
 }
 
 .win96-search__result:hover .win96-search__result-breadcrumb,
 .win96-search__result:hover .win96-search__result-route,
+.win96-search__result:hover .win96-search__result-snippet,
 .win96-search__result:focus-visible .win96-search__result-breadcrumb,
 .win96-search__result:focus-visible .win96-search__result-route,
+.win96-search__result:focus-visible .win96-search__result-snippet,
 .win96-search__result--active .win96-search__result-breadcrumb,
-.win96-search__result--active .win96-search__result-route {
+.win96-search__result--active .win96-search__result-route,
+.win96-search__result--active .win96-search__result-snippet {
   color: rgba(255, 255, 255, 0.82);
 }
 

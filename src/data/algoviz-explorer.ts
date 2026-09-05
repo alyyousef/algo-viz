@@ -103,6 +103,20 @@ const formatSegmentName = (segment: string): string => {
 const slugPath = (segments: string[]): string =>
   segments.map((segment) => slugifySegment(segment)).join('/')
 
+const allocateChildId = (parent: ExplorerFolderNode, desiredId: string): string => {
+  if (!parent.children.some((child) => child.id === desiredId)) {
+    return desiredId
+  }
+
+  let suffix = 2
+  let nextId = `${desiredId}-${suffix}`
+  while (parent.children.some((child) => child.id === nextId)) {
+    suffix += 1
+    nextId = `${desiredId}-${suffix}`
+  }
+  return nextId
+}
+
 const compareSegmentArrays = (a: string[], b: string[]): number => {
   const maxLength = Math.min(a.length, b.length)
   for (let i = 0; i < maxLength; i += 1) {
@@ -145,6 +159,7 @@ prefixSegments.forEach((segments, prefix) => {
 
 export const explorerRoot: ExplorerFolderNode = folder('root', 'AlgoViz', [])
 const folderCache = new Map<string, ExplorerFolderNode>([['', explorerRoot]])
+const folderById = new Map<string, ExplorerFolderNode>([['root', explorerRoot]])
 
 const sortedNonLeafPrefixes = Array.from(nonLeafPrefixes).sort((a, b) => {
   const aSegments = prefixSegments.get(a)
@@ -180,9 +195,19 @@ sortedNonLeafPrefixes.forEach((prefix) => {
     return
   }
 
-  const childFolder = folder(nodeId, formatSegmentName(lastSegment), [])
+  const existingInParent = parentFolder.children.find(
+    (child) => child.kind === 'folder' && child.id === nodeId,
+  )
+  if (existingInParent?.kind === 'folder') {
+    folderCache.set(prefix, existingInParent)
+    return
+  }
+
+  const uniqueId = allocateChildId(parentFolder, nodeId)
+  const childFolder = folder(uniqueId, formatSegmentName(lastSegment), [])
   parentFolder.children.push(childFolder)
   folderCache.set(prefix, childFolder)
+  folderById.set(uniqueId, childFolder)
 })
 
 kbRouteDefinitions.forEach(({ segments, path }) => {
@@ -203,9 +228,8 @@ kbRouteDefinitions.forEach(({ segments, path }) => {
     return
   }
 
-  parentFolder.children.push(
-    visualization(`page:${slugPath(segments)}`, formatSegmentName(lastSegment), undefined, path),
-  )
+  const pageId = allocateChildId(parentFolder, `page:${slugPath(segments)}`)
+  parentFolder.children.push(visualization(pageId, formatSegmentName(lastSegment), undefined, path))
 })
 
 const languagesEcosystemsFolder = findFolderChild(explorerRoot, 'folder:0-languages-ecosystems')

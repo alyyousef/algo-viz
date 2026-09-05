@@ -1,29 +1,92 @@
 ---
 title: Facial Recognition
-description: A biometric AI technology that mathematically extracts the unique geometrical structure of a human face and maps it to a dense vector embedding for instantaneous, high-security identification.
+description: "Face detection, alignment, and an embedding you compare with cosine — plus the verification vs identification distinction and the legal risk."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Facial Recognition">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-You cannot just compare the pixels of Face A to Face B; shadows, glasses, or a slight turn of the head mathematically change every single pixel. Facial Recognition relies on extracting invariant geometric topology.
+**Face recognition** is usually three models: **detect** the box (and landmarks), **align** (warp to a template), **embed** (ArcFace / AdaFace / a vendor SDK), then **compare** with cosine. **Verification** is 1:1 ("is this the same person as the enrolled photo?"). **Identification** is 1:N (search a gallery). Those have different ROC stories and different ethics.
 
-## 1. The Face Embedding
-When an image is passed to a Facial Recognition network (like FaceNet), it first runs a fast detector to draw a bounding box around the face. It aligns the face (straightens the eyes).
-Then, a deep CNN mathematically compresses the physical structure of the face (the distance between the pupils, the depth of the eye sockets, the shape of the jawline) into a dense **128-dimensional Vector**. This vector is mathematically invariant to lighting or facial expressions.
+## 1. Deep Dive and Mechanics
 
-## 2. Triplet Loss Training
-How do you train a network to do this? You use **Triplet Loss**.
-During training, the network is fed three images simultaneously:
-1. **Anchor**: A picture of John.
-2. **Positive**: A different picture of John (different lighting).
-3. **Negative**: A picture of Bob.
-The mathematical Loss Function physically forces the network to adjust its weights so that the Distance between the Anchor Vector and the Positive Vector shrinks, while simultaneously forcing the Distance between the Anchor Vector and the Negative Vector to expand. In production, to unlock a phone, the system simply checks if the Cosine Similarity between the stored Vector and the camera Vector crosses a strict mathematical threshold (e.g., 0.95).
+**Detect.** RetinaFace, SCRFD, YOLO-face, MediaPipe. Tiny faces and extreme yaw still break cheap detectors.
 
+**Align.** Five-point similarity transform to a canonical 112×112. A 10° roll leftover costs more accuracy than a slightly older backbone.
+
+**Embed.** Metric learning with angular margins (ArcFace) so identities are separable on the sphere. Train on huge (and often legally ugly) datasets. At serve: L2-normalise, store 512-D.
+
+**Match.** Threshold τ on cosine. Set τ from a target FAR on a *your-demographics* set. One global τ from LFW will not transfer.
+
+**Liveness.** Print and replay attacks. Texture, challenge-response, or depth. Recognition without liveness is a poster attack.
+
+<Callout icon="error" title="This is high-risk biometric processing">
+Many jurisdictions restrict live facial ID in public spaces. Accuracy is worse on darker skin and women in older systems (NIST FRVT — check the latest). If you do not have a lawful basis and a bias eval, do not build this.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+ArcFace: softmax on `s cos(θ + m)` for the true class. Verification: FAR, FRR, EER, TAR@FAR=1e-4. Identification: rank-1, TPIR vs FPIR. Open-set ID must reject unknowns, not force a nearest neighbour.
+
+<ComparisonTable
+  headers={['Task', 'Compare']}
+  rows={[
+    ['Verification 1:1', 'Two embeddings vs tau'],
+    ['Identification 1:N', 'Query vs gallery ANN'],
+    ['Clustering', 'Unsupervised grouping (noisy)'],
+    ['Attribute / emotion', 'Different heads, not ID'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Conceptual
+box, kps = detect(frame)
+face = align(frame, kps, size=112)
+z = normalize(embed(face))
+score = float(z @ z_enrolled)
+allow = score >= tau
+```
+
+Use a maintained insightface / vendor SDK; do not train ArcFace on scraped photos.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Frame --> Det[Detect plus landmarks]
+    Det --> Al[Align]
+    Al --> Emb[Embedding]
+    Emb --> Cmp[Cosine vs gallery]
+    Cmp --> Dec[Verify or identify]
+```
+
+## 5. Interview Prep
+
+**Q: Why not classify with softmax over employees?**
+**A:** Closed set, retrain on every hire, no unknown reject. Embeddings + ANN + a reject threshold scale.
+
+**Q: Why alignment?**
+**A:** The embedding is not fully pose-invariant. Alignment is cheap invariance.
+
+**Q: How do you eval fairly?**
+**A:** Stratify by sex, age, skin tone, capture device. Publish FAR/FRR per slice. Use NIST-style protocols, not a selfie demo.
+
+## 6. Production Use Cases
+
+- **Device unlock** (on-device, 1:1, liveness).
+- **Secure workplace** where law and union rules allow.
+- **Photo app** grouping (opt-in, on-device preferred).
+
+<Callout icon="tip" title="Prefer on-device 1:1">
+Unlocking a phone with a local embedding is a different moral and legal object than a city-scale 1:N camera grid. Design the smallest system that solves the job.
+</Callout>

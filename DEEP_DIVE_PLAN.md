@@ -1,11 +1,13 @@
 # Deep Dive Upgrade Plan
 
 ## Objective
-The goal of this initiative is to revisit the previously scaffolded and briefly hydrated Knowledge Base (KB) pages and upgrade them into **thorough, high-quality "Deep Dives"**. 
+
+The goal of this initiative is to revisit the previously scaffolded and briefly hydrated Knowledge Base (KB) pages and upgrade them into **thorough, high-quality "Deep Dives"**.
 
 Instead of just providing a high-level overview, each page will be rigorously rewritten to include in-depth technical details, theoretical foundations, real-world implementations, visual architectures, and interview preparation.
 
 ## Structure of a Deep Dive
+
 Each upgraded `.mdx` file will strictly adhere to the following structure:
 
 1. **Overview & Philosophy**: A brief, engaging introduction to what the technology/concept is and why it exists.
@@ -18,9 +20,36 @@ Each upgraded `.mdx` file will strictly adhere to the following structure:
 8. **Callouts**: Important tips, warnings, or historical anecdotes using the `<Callout>` component.
 
 ## Execution Methodology
+
 1. **Tracking Progress**: We use `scripts/deep-dives/progress.json` to track which pages have been upgraded (`completed`) and which ones still need it (`pending`).
 2. **Batch Generation**: We create Node.js scripts (e.g., `generate-batch-002.mjs`) containing the highly detailed Markdown/MDX content for the next batch of files.
 3. **Hydration**: The script writes the new content directly into the `.mdx` files, overwriting the old, shallow content.
 4. **Tracker Update**: The script automatically moves the processed paths from the `pending` array to the `completed` array in `progress.json`.
 
-We will continue pulling from the `pending` list (currently tackling **Linux & Shell Administration**) and generating batches until the entire Knowledge Base is deeply hydrated.
+## Current status (2026-09-05)
+
+**Paused here.** Resume next session from the top of `pending` in `scripts/deep-dives/progress.json`.
+
+|                          | Count |
+| ------------------------ | ----: |
+| Deep-dived (`completed`) |   929 |
+| Still pending            |  1694 |
+| Tracked total            |  2623 |
+
+**Last finished section:** **32. Computer Vision** (all 24 topic pages).
+
+**Resume at:** **33. Reinforcement Learning** — first pending file:
+
+`src/features/kb/routes/KB/33. Reinforcement Learning/Actions/index.mdx`
+
+This session (2026-09-05) upgraded these sections in order:
+
+1. **3.1 Paradigms** (10 pages)
+2. **3.2 Language Design & Theory** (15 pages)
+3. **30. RAG & Retrieval** (15 pages)
+4. **31. AI Agent Systems** (19 pages)
+5. **32. Computer Vision** (24 pages)
+
+Tracker has no duplicates and no completed/pending overlap. Keep moving `pending` → `completed` after each batch.
+
+We will continue pulling from the `pending` list (next: **Reinforcement Learning**) until the entire Knowledge Base is deeply hydrated.

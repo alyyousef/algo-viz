@@ -1,21 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import {
-  INITIAL_STATE,
-  reduceManager,
-} from '@/systems/win96/context/Win96WindowManager'
+import { INITIAL_STATE, reduceManager } from '@/systems/win96/context/Win96WindowManager'
 
-import type {
-  FolderWindowState,
-  WindowState,
-} from '@/systems/win96/context/Win96WindowManager'
+import type { FolderWindowState, WindowState } from '@/systems/win96/context/Win96WindowManager'
 
 // ---------------------------------------------------------------------------
 // Module mocks
 // ---------------------------------------------------------------------------
 
 vi.mock('@/data/algoviz-explorer', () => ({
-  explorerIndex: { root: { id: 'root', name: 'AlgoViz', kind: 'folder', children: [] }, map: new Map() },
+  explorerIndex: {
+    root: { id: 'root', name: 'AlgoViz', kind: 'folder', children: [] },
+    map: new Map(),
+  },
   getExplorerNode: vi.fn(),
   getExplorerChildren: vi.fn(() => []),
 }))
@@ -113,7 +110,12 @@ describe('reduceManager', () => {
     it('preserves activeWindowId when a different window is closed', () => {
       const win1 = makeFolderWindow({ id: 'win-1' })
       const win2 = makeFolderWindow({ id: 'win-2' })
-      const state = { ...INITIAL_STATE, windows: [win1, win2], activeWindowId: 'win-1', zCounter: 12 }
+      const state = {
+        ...INITIAL_STATE,
+        windows: [win1, win2],
+        activeWindowId: 'win-1',
+        zCounter: 12,
+      }
 
       const next = reduceManager(state, { type: 'CLOSE_WINDOW', windowId: 'win-2' })
 
@@ -180,7 +182,12 @@ describe('reduceManager', () => {
       const state = stateWithWindow(win)
 
       const mockEntry = {
-        node: { id: 'folder:fundamentals', name: 'Fundamentals', kind: 'folder' as const, children: [] },
+        node: {
+          id: 'folder:fundamentals',
+          name: 'Fundamentals',
+          kind: 'folder' as const,
+          children: [],
+        },
         parentId: 'root',
         pathEntries: [],
       }
@@ -257,7 +264,12 @@ describe('reduceManager', () => {
       const state = stateWithWindow(win)
 
       const mockEntry = {
-        node: { id: 'folder:algorithms', name: 'Algorithms', kind: 'folder' as const, children: [] },
+        node: {
+          id: 'folder:algorithms',
+          name: 'Algorithms',
+          kind: 'folder' as const,
+          children: [],
+        },
         parentId: 'root',
         pathEntries: [],
       }
@@ -284,6 +296,45 @@ describe('reduceManager', () => {
   // -------------------------------------------------------------------------
   // Unknown action (default branch)
   // -------------------------------------------------------------------------
+  describe('OPEN_TOPIC_WINDOW', () => {
+    it('opens a topic window', () => {
+      const next = reduceManager(INITIAL_STATE, {
+        type: 'OPEN_TOPIC_WINDOW',
+        route: '/kb/32-computer-vision/yolo',
+        title: 'YOLO',
+      })
+
+      expect(next.windows).toHaveLength(1)
+      expect(next.windows[0]).toMatchObject({
+        kind: 'topic',
+        route: '/kb/32-computer-vision/yolo',
+        title: 'YOLO',
+      })
+      expect(next.activeWindowId).toBe(next.windows[0]?.id)
+    })
+
+    it('reuses the existing topic window instead of opening a second one', () => {
+      const opened = reduceManager(INITIAL_STATE, {
+        type: 'OPEN_TOPIC_WINDOW',
+        route: '/kb/32-computer-vision/yolo',
+        title: 'YOLO',
+      })
+      const next = reduceManager(opened, {
+        type: 'OPEN_TOPIC_WINDOW',
+        route: '/kb/32-computer-vision/cnns',
+        title: 'CNNs',
+      })
+
+      expect(next.windows).toHaveLength(1)
+      expect(next.windows[0]).toMatchObject({
+        kind: 'topic',
+        route: '/kb/32-computer-vision/cnns',
+        title: 'CNNs',
+        isMinimized: false,
+      })
+    })
+  })
+
   describe('unknown action', () => {
     it('returns state unchanged', () => {
       const state = stateWithWindow(makeFolderWindow())

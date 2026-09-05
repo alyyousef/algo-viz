@@ -4,6 +4,8 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -17,6 +19,12 @@
 }
 
 @layer components {
+  .page-loader--window {
+    min-height: 100%;
+    height: 100%;
+    padding: 16px;
+  }
+
   .page-loader {
     display: flex;
     align-items: center;

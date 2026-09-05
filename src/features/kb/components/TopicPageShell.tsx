@@ -1,3 +1,4 @@
+import TopicBreadcrumb from '@/features/kb/components/TopicBreadcrumb'
 import TopicPageNavigation from '@/features/kb/components/TopicPageNavigation'
 
 import type { TopicTab } from '@/features/kb/hooks/useTopicTabs'
@@ -58,6 +59,11 @@ export default function TopicPageShell<T extends string>({
           </div>
         </header>
 
+        <div className="bin98-crumb-row">
+          <TopicBreadcrumb />
+          <TopicPageNavigation />
+        </div>
+
         <div className="bin98-tabs-row">
           <div className="bin98-tabs" role="tablist" aria-label="Sections">
             {tabs.map((tab) => (
@@ -73,16 +79,29 @@ export default function TopicPageShell<T extends string>({
               </button>
             ))}
           </div>
-          <TopicPageNavigation />
         </div>
 
-        <div className="bin98-main">
+        <div className="bin98-main bin98-main--with-toc">
           <aside className="bin98-toc" aria-label="Table of contents">
             <h2 className="bin98-toc-title">Contents</h2>
             <ul className="bin98-toc-list">
               {tocLinks.map((section) => (
                 <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.label}</a>
+                  <a
+                    href={`#${section.id}`}
+                    onClick={(event) => {
+                      event.preventDefault()
+                      const reduceMotion = window.matchMedia(
+                        '(prefers-reduced-motion: reduce)',
+                      ).matches
+                      document.getElementById(section.id)?.scrollIntoView({
+                        behavior: reduceMotion ? 'auto' : 'smooth',
+                        block: 'start',
+                      })
+                    }}
+                  >
+                    {section.label}
+                  </a>
                 </li>
               ))}
             </ul>

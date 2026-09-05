@@ -1,35 +1,106 @@
 ---
-title: Function Calling (Tool Use)
-description: The strict mathematical protocol allowing Large Language Models to deterministically request the execution of predefined external code functions, acting as the foundation of all AI Agents.
+title: Function Calling
+description: "The API contract where a model emits a structured tool request, your server runs the function, and the model continues with the result — not with invented JSON in a markdown fence."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Function Calling">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-LLMs are mathematically trained to generate human language. Getting them to generate a perfectly formatted, syntactically flawless JSON object to trigger an API was historically very difficult. OpenAI solved this mathematically at the API level with Function Calling.
+Early agents asked the model to "output JSON" in the chat and then regexed it. That breaks. **Function calling** (tool use) is the vendor protocol: you send **schemas**, the model returns a **typed call** (name + arguments) in a dedicated field, you execute, you send a **tool result** message, the model speaks or calls again.
 
-## 1. The JSON Schema Definition
-When calling the LLM API, the developer passes a mathematical **Schema** defining the available tools.
-```json
-{
-  "name": "get_weather",
-  "description": "Get current temperature",
-  "parameters": {
-    "type": "object",
-    "properties": { "location": { "type": "string" } }
-  }
-}
+OpenAI, Anthropic, Google, and most local stacks now have a flavour of this. It is the substrate under ReAct-style products.
+
+## 1. Deep Dive and Mechanics
+
+**Schema.** JSON Schema (or equivalent) for each tool: name, description, parameters. The description *is* the API docs the model reads. Vague descriptions cause wrong tools. Include when *not* to call.
+
+**The model does not run your code.** It stops with a call object. Your process validates types, auth, and policy, then runs `get_weather("Tokyo")`. If you skip validation, you will pass `location: "'; DROP TABLE"`.
+
+**Round trip.** User → model (call) → you (result) → model (answer). Parallel calls (several functions in one turn) need a fan-in. Errors should come back as tool results (`404 not found`), not as a crashed host — the model can recover.
+
+**Constrained decode.** Some runtimes grammar-constrain arguments to the schema. Still check ranges and tenancy. A schema that says `string` will accept a 2MB blob.
+
+<Callout icon="info" title="Parallel vs sequential">
+Independent reads can run together. Writes that depend on a prior id must be sequential. If the model emits both at once, *you* serialise or reject the batch.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Fine-tuning (or preference training) shifts probability mass from natural language to schema-valid argument strings. The description tokens attend into the argument tokens. That is why a good description beats a clever regex.
+
+Function calling is still sampling: required fields can be omitted. Treat parse failure as a tool error and retry with a short "your last call was invalid" observation.
+
+<ComparisonTable
+  headers={['Style', 'Who parses', 'Reliability']}
+  rows={[
+    ['Prose plus regex', 'You, badly', 'Low'],
+    ['Native function call', 'The API', 'High'],
+    ['MCP tools', 'Protocol + you', 'High if schema is tight'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+tools = [{
+    'type': 'function',
+    'function': {
+        'name': 'get_weather',
+        'description': 'Current temperature in Celsius for a city.',
+        'parameters': {
+            'type': 'object',
+            'properties': {
+                'city': {'type': 'string'},
+            },
+            'required': ['city'],
+        },
+    },
+}]
+
+# 1) model returns tool_calls[0].function.arguments == '{"city":"Tokyo"}'
+# 2) temp = get_weather('Tokyo')
+# 3) append role=tool content=str(temp) and call the model again
 ```
-The LLM is mathematically fine-tuned to recognize these schemas. If the user asks, "Is it hot in Tokyo?", the LLM calculates that answering with text is mathematically less optimal than triggering the function.
 
-## 2. Deterministic Interception
-The LLM does *not* execute the function. It mathematically stops generating text and outputs a strict JSON payload: `{"name": "get_weather", "arguments": {"location": "Tokyo"}}`.
-The developer's server intercepts this payload, physically executes the `get_weather()` Python code, and sends the integer `32` back to the LLM. Only then does the LLM mathematically resume text generation, combining the physical data (32) with natural language to say, *"It is currently 32 degrees in Tokyo."*
+## 4. Visualizations
 
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant M as Model
+    participant H as Host
+    U->>M: Is it hot in Tokyo?
+    M->>H: get_weather city Tokyo
+    H->>H: Run function
+    H->>M: 32
+    M->>U: About 32 C in Tokyo
+```
+
+## 5. Interview Prep
+
+**Q: Function calling vs ReAct?**
+**A:** ReAct is the *cognitive* pattern (thought, act, observe). Function calling is the *wire* format. You can ReAct with native tools (thoughts in content, acts as tool_calls).
+
+**Q: Why did the model call the tool with yesterday's city?**
+**A:** Stale names in the thread. Repeat entities in the tool description ("use the city from the latest user message") or pass structured state yourself.
+
+**Q: Can the model call undeclared functions?**
+**A:** A well-built API will not execute them. Still ignore unknown names. Never `eval` a name string.
+
+## 6. Production Use Cases
+
+- **Assistants:** calendar, CRM, search.
+- **Agents:** every tool in the loop is a function call.
+- **Structured extraction:** a dummy tool whose args *are* the schema you want (function-calling as JSON mode).
+
+<Callout icon="warning" title="Idempotency">
+Retries will double-charge if `create_payment` is not idempotent. Put idempotency keys in the schema and in your backend.
+</Callout>

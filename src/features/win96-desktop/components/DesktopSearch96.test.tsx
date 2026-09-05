@@ -5,7 +5,26 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import DesktopSearch96 from './DesktopSearch96'
-import { desktopSearchEntries } from '../utils/desktopSearch'
+import { desktopSearchEntries, replaceDesktopSearchEntries } from '../utils/desktopSearch'
+
+const searchFixtures = [
+  {
+    id: 'binary',
+    title: 'Binary Search',
+    breadcrumb: 'Core Algorithms',
+    route: '/kb/binary-search',
+    routeLabel: 'kb/binary-search',
+    matchText: 'binary search core algorithms',
+  },
+  {
+    id: 'yolo',
+    title: 'YOLO',
+    breadcrumb: '32. Computer Vision',
+    route: '/kb/32-computer-vision/yolo',
+    routeLabel: 'kb/32-computer-vision/yolo',
+    matchText: 'yolo computer vision',
+  },
+]
 
 class ResizeObserverMock {
   observe(): void {}
@@ -46,6 +65,7 @@ describe('DesktopSearch96', () => {
 
     vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
     vi.stubGlobal('ResizeObserver', ResizeObserverMock)
+    replaceDesktopSearchEntries(searchFixtures)
   })
 
   afterEach(() => {

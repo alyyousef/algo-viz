@@ -1,25 +1,90 @@
 ---
 title: Semantic Search
-description: A search paradigm that abandons exact character matching in favor of mathematically mapping the intent and contextual meaning of a user's query against an embedded Latent Space.
+description: "Finding documents by meaning instead of exact tokens: the product name for dense retrieval over an embedding space."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Semantic Search">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you search a traditional SQL database for "places to get coffee," and the database only contains the phrase "cafe," SQL returns 0 results. Semantic Search returns the cafe immediately because it understands the math of language.
+A SQL `LIKE '%coffee%'` misses `cafe`. A BM25 query for "places to get coffee" misses a page titled only "Espresso bar hours." **Semantic search** embeds the query and the corpus so **intent** sits next to **content** in a vector space, then returns nearest neighbors.
 
-## 1. Mapping Intent to Geometry
-Semantic Search is entirely reliant on Neural Networks (Transformers).
-During ingestion, every document is passed through an Embedding Model, stripping away the ASCII characters and extracting pure mathematical meaning. This meaning is plotted as a coordinate in a 1,536-dimensional universe.
-When a user types "places to get coffee," the system does not look for those words. It converts the query into a coordinate. Because the Neural Network was trained on billions of human conversations, it mathematically places the coordinate for the query exactly next to the coordinate for "cafe."
+It is the user-facing name for what this KB calls dense retrieval plus a decent UI. It does not replace keyword search; it covers the **vocabulary gap**.
 
-## 2. Overcoming the Vocabulary Gap
-The primary architectural goal of Semantic Search is to solve the **Vocabulary Gap**—the mathematical reality that the person asking the question rarely uses the exact same terminology as the person who wrote the answer. By abstracting language into pure geometric space, Semantic Search makes systems incredibly resilient to typos, synonyms, and drastically different phrasings.
+## 1. Deep Dive and Mechanics
 
+**Vocabulary gap.** Authors and askers do not share a lexicon. Support tickets say "it won't let me pay"; the runbook says "checkout authorization declined." Embedding models trained on query–document pairs learn that those strings are neighbors.
+
+**Ingestion.** Every searchable unit (chunk, product, ticket) is passed through `f`, stored with metadata (ACL, locale, type). Filters run in the engine (prefilter / postfilter) so "coffee" in the HR policy does not leak into the public help center.
+
+**Query time.** Embed the query with the *same* `f` (and the `query:` prefix if required). ANN → optional hybrid/rerank → results. Highlighting is harder than with BM25: you may highlight a sentence that never shared a token with the query. Show a short extract the reranker liked.
+
+**Multilingual and multimodal.** Multilingual models put "coffee" and "café" near each other. Image and CLIP-style models let a photo query retrieve SKUs. Same geometry, different encoder.
+
+<Callout icon="warning" title="Semantic is not magic ACL">
+Nearest neighbor does not know the user is intern-level. Always filter by permission *inside* the retrieval engine. Filtering after generation is how you leak.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Semantic search assumes `s(f(q), f(d))` correlates with human relevance. That correlation is an empirical property of the training set. Out of domain (medical, legal, your internal code names) it decays. Fine-tuning on click data (two-tower, distillation from a cross-encoder) is how large search teams keep the assumption true.
+
+False friends: antonyms and negations ("without peanuts") are historically weak in bi-encoders. Hybrid + rerank + explicit token filters ("peanuts") patch this.
+
+<ComparisonTable
+  headers={['User types', 'Keyword finds', 'Semantic finds']}
+  rows={[
+    ['places to get coffee', 'pages with those words', 'cafe, espresso bar'],
+    ['ERR_7X9', 'exact code', 'maybe nothing useful'],
+    ['why did checkout fail', 'those words', 'authorization timeout article'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def semantic_search(query: str, embed, ann, k: int = 8):
+    vec = embed([query], kind='query')[0]
+    return ann.search(vec, k=k)
+```
+
+Add BM25 in parallel if `query` contains digits or quoted phrases.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Q[Query] --> E[Embed]
+    E --> NN[Nearest neighbors]
+    NN --> UI[Results by meaning]
+    Docs[Corpus] --> E2[Embed offline]
+    E2 --> NN
+```
+
+## 5. Interview Prep
+
+**Q: Semantic search vs RAG?**
+**A:** Semantic search *returns documents* to a human. RAG *stuffs documents into an LLM*. Same retriever. Different consumer. RAG without a citation UI is still using semantic search under the hood.
+
+**Q: Why did we get unrelated results?**
+**A:** Hubness (some vectors are everyone's neighbor), a muddy chunk (whole-page embeddings), or a model change that was not re-indexed. Inspect the actual vectors' nearest labeled examples.
+
+**Q: Can I semantic-search SQL rows?**
+**A:** Embed a text view of the row (`title + description`). Keep the primary key in metadata. Do not embed raw integers and hope.
+
+## 6. Production Use Cases
+
+- **Help centers and wikis:** the default upgrade from keyword.
+- **E-commerce:** "crispy snack" → chips.
+- **People search:** "who knows Kubernetes on-call" over bios (watch privacy).
+
+<Callout icon="tip" title="Show why">
+Users forgive a keyword miss. They distrust a semantic miss. Display the matched passage and a "search as keywords instead" toggle.
+</Callout>
