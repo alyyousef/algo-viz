@@ -1,36 +1,90 @@
 ---
 title: Insecure Deserialization
-description: A vulnerability occurring when untrusted data is used to abuse the logic of an application, often leading to Remote Code Execution (RCE).
+description: "Turning untrusted bytes into live objects so attacker-controlled types or gadgets run during load."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Insecure Deserialization">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Serialization** is the mathematical process of taking a complex object in memory (like a Java User object) and converting it into a flat string of bytes so it can be saved to a database or sent over a network. **Deserialization** is putting it back together.
+**Insecure deserialization** is reconstructing objects from bytes you did not sign and trusting the result. Some formats can name classes to instantiate. During load, constructors and magic methods run. That is a remote code-execution class in several ecosystems. The safe default is **dumb data formats plus a schema**, or signed tokens you verify before parse.
 
-**Insecure Deserialization** occurs when an application receives serialized data from the user and blindly deserializes it without mathematically verifying its contents.
+## 1. Deep Dive and Mechanics
 
+JSON with a schema is data. Language-native pickles, Java serialization, .NET BinaryFormatter, PHP unserialize, and YAML load (not safe_load) can become code. The attacker does not need a "payload tutorial" from you: they need you to stop calling those APIs on untrusted input.
 
-<Callout icon="warning" title="The Equifax Breach">
+**What to do.** Prefer JSON, protobuf, or CBOR with explicit types you allocate. If you must persist objects, encrypt-and-MAC them with a server key and a version field. Java and .NET teams should use serialization filters / allowlists if a legacy protocol cannot die yet.
 
+**JWT and cookies.** Deserialize only after signature verify. Do not parse then verify.
 
-  Insecure Deserialization is incredibly dangerous because it almost always leads to full Remote Code Execution (RCE). The devastating 2017 Equifax breach, which compromised the financial data of 147 million Americans, was caused by an insecure deserialization flaw in the Apache Struts framework.
-
-
+<Callout icon="error" title="Never pickle untrusted data">
+Python pickle is a bytecode loader. The same spirit applies to other native serializers. Delete the endpoint or switch to JSON.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How the Attack Works
+A serializer is a programming language if it can name methods. Safe decoders implement a **total function from bytes to a closed value type**. Object graphs with dynamic dispatch are not that function. Signing (HMAC or public-key) reduces the source of bytes to "us", which is necessary but not sufficient if your own writer can be tricked to emit hostile graphs.
 
-1. The developer serializes a `User` object and sends it to the browser as a cookie (e.g., `{ "role": "user", "isAdmin": false }` converted to Base64).
-2. The attacker decodes the Base64, mathematically changes the payload to `{ "role": "admin", "isAdmin": true }`, and re-serializes it.
-3. When the server deserializes the modified payload, it blindly instantiates the object in memory, instantly granting the attacker administrative privileges.
-4. **Advanced RCE:** If the attacker understands the mathematical structure of the backend language (Java, Python Pickle, PHP), they can craft a malicious object that mathematically executes a shell command (like `whoami` or `rm -rf /`) the exact millisecond the server attempts to instantiate the object.
+<ComparisonTable
+  headers={['Format', 'Code during load', 'Untrusted data']}
+  rows={[
+    ['JSON + schema', 'No', 'OK'],
+    ['protobuf', 'No', 'OK'],
+    ['pickle / BinaryFormatter', 'Yes', 'Never'],
+    ['YAML safe_load', 'No', 'OK if you stay on safe_load'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```python
+import json
+from pydantic import BaseModel, ValidationError
+
+class Settings(BaseModel):
+    theme: str
+    page_size: int
+
+def load_settings(raw: bytes) -> Settings:
+    return Settings.model_validate(json.loads(raw))
+```
+
+Reject unknown fields if your threat model includes smuggling.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Bytes[Untrusted bytes] --> Native[Native deserialize]
+    Native --> Gadget[Constructor / magic]
+    Bytes --> Schema[JSON + schema]
+    Schema --> Values[Plain values]
+```
+
+## 5. Interview Prep
+
+**Q: Why is JSON usually safer?**
+**A:** It describes numbers, strings, arrays, and objects — not class names and method calls.
+
+**Q: Is a signed pickle safe?**
+**A:** Safer against network attackers, still unsafe if any writer is compromised or confused. Prefer not to pickle.
+
+**Q: How do you migrate a Java app?**
+**A:** Enable serialization filters, stop exposing endpoints, move to JSON, monitor.
+
+## 6. Production Use Cases
+
+- **Session stores** that used to pickle user objects.
+- **Job queues** with typed protobuf messages.
+- **Legacy RMI / Java** services in retirement.
+
+<Callout icon="tip" title="Treat deserialize as an interpreter">
+If the API docs mention "object graph" or "class name", it is not a data parser.
+</Callout>

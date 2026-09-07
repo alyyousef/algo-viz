@@ -1,43 +1,104 @@
 ---
-title: Performance & Load Testing
-description: "Non-functional testing methodologies designed to determine how a system performs in terms of responsiveness and stability under a particular workload."
+title: Performance Testing
+description: "Measuring latency, throughput, and resource cost against explicit SLOs so speed is a tested property, not a late surprise."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Performance & Load Testing">
+    <ConceptTemplate title="Performance Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Unit and E2E tests ensure your application works for *one* user. **Performance Testing** ensures your application works when 10,000 users try to access it simultaneously.
+**Performance testing** asks whether the system is fast and cheap enough under a stated load. Functional tests ignore time. Performance tests treat time, queue depth, and hardware as first-class oracles. Without an SLO, you are just drawing charts.
 
-It is used to identify bottlenecks (e.g., slow database queries, memory leaks, insufficient CPU resources) before the application crashes in a production environment.
+## 1. Deep Dive and Mechanics
 
-## 1. Types of Performance Tests
+**The oracle.** An SLO such as "p99 checkout under 300 ms at 200 RPS" is a pass/fail line. Average latency hides the tail that users feel.
 
+**Kinds.** Load (expected peak), stress (beyond peak), soak (hours, leaks), spike (sudden jump), scalability (add nodes, does work grow linearly).
 
-<ComparisonTable headers={['Test Type', 'Goal', 'Example Scenario']} rows={[ ['Load Testing', 'Assess system behavior under anticipated, normal peak load conditions.', 'Testing an e-commerce site with 1,000 concurrent users adding items to a cart over 1 hour.'], ['Stress Testing', 'Push the system beyond normal limits to find its breaking point and observe how it fails.', 'Gradually increasing users to 50,000 until the database crashes. Does it fail gracefully?'], ['Spike Testing', 'Evaluate the system\'s response to sudden, extreme bursts of traffic.', 'Simulating the exact moment a viral tweet drops, sending 10,000 users in 3 seconds.'], ['Soak Testing', 'Run a normal load over an extended period (hours or days) to find long-term issues.', 'Testing for memory leaks or gradual database fragmentation over a 48-hour period.'] ]} />
+**Environment.** A laptop is not production. Use production-like data volumes, warmed caches, and realistic mix (reads versus writes). Otherwise you tune a fantasy.
 
+**Observability.** Pair the load generator with traces and profiles. A failed SLO without a flame graph is a ticket, not a diagnosis.
 
-## 2. Key Metrics
-When analyzing a performance test report (using tools like k6, JMeter, or Gatling), engineers look at:
-- **Throughput**: Requests per second (RPS) the server successfully handles.
-- **Latency / Response Time**: Measured in percentiles (e.g., the p95 response time is 200ms, meaning 95% of requests completed in under 200ms).
-- **Error Rate**: The percentage of requests that returned 5xx server errors due to timeouts or crashes.
-
-
-<Callout icon="tip" title="Testing in Production-like Environments">
-
-
-Running a load test against your local developer laptop is useless. Performance tests must be run against a Staging environment that perfectly mirrors Production infrastructure (same server sizes, same load balancers, same database configurations).
-
-
+<Callout icon="warning" title="Never load-test production blindly">
+Shared databases, rate limits, and real customers will notice. Use a dedicated cell, a replay of anonymised traffic, or a carefully capped canary.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+**Little's Law:** L = λ W. Concurrent users L equal arrival rate λ times mean time in system W. If you want 2 seconds think time and 200 RPS, you need enough VUs to sustain λ.
+
+**Percentiles.** p99 is the 0.99 quantile of the latency distribution. Means are pulled by both tails; SLOs should name quantiles and a window.
+
+**Utilization.** For an M/M/1 queue, mean wait blows up as ρ → 1. Performance tests hunt the knee where latency goes nonlinear — that is capacity.
+
+<ComparisonTable
+  headers={['Discipline', 'Question', 'Typical tool']}
+  rows={[
+    ['Performance', 'Do we meet the SLO?', 'k6, Gatling, JMeter'],
+    ['Load', 'Survive expected peak?', 'Same tools, peak profile'],
+    ['Stress', 'Where and how do we break?', 'Ramp past capacity'],
+    ['Profiling', 'Which function burns CPU?', 'perf, pprof, py-spy'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```javascript
+import http from 'k6/http';
+import { check } from 'k6';
+
+export const options = {
+  vus: 50,
+  duration: '2m',
+  thresholds: {
+    http_req_duration: ['p(99)<300'],
+    http_req_failed: ['rate<0.01'],
+  },
+};
+
+export default function () {
+  const res = http.get('https://staging.example.com/catalog');
+  check(res, { ok: (r) => r.status === 200 });
+}
+```
+
+Fail the pipeline if thresholds trip. Charts without a gate will be ignored.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    SLO[Named SLO] --> Script[Load script]
+    Script --> Gen[Generator]
+    Gen --> SUT[System]
+    SUT --> Metrics[Latency / errors / saturation]
+    Metrics --> Gate[Pass or fail]
+```
+
+## 5. Interview Prep
+
+**Q: Why p99 instead of average?**
+**A:** Users feel the slow requests. A 50 ms mean with a 4 s tail is a broken checkout for 1 in 100.
+
+**Q: How do you make a performance test deterministic enough for CI?**
+**A:** Pin the mix, warm up, use a stable staging size, and compare against a band — not a single millisecond. Nightly is fine if PR CI is too noisy.
+
+**Q: Performance versus load versus stress?**
+**A:** Performance is the family. Load is expected traffic. Stress is past the knee. Interviews reward that vocabulary.
+
+## 6. Production Use Cases
+
+- **Release gates** on search, checkout, and login.
+- **Capacity planning** before a marketing spike.
+- **Regression of a hot path** after a dependency upgrade.
+
+<Callout icon="tip" title="Test the mix, not a single URL">
+A catalog GET is not a checkout. Weighted scenarios (browse, search, buy) expose lock and cache behaviour that a ping never will.
+</Callout>

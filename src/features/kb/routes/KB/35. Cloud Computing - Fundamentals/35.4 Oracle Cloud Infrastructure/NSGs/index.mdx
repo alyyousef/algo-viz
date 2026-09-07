@@ -1,26 +1,88 @@
 ---
-title: OCI Network Security Groups (NSGs)
-description: A granular, mathematically precise virtual firewall system that applies strict ingress and egress traffic rules directly to individual Virtual Network Interface Cards (VNICs).
+title: OCI Network Security Groups
+description: "Stateful firewall rules attached to VNICs: source/dest, proto, port — prefer NSGs over security lists as the fleet grows."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Network Security Groups (NSGs)"
-  subtitle="Granular Virtual Firewalls"
-  tags={['OCI', 'Security', 'Networking', 'Firewall']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Network Security Groups">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-In OCI, Security Lists apply firewall rules to an entire Subnet. Network Security Groups (NSGs) provide a much more precise mathematical level of security, applying rules directly to individual servers.
+A **Network Security Group (NSG)** is a stateful virtual firewall you attach to VNICs (instances, LB, mount targets, database endpoints). Rules allow ingress or egress by CIDR, **or by another NSG** (security-group referencing). A VNIC can have multiple NSGs; the union of allow rules applies.
 
-## 1. VNIC-Level Enforcement
-When you boot a Virtual Machine in OCI, it receives a Virtual Network Interface Card (VNIC).
-An NSG is a mathematical logical group. You assign the Web Server's VNIC to the "Web_NSG".
-You then define strict mathematical rules inside the NSG: *"Allow Ingress TCP Port 443 (HTTPS) from 0.0.0.0/0. Block all other ports."* The OCI hypervisor physically enforces this rule at the VNIC level. Even if a hacker breaches the wider Subnet, they mathematically cannot establish an SSH connection (Port 22) to the Web Server, because the NSG will physically drop the packet before the OS even sees it.
+## 1. Deep Dive and Mechanics
 
-## 2. Microsegmentation via NSG Tags
-NSGs allow for brilliant mathematical **Microsegmentation** without relying on IP addresses.
-If you have 100 Web Servers and 50 Database Servers, managing IP whitelists is impossible.
-Instead, you create a "DB_NSG". You write an Ingress rule: *"Allow TCP Port 1521 (Oracle DB) ONLY where the Source is mathematically tagged as 'Web_NSG'."*
-If you boot a brand new Web Server, you simply assign it to the 'Web_NSG'. It instantly inherits the mathematical permission to talk to the Database. If a compromised server in the same Subnet (but not in the Web_NSG) tries to connect to the database, the DB_NSG mathematically drops the packet.
+**Stateful.** An allowed inbound connection may reply even if you did not write the reverse. Egress still needs an allow for new outbound connections.
 
-</TechnologyTemplate>
+**NSG as source.** `app` NSG can allow from `lb` NSG on 8080 without writing CIDRs that go stale when the LB scales.
+
+**Security lists.** Subnet-level lists still exist. A packet is allowed if **either** a security list **or** an NSG on the VNIC allows it. A wide subnet list makes your tight NSG pointless.
+
+**Limits.** Rule counts and NSGs per VNIC have caps. Micro-segmentation still needs a design, not one rule per IP.
+
+<Callout icon="warning" title="OR with security lists">
+People tighten NSGs and leave a security list of 0.0.0.0/0 on the subnet. The effective policy is the wide one. Audit both.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Effective allow = union(lists on subnet, NSGs on VNIC). There is no "most specific deny" tradition like some NACLs. Default deny is implied only if nothing allows.
+
+Stateful tracking is a conntrack table. Long idle flows die if timeouts are shorter than the app.
+
+<ComparisonTable
+  headers={['Control', 'Attaches to', 'Best for']}
+  rows={[
+    ['NSG', 'VNIC / NIC set', 'Role-based rules'],
+    ['Security list', 'Subnet', 'Coarse defaults'],
+    ['NACL analog', 'Subnet stateless (AWS)', 'Not OCI NSG'],
+    ['IAM', 'API', 'Not packet filter'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# NSG lb: ingress 443 from 0.0.0.0/0
+# NSG app: ingress 8080 from NSG lb
+# NSG app: egress 443 to 0.0.0.0/0 (or to NAT)
+# NSG db: ingress 1521 from NSG app
+```
+
+No CIDR of the LB subnet required if you reference the LB NSG.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Inet[Internet] --> LBnsg[NSG lb]
+    LBnsg --> Appnsg[NSG app]
+    Appnsg --> DBnsg[NSG db]
+```
+
+## 5. Interview Prep
+
+**Q: NSG vs security list?**
+**A:** NSG is per-VNIC and can reference other NSGs. Security list is per subnet. Prefer NSGs; keep lists minimal.
+
+**Q: Are NSGs stateful?**
+**A:** Yes. Like AWS security groups, unlike AWS NACLs.
+
+**Q: Multiple NSGs?**
+**A:** Union of allows. Use composition (base-egress + role-ingress) instead of one giant group.
+
+## 6. Production Use Cases
+
+- Three-tier NSG chain: edge, app, data.
+- Mount target NSG that only allows NFS from app NSG.
+- Database private endpoint NSG that never allows the public subnet.
+
+<Callout icon="tip" title="Empty the default security list">
+New VCNs often ship a generous default list. Replace it with deny-all (or SSH from bastion only) so NSGs become the real policy.
+</Callout>

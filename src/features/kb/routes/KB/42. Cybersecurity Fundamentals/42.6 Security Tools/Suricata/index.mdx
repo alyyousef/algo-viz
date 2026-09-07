@@ -1,33 +1,86 @@
 ---
 title: Suricata
-description: A high-performance, open-source network analysis and threat detection engine.
+description: "A multi-threaded IDS/IPS and network security monitoring engine for detecting hostile traffic on links you control."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Suricata">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Suricata is a robust, open-source Network Intrusion Detection System (NIDS), Intrusion Prevention System (IPS), and Network Security Monitoring (NSM) engine. Developed by the OISF (Open Information Security Foundation), it is highly regarded as the modern, multi-threaded successor to Snort.
+**Suricata** is an open-source IDS/IPS and NSM engine (OISF). It inspects traffic you feed it and can emit alerts plus protocol logs (HTTP, DNS, TLS metadata). Defenders use it on **their** spans and gateways. This page is about detection operations, not evasion or offensive use.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="success" title="The Multi-Threading Advantage">
+**Performance.** Multi-thread and a modern capture story (AF_PACKET, DPDK in some shops). That is why many teams picked it over legacy single-thread Snort.
 
+**Outputs.** EVE JSON to a SIEM or to a lake. TLS SNI, DNS queries, and file hashes from reconstructed streams are often more useful than a single payload rule.
 
-  Older engines like Snort were originally single-threaded, meaning they could only utilize one CPU core, creating massive bottlenecks on 10-Gigabit networks. Suricata was designed from the ground up to be fully multi-threaded, allowing it to seamlessly scale across massive 64-core enterprise servers.
+**Rules.** Emerging Threats and others. Same hygiene as Snort: owners, staging, and no silent IPS in week one.
 
-
+<Callout icon="info" title="Metadata outlives payload rules">
+Even when HTTPS hides the body, DNS and SNI still tell a story — and they are still privacy-sensitive logs.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Core Capabilities
+Suricata is a stream reassembly and signature engine plus protocol parsers. Throughput is packets per second versus CPU and a drop counter you must watch. Detection remains a pattern-match with evasion and encryption limits. NSM logs are a high-volume telemetry source; sample or filter or go bankrupt on storage.
 
+<ComparisonTable
+  headers={['Output', 'Use', 'Careful']}
+  rows={[
+    ['Alert', 'SOC queue', 'Noise'],
+    ['EVE DNS/TLS', 'Hunt', 'PII in names'],
+    ['Files', 'Malware hash', 'Disk'],
+    ['Drop (IPS)', 'Block', 'Availability'],
+  ]}
+/>
 
-<ComparisonTable headers={['Capability', 'Description']} rows={[ ['Signature-Based Detection', 'Inspects live network traffic against thousands of known mathematical rules and malware signatures to instantly drop malicious packets.'], ['Protocol Identification', 'Automatically identifies protocols (HTTP, DNS, TLS) on ANY port, defeating malware that tries to hide SSH traffic on port 80.'], ['File Extraction', 'Can automatically extract files (like PDFs or EXEs) out of the raw network stream and save them to disk for isolated malware analysis.'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Sensor standard
+# - Named site and link
+# - EVE to SIEM with sensor tags
+# - Drop counters on the dashboard
+# - New drop rules alert-only first
+```
 
+Keep a packet-loss graph next to the alert graph. A silent sensor is worse than none.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Nic[Capture] --> Sur[Suricata]
+    Sur --> Eve[EVE JSON]
+    Eve --> SIEM[SIEM / lake]
+    Sur --> Alert[Alerts]
+```
+
+## 5. Interview Prep
+
+**Q: Suricata vs Snort vs Zeek?**
+**A:** Suricata and Snort are signature IDS/IPS. Zeek is a protocol logger and scripting NSM. Many stacks run Suricata plus Zeek.
+
+**Q: Why EVE JSON?**
+**A:** One structured stream for alerts and protocol events. Easier than a pile of custom log formats.
+
+**Q: Cloud equivalent?**
+**A:** VPC traffic mirroring is expensive. Often you use DNS, flow, and host EDR instead of a full NIDS.
+
+## 6. Production Use Cases
+
+- **Egress** monitoring at the office edge.
+- **DC** chokepoints you still own.
+- **Purple-team** validation that a scenario produced an alert.
+
+<Callout icon="tip" title="Watch the drop counter">
+If the NIC is overflowing, you are not detecting. You are sampling at random.
+</Callout>

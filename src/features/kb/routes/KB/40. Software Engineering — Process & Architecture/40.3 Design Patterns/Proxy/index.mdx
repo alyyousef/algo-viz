@@ -1,30 +1,107 @@
 ---
-title: Proxy Pattern
-description: A Structural Design Pattern from the Gang of Four (GoF) that mathematically provides a surrogate or placeholder for another object to control access to it, enabling lazy initialization, logging, or access control.
+title: Proxy
+description: "A structural pattern that stands in for another object to add access control, laziness, or a remote hop — same interface, extra behavior."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Proxy Pattern"
-  subtitle="The Mathematical Interceptor"
-  tags={['Design Patterns', 'Structural', 'GoF', 'Architecture']}
->
+    <ConceptTemplate title="Proxy">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you have a massive `HighResImage` object that takes 5 seconds to load from the hard drive, and a user scrolls through a gallery of 1,000 images, instantiating all 1,000 objects will mathematically freeze the application.
+**Proxy** (GoF) implements the same interface as a real subject and forwards calls after doing something else: check ACL, lazy-load, cache, or marshal across the network. The client thinks it holds the subject.
 
-## 1. The Surrogate Object
-The Proxy pattern solves this by putting a fake "bodyguard" object in front of the real object.
-Both the `HighResImage` and the `ImageProxy` mathematically implement the exact same `IImage` interface (which has a `display()` method).
-When the gallery loads, it instantiates 1,000 `ImageProxy` objects. This takes 1 millisecond, because the Proxy mathematically contains no image data; it just contains the file path.
+## 1. Deep Dive and Mechanics
 
-## 2. Lazy Initialization
-When the user actually scrolls to Image #42, the gallery calls `proxy.display()`.
-The Proxy mathematically intercepts the call. It checks if the real `HighResImage` exists in RAM. It doesn't. So, the Proxy pauses, instantiates the heavy real object, loads the 5MB file from disk, and then mathematically forwards the `display()` call to the real object. The client code is completely ignorant that it was talking to a surrogate.
+**Subject interface.** Both `RealImage` and `ImageProxy` implement `draw`. Clients depend on the interface.
 
+**Virtual proxy.** Creates the expensive subject on first use (lazy image, lazy Hibernate association).
+
+**Protection proxy.** Checks identity or permission before forward (access facade with teeth).
+
+**Remote proxy.** Stub that serializes the call (RMI, gRPC stub). The “subject” lives in another process.
+
+**Smart reference.** Ref-counting, write barriers, logging. AOP and HTTP middleware are cousins.
+
+<Callout icon="info" title="Proxy versus Decorator">
+Both wrap and implement the same interface. Decorator *adds* responsibilities and stacks. Proxy *controls access* to a specific instance and usually does not stack as a pipeline of equals.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Indirection.** A proxy is an extra hop on the call graph. Correctness requires behavioral equivalence except for the added policy (liveness, security, latency).
+
+**Cache proxy.** Memoization: `f(x)` stored after first call. Invalidation policy is the hard part, not the wrap.
+
+**Remote.** The proxy plus stub plus skeleton is the RPC isomorphism: local call shape, distributed failure modes. Timeouts and partial failure are now in the contract.
+
+<ComparisonTable
+  headers={['Wrapper', 'Intent', 'Stacks']}
+  rows={[
+    ['Proxy', 'Control access or location', 'Rarely'],
+    ['Decorator', 'Add behavior', 'Yes'],
+    ['Adapter', 'Convert interface', 'No'],
+    ['Facade', 'Simplify many types', 'N/A'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Image:
+    def draw(self):
+        raise NotImplementedError
+
+class DiskImage(Image):
+    def __init__(self, path):
+        self.pixels = load(path)
+
+    def draw(self):
+        blit(self.pixels)
+
+class ImageProxy(Image):
+    def __init__(self, path):
+        self.path, self._real = path, None
+
+    def draw(self):
+        if self._real is None:
+            self._real = DiskImage(self.path)
+        self._real.draw()
+```
+
+Construction of `ImageProxy` is cheap. `DiskImage` waits until `draw`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Client --> Proxy
+    Proxy -->|auth cache or lazy| Real[Real subject]
+    Proxy -->|deny| Deny[Error]
+```
+
+## 5. Interview Prep
+
+**Q: Proxy versus Decorator?**
+**A:** Decorator is additive and composable (scrollbars on a window). Proxy is a stand-in (lazy, remote, secure). If you would wrap wrappers, you probably want Decorator.
+
+**Q: Is a gRPC stub a proxy?**
+**A:** Yes — remote proxy. Same interface idea, extra failure modes.
+
+**Q: What is a protection proxy that should have been a Facade?**
+**A:** If you are hiding a *subsystem* of many types, that is Facade. Proxy hides or guards *one* subject type.
+
+## 6. Production Use Cases
+
+- **ORM lazy associations** and virtual files.
+- **API gateways and service meshes** as process-level proxies.
+- **Capability checks** around a domain service.
+
+<Callout icon="tip" title="Keep the interface honest">
+If the proxy cannot honor a method (offline, denied), fail that method. Do not silently no-op unless the subject’s contract allows it.
+</Callout>

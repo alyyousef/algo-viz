@@ -1,35 +1,85 @@
 ---
-title: OWASP ZAP (Zed Attack Proxy)
-description: A highly capable, free, and open-source web application security scanner and proxy.
+title: OWASP ZAP
+description: "An open-source intercepting proxy and DAST engine for authorized tests of your own web apps."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="OWASP ZAP (Zed Attack Proxy)">
+    <ConceptTemplate title="OWASP ZAP">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While Burp Suite is the commercial gold standard for web application testing, the **Zed Attack Proxy (ZAP)** is the flagship open-source alternative maintained by the Open Worldwide Application Security Project (OWASP).
+**OWASP ZED Attack Proxy (ZAP)** is a free intercepting proxy and scanner for web apps. AppSec teams put it in CI against **ephemeral preview environments** with synthetic users. It is not permission to scan third-party sites. This page does not cover exploit payloads or bypass recipes.
 
-It operates identically as a "Man-in-the-Middle" proxy, allowing developers and penetration testers to intercept, inspect, and mathematically manipulate HTTP traffic between their browser and the web application.
+## 1. Deep Dive and Mechanics
 
+**Manual.** Same idea as Burp: see the real requests, check that authz is server-side.
 
-<Callout icon="tip" title="CI/CD Integration">
+**Automation.** Baseline or full scans in CI on a disposable URL. Fail the build on high-confidence issues you have tuned (missing CSP is a conversation; a true open redirect on login is a stop). Keep the scan identity documented so prod WAF does not page.
 
+**Noise.** DAST will yell. Maintain an allow-list with expiry, not a culture of ignoring the job.
 
-  Because ZAP is completely free and has a robust headless API, it is universally used in DevSecOps pipelines. Developers configure GitHub Actions to automatically spin up ZAP and mathematically scan the staging environment for vulnerabilities (like XSS or SQLi) before every production deployment.
-
-
+<Callout icon="info" title="DAST cannot see your IDOR if it cannot log in">
+Give the scanner a real role and a second role if you want access-control findings. Still only on systems you own.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Key Features
+DAST is dynamic testing: it explores a state graph of HTTP. Coverage is bounded by crawl quality and auth. False positives are inherent. Pair with SAST and code review. The CI gate is a policy on expected value, not a proof of absence of bugs.
 
+<ComparisonTable
+  headers={['Mode', 'When', 'Limit']}
+  rows={[
+    ['Proxy manual', 'Feature review', 'Human time'],
+    ['CI baseline', 'Every PR preview', 'Shallow'],
+    ['Nightly deeper', 'Main branch env', 'Flaky apps'],
+    ['Prod scan', 'Rare, agreed', 'Customers and WAF'],
+  ]}
+/>
 
-<ComparisonTable headers={['Feature', 'Description']} rows={[ ['Active Scanner', 'Automatically fires thousands of known attack payloads at the target website to discover mathematical flaws in the backend logic.'], ['Spider / Crawler', 'Automatically navigates the website, parsing HTML and JavaScript to discover all hidden endpoints, APIs, and directories.'], ['Fuzzer', 'Allows testers to inject massive arrays of random, malformed data into specific input fields to cause unhandled exceptions or crashes.'] ]} />
+## 3. Real-World Implementation
 
+```text
+# CI DAST
+# - Preview URL + synthetic user
+# - Timeout and memory caps
+# - Fail on tuned high rules only
+# - Upload HTML report as a build artifact (restricted)
+```
 
+Do not scan production from a PR. You will DDoS yourself and poison analytics.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    PR[Preview deploy] --> ZAP[ZAP baseline]
+    ZAP --> Gate[CI gate]
+    Gate --> Ticket[New true positives]
+```
+
+## 5. Interview Prep
+
+**Q: ZAP vs Burp?**
+**A:** Overlapping proxy jobs. ZAP is open and CI-friendly. Burp Pro is a common human-driven suite.
+
+**Q: Will ZAP replace a pentest?**
+**A:** No. It catches hygiene and some injection classes. Humans catch logic.
+
+**Q: Safe to scan prod?**
+**A:** Only with a window, rate limits, and a story for side effects (orders, emails).
+
+## 6. Production Use Cases
+
+- **PR previews** for internal apps.
+- **Nightly** scans of staging.
+- **Training** developers to read HTTP.
+
+<Callout icon="tip" title="Tune or die">
+An untuned DAST job becomes wallpaper in two sprints.
+</Callout>

@@ -1,56 +1,88 @@
 ---
 title: RabbitMQ
-description: The most widely deployed open source message broker.
+description: "An AMQP 0-9-1 broker: exchanges route to queues, consumers ack, and plugins add streams, federation, and shovel."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="RabbitMQ">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="RabbitMQ">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-RabbitMQ is an open-source message broker software that implements the Advanced Message Queuing Protocol (AMQP). It gives your applications a common platform to send and receive messages, and your messages a safe place to live until received.
+**RabbitMQ** is a broker best known for **AMQP 0-9-1**. Producers publish to an **exchange**. The exchange **routes** to **queues** by type (direct, topic, fanout, headers). Consumers ack. Classic queues and **quorum queues** (Raft) are the modern durability story.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="tip" title="Smart Broker, Dumb Consumer">
+**Exchanges.** Direct: exact routing key. Topic: dot wildcards. Fanout: all bound queues. You can change fan-out by adding a binding, not by changing publishers.
 
+**Acks and prefetch.** prefetch (QoS) is the window of unacked messages. Manual ack after the side effect. Publisher confirms tell the producer the broker persisted.
 
-  RabbitMQ is designed as a "Smart Broker". It keeps track of exactly which consumer has read which message. Once a consumer successfully processes and acknowledges a message, RabbitMQ permanently deletes it from the queue.
+**Quorum queues.** Replicated via Raft. Use these for durable work. Classic mirrored queues are legacy.
 
+**Streams plugin.** A Kafka-like log on Rabbit for replay. Different from classic queues.
 
+<Callout icon="warning" title="A full disk or memory alarm blocks publishers">
+Rabbit will block connections when it hits high watermarks. That is backpressure. Alert on alarms, not only on queue depth.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Exchanges and Queues
+Routing is a bind-time function from (exchange, key, headers) to queue set. Delivery is at-least-once with manual ack. Quorum commit waits for a Raft majority.
 
-Unlike Kafka where producers write directly to Topics, in RabbitMQ, producers never send messages directly to a queue. They send messages to an **Exchange**, which then routes the messages to zero or more **Queues** based on routing rules.
+Prefetch N means up to N in-flight per consumer; crash cost is up to N redeliveries.
 
+<ComparisonTable
+  headers={['Piece', 'Role', 'Failure note']}
+  rows={[
+    ['Exchange', 'Route', 'Misbind = silent drop if no alternate'],
+    ['Classic queue', 'Buffer', 'Node-local unless mirrored (legacy)'],
+    ['Quorum queue', 'Raft buffer', 'Minority cannot commit'],
+    ['Stream', 'Log', 'Consumers have offsets'],
+  ]}
+/>
 
-<ComparisonTable headers={['Exchange Type', 'Routing Behavior']} rows={[ ['Direct', 'Routes messages to a queue whose binding key exactly matches the routing key of the message.'], ['Fanout', 'Broadcasts all messages to all connected queues, ignoring the routing key.'], ['Topic', 'Routes messages based on wildcard matching between the routing key and the queue binding (e.g., `logs.*.error`).'], ['Headers', 'Routes based on message header attributes instead of the routing key.'] ]} />
+## 3. Real-World Implementation
 
+```python
+# channel.exchange_declare(x, "topic", durable=True)
+# channel.queue_bind(q, x, routing_key="order.#")
+# channel.basic_consume(q, on_message, auto_ack=False)
+```
 
-## Architecture
+Enable publisher confirms. Set a dead-letter exchange. Prefer quorum for anything you would page on.
 
-RabbitMQ is perfect for task-queue workflows, like processing background video encoding jobs or sending emails asynchronously.
+## 4. Visualizations
 
-<ArchitectureDiagram chart={`
-graph LR
-  Producer[Web Server\n(Producer)]
+```mermaid
+flowchart LR
+    P[Publisher] --> X[Topic exchange]
+    X -->|order.created| Q1[Queue billing]
+    X -->|order.*| Q2[Queue audit]
+    Q1 --> C[Consumer]
+```
 
-  subgraph RabbitMQ Broker
-    Exchange{Exchange\n(Type: Direct)}
-    Queue1[(Queue: PDF Processing)]
-    Queue2[(Queue: Email Sending)]
-  end
+## 5. Interview Prep
 
-  Worker1[Worker Node A\n(PDF Generator)]
-  Worker2[Worker Node B\n(Email Sender)]
+**Q: What if no queue is bound?**
+**A:** The message is dropped unless you set an alternate exchange or mandatory flag plus return. Silent drop is a common production bug.
 
-  Producer -- "pdf.create" --> Exchange
-  Producer -- "email.send" --> Exchange
+**Q: Rabbit versus Kafka?**
+**A:** Flexible routing and work queues versus long logs and replay. Many companies use Rabbit for commands and Kafka for facts.
 
-  Exchange -- Routes "pdf.*" --> Queue1
-  Exchange -- Routes "email.*" --> Queue2
+**Q: How do you scale consumers?**
+**A:** Add consumers on the same queue. For very high rates, shard routing keys into several queues. One giant classic queue is a single-node bottleneck.
 
-  Queue1 -- Pops message --> Worker1
-  Queue2 -- Pops message --> Worker2
-`} />
+## 6. Production Use Cases
 
-</TechnologyTemplate>
+- **Task queues** for web apps (often via Celery historically).
+- **Topic routing** of domain events to teams.
+- **Federation / shovel** across sites.
+
+<Callout icon="tip" title="Use quorum queues by default">
+If the interview stops at "durable classic queue," mention Raft quorum queues. That is the current advice.
+</Callout>

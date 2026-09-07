@@ -1,37 +1,87 @@
 ---
-title: PCI-DSS (Payment Card Industry Data Security Standard)
-description: The strict, globally mandated security standard for any organization that handles credit card information.
+title: PCI DSS
+description: "The payment-card industry standard for protecting cardholder data wherever it is stored, processed, or transmitted."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="PCI-DSS (Payment Card Industry Data Security Standard)">
+    <ConceptTemplate title="PCI DSS">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In 2004, Visa, MasterCard, Discover, and American Express realized that disparate security standards were leading to massive credit card breaches. They joined forces to create the PCI Security Standards Council and launched **PCI-DSS**.
+**PCI DSS** is a contractual standard from the PCI Security Standards Council. If you store, process, or transmit **cardholder data (CHD)** or **sensitive authentication data**, you are in the cardholder data environment (CDE) and must meet the current DSS (v4.x). The cheapest control is often **not having the data**: a hosted payment field or token vault shrinks scope.
 
-If your business accepts, processes, stores, or transmits credit card data, you **must** comply with PCI-DSS. Failure to comply can result in massive monthly fines or the permanent loss of the ability to process credit cards.
+## 1. Deep Dive and Mechanics
 
+**Scope.** Systems that touch CHD and systems connected to them. Segmentation that actually works can shrink the CDE. Flat networks make the whole estate in scope.
 
-<Callout icon="warning" title="Scope Reduction">
+**Requirements.** Network controls, hardening, protect stored data, encryption in transit, anti-malware, secure development, access control, unique IDs, physical, logging, testing, and a policy pack. v4.x emphasizes customized approaches and stronger MFA and phishing-resistant options for CDE access.
 
+**Assess.** SAQ vs ROC depends on volume and how you take cards. QSAs assess larger merchants and service providers.
 
-  The number one rule of PCI-DSS compliance is: **Don\'t store credit card numbers if you don\'t have to.** Modern businesses use payment gateways like Stripe or Braintree to tokenize the transaction on the frontend. The raw credit card number mathematically bypasses the company\'s servers entirely, drastically reducing their PCI compliance scope.
-
-
+<Callout icon="error" title="Logs and admin laptops are in scope if they can reach the CDE">
+A jump box with CHD screenshots in a ticket is still card data.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The 12 Requirements
+Scope is a reachability and data-flow graph. If CHD bytes can land on a host, that host is in. PAN storage constraints (render, hash, truncate, encrypt with documented key management) are applied crypto, not "we zipped it." Compensating controls must meet the intent and be extra, not a shrug.
 
-PCI-DSS is incredibly prescriptive, containing 12 core requirements grouped into 6 goals:
+<ComparisonTable
+  headers={['Approach', 'CHD on your box?', 'Typical SAQ / ROC']}
+  rows={[
+    ['Redirect / hosted field', 'No', 'Shorter SAQ'],
+    ['Tokenize after auth', 'Transient only', 'Smaller CDE'],
+    ['Store PAN', 'Yes', 'Full controls + keys'],
+    ['Service provider', 'Yes for customers', 'ROC common'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
-<ComparisonTable headers={['Goal', 'Requirements']} rows={[ ['Build and Maintain a Secure Network', '1. Install and maintain firewalls. \n2. Do not use vendor-supplied defaults for system passwords.'], ['Protect Cardholder Data', '3. Protect stored cardholder data (Encryption/Hashing). \n4. Encrypt transmission of data across open, public networks (TLS).'], ['Maintain a Vulnerability Management Program', '5. Protect all systems against malware and regularly update anti-virus. \n6. Develop and maintain secure systems and applications.'], ['Implement Strong Access Control Measures', '7. Restrict access to cardholder data by business need-to-know. \n8. Identify and authenticate access to system components. \n9. Restrict physical access to cardholder data.'], ['Regularly Monitor and Test Networks', '10. Track and monitor all access to network resources and cardholder data. \n11. Regularly test security systems and processes (Penetration testing).'], ['Maintain an Information Security Policy', '12. Maintain a policy that addresses information security for all personnel.'] ]} />
+```text
+# Scope reduction
+# - Hosted payment page; your app stores only a token
+# - CDE in a separate VPC with deny-all peering
+# - Admin via PAM with MFA; no email on CDE jump hosts
+# - Quarterly ASV scans and documented pentest
+```
 
+Never keep magnetic-stripe or CVV data after authorization. That is forbidden storage, not a setting.
 
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Browser[Browser] --> Hosted[Hosted payment]
+    Hosted --> Vault[Token vault]
+    Browser --> App[Your app: token only]
+    App --> Vault
+    CDE[CDE segment] --> App
+```
+
+## 5. Interview Prep
+
+**Q: What is the CDE?**
+**A:** The people, process, and tech that store, process, or transmit CHD, plus connected systems that can affect it.
+
+**Q: Why tokenize?**
+**A:** Tokens are not PANs. Most of your CRM falls out of scope if the flow is honest.
+
+**Q: SAQ vs ROC?**
+**A:** Self-Assessment Questionnaire vs a Report on Compliance signed by a QSA. Volume and role decide.
+
+## 6. Production Use Cases
+
+- **E-commerce** with a hosted checkout.
+- **Payfacs and processors** with a large CDE.
+- **Retail** store networks segmented from office IT.
+
+<Callout icon="tip" title="Draw data flows before you buy a scanner">
+PCI is a scope problem first and a tool problem second.
+</Callout>

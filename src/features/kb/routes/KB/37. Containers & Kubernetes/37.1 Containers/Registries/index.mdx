@@ -1,30 +1,100 @@
 ---
 title: Container Registries
-description: Highly available storage and distribution systems mathematically designed to host, version, and securely deliver OCI-compliant container image layers to cloud infrastructure globally.
+description: "HTTP stores for OCI manifests and layer blobs: the distribution layer between docker push and kubelet pull."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Container Registries"
-  subtitle="The Hubs of Immutable Artifacts"
-  tags={['Containers', 'Storage', 'Distribution', 'Architecture']}
->
+    <ConceptTemplate title="Container Registries">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A CI/CD pipeline compiles source code into a mathematical OCI container image. Before Kubernetes can run that image, it must be uploaded to a secure, highly-available storage system known as a Container Registry.
+A **container registry** hosts OCI images. CI pushes a manifest and blobs. Nodes pull them. The protocol is the OCI **distribution spec**: authenticated HTTP, content-addressed blobs, and a tag namespace. Docker Hub is one implementation. ECR, ACR, GCR/Artifact Registry, GHCR, Harbor, and a local `registry:2` are others.
 
-## 1. Public vs. Private Registries
-While **Docker Hub** is the world's default public registry for open-source images, enterprises mathematically mandate private registries to protect proprietary code.
-Major cloud providers offer integrated private registries: **AWS ECR** (Elastic Container Registry), **Google GCR/Artifact Registry**, and **Azure ACR**. When a Kubernetes cluster on AWS needs to scale up, it mathematically requests the image from ECR, ensuring the gigabytes of data never leave the private AWS fiber-optic network.
+## 1. Deep Dive and Mechanics
 
-## 2. Advanced Mathematical Features
-Modern registries are not just dumb storage buckets; they are active security platforms.
-- **Vulnerability Scanning**: When an image is pushed, the registry mathematically decompresses the layers and scans the binaries against known CVE databases, physically blocking the deployment if a critical vulnerability is found.
-- **Image Signing (Notary)**: Registries use cryptographic mathematics to sign images. A Kubernetes cluster can be configured to mathematically reject any image that was not cryptographically signed by an authorized senior engineer, preventing supply-chain attacks.
+**Push.** The client uploads missing blobs (by digest), then uploads the config, then the manifest, then moves a tag pointer. If the blob already exists, the registry returns a mount or an exists response and you skip the bytes.
 
+**Pull.** Resolve tag → manifest digest → config + layer descriptors → download missing blobs. Snapshotters may lazy-pull (stargz) so cold start does not wait for every layer.
+
+**Auth.** Bearer tokens (Hub, GHCR) or cloud IAM (ECR password is a short-lived token from `get-login-password`). Kubernetes uses an `imagePullSecret` or a node/instance role.
+
+**Private versus public.** Enterprises keep product images private and *mirror* public bases so builds do not depend on Hub rate limits or outages.
+
+**Scanning and signing.** Registries often unzip layers and match packages to CVE feeds. Admission can require a Cosign signature and a clean scan before the digest is allowed on a cluster.
+
+<Callout icon="warning" title="Tags are not access control">
+A private repo with a predictable tag is still one leaked credential away from a pull. Prefer short-lived cloud identity and deny anonymous.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Content-addressed store plus mutable names.** Blobs are immutable. Tags are a mutable index. Garbage collection deletes blobs not referenced by any manifest, subject to locks and last-pull time. Misconfigured GC is how people delete layers still needed by an untagged digest.
+
+**Bandwidth.** Pull cost is roughly the sum of unique blob sizes not already on the node. Shared bases make the marginal cost of the Nth service small.
+
+<ComparisonTable
+  headers={['Product', 'Where it lives', 'Hook']}
+  rows={[
+    ['Docker Hub', 'Public SaaS', 'Default docker pull'],
+    ['ECR / ACR / Artifact Registry', 'Cloud account', 'IAM to kube nodes'],
+    ['Harbor / Artifactory', 'Self-hosted', 'Mirror, scan, replicate'],
+    ['GHCR / GitLab', 'Next to git', 'CI OIDC publish'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+# Kubernetes pull from a private registry
+apiVersion: v1
+kind: Pod
+metadata:
+  name: api
+spec:
+  imagePullSecrets:
+    - name: ecr-pull
+  containers:
+    - name: api
+      image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/shop-api@sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+```
+
+On EKS, the better pattern is the node role plus the ECR credential provider so you do not rotate pull secrets.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    CI[CI build] --> Push[Push blobs + manifest]
+    Push --> Reg[Registry]
+    Reg --> Scan[Optional CVE scan]
+    Reg --> Nodes[kubelet pull]
+    Nodes --> Snap[Snapshotter]
+    Snap --> Run[Create container]
+```
+
+## 5. Interview Prep
+
+**Q: What does a registry store?**
+**A:** Blobs (layers, config) keyed by digest, manifests, and a tag-to-digest map. It is not a git repo and not a VM image store.
+
+**Q: Why pin digests in production?**
+**A:** Tags move. A digest pull is bit-identical everywhere and is what scanners attested.
+
+**Q: Hub versus ECR?**
+**A:** Hub is public default and rate-limited. ECR is private, in-VPC pull, IAM-native. Most companies use both: Hub (or a mirror) for bases, ECR for their apps.
+
+## 6. Production Use Cases
+
+- **Every CD pipeline** that promotes an image through staging to prod.
+- **Pull-through caches** at the edge so a hundred nodes do not hammer Hub.
+- **Air-gapped** plants that replicate a Harbor to a factory floor.
+
+<Callout icon="tip" title="Promote the digest">
+Do not rebuild per environment. Push once, scan once, retag the same digest as `staging` and `prod`. Configuration belongs in ConfigMaps, not in a new image.
+</Callout>

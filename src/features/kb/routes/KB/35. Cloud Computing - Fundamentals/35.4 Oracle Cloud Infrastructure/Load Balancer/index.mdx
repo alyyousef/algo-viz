@@ -1,24 +1,90 @@
 ---
 title: OCI Load Balancer
-description: A mathematically rigorous, high-availability software-defined networking service that distributes incoming TCP and HTTP traffic across multiple compute instances to ensure fault tolerance.
+description: "Regional L4/L7 proxy: public or private, backend sets, health checks, and TLS — plus a cheaper Network Load Balancer when you need passthrough."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Load Balancer"
-  subtitle="Layer 4 and Layer 7 Traffic Distribution"
-  tags={['OCI', 'Networking', 'Load Balancing', 'High Availability']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Load Balancer">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If an enterprise deploys a single Web Server, that server is a mathematical single point of failure. If it crashes, the application goes offline. The OCI Load Balancer solves this by fronting a cluster of servers with a single Public IP address.
+The **OCI Load Balancer** is a regional reverse proxy (HTTP/HTTPS/TCP/WebSocket). You pick public or private, a shape or flexible bandwidth, listeners, backend sets, and health checks. The **Network Load Balancer (NLB)** is the passthrough / DSR-style sibling when you must preserve client IP and avoid proxy buffers.
 
-## 1. Flexible Bandwidth Shapes
-Historically in OCI, you had to choose a fixed bandwidth size for your Load Balancer (e.g., exactly 100 Mbps or 400 Mbps).
-Modern OCI utilizes **Flexible Load Balancers**. You mathematically define a minimum bandwidth (e.g., 10 Mbps) and a maximum bandwidth (e.g., 1000 Mbps). During normal hours, OCI only charges you for the 10 Mbps footprint. If a sudden surge of traffic hits, the underlying software-defined network mathematically expands the bandwidth up to 1000 Mbps instantly, ensuring zero dropped packets without requiring you to over-provision expensive network capacity.
+## 1. Deep Dive and Mechanics
 
-## 2. Health Checks and Routing Policies
-The Load Balancer does not just blindly forward traffic. It mathematically monitors the health of the backend servers.
-It continuously pings a specific endpoint (e.g., `/api/health`). If Server B fails to return a `200 OK` HTTP status code three times in a row, the Load Balancer mathematically removes Server B from the routing pool. All subsequent traffic is instantly rerouted to Server A and Server C.
-Furthermore, it supports **Layer 7 Routing**. The Load Balancer can mathematically inspect the URL path: *"If the URL contains `/images/`, route the packet to the Image Server Pool. If it contains `/api/`, route it to the API Server Pool."*
+**Regional.** Backends can sit in multiple ADs. The LB VNICs land in your subnets (often a dedicated pair). NSGs on the LB and on backends are both required.
 
-</TechnologyTemplate>
+**HTTP features.** Path routing, session cookies, header rewrites, and certs in the LB or via Vault. Backend sets have policies (weighted, round robin).
+
+**Health checks.** Status codes and timeouts decide membership. A too-strict check flapping is an outage you invented.
+
+**NLB.** Layer-4, high throughput, source IP preservation. No fancy URL maps. Use it for TCP services and some Kubernetes.
+
+<Callout icon="warning" title="Idle timeout vs app timeout">
+Long uploads die at the LB if the idle timeout is shorter than the handler. Align both numbers.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Capacity is bandwidth shape / flexible max. Burst above the shape is dropped or queued. Load test the LB and the backends.
+
+Health check interval × unhealthy threshold is the detection time. Too fast + noisy app = flapping. Too slow = serving dead nodes.
+
+<ComparisonTable
+  headers={['Type', 'Layer', 'Pick when']}
+  rows={[
+    ['Load Balancer', 'L7 / proxy', 'HTTP, TLS, routing'],
+    ['Network LB', 'L4', 'IP preserve, speed'],
+    ['API Gateway', 'HTTP + auth', 'API products'],
+    ['DNS only', 'Name', 'Not a health check'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci lb load-balancer create --compartment-id $COMP \
+  --display-name web --shape-name flexible \
+  --subnet-ids '["'"$SUB1"'","'"$SUB2"'"]' \
+  --is-private false
+```
+
+Then add a backend set, backends, listener, and a cert. Terraform the whole graph.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Users --> Lsnr[Listener 443]
+    Lsnr --> Set[Backend set]
+    Set --> AD1[Instance AD-1]
+    Set --> AD2[Instance AD-2]
+    Set --> HC[Health check]
+```
+
+## 5. Interview Prep
+
+**Q: Public vs private LB?**
+**A:** Public gets a public IP and needs an IGW path. Private is VCN-only for internal APIs.
+
+**Q: LB vs NLB?**
+**A:** LB for HTTP features. NLB for raw TCP and client IP. Kubernetes often wants NLB for Services.
+
+**Q: Where do certificates live?**
+**A:** On the LB or referenced from a vault. Do not copy PEMs into instance userdata.
+
+## 6. Production Use Cases
+
+- Multi-AD HTTP app with cookie stickiness only if you must.
+- Private LB in front of ATP-facing middleware.
+- NLB for a TCP protocol the HTTP LB cannot parse.
+
+<Callout icon="tip" title="Drain before you scale in">
+Mark backends offline or use connection draining. Instant terminate is a 502 generator.
+</Callout>

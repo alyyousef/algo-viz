@@ -1,24 +1,89 @@
 ---
-title: OCI Custom Images
-description: A mathematically exact snapshot of a Virtual Machine's boot disk, used as a golden template to rapidly and consistently provision thousands of identical servers in Oracle Cloud.
+title: OCI Images
+description: "Boot sources for compute: platform images, custom images, and marketplace — golden images plus cloud-init, not yum on every box."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Custom Images"
-  subtitle="Virtual Machine Golden Templates"
-  tags={['OCI', 'Compute', 'Infrastructure', 'Virtualization']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Images">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If you need 50 web servers, manually installing Linux, Nginx, and your corporate security software 50 times is mathematically absurd. Custom Images automate this process perfectly.
+An **image** is the boot disk template for an instance. **Platform images** (Oracle Linux, Ubuntu, Windows) are Oracle-published and move. **Custom images** are snapshots you own. **Marketplace** images add vendor appliances. Image OCID is a launch-time pin.
 
-## 1. The Golden Image Workflow
-You boot a single, vanilla Oracle Linux Virtual Machine.
-You manually install all your necessary software, update the OS patches, and configure the firewalls exactly to your corporate specifications.
-You then instruct OCI to "Create Image." OCI mathematically pauses the VM and takes a bit-for-bit snapshot of the underlying Block Volume. This snapshot becomes a **Custom Image** stored permanently in OCI Object Storage. You can now use this exact mathematical template to boot 50 identical VMs in under 2 minutes.
+## 1. Deep Dive and Mechanics
 
-## 2. Bring Your Own Image (BYOI)
-Enterprises often have complex, legacy virtual machines running in on-premise VMWare data centers.
-OCI supports **Bring Your Own Image (BYOI)**. You can take a mathematical export of a VMWare VM (e.g., a `.vmdk` or `.qcow2` file), upload it to an OCI Object Storage bucket, and instruct OCI to mathematically convert it into a native Custom Image. This allows enterprises to lift-and-shift legacy 10-year-old operating systems directly into the cloud without rewriting their underlying architecture.
+**Create custom.** You generalize a golden VM (remove SSH host keys, sysprep on Windows) and `create-image`. That image is compartment-scoped and AD-independent as an object, but it still boots volumes into an AD.
 
-</TechnologyTemplate>
+**Import/export.** Bring a QCOW2/VMDK via Object Storage. Licensing and virtio/paravirtual drivers are the usual import failures.
+
+**Lifecycle.** Platform image OCIDs rotate. Terraform that pins yesterday's Oracle Linux OCID is good; Terraform that always takes "latest" is a surprise kernel.
+
+**Cloud-init.** Images should be cattle-ready: agent, logging, hardening. Instance metadata supplies the rest.
+
+<Callout icon="warning" title="Secrets in images">
+A baked-in API key or well-known SSH key is immortal. Scan images. Inject secrets at launch from Vault.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Image sprawl is a set that only grows. Each unpatched custom image is a CVE baseline. A pipeline that rebuilds monthly and marks old images retired is the control.
+
+Launch time includes image-to-boot-volume clone. Huge images slow scale-out.
+
+<ComparisonTable
+  headers={['Type', 'Who owns updates', 'Use']}
+  rows={[
+    ['Platform', 'Oracle', 'Baseline OS'],
+    ['Custom', 'You', 'Golden / CIS'],
+    ['Marketplace', 'Vendor + you', 'Appliances'],
+    ['OKE node', 'Oracle / you', 'Kube-optimized'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci compute image create --instance-id $GOLDEN \
+  --display-name ol9-cis-2026-09-07 --compartment-id $COMP
+
+oci compute instance launch --image-id $IMAGE ...
+```
+
+Record the image OCID in the same git commit as the instance template.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Plat[Platform image] --> Bake[Golden bake]
+    Bake --> Custom[Custom image]
+    Custom --> Launch[Instance launch]
+    Launch --> CloudInit[cloud-init]
+```
+
+## 5. Interview Prep
+
+**Q: Image vs boot volume?**
+**A:** Image is the template. Launch copies it to a boot volume you can later detach or snapshot.
+
+**Q: How do you patch?**
+**A:** Rebuild the image, roll instance pools. In-place yum is a pet.
+
+**Q: Cross-region?**
+**A:** Export/import or copy image features. An image OCID is regional.
+
+## 6. Production Use Cases
+
+- CIS-hardened Oracle Linux for all app pools.
+- Windows marketplace image plus your sysprep.
+- Import of a vendor NVA for inspection.
+
+<Callout icon="tip" title="Pin and retire">
+Allowlist image OCIDs in policy or pipeline. "Any image in the compartment" is how a test Ubuntu becomes prod.
+</Callout>

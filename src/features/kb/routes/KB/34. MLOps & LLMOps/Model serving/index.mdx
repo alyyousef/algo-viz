@@ -1,26 +1,97 @@
 ---
 title: Model Serving
-description: The highly specialized MLOps infrastructure layer responsible for loading raw mathematical model weights into VRAM and exposing them as secure, high-throughput, low-latency APIs.
+description: "The runtime that loads a versioned artifact and answers predict with a latency SLO — batch, online, or streaming, but always with a contract."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Model Serving">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A Jupyter Notebook mathematically processes one image in a second. A global API must mathematically process 5,000 images a second. Model Serving is the DevOps engineering required to bridge that gap.
+**Serving** is the production loop: load artifact, validate input schema, run the graph, emit prediction plus traces. Notebooks do not serve. Pick a server (Triton, TF-Serving, TorchServe, Bento, a custom FastAPI) and treat it like any other stateful service.
 
-## 1. The Serving Architecture
-Model Serving engines (like NVIDIA Triton, TorchServe, or BentoML) are fundamentally different from standard web servers (like Nginx).
-- **VRAM Management**: They mathematically optimize the loading of 10GB neural network weights directly into GPU memory, ensuring multiple models can share a single GPU without causing Out-of-Memory (OOM) crashes.
-- **Dynamic Batching**: If 100 users hit the API in the same millisecond, a standard web server processes them sequentially. A Model Serving engine intercepts the 100 requests, mathematically fuses them into a single $100 \times N$ Tensor, executes a single hardware-accelerated pass on the GPU, and splits the results back to the users. This increases throughput by orders of magnitude.
+## 1. Deep Dive and Mechanics
 
-## 2. Serverless vs. Dedicated Endpoints
-- **Serverless Inference**: The model is spun down to zero when unused. When a request hits, the infrastructure boots up the container, loads the weights, and runs the math. Excellent for saving money, but mathematically suffers from "Cold Start" latency (taking 5+ seconds to boot).
-- **Dedicated Endpoints**: The model is permanently locked in GPU VRAM, mathematically ready to execute inference in sub-milliseconds, 24/7. Required for real-time systems (like self-driving cars or trading algorithms) where cold starts are fatal.
+**Online.** Sync RPC/HTTP, tight p99, batching inside the server (Triton dynamic batch).
 
+**Batch.** Nightly score the warehouse. Throughput over latency. Same artifact as online if you can — otherwise you reintroduced skew.
+
+**Streaming.** Flink/Kafka consume features, produce scores. Watermarks and late data are the hard part.
+
+**Contract.** Protobuf/JSON schema, model name, version header. Reject unknown fields or you will silently drop a feature.
+
+<Callout icon="info" title="The server is not the model">
+Autoscaling, auth, and canaries are platform. The artifact is the model. Do not bake routing logic into the forward pass.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Batching trades latency for throughput: wait w ms to fill a batch of size b, compute cost ≈ c(b). Optimal w depends on arrival process (see Triton queueing). GPUs want large b; SLOs want small w.
+
+<ComparisonTable
+  headers={['Mode', 'SLA', 'Typical stack']}
+  rows={[
+    ['Online', 'p99 tens of ms', 'Triton, TF-Serving, k8s'],
+    ['Batch', 'Hours', 'Spark / Beam plus artifact'],
+    ['Streaming', 'Seconds', 'Flink plus online model'],
+    ['Edge', 'Offline-capable', 'TFLite, ONNX Runtime, Core ML'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+model = load_champion()
+
+class Req(BaseModel):
+    user_id: str
+    features: list[float]
+
+@app.post('/predict')
+def predict(req: Req):
+    score = float(model(req.features))
+    return {'score': score, 'model': 'ranker@champion'}
+```
+
+Add auth, timeouts, and a `/ready` that fails if the artifact did not load.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Client --> GW[Gateway]
+    GW --> Svc[Model server]
+    Svc --> Art[Registry artifact]
+    Svc --> Log[Traces plus metrics]
+```
+
+## 5. Interview Prep
+
+**Q: Why not pickle a notebook function?**
+**A:** No schema, no version, no GPU batching, no safe rollout. It will work until it does not.
+
+**Q: Sync vs async serving?**
+**A:** Sync for user-facing rank. Async/batch when the user can wait or when you precompute.
+
+**Q: How do you multi-model?**
+**A:** One process, many versions (Triton model repository) or many Deployments. Isolation vs density is the trade.
+
+## 6. Production Use Cases
+
+- Recsys rank on the request path.
+- Nightly churn scores into a CRM.
+- On-device keyword spotting.
+
+<Callout icon="tip" title="Ready vs live">
+`/live` is the process. `/ready` is “artifact loaded and warmup done.” Kubernetes should use both.
+</Callout>

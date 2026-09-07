@@ -1,32 +1,92 @@
 ---
 title: Message Queues
-description: Asynchronous communication infrastructure that decouples microservices by allowing them to drop tasks into a buffer rather than waiting for direct API responses.
+description: "A durable buffer between producers and competing consumers: send, lease, ack or retry — the basic decoupling primitive."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Message Queues">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If Microservice A needs Microservice B to process an invoice, it could make a direct HTTP REST call. However, if Microservice B is currently overwhelmed or crashed, the HTTP call will timeout, and the invoice is permanently lost. This is called **Tight Coupling**.
+A **message queue** stores work items until a consumer **acks**. Producers do not wait for the worker. Several workers compete; each message should be processed by one success path (plus retries). The queue absorbs bursts and outages.
 
-A **Message Queue** (like RabbitMQ or AWS SQS) solves this by acting as a highly durable, asynchronous buffer between services.
+## 1. Deep Dive and Mechanics
 
-## 1. The Producer-Consumer Pattern
+**Lifecycle.** Enqueue, lease (visibility), process, ack (delete) or fail (retry / DLQ). Crash before ack = redelivery.
 
-1. **Producer**: Microservice A creates a JSON "Message" representing the invoice and drops it into the Queue. It receives an instant 200 OK from the Queue and immediately goes back to work. It does not care when the invoice is actually processed.
-2. **The Queue**: A highly available server that holds the messages in memory (or on disk) in strict chronological order.
-3. **Consumer**: Microservice B reads the message from the Queue, processes the invoice, and tells the Queue to delete the message.
+**Competing consumers.** Scale by adding workers. Order is usually lost unless you add FIFO groups or sessions.
 
-## 2. System Resilience (Buffering)
+**Backpressure.** When the queue grows, producers should slow down or shed. A queue without a max depth is an unbounded memory leak on disk.
 
-The true power of a message queue is handling traffic spikes.
-If a Super Bowl ad causes 100,000 users to sign up in one minute, the system needs to send 100,000 welcome emails. An email server cannot send 100,000 emails a minute; it will crash.
+**Poison messages.** A payload that always crashes the worker. Max-receive plus DLQ is mandatory.
 
-Instead, the Web Server dumps 100,000 "Send Email" tasks into a Message Queue. The Email Server pulls them off the queue at a steady, safe rate of 500 per minute. The queue acts as a shock absorber, protecting the Email Server from being destroyed by the traffic spike.
+<Callout icon="info" title="A queue hides the worker; it does not hide bad contracts">
+Schema errors still poison the DLQ. Version the payload.
+</Callout>
 
+## 2. Mathematical / Theoretical Foundation
+
+Little's law: L = lambda times W. Queue depth is arrival rate times time-in-system. If process time is s and you want lag under T, you need about lambda times s workers, plus slack for jitter.
+
+M/M/k sketches the same idea. Heavy tails need more slack than the mean suggests.
+
+<ComparisonTable
+  headers={['Property', 'Queue', 'Pub-sub', 'Log']}
+  rows={[
+    ['Who has the message', 'Broker until ack', 'Each sub', 'Everyone with a cursor'],
+    ['Replay', 'No', 'If retained', 'Yes'],
+    ['Work sharing', 'Native', 'Per sub', 'Consumer group'],
+    ['User-facing wait', 'Often async', 'Async', 'Async'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def worker(q):
+    msg = q.lease()
+    try:
+        do_work(msg)
+        q.ack(msg)
+    except Retryable:
+        q.release(msg)
+    except Fatal:
+        q.dead_letter(msg)
+```
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    API --> Q[Queue]
+    Q --> W1[Worker]
+    Q --> W2[Worker]
+    Q --> DLQ[DLQ]
+```
+
+## 5. Interview Prep
+
+**Q: Queue versus stream?**
+**A:** Queue: delete on success, one logical consumer group. Stream: retain, many groups, replay.
+
+**Q: How do you size workers?**
+**A:** Measure service time and target lag. Add autoscaling on age, not only on CPU. CPU can be idle while the queue is huge if workers are blocked on I/O.
+
+**Q: Is the queue the source of truth?**
+**A:** Only for in-flight work. Durable business state lives in a database. The outbox pattern ties them together.
+
+## 6. Production Use Cases
+
+- **Background jobs** (mail, PDF, webhooks).
+- **Load leveling** in front of a fragile dependency.
+- **SQS, Rabbit, Service Bus, ActiveMQ** as the product.
+
+<Callout icon="tip" title="Page on age, not only depth">
+A depth of 10 million tiny messages can be fine. Age of 2 hours on refunds is not.
+</Callout>

@@ -1,30 +1,97 @@
 ---
-title: API Gateways
-description: A crucial architectural component in Microservices that acts as the single mathematical entry point for all client requests, routing traffic, enforcing security, and providing rate limiting before requests reach the internal services.
+title: API gateways
+description: "The edge hop that terminates clients, then routes, authenticates, rate-limits, and adapts calls to internal services."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="API Gateways"
-  subtitle="The Front Door of Microservices"
-  tags={['API', 'Microservices', 'Architecture', 'Security']}
->
+    <ConceptTemplate title="API gateways">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If an enterprise has 500 different Microservices, requiring a mobile app to mathematically know the IP address and port number of all 500 services is impossible. If the "Inventory Service" changes its IP address, all mobile apps in the world instantly break.
+An **API gateway** is the front door for a fleet of services. Browsers and apps see one origin. Behind it, the gateway authenticates, applies quotas, rewrites paths, aggregates calls, and emits access logs. Internals stay off the public internet.
 
-## 1. The Reverse Proxy
-An API Gateway (like AWS API Gateway, Kong, or NGINX) acts as a mathematical Reverse Proxy.
-The mobile app only knows **one** URL: `api.company.com`.
-When the app requests `/orders`, the request hits the Gateway. The Gateway mathematically inspects the URL, looks up its internal routing table, and forwards the TCP packet to the correct internal, hidden Microservice.
+## 1. Deep Dive and Mechanics
 
-## 2. Centralized Cross-Cutting Concerns
-If you do not have a Gateway, every one of the 500 Microservices must independently implement mathematical logic for JWT Authentication, SSL Termination, and Rate Limiting.
-The API Gateway centralizes this. It mathematically terminates the HTTPS connection. It verifies the JWT signature. If the token is invalid, the Gateway immediately drops the packet and returns a 401 error. The internal Microservices receive clean, verified traffic and can focus purely on business logic.
+**Reverse proxy core.** TLS terminate, HTTP route by path or host, upstream load balance. Timeouts and retries live here so clients do not invent them.
 
+**Cross-cutting policy.** AuthN/AuthZ, rate limits, WAF, CORS, request size, IP allowlists. Doing this in every microservice duplicates bugs.
+
+**BFF versus one gateway.** A Backend-for-Frontend is a gateway per client type (mobile, web). One mega-gateway that aggregates every screen becomes a deploy bottleneck.
+
+**Data plane versus control plane.** Envoy / nginx handle packets. A control plane (Kong, Apigee, AWS API Gateway config) pushes routes and plugins. Know which one you are debugging.
+
+<Callout icon="warning" title="The gateway is not your domain layer">
+Orchestrating eight service calls to build a page is a BFF or a use-case service. If the gateway owns business rules, you built a distributed monolith with extra latency.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Fan-out latency.** A naive aggregate of k sequential calls costs the sum of their tails. Parallelize independent calls; the cost becomes the max plus overhead. Gateways that stitch graphs must budget this.
+
+**Capacity.** Each extra hop adds p99. Gateway CPU is often crypto and JSON, not routing. Horizontal scale plus connection pooling to upstreams is the usual model.
+
+**Failure.** Retry storms: the gateway multiplying 502s into a thundering herd. Jittered backoff and a retry budget (max extra load) are required.
+
+<ComparisonTable
+  headers={['Edge', 'Owns', 'Risk']}
+  rows={[
+    ['API gateway', 'Policy + routing', 'God gateway'],
+    ['BFF', 'One client shape', 'Many BFFs to run'],
+    ['Service mesh', 'East-west policy', 'Does not replace public edge'],
+    ['Direct client-to-service', 'Nothing shared', 'Auth and CORS everywhere'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```nginx
+server {
+  listen 443 ssl;
+  location /orders/ {
+    auth_request /_auth;
+    proxy_pass http://orders-svc;
+    limit_req zone=api burst=20;
+  }
+}
+```
+
+Auth and quota sit at the edge. The orders service sees an already-checked identity header.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Client --> GW[API gateway]
+    GW --> Auth[Auth policy]
+    GW --> RL[Rate limit]
+    GW --> A[Orders]
+    GW --> B[Catalog]
+    GW --> C[BFF aggregate]
+```
+
+## 5. Interview Prep
+
+**Q: Gateway versus service mesh?**
+**A:** Gateway is north-south (clients in). Mesh is east-west (service to service). You often want both. Do not make Envoy sidecar your public TLS story without an edge.
+
+**Q: Should the gateway aggregate?**
+**A:** Light aggregation is fine. Heavy graphs belong in a BFF or GraphQL layer you can deploy without touching every route.
+
+**Q: What headers do you strip?**
+**A:** Hop-by-hop headers, incoming internal trust headers (`X-User-Id` from the public), and anything that would let a client impersonate the gateway.
+
+## 6. Production Use Cases
+
+- **Public API products** with keys, plans, and quotas.
+- **Microservices** hiding dozens of internals behind `/v1`.
+- **Legacy wrap** where the gateway adapts old SOAP to REST for new clients.
+
+<Callout icon="tip" title="Timeouts closer than the client">
+Set gateway timeouts tighter than browser defaults. Fail a hung upstream before the user retries and doubles load.
+</Callout>

@@ -1,31 +1,109 @@
 ---
-title: Chaos Engineering
-description: The disciplined, mathematical practice of intentionally injecting failures into a production system to empirically prove its resilience and identify hidden architectural weaknesses before they cause real-world outages.
+title: Chaos engineering
+description: "Run controlled experiments that inject failure in production-like conditions to test a hypothesis about steady state — not random sabotage."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Chaos Engineering"
-  subtitle="Empirical Resilience Testing"
-  tags={['SRE', 'Reliability', 'Testing', 'Architecture']}
->
+    <ConceptTemplate title="Chaos engineering">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Engineers often write retry logic and circuit breakers in their code, but until the database actually explodes in production, those safety mechanisms are purely theoretical. Chaos Engineering transforms theoretical resilience into mathematical proof.
+**Chaos engineering** is the scientific method applied to production failure. You state a hypothesis (“if Redis dies, checkout falls back to Postgres within 2 s and the error ratio stays under 1 percent”), inject a fault with a **bounded blast radius**, measure the golden signals, and stop if the hypothesis fails. Netflix’s Chaos Monkey made the idea famous. The discipline is the experiment design, not the kill script.
 
-## 1. The Chaos Monkey
-The discipline was popularized by Netflix with their tool, **Chaos Monkey**.
-Chaos Monkey is a script that runs in production. Every hour, it mathematically selects a random AWS EC2 server and instantly terminates it.
-Because Netflix engineers know that their servers are constantly being murdered, they are mathematically forced to design their microservices to be entirely stateless and highly redundant. If the system survives Chaos Monkey without users noticing, the architecture is mathematically proven to be fault-tolerant.
+## 1. Deep Dive and Mechanics
 
-## 2. The Blast Radius
-Chaos Engineering is not random sabotage; it is the scientific method.
-You form a hypothesis: *"If the Redis cache dies, the application will fallback to the SQL database seamlessly."*
-You then run the experiment, but you must mathematically control the **Blast Radius**. You do not kill the production Redis cluster immediately. You route 1% of production traffic to an isolated cluster, kill that cluster, and observe the metrics. If the hypothesis fails, you abort the experiment instantly, mathematically limiting the damage to only 1% of users.
+**Steady state.** Define it in SLI language before you touch anything: error ratio, p99, in-flight checkouts. If you cannot graph success, you cannot tell chaos from an organic incident.
 
+**Faults.** Kill a pod or node, partition a network, add latency, expire certificates, fill a disk, throttle a dependency, flip a feature flag. Start with staging, then a canary slice of prod, then a region. Never the first experiment on the write path of payments at 100 percent.
+
+**Blast radius.** One shard, one percent of traffic, one AZ, abort criteria wired to the same SLIs. Game days put humans in the loop. Automated chaos (Gremlin, Chaos Mesh, Litmus, fishtank scripts) still needs a kill switch.
+
+**Game days.** Scheduled, with an incident commander, a communications lead, and a written stop condition. The point is to find the missing runbook, not to surprise on-call on a Friday.
+
+<Callout icon="error" title="No hypothesis, no experiment">
+“Let’s see what happens if we kill the primary” is an incident you scheduled. Write the expected user-visible outcome and the abort metric first.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+You are sampling the system’s response surface. A single kill proves little; a series of faults with measured recovery time estimates MTTR under that class. Confidence grows with coverage of failure modes, not with drama.
+
+Blast radius as expected user harm: fraction_of_traffic × duration × severity. Design so that product and legal already accepted that product. Error-budget spend should be explicit — chaos that burns the monthly budget is a failed process, not a badge.
+
+<ComparisonTable
+  headers={['Practice', 'Environment', 'Goal', 'Risk']}
+  rows={[
+    ['Unit / integration tests', 'CI', 'Known cases', 'False green'],
+    ['Load test', 'Lab', 'Capacity knee', 'Wrong mix'],
+    ['Chaos experiment', 'Prod-like / prod slice', 'Unknown unknowns', 'Real users if unbounded'],
+    ['Game day', 'Prod with staff', 'People + process', 'Calendar cost'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+Chaos Mesh style pod kill (concept):
+
+```yaml
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: checkout-redis-kill
+  namespace: chaos
+spec:
+  action: pod-kill
+  mode: one
+  duration: '30s'
+  selector:
+    namespaces: ['prod']
+    labelSelectors:
+      app: redis
+      pool: checkout-canary
+```
+
+Hypothesis card the team signs:
+
+```text
+Steady state: checkout error ratio < 0.5% and p99 < 300 ms
+Fault: kill one canary Redis replica for 30s
+Expect: failover < 5s, no SLO burn on the canary slice
+Abort: error ratio > 2% for 1 minute — halt and revert
+```
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    H[Hypothesis + SLIs] --> R[Small blast radius]
+    R --> I[Inject fault]
+    I --> M[Measure golden signals]
+    M -->|holds| Learn[Record, widen next time]
+    M -->|fails| Abort[Stop, fix, write runbook]
+```
+
+## 5. Interview Prep
+
+**Q: How is this different from testing HA?**
+**A:** HA tests the failover you designed. Chaos finds the hidden coupling — the one DNS cache, the one stateful singleton, the client that does not retry.
+
+**Q: Is production required?**
+**A:** Production-like traffic and data shape are required. Many faults are safe on a canary. Some (IAM, global control planes) only exist in prod. Start wherever the hypothesis can be falsified safely.
+
+**Q: Who approves?**
+**A:** Service owners plus whoever owns the error budget. Chaos is a planned budget spend, like a deploy.
+
+## 6. Production Use Cases
+
+- **After a postmortem** — replay the failure class on a schedule so the fix stays fixed.
+- **Kubernetes platforms** — regular node drains and zone loss on non-critical namespaces.
+- **Dependency contracts** — inject 500s from a stub payments API and prove the circuit breaker opens.
+
+<Callout icon="tip" title="Instrument the experiment itself">
+A `chaos.experiment` metric with name and result makes the game day visible next to the SLO. If nobody can see it, it did not happen.
+</Callout>

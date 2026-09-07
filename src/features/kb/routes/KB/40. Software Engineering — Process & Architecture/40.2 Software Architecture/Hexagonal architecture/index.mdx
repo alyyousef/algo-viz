@@ -1,32 +1,99 @@
 ---
 title: Hexagonal Architecture
-description: Also known as "Ports and Adapters," an architectural pattern designed by Alistair Cockburn that mathematically isolates core domain logic from external agents by routing all input and output through strict interface contracts.
+description: "Ports and adapters: the application core exposes ports; UI, DB, and devices plug in as adapters so the domain does not import infrastructure."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Hexagonal Architecture (Ports & Adapters)"
-  subtitle="Isolating the Core Domain"
-  tags={['Architecture', 'Design Patterns', 'Clean Code', 'DDD']}
->
+    <ConceptTemplate title="Hexagonal Architecture">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Hexagonal Architecture is the mathematical predecessor to (and largely synonymous with) Clean Architecture. It solves the exact same problem: preventing external UI and Database code from bleeding into pure business logic.
+**Hexagonal architecture** (Cockburn), also called ports and adapters, draws the app as a hexagon so no side is “the top.” Driving adapters (HTTP, CLI, tests) call inbound ports. Driven adapters (SQL, mail, other APIs) implement outbound ports. The hexagon is the application.
 
-## 1. The Core and the Ports
-At the center of the hexagon is the pure mathematical domain logic (e.g., Java code that calculates interest rates). This code has zero dependencies.
-To communicate with the outside world, the core defines **Ports** (which are mathematically just Interfaces in Java/C#).
-- A **Driving Port** defines how the outside world can send commands *into* the core (e.g., an `IOrderService` interface).
-- A **Driven Port** defines how the core asks the outside world for data (e.g., an `IOrderRepository` interface).
+## 1. Deep Dive and Mechanics
 
-## 2. The Adapters
-The outside edge of the hexagon consists of **Adapters**.
-An HTTP REST Controller is a Driving Adapter; it parses JSON and mathematically calls the Driving Port.
-A PostgreSQL class is a Driven Adapter; it implements the Driven Port interface and executes SQL. Because the Core mathematically only knows about Ports, you can swap the REST Adapter for a gRPC Adapter, or the PostgreSQL Adapter for a MongoDB Adapter, without changing a single line of the core domain logic.
+**Inbound port.** An interface the outside world uses: `CheckoutUseCase`. A REST controller is a driving adapter that translates HTTP into that call.
 
+**Outbound port.** An interface the app needs: `PaymentsPort`. Stripe or a fake implements it. The core never imports Stripe.
+
+**Swap.** Tests drive the hexagon through the same inbound ports production uses. That is the point — not a cute diagram.
+
+**Family.** Onion and Clean Architecture redraw the same rule with concentric circles. Hexagonal emphasises symmetry of adapters.
+
+<Callout icon="info" title="The hexagon is not six things">
+Six sides are a drawing trick so people stop thinking UI-on-top / DB-on-bottom. You can have two adapters or twenty.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Dependency inversion.** High-level policy defines abstractions. Low-level details conform. The compile-time graph must not have core packages importing adapter packages.
+
+**Test substitution.** If every outbound port has a fake, the state space of a use case is exercisable in memory. That is a reduction of the I/O-heavy system to a deterministic function plus fakes.
+
+**Anti-corruption.** An adapter is also a translation layer. External models stop at the port.
+
+<ComparisonTable
+  headers={['Piece', 'Defined by', 'Example']}
+  rows={[
+    ['Inbound port', 'Application', 'PlaceOrder'],
+    ['Driving adapter', 'Delivery', 'HTTP handler, CLI'],
+    ['Outbound port', 'Application', 'ChargeCard'],
+    ['Driven adapter', 'Infrastructure', 'Stripe client, SQL'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```typescript
+interface ChargeCard {
+  charge(customerId: string, cents: number): Promise<string>
+}
+
+class Checkout {
+  constructor(private payments: ChargeCard) {}
+  async run(customerId: string, cents: number) {
+    return this.payments.charge(customerId, cents)
+  }
+}
+```
+
+The HTTP layer constructs `Checkout` with a Stripe adapter or a fake.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    HTTP[HTTP adapter] --> In[Inbound port]
+    CLI[CLI adapter] --> In
+    In --> Core[Application core]
+    Core --> Out[Outbound ports]
+    Out --> SQL[SQL adapter]
+    Out --> Mail[Mail adapter]
+```
+
+## 5. Interview Prep
+
+**Q: Hexagonal versus layered?**
+**A:** Layered often lets the domain depend on the data layer. Hexagonal forbids that: persistence is an adapter behind a port the domain owns.
+
+**Q: Do I need a port for every library call?**
+**A:** Port the things you might swap or fake (IO, vendors, clocks in tests). Do not wrap `Math` for purity points.
+
+**Q: Is this microservices?**
+**A:** No. It is an inside-the-process boundary. Each service can be hexagonal.
+
+## 6. Production Use Cases
+
+- **Apps that will change delivery** (add a queue consumer next to HTTP).
+- **Vendor-heavy cores** (payments, email, identity) that need fakes.
+- **Long-lived monoliths** keeping the domain testable.
+
+<Callout icon="tip" title="Start with the test adapter">
+If you cannot drive the use case from a unit test through the inbound port, the hexagon is still theoretical.
+</Callout>

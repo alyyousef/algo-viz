@@ -1,36 +1,100 @@
 ---
 title: Just-In-Time (JIT) Compilation
-description: A way of executing computer code that involves compilation during execution of a program (at run time) rather than before execution.
+description: "Compile hot code at run time using live types and profiles, so a portable VM can still reach near-native speed on the paths that matter."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Just-In-Time (JIT) Compilation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A traditional Interpreter executes code mathematically line-by-line. If a `for` loop runs 100,000 times, the interpreter must re-translate the exact same mathematical addition instruction 100,000 times, wasting massive amounts of CPU cycles.
+**JIT compilation** produces native code while the program runs. The runtime starts in an interpreter or a cheap compiler, counts executions, and when a function or loop is hot, compiles a specialised native version. Java HotSpot, V8, .NET RyuJIT, LuaJIT, and PyPy all live on this idea.
 
-**Just-In-Time (JIT) Compilation** is the miracle technology that bridges the mathematical gap between slow Interpreters (JavaScript, Python) and blazing-fast Ahead-Of-Time (AOT) Compilers (C++, Rust).
+## 1. Deep Dive and Mechanics
 
+**Method JIT.** Compile a whole function once it is hot (HotSpot C1/C2, .NET). **Tracing JIT.** Record a hot loop path and compile that linear trace (LuaJIT, older TraceMonkey). **Baseline then optimising.** V8's Ignition interpreter plus TurboFan; HotSpot's C1 then C2.
 
-<Callout icon="tip" title="The Best of Both Worlds">
+**Speculation.** The JIT assumes "this add is two Smi integers" or "this call hits one receiver class." It plants a guard. If the guard fails, it **deoptimises**: jump back to the interpreter and maybe recompile later with less optimism.
 
+**Code cache.** Native blobs live in an executable region with a size cap. GC must relocate or invalidate code that inlines a class that was unloaded.
 
-  JIT allows JavaScript to start running instantly (because it doesn't wait for a 5-minute C++ compile step), but achieves near-native C++ performance within seconds of execution.
-
-
+<Callout icon="warning" title="Warmup is part of the SLA">
+The first thousand requests can be 10x slower than steady state. For latency SLOs, warmup the JIT in a pre-prod ritual or use AOT/PGO profiles (Graal Native, .NET ReadyToRun, Java CDS/AOT).
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How JIT Mathematically Works (The V8 Engine)
+A JIT is a partial evaluator with a profile. Futamura's first projection: specialise an interpreter with respect to a program, get a compiler. Tracing is specialising along one path of the CFG.
 
-1. **Ignition (The Interpreter):** The code starts executing immediately using a fast, unoptimized Bytecode Interpreter.
-2. **The Profiler:** As the code runs, the JIT mathematically watches the execution. It counts how many times a function is called. If a function is called thousands of times, it mathematically marks it as **"Hot"**.
-3. **TurboFan (The Optimizer):** The JIT sends the "Hot" function to a background thread. It mathematically compiles that specific function directly into physical x86/ARM Machine Code.
-4. **On-Stack Replacement (OSR):** The next time the code calls that function, the JIT seamlessly swaps out the slow interpreter bytecode and executes the blazing-fast physical machine code instead.
+Guards split the concrete state space. Each compiled version is valid on a subset. Deopt is a soundness mechanism: when the subset is left, discard the compiled theorem.
 
+Tiered compilation is an optimisation under a time budget: spend compile time only where the expected remaining executions repay it.
+
+<ComparisonTable
+  headers={['Engine', 'Start', 'Hot compiler', 'Deopt']}
+  rows={[
+    ['HotSpot', 'Interpreter / C1', 'C2 or Graal', 'Yes, uncommon traps'],
+    ['V8', 'Ignition', 'TurboFan / Maglev', 'Yes'],
+    ['LuaJIT', 'Interpreter', 'Trace recorder', 'Yes, trace abort'],
+    ['CPython 3.13+', 'Bytecode', 'Copy-and-patch tiers', 'Limited'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Conceptual hotness + compile threshold (not a real JIT)
+THRESHOLD = 1000
+hits = {}
+native = {}
+
+def call(fn_id, interpret, compile_fn, args):
+    hits[fn_id] = hits.get(fn_id, 0) + 1
+    compiled = native.get(fn_id)
+    if compiled is not None:
+        return compiled(*args)
+    if hits[fn_id] >= THRESHOLD:
+        native[fn_id] = compile_fn(fn_id)
+        return native[fn_id](*args)
+    return interpret(*args)
+```
+
+Real JITs compile off-thread, patch call sites, and keep a deopt metadata table.
+
+## 4. Visualizations
+
+```mermaid
+stateDiagram-v2
+    [*] --> Interpret
+    Interpret --> Baseline: hot enough
+    Baseline --> Opt: very hot
+    Opt --> Interpret: deopt / guard fail
+    Baseline --> Interpret: deopt
+```
+
+## 5. Interview Prep
+
+**Q: JIT versus AOT?**
+**A:** AOT pays compile cost before run and cannot see live types. JIT sees profiles and monomorphic call sites, but needs warmup, a code cache, and a more complex runtime.
+
+**Q: What is a megamorphic call site?**
+**A:** A call that has seen many receiver types. Inline caches stop helping; the JIT emits a full dispatch. That is a common JS and Java slow path.
+
+**Q: Why can JIT code be faster than static C?**
+**A:** It rarely beats carefully written C on a stable numeric kernel. It can beat generic C++ on megamorphic-looking source that is monomorphic at run time, because it specialises. Do not claim this as a universal win.
+
+## 6. Production Use Cases
+
+- **JVM and CLR services** that run for hours and repay warmup.
+- **Browsers** (V8, SpiderMonkey, JavaScriptCore) JITing JS and WASM.
+- **Game scripting** with LuaJIT where scripts stay hot in a frame loop.
+
+<Callout icon="tip" title="Measure after warmup">
+Benchmarks that include JIT compile time lie about steady state. Run a warmup loop, then time, or use JMH/.NET BenchmarkDotNet.
+</Callout>

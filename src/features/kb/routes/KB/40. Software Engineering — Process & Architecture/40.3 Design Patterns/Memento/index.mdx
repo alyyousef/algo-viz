@@ -1,29 +1,112 @@
 ---
-title: Memento Pattern
-description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically allows you to capture and externalize an object's internal state so that the object can be restored to this state later, without violating encapsulation.
+title: Memento
+description: "A behavioral pattern that snapshots an object's internals so undo can restore them without breaking encapsulation."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Memento Pattern"
-  subtitle="The Mathematical Snapshot"
-  tags={['Design Patterns', 'Behavioral', 'GoF', 'Data Structures']}
->
+    <ConceptTemplate title="Memento">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Implementing an "Undo" feature in a text editor or a video game save system is mathematically difficult. You need to save the exact internal state of the `Editor` object.
+**Memento** (GoF) lets an originator export a snapshot and later restore it. The caretaker stores snapshots but cannot read the fields. Undo, rollback, and “draft vs published” rest on this split.
 
-## 1. The Encapsulation Violation
-You could have the UI simply copy all the variables out of the `Editor` and store them in an array. However, this mathematically violates encapsulation. The `Editor` would have to make all its private, internal variables (like the cursor position or the hidden text buffer) public.
+## 1. Deep Dive and Mechanics
 
-## 2. The Opaque Snapshot
-The Memento pattern solves this. The `Editor` (the Originator) is the *only* class allowed to create the snapshot.
-When the user types, the UI asks the Editor for a Memento. The Editor mathematically packages its own private state into a `Memento` object and hands it to the UI (the Caretaker).
-Crucially, the `Memento` object is mathematically opaque to the UI. The UI cannot read or modify the variables inside it; it can only store it in an Undo stack. When the user hits CTRL+Z, the UI hands the Memento back to the Editor, which mathematically unpacks it and restores its own private state.
+**Originator.** The object with private state (`Editor`). It implements `save()` -> memento and `restore(memento)`.
 
+**Memento.** An opaque token. In languages with nested types, only the originator can read it. In Python/JS you fake opacity with a convention or a sealed class.
+
+**Caretaker.** History stack, command log, or session store. It must not peek. If it peeks, you leaked encapsulation and the snapshot format becomes a public API.
+
+**Incremental snapshots.** Full copies are simple and expensive. Production editors store diffs, command logs, or structural sharing (immutable trees) and *present* them as mementos.
+
+<Callout icon="warning" title="A dict is not a memento if everyone reads it">
+If the caretaker does `snap['cursor'] = 0` you have a public struct, not a memento. Keep the payload private to the originator.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**State restore.** A memento is a value `s` in the originator’s state space. `restore` is an inverse of `save` on that space: restore(save(o)) equals o at snapshot time, ignoring identity.
+
+**Space versus time.** k undo steps times size of state. Command pattern stores operations (often smaller, replay needed). Memento stores states (replay-free, heavier).
+
+**Encapsulation.** The information-hiding invariant: caretaker’s type does not include originator fields. Nested/friend types encode that in the type system.
+
+<ComparisonTable
+  headers={['Approach', 'What you store', 'Undo cost']}
+  rows={[
+    ['Memento', 'State snapshot', 'Restore, no replay'],
+    ['Command', 'Do and undo ops', 'Replay inverse'],
+    ['Event sourcing', 'Full event log', 'Rebuild projection'],
+    ['DB transaction', 'WAL or snapshot', 'Rollback'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Editor:
+    def __init__(self):
+        self._text = ""
+        self._cursor = 0
+
+    def save(self):
+        return (self._text, self._cursor)
+
+    def restore(self, snap):
+        self._text, self._cursor = snap
+
+class History:
+    def __init__(self):
+        self._stack = []
+
+    def push(self, editor):
+        self._stack.append(editor.save())
+
+    def undo(self, editor):
+        if self._stack:
+            editor.restore(self._stack.pop())
+```
+
+`History` never names `_text`.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant C as Caretaker
+    participant O as Originator
+    participant M as Memento
+    C->>O: save
+    O->>M: capture state
+    C->>C: hold token
+    C->>O: restore token
+    O->>O: write fields back
+```
+
+## 5. Interview Prep
+
+**Q: Memento versus Command for undo?**
+**A:** Command stores the inverse operation (cheap if ops are small). Memento stores the whole state (simple, costly). Many editors use Command for typing and Memento for checkpoints.
+
+**Q: How do you serialize mementos?**
+**A:** Same as any snapshot: version the format, do not let the caretaker interpret fields. Treat it as bytes plus a schema id.
+
+**Q: What breaks undo?**
+**A:** External side effects (network, disk) that the memento did not capture. Undo in-memory state and compensate the outside world separately.
+
+## 6. Production Use Cases
+
+- **Editors** (text, image, CAD) with undo/redo stacks.
+- **Transactional in-memory objects** that rollback on validation failure.
+- **Game save slots** and replay checkpoints.
+
+<Callout icon="tip" title="Snapshot at command boundaries">
+Save after a completed user gesture, not after every key, unless you coalesce. History UX is part of the pattern.
+</Callout>

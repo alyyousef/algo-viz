@@ -1,26 +1,98 @@
 ---
-title: TRPO (Trust Region Policy Optimization)
-description: A highly mathematical, deeply theoretical RL algorithm that guarantees monotonic policy improvements by strictly limiting the magnitude of neural network weight updates using KL Divergence.
+title: Trust Region Policy Optimization (TRPO)
+description: "On-policy policy search with a hard KL trust region and a conjugate-gradient step — the theoretically tighter parent of PPO."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="TRPO (Trust Region Policy Optimization)">
+    <ConceptTemplate title="Trust Region Policy Optimization (TRPO)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-TRPO is the direct predecessor to PPO. While PPO uses a simple "clipping" hack to keep the math stable, TRPO uses rigorous, Second-Order Calculus to mathematically guarantee that the Agent's policy will never collapse.
+**TRPO** (Schulman et al., 2015) asks for the biggest policy improvement you can take **without leaving a KL ball** around the old policy. That constraint is why it was the first method many people trusted on high-dimensional continuous control — and why it is annoying to implement. PPO later faked the same intuition with a clip.
 
-## 1. Monotonic Improvement
-In standard Policy Gradients, taking a large step in the direction of the gradient can accidentally push the neural network off a mathematical cliff, destroying the Policy.
-TRPO introduced a strict constraint. It mathematically proved that if you limit the distance the Policy is allowed to change during an update, the new Policy is mathematically guaranteed to be greater than or equal to the old Policy (Monotonic Improvement). It is physically impossible for the Agent to un-learn a good behavior.
+## 1. Deep Dive and Mechanics
 
-## 2. The KL Divergence Constraint
-How do you measure the "distance" between the Old Policy and the New Policy?
-You cannot just measure the physical change in the Neural Network weights. A 0.01 change in a weight might drastically alter the probabilities.
-TRPO uses **Kullback-Leibler (KL) Divergence**, a mathematical equation that calculates the exact difference between two Probability Distributions. TRPO enforces a strict "Trust Region" (e.g., $KL < 0.01$). To calculate this, the algorithm must compute the **Fisher Information Matrix** and use Conjugate Gradient methods (Second-Order derivatives). While mathematically beautiful and flawlessly stable, computing massive matrices for millions of neural network parameters was too computationally expensive, leading OpenAI to invent PPO as a fast approximation.
+**Surrogate.** Maximise E[ (pi / pi_old) A_old ] subject to E[ KL(pi_old || pi) ] ≤ delta (delta ~ 0.01).
 
+**Natural gradient.** The KL quadratic is F, the Fisher information. You solve F x = g with conjugate gradient (Hessian-vector products, no explicit Fisher). Then a line search shrinks the step until the KL constraint and a real improvement hold.
+
+**Critic.** Still actor-critic: GAE advantages, a value net trained separately (often plain SGD).
+
+**Cost.** CG + line search + extra forward passes. Awkward with RNNs and discrete action masking unless you are careful about the KL estimate.
+
+<Callout icon="info" title="Mean KL, not max">
+The constraint is an *average* KL over the rollout states. A few states can still move a lot. That is not a per-state safety shield.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+The performance difference lemma writes J(pi) - J(pi_old) in terms of advantages of pi_old plus a remainder that grows with how far occupancy measures drift. Bounding KL keeps that remainder small, so maximising the surrogate is a conservative proxy for true improvement.
+
+Natural policy gradient (Kakade) is the unconstrained cousin: invert the Fisher. TRPO adds the explicit radius and line search.
+
+<ComparisonTable
+  headers={['Method', 'Trust', 'Optimizer']}
+  rows={[
+    ['NPG', 'Implicit via Fisher', 'Natural grad'],
+    ['TRPO', 'Hard mean KL', 'CG plus line search'],
+    ['PPO-clip', 'Heuristic band', 'Adam'],
+    ['PPO-penalty', 'Adaptive KL coef', 'Adam'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Sketch: one conjugate-gradient solve for Hx = g, then backtracking
+def trpo_step(policy, loss_fn, kl_fn, delta=0.01, max_kl_evals=10):
+    g = torch_grad(loss_fn(), policy.parameters())
+    step = conjugate_gradient(lambda v: fisher_vec(policy, v), g)
+    step_size = torch.sqrt(2 * delta / (step @ fisher_vec(policy, step) + 1e-8))
+    proposed = scale(step, step_size)
+    for _ in range(max_kl_evals):
+        if kl_fn(proposed) <= delta and loss_fn(proposed) < loss_fn():
+            return apply(policy, proposed)
+        proposed = scale(proposed, 0.5)
+    return policy  # reject
+```
+
+Use a maintained implementation (Garage, original OpenAI baselines) unless you enjoy debugging CG damping.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Pi[pi_old] --> G[Policy gradient g]
+    Pi --> F[Fisher-vector products]
+    G --> CG[Conjugate gradient]
+    F --> CG
+    CG --> LS[Line search on KL and L]
+    LS --> New[pi_new]
+```
+
+## 5. Interview Prep
+
+**Q: What problem does the trust region solve?**
+**A:** A large policy step can collapse performance with no recovery. KL-bounding keeps occupancy close so the advantage of pi_old stays meaningful.
+
+**Q: Why did PPO win the popularity contest?**
+**A:** Similar empirical stability, one `loss.backward()`, easy to mix with other losses (aux, value clip). TRPO is fussier on GPUs and with discrete heads.
+
+**Q: KL(pi_old || pi) or the reverse?**
+**A:** TRPO uses KL(old || new) in the usual statement. Direction matters; do not swap casually.
+
+## 6. Production Use Cases
+
+- **Research baselines** when you need the paper-faithful trust-region story.
+- **Low-dimensional control** where CG is cheap and you want conservative updates.
+- **Most new systems** pick PPO or SAC instead and treat TRPO as ancestry.
+
+<Callout icon="tip" title="Damping">
+Add a small multiple of the identity to the Fisher-vector product (`cg_damping`). Without it CG is numerically rude.
+</Callout>

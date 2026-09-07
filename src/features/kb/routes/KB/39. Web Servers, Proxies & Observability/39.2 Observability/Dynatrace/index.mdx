@@ -1,23 +1,102 @@
 ---
 title: Dynatrace
-description: A premier, AI-powered enterprise observability platform mathematically engineered for massive scale, providing automatic full-stack topology mapping and deterministic root-cause analysis.
+description: "An enterprise observability platform that auto-injects OneAgent, builds a live topology, and runs Davis — a causality engine — on that graph instead of a pile of uncorrelated charts."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Dynatrace"
-  subtitle="AI-Driven Enterprise Observability"
-  tags={['Observability', 'Monitoring', 'Enterprise', 'AI']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Dynatrace">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While tools like Prometheus require engineers to manually write complex mathematical alert queries (PromQL) and manually instrument code, Dynatrace is designed to be mathematically autonomous.
+**Dynatrace** sells **automatic** full-stack observability. You install **OneAgent** on a host (or use Operator + code modules). It injects into Java, .NET, Node, and others, records **PurePath** traces, and draws a dependency graph. **Davis** walks that graph when something breaks and names a root cause instead of firing 40 red monitors.
 
-## 1. The OneAgent and PurePath
-A DevOps team installs a single mathematical binary, the **OneAgent**, onto a host server.
-Without a single line of code modification, the OneAgent mathematically injects itself into running Java, Node, or Python processes at the OS level. It utilizes **PurePath** technology to automatically capture distributed traces. It mathematically maps the entire topology of the infrastructure—drawing a live graph showing exactly which microservices are talking to which databases.
+## 1. Deep Dive and Mechanics
 
-## 2. Deterministic AI (Davis)
-Other monitoring tools use correlation (e.g., "CPU spiked at the same time errors spiked, so they might be related"). Dynatrace's AI engine (Davis) uses **Deterministic Causality**.
-Because Dynatrace possesses the exact mathematical dependency graph, if a database slows down, Davis doesn't just alert that the database is slow. It traces the mathematical graph backward, instantly generating an alert that says: *"The Checkout microservice is failing because of a slow query on the Orders database, which was mathematically caused by a code deployment made 3 minutes ago by User X."*
+**OneAgent.** A privileged installer drops a system module and language modules. At process start, the module wraps sockets, HTTP clients, and SQL drivers. No code change is the pitch; the cost is a vendor in your process and a compatibility matrix (libc, musl, distroless, newer JDKs).
 
-</TechnologyTemplate>
+**Smartscape.** Continuous topology: hosts, processes, services, and third-party APIs as a live graph. Edges come from observed calls, not a CMDB someone forgot to update.
+
+**PurePath.** Dynatrace’s end-to-end trace, including code-level method hotspots on supported runtimes. It is richer than a typical OpenTelemetry HTTP-only trace and more proprietary.
+
+**Davis.** Not “CPU correlated with errors.” Davis uses the graph: if checkout fails and the only new edge change is a bad deploy on orders-db, the problem card says that. You still verify; you do not start from a blank Grafana.
+
+**OpenTelemetry.** Dynatrace can ingest OTLP. New services sometimes skip OneAgent inject and export OTLP, at the cost of some automatic code-level magic.
+
+<Callout icon="warning" title="Auto-inject is a change-control event">
+A OneAgent upgrade is a production deploy into every process. Pin versions, soak in one cluster, and have a kill switch (disable injection) before a Friday JVM crash.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Davis is **graph causality**, not Pearson correlation. Given nodes V and observed fault F on a subset, it searches ancestors for change events (deploy, config, resource saturation) that explain F. Deterministic here means “follows the dependency edges,” not “mathematically proven in all topologies.” Hidden edges (async via a queue you did not instrument) produce wrong ancestors.
+
+Trace volume is still a **sample**. Even OneAgent cannot keep every method on every request at mesh scale; it budgets CPU and adaptive capture.
+
+<ComparisonTable
+  headers={['Approach', 'How you instrument', 'Root cause style']}
+  rows={[
+    ['Dynatrace OneAgent', 'Auto-inject', 'Graph + problem cards'],
+    ['Datadog APM', 'Library + Agent', 'Unified tags, Watchdog'],
+    ['OTel + Grafana', 'SDK / auto-instr', 'You write the joins'],
+    ['New Relic', 'Agent', 'APM-first, now broader'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+apiVersion: dynatrace.com/v1beta1
+kind: DynaKube
+metadata:
+  name: dynakube
+  namespace: dynatrace
+spec:
+  apiUrl: https://abc12345.live.dynatrace.com/api
+  oneAgent:
+    cloudNativeFullStack: {}
+  activeGate:
+    capabilities:
+      - routing
+      - kubernetes-monitoring
+```
+
+The Operator injects OneAgent into node and workload paths. Tokens live in a Secret, not in the YAML you commit.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    OA[OneAgent] --> P[Processes]
+    OA --> PP[PurePaths]
+    OA --> SM[Smartscape graph]
+    PP --> Davis
+    SM --> Davis
+    Davis --> Card[Problem card]
+```
+
+## 5. Interview Prep
+
+**Q: How is Davis different from static alerts?**
+**A:** Alerts fire per signal. Davis groups signals that share a causal path on the topology and proposes one problem. You still need SLOs; Davis is a triage accelerator.
+
+**Q: Why do some containers show no deep monitoring?**
+**A:** Unsupported runtime, missing capabilities, musl, or injection blocked by a restricted PodSecurity policy. Check the OneAgent compatibility list before promising “zero code.”
+
+**Q: Can you avoid OneAgent entirely?**
+**A:** Export OTLP and host metrics. You lose some automatic topology richness. Many hybrid estates do exactly that for new Go services.
+
+## 6. Production Use Cases
+
+- **Large enterprises** with mixed JVM, .NET, and k8s that want a single vendor RCA story.
+- **Mainframe-adjacent** and classic Windows estates where OneAgent coverage is a selling point.
+- **Managed service** contracts that include Dynatrace as the observability clause.
+
+<Callout icon="tip" title="Map problem cards to your CMDB owners">
+A perfect root-cause sentence still pages the wrong team if service names do not match ownership. Align naming before you tune Davis.
+</Callout>

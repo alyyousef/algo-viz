@@ -1,32 +1,99 @@
 ---
 title: Refactoring
-description: The disciplined, mathematical process of restructuring existing computer code—changing the internal factoring—without changing its external behavior, specifically to improve nonfunctional attributes of the software.
+description: "Changing structure without changing externally observable behaviour — a disciplined way to make the next feature cheap instead of layering another workaround."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Refactoring"
-  subtitle="Mathematical Code Restructuring"
-  tags={['Process', 'Clean Code', 'Architecture', 'Maintenance']}
->
+    <ConceptTemplate title="Refactoring">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Martin Fowler famously defined Refactoring as: *"A change made to the internal structure of software to make it easier to understand and cheaper to modify without changing its observable behavior."*
+**Refactoring** (Fowler) is behaviour-preserving structural change. Rename, extract, invert a dependency, replace a conditional with polymorphism. If the user-visible contract moves, that is a feature or a fix — keep it in a separate commit.
 
-## 1. The Mathematical Requirement of Testing
-You cannot mathematically refactor code if you do not have automated tests.
-If you take a 500-line function and fracture it into 5 elegant 100-line functions, how do you mathematically prove you didn't break the application? You run the Unit Test suite. If the tests pass, you have mathematical proof that the external behavior remains identical, even though the internal architecture was drastically altered. Without tests, "refactoring" is just a dangerous, unproven mutation of code.
+## 1. Deep Dive and Mechanics
 
-## 2. Code Smells
-Refactoring is driven by identifying mathematical patterns known as **Code Smells**.
-- **Long Method**: A method that is 1,000 lines long. (Refactoring technique: *Extract Method*).
-- **Duplicated Code**: The exact same mathematical logic exists in 3 different files. (Refactoring technique: *Extract Class* or *Pull Up Method*).
-- **Primitive Obsession**: Using raw Strings and Integers to represent complex domain concepts like a Zip Code. (Refactoring technique: *Replace Data Value with Object*).
-By constantly applying small mathematical refactorings, engineers prevent the codebase from slowly rotting into an unmaintainable legacy state.
+**Safety net.** You cannot refactor what you cannot detect breaking. Characterisation tests, type systems, and a fast suite are the precondition. No tests means you are editing under anaesthesia.
 
+**Small steps.** Each micro-refactor (extract function, move field) leaves the suite green. Large mixed PRs that also change behaviour are how you invent weekend incidents.
+
+**Opportunistic versus campaign.** Boy Scout rule on the touched files versus a scheduled campaign (strangler, extract a module). Campaigns belong on main in thin slices, not on a months-old branch.
+
+**Smell first.** Duplication, long methods, feature envy, shotgun surgery — the catalog tells you which move to apply. Do not clean up without a smell or a next feature that needs the new shape.
+
+<Callout icon="error" title="Rewrite dressed as refactor">
+If you change APIs, data, and behaviour in one PR titled refactor, reviewers cannot reason about risk. Split it or it is not refactoring.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Behavioural equivalence.** Let P be the program and T a test suite approximating the specification S. A refactoring r should satisfy T of r of P equals T of P and, ideally, S of r of P equals S of P. Incomplete T means incomplete proof.
+
+**Coupling reduction.** Moves that lower afferent and efferent coupling reduce the number of modules that must change together. That is a graph-cut problem: you want thin interfaces.
+
+**Option value.** Refactoring buys cheaper future edits. Spend when the next change is known or when the module is on the hot path of defects.
+
+<ComparisonTable
+  headers={['Move', 'Smell', 'Risk if untested']}
+  rows={[
+    ['Extract function', 'Long method', 'Low'],
+    ['Replace conditional with polymorphism', 'Switch on type', 'Medium'],
+    ['Split module / extract service', 'God package', 'High'],
+    ['Rename across public API', 'Misleading name', 'High if published'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```javascript
+// Before: feature envy — pricing logic lives in the order printer
+function printOrder(order) {
+  const total = order.lines.reduce((s, l) => s + l.qty * l.price, 0)
+  return `total=${total}`
+}
+
+// After: behaviour unchanged, money math sits on Order
+function printOrder(order) {
+  return `total=${order.total()}`
+}
+```
+
+Commit this separately from any change to rounding rules.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Smell[Smell or next feature] --> Tests[Suite covers behaviour]
+    Tests --> Step[One mechanical move]
+    Step --> Green[Tests green]
+    Green --> Decide[More moves needed]
+    Decide -->|yes| Step
+    Decide -->|no| Ship[Ship structure-only PR]
+```
+
+## 5. Interview Prep
+
+**Q: When is refactoring not the first move?**
+**A:** When you do not have characterisation tests, when a deadline forbids risk, or when the module is about to be deleted. Add tests or isolate first.
+
+**Q: How do you refactor a legacy module with no tests?**
+**A:** Characterise from the outside (golden outputs), then seam in tests, then small moves. Do not start with a greenfield rewrite.
+
+**Q: Refactoring versus technical debt paydown?**
+**A:** Refactoring is the technique. Debt paydown is the portfolio decision about where to apply it.
+
+## 6. Production Use Cases
+
+- **Before a large feature** so the feature lands in a module that can accept it.
+- **Hotspot files** identified by churn and defect density.
+- **Strangler work** that extracts a seam without changing the external contract.
+
+<Callout icon="tip" title="One intent per commit">
+Reviewers and bisect both need a behaviour-preserving history. Mixed commits make every later debug a coin flip.
+</Callout>

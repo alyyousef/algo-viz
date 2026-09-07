@@ -1,24 +1,114 @@
 ---
 title: CircleCI
-description: A leading cloud-native continuous integration and delivery platform renowned for its mathematical speed, containerized execution model, and sophisticated pipeline caching mechanisms.
+description: "A cloud-native CI platform with orbs, Docker/machine executors, and a YAML config that popularised fast, cache-heavy pipelines for GitHub and Bitbucket repos."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="CircleCI"
-  subtitle="High-Velocity Cloud CI/CD"
-  tags={['DevOps', 'CI/CD', 'Platform', 'Automation']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="CircleCI">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-CircleCI was one of the first platforms to aggressively champion the **Docker-first** mathematical execution model, pulling developers away from the nightmare of managing massive, brittle Jenkins servers.
+**CircleCI** is a hosted CI service (plus self-hosted runners) that builds from a `.circleci/config.yml` in the repo. It grew up with GitHub-centric startups: Docker executors, aggressive caching, fan-out workflows, and **orbs** (reusable config packages). You still meet it in teams that adopted it before Actions existed, and in shops that want a CI vendor independent of their forge.
 
-## 1. The Executor Model
-In CircleCI's `.circleci/config.yml`, every job explicitly defines a mathematical **Executor** (typically a Docker image).
-For example, a job might declare: *"Execute this step inside `cimg/node:18.0`."* CircleCI instantly pulls that pristine container and runs the commands inside it. This guarantees that the CI environment is mathematically identical every single time, completely eliminating "flaky builds" caused by leftover files from a previous run.
+## 1. Deep Dive and Mechanics
 
-## 2. Advanced Caching and Orbs
-CircleCI is mathematically optimized for speed.
-Downloading `node_modules` can take 3 minutes. CircleCI uses advanced **Dependency Caching**. It computes a mathematical hash of the `package-lock.json` file. If the hash hasn't changed since the last build, it instantly injects the cached `node_modules` into the container, saving massive amounts of compute time.
-Additionally, CircleCI introduced **Orbs**—reusable, open-source mathematical YAML snippets. Instead of writing 50 lines of code to deploy to AWS S3, a developer imports the AWS Orb and executes the deployment in 2 lines.
+**Config.** Version 2.1: `orbs`, `commands`, `jobs`, `workflows`. Workflows are the DAG. Jobs pick an **executor**: Docker image, `machine` VM, macOS, Windows, or a self-hosted runner.
 
-</TechnologyTemplate>
+**Orbs.** Named, versioned bundles of jobs/commands (e.g. `node`, AWS). They are a supply chain. Pin a semver; treat unpinned `@volatile` as untrusted code in your pipeline.
+
+**Caching and workspaces.** `restore_cache` / `save_cache` keyed by lockfile checksum. Workspaces pass files between jobs in the same workflow (different from cache, which is across runs).
+
+**Contexts.** Org-level secret sets attached to workflows. Restrict contexts to groups — this is how you stop a fork PR from seeing prod keys (also: disable secrets on fork builds).
+
+**Insights and test splitting.** Timing-based split across parallelism is Circle's old trick for keeping wall time flat as the suite grows.
+
+<Callout icon="warning" title="Orbs run with your secrets">
+An orb step is not a comment. It is code on the executor. Pin versions, review source, and prefer first-party or internally published orbs for deploy jobs.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A workflow is a DAG of jobs. `requires` edges are the partial order. **Parallelism N** shards a test job into N containers; total CPU is N times one shard. Optimal N balances suite time against queue + boot overhead.
+
+**Cache keys.** A key is a prefix plus a hash of inputs (lockfile). Hit rate is the fraction of jobs whose key exists. Bad keys (too coarse) reuse stale deps; too fine (include `package.json` time) never hit.
+
+**Credits.** Circle bills compute credits. Fan-out reduces wall time and increases credits. That is the same trade as every hosted CI.
+
+<ComparisonTable
+  headers={['Feature', 'CircleCI', 'GitHub Actions', 'Buildkite']}
+  rows={[
+    ['Config', 'config.yml + orbs', 'workflow YAML + actions', 'pipeline.yml + upload'],
+    ['Default compute', 'Their cloud', 'Their cloud', 'Your agents'],
+    ['Reuse unit', 'Orb', 'Action / reusable workflow', 'Hooks + dynamic YAML'],
+    ['Forge coupling', 'Loose', 'Tight', 'Loose'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+version: 2.1
+orbs:
+  node: circleci/node@5.2.0
+workflows:
+  test:
+    jobs:
+      - node/test:
+          version: 22.11.0
+      - deploy:
+          requires: [node/test]
+          filters:
+            branches:
+              only: main
+          context: prod-aws
+jobs:
+  deploy:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run: ./scripts/deploy.sh
+```
+
+Attach `prod-aws` only to the deploy job on `main`. Do not put that context on the test job.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Push[Push / PR] --> WF[Workflow]
+    WF --> J1[Job: test shard 1]
+    WF --> J2[Job: test shard 2]
+    J1 --> Cache[Cache save]
+    J2 --> Cache
+    J1 --> Dep[Deploy job]
+    J2 --> Dep
+    Dep --> Ctx[Context secrets]
+```
+
+## 5. Interview Prep
+
+**Q: Orb versus GitHub Action?**
+**A:** Same idea: reusable CI code with a version and a trust problem. Migration is mapping orbs to actions and contexts to environments.
+
+**Q: Why is my cache never hit?**
+**A:** The key includes a volatile file, or you save from a different path than you restore, or the branch namespace isolates caches. Print the computed key in the job.
+
+**Q: Circle versus Actions in 2026?**
+**A:** Actions is the default on GitHub. Circle still wins if you need their executors, existing orbs, or a CI vendor not named Microsoft. Do not run both "for redundancy" without a clear split.
+
+## 6. Production Use Cases
+
+- **Startup monorepos** already invested in orbs and test splitting.
+- **macOS / iOS** jobs on Circle's mac fleet when you do not want self-hosted Macs.
+- **Multi-forge** orgs (GitHub + Bitbucket) with one CI vendor.
+
+<Callout icon="tip" title="Contexts are environments">
+Name contexts after trust (`prod-aws`, `pr-readonly`), not after teams (`mobile`). Team names change; trust boundaries should not.
+</Callout>

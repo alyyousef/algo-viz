@@ -1,27 +1,93 @@
 ---
 title: Feature Stores
-description: A centralized, high-performance data engineering layer in MLOps that calculates, mathematically transforms, and serves Machine Learning features to guarantee absolute consistency between training and production.
+description: "A shared layer that serves the same feature definitions online and offline so training and inference stop silently disagreeing."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Feature Stores">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A Data Scientist calculates a feature in a Jupyter Notebook: *"User's average spend over 30 days."* Six months later, a Software Engineer tries to rewrite that exact mathematical logic in Java for the production API. The math is slightly different. The model silently fails. This is Training-Serving Skew.
+Most “the model got worse” incidents are **training/serving skew**: pandas in the notebook, a different join in the service. A **feature store** (Feast, Tecton, Vertex, SageMaker FS) is a contract: one definition, two materialisations — historical for train, low-latency for serve.
 
-## 1. The Single Source of Mathematical Truth
-A Feature Store (like Feast or Hopsworks) solves this by decoupling the Feature Math from the Model.
-The Data Engineer writes the mathematical transformation *once* and registers it to the Feature Store.
-- **Offline Store (Training)**: The Feature Store uses a massive Data Warehouse (like Snowflake) to run batch processing, generating millions of historical rows of the feature so the Data Scientist can train the Neural Network.
-- **Online Store (Serving)**: The Feature Store simultaneously syncs that exact same mathematical logic to a low-latency database (like Redis).
+## 1. Deep Dive and Mechanics
 
-## 2. Preventing Training-Serving Skew
-When the API receives a live request (e.g., User ID 123 applies for a loan), the API does *not* calculate the "30-day average spend" itself.
-It queries the Online Feature Store, which returns the exact, pre-calculated float in 2 milliseconds. Because the Offline Store and the Online Store are physically powered by the exact same mathematical definition, Training-Serving Skew is mathematically eliminated.
+**Offline store.** Warehouse or lake (BigQuery, Snowflake, Iceberg). Point-in-time correct joins so you do not leak the future.
 
+**Online store.** Redis, Dynamo, Bigtable. Values keyed by entity id, updated by streaming or batch push.
+
+**Registry.** Feature names, types, owners, TTL, and transforms. This is the API.
+
+**On-demand transforms.** Some features compute at request time (ratios). Those transforms must be in the same repo the trainer imports.
+
+<Callout icon="warning" title="Point-in-time or leak">
+If you join the latest user aggregate onto a label from last month, you trained on the future. Feature stores exist to make that join hard to get wrong.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A feature is a function f(entity, t) → value using only data with timestamps &lt; t (for label time t). Point-in-time correctness is that inequality. Online serve approximates f(entity, now). If the streaming job lags, online f is stale — a different skew.
+
+<ComparisonTable
+  headers={['Plane', 'Storage', 'Used for']}
+  rows={[
+    ['Offline', 'Warehouse / lake', 'Train, backfill, batch score'],
+    ['Online', 'KV / cache', 'Live inference'],
+    ['Streaming', 'Jobs into KV', 'Fresh features'],
+    ['On-demand', 'In-process', 'Request-time math'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Feast-style retrieve at train time
+from datetime import datetime
+
+entity_df = spark.table('labels').select('user_id', 'event_time')
+training = store.get_historical_features(
+    entity_df=entity_df,
+    features=['user:clicks_7d', 'user:country'],
+).to_df()
+```
+
+The same feature names are fetched in the service via `get_online_features`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Src[Events / tables] --> Off[Offline store]
+    Src --> On[Online store]
+    Off --> Train[Training set]
+    On --> Inf[Inference]
+    Reg[Feature registry] --> Off
+    Reg --> On
+```
+
+## 5. Interview Prep
+
+**Q: Why not just Redis?**
+**A:** Redis is the online sink. Without a registry and PIT offline path you still have two definitions.
+
+**Q: What is training/serving skew?**
+**A:** Different code or clocks producing x_train vs x_serve. The model never saw the serve distribution.
+
+**Q: When is a feature store overkill?**
+**A:** One team, five features, one batch pipeline. The *idea* of one definition still applies; the product can wait.
+
+## 6. Production Use Cases
+
+- Recsys and ads with hundreds of shared features.
+- Fraud with streaming counters and a warehouse history.
+- Multi-model platforms that must not copy SQL.
+
+<Callout icon="tip" title="Test PIT with a known leak">
+Write a unit test that a label at t cannot see a feature timestamped t+1. If that test is missing, assume you leak.
+</Callout>

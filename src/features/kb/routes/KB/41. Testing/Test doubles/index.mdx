@@ -1,31 +1,101 @@
 ---
 title: Test Doubles
-description: "A generic mathematical term (analogous to a movie stunt double) encompassing any object used to replace a real dependency in a system for the purposes of isolated unit testing."
+description: "Stand-ins for collaborators — dummies, stubs, spies, mocks, and fakes — so a test can control the world without standing up the real one."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Test Doubles"
-  subtitle="The Stunt Doubles of Software"
-  tags={['Testing', 'Unit Testing', 'Clean Code', 'Terminology']}
->
+    <ConceptTemplate title="Test Doubles">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Gerard Meszaros coined the term "Test Double" to mathematically categorize the different ways engineers fake dependencies in Unit Tests. Many developers incorrectly call all of these "Mocks."
+**Test doubles** (Gerard Meszaros) are objects that replace a real collaborator in a test. The word "mock" is often used for the whole family; that sloppiness causes design fights. Use the precise type: dummy, stub, spy, mock, or fake.
 
-## 1. The 5 Types of Test Doubles
-1. **Dummy**: Objects passed around just to satisfy the compiler (e.g., passing `null` or an empty string into a required parameter that the test mathematically doesn't care about).
-2. **Stub**: Provides hardcoded answers to method calls (e.g., always returns `true`).
-3. **Spy**: A Stub that also secretly records mathematical data about how it was called (e.g., recording how many times `sendEmail()` was executed so the test can assert it later).
-4. **Mock**: An advanced object pre-programmed with mathematical *expectations*. If the Mock expects to be called twice, and the code only calls it once, the Mock itself throws an exception and fails the test.
-5. **Fake**: A lightweight, mathematically functioning implementation of a dependency (e.g., an In-Memory Database that actually saves data to a RAM array).
+## 1. Deep Dive and Mechanics
 
-## 2. The Danger of Over-Mocking
-Using too many Test Doubles mathematically couples your Unit Tests to the *implementation details* of the code, rather than the output. If a test is 90% Mocks and 10% real code, the test will mathematically break every time you refactor a private method, creating massive technical debt.
+**Dummy.** Passed but never used (a required constructor arg).
 
+**Stub.** Returns canned data. No interaction asserts.
+
+**Spy.** Records calls; you assert "sendMail was called once" after acting.
+
+**Mock.** Pre-programmed expectations; unexpected calls fail. Interaction-heavy.
+
+**Fake.** A working, simpler implementation (in-memory repository). Preferred when the protocol is rich.
+
+**The port.** Doubles require a seam: an interface you own. You cannot usefully double a static `Date.now` without wrapping it.
+
+<Callout icon="tip" title="Prefer fakes for stateful protocols">
+A mock of a repository that has save, find, list, and delete will rot on every extra method. An in-memory map stays boring.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A collaborator is a function (or object) C. A double C' should agree with C on the **observations the unit is allowed to make**. That is a simulation or bisimulation on a subset of the interface.
+
+Over-specified mocks encode a particular call graph — an implementation, not a spec. The test then fails on a harmless refactor (the **mock-over-specification** problem).
+
+<ComparisonTable
+  headers={['Double', 'Behaviour', 'Typical assert']}
+  rows={[
+    ['Dummy', 'Unused', 'None'],
+    ['Stub', 'Canned return', 'State of the unit'],
+    ['Spy', 'Records calls', 'Call count / args after'],
+    ['Mock', 'Expected calls', 'Interactions were exact'],
+    ['Fake', 'Real-ish logic', 'State of the fake'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```typescript
+class InMemoryOrders implements OrderPort {
+  private rows = new Map<string, Order>();
+  save(order: Order) { this.rows.set(order.id, order); }
+  find(id: string) { return this.rows.get(id) ?? null; }
+}
+
+test('place order stores a submitted order', () => {
+  const orders = new InMemoryOrders();
+  const svc = new Checkout(orders);
+  svc.place('o1', 20);
+  expect(orders.find('o1')?.status).toBe('submitted');
+});
+```
+
+This is a fake. A mock would have asserted `save` was called with a particular object shape and would break if you also wrote an audit row.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Unit[Unit under test] --> Port[Port]
+    Port --> Double[Double]
+    Double --> Assert[State or interactions]
+```
+
+## 5. Interview Prep
+
+**Q: Mock versus stub?**
+**A:** A stub only supplies values. A mock asserts conversations. If you never `verify`, you had a stub with extra API.
+
+**Q: Why do people say mocks are bad?**
+**A:** Because they mock types they do not own (HTTP clients, ORMs) and lock tests to incidental call order. Mock your ports; fake or integrate the rest.
+
+**Q: Dummy versus null?**
+**A:** A dummy is an object that satisfies a type. Null may crash. Prefer a dummy or a simple stub.
+
+## 6. Production Use Cases
+
+- **Unit tests** of domain services with fakes for stores and stubs for clocks.
+- **UI tests** that stub the network so the story is about rendering.
+- **Contract tests** that use a mock provider generated from a pact.
+
+<Callout icon="warning" title="Do not double the thing you are testing">
+If half the class is mocked, you are testing the mock framework. Extract a smaller unit or write an integration.
+</Callout>

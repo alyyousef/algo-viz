@@ -1,40 +1,99 @@
 ---
 title: Constructors
-description: Special mathematical methods within a class that are automatically invoked exactly once during the instantiation of an object, responsible for safely initializing the object's initial state in memory.
+description: "Special methods that establish a valid initial state before any other method may run on a new instance."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Constructors"
-  subtitle="The Initialization Phase"
-  tags={['OOP', 'Memory Management', 'Java', 'C++']}
->
+    <ConceptTemplate title="Constructors">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When you allocate physical memory for a new object using `new Car()`, the memory initially contains random garbage data. The Constructor is the mathematical function responsible for wiping that garbage and setting a safe initial state before any other code is allowed to touch the object.
+A **constructor** is the first user code that runs after allocation. Its job is to leave the object in a state that every later method can trust.
 
-## 1. The Mathematical Guarantee
-A Constructor has the exact same name as the Class and no return type.
-```java
-public class BankAccount {
-    private double balance;
+## 1. Deep Dive and Mechanics
 
-    // The Constructor
-    public BankAccount(double initialDeposit) {
-        if (initialDeposit &lt; 0) throw new Error();
-        this.balance = initialDeposit;
-    }
-}
+Typical order: allocate raw storage, write default field values, run superclass constructors from the top down, then run the most-derived constructor body. Java and C-sharp require `super(...)` or `this(...)` first so the parent is never observed half-built.
+
+**Overloading.** Several constructors can accept different argument lists. They should funnel through one canonical constructor so validation lives once.
+
+**Factories.** `of`, `from`, and `parse` static methods can return subtypes, cache instances, or fail without throwing from `new`. Constructors cannot return a different type.
+
+**Virtual calls.** Calling an overridable method from a constructor is dangerous: the subclass fields are not initialized yet, so the override sees zeros or nulls.
+
+<Callout icon="error" title="Never call overridable methods from a constructor">
+The subclass override runs before the subclass constructor body. That is a classic source of nulls and half-built observers.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Construction is a function from arguments to a value of the type, or an error. After success, all declared invariants hold. Two-phase init (default construct, then `init`) is a weaker contract: there exists a window where the object is allocated but illegal.
+
+In languages with value types, constructors may run on the stack. Move and copy constructors in C++ are extra operations on lifetime, not just "set the fields."
+
+<ComparisonTable
+  headers={['Style', 'Returns other types', 'Can cache', 'Can fail softly']}
+  rows={[
+    ['Constructor', 'No', 'No', 'Only by throwing'],
+    ['Static factory', 'Yes', 'Yes', 'Yes, null or Result'],
+    ['Builder', 'Usually the product', 'Optional', 'At build time'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Rectangle:
+    def __init__(self, width, height):
+        if width <= 0 or height <= 0:
+            raise ValueError("dimensions must be positive")
+        self.width = width
+        self.height = height
+
+    @classmethod
+    def square(cls, side):
+        return cls(side, side)
 ```
-By requiring `initialDeposit` in the constructor, the developer mathematically guarantees that it is impossible to create a `BankAccount` object without providing a valid starting balance. The compiler will instantly reject `new BankAccount()`, eliminating entire categories of "Null Reference" or "Uninitialized State" bugs.
 
-## 2. Constructor Overloading
-A single class can mathematically possess multiple constructors, provided they have different parameter signatures (Overloading).
-You could have `public User(String email)` and `public User(String email, String phone)`. When you type `new User("bob@a.com")`, the compiler mathematically analyzes the arguments and routes the execution to the exact constructor that matches that specific mathematical signature.
+`square` is a named factory that still goes through the same checks.
 
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant C as Caller
+    participant A as Allocator
+    participant P as Parent ctor
+    participant D as Derived ctor
+    C->>A: new Derived(args)
+    A->>P: construct parent
+    P-->>A: parent ready
+    A->>D: construct derived
+    D-->>C: reference
+```
+
+## 5. Interview Prep
+
+**Q: Constructor versus factory method?**
+**A:** A constructor always allocates this exact type. A factory can reuse instances, pick a subclass, or return a failure object. Prefer factories when those extra powers matter.
+
+**Q: What is a copy constructor?**
+**A:** In C++ it builds a new object from an existing one. If you define one, you usually need the rest of the rule-of-five so copies, moves, and destruction stay consistent.
+
+**Q: Why do some guides ban work in constructors?**
+**A:** Heavy I/O makes objects hard to test and easy to fail halfway through a graph. Inject already-opened resources, or use an explicit `start` after a cheap constructor.
+
+## 6. Production Use Cases
+
+- **Domain entities** that refuse to exist without an id and a valid status.
+- **Builders** for types with many optional fields (HTTP clients, query objects).
+- **Dependency graphs** where constructors take interfaces, not concrete services.
+
+<Callout icon="tip" title="One canonical constructor">
+Overloads and factories should call one private or primary constructor. Duplicate validation will drift.
+</Callout>

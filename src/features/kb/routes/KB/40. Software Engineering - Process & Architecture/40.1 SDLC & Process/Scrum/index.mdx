@@ -3,46 +3,114 @@ title: Scrum
 description: "The most popular Agile framework, organizing work into short, time-boxed iterations called Sprints."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Scrum">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Scrum** is the most widely utilized framework for implementing Agile development. It provides a lightweight structure consisting of specific Roles, Artifacts, and Ceremonies (meetings) designed to help teams deliver value iteratively.
+**Scrum** is a lightweight Agile framework built around a **Sprint**: a fixed-length iteration that produces a potentially shippable increment. It defines three accountabilities, five events, and three artifacts. The Scrum Guide is deliberately short; most pain in the wild comes from adding extra process or using Scrum as a status-reporting machine for a project manager.
 
-## 1. The Sprints
-In Scrum, all work is executed in time-boxed iterations called **Sprints**, typically lasting exactly 2 weeks. At the end of the Sprint, the team must produce a potentially shippable increment of the product.
+Scrum assumes a complex domain where you cannot predict the whole product up front. You inspect the increment and the process every Sprint and adapt the backlog and the working agreements.
 
-Once a Sprint begins, the goal is locked in—management is not allowed to add new surprise tasks to the team's plate mid-sprint.
+## 1. Deep Dive and Mechanics
 
-## 2. The Three Roles
+**Sprint.** Commonly two weeks, never longer than one month. Scope is not supposed to change in a way that endangers the Sprint Goal. New work waits in the Product Backlog. That lock is what makes the forecast honest.
 
+**Accountabilities.**
+- **Product Owner** owns the Product Backlog and the **what** and **why**. One person, not a committee with a shared inbox.
+- **Scrum Master** is a coach and impediment remover, not a line manager or a Jira clerk.
+- **Developers** own the **how**, the Sprint forecast, and engineering quality.
 
-<ComparisonTable headers={['Role', 'Responsibilities']} rows={[ ['Product Owner', 'Represents the business and the customer. Owns the "What" and the "Why". Prioritizes the backlog.'], ['Scrum Master', 'The facilitator. Protects the team from outside interruptions, removes blockers, and ensures Scrum rules are followed.'], ['Developers', 'The engineers, designers, and QA who do the actual work. They own the "How" and estimate how much work they can take on.'] ]} />
+**Events.** Sprint Planning selects a Sprint Goal and a forecast. The Daily Scrum is a 15-minute developer plan for the next 24 hours, not a status meeting for stakeholders. Sprint Review inspects the increment with stakeholders. Sprint Retrospective inspects the process. The Sprint itself contains all of these.
 
+**Artifacts and commitments.** Product Backlog has a Product Goal. Sprint Backlog has a Sprint Goal. The Increment must meet the **Definition of Done**. Transparency fails when Done means compiled on my laptop.
 
-## 3. The Ceremonies (Meetings)
-Scrum defines four specific meetings to structure the feedback loop:
-
-1. **Sprint Planning**: At the start of the Sprint. The team looks at the prioritized Backlog and agrees on what they can realistically complete in the next 2 weeks.
-2. **Daily Stand-up**: A strictly 15-minute daily sync. Each member states: What did I do yesterday? What will I do today? Am I blocked by anything?
-3. **Sprint Review (Demo)**: At the end of the Sprint. The team demonstrates the working software they just built to stakeholders.
-4. **Sprint Retrospective**: A private team meeting to reflect on the process itself. What went well? What went poorly? How can we improve our workflow next sprint?
-
-
-<Callout icon="warning" title="Story Points & Velocity">
-
-
-Scrum teams rarely estimate tasks in "Hours", because humans are terrible at absolute time estimation. Instead, they use **Story Points** (often following the Fibonacci sequence: 1, 2, 3, 5, 8) to estimate the *relative complexity* of a task. The total number of points a team completes in a sprint is their **Velocity**.
-
-
+<Callout icon="warning" title="Story points are not hours">
+Teams often estimate relative complexity with Fibonacci-like sizes (1, 2, 3, 5, 8). Velocity is the count of those points finished in a Sprint. It forecasts capacity for this team. It is a terrible cross-team performance score.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Scrum is **empirical process control** with three pillars: transparency, inspection, and adaptation. The Sprint is a sampling interval. Too long, and you discover failure late. Too short, and planning overhead dominates useful work.
+
+Forecasting uses **yesterday's weather**: next Sprint capacity is close to recent throughput, not to a wish. Monte Carlo methods on historical cycle times beat a single velocity number when the work mix is noisy.
+
+Story-point math is ordinal, not interval. An 8 is not twice a 4 in any physical unit. Treating points as hours reintroduces false precision. Little's Law still applies: too many items in a Sprint (high WIP) inflates cycle time and unfinished work at Sprint end.
+
+<ComparisonTable
+  headers={['Accountability', 'Owns', 'Does not own']}
+  rows={[
+    ['Product Owner', 'Backlog order and Product Goal', 'Task-level assignment of developers'],
+    ['Scrum Master', 'Process coaching and impediment removal', 'Delivery commitments on behalf of the team'],
+    ['Developers', 'Sprint forecast, quality, and how to build', 'Unilateral product priority'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+A Sprint forecast can be a simple capacity check: sum of planned points versus a rolling average of completed points. The code below is a planning helper, not a substitute for conversation.
+
+```python
+from collections import deque
+
+class VelocityWindow:
+    def __init__(self, n=5):
+        self.recent = deque(maxlen=n)
+
+    def record(self, completed_points: int) -> None:
+        self.recent.append(completed_points)
+
+    def forecast(self) -> float:
+        if not self.recent:
+            return 0.0
+        return sum(self.recent) / len(self.recent)
+
+    def fits(self, planned_points: int, buffer=0.85) -> bool:
+        return planned_points <= self.forecast() * buffer
+```
+
+The buffer is honesty about interrupts, production support, and estimation error. A team that plans to 100 percent of peak velocity will fail the Sprint Goal often.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    PB[Product Backlog] --> Plan[Sprint Planning]
+    Plan --> SB[Sprint Backlog plus Sprint Goal]
+    SB --> Daily[Daily Scrum]
+    Daily --> Inc[Done Increment]
+    Inc --> Review[Sprint Review]
+    Review --> Retro[Retrospective]
+    Retro --> PB
+    Review --> PB
+```
+
+## 5. Interview Prep
+
+**Q: Product Owner versus project manager?**
+**A:** A PO maximizes product value through backlog order. A traditional PM tracks tasks, dates, and resources. Combining both roles often turns Scrum into a status factory and starves product discovery.
+
+**Q: What if leadership adds work mid-Sprint?**
+**A:** The Scrum Master protects the Sprint Goal. The PO can renegotiate scope with developers if the Goal is still achievable. Constant mid-Sprint injection means the organization is not using Scrum; it is using a two-week status cadence.
+
+**Q: Scrum versus Kanban?**
+**A:** Scrum uses a time-box and a Sprint Goal. Kanban uses a continuous flow with explicit WIP limits and no required Sprint. Many teams run Scrum events on a Kanban board. Pick the constraint you actually need: a shared goal cadence, or smoother flow of uneven work.
+
+**Q: Why is the Daily Scrum for developers?**
+**A:** It is a replan of the next day toward the Sprint Goal. When it becomes a report to a manager, people optimize for sounding busy instead of finishing the increment.
+
+## 6. Production Use Cases
+
+- **Feature teams** on a single product with a clear PO and a shared Definition of Done, releasing every Sprint or continuously via trunk-based development.
+- **Platform teams** using Scrum for a Product Goal such as a self-service deploy path, with application teams as the Review audience.
+- **Regulated delivery** attaching evidence (tests, threat models, change records) to the Increment so Done includes compliance, not a later hardening Sprint.
+
+<Callout icon="tip" title="One Definition of Done">
+If Done differs per person, the Increment is not transparent. Write Done as a checklist the team can fail in CI: tests, review, observability, and the release path.
+</Callout>

@@ -1,35 +1,86 @@
 ---
 title: XML External Entity (XXE)
-description: A severe vulnerability occurring when weakly configured XML parsers process XML input containing a reference to an external entity.
+description: "XML parsers that expand external entities and leak files or cause the server to fetch attacker-chosen URLs."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="XML External Entity (XXE)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Many older enterprise applications (and modern APIs like SOAP) communicate using XML instead of JSON. The XML specification includes a legacy feature called **Entities**, which act like variables.
+**XXE** is a parser-configuration bug. XML allows entities that expand to file contents or remote URLs. If you parse untrusted XML with defaults from older libraries, those entities resolve on the server. The fix is **disable DTDs and external entities**, or stop using XML.
 
-An **External Entity** allows the XML document to mathematically fetch data from a local file path or a URL and inject it into the document as it parses. If a server allows a user to upload XML and blindly parses it, an attacker can use XXE to steal files off the server.
+## 1. Deep Dive and Mechanics
 
+A hostile document can define an entity that points at a local file or an internal URL (SSRF-by-XML). Some parsers also expand parameter entities in ways that lead to denial of service (billion laughs is a related expansion bomb).
 
-<Callout icon="tip" title="The /etc/passwd Attack">
+**Safe settings.** Disable DTDs, external general entities, and external parameter entities. Do not enable XInclude unless you must, and never on untrusted docs. Prefer JSON APIs.
 
+**Where it hides.** SAML, SOAP, office document formats, RSS importers, and "just upload this XML config" admin tools.
 
-  An attacker uploads this payload: `<!DOCTYPE foo [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><user>&xxe;</user>`. If the XML parser is vulnerable, it will mathematically read the sensitive Linux password file from the hard drive and embed the text into the API response!
-
-
+<Callout icon="warning" title="Default parser settings have been wrong for a decade">
+If you did not explicitly harden the parser, assume it is unsafe until you prove otherwise on your library version.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Impact of XXE
+XML is a document plus an optional DTD language that can perform substitution. Security is turning off that language. Entity expansion is also a complexity attack (exponential or quadratic blow-up). Caps on entity count and size are a resource bound, not a substitute for disabling external resolution.
 
-1. **Local File Disclosure:** The attacker can read sensitive configuration files, stealing AWS API keys or database passwords stored on the disk.
-2. **Server-Side Request Forgery (SSRF):** Instead of pointing the entity at a local file (`file://`), the attacker points it at an internal IP address (`http://192.168.1.50`). The server will make an HTTP request to that internal machine, allowing the attacker to scan the private network behind the firewall.
-3. **Billion Laughs Attack (DoS):** A Denial of Service attack where the attacker defines mathematical entities that expand exponentially. 10 entities that each call 10 other entities can crash the server's RAM in milliseconds.
+<ComparisonTable
+  headers={['Parser setting', 'Intent', 'Untrusted XML']}
+  rows={[
+    ['DTDs enabled', 'Legacy docs', 'Off'],
+    ['External entities', 'Includes', 'Off'],
+    ['XInclude', 'Modular XML', 'Off'],
+    ['JSON instead', 'Avoid the class', 'Preferred'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```python
+from defusedxml import ElementTree
+
+def parse_upload(raw: bytes):
+    return ElementTree.fromstring(raw)
+```
+
+defusedxml rejects the dangerous features. In Java, set the equivalent factory features to false and add unit tests that a DTD-bearing fixture fails closed.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    XML[Uploaded XML] --> Soft[Default parser]
+    Soft --> Ent[Resolve external entity]
+    Ent --> Leak[File or internal HTTP]
+    XML --> Hard[DTD-disabled parser]
+    Hard --> DOM[Safe element tree]
+```
+
+## 5. Interview Prep
+
+**Q: XXE vs SSRF?**
+**A:** XXE can cause SSRF (the parser fetches a URL). SSRF is the broader class of server fetches. Fix both the parser and any explicit URL fetchers.
+
+**Q: Is JSON immune?**
+**A:** JSON has no DTD entity system. You still need schema validation. You do not need XXE hardening.
+
+**Q: How do you test without leaking files?**
+**A:** Feed a fixture with a DTD and assert the parser errors. Do not point entities at real secrets in tests.
+
+## 6. Production Use Cases
+
+- **Document import** (DOCX/ODF are zip+XML).
+- **SAML** libraries — keep them patched and configured.
+- **Legacy SOAP** that you should front with a hardened gateway.
+
+<Callout icon="tip" title="Add a unit test that DTD parsing fails">
+Configuration drifts when someone "fixes" a customer file by turning DTDs back on. The test is the lock.
+</Callout>

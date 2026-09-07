@@ -1,25 +1,99 @@
 ---
-title: Network Access Control Lists (NACLs)
-description: The stateless, subnet-level firewall in an AWS VPC that mathematically evaluates ordered rules to allow or deny network traffic before it ever reaches the servers.
+title: AWS Network ACLs
+description: "Stateless subnet firewalls: numbered allow/deny rules on ingress and egress — a coarse second layer beneath security groups, not a replacement."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Network Access Control Lists (NACLs)"
-  subtitle="The Subnet Firewall"
-  tags={['AWS', 'Networking', 'Security', 'VPC']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="NACLs">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-A Security Group protects a specific EC2 server. A NACL protects the entire Subnet (the neighborhood). If a hacker's packet is mathematically dropped by the NACL, the Security Group never even sees it.
+A **network ACL (NACL)** is a stateless packet filter attached to a subnet. Every ENI in that subnet is subject to the inbound list and the outbound list. Rules are numbered; the first match wins. Because it is stateless, a request you allow in does **not** automatically allow the response out — you must allow ephemeral ports on the return path.
 
-## 1. Stateless vs. Stateful
-Security Groups are **Stateful**. If an EC2 server initiates a request to the internet, the Security Group mathematically remembers the state of the connection and automatically allows the response packet back in, regardless of inbound rules.
-NACLs are **Stateless**. They have no memory. If a subnet sends a request out to the internet, the response packet coming back is evaluated purely on its own merits against the Inbound Rules. If you do not explicitly open the high Ephemeral Ports (1024-65535) on the Inbound NACL, the response packet is mathematically destroyed, and your server will appear to have no internet access.
+## 1. Deep Dive and Mechanics
 
-## 2. Ordered Rule Evaluation
-Unlike IAM policies (where a single Deny overrides everything), NACL rules are mathematically evaluated in strict numerical order.
-- Rule 100: ALLOW IP 192.168.1.5
-- Rule 110: DENY ALL
-If IP 192.168.1.5 tries to enter, the NACL evaluates Rule 100, matches it, and instantly allows the packet. It never looks at Rule 110. This strict mathematical ordering allows network administrators to create surgical Deny rules (e.g., "Deny this one specific hacker IP at Rule 90, but Allow the rest of the world at Rule 100").
+**Default NACL.** Allows all in and out. Custom NACLs start empty (deny all) until you add rules. Forgetting ephemeral outbound/inbound is the #1 “I added a NACL and the subnet died” story.
 
-</TechnologyTemplate>
+**Rule numbers.** Evaluate from lowest number. A catch-all deny at 32767 (or implicit deny) sits at the end. Leave gaps (100, 110, 120) so you can insert.
+
+**Association.** One NACL per subnet. Many subnets can share a NACL. Changing a shared NACL changes every associated subnet at once.
+
+**IPv4 and IPv6.** Separate rule spaces. Dual-stack means you maintain both.
+
+**What they cannot see.** They do not understand TLS or IAM. They do not replace SGs. They do not attach to a single instance.
+
+<Callout icon="warning" title="Ephemeral ports">
+Clients pick a high source port (1024–65535, often 32768–65535). If you allow inbound 443 but forget inbound ephemeral on the return for a public subnet’s outbound, or the reverse, you have built a one-way street.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Stateless filter: each packet is classified independently. Connection tracker state is **not** stored (that is the SG). Capacity is rule-count × packet rate; keep lists short.
+
+Defense in depth: SG (stateful, instance) ∩ NACL (stateless, subnet) ∩ routing. A deny in either SG or NACL drops the packet.
+
+<ComparisonTable
+  headers={['Control', 'State', 'Scope']}
+  rows={[
+    ['Security group', 'Stateful', 'ENI'],
+    ['NACL', 'Stateless', 'Subnet'],
+    ['WAF', 'HTTP layer', 'ALB / CloudFront / APIGW'],
+    ['Route table', 'Not a firewall', 'Where packets go'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Allow HTTP in and ephemeral return — custom NACL sketch
+inbound = [
+    (100, 'tcp', 80, '0.0.0.0/0', 'allow'),
+    (110, 'tcp', 443, '0.0.0.0/0', 'allow'),
+    (120, 'tcp', '1024-65535', '0.0.0.0/0', 'allow'),
+]
+outbound = [
+    (100, 'tcp', 80, '0.0.0.0/0', 'allow'),
+    (110, 'tcp', 443, '0.0.0.0/0', 'allow'),
+    (120, 'tcp', '1024-65535', '0.0.0.0/0', 'allow'),
+]
+```
+
+Most modern designs keep NACLs wide (or default) and enforce with SGs. Use custom NACLs when you need an explicit subnet-level deny (known bad prefix, isolated quarantine subnet).
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Pkt[Packet] --> NACL[Subnet NACL]
+    NACL --> SG[ENI security group]
+    SG --> App[Instance]
+    App --> SG2[SG out]
+    SG2 --> NACL2[NACL out]
+```
+
+## 5. Interview Prep
+
+**Q: Why do we even have NACLs if SGs exist?**
+**A:** Subnet-wide denies, explicit deny (SGs are allow-only), and a second control for auditors. Day-to-day allow lists belong on SGs.
+
+**Q: Can a NACL allow what an SG denies?**
+**A:** No. Both must pass. NACL cannot punch a hole through an SG.
+
+**Q: What breaks first when someone “locks down” a NACL?**
+**A:** Return traffic and DNS (53) and NTP. Symptom: half-open connections and flaky package installs.
+
+## 6. Production Use Cases
+
+- Quarantine subnets with a deny-all except forensics.
+- Explicit deny of a malicious CIDR at the subnet edge.
+- Regulatory diagrams that want a subnet firewall in addition to SGs.
+
+<Callout icon="tip" title="Default-allow NACLs, strict SGs">
+If you do not have a specific subnet deny to implement, leave the default NACL alone. Inventing a parallel rule system is how you page yourself.
+</Callout>

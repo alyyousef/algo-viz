@@ -1,24 +1,95 @@
 ---
 title: Google Cloud DNS
-description: A highly available, scalable Domain Name System (DNS) service mathematically engineered by Google to translate human-readable domain names into IP addresses globally with a 100% SLA.
+description: "Managed authoritative DNS: public and private zones, peering, and routing policies — the control plane for names, not a substitute for a load balancer."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud DNS"
-  subtitle="Global Domain Routing"
-  tags={['GCP', 'Networking', 'DNS', 'Global']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud DNS">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If a hacker takes down your DNS provider, your entire company mathematically ceases to exist on the internet, even if your servers are running perfectly. Cloud DNS leverages the exact same global infrastructure that keeps Google.com online.
+**Cloud DNS** is Google’s authoritative DNS service. **Public zones** answer on the internet. **Private zones** answer only inside selected VPCs. Record sets are the usual A/AAAA/CNAME/MX/TXT plus routing policies (weighted, geolocation). It is not recursive DNS for the world; VMs still use the metadata resolver (169.254.169.254).
 
-## 1. The 100% Mathematical SLA
-Because DNS is the absolute bedrock of internet routing, Cloud DNS provides a mathematically binding **100% Service Level Agreement (SLA)**.
-Google guarantees the service will never go offline. It achieves this by heavily replicating your DNS Zone file (the list of your A Records, CNAMEs, and MX Records) across a massive, globally distributed network of Anycast name servers. When a user queries `yourcompany.com`, the query is automatically routed to the closest surviving name server, ensuring sub-millisecond resolution times regardless of regional internet outages.
+## 1. Deep Dive and Mechanics
 
-## 2. Private vs. Public Zones
-Cloud DNS is not just for the public internet; it is crucial for internal VPC networking.
-- **Public Zones**: Translates `yourcompany.com` to a Public IP address for the world to see.
-- **Private Zones**: You can create a Private DNS Zone exclusively for your internal GCP Virtual Private Cloud (VPC). You can mathematically map `database.internal` to Private IP `10.0.0.5`. This record is physically invisible to the public internet. Only Virtual Machines residing strictly inside that specific VPC can resolve the name, providing massive internal security and simplifying microservice communication.
+**Zones.** A managed zone is a DNS suffix you own (public) or invent (private, e.g. `internal.shop.`). DNSSEC is available on public zones.
 
-</TechnologyTemplate>
+**VPC association.** Private zones bind to networks. **DNS peering** lets a consumer VPC query a producer’s private zone. **Inbound/outbound forwarding** talks to on-prem BIND.
+
+**Routing policies.** Weighted round-robin and geo policies at the record set. This is coarse failover — health is not a full HTTP probe like Traffic Director.
+
+**Service Directory and Cloud DNS.** Integrations exist so service names become records. GKE can register services.
+
+**IAM.** Split who can mutate `prod.` vs `dev.`. A TXT record is how people hijack domain verification — lock production zones.
+
+<Callout icon="warning" title="Private zone split-horizon">
+The same FQDN in a public zone and a private zone answers differently inside the VPC. That is powerful and a debugging tax. Document which view a laptop VPN sees.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+DNS TTL is a cache lease. Failover time ≥ TTL + resolver cache. Lower TTL increases QPS on Cloud DNS (and on you when you are the target of a storm).
+
+Authoritative vs recursive: Cloud DNS publishes; clients recurse via Google or their ISP. You cannot “flush the internet.”
+
+<ComparisonTable
+  headers={['Zone', 'Who can query', 'Use']}
+  rows={[
+    ['Public', 'Internet', 'Customer names'],
+    ['Private', 'Selected VPCs', 'Internal APIs'],
+    ['Peered private', 'Consumer VPCs', 'Shared services'],
+    ['Forwarding', 'On-prem or GCP', 'Hybrid names'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+gcloud dns managed-zones create internal-shop \
+  --dns-name=internal.shop. \
+  --visibility=private \
+  --networks=vpc-prod
+
+gcloud dns record-sets create sql.internal.shop. \
+  --zone=internal-shop --type=A --ttl=300 \
+  --rrdatas=10.10.2.4
+```
+
+Automate record sets in Terraform or a pipeline. Click-ops DNS is how stale IPs survive a migration.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    VM[VPC resolver] --> Priv[Private zone]
+    Inet[Internet] --> Pub[Public zone]
+    OnPrem[On-prem] --> Fwd[Forwarding]
+    Fwd --> Priv
+```
+
+## 5. Interview Prep
+
+**Q: Cloud DNS vs Cloud Load Balancing?**
+**A:** DNS names a VIP. The LB is the VIP and the health-checked hop. DNS failover alone is slow and dumb about HTTP 500s.
+
+**Q: How do hybrid names work?**
+**A:** Outbound forwarding from GCP to on-prem for `corp.local`, inbound forwarding so on-prem can resolve `internal.shop`. Overlapping suffixes are pain.
+
+**Q: What is DNS peering?**
+**A:** A consumer network is allowed to query a producer’s private zones without copying records. Shared-services host project pattern.
+
+## 6. Production Use Cases
+
+- Public zone for `example.com` with IAM-restricted editors.
+- Private zone per environment, peered to app VPCs.
+- Weighted records for a coarse blue/green at DNS (know the TTL).
+
+<Callout icon="tip" title="Delegate with NS, do not copy records">
+A subdomain (`gcp.example.com`) as its own zone keeps IAM and Terraform scoped. One giant zone file is a merge conflict factory.
+</Callout>

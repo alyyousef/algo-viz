@@ -1,38 +1,85 @@
 ---
 title: Snort
-description: The original, legendary open-source Network Intrusion Detection System created by Sourcefire.
+description: "An open-source network IDS/IPS that matches traffic against rules so you can detect or drop known-bad patterns."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Snort">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by Martin Roesch in 1998, **Snort** is arguably the most famous Network Intrusion Detection System (NIDS) in the world. Now owned by Cisco, it fundamentally defined how signature-based threat detection operates.
+**Snort** is a long-lived network intrusion detection (and, in-line, prevention) engine. You feed it a span or a bump-in-the-wire and a ruleset. It is a **detection control**, not an attack tool. Encrypted traffic limits what payload rules can see unless you inspect at a trusted break.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="warning" title="Snort Rules">
+**IDS mode.** Copy of traffic, alerts to the SIEM. Safe. **IPS mode.** In-line drop. Fast and able to hurt availability if a rule is wrong.
 
+**Rules.** Community, subscription, and your locals. Each rule needs an owner and a disable path. Tune or you will drown.
 
-  The true value of Snort is its syntax. "Snort Rules" have become the lingua franca of the cybersecurity industry. Almost all major commercial firewalls and competing open-source tools (like Suricata) natively understand and import Snort rules.
+**Placement.** Internet edge, egress, and a few east-west chokepoints. You cannot span the whole cloud by wishing.
 
-
+<Callout icon="info" title="TLS is most of the packet">
+Without a designed TLS inspection point, many payload rules become metadata and JA3-style guesses.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Anatomy of a Snort Rule
+Snort rules are pattern matchers over packets and streams (content, PCRE, flow). Detection is approximate: evasion and encryption exist. IPS adds a fail-closed/fail-open decision. False-positive rate times traffic volume is the SOC cost.
 
-A Snort rule consists of a **Rule Header** (who, where, and what) and **Rule Options** (the specific mathematical payload to look for).
+<ComparisonTable
+  headers={['Mode', 'On path?', 'Failure']}
+  rows={[
+    ['IDS', 'No', 'You miss silently'],
+    ['IPS', 'Yes', 'You drop good traffic'],
+    ['NSM (Suricata/Zeek)', 'Usually no', 'Storage cost'],
+    ['Host EDR', 'Host', 'Unmanaged devices'],
+  ]}
+/>
 
-`alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SQL Injection Attempt"; content:"%27 OR 1=1"; sid:100001;)`
+## 3. Real-World Implementation
 
-- **Action:** `alert` (Log the packet)
-- **Protocol:** `tcp`
-- **Source/Dest:** From any external IP to our internal HTTP servers.
-- **Payload Math:** Look for the exact byte sequence of `' OR 1=1` URL-encoded.
+```text
+# Rule hygiene
+# - Pull official sets on a schedule
+# - Every local rule has an owner and a ticket
+# - Disable with a comment, never "delete and forget"
+# - Alert to SIEM with sensor id and src/dst
+```
 
+Test new drop rules in alert-only for a week.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Span[Span or in-line] --> Snort[Snort]
+    Snort --> SIEM[SIEM]
+    Snort --> Drop[Optional drop]
+```
+
+## 5. Interview Prep
+
+**Q: Snort vs Suricata?**
+**A:** Same niche. Suricata is multi-thread and often faster on modern NICs. Snort 3 modernized the old engine. Pick operations, not religion.
+
+**Q: IDS vs IPS?**
+**A:** Detect vs block. Blocking needs change control and a rollback.
+
+**Q: Why still use NIDS in a Zero Trust world?**
+**A:** Egress malware, guest networks, and places you do not have EDR.
+
+## 6. Production Use Cases
+
+- **Campus egress** IDS.
+- **OT** spans where you cannot put agents.
+- **Lab** teaching of detection engineering.
+
+<Callout icon="tip" title="Name the sensor in the alert">
+"Snort fired" without which site and which interface is not an alert.
+</Callout>

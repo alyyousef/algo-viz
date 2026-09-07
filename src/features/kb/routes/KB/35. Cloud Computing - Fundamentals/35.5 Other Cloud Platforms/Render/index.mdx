@@ -1,23 +1,100 @@
 ---
 title: Render
-description: A unified, developer-friendly cloud platform that mathematically combines the simplicity of Heroku with the flexibility of AWS, offering managed web services, background workers, and persistent disks.
+description: "Heroku-like PaaS: web services, workers, cron, and managed Postgres — git deploy with clearer IaaS-shaped knobs."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Render"
-  subtitle="Unified Cloud Hosting"
-  tags={['Cloud', 'PaaS', 'Developer', 'Deployment']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Render">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Render aims to be the "zero DevOps" cloud. While Railway focuses heavily on a canvas UI, Render focuses on a mathematically predictable, highly stable environment for running both stateless web apps and stateful services.
+**Render** is a PaaS in the Heroku tradition: **web services**, **background workers**, **cron jobs**, static sites, and **managed Postgres/Redis**. You connect GitHub/GitLab, pick a region, and get HTTPS. Private services and a private network keep workers off the internet. `render.yaml` is Infrastructure-as-blueprint.
 
-## 1. Native Private Networking
-In many PaaS environments, if your Web App needs to talk to your Redis cache, the traffic is mathematically routed out to the public internet and back in, creating latency and massive security vulnerabilities.
-Render utilizes **Native Private Networking**. When you deploy a Web Service and a Redis instance in the same Render region, they are placed in a mathematically isolated private network. They communicate using internal IP addresses. The Redis cache is never exposed to the public internet, guaranteeing strict architectural security without requiring the developer to configure complex VPCs or subnets.
+## 1. Deep Dive and Mechanics
 
-## 2. Background Workers and Persistent Disks
-Heroku forced developers to use ephemeral filesystems (where files vanish on restart).
-Render mathematically supports both stateless and stateful architectures. You can attach a **Persistent Disk** to a Background Worker instance. If you have a Python script scraping massive CSV files from the internet, it can save them to the persistent disk. Even if Render mathematically restarts the Python container, the disk remains safely attached, allowing developers to build complex data-processing pipelines without requiring external AWS S3 integration.
+**Services.** Docker or native buildpacks. Autoscaling on paid plans. Zero-downtime deploys if the health check is honest.
 
-</TechnologyTemplate>
+**Datastores.** Render Postgres with PITR on higher tiers. Disks for services that insist on local state — those do not horizontally scale.
+
+**Preview environments.** Spin a stack per PR from `render.yaml`. Cost and data isolation are the reviews you skip at your peril.
+
+**Networking.** Public web vs private worker. Internal URLs for service-to-service.
+
+<Callout icon="warning" title="Health check path">
+A `/` that returns 200 only after a 30s warmup will flap deploys. Give Render a cheap `/healthz`.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Price is instance-hours plus datastore. A always-on web + worker + PG is comparable to a small VM trio, with less SSH.
+
+Single-region by service. Multi-region is multiple services and a data story you design.
+
+<ComparisonTable
+  headers={['Need', 'Render', 'Heroku']}
+  rows={[
+    ['Web + worker', 'Yes', 'Yes'],
+    ['IaC file', 'render.yaml', 'app.json / terraform'],
+    ['Private net', 'Yes', 'Spaces / Private'],
+    ['Dyno metaphor', 'Service plan', 'Dyno type'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+# render.yaml
+services:
+  - type: web
+    name: api
+    runtime: docker
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pg
+          property: connectionString
+databases:
+  - name: pg
+    plan: basic-256mb
+```
+
+Commit this. Console-only services drift.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Git --> Web[Web service]
+    Git --> Wk[Worker]
+    Web --> PG[Render Postgres]
+    Wk --> PG
+    Cron[Cron] --> Wk
+```
+
+## 5. Interview Prep
+
+**Q: Render vs Heroku?**
+**A:** Same job. Render is often cheaper/clearer for new teams. Heroku has older marketplace gravity.
+
+**Q: Render vs Railway?**
+**A:** Overlap. Render's yaml and service types are very Heroku-shaped. Pick on region, DX, and Postgres features.
+
+**Q: When to leave?**
+**A:** Custom networking, multi-cloud IAM, or cost at large steady fleets.
+
+## 6. Production Use Cases
+
+- Product APIs with a worker and cron.
+- Static + API hybrids.
+- Preview stacks for pull requests.
+
+<Callout icon="tip" title="Separate worker from web">
+CPU-heavy jobs on the web service steal request latency. A worker service is cheaper than a pager.
+</Callout>

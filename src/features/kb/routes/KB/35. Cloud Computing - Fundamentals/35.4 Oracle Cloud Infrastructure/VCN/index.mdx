@@ -1,26 +1,90 @@
 ---
-title: Oracle Virtual Cloud Network (VCN)
-description: The foundational software-defined networking construct in OCI, mathematically providing a customizable, isolated private network for deploying cloud infrastructure.
+title: OCI Virtual Cloud Network (VCN)
+description: "Regional private network: CIDRs, gateways, subnets, and routing — the container for almost every NIC in the tenancy."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Oracle Virtual Cloud Network (VCN)"
-  subtitle="The Foundational Cloud Network"
-  tags={['OCI', 'Networking', 'VCN', 'Infrastructure']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Virtual Cloud Network">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-A VCN is the exact OCI equivalent of an AWS VPC. Before you can provision a single Virtual Machine, you must mathematically define the networking physics of the environment by creating a VCN.
+A **VCN** is a regional software-defined network. You assign one or more CIDRs, then add **subnets**, **gateways** (IGW, NAT, Service, DRG), **route tables**, and **security lists / NSGs**. Most resources with a VNIC attach here. It is the AWS VPC analog, regional like AWS, not global like GCP.
 
-## 1. The Regional CIDR Block
-When you create a VCN, you assign it a contiguous block of IP addresses using Classless Inter-Domain Routing (CIDR) notation (e.g., `10.0.0.0/16`).
-This VCN mathematically spans all Availability Domains within a specific Region. It is a completely isolated logical entity. If you deploy a database inside this VCN, it is physically impossible for the public internet to reach it unless you explicitly attach an Internet Gateway and modify the mathematical Route Tables.
+## 1. Deep Dive and Mechanics
 
-## 2. Default Components
-By default, when a VCN is created, OCI provisions three mathematical constructs attached to it:
-- A **Default Route Table** (empty by default for security).
-- A **Default Security List** (allowing internal SSH and blocking external access).
-- A **Default DHCP Options** set (handling internal DNS resolution).
-While these defaults exist, enterprise security best practices dictate that cloud architects should mathematically abandon the default constructs and create strict, custom Route Tables and Security Lists uniquely tailored for every individual Subnet.
+**CIDRs.** IPv4 blocks you can expand later if adjacent space is free. Overlap with on-prem or peered VCNs blocks routing.
 
-</TechnologyTemplate>
+**Gateways.** IGW (internet), NAT (private egress), Service Gateway (OSN), DRG (hybrid/hub), LPG (local VCN peer). Each is a next hop, not a subnet.
+
+**DNS.** Enable VCN resolver. Instance hostnames work if subnet DNS labels exist.
+
+**Peering.** LPG is 1:1 local. DRG is hub. Remote peering joins regions. Transitive routing needs the DRG design, not stacked LPGs.
+
+<Callout icon="warning" title="One giant VCN vs many">
+One VCN is simple IPAM. Many VCNs isolate blast radius and billing units. Hub-spoke with a DRG is the usual enterprise answer, not 40 LPGs.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Address space is a packing problem against on-prem and other clouds. A 10.0.0.0/8 VCN is rude if you will ever peer.
+
+Packet path: VNIC → NSG/list → LPM route → gateway. Failures are usually the middle two.
+
+<ComparisonTable
+  headers={['Network', 'Scope', 'Peer style']}
+  rows={[
+    ['VCN', 'Regional', 'LPG / DRG'],
+    ['AWS VPC', 'Regional', 'TGW / peering'],
+    ['GCP VPC', 'Global', 'Peering / NCC'],
+    ['Azure VNet', 'Regional', 'Peering / vWAN'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci network vcn create --compartment-id $NET \
+  --cidr-blocks '["10.20.0.0/16"]' --display-name prod \
+  --dns-label prod
+```
+
+Then add regional subnets, IGW/NAT/SGW, and split route tables before the first instance.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    VCN[VCN] --> Pub[Public subnet]
+    VCN --> Priv[Private subnet]
+    VCN --> IGW[IGW]
+    VCN --> NAT[NAT]
+    VCN --> SGW[Service Gateway]
+    VCN --> DRG[DRG]
+```
+
+## 5. Interview Prep
+
+**Q: VCN vs subnet vs NSG?**
+**A:** VCN is the network. Subnet is a CIDR + route table. NSG is the VNIC firewall.
+
+**Q: How do two VCNs talk?**
+**A:** LPG if simple and same region. DRG if hub-spoke or hybrid.
+
+**Q: Is a VCN global?**
+**A:** No. Regional. Cross-region is remote peering or public, not implicit.
+
+## 6. Production Use Cases
+
+- Landing-zone hub VCN plus spoke VCNs per environment.
+- Isolated sandbox VCN with no DRG.
+- Dual-CIDR VCN when you must merge overlapping teams (painful; avoid).
+
+<Callout icon="tip" title="Create the VCN in a network compartment">
+App teams `use` subnets. They do not `manage` the VCN. That policy split is the whole landing zone.
+</Callout>

@@ -1,25 +1,87 @@
 ---
 title: OCI Monitoring
-description: A comprehensive metrics and alerting engine that mathematically analyzes the real-time health, performance, and capacity of the entire Oracle Cloud infrastructure.
+description: "Metrics, alarms, and MQL: namespace plus dimensions, then a threshold that pages — not a dashboard you glance at after the outage."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Monitoring"
-  subtitle="Real-Time Metrics and Alerting"
-  tags={['OCI', 'Observability', 'Metrics', 'Automation']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Monitoring">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While OCI Logging handles text-based events, OCI Monitoring handles raw, mathematical time-series data (Metrics).
+**OCI Monitoring** stores time-series from OCI services and from the **custom metrics** API. You query with **MQL**, chart in consoles or Grafana, and fire **alarms** to Notifications (email, Slack, Pager). Agents emit compute metrics; apps should emit RED/USE metrics too.
 
-## 1. Metrics and Dimensions
-Every resource in OCI automatically emits metrics.
-A Virtual Machine emits `CpuUtilization`. An Autonomous Database emits `StorageSpaceUsed`.
-These metrics are tagged with **Dimensions**. A dimension is a mathematical filter. You do not just view "CPU Utilization"; you view *"CPU Utilization WHERE Region = Ashburn AND Compartment = Production AND InstanceType = WebServer"*. This dimensional filtering allows DevOps engineers to mathematically isolate performance bottlenecks across a massive, globally distributed fleet of servers.
+## 1. Deep Dive and Mechanics
 
-## 2. Alarms and Auto-Scaling
-Metrics are useless without mathematical reaction.
-You configure an **Alarm** using MQL (Monitoring Query Language): *"IF the 5-minute rolling average of CPU Utilization for the WebServer pool strictly exceeds 80%, trigger an Alert."*
-The Alert mathematically triggers an OCI Notification, which sends an SMS to the on-call engineer. More importantly, the Alert can trigger an OCI Auto-Scaling action, mathematically instructing the cloud to boot 3 brand-new Web Servers and attach them to the Load Balancer before human intervention is even required.
+**Namespace and metric.** `oci_computeagent` vs `oci_lb` vs your `app.orders`. Dimensions (instance id, AD, shape) are the group-by keys.
 
-</TechnologyTemplate>
+**Alarms.** Query + operator + pending period + severity + destination. Missing-data treatment matters: a dead agent looks like "all green" if you ignore absences.
+
+**Custom metrics.** API or agent. Cardinality limits exist. A dimension per user id will be throttled or expensive.
+
+**Retention.** Fine-resolution data ages out. Long-term capacity planning needs a downsample export.
+
+<Callout icon="warning" title="Alarm on missing data">
+`absent()` (or equivalent) for heartbeat metrics. A silent host is an incident, not a vacation from CPU alerts.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+MQL aggregations: avg/min/max/rate over a window. Rate of a counter is the useful number; raw counters only go up.
+
+Error budget: alarm thresholds should match SLOs, not "CPU greater than 80" on a correctly busy box.
+
+<ComparisonTable
+  headers={['Signal', 'Tool', 'Action']}
+  rows={[
+    ['Metrics', 'Monitoring + MQL', 'Alarms'],
+    ['Logs', 'Logging', 'Connectors'],
+    ['Traces', 'APM (if used)', 'Latency debug'],
+    ['Events', 'Events service', 'Automation'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+CpuUtilization[1m]{resourceId = "ocid1.instance..."}.mean() > 85
+```
+
+Attach that query to an alarm with a 5-minute pending period and a Notification topic the on-call actually follows.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Agent[Compute agent] --> NS[Metric namespace]
+    App[Custom API] --> NS
+    NS --> MQL[MQL alarm]
+    MQL --> Topic[Notifications]
+    Topic --> Pager[On-call]
+```
+
+## 5. Interview Prep
+
+**Q: Metrics vs logs for paging?**
+**A:** Metrics for SLOs and saturation. Logs for explanation. Page on metrics; jump to logs after.
+
+**Q: What is MQL?**
+**A:** Monitoring Query Language — select metric, filter dimensions, aggregate, compare.
+
+**Q: Why is my custom metric empty?**
+**A:** Wrong namespace, missing IAM on the dynamic group, or a dimension set that never repeats (cardinality drop).
+
+## 6. Production Use Cases
+
+- LB 5xx rate and p99 latency alarms.
+- Disk used percent on boot and data volumes.
+- Business metric: checkout success rate as a custom metric.
+
+<Callout icon="tip" title="One topic per urgency">
+Do not dump INFO and SEV1 on the same email list. People will filter all of it.
+</Callout>

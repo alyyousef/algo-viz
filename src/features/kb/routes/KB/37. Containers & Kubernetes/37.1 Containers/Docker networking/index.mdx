@@ -1,29 +1,97 @@
 ---
 title: Docker Networking
-description: The mathematical subsystem within the Docker Engine that provides isolated, software-defined network topologies, allowing containers to securely communicate with each other and the external world.
+description: "Per-container network namespaces plumbed into bridges, overlays, or the host stack — plus NAT and published ports."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Docker Networking"
-  subtitle="Software-Defined Container Communication"
-  tags={['Containers', 'Docker', 'Networking', 'Architecture']}
->
+    <ConceptTemplate title="Docker Networking">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-By default, a container is mathematically isolated. It has its own private network namespace, its own loopback interface (`localhost`), and its own private IP address. It cannot communicate with the outside world.
+Every container starts with its own **network namespace**: its own interfaces, routes, and `localhost`. Docker then attaches that namespace to a driver. The default is a bridge. Publishing a port is NAT from the host into the container, not "the container magically owns host:80."
 
-## 1. The Bridge Network
-When you install Docker, it creates a default virtual switch on the host machine called `docker0` (the Bridge network).
-When you spin up a container, Docker mathematically provisions a virtual ethernet cable (a `veth` pair). One end plugs into the container, the other plugs into `docker0`. Docker assigns the container an internal IP (e.g., `172.17.0.2`). If the container needs to access the internet, Docker uses mathematical NAT (Network Address Translation) via iptables to route traffic through the host's physical Wi-Fi or Ethernet card.
+## 1. Deep Dive and Mechanics
 
-## 2. Port Mapping
-Because the container's IP is purely internal, the outside world cannot reach it.
-If you run an Nginx container on port 80, you must mathematically map a port on the host machine to the container (e.g., `docker run -p 8080:80 nginx`). The Docker Engine dynamically rewrites the host's Linux iptables rules: *"Any traffic hitting the physical host machine on port 8080 must be mathematically forwarded to internal IP 172.17.0.2 on port 80."* This enables public access while maintaining internal isolation.
+**Bridge (default).** Engine creates `docker0` (or a user-defined bridge). A veth pair links the container's `eth0` to the bridge. The container gets an address from the bridge subnet (often 172.17.0.0/16). Egress to the internet is MASQUERADE through the host. User-defined bridges add **embedded DNS** so containers resolve each other by name.
 
+**Host.** The container joins the host network namespace. No NAT, no port map. `localhost` is the host. Fast and sharp-edged — port conflicts and weaker isolation.
+
+**None.** Only a loopback. Used for sidecars you will `nsenter` later or for batch jobs with no net.
+
+**Overlay.** Swarm (and some plugins) build a VXLAN overlay so containers on different hosts share a virtual L2. Kubernetes does *not* use Docker overlay; it uses CNI.
+
+**Macvlan / ipvlan.** The container appears as another MAC or IP on the physical LAN. Useful for legacy appliances that must be neighbors of real machines.
+
+**Port publish.** `-p 8080:80` installs forwarding: host TCP 8080 to container IP port 80. On Linux this is iptables or nftables. On Desktop it is that plus VM port forwarding.
+
+<Callout icon="warning" title="localhost is not the host">
+Inside a bridge-mode container, `localhost` is the container. To reach a server on the host, use `host.docker.internal` (Desktop) or the host-gateway IP — not 127.0.0.1.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Namespace + veth** is a pair of virtual Ethernet ends. A packet that enters one end exits the other. The bridge is a learning switch. NAT is a stateful rewrite of source or destination addresses; connection tracking memory grows with concurrent flows.
+
+**Hairpin and MTU.** Overlay and Desktop VMs add encapsulation. If MTU is not reduced, large writes fragment or black-hole. Path MTU math is why "it works on the laptop bridge and dies on overlay" is a classic outage.
+
+<ComparisonTable
+  headers={['Driver', 'Isolation', 'Best for']}
+  rows={[
+    ['bridge', 'Own netns + NAT', 'Default apps, Compose'],
+    ['host', 'Shared host netns', 'High performance, host ports'],
+    ['none', 'Loopback only', 'Custom plumbing'],
+    ['overlay', 'Cross-host L2', 'Swarm services'],
+    ['macvlan', 'LAN neighbor', 'Physical-network apps'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+docker network create --driver bridge appnet
+docker run -d --name db --network appnet postgres:16
+docker run -d --name api --network appnet -p 8080:8080 \
+  -e DATABASE_URL=postgres://postgres@db:5432/postgres myorg/api:1.4
+docker network inspect appnet
+```
+
+The API uses hostname `db` because both containers sit on `appnet`. The published 8080 is for browsers on the host, not for container-to-container traffic.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Browser[Host :8080] --> NAT[iptables DNAT]
+    NAT --> Veth[veth pair]
+    Veth --> Eth0[container eth0 :80]
+    Eth0 --> App[nginx]
+    App --> Egress[MASQUERADE via host]
+    Egress --> Inet[Internet]
+```
+
+## 5. Interview Prep
+
+**Q: Why can two containers talk by name on a user-defined bridge but not on the default docker0?**
+**A:** User-defined bridges run Docker's internal DNS. The legacy default bridge does not (legacy). Always create a named network.
+
+**Q: What does `-p 80:80` do?**
+**A:** Forwards host port 80 to the container's port 80 via NAT. It does not change what the process binds inside the namespace.
+
+**Q: Host network versus `--network=host` in Kubernetes?**
+**A:** Same idea: skip the isolated netns. In Kubernetes that is `hostNetwork: true` and it is a security and port-conflict decision, not a default.
+
+## 6. Production Use Cases
+
+- **Compose stacks** on one host with a dedicated bridge and service DNS.
+- **Edge proxies** on host network to bind 443 without double NAT.
+- **Lab overlays** on Swarm before a team moves the same images to Kubernetes CNI.
+
+<Callout icon="tip" title="Prefer user-defined bridges">
+They give DNS, better isolation from the default subnet, and inspectable labels. The default bridge is a compatibility leftover.
+</Callout>

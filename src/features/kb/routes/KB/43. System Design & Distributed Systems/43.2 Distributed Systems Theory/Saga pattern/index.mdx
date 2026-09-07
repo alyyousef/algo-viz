@@ -1,35 +1,98 @@
 ---
 title: Saga Pattern
-description: "A sequence of local transactions used to maintain data consistency across microservices."
+description: "A long-running workflow of local transactions plus compensating actions, used when a single distributed lock-and-commit would hold too long."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
 import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="The Saga Pattern">
+    <ConceptTemplate title="Saga Pattern">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a monolith, if a user buys an item, you deduct inventory and charge their card within a single ACID database transaction. If the card declines, you issue an SQL `ROLLBACK`, and the inventory is perfectly restored.
+A **saga** is a sequence of local transactions. Each step publishes or records that it succeeded. If a later step fails, earlier steps run **compensations** that semantically undo (refund, cancel, release). There is no single global lock and no two-phase commit across services.
 
-In microservices, the Inventory DB and the Payment DB are separated by a network. You cannot run a single ACID transaction across them. To solve this, you use a **Saga**.
+## 1. Deep Dive and Mechanics
 
-A Saga is a sequence of local database transactions. Each service performs its local transaction and publishes an event to trigger the next step.
+**Choreography.** Each service listens for the previous event and emits the next. Few moving parts, hard to see the whole graph, easy to cycle.
 
-## Compensating Transactions
-If a step fails, you cannot use SQL `ROLLBACK`. You must write business logic to execute a **Compensating Transaction**—an operation that actively undoes the previous step.
+**Orchestration.** A coordinator (state machine, Temporal, Step Functions) tells each service what to do and records progress. Easier timeouts, retries, and human replay.
 
-If Step 1 (Deduct Inventory) succeeds, but Step 2 (Charge Card) fails, the Payment Service emits a "PaymentFailed" event. The Inventory Service listens for this event and executes a Compensating Transaction: `UPDATE inventory SET count = count + 1`.
+**Compensation is not rollback.** You cannot un-send an email. You send an apology. You cannot un-charge if the acquirer already settled; you refund. Design compensations as first-class APIs.
 
-## Choreography vs Orchestration
+**Idempotency.** Every step and compensation must be safe to retry. Sagas retry.
 
-There are two ways to organize a Saga:
+<Callout icon="warning" title="A failed compensation is an incident">
+If refund fails after ship fails, you have money and goods in an unknown state. Put compensations on a dead-letter path with paging, not a log line.
+</Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-<ComparisonTable headers={['Type', 'How it works', 'Pros & Cons']} rows={[ ['Choreography', 'Services listen to each other\'s events directly. (A decentralized dance).', 'Pro: No single point of failure. Con: Hard to track the overall status of the transaction.'], ['Orchestration', 'A central "Orchestrator" service acts as a conductor, explicitly telling each service what to do via commands.', 'Pro: Complex workflows are easy to monitor and reason about. Con: The orchestrator is a single point of failure.'] ]} />
+Sagas (Garcia-Molina and Salem) trade atomicity for isolation. The global history is not serializable: other readers can see a booking that later cancels. You get eventual semantic consistency if every forward step has a compensation that converges.
 
+Name the isolation holes: dirty business state, lost uniqueness if two sagas book the last seat. Use reservations with TTLs to close the seat race.
 
+<ComparisonTable
+  headers={['Approach', 'Atomicity', 'Holds locks', 'Best for']}
+  rows={[
+    ['2PC', 'Yes', 'Yes, across nodes', 'One DB vendor, short'],
+    ['Saga choreography', 'Semantic undo', 'No', 'Simple linear flows'],
+    ['Saga orchestration', 'Semantic undo', 'No', 'Timeouts, humans, many steps'],
+    ['Outbox plus queue', 'Per service', 'Local only', 'The usual glue'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def run_saga(steps):
+    done = []
+    try:
+        for step in steps:
+            step.forward()
+            done.append(step)
+    except Exception:
+        for step in reversed(done):
+            step.compensate()
+        raise
+```
+
+Persist the saga state before each call. In-memory "done" lists die with the process.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant O as Orchestrator
+    participant P as Payments
+    participant I as Inventory
+    O->>P: charge
+    O->>I: reserve
+    I-->>O: fail
+    O->>P: refund
+```
+
+## 5. Interview Prep
+
+**Q: Saga versus 2PC?**
+**A:** 2PC keeps locks and blocks on a coordinator. Sagas finish local commits and repair with compensations. Use sagas across services; use 2PC inside one database product if you must.
+
+**Q: What if compensation cannot exist?**
+**A:** That step should be last, or you need a reservation that expires, or you should not split the transaction across systems.
+
+**Q: How do you make it idempotent?**
+**A:** Saga id plus step name as a unique key. Store outcome. Retries read the row instead of charging twice.
+
+## 6. Production Use Cases
+
+- **Order, pay, allocate, ship** in commerce.
+- **Provision then bill** in cloud control planes.
+- **Temporal / Cadence / Step Functions** as the orchestrator.
+
+<Callout icon="tip" title="Write the unhappy path on the ticket">
+If the design doc only has the happy sequence, it is not a saga design yet.
+</Callout>

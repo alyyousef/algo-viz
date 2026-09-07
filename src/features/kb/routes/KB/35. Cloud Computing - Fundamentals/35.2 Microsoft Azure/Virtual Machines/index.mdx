@@ -1,27 +1,93 @@
 ---
 title: Azure Virtual Machines (VMs)
-description: The foundational Infrastructure as a Service (IaaS) compute offering in Azure, providing developers with absolute root access to mathematically partitioned slices of physical server hardware.
+description: "IaaS compute: SKU, disks, NIC, and an availability stance — you patch the guest, Azure hosts the hypervisor."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Virtual Machines (VMs)"
-  subtitle="IaaS Cloud Compute"
-  tags={['Azure', 'Compute', 'IaaS', 'Infrastructure']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Virtual Machines">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Azure Virtual Machines are the exact equivalent of AWS EC2. When you provision a VM, you are renting a mathematically isolated slice of CPU, RAM, and Disk from a massive physical server rack sitting in a Microsoft data center.
+An **Azure VM** is a guest OS on Azure’s hypervisor: a **size** (vCPU, RAM, NIC, temp disk), one or more **managed disks**, a **NIC** in a subnet, and optional public IP. You own patching, agents, and the application. Azure owns the host, the fabric, and (if you buy it) the SLA that depends on how you place the VM.
 
-## 1. VM Series and Sizing
-Microsoft mathematically engineers different hardware architectures for specific workloads:
-- **D-Series (General Purpose)**: A balanced mathematical ratio of CPU to RAM, used for standard web servers.
-- **E-Series (Memory Optimized)**: Massive amounts of RAM relative to CPU, designed specifically for in-memory databases like Redis or SAP HANA.
-- **N-Series (GPU Accelerated)**: Physically packed with NVIDIA GPUs, designed for Machine Learning and heavy video rendering.
-You select the exact mathematical size (e.g., `Standard_D4s_v3`: 4 vCPUs, 16GB RAM) and the Hyper-V hypervisor strictly enforces those hardware boundaries.
+## 1. Deep Dive and Mechanics
 
-## 2. Availability Sets vs. Zones
-To guarantee 99.99% uptime, you cannot rely on one VM.
-- **Availability Sets**: You deploy 2 VMs. Azure mathematically guarantees they are placed on different physical server racks connected to different power supplies within the *same* data center. If a rack fails, one VM survives.
-- **Availability Zones**: You deploy 2 VMs. Azure mathematically guarantees they are placed in two *entirely different physical buildings* miles apart. If a tornado destroys the entire data center, the other VM survives.
+**Sizes.** Families: D (general), E (memory), F (CPU), L (storage), N (GPU), H (HPC). Constrained vCPU SKUs exist for licensing. Temp disks are ephemeral — not for data.
 
-</TechnologyTemplate>
+**Disks.** OS + data managed disks: Standard HDD/SSD, Premium SSD, Premium SSD v2, Ultra. Caching and bursting differ. Host cache settings on Premium can lie to apps that expected fsync.
+
+**Availability.** Availability Set (fault/update domains, legacy). **Availability Zones** (buildings). **VMSS** (scale sets) for fleets, with flexible orchestration as the modern default. A single VM has a weaker SLA than two VMs in zones behind a load balancer.
+
+**Identity and access.** Managed identity, Entra login (Linux/Windows), and no inbound 22/3389 — use Bastion or SSH certs over a private IP.
+
+**Spot and reservations.** Spot for interruptible batch. Reserved instances / savings plans for steady fleets.
+
+<Callout icon="error" title="A public IP plus 3389 is a scanner magnet">
+Disable public IPs on workloads. Bastion in a hub, or JIT plus NSG, or neither if you have Serial Console and an agent. Patch week one.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+SLA math is placement: one VM < set < zone-redundant pair. Disk IOPS and throughput caps are SKU + disk size (except v2/Ultra, which provision independently). An undersized disk looks like a “slow VM.”
+
+Spot eviction is a hazard rate; expected work completed is (1 − P_evict) × batch. Checkpoint or the job is waste.
+
+<ComparisonTable
+  headers={['Placement', 'Failure domain', 'Typical']}
+  rows={[
+    ['Single VM', 'Host + AZ', 'Labs'],
+    ['Availability Set', 'FD / UD', 'Legacy pairs'],
+    ['Two+ zonal VMs', 'AZ', 'Pets with an SLA'],
+    ['VMSS Flexible', 'Zones + scale', 'Fleets'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+az vm create -g prod -n vm-app-1 --image Ubuntu2204 \
+  --size Standard_D4s_v5 --zone 1 \
+  --nsg nsg-app --public-ip-address "" \
+  --assign-identity \
+  --os-disk-size-gb 64 --storage-sku Premium_LRS
+```
+
+Attach a data disk for state. Use cloud-init or an image pipeline (Image Builder / Packer), not SSH snowflakes.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User[Bastion] --> Nic[NIC in subnet]
+    Nic --> VM[Guest OS]
+    VM --> OSDisk[OS disk]
+    VM --> Data[Data disk]
+    VM --> MI[Managed identity]
+```
+
+## 5. Interview Prep
+
+**Q: VM vs App Service vs AKS?**
+**A:** VM when you need a custom OS, strange kernel modules, or a vendor installer. PaaS otherwise. AKS when the unit is a container fleet.
+
+**Q: What does the SLA actually require?**
+**A:** Read the current compute SLA. Two or more VMs in an availability set or two zones behind a load balancer is the usual bar. One VM is best-effort-ish.
+
+**Q: Premium SSD vs Ultra?**
+**A:** Premium for most databases. Ultra (or Premium v2) when you must dial IOPS independently of size. Price follows.
+
+## 6. Production Use Cases
+
+- Lift-and-shift vendor appliances that will not containerize.
+- GPU VMs for burst inference with a scale set.
+- Domain controllers or other “needs a Windows VM” infrastructure.
+
+<Callout icon="tip" title="Golden images, not apt on Monday">
+Build images in a pipeline, version them, and rotate VMSS. Configuration drift on pets is how patch status lies.
+</Callout>

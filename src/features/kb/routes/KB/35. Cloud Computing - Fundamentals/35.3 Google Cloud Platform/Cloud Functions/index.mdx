@@ -1,26 +1,94 @@
 ---
 title: Google Cloud Functions
-description: Google's event-driven, serverless compute platform that allows developers to run mathematically isolated, single-purpose blocks of code in response to cloud events.
+description: "Event-driven functions on GCP: HTTP or Eventarc triggers, gen 2 on Cloud Run under the hood — short jobs, not a hidden monolith."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud Functions"
-  subtitle="Serverless Event-Driven Code"
-  tags={['GCP', 'Serverless', 'Compute', 'Functions']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud Functions">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Cloud Functions are GCP's direct equivalent to AWS Lambda. Instead of provisioning an entire Virtual Machine to run a 50-line Node.js script, you deploy the raw code directly to the cloud, and Google mathematically handles the execution.
+**Cloud Functions** runs a single entrypoint per deploy. **1st gen** is the original functions product. **2nd gen** is Cloud Run plus Eventarc: longer timeouts, concurrency, and more event sources. Triggers are HTTP or events (Pub/Sub, Storage, Firestore, Audit Logs). If the unit is already a container, skip ahead to Cloud Run.
 
-## 1. Event Triggers
-A Cloud Function is mathematically useless until an event triggers it.
-- **HTTP Triggers**: The function is assigned a public URL. When a user hits the URL, the code executes.
-- **Background Triggers**: The function is physically wired into the GCP ecosystem. You can mathematically decree: *"Whenever a new file is uploaded to this specific Cloud Storage Bucket, instantly boot up my Python function, pass the file metadata as a JSON argument, and execute."*
-This allows for highly decoupled, reactive architectures. The function scales from 0 to 1,000 parallel executions instantly if 1,000 files are uploaded simultaneously.
+## 1. Deep Dive and Mechanics
 
-## 2. Generations and Architecture
-GCP offers two mathematical generations of Functions:
-- **1st Gen**: The original architecture. Highly restricted, but extremely fast cold-starts.
-- **2nd Gen (Cloud Run under the hood)**: 2nd Gen Functions are mathematically compiled into Docker containers and run on Google's Cloud Run infrastructure. This provides massive benefits: longer execution timeouts (up to 60 minutes), larger instances (up to 16GB of RAM), and native integration with Eventarc for complex event routing, blurring the line between simple Functions and complex containerized microservices.
+**Gen 2.** Builds an image, deploys a Cloud Run service, wires Eventarc. You get Cloud Run knobs: min/max instances, CPU always allocated, VPC connector or Direct VPC egress.
 
-</TechnologyTemplate>
+**Triggers.** HTTP is an HTTPS endpoint (put IAP or an LB in front). Eventarc uses CloudEvents. Storage finalize is the usual thumbnail story.
+
+**Identity.** Per-function service account. Do not use the default compute SA. Eventarc needs a trigger SA that can invoke the function.
+
+**Cold start.** Language + package size + min instances. Gen 2 concurrency means one instance can handle many requests — different from 1st gen’s one-request model.
+
+**Source vs image.** You can still deploy source; Cloud Build builds it. Reproducible deploys pin the build.
+
+<Callout icon="warning" title="1st gen vs 2nd gen is not a rename">
+Event payload shapes, IAM, and networking differ. Migrating is a project. New work should be 2nd gen unless a 1st gen-only trigger still blocks you.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Billing is invocation count + compute time + egress (and Cloud Run’s model for gen 2). A chatty Pub/Sub function at 1 ms still pays per message.
+
+Eventarc delivery is at-least-once. Idempotency keys on Storage object generation or Pub/Sub message id.
+
+<ComparisonTable
+  headers={['Product', 'Unit', 'Events']}
+  rows={[
+    ['Functions gen 2', 'Entrypoint on Cloud Run', 'Eventarc'],
+    ['Cloud Run', 'Container', 'HTTP / Eventarc'],
+    ['App Engine', 'Service version', 'Mostly HTTP'],
+    ['Workflows', 'Orchestration', 'Calls functions'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import functions_framework
+
+@functions_framework.cloud_event
+def on_object(event):
+    bucket = event.data["bucket"]
+    name = event.data["name"]
+    # process gs://bucket/name once per generation
+```
+
+Deploy with `gcloud functions deploy` and a dedicated SA. Set max instances to protect downstream SQL.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Gcs[GCS finalize] --> Ear[Eventarc]
+    Ear --> Fn[Function gen 2]
+    Fn --> Run[Cloud Run revision]
+    Run --> Out[Thumbnails / Pub/Sub]
+```
+
+## 5. Interview Prep
+
+**Q: Functions vs Cloud Run?**
+**A:** Functions if you want a source-based entrypoint and a trigger catalog. Cloud Run if you already have a Dockerfile or need multiple routes in one service. Gen 2 blurs this on purpose.
+
+**Q: How do you stop a retry storm?**
+**A:** Idempotent writes, max retry on the trigger, and an alert on error rate. Eventarc will retry.
+
+**Q: Why VPC connector?**
+**A:** To reach private IPs (Memorystore, internal GCE). Direct VPC egress on Cloud Run is the newer path — prefer it when available.
+
+## 6. Production Use Cases
+
+- Image pipeline: Storage → Function → Storage + Pub/Sub.
+- Audit log sink → Function that pages on `SetIamPolicy`.
+- HTTP webhooks with min instances = 1 for a partner SLA.
+
+<Callout icon="tip" title="One function, one trigger">
+A mega-function with an internal switch on event type is a monolith with worse tooling. Split deployables so you can scale and IAM them apart.
+</Callout>

@@ -1,24 +1,91 @@
 ---
-title: OCI Software Development Kits (SDKs)
-description: A suite of language-specific libraries mathematically engineered to allow custom applications to securely authenticate and programmatically control Oracle Cloud infrastructure natively in code.
+title: OCI SDK
+description: "Language clients that sign the same REST APIs: Python, Java, Go, TypeScript — instance principals in prod, not a PEM in the image."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Software Development Kits (SDKs)"
-  subtitle="Programmatic Cloud Integration"
-  tags={['OCI', 'Development', 'SDK', 'Automation']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI SDK">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-The OCI CLI is excellent for DevOps Bash scripts, but if a developer is writing a custom Java web application that needs to upload user avatars to OCI Object Storage, they cannot rely on terminal commands. They need the OCI SDK.
+**OCI SDKs** are official clients (Python, Java, Go, .NET, TypeScript, Ruby) for the public APIs. They handle request signing, retries, and pagination. Config file, env, instance principals, and resource principals are the auth providers. The CLI is built on the Python SDK.
 
-## 1. Native Language Integration
-Oracle provides mathematically optimized SDKs for Java, Python, Go, TypeScript, and .NET.
-These libraries handle the grueling mathematical complexity of cloud authentication. The OCI REST API strictly requires every single HTTP request to be cryptographically signed using an RSA-256 algorithm based on the HTTP headers.
-If a developer had to write this mathematical signature logic manually, it would take weeks. The SDK handles it entirely. The developer simply imports the SDK, writes `client.putObject(file)`, and the SDK mathematically handles the cryptographic signing, the network retries, and the JSON parsing automatically.
+## 1. Deep Dive and Mechanics
 
-## 2. Waiters and Pagination
-Cloud provisioning is asynchronous. If your Python code asks OCI to boot a Database, the API instantly returns a `202 Accepted` status, but the database will take 10 minutes to physically build.
-The SDK provides **Waiters**. The developer writes `waiters.forDatabaseAvailable(dbId)`. The SDK automatically and mathematically implements a backoff polling algorithm, pausing the Python thread and checking the OCI API every few seconds until the database state mathematically transitions to `AVAILABLE`, preventing the developer from having to write complex, infinite polling loops.
+**Clients.** One client class per service (`ComputeClient`, `ObjectStorageClient`). You pass a `config` dict or a signer.
 
-</TechnologyTemplate>
+**Signers.** `InstancePrincipalsSecurityTokenSigner` on VMs. Resource principal signer on Functions. User principal from `~/.oci/config` on a laptop.
+
+**Retries.** Default retry on 429/5xx. Idempotent GETs are safe. POSTs that create resources need idempotency tokens or careful retry.
+
+**Pagination.** List calls return tokens. SDK paginators exist; do not assume one page.
+
+<Callout icon="warning" title="User config in a container">
+Baking `~/.oci/config` plus a PEM into a Docker image is a leaked user. Use the instance or resource principal signer.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Signing string includes date, path, and selected headers. Replay windows are short. Do not log the authorization header.
+
+Backoff is exponential with jitter. A synchronized retry storm after an outage is how you extend the outage.
+
+<ComparisonTable
+  headers={['Runtime', 'Signer', 'Typical']}
+  rows={[
+    ['Laptop', 'API key / session', 'Dev'],
+    ['Compute', 'Instance principal', 'Apps / agents'],
+    ['Functions', 'Resource principal', 'FaaS'],
+    ['OKE', 'Workload / instance', 'Pods'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import oci
+
+signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
+client = oci.object_storage.ObjectStorageClient(config={}, signer=signer)
+ns = client.get_namespace().data
+client.put_object(ns, "app-artifacts", "ok.txt", b"ok")
+```
+
+Empty `config` plus signer is the instance-principal pattern.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    App[Application] --> SDK[OCI SDK]
+    SDK --> Signer[Signer]
+    Signer --> Meta[Metadata / Id]
+    SDK --> REST[Service REST]
+```
+
+## 5. Interview Prep
+
+**Q: SDK vs REST?**
+**A:** Same APIs. SDK does signing and models. REST is what you debug in logs.
+
+**Q: How do you test without OCI?**
+**A:** Interface the client, record/replay, or use a small integration project. Do not skip IAM path tests.
+
+**Q: Thread safety?**
+**A:** Clients are generally reusable. Check the language SDK notes before sharing a signer across forks.
+
+## 6. Production Use Cases
+
+- Apps that mint PARs or rotate secrets in Vault.
+- Operators tools in Go that list unhealthy backends.
+- Functions that write an object on an event.
+
+<Callout icon="tip" title="Pin SDK versions">
+A major SDK bump can rename models. Lock versions like any other HTTP client.
+</Callout>

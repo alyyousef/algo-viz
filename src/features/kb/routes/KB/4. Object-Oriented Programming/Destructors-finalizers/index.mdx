@@ -1,29 +1,103 @@
 ---
 title: Destructors / Finalizers
-description: Mathematical methods invoked automatically when an object is being destroyed and removed from memory, used to safely release unmanaged resources like open file handles or network sockets.
+description: "Lifecycle hooks that run when an object dies — deterministic in RAII languages, best-effort in garbage-collected runtimes."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Destructors & Finalizers"
-  subtitle="The Mathematical Cleanup Phase"
-  tags={['OOP', 'Memory Management', 'C++', 'Java']}
->
+    <ConceptTemplate title="Destructors / Finalizers">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When an object dies, the memory it occupied in RAM is freed. However, if the object had opened a physical file on the hard drive, freeing the RAM does *not* automatically close the file lock, mathematically resulting in a resource leak.
+A **destructor** runs when an object's lifetime ends in a deterministic language. A **finalizer** is a last-chance hook in a garbage-collected runtime. They look similar and behave very differently.
 
-## 1. Deterministic Destructors (C++)
-In languages without Garbage Collection (like C++ or Rust), the destruction of an object is mathematically **deterministic**.
-When an object goes out of scope, the compiler instantly and predictably executes a **Destructor** (denoted by a tilde: `~FileHandler()`). The developer writes code inside the destructor to mathematically close the file handle. Because the timing is exact, resource leaks are prevented.
+## 1. Deep Dive and Mechanics
 
-## 2. Non-Deterministic Finalizers (Java/C#)
-In Garbage Collected languages (like Java or C#), you do not control exactly when an object is destroyed from memory; the Garbage Collector (GC) decides.
-Therefore, these languages use **Finalizers** (or `finalize()`). Because the execution is mathematically non-deterministic (the GC might wait 5 minutes before destroying the object), Finalizers are widely considered dangerous. If you wait for the GC to close the file handle, the system might mathematically run out of available file handles before the GC ever runs. This is why modern C#/Java relies on `using` blocks or `try-with-resources` to force deterministic closure of resources.
+**C++ destructors** run when a stack object leaves scope, when `delete` is called, or when a member is destroyed as part of its owner. This is RAII: the destructor releases the resource the constructor acquired.
 
+**Java and C-sharp finalizers** run if the collector feels like it, on a special thread, with no ordering guarantee among objects. They can resurrect the object by publishing `this`. Modern guidance is: do not write finalizers; implement `Closeable` or `IDisposable` and use try-with-resources.
+
+**Python** `__del__` is closer to a finalizer. Cycles and interpreter shutdown make it unreliable for sockets and files. Prefer context managers.
+
+<Callout icon="error" title="Do not throw from a destructor">
+In C++ a throw that escapes a destructor during stack unwinding calls terminate. In GC languages a throw in a finalizer is easy to lose and hard to debug.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Deterministic destruction is a stack discipline: last constructed, first destroyed, matching the LIFO of scopes. That gives exception safety: if construction of object n fails, objects 1 through n-1 already have destructors queued.
+
+Finalization is a graph problem. The collector finds unreachable nodes and may enqueue them. There is no bound on time-to-run, so resource limits (file handles, connection caps) cannot depend on it.
+
+<ComparisonTable
+  headers={['Hook', 'When it runs', 'Safe for sockets', 'Typical language']}
+  rows={[
+    ['Destructor', 'Scope end / delete', 'Yes', 'C++, Rust Drop'],
+    ['Dispose / close', 'Caller or with-block', 'Yes', 'Java, C-sharp, Python'],
+    ['Finalizer / del', 'Sometime after last ref', 'No', 'JVM, CLR, CPython'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class TempFile:
+    def __init__(self, path, handle):
+        self.path = path
+        self._handle = handle
+
+    def write(self, data):
+        self._handle.write(data)
+
+    def close(self):
+        if self._handle is not None:
+            self._handle.close()
+            self._handle = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.close()
+        return False
+```
+
+The context manager is the destructor you can actually test. `__del__` is omitted on purpose.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Alloc[Acquire resource] --> Use[Use object]
+    Use --> ScopeEnd[Scope or with ends]
+    ScopeEnd --> Dtor[Destructor or close]
+    Dtor --> Free[Release resource]
+    Use -.->|GC only| Fin[Finalizer maybe]
+    Fin -.->|too late| Leak[Handle exhausted]
+```
+
+## 5. Interview Prep
+
+**Q: Destructor versus finalizer?**
+**A:** A destructor is deterministic and is the right place for scarce resources in RAII languages. A finalizer is a safety net for unmanaged memory and should almost never be your primary release path.
+
+**Q: What is the dispose pattern in C-sharp?**
+**A:** `IDisposable.Dispose` releases managed and unmanaged resources. A finalizer, if present, only releases unmanaged ones and calls `GC.SuppressFinalize` from Dispose so the object is not queued twice.
+
+**Q: Why is `__del__` disliked in Python?**
+**A:** It can prevent cycles from being collected, it may run with globals already torn down, and it is not a substitute for `with`.
+
+## 6. Production Use Cases
+
+- **File, socket, and lock wrappers** in C++ via RAII.
+- **Database sessions** closed by try-with-resources or `with`.
+- **Native interop** buffers that must be freed even if a finalizer exists as a backstop.
+
+<Callout icon="tip" title="Pair acquire with release in the same type">
+The type that opened the handle should be the type that closes it. Do not hand a raw descriptor to callers and hope they remember.
+</Callout>

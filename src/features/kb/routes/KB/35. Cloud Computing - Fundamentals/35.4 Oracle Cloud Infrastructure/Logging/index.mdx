@@ -1,25 +1,90 @@
 ---
 title: OCI Logging
-description: A highly scalable, centralized telemetry service that mathematically aggregates, indexes, and searches logs from all OCI resources, custom applications, and security audits.
+description: "Central log groups and streams: service logs, custom agent logs, and unified search — plus retention you set before a compliance ask."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Logging"
-  subtitle="Centralized Telemetry and Audit"
-  tags={['OCI', 'Observability', 'Logging', 'Security']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Logging">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-In a distributed cloud architecture with 500 Virtual Machines and 50 Databases, manually SSHing into servers to read text-based log files is mathematically impossible. OCI Logging centralizes this data.
+**OCI Logging** collects **service logs** (flow logs, LB access, Object Storage) and **custom logs** from the Unified Monitoring Agent into **log groups** and **logs**. Search and dashboards live in Logging Analytics or raw Logging search. Rules can forward to Streaming, Functions, or Object Storage.
 
-## 1. Unified Log Ingestion
-OCI Logging acts as the single mathematical sink for three distinct types of logs:
-- **Audit Logs**: Irrefutable, mathematically secure records of every single API call made to the OCI Control Plane (e.g., *"User John deleted Database X at 2:00 PM"*).
-- **Service Logs**: Native telemetry emitted directly by OCI services (e.g., Load Balancer access logs, VCN Flow Logs).
-- **Custom Logs**: Application logs pushed directly from your code or via the unified monitoring agent installed on your VMs.
+## 1. Deep Dive and Mechanics
 
-## 2. Log Search and Service Connectors
-Once billions of log lines are aggregated, OCI provides a mathematical search engine to query them (using a syntax similar to SQL).
-However, storing hot logs forever is expensive. OCI utilizes **Service Connectors**. You write a mathematical rule: *"Hold the logs in hot search memory for 30 days. On day 31, mathematically intercept the log stream and archive it to an ultra-cheap Object Storage Bucket for 7-year compliance retention."* This automated state machine ensures strict security compliance at the lowest possible cost.
+**Log group.** A compartment-scoped bucket of logs with a retention. IAM `read logs` is usually granted on the group, not the tenancy.
 
-</TechnologyTemplate>
+**Service logs.** Enable per resource (subnet flow logs, for example). They have a cost and a volume surprise on chatty VCNs.
+
+**Custom logs.** Agent on compute tails files or systemd and ships with a config. Dynamic groups allow the agent to write.
+
+**Routing.** Service Connector Hub (or equivalent connectors) moves logs to Object Storage for cheap long-term, or to SIEM.
+
+<Callout icon="warning" title="Flow logs on a busy subnet">
+Every accepted packet can become a line you pay to store. Sample or enable only on edge subnets unless you have a reason.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Cost ≈ ingest + storage × retention. Doubling retention doubles the tail of the bill. Compliance wants 1 year; debug wants 7 days. Split log groups.
+
+Cardinality: high-cardinality labels explode Logging Analytics indexes. Do not label per request id as a dimension you facet.
+
+<ComparisonTable
+  headers={['Product', 'Role', 'Analog']}
+  rows={[
+    ['Logging', 'Ingest + search', 'CloudWatch Logs'],
+    ['Logging Analytics', 'ML search / parse', 'Athena + SIEM lite'],
+    ['Object Storage archive', 'Cheap retain', 'S3 + Glacier'],
+    ['Streaming', 'Fan-out consume', 'Kinesis / PubSub'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+allow dynamic-group app-instances to use log-content in compartment prod
+
+# Agent unified config tails /var/log/app/app.log into a custom log OCID
+```
+
+Create the log and log group first; the agent config references OCIDs.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Agent[Unified agent] --> Custom[Custom log]
+    LB[Load balancer] --> SvcLog[Service log]
+    Custom --> Group[Log group]
+    SvcLog --> Group
+    Group --> SCH[Connector]
+    SCH --> OSS[Object Storage]
+```
+
+## 5. Interview Prep
+
+**Q: Service log vs custom log?**
+**A:** Service logs come from OCI resources you enable. Custom logs come from your process via the agent or API.
+
+**Q: Where should audit logs go?**
+**A:** A locked compartment, longer retention, maybe a second tenancy sink. App debug logs should not share that IAM.
+
+**Q: How do you alert on a log line?**
+**A:** Connector to Functions or Monitoring-compatible pipeline. Logging search alone is not an on-call.
+
+## 6. Production Use Cases
+
+- LB 5xx logs to a connector that pages.
+- Flow logs on the public subnet for incident review.
+- App JSON logs with 14-day hot retention and 1-year Object Storage.
+
+<Callout icon="tip" title="JSON one line per event">
+Multiline stack traces without a well-defined parse rule become glue. Structured logs survive the trip to Analytics.
+</Callout>

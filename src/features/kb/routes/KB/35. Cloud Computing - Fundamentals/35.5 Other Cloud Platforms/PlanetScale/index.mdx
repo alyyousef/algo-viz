@@ -1,23 +1,89 @@
 ---
 title: PlanetScale
-description: A mathematically advanced, serverless MySQL platform built on the open-source Vitess framework, designed to scale relationally to millions of queries per second through transparent horizontal sharding.
+description: "Vitess-powered MySQL (and evolving Postgres): branching, nonblocking schema, and sharding — not a single primary you SSH into."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="PlanetScale"
-  subtitle="Serverless Vitess MySQL"
-  tags={['Cloud', 'Database', 'MySQL', 'Serverless']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="PlanetScale">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-MySQL is mathematically designed to run on a single server (vertical scaling). If your database exceeds the capacity of the largest server available, you hit a hard mathematical wall. PlanetScale solves this using **Vitess** (the technology originally built by YouTube to scale MySQL).
+**PlanetScale** popularized **database branching** and **online schema changes** on a **Vitess** (YouTube-scale MySQL sharding) backbone. You get a MySQL wire protocol, deploy requests for schema, and optional multi-region. A Postgres offering has been part of the roadmap/product mix — treat engine choice as explicit. You do not get SUPER or arbitrary triggers the same way as a pet MySQL.
 
-## 1. Transparent Horizontal Sharding
-PlanetScale does not force you to rewrite your application logic to handle database sharding.
-The application connects to PlanetScale believing it is talking to a standard, single MySQL database. Behind the scenes, PlanetScale mathematically chops the massive tables into "Shards" and distributes them across hundreds of physical servers. The Vitess routing engine intercepts the incoming SQL query, mathematically determines which physical shard holds the required rows, executes the query, and aggregates the results, completely invisibly to the developer.
+## 1. Deep Dive and Mechanics
 
-## 2. Non-Blocking Schema Changes
-In standard MySQL, altering a table with 10 billion rows (e.g., `ALTER TABLE ADD COLUMN`) physically locks the table. The application goes down for hours while the math computes.
-PlanetScale eliminates this with **Non-Blocking Schema Changes**. It creates a mathematical shadow copy of the table, applies the new column, and uses a VReplication stream to sync the live data in the background. Once the shadow table is perfectly synchronized, it executes an atomic mathematical swap in milliseconds. The database never locks, and the application never experiences downtime.
+**Branches.** `main` plus development branches. Schema changes are deploy requests, not `ALTER` on prod Friday. Data branching is not a full Neon-style COW of all rows in every plan — read the current branch semantics.
 
-</TechnologyTemplate>
+**Vitess.** VTGate routes, VTTablet holds shards. Hot shards and cross-shard joins are your design problem. Foreign keys have historically been limited; check current support.
+
+**Insights.** Query performance and exploding row counts show up in the UI. Missing indexes still hurt.
+
+**Connect.** Serverless driver / pooled connections for edge and Functions.
+
+<Callout icon="warning" title="Not every MySQL feature">
+Triggers, some FKs, and SUPER-level tricks may be blocked. App-level integrity is the contract. Design for it.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Sharding key choice is forever-ish. A monotonic user-id can hotspot. Hash or entity-id prefixes matter at scale, not at 10 GB.
+
+Online schema change is a copy-and-backfill algorithm (gh-ost / Vitess flavors). Huge tables still take wall time; they just do not block like a naive ALTER.
+
+<ComparisonTable
+  headers={['Host', 'Engine', 'Branching']}
+  rows={[
+    ['PlanetScale', 'Vitess MySQL', 'Schema-first'],
+    ['Neon', 'Postgres', 'COW data'],
+    ['RDS MySQL', 'MySQL', 'Snapshots'],
+    ['Cloud Spanner', 'Spanner SQL', 'No Vitess'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+pscale branch create db feat-add-index
+pscale connect db feat-add-index
+# apply migrations, open deploy request to main
+```
+
+Never `ALTER` production outside the deploy-request path if you bought the product for that safety.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    App --> Gate[VTGate]
+    Gate --> S1[Shard 1]
+    Gate --> S2[Shard 2]
+    Dev[Dev branch] --> DR[Deploy request]
+    DR --> Main[main]
+```
+
+## 5. Interview Prep
+
+**Q: Why Vitess?**
+**A:** Horizontal MySQL. PlanetScale packages it with a SaaS UX. Interviews want sharding and nonblocking DDL.
+
+**Q: PlanetScale vs RDS?**
+**A:** RDS is a managed primary. PlanetScale is a sharded platform with workflow. Small apps may not need it.
+
+**Q: Branching vs dump/restore?**
+**A:** Schema workflow is the win. Full data clones depend on plan and product era — do not bluff.
+
+## 6. Production Use Cases
+
+- SaaS MySQL that will outgrow one primary.
+- Teams that want reviewable schema deploys.
+- Serverless apps that need a pooled MySQL endpoint.
+
+<Callout icon="tip" title="Pick a shard key with a grown-up">
+Changing a shard key is a migration project. Start with the access pattern, not with auto-increment pride.
+</Callout>

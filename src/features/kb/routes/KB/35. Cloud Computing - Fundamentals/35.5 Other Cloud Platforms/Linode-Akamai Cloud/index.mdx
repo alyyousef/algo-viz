@@ -1,23 +1,88 @@
 ---
-title: Linode (Akamai Cloud)
-description: A historic, highly beloved developer cloud (recently acquired by Akamai) that provides simple, high-performance Virtual Machines and is evolving into a massive distributed edge compute platform.
+title: Linode / Akamai Cloud
+description: "Developer IaaS under Akamai: Linodes, LKE, Object Storage, plus Akamai edge — two catalogs learning to be one."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Linode (Akamai Cloud)"
-  subtitle="The Distributed Compute Platform"
-  tags={['Cloud', 'IaaS', 'Developer', 'Edge']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Linode / Akamai Cloud">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Linode (similar to DigitalOcean) built its reputation over 20 years by providing incredibly reliable, mathematically simple Linux Virtual Machines with predictable pricing. In 2022, they were acquired by Akamai, one of the world's largest Content Delivery Networks.
+**Linode** is a long-running developer IaaS now branded **Akamai Cloud Computing**. You still get **Linodes** (VMs), volumes, NodeBalancers, **LKE** (Kubernetes), and Object Storage. Akamai adds a global CDN/security edge. The interesting architecture is origin on Linode plus delivery on Akamai — if you wire them on purpose.
 
-## 1. The Core Primitives
-Linode completely rejects the mathematical complexity of AWS.
-They offer standard **Linodes** (Virtual Machines), **NodeBalancers** (Load Balancers), and **Object Storage**. The UI is exceptionally fast, and the documentation is legendary in the DevOps community. A developer can mathematically predict their monthly bill down to the cent, making it a favorite for hosting independent SaaS products and VPNs.
+## 1. Deep Dive and Mechanics
 
-## 2. The Akamai Edge Evolution
-The mathematical implications of the Akamai acquisition are massive.
-Akamai owns thousands of edge routing nodes distributed physically inside the networks of global ISPs. The strategic goal is to mathematically merge Linode's compute capabilities with Akamai's edge network. Instead of deploying a Linode VM in a central mega-data center (like AWS Ashburn), developers will eventually be able to mathematically deploy containerized compute workloads directly to the Akamai edge, milliseconds away from end-users, creating a massively distributed cloud that rivals Cloudflare Workers.
+**Linodes.** Shared vs dedicated CPU, GPUs in some sites, images, StackScripts (cloud-init cousins). Regions are the classic Linode list plus growth.
 
-</TechnologyTemplate>
+**LKE.** Managed K8s with Linode CCM for NodeBalancers and volumes. Simple and adequate.
+
+**Object Storage.** S3-compatible. Good for backups and static assets; pair with Akamai property for public delivery.
+
+**Akamai edge.** Property Manager, WAF, and Ion are a different console and contract. Do not assume a checkbox connects them.
+
+<Callout icon="warning" title="Two control planes">
+Linode API tokens do not configure Akamai properties. Identity and billing may still feel like two vendors. Plan the seam.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Origin offload: cache hit ratio at Akamai determines whether cheap Linodes survive a traffic spike. A 0% hit rate is just a VPS with extra latency.
+
+IPv4 and bandwidth packages are the Linode-era bill. Edge overages are the Akamai-era bill.
+
+<ComparisonTable
+  headers={['Need', 'Linode', 'Akamai edge']}
+  rows={[
+    ['VM / K8s', 'Linode / LKE', 'Not the point'],
+    ['Object', 'Object Storage', 'NetStorage / others'],
+    ['CDN / WAF', 'Limited', 'Core product'],
+    ['DNS', 'Linode DNS', 'Akamai Edge DNS'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+linode-cli linodes create --type g6-standard-2 --region us-east \
+  --image linode/ubuntu24.04 --label web-1
+```
+
+Put NodeBalancers in front; do not expose every Linode publicly.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User --> Aka[Akamai edge]
+    Aka --> NB[NodeBalancer]
+    NB --> L1[Linode]
+    NB --> L2[Linode]
+    L1 --> Obj[Object Storage]
+```
+
+## 5. Interview Prep
+
+**Q: Linode vs DigitalOcean?**
+**A:** Same class: simple IaaS. Linode's twist is Akamai's edge. Pick on region, price, and whether you already buy Akamai.
+
+**Q: What is LKE?**
+**A:** Managed Kubernetes on Linode workers. Fewer addons than EKS.
+
+**Q: Why mention Akamai?**
+**A:** Acquisition. Architectures that ignore the edge leave money and DDoS capacity on the table — or confuse two bills.
+
+## 6. Production Use Cases
+
+- Media/static sites: objects + Akamai.
+- LKE for small product teams.
+- Lift of classic Linode fleets that need a WAF.
+
+<Callout icon="tip" title="Lock down origin to the edge">
+If Akamai fronts HTTP, Linodes should not be world-open on 80/443. Origin allow lists or private paths.
+</Callout>

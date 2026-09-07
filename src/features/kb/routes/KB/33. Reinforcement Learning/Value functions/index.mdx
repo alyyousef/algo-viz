@@ -1,27 +1,101 @@
 ---
-title: Value Functions
-description: The core mathematical predictors in RL that estimate the total cumulative future reward an Agent can expect to receive from a given State or Action.
+title: Value Functions (Reinforcement Learning)
+description: "V and Q — predictions of discounted return that turn a sequential problem into a backup equation you can approximate with a table or a net."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Value Functions">
+    <ConceptTemplate title="Value Functions (Reinforcement Learning)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a chess player looks at a board and thinks, *"I have a 90% chance of winning from this position,"* they are calculating a Value Function. It is the mathematical estimation of the long-term future.
+A **value function** answers “how good is this situation?” **V(s)** is the expected return from state s following a policy. **Q(s, a)** is the same, after committing to action a. Almost every RL algorithm is a way to estimate one of these and then improve the policy.
 
-## 1. State-Value Function ($V$)
-The State-Value function, $V(s)$, calculates how "good" it is to be in a specific State $s$.
-It is the Expected Return ($G_t$) starting from State $s$ and strictly following the current Policy ($\pi$) until the end of the game.
-If an Agent is driving toward a cliff, the physical State (coordinates) might be perfectly fine right now. But because the Agent's velocity is carrying it over the edge, the State-Value $V(s)$ will be astronomically negative. The Agent uses this mathematical foresight to slam the brakes *before* the disaster occurs.
+## 1. Deep Dive and Mechanics
 
-## 2. Action-Value Function ($Q$)
-The Action-Value function, $Q(s, a)$, calculates how good it is to take a *specific action* in a specific State.
-Unlike $V(s)$, which just scores the State, $Q(s, a)$ mathematically forces the Agent to ask, *"If I take Action A right now, and then follow my Policy forever, what is my total score?"*
-By calculating $Q$ for every possible action, the Agent simply picks the action with the highest $Q$-Value. The mathematical relationship between $V$ and $Q$ is called the **Advantage Function** ($A(s, a) = Q(s, a) - V(s)$), which tells the Agent exactly how much better (or worse) a specific action was compared to the baseline expectation of the State.
+**V^pi vs V\***. V^pi is “if I keep acting like this.” V* is “if I act optimally.” Policy evaluation estimates V^pi; control estimates V* or Q*.
 
+**Advantage.** A(s, a) = Q(s, a) - V(s) says how much better a is than average. Policy gradients with advantage (A2C, PPO) subtract a baseline to cut variance.
+
+**Bootstrapping.** TD uses V(s') or max Q(s', ·) instead of waiting for the full return. Fast, biased if the critic is wrong. Monte Carlo waits for the episode: unbiased, high variance.
+
+**Function approximation.** A table can hold every (s, a). A neural net shares weights and can **diverge** (deadly triad: off-policy + bootstrap + FA). Target networks and replay are duct tape that usually works.
+
+<Callout icon="warning" title="Overestimate">
+max_a Q_theta(s', a) uses the same noisy net to pick and evaluate. DQN overestimates; Double DQN evaluates with the target net. TD3 uses the min of two critics.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Bellman expectation: V^pi(s) = E_a~pi, s'[ r + gamma V^pi(s') ]. Bellman optimality: V*(s) = max_a E[ r + gamma V*(s') ].
+
+The Bellman operator is a gamma-contraction in sup norm, so value iteration converges. With linear FA, you need projected Bellman / LSTD caveats. With deep nets you have empirical recipes, not a theorem you can cite in an incident review.
+
+<ComparisonTable
+  headers={['Object', 'Input', 'Used for']}
+  rows={[
+    ['V(s)', 'state', 'Baseline, GAE, PPO critic'],
+    ['Q(s,a)', 'state, action', 'DQN, SARSA, SAC critic'],
+    ['A(s,a)', 'state, action', 'Policy gradient, GAE'],
+    ['Advantages GAE', 'trajectory', 'Bias-variance knob lambda'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import torch
+import torch.nn as nn
+
+class VHead(nn.Module):
+    def __init__(self, body: nn.Module, hidden: int):
+        super().__init__()
+        self.body = body
+        self.v = nn.Linear(hidden, 1)
+
+    def forward(self, state):
+        return self.v(self.body(state)).squeeze(-1)
+
+def td_target(reward, next_v, done, gamma: float):
+    return reward + gamma * next_v * (1.0 - done)
+```
+
+`done` here should be **terminated**, not truncated.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    S[State s] --> V[V(s)]
+    S --> Q[Q(s, a)]
+    A[Action a] --> Q
+    Q --> Adv[A = Q minus V]
+    V --> Backup[Bellman backup]
+    Q --> Backup
+```
+
+## 5. Interview Prep
+
+**Q: V vs Q?**
+**A:** V scores states; you still need a model or a policy to pick a. Q scores actions directly, so greedy control is argmax_a Q.
+
+**Q: What is GAE?**
+**A:** Generalised advantage estimation mixes 1-step through n-step TD residuals with lambda. lambda=0 is 1-step TD; lambda=1 is Monte Carlo.
+
+**Q: Why a target network?**
+**A:** The bootstrap target uses a slow copy of Q so the regression target does not chase a moving online net every step.
+
+## 6. Production Use Cases
+
+- **Critics** in PPO/SAC training clusters; discarded or kept for offline eval.
+- **Q-rankers** in recsys (slate Q) when actions are “which item.”
+- **Risk-sensitive values** (CVaR) when the mean return is not the business metric.
+
+<Callout icon="tip" title="Plot value vs return">
+If predicted V is 50 and empirical return is 8, the critic is lying. Fix that before you tune the actor LR.
+</Callout>

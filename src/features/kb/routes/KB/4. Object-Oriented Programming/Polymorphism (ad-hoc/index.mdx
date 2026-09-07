@@ -1,26 +1,95 @@
 ---
 title: Polymorphism
-description: The provision of a single interface to entities of different types.
+description: "Ad-hoc polymorphism: one name, several implementations chosen from the argument types at compile time — overloading and some operator tricks."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="Polymorphism">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Polymorphism">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-In programming languages and type theory, polymorphism is the provision of a single interface to entities of different types, or the use of a single symbol to represent multiple different types.
+**Ad-hoc polymorphism** gives one name to several unrelated implementations. The compiler (or a type class resolver) picks a body from the static types of the arguments. Method overloading is the everyday form.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="tip" title="The Power of Interfaces">
+`print` for an int and `print` for a string do not share an algorithm. They share a name. That is ad-hoc: each pair of types gets a handmade instance.
 
+**Overload resolution** ranks candidates by specificity. Boxing, inheritance, and variadic arguments make the ranking language-specific and sometimes surprising. Java will pick a different overload after a seemingly innocent refactor.
 
-  If you have an array of `IShape` objects, you can loop through the array and call `.draw()` on every item. The `Circle` object will draw a circle, and the `Square` object will draw a square. The calling code doesn't need to know what specific shape it is dealing with.
+**Type classes** (Haskell `Show`, Rust traits with many impls) are a disciplined ad-hoc: you still write one implementation per type, but the compiler proves a unique instance exists.
 
-
+<Callout icon="info" title="Not the same as generics">
+Parametric polymorphism runs the same code for every type. Ad-hoc code is allowed to be different — and usually is.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Types of Polymorphism
+Strachey split polymorphism into ad-hoc and parametric. Ad-hoc is a family of functions indexed by types, not one function abstracted over a type variable.
 
+Resolution is a search problem on the set of visible declarations. Ambiguity (two equally good candidates) is a compile error in strict systems and a fragile implicit pick in others.
 
-<ComparisonTable headers={['Type', 'Description']} rows={[ ['Subtype (Runtime)', 'Method Overriding. A child class replaces the implementation of a parent class method.'], ['Ad-hoc (Compile-time)', 'Method Overloading. Having three functions named `add()`, but one takes ints, one takes floats, one takes strings.'], ['Parametric', 'Generics. Writing a single `List<T> ` class that works for any type T.'] ]} />
+<ComparisonTable
+  headers={['Kind', 'Same algorithm', 'Chosen when', 'Example']}
+  rows={[
+    ['Ad-hoc', 'No', 'Compile time, by types', 'Overloads, type classes'],
+    ['Parametric', 'Yes', 'Compile time, type param', 'Generics, templates'],
+    ['Subtype', 'Override may differ', 'Run time, receiver', 'Virtual methods'],
+  ]}
+/>
 
-</TechnologyTemplate>
+## 3. Real-World Implementation
+
+```java
+public final class Format {
+    public static String show(int n) {
+        return Integer.toString(n);
+    }
+
+    public static String show(double n) {
+        return String.format("%.2f", n);
+    }
+
+    public static String show(String s) {
+        return s == null ? "" : s;
+    }
+}
+```
+
+Three methods, one name. The bytecode contains three distinct symbols after overload desugaring.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Call[Call show(x)] --> Resolve[Overload resolution]
+    Resolve --> I[show int]
+    Resolve --> D[show double]
+    Resolve --> S[show String]
+```
+
+## 5. Interview Prep
+
+**Q: Overloading versus overriding?**
+**A:** Overloading is ad-hoc and static: same name, different signatures, pick at compile time. Overriding is subtype polymorphism: same signature, pick the receiver's implementation at run time.
+
+**Q: Why can overloading surprise you in Java?**
+**A:** `null` has many possible types. Autoboxing and `Object` overloads can steal a call you thought was going to a more specific method.
+
+**Q: Is operator overloading ad-hoc polymorphism?**
+**A:** Yes. `+` on integers and `+` on strings are different functions that happen to share a symbol.
+
+## 6. Production Use Cases
+
+- **Numeric and logging APIs** with overloads for primitives versus objects.
+- **Builder setters** overloaded on `String`, `int`, and enum.
+- **Serialization type classes** that supply a `show` instance per type.
+
+<Callout icon="tip" title="Prefer distinct names when types are close">
+If two overloads could both apply after boxing, use `showInt` and `showText` instead. Clarity beats a clever name.
+</Callout>

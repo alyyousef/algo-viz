@@ -1,24 +1,101 @@
 ---
 title: Azure Container Apps
-description: A fully managed, serverless container service heavily optimized for microservices, allowing developers to deploy Docker containers without managing the underlying Kubernetes cluster.
+description: "Serverless containers on Kubernetes you do not see: revisions, ingress, Dapr, and KEDA scale — including scale to zero — without an AKS bill."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Container Apps"
-  subtitle="Serverless Microservices"
-  tags={['Azure', 'Containers', 'Serverless', 'Microservices']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Container Apps">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Running raw Kubernetes (AKS) is an infrastructure nightmare. Running a simple web app (App Service) lacks microservice networking. Container Apps is the mathematical middle ground, built on top of a hidden Kubernetes cluster.
+**Container Apps (ACA)** runs containers on a managed environment (Consumption or dedicated workload profiles). You get HTTP ingress, revisions (traffic split), secrets, and KEDA-based scale rules. There is no kubeconfig. If you need CRDs, DaemonSets, or a custom CNI, that is AKS.
 
-## 1. KEDA (Kubernetes Event-Driven Autoscaling)
-The most powerful mathematical feature of Container Apps is its native integration with **KEDA**.
-Standard auto-scaling looks at CPU percentage (e.g., "Scale up if CPU > 80%"). This is slow and reactive.
-KEDA scales based on *Events*. You can configure your Container App to mathematically monitor an Azure Service Bus queue. If the queue is empty, the container scales exactly to Zero (costing $0). The exact millisecond a message hits the queue, KEDA mathematically forces the Container App to boot up, process the message, and spin back down to zero.
+## 1. Deep Dive and Mechanics
 
-## 2. Dapr (Distributed Application Runtime)
-Microservices require complex math to talk to each other (Service Discovery, Mutual TLS encryption, State management).
-Container Apps natively injects **Dapr** as a "sidecar" into your container. If Container A wants to talk to Container B, it does not need to know B's IP address or write complex retry logic. Container A simply sends a standard HTTP request to its own local Dapr sidecar (`localhost:3500`), and Dapr mathematically handles the secure network routing, retries, and encryption to Container B completely invisibly.
+**Environment.** A boundary for networking and observability. Consumption is pay-per-use. Workload profiles pin compute for predictable noisy-neighbor isolation. The environment joins a VNet when you need private outbound or internal ingress.
 
-</TechnologyTemplate>
+**Revisions.** Each deploy can create a revision. Send 10 percent of traffic to the new one, then 100. Deactivate old revisions or they cost if min replicas is greater than zero.
+
+**Scale.** HTTP concurrency, CPU, or KEDA scalers (Service Bus depth, Event Hubs). `minReplicas: 0` is the serverless story; the first request pays a cold start.
+
+**Dapr (optional).** Sidecar for pub/sub and state. Useful if you already standardized on Dapr; not mandatory.
+
+**Jobs.** Run-to-completion jobs (manual, schedule, or event) sit beside apps. Use them for workers that should not listen on 80.
+
+<Callout icon="warning" title="Ingress is not a WAF">
+External ingress is a public HTTPS endpoint. Put Front Door or Application Gateway with WAF in front for internet apps. Internal ingress for east-west only.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Scale-to-zero is a queueing system with setup time. Offered load λ with cold-start S makes P99 ≈ S when the app is idle. A min replica of 1 buys away S at the cost of always-on vCPU-seconds.
+
+Traffic splitting is weighted random at the ingress, not session-sticky unless you turn affinity on — usually do not.
+
+<ComparisonTable
+  headers={['Service', 'Unit', 'Cluster API']}
+  rows={[
+    ['Container Apps', 'App / revision', 'Hidden'],
+    ['Container Instances', 'Container group', 'None'],
+    ['App Service', 'Site / plan', 'None'],
+    ['AKS', 'Pod / Deployment', 'Full'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bicep
+resource app 'Microsoft.App/containerApps@2024-03-01' = {
+  name: 'api-checkout'
+  location: location
+  properties: {
+    environmentId: env.id
+    configuration: {
+      ingress: { external: false, targetPort: 8080 }
+    }
+    template: {
+      containers: [{ name: 'api', image: 'acrprod.azurecr.io/api:1.4.2' }]
+      scale: { minReplicas: 1, maxReplicas: 20 }
+    }
+  }
+}
+```
+
+Pull from ACR with a managed identity on the app. Do not put a pull secret in env vars.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    FD[Front Door] --> Ing[ACA ingress]
+    Ing --> Rev1[Revision n]
+    Ing --> Rev2[Revision n+1]
+    Rev1 --> KEDA[KEDA scale]
+```
+
+## 5. Interview Prep
+
+**Q: ACA vs AKS?**
+**A:** ACA when the unit is a container and you want scale-to-zero, revisions, and no node pools. AKS when you need Kubernetes itself.
+
+**Q: ACA vs Functions?**
+**A:** Functions if the programming model is triggers and bindings. ACA if you already have a Dockerfile and an HTTP server.
+
+**Q: Why is my app billed while idle?**
+**A:** minReplicas greater than zero, or a probe that keeps HTTP scale above zero. Check replica count, not just “we set scale to zero.”
+
+## 6. Production Use Cases
+
+- Public API: Front Door → ACA with min 2 in prod.
+- Queue workers scaled on Service Bus depth.
+- Preview revisions for a mobile API with a 5 percent traffic canary.
+
+<Callout icon="tip" title="One environment per network story">
+Do not dump every team into one environment unless you intended shared logs and one VNet. Isolation is an environment (or a workload profile), not a naming prefix.
+</Callout>

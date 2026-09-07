@@ -1,24 +1,97 @@
 ---
-title: Subversion (SVN)
-description: A centralized legacy version control system that relies on a single, authoritative master server, meaning developers must have a continuous network connection to commit code or view history.
+title: SVN
+description: "Apache Subversion: a centralised VCS with a linear global revision number, cheap directory copies for branches, and a working copy that talks to one server."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Subversion (SVN)"
-  subtitle="Centralized Version Control"
-  tags={['Version Control', 'Legacy', 'Centralized', 'Engineering']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="SVN">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Before Git revolutionized the industry, Apache Subversion (SVN) was the global standard for version control. It fundamentally differs from Git in its mathematical architecture regarding decentralization.
+**Apache Subversion** (SVN) is a centralised version-control system. There is one authoritative repository; working copies hold a slice plus metadata (`.svn`). Every successful commit increments a **global revision** number. Branches and tags are ordinary directories created by cheap copies. SVN still appears in enterprises that never finished a Git migration, in shops that want a simple linear audit story, and as the system Git users `git svn` against during transition.
 
-## 1. The Central Server Bottleneck
-Git is *Distributed* (every developer has a full 5GB mathematical clone of the entire repository history on their laptop).
-SVN is *Centralized*. A developer's laptop only contains a single snapshot of the current files. The mathematical history (all past commits) exists *only* on the central SVN server.
-Therefore, in SVN, if you are on an airplane without Wi-Fi, you are mathematically incapable of committing code, viewing a file's history, or switching branches, because all those operations require a network request to the central server.
+## 1. Deep Dive and Mechanics
 
-## 2. The Merging Nightmare
-SVN's mathematical branching and merging algorithms were notoriously weak.
-Because tracking branch divergence computationally required constant communication with the central server, developers avoided branching. Instead, massive teams worked directly on the "trunk" (main branch), leading to constant breakages. When branches were used, merging them back together often resulted in catastrophic, unresolvable conflicts, a trauma that drove the industry's rapid migration to Git in the 2010s.
+**Central server.** `svn commit` is a network round-trip that either creates rN+1 or fails. There is no local commit. Offline work is "edit files and hope nobody else touched them."
 
-</TechnologyTemplate>
+**Revisions.** r42 is a tree of the whole repository. A project living in `/trunk/app` still shares the revision counter with `/branches/other`. Blame and log are path-scoped; the number is not.
+
+**Cheap copies.** `svn copy ^/trunk ^/branches/1.4` is O(1) on the server: a new directory that points at the same node history. Tags are copies you pinky-promise not to commit to. Enforcement is hook policy, not type system.
+
+**Working copy.** Mixed-revision working copies are normal after a partial update. `svn update` moves the WC toward HEAD. Tree conflicts (delete vs edit) are first-class.
+
+**Auth and locks.** Path-based authz. Optional file locks (`svn lock`) for unmergeable binaries — the feature Git users re-invent with LFS lock.
+
+<Callout icon="info" title="trunk, branches, tags is a convention">
+SVN does not know what a branch is. Layout (`/trunk`, `/branches`, `/tags`) is social. Break the convention and every tool that assumes it (Jenkins SVN plugin, git-svn) breaks too.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+History is a **linear sequence** of repository-wide trees T_0, T_1, … T_n. A branch is a path prefix whose node-ids fork at a copy revision. Merge tracking (`svn:mergeinfo`) records which revision ranges of path A have been applied to path B — a set of intervals, easy to get wrong after renames.
+
+**No DAG of commits as first-class objects.** Cross-branch history is reconstructed from copies + mergeinfo. That is why SVN merge is famously more painful than Git merge on long-lived branches.
+
+**Concurrency.** Optimistic: commit fails if your base revision for a changed file is stale (out-of-date). Locks make that pessimistic for chosen paths.
+
+<ComparisonTable
+  headers={['Property', 'SVN', 'Git']}
+  rows={[
+    ['Authority', 'One server', 'Every clone'],
+    ['Commit offline', 'No', 'Yes'],
+    ['Revision name', 'Monotonic integer', 'Content hash'],
+    ['Branch', 'Directory copy', 'Ref pointer'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+svn checkout https://svn.example.com/ledger/trunk ledger
+cd ledger
+svn update
+# edit
+svn status
+svn commit -m "fix: charge tax once on bundle SKUs"
+svn copy ^/trunk ^/tags/2.3.0 -m "tag 2.3.0"
+```
+
+Server-side hooks (`pre-commit`) enforce log message patterns and protect `/tags`. For migration, `git svn clone --stdlayout` then treat Git as source of truth; do not dual-commit for months.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    WC[Working copy] -->|commit| Svn[SVN server]
+    Svn -->|rN+1| Repo[Repository trees]
+    Repo -->|update| WC
+    Trunk[trunk] -->|svn copy| Br[branches/1.4]
+    Trunk -->|svn copy| Tag[tags/1.4.0]
+```
+
+## 5. Interview Prep
+
+**Q: Why did Git displace SVN for most new work?**
+**A:** Offline commits, cheap real branches, and GitHub. SVN's model is simpler to explain (one number, one server) but branching/merging and distributed teams pushed shops off it.
+
+**Q: Is a tag immutable?**
+**A:** Only if a hook forbids commits under `/tags`. Otherwise it is a directory someone can edit.
+
+**Q: What is git-svn good for?**
+**A:** A bridge during migration. It is a leaky impedance match (one SVN revision to one Git commit, branches as refs). Finish the cut, then turn off write to SVN.
+
+## 6. Production Use Cases
+
+- **Regulated linear audit** where "r18432" is the language auditors already speak.
+- **Binary-heavy shops** using locks (game assets, CAD) that never adopted Git LFS locks.
+- **Migration tails**: a read-only SVN mirror kept for archaeology after Git is live.
+
+<Callout icon="tip" title="Protect tags with a hook on day one">
+A writable `/tags` directory is how "the 2.3.0 we certified" silently gains a file. Deny writes except to a release robot.
+</Callout>

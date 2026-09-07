@@ -1,27 +1,112 @@
 ---
 title: GitHub Actions
-description: A continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline.
+description: "GitHub's CI/CD: workflow YAML in the repo, hosted or self-hosted runners, a marketplace of actions, and OIDC to cloud roles without long-lived keys."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="GitHub Actions">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GitHub Actions">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-GitHub Actions makes it easy to automate all your software workflows, now with world-class CI/CD. Build, test, and deploy your code right from GitHub. Make code reviews, branch management, and issue triaging work the way you want.
+**GitHub Actions** is CI/CD that lives in the same product as the Git host. A **workflow** is YAML under `.github/workflows`, triggered by events (push, pull_request, schedule, workflow_dispatch). **Jobs** run on GitHub-hosted VMs or self-hosted runners. **Steps** are either `run` scripts or **actions** (reusable units). Environments, OIDC, and reusable workflows turned it from "a CI toy" into the default pipeline for GitHub-centric teams.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="success" title="Event-Driven Automation">
+**Events and concurrency.** Triggers filter by branch and path. `concurrency` groups cancel stale runs so a force-push does not waste a farm. `pull_request` versus `pull_request_target` is the security cliff: the latter runs in the *base* repo context and can see secrets.
 
+**Runners.** `ubuntu-latest` is a Microsoft-hosted VM. Larger runners and self-hosted exist for private nets and GPUs. Self-hosted ephemeral runners (one job, then destroy) are the only safe pattern for untrusted PR code.
 
-  Unlike traditional CI tools that only run when code is pushed, GitHub Actions can be triggered by *any* GitHub event. You can run a script when an Issue is opened, when a PR is labeled, or when a new release is drafted.
+**Actions.** `uses: owner/repo@ref`. A floating tag is a mutable pointer. Composite, JavaScript, and Docker actions differ in how they execute, not in the trust problem.
 
+**Permissions.** Default `GITHUB_TOKEN` scopes are repo-settable. Least privilege is `permissions:` at workflow or job level. `id-token: write` is required for OIDC.
 
+**Reusable workflows and composite actions.** Org-wide CI lives in a private actions repo. `workflow_call` is the template lock analogue of Azure's `extends`.
+
+<Callout icon="error" title="pull_request_target plus checkout of the fork is RCE">
+The workflow file comes from the base branch (trusted) but if you check out the PR SHA and run its install scripts, the attacker has your secrets. Do not mix those.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Core Concepts
+A workflow run is a DAG of jobs (`needs`). Matrix is a Cartesian product; cost multiplies. Expressions in the workflow language evaluate in a sandbox at the runner — still treat them as code, not as documentation.
 
+**OIDC.** The runner presents a JWT with claims (repo, workflow, ref, environment). The cloud IdP maps claims → role. The security property is short-lived, audience-bound credentials. A stolen `GITHUB_TOKEN` is still powerful inside GitHub; OIDC does not replace job isolation.
 
-<ComparisonTable headers={['Concept', 'Description']} rows={[ ['Workflow', 'A configurable automated process made up of one or more jobs. Defined in a YAML file in `.github/workflows/`.'], ['Event', 'A specific activity in a repository that triggers a workflow run (e.g., `push`, `pull_request`, `schedule`).'], ['Job', 'A set of steps in a workflow that execute on the same runner (server). Jobs run in parallel by default.'], ['Step', 'An individual task that can run commands (like `npm test`) or use an Action.'], ['Action', 'A reusable, standalone command that can be shared in the GitHub Marketplace (e.g., `actions/checkout@v3`).'] ]} />
+**Cache keys.** Same as other CIs: hash of lockfile. Cache poisoning on public repos is a known class: a PR can write a cache the default branch later consumes unless you partition keys.
 
+<ComparisonTable
+  headers={['Piece', 'Role', 'Trust note']}
+  rows={[
+    ['Workflow YAML', 'Orchestration', 'Review like prod code'],
+    ['Marketplace action', 'Reusable step', 'Pin to SHA'],
+    ['GITHUB_TOKEN', 'Forge API', 'Least-privilege permissions'],
+    ['OIDC token', 'Cloud auth', 'Claim-condition the role'],
+  ]}
+/>
 
-</TechnologyTemplate>
+## 3. Real-World Implementation
+
+```yaml
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/gha-pay-prod
+          aws-region: eu-west-1
+      - run: ./scripts/deploy.sh
+```
+
+The AWS role's trust policy must require the exact repo and `environment: production`. Tag-based deploy still needs a gate: only create tags from a protected workflow on `main`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Ev[Event] --> WF[Workflow]
+    WF --> J1[Job A]
+    WF --> J2[Job B]
+    J1 --> J3[Job deploy]
+    J2 --> J3
+    J3 --> Env[Environment approvals]
+    J3 --> OIDC[OIDC to cloud]
+    Env --> Cloud[AWS / Azure / GCP]
+    OIDC --> Cloud
+```
+
+## 5. Interview Prep
+
+**Q: Why pin actions to a SHA?**
+**A:** Tags move. A compromised maintainer or stolen token can retarget `v3` to malware. SHA is immutable. Dependabot can still propose SHA bumps.
+
+**Q: Hosted versus self-hosted?**
+**A:** Hosted is patch-managed and ephemeral. Self-hosted reaches private networks and special hardware — and is a standing execution foothold if not ephemeral and isolated.
+
+**Q: How do you promote the same artifact?**
+**A:** Build once, upload to Actions artifacts or a registry by digest, then a later job or workflow downloads that digest. Do not rebuild on the deploy job.
+
+## 6. Production Use Cases
+
+- **Default CI** for GitHub orgs: lint, test, required checks, merge queue.
+- **OIDC deploy** to AWS/Azure/GCP without stored cloud keys.
+- **Reusable org workflows** that lock scanning into every repo.
+
+<Callout icon="tip" title="Set default token to read-only at the org">
+Then grant write only on the jobs that need it. The number of "Actions pushed to main" incidents drops overnight.
+</Callout>

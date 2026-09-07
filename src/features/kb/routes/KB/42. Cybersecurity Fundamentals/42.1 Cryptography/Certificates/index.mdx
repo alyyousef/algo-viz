@@ -1,46 +1,82 @@
 ---
-title: Digital Certificates (X.509)
-description: An electronic document used to prove the validity of a public key.
+title: Certificates
+description: "X.509 bindings of a public key to an identity, signed by a issuer, that make TLS and code signing scalable."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="Digital Certificates (X.509)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Certificates">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-A digital certificate (or public key certificate) is an electronic document used to prove the ownership of a public key. The certificate includes information about the key, information about the identity of its owner, and the digital signature of an entity that has verified the certificate's contents (a Certificate Authority).
+A **certificate** is a signed statement: this public key belongs to this name, until this date, under these usages. On the web that name is a DNS name. The signature comes from a Certification Authority that browsers or your private PKI already trust. Without certificates, every client would have to pin every server key by hand.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="info" title="The Digital Passport">
+An X.509 v3 certificate carries subject, subject public key, issuer, validity window, serial, and extensions: SAN, key usage, EKU, AIA, CRL/OCSP pointers. Browsers match the hostname against SAN, check the time window, walk the chain to a trust anchor, and check revocation when they can.
 
+**Chain building.** The leaf is signed by an intermediate. The intermediate is signed by a root in the trust store. Name constraints and path-length constraints stop a rogue intermediate from minting arbitrary names.
 
-  Think of a digital certificate like a passport. It contains your face (Public Key), your name and nationality (Identity Information), and it is stamped and sealed by a trusted government entity (the Certificate Authority).
+**Lifecycle.** Issue, deploy, renew before expiry, revoke on compromise. Short-lived certs (hours to days) shrink the revocation problem. ACME automates the web PKI loop.
 
-
+<Callout icon="warning" title="Hostname mismatch is a hard fail">
+A perfectly valid cert for the wrong name is an impersonation. Always verify SAN against the name you intended to reach.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The X.509 Standard
+A cert is a signature over a TBSCertificate encoding. Verification is public-key signature verification plus a policy: allowed roots, required EKUs, name constraints. The crypto proves the issuer attested the binding. It does not prove the issuer did good identity checks. That is a process problem (CABF baseline requirements, your RA).
 
-Almost all digital certificates on the internet follow a strict formatting standard known as **X.509**. When you click the padlock icon in your browser to view a website's certificate, you are looking at an X.509 data structure.
+<ComparisonTable
+  headers={['Field', 'Job', 'Common failure']}
+  rows={[
+    ['SAN', 'Names the cert covers', 'Missing name, only CN set'],
+    ['EKU', 'TLS server vs code sign vs email', 'Wrong purpose accepted'],
+    ['Validity', 'Not-before / not-after', 'Clock skew, forgotten renew'],
+    ['AKI / SKI', 'Chain building hints', 'Broken intermediate chain'],
+  ]}
+/>
 
-A standard X.509 certificate contains the following critical fields:
-- **Version**: Usually v3.
-- **Serial Number**: A unique identifier assigned by the CA to track or revoke the certificate.
-- **Signature Algorithm**: The cryptographic algorithm used by the CA to sign the certificate (e.g., `sha256RSA`).
-- **Issuer**: The distinguished name of the CA that issued and signed the certificate (e.g., `Let's Encrypt Authority X3`).
-- **Validity Period**: Two dates defining when the certificate becomes active, and when it definitively expires (e.g., `Not Before`, `Not After`).
-- **Subject**: The identity of the entity the certificate belongs to (e.g., `Common Name (CN): www.google.com`).
-- **Subject Public Key Info**: The actual Public Key being vouched for, and the algorithm it uses (e.g., `RSA 2048-bit`).
+## 3. Real-World Implementation
 
-## Types of Validation
+```bash
+openssl x509 -in leaf.pem -noout -text -certopt no_pubkey,no_sigdump
+openssl verify -CAfile roots.pem -untrusted intermediates.pem leaf.pem
+```
 
-When a company applies for a TLS/SSL certificate, the CA can perform different levels of background checks before signing it:
+In application code, use the platform TLS stack and its default trust store unless you are pinning a private CA. Do not parse X.509 with regex.
 
+## 4. Visualizations
 
-<ComparisonTable headers={['Type', 'Acronym', 'Verification Level']} rows={[ ['Domain Validation', 'DV', 'The CA only verifies that the applicant possesses technical control over the domain name (e.g., by asking them to place a specific file on the web server). Cheap, fast, fully automated.'], ['Organization Validation', 'OV', 'The CA verifies domain ownership AND verifies the actual legal existence of the organization by checking government business registries. Provides moderate trust.'], ['Extended Validation', 'EV', 'Requires a rigorous identity vetting process, including physical address checks and human phone calls. Used by banks and financial institutions for maximum trust.'] ]} />
+```mermaid
+flowchart BT
+    Leaf[Leaf cert for app.example] --> Int[Intermediate CA]
+    Int --> Root[Trust-anchor root]
+    Client[Client trust store] --> Root
+```
 
+## 5. Interview Prep
 
-## Certificate Extensions (SAN)
+**Q: Why do we still have intermediates?**
+**A:** Roots stay offline. Intermediates sign daily issuance. Compromise of an intermediate is painful; compromise of a root is catastrophic.
 
-Historically, a certificate was valid for a single domain name defined in the Subject Common Name (CN). Modern v3 certificates utilize the **Subject Alternative Name (SAN)** extension, which allows a single certificate to secure multiple domain names (e.g., `example.com`, `www.example.com`, and `api.example.com`) simultaneously.
+**Q: Cert pinning vs public CA?**
+**A:** Pinning shrinks the trusted set (good for mobile apps talking to your API). It also makes rotation and incident response harder. Public CA plus Certificate Transparency is the web default.
 
-</TechnologyTemplate>
+**Q: What is a leaf versus a CA cert?**
+**A:** Basic Constraints CA=true marks issuers. Clients must reject a leaf that tries to sign other certs.
+
+## 6. Production Use Cases
+
+- **HTTPS** server identity on the public internet.
+- **mTLS** service-to-service identity in a mesh.
+- **Code signing and document signing** with a different EKU.
+
+<Callout icon="tip" title="Automate renewal at 60 percent of lifetime">
+Humans forget 90-day certs. ACME or your internal issuer API should renew unattended and fail the deploy if the new chain does not verify.
+</Callout>

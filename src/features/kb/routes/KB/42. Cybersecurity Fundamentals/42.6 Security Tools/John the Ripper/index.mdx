@@ -1,35 +1,86 @@
 ---
 title: John the Ripper
-description: A legendary, extremely fast password cracking software tool.
+description: "A password-recovery toolkit used to audit hashes you own and to justify stronger KDFs and MFA."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="John the Ripper">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When a hacker steals a database of passwords, they don\'t get the plaintext passwords; they get cryptographic hashes (like MD5, SHA-256, or bcrypt). To find the real passwords, they must "crack" the hashes.
+**John the Ripper** is an open-source password-recovery project (often "John"). Like Hashcat, its only clean use in a company is an **authorized audit of your own hashes** to show residual guessability. This page does not include formats, wordlists, or recovery commands.
 
-**John the Ripper (JtR)** is one of the oldest and most famous open-source password crackers. It is incredibly versatile and runs on CPU architectures.
+## 1. Deep Dive and Mechanics
 
+An audit program extracts a sample from a test system or an approved production snapshot, runs a time-boxed recovery in a locked lab, and reports a percentage. Then you **destroy the extract**. The engineering follow-through is Argon2id, salt, blocklists, and MFA.
 
-<Callout icon="info" title="The Auto-Detect Magic">
+**Unix history.** John grew up around crypt(3)-style hashes. Modern orgs should not still store those for interactive login.
 
+**Legal.** Other people's hashes, "just to see," are out of bounds.
 
-  John the Ripper\'s most famous feature is that it mathematically analyzes the structure of the hash (e.g., length, character set, prefixes like `$1$`) and automatically detects the hashing algorithm used, requiring zero configuration from the user.
-
-
+<Callout icon="error" title="A recovered password list is toxic data">
+Store the metric. Wipe the secrets. Tell people to rotate if the audit used real accounts.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Cracking Modes
+Guessing is search over a distribution that is not uniform (people pick seasons and pets). A KDF multiplies work per guess. Unique salts prevent one precomputation from covering the directory. MFA changes the payoff: a guessed password should not open the session.
 
+<ComparisonTable
+  headers={['Control', 'What it does', 'Gap it leaves']}
+  rows={[
+    ['Length + blocklist', 'Removes easy guesses', 'Phishing'],
+    ['Slow KDF + salt', 'Raises offline cost', 'Reuse elsewhere'],
+    ['MFA', 'Second factor', 'Fatigue / bad UX'],
+    ['Passkeys', 'No shared secret', 'Recovery flow'],
+  ]}
+/>
 
-<ComparisonTable headers={['Mode', 'Description']} rows={[ ['Dictionary Attack', 'Takes a massive text file of common passwords (like the famous `rockyou.txt`), hashes each one, and mathematically compares it to the stolen hash.'], ['Brute Force', 'Mathematically tries every single possible combination of characters (`a`, `b`, `c`... `aaaa`, `aaab`). Guaranteed to work eventually, but usually takes millions of years for long passwords.'], ['Rule-based Attack', 'The most effective mode. It takes a dictionary word (e.g., `password`) and applies mathematical mutations (e.g., capitalizing the first letter, appending `123`, changing `a` to `@`) to create highly probable guesses (`P@ssword123`).'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Authorized audit record
+# Approver, date, system, sample size
+# Lab host id, duration cap
+# Result: percent recovered (no plaintext retained)
+# Follow-up ticket: policy / KDF / MFA
+```
 
+Prefer forcing a reset over emailing anyone their recovered password.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Appr[Approval] --> Sample[Sample hashes]
+    Sample --> Lab[Time-boxed lab]
+    Lab --> Metric[Metric only]
+    Metric --> Fix[Policy and KDF]
+```
+
+## 5. Interview Prep
+
+**Q: John vs Hashcat?**
+**A:** Overlapping jobs. Hashcat is GPU-centric. John is common on Unix labs. Neither replaces MFA.
+
+**Q: Should we audit monthly?**
+**A:** Rarely. After a KDF change or a breach of the hash file, yes. Otherwise invest in IdP controls.
+
+**Q: What if recovery is "too easy"?**
+**A:** That is a successful audit. Fix the store and require MFA. Do not hide the result.
+
+## 6. Production Use Cases
+
+- **Legacy Linux** shadow-file migrations.
+- **App-local** password tables you are deleting.
+- **Compliance** evidence that offline guessability was measured.
+
+<Callout icon="tip" title="Delete the app password table">
+SSO plus passkeys makes this whole class of tools boring — that is the win.
+</Callout>

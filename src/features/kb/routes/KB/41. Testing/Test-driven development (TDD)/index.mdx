@@ -1,40 +1,94 @@
 ---
 title: Test-Driven Development (TDD)
-description: "A software development process where developers write the automated tests before writing the actual production code."
+description: "Writing a failing test first, then the smallest code that passes, then refactoring under that safety net — a design loop, not a test-after habit."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Test-Driven Development (TDD)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Test-Driven Development (TDD)** flips the traditional development process upside down. Instead of writing code and then writing tests to verify it, you write the test first, watch it fail, and then write the minimum amount of code required to make it pass.
+**Test-driven development** is a tight loop: Red (a failing test that states the next behaviour), Green (the dullest code that passes), Refactor (clean design while green). Kent Beck's point was design feedback, not a coverage trophy. If you write tests after a sprawling module, you did test-after development.
 
-## 1. The Red-Green-Refactor Cycle
-TDD is driven by a strict, repetitive three-step cycle:
+## 1. Deep Dive and Mechanics
 
-1. **Red**: Write a test for the next piece of functionality you want to add. Run the test suite. It will fail (show Red) because the functionality doesn't exist yet.
-2. **Green**: Write the absolute simplest, ugliest, most hard-coded production code possible just to make that specific test pass (show Green).
-3. **Refactor**: Now that the test passes, you have a safety net. Clean up the code, remove duplication, and apply design patterns, ensuring the test stays Green.
+**Red.** The test must fail for the right reason — missing behaviour, not a typo in the test. Watching red proves the test can fail.
 
-## 2. Why use TDD?
-- **Forces Testable Design**: If you write the test first, you are forced to design your classes to be modular, decoupled, and easily mockable. You cannot accidentally write untestable spaghetti code.
-- **YAGNI (You Aren't Gonna Need It)**: Because you only write code to make a failing test pass, TDD prevents you from over-engineering features that the requirements didn't ask for.
-- **Fearless Refactoring**: The test suite grows organically with the codebase, providing a 100% reliable safety net for future changes.
+**Green.** Hard-coding the expected value is legal. Triangulate with a second example before you generalise. YAGNI: no extra branch until a test demands it.
 
+**Refactor.** Duplication, names, and seams. Tests stay green. If you need a new behaviour, leave the refactor and start a new red.
 
-<Callout icon="warning" title="The TDD Learning Curve">
+**Outside-in versus classic.** Classic TDD grows from units. London/outside-in starts at the acceptance test and mocks neighbors inward. Both are TDD; they differ on when you invent interfaces.
 
-
-TDD is notoriously difficult for beginners to adopt. It feels counter-intuitive and significantly slows down initial development speed. However, advocates argue that the time lost writing tests upfront is paid back tenfold by preventing long debugging sessions and regressions in the future.
-
-
+<Callout icon="warning" title="Skipping red is not TDD">
+A test written after the code that is already green never proved it could catch the bug. At least break the implementation once.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Think of the specification as a sequence of examples e1, e2, … that tighten a hypothesis H about the program. Each red/green step is a **refinement**: the program class shrinks toward H.
+
+TDD does not prove correctness. It produces an executable regression suite whose examples *are* the design conversation. Formal refinement (Z, Event-B) is the mathematical cousin; TDD is the lightweight one.
+
+Feedback latency matters: a loop that takes 10 minutes is not TDD. The unit of work must stay in-process and fast.
+
+<ComparisonTable
+  headers={['Practice', 'When tests are written', 'Design effect']}
+  rows={[
+    ['TDD', 'Before the behaviour', 'Forces seams and small steps'],
+    ['Test-after', 'After a chunk', 'Can ossify a bad API'],
+    ['ATDD / BDD', 'Before the story', 'Aligns on outcomes'],
+    ['No automated tests', 'Never', 'Fear of change'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def test_empty_cart_total_is_zero():
+    assert Cart().total() == 0
+
+def test_single_line_is_qty_times_price():
+    cart = Cart()
+    cart.add(sku='sku', qty=2, price=50)
+    assert cart.total() == 100
+```
+
+First implementation of `total` can return 0, then 100, then a real sum. The third test (two lines) forces the loop. That is triangulation.
+
+## 4. Visualizations
+
+```mermaid
+stateDiagram-v2
+    [*] --> Red
+    Red --> Green: smallest pass
+    Green --> Refactor: clean while green
+    Refactor --> Red: next behaviour
+```
+
+## 5. Interview Prep
+
+**Q: Does TDD slow teams down?**
+**A:** It slows the first hour and speeds the third month. The honest cost is learning to design testable units. The saving is debugging and fearless refactors.
+
+**Q: What should you not TDD?**
+**A:** Exploratory spikes, throwaway prototypes, and most CSS tweaks. Also anything you cannot run fast in isolation — extract a seam first.
+
+**Q: TDD versus BDD?**
+**A:** TDD is a programmer micro-loop. BDD is a shared language for examples at the story level. They compose: BDD outside, TDD inside.
+
+## 6. Production Use Cases
+
+- **Domain-rich services** (pricing, eligibility) where examples *are* the spec.
+- **Legacy rescue**: characterisation tests first (not TDD), then TDD on new seams.
+- **Katas and pairing** to teach a team the rhythm before applying it to a service.
+
+<Callout icon="tip" title="One behaviour per cycle">
+A 40-line test that invents a feature is a design session in the wrong window. Split until red is a single sentence.
+</Callout>

@@ -1,23 +1,87 @@
 ---
 title: OCI Tenancy
-description: The absolute mathematical root boundary of an organization's presence in Oracle Cloud, providing strict, unbreachable physical and logical isolation from all other Oracle customers.
+description: "The root account: home region, root compartment, and the OCID everything hangs from — one contract, many compartments."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Tenancy"
-  subtitle="The Root Cloud Boundary"
-  tags={['OCI', 'Architecture', 'Security', 'Governance']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Tenancy">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-When a corporation signs a contract with Oracle, they do not just get a username. They are mathematically allocated a **Tenancy**. A Tenancy is the highest level of logical isolation in the OCI architecture, equivalent to an AWS "Account."
+A **tenancy** is your OCI account. It has a globally unique OCID, a **home region** (where IAM metadata lives), a root compartment, and a subscription/credits contract. All compartments, users, and regions you subscribe to sit under that tenancy.
 
-## 1. Absolute Isolation
-Oracle Cloud is a multi-tenant public cloud. Your company's Virtual Machines might physically reside on the exact same hardware rack as a competitor's Virtual Machines.
-The Tenancy is the mathematical hypervisor boundary that guarantees absolute isolation. It is mathematically and physically impossible for a user in Tenancy A to see, access, or consume the resources in Tenancy B unless an explicit, cross-tenancy IAM trust policy is aggressively configured. All billing, all Compartments, and all IAM users exist strictly within the mathematical borders of the Tenancy.
+## 1. Deep Dive and Mechanics
 
-## 2. The Root Compartment and Global Scope
-When a Tenancy is created, it is instantiated with a **Root Compartment**.
-Every single resource the company ever builds will mathematically exist as a child of this Root Compartment. Furthermore, the Tenancy itself is **Global**. While a Virtual Machine is physically locked to a specific Region (like London), the Tenancy exists globally across the entire Oracle Cloud. This allows the Tenancy Administrators to write a single, global IAM policy in the Root Compartment that mathematically cascades down and secures every single server in every single data center on Earth simultaneously.
+**Home region.** Identity resources are mastered there. You can use other subscribed regions for data plane. Moving home region is not a casual rename.
 
-</TechnologyTemplate>
+**Subscribe regions.** Capacity and services appear only in regions you enabled. A Terraform apply in an unsubscribed region fails loudly.
+
+**Root compartment.** The tenancy OCID is also the root compartment OCID. Policies `in tenancy` are global. That is why landing zones create children immediately.
+
+**Limits.** Service limits are tenancy-plus-region. Raising GPU limits is a support/ticket process, not a checkbox on a VM.
+
+<Callout icon="warning" title="One tenancy vs many">
+A single tenancy with compartments is simpler billing. Separate tenancies isolate blast radius and contracts (prod vs sandbox, or acquired company). Both are valid; mixing without a plan is not.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Blast radius of a tenancy admin is the whole contract. Federation + break-glass + no standing `manage all-resources in tenancy` is the control.
+
+Cost allocation: compartments and tags, not "ask finance to split one invoice by folklore."
+
+<ComparisonTable
+  headers={['Boundary', 'OCI', 'AWS']}
+  rows={[
+    ['Contract', 'Tenancy', 'Account / org'],
+    ['IAM root', 'Root compartment', 'Account root'],
+    ['Home of identity', 'Home region', 'Global IAM'],
+    ['Isolation extra', 'Second tenancy', 'Second account'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci iam region-subscription list
+oci iam tenancy get --tenancy-id $TENANCY_OCID
+```
+
+Write the tenancy OCID and home region in the landing-zone README. People will guess wrong.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Ten[Tenancy] --> Home[Home region IAM]
+    Ten --> Root[Root compartment]
+    Root --> Kids[Child compartments]
+    Ten --> Reg[Subscribed regions]
+```
+
+## 5. Interview Prep
+
+**Q: Tenancy vs compartment?**
+**A:** Tenancy is the account. Compartments are IAM/quota folders inside it.
+
+**Q: What is home region?**
+**A:** Where identity is mastered. Data can live elsewhere. Some IAM operations must target home.
+
+**Q: How do you isolate a risky experiment?**
+**A:** Tight compartment + quotas, or a separate tenancy if the risk is contractual.
+
+## 6. Production Use Cases
+
+- Enterprise landing zone in one tenancy, many compartments.
+- M&A: second tenancy until identity and network merge.
+- Sandbox tenancy with hard spend caps.
+
+<Callout icon="tip" title="Protect the tenancy OCID in docs, not in Slack lore">
+Every policy and CLI needs it. Put it in a secrets-safe catalog, not only in one admin's head.
+</Callout>

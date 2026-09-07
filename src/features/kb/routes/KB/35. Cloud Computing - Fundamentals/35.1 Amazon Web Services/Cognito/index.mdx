@@ -1,28 +1,98 @@
 ---
 title: Amazon Cognito
-description: A massively scalable Customer Identity and Access Management (CIAM) service that handles secure user sign-up, authentication, and token generation for web and mobile applications.
+description: "AWS-managed user pools and identity pools: sign-up, tokens, and optional STS credentials so apps do not invent their own password database."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Amazon Cognito"
-  subtitle="Managed User Authentication"
-  tags={['AWS', 'Security', 'Identity', 'JWT']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Amazon Cognito">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Writing your own cryptography to hash passwords and manage session tokens in a database is a massive security risk. Cognito outsources the complex mathematics of user authentication to AWS.
+**Cognito** is two products that people mash together. A **user pool** is an IdP: users, passwords, MFA, hosted UI, and JWT access/id/refresh tokens. An **identity pool** (federated identities) vends temporary AWS credentials from STS, usually after a user-pool or social login. Most app auth needs only the user pool plus an API Gateway or ALB JWT check.
 
-## 1. User Pools (Authentication)
-A **User Pool** is the managed database of your users.
-It handles the entire lifecycle: Sign-Up, Email Verification, Password Resets, and Multi-Factor Authentication (MFA).
-When a user successfully logs in, Cognito executes cryptographic math to generate three **JSON Web Tokens (JWTs)**:
-- **ID Token**: Contains the user's profile data (Email, Name).
-- **Access Token**: Contains the OAuth scopes (what the user is allowed to do).
-- **Refresh Token**: Used to securely get new Access Tokens when the old one expires.
-The frontend application mathematically attaches the Access Token to every API request to prove identity.
+## 1. Deep Dive and Mechanics
 
-## 2. Identity Pools (Authorization)
-A User Pool proves *who* you are. An **Identity Pool** dictates *what* AWS resources you can touch.
-If you want your mobile app users to upload profile pictures directly to an S3 bucket (without going through your backend API), the app sends the Cognito JWT to the Identity Pool. The Identity Pool mathematically verifies the cryptographic signature of the token, and exchanges it for temporary, highly restricted AWS IAM Credentials that only allow that specific user to write to their specific folder in S3.
+**Tokens.** Id token is OIDC identity. Access token is for resource servers and custom scopes. Refresh token is long-lived and must be stored like a session secret. App clients are public (SPA, mobile) or confidential (server).
 
-</TechnologyTemplate>
+**Hosted UI vs custom.** Hosted UI/OAuth endpoints give you standards-compliant redirects. Custom UI uses the SDK and amplify-auth style APIs; you own XSS and password UX.
+
+**Triggers.** Pre-signup, pre-token generation, migrate-user, and others are Lambda hooks. Pre-token is how you inject custom claims — and how you accidentally make every login depend on a cold Lambda.
+
+**Federation.** User pools can broker SAML/OIDC to a workforce IdP. Identity pools can also take Facebook/Google tokens and map them to IAM roles.
+
+**Advanced security.** Compromised-credential checks, risk-based MFA, adaptive auth — extra cost, extra lock-in.
+
+<Callout icon="warning" title="Refresh tokens are the kingdom">
+A leaked refresh token is a durable session. Rotate app clients, use token revocation, short refresh on SPAs, and never park tokens in localStorage if you can use tighter browser storage plus a BFF.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+JWTs are signed (and optionally encrypted) claims. Verification is signature + iss + aud + exp — no network call if you cache JWKs. Revocation before expiry needs a denylist or short TTL plus refresh.
+
+Identity-pool IAM is **GetCredentialsForIdentity**: a role assumption keyed by a mapping rule. The role trust must not be `*` with a weak identity. Confused-deputy here issues real AWS keys to the browser.
+
+<ComparisonTable
+  headers={['Piece', 'Issues', 'Consumers']}
+  rows={[
+    ['User pool', 'JWTs for users', 'API Gateway, ALB, your API'],
+    ['Identity pool', 'STS keys', 'S3/DDB from the client'],
+    ['IAM Identity Center', 'Workforce SSO', 'AWS console and CLI'],
+    ['Cognito vs Auth0', 'AWS-native vs vendor', 'Triggers vs richer CX'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import boto3
+
+idp = boto3.client('cognito-idp')
+resp = idp.admin_initiate_auth(
+    UserPoolId='us-east-1_example',
+    ClientId='app-client-id',
+    AuthFlow='ADMIN_USER_PASSWORD_AUTH',
+    AuthParameters={'USERNAME': 'ada', 'PASSWORD': 'not-in-source'},
+)
+print(resp['AuthenticationResult']['ExpiresIn'])
+```
+
+APIs should verify the JWT locally with the user-pool JWKS, not call AdminGetUser on every request.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User[User] --> Pool[User pool]
+    Pool --> JWT[JWT]
+    JWT --> APIGW[API Gateway JWT authorizer]
+    JWT --> IdPool[Identity pool]
+    IdPool --> STS[Temp AWS creds]
+```
+
+## 5. Interview Prep
+
+**Q: User pool vs identity pool?**
+**A:** User pool authenticates humans and issues JWTs. Identity pool exchanges a proof of identity for IAM credentials. You can use the first without the second.
+
+**Q: How does API Gateway check Cognito?**
+**A:** A JWT authorizer (HTTP API) or a Cognito authorizer (REST) validates the access token. The Lambda never sees a password.
+
+**Q: What belongs in a pre-token trigger?**
+**A:** Small, cacheable claims (tenant id, role). Not a 200 ms database join on every refresh if you can store it on the user attribute.
+
+## 6. Production Use Cases
+
+- Consumer apps with email/password and social login.
+- Machine-to-user APIs with Cognito as the JWT issuer.
+- Mobile apps that upload to S3 via identity-pool scoped credentials.
+
+<Callout icon="tip" title="Prefer HTTP API JWT authorizer">
+Verify at the edge, cache JWKS, and keep custom claims tiny. The authorizer should not become your monolith.
+</Callout>

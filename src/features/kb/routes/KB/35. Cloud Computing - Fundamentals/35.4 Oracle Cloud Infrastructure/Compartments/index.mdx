@@ -1,25 +1,90 @@
 ---
 title: OCI Compartments
-description: A fundamental, mathematically rigorous logical isolation feature unique to Oracle Cloud, used to strictly organize and secure cloud resources across an entire enterprise.
+description: "The tenancy's resource tree: isolate IAM, quotas, and blast radius — not folders for pretty names, the actual authorization boundary."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Compartments"
-  subtitle="Logical Resource Isolation"
-  tags={['OCI', 'Security', 'Governance', 'IAM']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Compartments">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-In AWS, if you want to completely isolate the "HR Team" from the "DevOps Team", you generally create two entirely separate AWS Accounts. OCI handles this mathematically within a single Tenancy (Account) using **Compartments**.
+A **compartment** is a logical collection of OCI resources inside a tenancy. Policies grant `verb` + `resource-type` **in compartment X**. Nesting is a tree. The root compartment is the tenancy. Almost every create call takes a compartment OCID.
 
-## 1. Logical Boundaries
-A Compartment is a logical, mathematical folder. It is not a physical network boundary.
-When you create a Virtual Machine, a Database, or a Virtual Cloud Network (VCN), you *must* mathematically place it into a specific Compartment (e.g., `Production_Compartment`).
-You then apply IAM Policies strictly to the Compartment: *"Allow the 'DevOps_Group' to manage all Virtual Machines inside the 'Production_Compartment'."* If a DevOps engineer tries to delete a VM in the `HR_Compartment`, the mathematical IAM evaluation strictly blocks the action.
+## 1. Deep Dive and Mechanics
 
-## 2. Hierarchical Nesting and Quotas
-Compartments can be mathematically nested up to 6 levels deep.
-(e.g., `Root -> Finance -> Analytics -> Sandbox`).
-This allows for massive enterprise governance. You can apply a **Quota Policy** at the `Finance` level: *"Mathematically restrict this compartment and all its children to a maximum of 50 CPU cores."* This absolute mathematical ceiling prevents a junior developer in the Sandbox from accidentally spinning up 1,000 GPUs and bankrupting the company.
+**Tree.** Typical layout: `network`, `prod`, `nonprod`, `shared-security`, maybe per-app children. Resources do not wander; you move them with an API that not everything supports.
 
-</TechnologyTemplate>
+**Policy scope.** `allow group AppAdmins to manage instance-family in compartment prod` does not grant the same in `network`. This is how you stop app teams from rewriting the VCN.
+
+**Quotas and budgets.** Compartment quotas cap how many GPUs or public IPs a sandbox can mint. Budgets alert on the same boundary.
+
+**Visibility.** Console "list in subtree" vs "this compartment only" is a frequent support ticket. APIs default to the compartment you pass, not the whole tenancy.
+
+<Callout icon="warning" title="Root is not a junk drawer">
+Resources in the root compartment inherit the widest policy mistakes. Create children on day one and deny casual create at root.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Authorization is path-scoped. A policy on a parent can include children depending on how you write `compartment` vs `compartment id`. Inheritance is powerful and easy to over-grant.
+
+Blast radius of a leaked user in `dev` should be `dev`. If your policy said `tenancy`, the math failed.
+
+<ComparisonTable
+  headers={['Boundary', 'OCI', 'AWS / GCP']}
+  rows={[
+    ['Account-like', 'Tenancy', 'Account / project'],
+    ['IAM folder', 'Compartment', 'OU / folder'],
+    ['Resource home', 'Compartment OCID', 'Account + tags / project'],
+    ['Quota unit', 'Compartment quota', 'Quota + budgets'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+allow group NetAdmins to manage virtual-network-family in compartment network
+allow group AppAdmins to manage instance-family in compartment prod
+allow group AppAdmins to use virtual-network-family in compartment network
+allow group Auditors to read all-resources in tenancy
+```
+
+App teams `use` the subnet; they do not `manage` the VCN.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Ten[Tenancy / root] --> Net[network]
+    Ten --> Prod[prod]
+    Ten --> Dev[nonprod]
+    Prod --> App1[app-a]
+    Prod --> App2[app-b]
+```
+
+## 5. Interview Prep
+
+**Q: Compartment vs tag?**
+**A:** Compartment is the IAM and quota boundary. Tags are for cost and automation. You need both. Tags do not replace policies.
+
+**Q: Can a resource be in two compartments?**
+**A:** No. One home. Share via policy, not dual citizenship.
+
+**Q: How do you isolate prod IAM?**
+**A:** Separate compartments, separate groups, no `manage all-resources in tenancy` for humans who ship apps.
+
+## 6. Production Use Cases
+
+- Landing zone: network + security + workload compartments.
+- Sandbox compartments with hard quotas for experiments.
+- Break-glass compartment for logging sinks nobody else can delete.
+
+<Callout icon="tip" title="Name compartments for policy, not for org charts">
+Org charts change quarterly. `prod` and `network` stay. If you must map a business unit, nest it under prod, do not explode the root.
+</Callout>

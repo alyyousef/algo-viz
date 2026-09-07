@@ -1,37 +1,103 @@
 ---
 title: Consistent Hashing
-description: A special kind of hashing such that when a hash table is resized, only n/m keys need to be remapped on average.
+description: "A ring-based placement scheme so adding or removing a node remaps only a nearby slice of keys instead of reshuffling the entire set."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Consistent Hashing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In distributed systems, we often use the mathematical modulo operator to route data. If we have 4 cache servers, we route a user to a server using: `Hash(UserID) % 4`.
+**Consistent hashing** places keys and nodes on a ring so that when membership changes, only keys that lived near the changed node move. Classic modulo hashing — hash(key) mod N — remaps nearly every key when N changes. That is a cache stampede and a data-migration disaster.
 
-This works perfectly until Server #4 dies. Now we only have 3 servers. If we use `Hash(UserID) % 3`, almost *every single user* mathematically maps to a completely different server than they did before. The entire cache is instantly invalidated, causing a catastrophic "Cache Stampede" against the database.
+## 1. Deep Dive and Mechanics
 
-**Consistent Hashing** is a brilliant mathematical algorithm that solves this.
+Hash nodes onto a circular identifier space. Hash the key onto the same circle. Walk clockwise to the first node. That node owns the key. Remove a node and its keys fall to the next clockwise neighbor. Add a node and it steals a slice from its successor.
 
+**Virtual nodes (vnodes).** One physical server appears as many points on the ring. That smooths load when hash points would otherwise clump, and it lets a fat machine advertise more vnodes than a small one.
 
-<Callout icon="success" title="The Mathematical Ring">
+**Replication.** Store copies on the next R-1 successors so a death still has data on the ring. Repair and hinted handoff fill the holes.
 
-
-  Instead of a simple modulo, Consistent Hashing places all servers on a theoretical mathematical ring (from 0 to 360 degrees). When a key is hashed, it is placed on the ring. It then walks clockwise until it mathematically collides with the first server it finds.
-
-
+<Callout icon="info" title="The ring is a coordination problem">
+Everyone must agree on membership and vnode weights. Gossip, a config service, or a control plane publishes the map. A split view of the ring is a consistency bug.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Elegance of the Ring
+On a uniform ring, expected fraction of keys owned by a node is about 1/N. Expected remapped fraction when one node of N is added or removed is about 1/N. Virtual nodes reduce variance of share (order 1/sqrt(v) style concentration).
 
-1. **Adding a Server:** If you add Server #5 to the mathematical ring, it only steals a tiny slice of the keys from its immediate clockwise neighbor. The other 4 servers are completely unaffected.
-2. **Removing a Server:** If Server #2 dies, its keys simply walk further clockwise to Server #3. The rest of the ring remains perfectly intact.
-3. **Virtual Nodes:** To prevent one server from mathematically taking on an unfair share of the circle, each physical server is assigned dozens of "Virtual Nodes" scattered randomly around the ring, ensuring a perfectly even distribution of data.
+Rendezvous hashing (HRW) is a cousin: score each node with hash(key, node) and pick the max. It also remaps ~1/N and needs no explicit ring walk.
 
+<ComparisonTable
+  headers={['Scheme', 'On N to N+1', 'Hotspot control', 'Common home']}
+  rows={[
+    ['hash mod N', 'Almost all keys', 'Poor if N small', 'Toy examples'],
+    ['Consistent hash ring', 'About 1/N', 'Vnodes', 'Dynamo, caches'],
+    ['HRW / rendezvous', 'About 1/N', 'Weighted scores', 'Some CDNs, caches'],
+    ['Range shards', 'Split one range', 'Manual or auto split', 'Bigtable, Vitess'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import hashlib
+import bisect
+
+def h(s):
+    return int(hashlib.sha1(s.encode()).hexdigest(), 16)
+
+class Ring:
+    def __init__(self, nodes, vnodes=50):
+        self.points = []
+        self.map = {}
+        for n in nodes:
+            for i in range(vnodes):
+                p = h(n + '#' + str(i))
+                self.points.append(p)
+                self.map[p] = n
+        self.points.sort()
+
+    def owner(self, key):
+        p = h(key)
+        i = bisect.bisect_left(self.points, p) % len(self.points)
+        return self.map[self.points[i]]
+```
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    K[Key hash] --> Walk[Walk clockwise]
+    Walk --> N2[Node B]
+    N1[Node A] --> N2
+    N2 --> N3[Node C]
+    N3 --> N1
+```
+
+## 5. Interview Prep
+
+**Q: Why did modulo hashing fail the cache fleet?**
+**A:** Changing N reshuffles almost every key. Hit rate collapses and the database absorbs a stampede. Consistent hashing moves only the slice of the lost or added node.
+
+**Q: How do you rebalance a hot key?**
+**A:** Vnodes do not split a single popular key. You need application sharding of that key, a local replica pool, or a different partition function.
+
+**Q: Ring versus directory-based sharding?**
+**A:** A directory (lookup table) can place keys anywhere and migrate one shard at a time. It needs a strongly consistent map. The ring is decentralized and simpler, with less placement freedom.
+
+## 6. Production Use Cases
+
+- **Distributed caches** (Memcached clients, some Redis clusters).
+- **Dynamo-style stores** with preference lists on the ring.
+- **Request routing** to stateful workers that should see the same session.
+
+<Callout icon="tip" title="Watch load per vnode, not only per host">
+A bad hash or a skewed keyspace still piles work on one point. Metrics must be per physical node after vnode aggregation.
+</Callout>

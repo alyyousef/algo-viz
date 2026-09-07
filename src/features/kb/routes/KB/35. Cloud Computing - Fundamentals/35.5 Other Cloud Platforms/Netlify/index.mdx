@@ -1,24 +1,94 @@
 ---
 title: Netlify
-description: The pioneer of the Jamstack architecture, mathematically automating the global deployment, continuous integration, and edge hosting of modern frontend web applications.
+description: "Git-connected JAMstack: builds, CDN, Functions, and Forms — frontend-first PaaS that is not a general VM host."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Netlify"
-  subtitle="The Jamstack Pioneer"
-  tags={['Cloud', 'Hosting', 'Jamstack', 'Frontend']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Netlify">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Before Netlify, deploying a React or Vue SPA required provisioning an AWS S3 bucket, setting up CloudFront, manually configuring SSL certificates, and writing complex GitHub Actions to handle the build. Netlify mathematically automated all of this into a single platform.
+**Netlify** pioneered git-push static hosting with a CDN, preview URLs per PR, and **Functions** (and Edge Functions) for server bits. **Netlify Forms**, Identity, and redirects live in `netlify.toml`. It competes with Vercel for frontend teams. It is a bad place to run a long-lived worker JVM.
 
-## 1. The Git-Centric Workflow
-Netlify's core architectural premise is that **Git is the source of truth**.
-You link your GitHub repository to Netlify. When you push to the `main` branch, a webhook triggers Netlify's mathematical build engine. It boots a container, runs `npm run build`, mathematically optimizes the HTML/CSS/JS assets, and deploys the static files directly to their massive global Edge CDN. The deployment is atomic; if a user is currently browsing the site, the state is mathematically consistent until they refresh.
+## 1. Deep Dive and Mechanics
 
-## 2. Edge Functions and Deploy Previews
-While initially for static sites, Netlify evolved to support dynamic compute.
-They offer **Netlify Edge Functions** (built on Deno). These run serverless TypeScript code directly at the CDN edge, allowing for instantaneous mathematical operations like A/B testing or personalized geo-routing before the HTML even reaches the user.
-Furthermore, Netlify provides **Deploy Previews**. If a developer opens a Pull Request on GitHub, Netlify automatically builds that specific branch and mathematically provisions a unique, temporary URL (e.g., `deploy-preview-42.netlify.app`) allowing QA teams to test the exact changes before they are merged to production.
+**Build.** Git webhook → build image → publish directory → edge. Build minutes are a quota. Monorepos need ignore and base-directory settings.
 
-</TechnologyTemplate>
+**Runtime.** Functions are AWS Lambda-shaped (historically) with Netlify routing. Edge Functions run on Deno-ish isolates. Timeouts apply.
+
+**Redirects and headers.** `_redirects` and `_headers` or toml. SPA fallback and HTTPS are table stakes.
+
+**Split testing and previews.** Deploy previews are the killer feature. Lock them down if the site is private.
+
+<Callout icon="warning" title="Secrets in the build">
+Build env vars are available to the build container. A malicious dependency can print them. Scoped tokens, not org-wide PATs.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Bandwidth and build minutes dominate cost after the nice free tier. A huge JS bundle plus a crawler is a CDN bill.
+
+Cold starts on Functions are the same FaaS curve. Edge Functions have tighter CPU and different APIs.
+
+<ComparisonTable
+  headers={['Need', 'Netlify', 'Vercel']}
+  rows={[
+    ['Git previews', 'Yes', 'Yes'],
+    ['Next.js bias', 'Works', 'Home turf'],
+    ['Functions', 'Lambda / Edge', 'Serverless / Edge'],
+    ['Enterprise SSO', 'Teams / Enterprise', 'Teams / Enterprise'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```toml
+# netlify.toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+```
+
+Pin Node version. "Latest" on the build image is a surprise.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Git --> Build[Build]
+    Build --> CDN[Edge CDN]
+    CDN --> Fn[Functions]
+    CDN --> Static[Static assets]
+```
+
+## 5. Interview Prep
+
+**Q: Netlify vs nginx on a VM?**
+**A:** Netlify is CDN + CI + Functions. A VM is cheaper at huge steady bandwidth if you will staff it. Most marketing sites should not staff it.
+
+**Q: Netlify vs Vercel?**
+**A:** Similar JAMstack. Framework and team preference dominate. Vercel owns Next.js mindshare.
+
+**Q: Where does the database live?**
+**A:** Not on Netlify. Neon, Supabase, PlanetScale, or a hyperscaler. Functions are the glue.
+
+## 6. Production Use Cases
+
+- Marketing and docs sites with PR previews.
+- Light APIs as Functions in front of a SaaS DB.
+- Split traffic for a landing-page experiment.
+
+<Callout icon="tip" title="Cache HTML on purpose">
+If every document is `max-age=0`, you bought a CDN and disabled it. Set cache headers for truly static paths.
+</Callout>

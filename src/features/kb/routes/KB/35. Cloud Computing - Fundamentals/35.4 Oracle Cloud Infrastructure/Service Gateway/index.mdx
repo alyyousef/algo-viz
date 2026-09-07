@@ -1,24 +1,89 @@
 ---
 title: OCI Service Gateway
-description: A mathematically secure, internal routing appliance that allows Virtual Machines in a private Subnet to privately access Oracle public services (like Object Storage) without traversing the internet.
+description: "Private path from a VCN to Oracle services (Object Storage and more) without IGW, NAT, or the public internet."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Service Gateway"
-  subtitle="Private Access to Public Services"
-  tags={['OCI', 'Networking', 'Security', 'Routing']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Service Gateway">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-OCI Object Storage and OCI Autonomous Database are public services; their API endpoints exist on the public internet. If a highly secure, private Database VM needs to back itself up to Object Storage, sending that highly sensitive backup data over an Internet Gateway is a massive security risk.
+A **Service Gateway** is a VCN hop that sends traffic to a **service CIDR** (for example the Object Storage CIDR in that region) over Oracle's private backbone. Instances keep private IPs. You do not need NAT or public IPs for those services. IAM still authorizes the API.
 
-## 1. The Internal Backbone
-The Service Gateway mathematically solves this.
-You attach a Service Gateway to your VCN. In your Route Table, you add a rule: *"Route all traffic destined for 'All OCI Services in Region' to the Service Gateway."*
-When the Database initiates the backup, the VCN routing engine mathematically intercepts the packet. Instead of sending it out to the public internet, it routes it to the Service Gateway. The Gateway forwards the packet entirely over Oracle's private, encrypted, internal fiber-optic backbone directly to the Object Storage array.
+## 1. Deep Dive and Mechanics
 
-## 2. Perfect Mathematical Security
-Because the traffic never touches the public internet, it cannot be mathematically intercepted or routed through malicious third-party ISPs.
-More importantly, the Database VM does not need a Public IP address, an Internet Gateway, or a NAT Gateway. It remains 100% mathematically isolated from the outside world, yet it can still seamlessly consume all of Oracle's native cloud services, providing the ultimate enterprise security posture.
+**Services.** You enable "OCI Object Storage" or "All services in Oracle Services Network" (OSN). Broader is convenient and a larger destination set. Narrow when you can.
 
-</TechnologyTemplate>
+**Routes.** A route rule: service CIDR → Service Gateway. Without the route, clients may still try the public IP via NAT.
+
+**NSGs.** Egress to the service CIDR must be allowed. People forget egress.
+
+**On-prem.** Combined with a DRG, on-prem hosts can reach OSN through the VCN if you intended that — or not, if you forgot to filter.
+
+<Callout icon="warning" title="All OSN vs Object Storage only">
+"All services" is easy and may expose more endpoints than your threat model wants. Start narrow.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Path selection is LPM. If you have both NAT 0.0.0.0/0 and a more specific service CIDR to the SGW, Object Storage stays private. Missing the specific route sends buckets out the NAT.
+
+Data: private path avoids internet egress fees and some compliance "data left the VCN" arguments. It does not bypass IAM.
+
+<ComparisonTable
+  headers={['Pattern', 'Cloud', 'Purpose']}
+  rows={[
+    ['Service Gateway', 'OCI', 'Private OSN'],
+    ['Gateway VPC endpoint', 'AWS', 'S3 / Dynamo prefix'],
+    ['Private Google Access', 'GCP', 'googleapis private'],
+    ['Service endpoint', 'Azure', 'Microsoft service VIP'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci network service-gateway create --compartment-id $COMP --vcn-id $VCN \
+  --services '[{"serviceId":"'"$OBJECT_STORAGE_SERVICE_ID"'"}]'
+
+# Route table: destination service CIDR -> service gateway OCID
+```
+
+Look up the service OCID with `oci network service list`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    VM[Private instance] --> RT[Route table]
+    RT --> SGW[Service Gateway]
+    SGW --> OSS[Object Storage]
+    RT --> NAT[NAT for the rest]
+```
+
+## 5. Interview Prep
+
+**Q: SGW vs NAT?**
+**A:** SGW is only for Oracle service CIDRs. NAT is general internet. Use both on private subnets.
+
+**Q: Does SGW make the bucket private?**
+**A:** It makes the **path** private. The bucket can still be public. Lock IAM and public access separately.
+
+**Q: Can on-prem use it?**
+**A:** Yes if routed through the VCN/DRG. That can be a feature or an accidental hole.
+
+## 6. Production Use Cases
+
+- Private app subnets writing backups to Object Storage.
+- OKE image pulls from OCIR via OSN.
+- Data Guard / backups that must not traverse the public internet.
+
+<Callout icon="tip" title="Pair with a bucket policy">
+Private path plus a public bucket is still a public bucket. Close both doors.
+</Callout>

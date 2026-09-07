@@ -1,29 +1,98 @@
 ---
-title: Abstract Factory Pattern
-description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically provides an interface for creating families of related or dependent objects without specifying their exact concrete classes.
+title: Abstract Factory
+description: "A creational pattern that builds families of related objects without the caller naming concrete classes — one factory, one consistent product line."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Abstract Factory Pattern"
-  subtitle="Families of Objects"
-  tags={['Design Patterns', 'Creational', 'GoF', 'Architecture']}
->
+    <ConceptTemplate title="Abstract Factory">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you are building a cross-platform UI framework, you need to create Buttons, Checkboxes, and TextFields. However, a Windows Button mathematically renders completely differently than a macOS Button.
+**Abstract Factory** (GoF) supplies an interface for creating a set of related products (Button, Scrollbar, Checkbox) so a client can stay on the Light theme or the Dark theme without `new`ing concrete widgets. The family stays consistent because one factory instance created all of them.
 
-## 1. The Family Problem
-If you use raw instantiation (`new WindowsButton()`), your business logic is mathematically tightly coupled to the Windows OS. If you run the code on a Mac, it crashes. You need a way to mathematically guarantee that you always create a complete "family" of matching UI components.
+## 1. Deep Dive and Mechanics
 
-## 2. The Abstract Factory
-The architect creates an Interface called `IGUIFactory`, which mathematically guarantees three methods: `createButton()`, `createCheckbox()`, and `createTextField()`.
-You then create concrete implementations: `WindowsFactory` and `MacFactory`.
-When the application starts, it checks the OS and injects the correct Factory into the business logic. The business logic simply calls `factory.createButton()`. It has absolutely zero mathematical knowledge of whether it is receiving a Windows button or a Mac button, completely fulfilling the Open-Closed Principle.
+**Factory of factories.** Each concrete factory (`WinFactory`, `OsxFactory`) implements `createButton` and `createMenu`. The app holds the abstract factory, not the product classes.
 
+**Families.** The point is combinatorial consistency. A Windows button on a macOS menu is the bug this pattern prevents.
+
+**Composition root.** You pick the factory once at startup (from config, from OS detection). The rest of the app depends on abstractions.
+
+**Versus Factory Method.** Factory Method defers one product to a subclass. Abstract Factory defers a whole family, usually via an object you inject, not via subclassing the client.
+
+<Callout icon="info" title="Do not factory everything">
+One `new` in a use case is not a crime. Abstract Factory earns its keep when products must match and the family will grow.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Type family.** Think of a factory as an index: for variant V, you get product types P1(V), P2(V), … that are designed to interoperate. The abstract factory is the interface of that index.
+
+**Open-closed.** Adding a product means a new method on every factory (painful). Adding a family means a new factory class (the intended extension axis). If you extend both axes often, you want a different design (dependency injection of each product).
+
+**Substitution.** Clients type against abstract products. Liskov still applies: a DarkButton must honour the Button contract.
+
+<ComparisonTable
+  headers={['Pattern', 'Creates', 'Extension axis']}
+  rows={[
+    ['Abstract Factory', 'A matching family', 'New family'],
+    ['Factory Method', 'One product', 'New creator subclass'],
+    ['Builder', 'One complex object', 'New construction recipe'],
+    ['DI container', 'Whatever is bound', 'New bindings'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class UiFactory:
+    def button(self):
+        raise NotImplementedError
+
+class DarkFactory(UiFactory):
+    def button(self):
+        return DarkButton()
+
+def toolbar(factory):
+    return factory.button()  # never DarkButton() here
+```
+
+Swap `DarkFactory` for `LightFactory` at the edge.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Client[Client] --> AF[Abstract factory]
+    AF --> F1[Family A factory]
+    AF --> F2[Family B factory]
+    F1 --> PA[Product A1 A2]
+    F2 --> PB[Product B1 B2]
+```
+
+## 5. Interview Prep
+
+**Q: Abstract Factory versus Factory Method?**
+**A:** Factory Method is “subclass decides one `createX`.” Abstract Factory is “an object can create a consistent set.” They compose: a factory method can return an abstract factory.
+
+**Q: Where have you seen this in the wild?**
+**A:** UI toolkits, database drivers (`java.sql.Connection` families), and cloud SDKs that vend matching clients for a region or credential style.
+
+**Q: What is the usual smell?**
+**A:** A god factory that creates unrelated objects. That is a service locator in a funny hat.
+
+## 6. Production Use Cases
+
+- **Look-and-feel** or brand skins that must not mix.
+- **Multi-platform** clients (desktop, mobile) sharing app code.
+- **Vendor families** (all AWS versus all GCP adapters chosen together).
+
+<Callout icon="tip" title="Bind the factory once">
+If every function looks up the factory globally, you have hidden coupling. Inject it.
+</Callout>

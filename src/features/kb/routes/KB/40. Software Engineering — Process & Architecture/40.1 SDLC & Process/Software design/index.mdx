@@ -1,35 +1,98 @@
 ---
 title: Software Design
-description: The critical architectural phase of the SDLC where high-level business requirements are mathematically translated into precise technical blueprints, establishing the structural foundation of the system before coding begins.
+description: "The activity of shaping modules, interfaces, and data so the system can be understood, changed, and operated — not just so it compiles today."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Software Design"
-  subtitle="The Translation to Architecture"
-  tags={['Process', 'Architecture', 'Design Patterns', 'UML']}
->
+    <ConceptTemplate title="Software Design">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If Requirements Engineering defines *what* the system must do, Software Design mathematically defines *how* the system will do it.
+**Software design** sits between a requirement and a pile of files. It chooses boundaries, responsibilities, and invariants. Architecture is design at the scale of systems and teams; detailed design is types, functions, and schemas. Both are design.
 
-## 1. High-Level Design (HLD)
-Software Design begins at the macro level. The architect mathematically determines the physical shape of the system.
-- Will it be a Monolith or Microservices?
-- Will the database be Relational (PostgreSQL) or NoSQL (DynamoDB)?
-- How will the system mathematically scale? (Load balancers, caching layers like Redis, asynchronous message queues like Kafka).
-The HLD provides the "10,000-foot view" of the infrastructure, ensuring the system can mathematically handle the required traffic and latency constraints.
+## 1. Deep Dive and Mechanics
 
-## 2. Low-Level Design (LLD)
-Once the HLD is approved, the engineers move to the Low-Level Design. This is the microscopic mathematical blueprint for the actual code.
-- Defining the exact REST API JSON payloads (OpenAPI/Swagger specs).
-- Designing the internal Object-Oriented class hierarchies and applying SOLID principles.
-- Selecting specific mathematical Design Patterns (e.g., using the Strategy Pattern to handle different payment gateways).
-A rigorous LLD ensures that when the developers finally open their IDEs, they are not guessing; they are simply implementing a mathematically proven blueprint.
+**Responsibilities.** What is this module allowed to know? Good design localises change: a pricing rule change should not require editing the HTTP layer and the email template.
 
+**Interfaces.** Stable contracts (functions, events, tables) hide volatile guts. Design the interface for the caller, not as a dump of internals.
+
+**Quality attributes.** Latency, safety, and evolvability are design inputs. A pretty class diagram that misses the SLO is incomplete.
+
+**Iterative.** Big Design Up Front fails when the problem is unknown. You still sketch: ADRs, sequence diagrams, type sketches. Then you let tests and usage revise the sketch.
+
+<Callout icon="info" title="Design is a conversation">
+If only one person can explain why the boundary exists, the design is not yet a team artifact. Write the ADR.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Information hiding (Parnas).** Modules should hide a design decision likely to change. The interface is the set of assumptions other modules may make. That is the theory behind encapsulation, not “use private fields.”
+
+**Coupling and cohesion.** High cohesion, low coupling is a graph quality: dense internal edges, sparse external ones. Complexity metrics (cyclomatic, cognitive) are proxies, not goals.
+
+**Types as design.** A type that cannot represent an illegal state shrinks the state space the rest of the program must consider.
+
+<ComparisonTable
+  headers={['Level', 'Question', 'Artifact']}
+  rows={[
+    ['Architecture', 'What are the deployable units?', 'Context and container diagrams'],
+    ['Module design', 'What is hidden behind this API?', 'Package and types'],
+    ['Detailed design', 'What are the invariants?', 'Functions, schemas, tests'],
+    ['Incidental structure', 'What file was handy?', 'Accidental architecture'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```typescript
+// Illegal states unrepresentable: a paid order cannot skip payment id
+type Unpaid = { status: "unpaid" }
+type Paid = { status: "paid"; paymentId: string }
+
+type Order = Unpaid | Paid
+
+function receipt(order: Paid): string {
+  return order.paymentId
+}
+```
+
+The compiler refuses `receipt` on an unpaid order. That is design, not decoration.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Need[Requirement + qualities] --> Bounds[Choose boundaries]
+    Bounds --> Hide[Hide likely change]
+    Hide --> Contract[Publish a small contract]
+    Contract --> Prove[Tests and types]
+    Prove --> Revise[Revise with usage]
+    Revise --> Bounds
+```
+
+## 5. Interview Prep
+
+**Q: Design versus architecture?**
+**A:** Scale and consequence. Architecture is the decisions that are expensive to reverse (storage, team boundaries, consistency). Design includes those and the module-level choices.
+
+**Q: How do you evaluate a design in an interview?**
+**A:** Walk a change: new field, new channel, a spike in load. Count modules touched and failure modes. Good design keeps those lists short.
+
+**Q: UML required?**
+**A:** No. Boxes and arrows that name responsibilities are. Sequence diagrams earn their keep for protocols.
+
+## 6. Production Use Cases
+
+- **Greenfield** where an ADR set prevents six incompatible styles.
+- **Brownfield** where you redesign a hotspot before adding the next feature.
+- **API products** where the published types are the design customers buy.
+
+<Callout icon="tip" title="Design for the next change you know">
+YAGNI forbids imaginary plugins. It does not forbid a seam you already have two reasons to need.
+</Callout>

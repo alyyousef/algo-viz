@@ -1,30 +1,100 @@
 ---
-title: SOLID Principles
-description: "An acronym representing five foundational mathematical principles of object-oriented class design, formulated by Robert C. Martin, aimed at making software architectures more understandable, flexible, and maintainable."
+title: SOLID
+description: "Five OO design heuristics — SRP, OCP, LSP, ISP, DIP — that keep types easy to change without breaking their callers."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="SOLID Principles"
-  subtitle="The 5 Pillars of Object-Oriented Architecture"
-  tags={['Process', 'Clean Code', 'Architecture', 'Design Principles']}
->
+    <ConceptTemplate title="SOLID">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If an engineer ignores SOLID, their codebase will mathematically degrade into "Spaghetti Code" where a single change to the UI breaks the database.
+**SOLID** (Martin, after others) is a mnemonic: **S**ingle responsibility, **O**pen-closed, **L**iskov substitution, **I**nterface segregation, **D**ependency inversion. They are heuristics for object design, not laws. Interviews expect a one-line definition and a failure example for each.
 
-## 1. SRP & OCP
-- **(S) Single Responsibility Principle**: A class must have exactly one mathematical reason to change. A `User` class should hold data; it should *not* contain the SQL query to save itself to the database (`UserRepository` should do that).
-- **(O) Open-Closed Principle**: Software entities must be mathematically *open for extension, but closed for modification*. If you need to add a "Bitcoin" payment method, you should mathematically create a new `BitcoinStrategy` class, not open the existing `PaymentProcessor` file and add another `if/else` statement.
+## 1. Deep Dive and Mechanics
 
-## 2. LSP, ISP & DIP
-- **(L) Liskov Substitution Principle**: A child class must be mathematically swappable with its parent class without breaking the program. If `Bird` has a `fly()` method, creating a `Penguin` class that extends `Bird` and throws a `CannotFlyException` mathematically violates LSP.
-- **(I) Interface Segregation Principle**: A client should never be forced to implement an interface it doesn't use. Instead of one massive `IWorker` interface with `work()` and `eat()`, split it into `IWorkable` and `IFeedable`, so a `Robot` class isn't forced to implement `eat()`.
-- **(D) Dependency Inversion Principle**: High-level modules must not mathematically depend on low-level modules; both should depend on abstractions (Interfaces). A `CheckoutService` must never instantiate a physical `MySQLDatabase`; it must depend on an abstract `IDatabase`.
+**SRP.** A module has one reason to change (one actor). A class that computes pay and writes PDF changes for two teams.
 
+**OCP.** Add behavior by adding code (new type, new plugin), not by editing a switch that already shipped. Factories and strategies are typical.
+
+**LSP.** Subtypes must honor the parent’s contract. A `Square` that breaks `Rectangle.set_width` is the classic violation. Preconditions cannot strengthen; postconditions cannot weaken.
+
+**ISP.** Do not force clients to depend on methods they do not use. Split fat interfaces (`read` vs `write`).
+
+**DIP.** High-level policy depends on abstractions; details (SQL, SMTP) implement them. The domain imports a port, not Postgres.
+
+<Callout icon="warning" title="SOLID is not 'more interfaces'">
+An interface per class with one implementor is ceremony. Extract an abstraction when you have a second implementation or a test seam you actually use.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**LSP as refinement.** Behavioral subtyping (Liskov, Wing): the subtype’s spec refines the supertype’s. History constraints matter (a type that forbids later `set_width` is not a `Rectangle`).
+
+**DIP and topological sort.** Dependencies should point toward stability. The domain is stable policy; I/O is volatile. Invert so arrows point in.
+
+**OCP and expression problem.** Open-closed along *one* axis (add types *or* add operations). Visitor versus methods is the same trade-off.
+
+<ComparisonTable
+  headers={['Letter', 'If you violate it', 'Typical fix']}
+  rows={[
+    ['S', 'Two actors in one type', 'Split the type'],
+    ['O', 'Edit a giant switch', 'New subtype / plugin'],
+    ['L', 'Subclass ifs and throws', 'Do not inherit that type'],
+    ['I', 'Empty methods / fat port', 'Split the interface'],
+    ['D', 'Domain imports SQL', 'Port plus adapter'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class OrderRepository(Protocol):
+    def get(self, oid) -> Order: ...
+
+class PlaceOrder:
+    def __init__(self, repo: OrderRepository, clock):
+        self.repo, self.clock = repo, clock
+
+    def execute(self, cmd):
+        order = Order.open(cmd, self.clock.now())
+        self.repo.add(order)
+```
+
+`PlaceOrder` depends on a protocol and a clock port (DIP, SRP). A `SqlOrderRepository` is a detail.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Policy[PlaceOrder] --> Port[OrderRepository]
+    Policy --> Clock[Clock]
+    Sql[SqlRepo] --> Port
+    Fake[FakeRepo] --> Port
+```
+
+## 5. Interview Prep
+
+**Q: Recite SOLID in one breath.**
+**A:** One reason to change; open to extension closed to modification; subtypes must be substitutable; thin interfaces; depend on abstractions. Then give one example.
+
+**Q: Is a Rectangle/Square always illegal?**
+**A:** If the parent allows independent width and height mutation, yes. If shapes are immutable values, the inheritance may be fine. LSP is about contracts, not pictures.
+
+**Q: Does functional code care?**
+**A:** DIP and SRP still apply (pure core, I/O at the edges). LSP is about substitutable functions/types. The letters are OO-flavored, the ideas are not.
+
+## 6. Production Use Cases
+
+- **Hexagonal / clean** service cores.
+- **Plugin pricing** (OCP) without editing checkout.
+- **Read vs write** ports (ISP) so query handlers do not depend on `save`.
+
+<Callout icon="tip" title="Use SOLID to explain a PR, not to decorate it">
+“This interface exists because we have a fake in tests and a SQL adapter” is DIP. “I added an interface because SOLID” is not.
+</Callout>

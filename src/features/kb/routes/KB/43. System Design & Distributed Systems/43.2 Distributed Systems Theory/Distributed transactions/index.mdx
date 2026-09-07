@@ -1,37 +1,96 @@
 ---
 title: Distributed Transactions
-description: Transactions that alter data on multiple databases mathematically simultaneously, requiring complex coordination to maintain ACID properties.
+description: "Atomic updates across more than one shard or store, via 2PC, 3PC, or sagas — each with a different failure and locking cost."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Distributed Transactions">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a Microservices architecture, you intentionally slice your database into smaller, isolated databases (e.g., a dedicated PostgreSQL server for Orders, and a dedicated PostgreSQL server for Inventory).
+A **distributed transaction** makes several resource managers commit or abort together. The user wants "card charged and order created, or neither." Across processes, that is a protocol, not a BEGIN on one Postgres. The protocol you pick decides who blocks, what you lose on crash, and how long locks live.
 
-While this mathematically improves horizontal scalability, it creates a massive engineering nightmare: **Distributed Transactions**.
+## 1. Deep Dive and Mechanics
 
-If an Order requires deducting $50 and deducting 1 item, how do you mathematically guarantee that BOTH databases commit the change, or BOTH databases rollback the change?
+**Two-phase commit.** A coordinator asks participants to prepare (vote yes and persist). If all yes, it commits; else abort. Participants that voted yes must wait for the decision — they are **uncertain** if the coordinator dies after prepare. Recovery requires the coordinator log or a human.
 
+**Three-phase commit** adds a pre-commit to reduce some blocking in a synchronous model; it is uncommon in the wild and still unhappy under partitions.
 
-<Callout icon="error" title="The Microservices Trap">
+**Sagas.** A sequence of local transactions with compensations (undo). No global lock. You get eventual consistency and must make compensations real (refund, not "delete the charge if we remember").
 
+**Percolator / MVCC + locks** and Spanner-style TrueTime are how some global SQL layers implement serializable distributed txn without a naive 2PC on the hot path.
 
-  Many engineers enthusiastically split their monolithic database into microservices without realizing they have mathematically destroyed ACID transactional guarantees. Without a distributed transaction strategy, you will inevitably encounter "partial failures" resulting in severe data corruption.
-
-
+<Callout icon="warning" title="2PC holds locks while the network thinks">
+A slow or dead coordinator extends row locks across services. That is how a payment outage becomes a warehouse outage.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Mathematical Strategies
+Atomic commit is consensus-adjacent: all honest participants decide the same commit/abort. Blocking 2PC is not partition-tolerant in the CAP sense: a participant cannot safely decide alone after a yes vote.
 
+Sagas trade atomicity for isolation. Intermediate states are visible. Isolation anomalies are a product concern.
 
-<ComparisonTable headers={['Strategy', 'How it works', 'Verdict']} rows={[ ['Two-Phase Commit (2PC)', 'A central coordinator mathematically locks rows across all databases, asks if they are ready, and then broadcasts a global commit.', 'Synchronous, highly consistent, but terribly slow. Creates massive mathematical bottlenecks.'], ['Saga Pattern', 'An asynchronous sequence of local transactions. Service A commits its local DB, then fires an Event to Service B. If Service B fails, it fires a "Compensating Event" to Service A to mathematically reverse the first transaction.', 'Complex to build, but highly scalable and performant. The modern standard for microservices.'], ['Outbox Pattern', 'Writing the business data AND the "Event message" to the exact same local database table in one single local ACID transaction. A background worker reads the table and forwards the message to the queue.', 'Mathematically guarantees that the event is fired if and only if the data is saved.'] ]} />
+<ComparisonTable
+  headers={['Approach', 'Atomic', 'Isolation', 'Failure mode']}
+  rows={[
+    ['Local ACID', 'Yes one store', 'Strong', 'One node'],
+    ['2PC', 'Yes', 'Locks across', 'Coordinator block'],
+    ['Saga', 'Eventual', 'Weak / app', 'Compensations'],
+    ['Global SQL (Spanner)', 'Yes', 'Serializable*', 'WAN latency'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
+```python
+def saga_place_order(order, pay, reserve):
+    oid = order.create()
+    try:
+        pay.charge(oid)
+        reserve.stock(oid)
+    except Exception:
+        pay.refund(oid)
+        order.mark_failed(oid)
+        raise
+```
+
+charge and refund must be idempotent. stock should fail if inventory is gone; do not compensate by pretending you never charged if refund can fail.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    C[Coordinator] --> P1[Prepare RM1]
+    C --> P2[Prepare RM2]
+    P1 --> D{All yes}
+    P2 --> D
+    D -->|yes| Commit[Commit both]
+    D -->|no| Abort[Abort both]
+```
+
+## 5. Interview Prep
+
+**Q: Why not 2PC everywhere?**
+**A:** Latency, lock time, and a coordinator as a single point of blocking. Fine inside one data-center DB cluster; painful as a web of microservices.
+
+**Q: Are sagas transactions?**
+**A:** They are a workflow with undo. They do not give ACID isolation. Say that clearly.
+
+**Q: Outbox pattern?**
+**A:** Write the business row and an event in one local transaction, then publish. That is how you avoid 2PC between DB and broker. Downstream still needs idempotency.
+
+## 6. Production Use Cases
+
+- **XA 2PC** between a DB and a legacy JMS broker inside one app server.
+- **Order sagas** across payment, inventory, and shipping services.
+- **Spanner / Cockroach** multi-shard SQL for products that need global serializability and can pay the RTT.
+
+<Callout icon="tip" title="Keep the happy path on one shard">
+If the shard key puts order and payment line on one node, you may not need a distributed txn at all.
+</Callout>

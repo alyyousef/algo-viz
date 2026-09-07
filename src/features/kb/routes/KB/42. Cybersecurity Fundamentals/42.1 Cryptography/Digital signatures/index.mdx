@@ -1,58 +1,88 @@
 ---
 title: Digital Signatures
-description: The cryptographic mechanism that guarantees the authenticity, integrity, and non-repudiation of digital documents and network messages.
+description: "Public-key proofs that a holder of a private key attested a specific message digest, used for TLS, software updates, and documents."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Digital Signatures">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A **Digital Signature** is the mathematical equivalent of a handwritten signature or a wax seal on an envelope. It uses Public-Key Cryptography to prove that a message originated from a specific person and that the message was not tampered with during transit.
+A **digital signature** is not encryption. The signer hashes a message and applies a private-key operation. Anyone with the public key can verify that that exact digest was attested and that the bits were not altered. Non-repudiation in the legal sense is a policy overlay; the crypto only proves key possession at signing time.
 
-They are the foundational security mechanism behind SSL/TLS Certificates, Software Updates, Cryptocurrency transactions, and secure emails.
+## 1. Deep Dive and Mechanics
 
-## 1. The Three Guarantees
+Pipeline: canonicalize the bytes, hash them, sign the digest with RSA-PSS, ECDSA, Ed25519, or a post-quantum scheme. Verification recomputes the hash and runs the public-key check. If the hash does not match, the signature is invalid even if the math on a different digest would pass.
 
-Digital Signatures provide three absolute cryptographic guarantees:
-1. **Authentication**: Proves the sender is who they claim to be (because only they possess the Private Key).
-2. **Integrity**: Proves the message was not altered by a hacker in transit. (If a single comma is changed, the signature verification mathematically fails).
-3. **Non-Repudiation**: The sender cannot legally or mathematically deny having sent the message, as only their unique Private Key could have generated the signature.
+**What is signed matters.** Sign the transcript, the artifact digest, or a structured statement (JWT payload). Signing "whatever bytes I was handed" without a type prefix invites cross-protocol surprises.
 
-## 2. How it Works (The Workflow)
+**Keys and padding.** Raw RSA PKCS#1 v1.5 signatures have a long history of implementation bugs. PSS and Ed25519 are the modern defaults. Do not use one key for both signing and decryption.
 
-Digital Signatures operate by running Asymmetric Encryption *in reverse*.
-
-### Step 1: Signing (The Sender)
-Alice wants to send a signed contract to Bob.
-1. Alice runs the contract through a Hashing Algorithm (like SHA-256) to generate a fixed-length **Hash**.
-2. Alice **encrypts** that Hash using her own secret **Private Key**. This encrypted hash is the "Digital Signature".
-3. Alice sends the plain-text contract and the Digital Signature to Bob.
-
-### Step 2: Verification (The Receiver)
-1. Bob receives the document and the signature.
-2. Bob runs the document through the exact same Hashing Algorithm (SHA-256) to generate his own Hash.
-3. Bob uses Alice's publically available **Public Key** to **decrypt** the Digital Signature.
-4. Bob compares the Hash he generated with the Hash he just decrypted. If they are a 100% perfect match, the signature is valid.
-
-
-<Callout icon="info" title="Why Hash first?">
-
-
-  Asymmetric encryption (like RSA) is mathematically incredibly slow and has strict data size limits. You cannot encrypt a 500-page PDF using a Private Key. By hashing the PDF into a tiny 256-bit string first, the cryptography only has to encrypt the hash, taking milliseconds rather than hours.
-
-
+<Callout icon="error" title="Never verify then parse untrusted structure carelessly">
+Check the signature over the exact bytes you will parse. Canonicalization bugs (XML DSig, JSON key reordering) are classic bypasses.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## 3. Real-World Applications
+EUF-CMA (existential unforgeability under chosen-message attack) is the usual goal: an adversary who can obtain signatures on messages they choose still cannot produce a valid signature on a new message. Hash-then-sign reduces that to the hash being collision-resistant and the trapdoor scheme being sound. Deterministic Ed25519 avoids the catastrophic nonce reuse that wrecked some ECDSA deployments.
 
-- **HTTPS / SSL Certificates**: When you visit your bank's website, your browser verifies a Digital Signature from a Certificate Authority (like DigiCert) to ensure the server actually belongs to the bank.
-- **Software Binaries**: When you download an iOS update or a Windows `.exe`, the operating system verifies Apple's or Microsoft's digital signature to ensure a hacker didn't inject malware into the download.
+<ComparisonTable
+  headers={['Scheme', 'Digest', 'Notes']}
+  rows={[
+    ['RSA-PSS', 'SHA-256', 'Flexible key size, larger sigs'],
+    ['ECDSA P-256', 'SHA-256', 'Needs good nonce generation'],
+    ['Ed25519', 'Internal SHA-512', 'Det. signatures, small keys'],
+    ['Dilithium / ML-DSA', 'SHAKE', 'Post-quantum signatures'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```python
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+key = Ed25519PrivateKey.generate()
+msg = b'artifact-sha256:deadbeef'
+sig = key.sign(msg)
+key.public_key().verify(sig, msg)
+```
+
+Verify before you trust the artifact. On failure, do not fallback to "unsigned is ok" in production paths.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    M[Message bytes] --> H[Hash]
+    H --> S[Sign with private key]
+    S --> V[Verify with public key]
+    M --> V
+    V --> OK[Accept or reject]
+```
+
+## 5. Interview Prep
+
+**Q: Is a signature confidential?**
+**A:** No. It is public verifiability. Combine with encryption if the payload must stay secret.
+
+**Q: Why hash first?**
+**A:** Public-key schemes operate on small field elements. A collision-resistant hash compresses arbitrary messages and prevents some algebraic tricks.
+
+**Q: HMAC versus digital signature?**
+**A:** HMAC needs a shared secret (symmetric). Signatures are transferable: a third party can verify without learning a shared key.
+
+## 6. Production Use Cases
+
+- **TLS certificates** (issuer signs the leaf).
+- **Software update** pipelines (cosign, Sigstore, OS package managers).
+- **JWT and document** signing when a verifier is not the signer.
+
+<Callout icon="tip" title="Bind a purpose string into what you sign">
+Prefix the message with a context label so a signature meant for "email" cannot be replayed as "payment".
+</Callout>

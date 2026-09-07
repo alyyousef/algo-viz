@@ -1,51 +1,86 @@
 ---
-title: RSA (Rivest-Shamir-Adleman)
-description: The original and most widely deployed Public-Key cryptographic system, deriving its unbreakable security from the mathematical impossibility of factoring massively large prime numbers.
+title: RSA
+description: "The classic public-key scheme based on modular exponentiation and factoring, still widely used for signatures and legacy key transport."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="RSA (Rivest-Shamir-Adleman)">
+    <ConceptTemplate title="RSA">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Invented in 1977, **RSA** was the first practical implementation of Asymmetric (Public-Key) Cryptography. For over 40 years, it has been the absolute backbone of internet security, responsible for securing SSL/TLS certificates, PGP emails, and secure SSH connections.
+**RSA** publishes a modulus n = p q and a public exponent e (usually 65537). The private exponent d inverts e modulo phi(n). Encryption and signatures are modular exponentiation with padding. Raw RSA is unsafe. Modern use is **RSA-OAEP** for wrapping small secrets and **RSA-PSS** for signatures, at 2048 bits or larger.
 
-## 1. The Mathematics (Prime Factorization)
+## 1. Deep Dive and Mechanics
 
-RSA is based on a mathematically elegant Trapdoor Function.
-It is extremely easy for a computer to take two massive prime numbers and multiply them together. It is practically impossible for a computer to take the massive resulting number and figure out which two prime numbers created it.
+Keygen picks two large primes, builds n, and computes d. Private operations use the Chinese Remainder Theorem with p and q for speed. Public operations are fast because e is small.
 
-1. **Key Generation**:
-   - Pick two randomly generated, gigantic prime numbers (e.g., $p$ and $q$, each hundreds of digits long).
-   - Multiply them together to create the Modulus ($n = p \times q$).
-   - Through Euler's Totient Function, calculate an exponent ($e$) for the Public Key, and an exponent ($d$) for the Private Key.
-2. **The Public Key**: The numbers $(n, e)$. Handed to the world.
-3. **The Private Key**: The numbers $(n, d)$. Kept strictly secret.
+**Padding is the product.** OAEP adds randomness and hashing so the same plaintext does not wrap to the same ciphertext and so algebraic relations do not survive. PSS does the same job for signatures. PKCS#1 v1.5 encryption is deprecated; v1.5 signatures persist but PSS is preferred.
 
-Because the Private Key $d$ is mathematically derived directly from the secret primes $p$ and $q$, a hacker who only has the Public Key $n$ must successfully factor $n$ back into $p$ and $q$ to steal the private key. For a 2048-bit RSA key, this would take classical supercomputers trillions of years.
+**TLS 1.3 dropped static RSA key transport.** Servers still present RSA certificates for signatures. New designs prefer ECDSA/Ed25519 and, soon, ML-DSA.
 
-## 2. How it Encrypts and Signs
-
-RSA relies entirely on modular exponentiation.
-
-- **To Encrypt a message ($M$)**: $ \text{Ciphertext} = M^e \pmod n $
-- **To Decrypt the Ciphertext ($C$)**: $ \text{Message} = C^d \pmod n $
-
-The math is perfectly symmetrical. You can also use it in reverse for **Digital Signatures**: encrypt a document hash with the Private Key ($d$), and anyone in the world can verify it using the Public Key ($e$).
-
-
-<Callout icon="warning" title="The Death of RSA">
-
-
-  While foundational, RSA is slowly being phased out of modern systems in favor of **ECC (Elliptic Curve Cryptography)**. Because computers are getting faster at factoring primes, RSA keys have had to grow to massive, bloated sizes (2048-bit or 4096-bit) to remain secure, which slows down TLS handshakes. Furthermore, a future Quantum Computer running Shor's Algorithm will effortlessly crack RSA's prime factorization in hours.
-
-
+<Callout icon="warning" title="Do not implement RSA from a textbook">
+Textbook RSA is deterministic and malleable. Use a library OAEP/PSS API and a 2048-bit or 3072-bit modulus.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Correctness is e d ≡ 1 (mod lcm(p-1, q-1)). Security is related to factoring n and to the RSA problem (eth roots mod n). There is no proof they are equivalent in all cases. Quantum computers running Shor break both. Classically, 2048-bit n is the current floor; 3072-bit matches 128-bit symmetric more honestly.
+
+<ComparisonTable
+  headers={['Mode', 'Job', 'Status']}
+  rows={[
+    ['Raw / textbook', 'None', 'Broken in practice'],
+    ['PKCS#1 v1.5 enc', 'Key wrap', 'Avoid'],
+    ['RSA-OAEP', 'Key wrap', 'OK if you must'],
+    ['RSA-PSS', 'Signatures', 'OK, large keys'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes
+
+key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+sig = key.sign(b'artifact', padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256())
+key.public_key().verify(sig, b'artifact', padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH), hashes.SHA256())
+```
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    P[Primes p and q] --> N[Modulus n]
+    P --> D[Private d]
+    N --> Pub[Public n, e]
+    D --> Priv[Private op]
+    Pub --> PubOp[Public op]
+```
+
+## 5. Interview Prep
+
+**Q: Why is e = 65537 common?**
+**A:** It is a prime with a low Hamming weight, so verification is fast, and it avoids tiny-e disasters like e = 3 without OAEP.
+
+**Q: RSA vs ECC?**
+**A:** Same jobs, bigger RSA keys and slower private ops. ECC is preferred unless a standard or HSM forces RSA.
+
+**Q: Can I encrypt a file with RSA?**
+**A:** Only a tiny blob. Hybrid: wrap an AES key with OAEP, encrypt the file with AES-GCM.
+
+## 6. Production Use Cases
+
+- **Legacy TLS certificates** that still sign with RSA.
+- **JWT RS256** in enterprise identity.
+- **HSM-backed** payment and document signing.
+
+<Callout icon="tip" title="Plan an ECC or PQC exit">
+RSA-2048 will limp along, but new protocols should not add more of it. Inventory now.
+</Callout>

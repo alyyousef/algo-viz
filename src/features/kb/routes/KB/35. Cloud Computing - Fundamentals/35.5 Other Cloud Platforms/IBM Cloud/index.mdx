@@ -1,23 +1,88 @@
 ---
 title: IBM Cloud
-description: A massive, enterprise-focused cloud platform mathematically specialized in hybrid-cloud architecture, AI (Watson), and highly secure, bare-metal compliance environments.
+description: "Enterprise hybrid: VPC, IKS, Cloud Functions, plus Power and Classic leftovers — and a Red Hat / watsonx gravity well."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="IBM Cloud"
-  subtitle="Enterprise Hybrid Cloud"
-  tags={['Cloud', 'Enterprise', 'Hybrid', 'AI']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="IBM Cloud">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-IBM Cloud is not typically targeted at individual developers building web apps; it is mathematically engineered for massive Fortune 500 companies, banks, and governments that require complex hybrid infrastructure.
+**IBM Cloud** is an enterprise-focused public cloud. Modern workloads sit on **VPC** (gen2): VSIs, block storage, load balancers, and **IKS** or **Red Hat OpenShift**. **Cloud Functions** is FaaS. Older **Classic** infrastructure still exists. IBM also sells **Power** and z-adjacent capacity, plus **watsonx** for AI. Procurement and hybrid (Satellite) are part of the product.
 
-## 1. Red Hat OpenShift Integration
-IBM acquired Red Hat, and consequently, IBM Cloud is mathematically fused with **OpenShift** (the enterprise version of Kubernetes).
-Large banks cannot move 100% of their data to the public cloud due to regulations. IBM provides a mathematical **Hybrid Cloud** model using OpenShift. A bank can run an OpenShift cluster in their private physical data center, and an identical OpenShift cluster in the IBM Public Cloud. The developers write their containerized apps once, and mathematically deploy them across both environments seamlessly, using a unified management plane.
+## 1. Deep Dive and Mechanics
 
-## 2. Watson AI and Mainframe Integration
-IBM Cloud houses **Watson**, one of the most mature enterprise AI suites for natural language processing and mathematical data analytics.
-Furthermore, for enterprises still running 40-year-old COBOL code on massive IBM Z-Series Mainframes, IBM Cloud provides mathematical integration points (like IBM Cloud Hyper Protect). This allows banks to securely bridge modern web APIs directly into legacy mainframe transactional systems without violating strict financial security compliance.
+**IAM.** Accounts, resource groups, access groups, and fine-grained IAM. Enterprise account hierarchy exists. It is closer to "enterprise directory" than to a hobby token.
 
-</TechnologyTemplate>
+**VPC vs Classic.** New designs should be VPC. Classic has different networking and a long tail of apps.
+
+**OpenShift.** IBM's Kubernetes story is often ROSA-like OpenShift they operate. IKS is vanilla-er Kubernetes.
+
+**Satellite.** Run IBM Cloud services on your hardware or another cloud — hybrid control plane.
+
+<Callout icon="warning" title="Classic gravity">
+A ten-year IBM account may still have Classic VLANs. Mixing Classic and VPC without a plan is a network incident.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Hybrid latency: Satellite or Direct Link does not make two continents one AZ. Place data next to the Power box if that is the system of record.
+
+Cost is contract-shaped (committed spend) more often than on-demand sticker.
+
+<ComparisonTable
+  headers={['Need', 'IBM Cloud', 'Elsewhere']}
+  rows={[
+    ['VM', 'VSI in VPC', 'EC2'],
+    ['K8s', 'IKS / OpenShift', 'EKS / ROSA'],
+    ['FaaS', 'Cloud Functions', 'Lambda'],
+    ['Hybrid', 'Satellite', 'Outposts / Anthos'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+ibmcloud login
+ibmcloud is instances
+ibmcloud ks clusters
+```
+
+Resource groups should match environments. Do not dump everything into default.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Ent[Enterprise account] --> RG[Resource groups]
+    RG --> VPC[VPC]
+    VPC --> IKS[IKS / OpenShift]
+    Sat[Satellite] --> OnPrem[On-prem cluster]
+```
+
+## 5. Interview Prep
+
+**Q: Why IBM Cloud?**
+**A:** Existing IBM/Red Hat estate, regulated industries, Power/z adjacency, or an enterprise agreement. Rarely "we wanted the cheapest VM."
+
+**Q: IKS vs OpenShift?**
+**A:** IKS is managed Kubernetes. OpenShift adds operators, routes, and a different support story. IBM leans OpenShift.
+
+**Q: What is Classic?**
+**A:** The pre-VPC generation. Know it exists so you do not debug the wrong API.
+
+## 6. Production Use Cases
+
+- Banks and insurers already on IBM software.
+- OpenShift as the corporate platform, IBM as the host.
+- watsonx projects that must stay in IBM's IAM boundary.
+
+<Callout icon="tip" title="Start from resource groups and IAM">
+The first week should not be a VSI in default. Landing zone first, same as any enterprise cloud.
+</Callout>

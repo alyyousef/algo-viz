@@ -1,56 +1,93 @@
 ---
-title: Diffie-Hellman Key Exchange
-description: A groundbreaking mathematical protocol allowing two parties to establish a shared secret over an insecure channel without ever transmitting the secret itself.
+title: Diffie-Hellman
+description: "Key-agreement protocol that lets two parties derive a shared secret over an untrusted channel without sending the secret itself."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Diffie-Hellman Key Exchange">
+    <ConceptTemplate title="Diffie-Hellman">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before 1976, if Alice and Bob wanted to encrypt their communications using a symmetric key (like AES), they had to physically meet in a dark alley to hand off a briefcase containing the key. If they sent it over the wire, a spy could intercept it.
+**Diffie-Hellman (DH)** is key agreement, not encryption. Two parties pick private scalars, publish public group elements, and both compute the same shared secret. An eavesdropper who sees only the public values cannot cheaply recover that secret if the group is well chosen. **ECDHE** is the elliptic-curve, ephemeral form used in TLS 1.3.
 
-The **Diffie-Hellman Key Exchange (DH)** is a mathematical miracle. It allows Alice and Bob to shout numbers at each other across a crowded, wiretapped room, and through modular arithmetic, both arrive at the exact same secret number, while the spy listening to every word learns absolutely nothing.
+## 1. Deep Dive and Mechanics
 
-## 1. The Paint Mixing Analogy
+Classic finite-field DH: agree on a prime p and generator g. Alice sends g^a mod p. Bob sends g^b mod p. Shared secret is g^(ab) mod p. Elliptic-curve DH replaces exponentiation with scalar multiplication on a curve such as X25519.
 
-The easiest way to understand the math is through mixing paint:
-1. Alice and Bob agree on a **Public Common Paint Color** (Yellow). The Spy also sees Yellow.
-2. Alice picks a **Secret Color** (Red). Bob picks a **Secret Color** (Blue). They never reveal these.
-3. Alice mixes her Red with the public Yellow, creating **Orange**.
-4. Bob mixes his Blue with the public Yellow, creating **Green**.
-5. Alice and Bob exchange their mixed colors in plain sight. The Spy intercepts Orange and Green.
-6. Alice takes Bob's Green and adds her secret Red. (Result: **Brown**).
-7. Bob takes Alice's Orange and adds his secret Blue. (Result: **Brown**).
+**Ephemeral versus static.** Ephemeral keys (the E in ECDHE) are generated per session and discarded. That is forward secrecy. Static DH keys persist and need authentication, or you have an unauthenticated agreement and a MITM can run DH twice.
 
-Alice and Bob now both share the secret color **Brown**. The Spy has Orange, Green, and Yellow, but it is chemically impossible to "unmix" paint to discover the original secret colors. The Spy cannot create Brown.
+**Authentication is separate.** DH alone does not name anyone. TLS binds DH to a certificate signature so you agree a secret with the owner of that name.
 
-## 2. The Real Mathematics (Modular Arithmetic)
-
-Instead of paint, Diffie-Hellman uses prime numbers and the **Discrete Logarithm Problem**.
-It relies on the mathematical fact that $ (g^a)^b \pmod p = (g^b)^a \pmod p $.
-
-1. Alice and Bob publicly agree on a prime modulus $p$ and a generator base $g$.
-2. Alice selects a secret integer $a$. She computes $A = g^a \pmod p$ and sends $A$ to Bob.
-3. Bob selects a secret integer $b$. He computes $B = g^b \pmod p$ and sends $B$ to Alice.
-4. Alice computes $S = B^a \pmod p$.
-5. Bob computes $S = A^b \pmod p$.
-
-Both Alice and Bob now possess the exact same shared secret $S$. The Spy saw $p$, $g$, $A$, and $B$, but without knowing $a$ or $b$, calculating $S$ requires solving the discrete logarithm, which takes modern supercomputers billions of years.
-
-
-<Callout icon="warning" title="The Man-in-the-Middle Flaw">
-
-
-  Diffie-Hellman provides perfect secrecy against eavesdroppers, but it provides **zero authentication**. A hacker can intercept Alice's message, pretend to be Bob, and establish a shared key with Alice, while simultaneously establishing a second key with Bob. This is why modern TLS pairs Diffie-Hellman with **RSA or ECDSA Digital Signatures** to cryptographically prove the identities of the parties before exchanging keys.
-
-
+<Callout icon="warning" title="Safe groups only">
+Tiny primes, non-safe primes, or reused broken parameters (historical export DH, Logjam-class groups) collapse the discrete-log hardness. Use named modern groups.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Hardness is the Computational Diffie-Hellman problem, which sits on the discrete logarithm problem in the group. CDH does not automatically give you a key you can feed to AES; you still run a KDF (HKDF) on the shared secret. Finite-field DH needs large primes (2048+ bits). ECDH on 256-bit curves gives similar classical strength with smaller messages.
+
+<ComparisonTable
+  headers={['Variant', 'Group', 'Forward secrecy', 'Where you see it']}
+  rows={[
+    ['Static FF-DH', 'Mod p', 'No', 'Legacy IPsec'],
+    ['DHE', 'Mod p ephemeral', 'Yes', 'Older TLS'],
+    ['ECDHE P-256', 'NIST prime curve', 'Yes', 'TLS, JWT ECDH-ES'],
+    ['X25519', 'Montgomery curve', 'Yes', 'TLS 1.3, SSH, Signal'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+from cryptography.hazmat.primitives.asymmetric import x25519
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives import hashes
+
+alice = x25519.X25519PrivateKey.generate()
+bob = x25519.X25519PrivateKey.generate()
+shared = alice.exchange(bob.public_key())
+key = HKDF(algorithm=hashes.SHA256(), length=32, salt=None, info=b'tls-like').derive(shared)
+```
+
+Never use the raw DH secret as an AES key. Always extract-and-expand with a KDF and a transcript-bound info string.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant A as Alice
+    participant B as Bob
+    A->>B: A_pub = X25519(a)
+    B->>A: B_pub = X25519(b)
+    A->>A: shared = X25519(a, B_pub)
+    B->>B: shared = X25519(b, A_pub)
+    A->>A: AES key = HKDF(shared)
+    B->>B: AES key = HKDF(shared)
+```
+
+## 5. Interview Prep
+
+**Q: DH versus RSA key transport?**
+**A:** RSA transport encrypts a premaster to the server cert key. DH agrees a new secret. Ephemeral DH gives forward secrecy; static RSA transport does not.
+
+**Q: Why HKDF after DH?**
+**A:** The shared field element is not uniform key material and is not bound to the handshake transcript until you derive with context.
+
+**Q: What is a MITM against anonymous DH?**
+**A:** The network runs DH with Alice and DH with Bob, then decrypts and re-encrypts. Signatures or a pre-shared identity stop that.
+
+## 6. Production Use Cases
+
+- **TLS 1.3** and QUIC handshake key schedule.
+- **Signal / Double Ratchet** root key updates.
+- **SSH** key exchange (curve25519-sha256).
+
+<Callout icon="tip" title="Prefer X25519 unless you are in a NIST-only box">
+It is fast, has simpler APIs, and avoids many ECC implementation foot-guns. FIPS environments often require P-256 instead.
+</Callout>

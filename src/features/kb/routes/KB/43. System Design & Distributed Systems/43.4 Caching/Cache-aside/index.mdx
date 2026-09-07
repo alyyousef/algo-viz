@@ -1,37 +1,95 @@
 ---
 title: Cache-Aside (Lazy Loading)
-description: A caching pattern where the application code is responsible for checking the cache, loading data from the database if there's a cache miss, and then updating the cache.
+description: "The app reads the cache, loads the store on miss, then fills — simple, common, and stale unless writes also evict."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Cache-Aside (Lazy Loading)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Cache-Aside** (also known as Lazy Loading) is the most common mathematical caching strategy in the world. It is the default approach for 95% of web applications.
+**Cache-aside** (lazy load) puts the application in charge. Read: GET cache; on miss, read the database; SET cache. Write: write the database, then delete (or update) the cache. The cache never calls the database by itself.
 
-In this architecture, the Cache server (e.g., Redis) and the Database (e.g., PostgreSQL) have absolutely no knowledge of each other. The Application code acts as the mathematical mediator between the two.
+## 1. Deep Dive and Mechanics
 
+**Why it is popular.** The app already knows the key and the query. Redis stays dumb. You can cache computed objects, not just rows.
 
-<Callout icon="info" title="The Data Flow">
+**Miss path.** Must be idempotent and stampede-safe for hot keys. A naive aside is the stampede.
 
+**Write path.** If you only implement the read side, the cache is stale until TTL. The delete-after-write is part of the pattern, not an extra.
 
-  1. The App asks Redis: "Do you have User #123?" (Cache Hit = Return to User immediately).
-  2. If Redis says "No" (Cache Miss), the App queries PostgreSQL.
-  3. The App receives the data from PostgreSQL, mathematically writes a copy of it into Redis, and *then* returns it to the User.
+**Negative caching.** Cache "not found" for a short time so missing keys do not beat the DB. Watch the create path: you must evict the negative entry.
 
-
+<Callout icon="info" title="Aside is not read-through">
+Read-through: the cache library loads on miss. Aside: your code loads. Same idea, different who-owns-the-query.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Mathematical Trade-Offs
+Expected latency is H times cache plus (1-H) times (cache + DB + set). Write amplification is one extra DEL. Consistency is TTL plus delete success.
 
+Race: read miss, concurrent write, then SET of old value. Mitigate with versions or short TTL.
 
-<ComparisonTable headers={['Pros', 'Cons']} rows={[ ['Resilient to Cache Failure: If Redis mathematically crashes, the App just experiences a 100% Miss rate and safely falls back to querying the DB directly.', 'The First Penalty: The very first user to request a piece of data always experiences the maximum latency (Cache check + DB query + Cache Write).'], ['Efficient RAM Usage: Data is only cached if a user actually requests it. You never waste RAM caching data that no one looks at.', 'Stale Data: If a separate process updates the DB, the Cache is mathematically unaware, serving stale data until the TTL expires.'] ]} />
+<ComparisonTable
+  headers={['Pattern', 'Who fills', 'Write behavior', 'Stale risk']}
+  rows={[
+    ['Cache-aside', 'App on miss', 'App DELs', 'Race + missed DEL'],
+    ['Read-through', 'Cache loader', 'Often DEL', 'Same races'],
+    ['Write-through', 'On write', 'Sync set plus DB', 'Write latency'],
+    ['Write-behind', 'On write to cache', 'Async DB', 'Loss on crash'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
+```python
+def get_user(cache, db, user_id):
+    key = f"user:{user_id}"
+    cached = cache.get(key)
+    if cached is not None:
+        return cached
+    user = db.get(user_id)
+    if user is not None:
+        cache.set(key, user, ttl=60)
+    return user
+```
+
+Pair with delete on update. Use a version field if the race matters.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    R[Read] --> G[GET]
+    G -->|hit| Return
+    G -->|miss| DB
+    DB --> SET
+    SET --> Return
+```
+
+## 5. Interview Prep
+
+**Q: Why not write-through everywhere?**
+**A:** Aside avoids caching writes that are never read and keeps Redis out of the write latency path. Write-through is better when the next read is immediate and must be fresh.
+
+**Q: What do you store?**
+**A:** A serialized DTO, not a live ORM object. Include a schema version.
+
+**Q: How long is TTL?**
+**A:** As short as the product allows if invalidation can fail; as long as the working set needs to keep H high. Pick with numbers.
+
+## 6. Production Use Cases
+
+- **Default Redis + SQL** stack.
+- **Session blobs** with explicit delete on logout.
+- **Computed recommendations** with a short TTL.
+
+<Callout icon="tip" title="Implement read and write in the same PR">
+A cache-aside read without a write-side delete is just a TTL cache with a fancy name.
+</Callout>

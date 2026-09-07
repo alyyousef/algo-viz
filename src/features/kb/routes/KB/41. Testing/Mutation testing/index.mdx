@@ -1,35 +1,94 @@
 ---
 title: Mutation Testing
-description: "The ultimate mathematical validation of a test suite, where an automated tool intentionally injects bugs (mutations) into the source code to verify that the unit tests mathematically fail and catch the sabotage."
+description: "Seeding tiny faults in production code and asking whether the suite kills them — a direct measure of whether tests would notice a real bug."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Mutation Testing"
-  subtitle="Testing the Tests"
-  tags={['Testing', 'Advanced', 'Quality Assurance', 'Process']}
->
+    <ConceptTemplate title="Mutation Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-"Code Coverage" is mathematically a lie. A developer can write a Unit Test that executes every line of a function, achieving 100% Code Coverage, but forget to write a single `assert()` statement. The test is useless.
+**Mutation testing** answers a question coverage cannot: if this line were wrong, would any test fail? Tools (Stryker, PIT, mutmut) rewrite operators, constants, and conditions, run the suite, and score how many **mutants** died.
 
-## 1. Injecting Mathematical Mutants
-Mutation Testing solves this by mathematically sabotaging the source code.
-Tools like Stryker (JS) or PIT (Java) parse the code and create "Mutants".
-Original code: `if (age >= 18)`
-Mutant 1: `if (age > 18)`
-Mutant 2: `if (age &lt; 18)`
-Mutant 3: `if (true)`
+## 1. Deep Dive and Mechanics
 
-## 2. Surviving Mutants
-The tool mathematically compiles Mutant 1 and runs your Unit Test suite against it.
-- If your Unit Test fails (because it caught the bug), the Mutant is **Killed**. This is a good thing; your test suite works.
-- If your Unit Test passes (despite the code being mathematically broken), the Mutant **Survives**. This proves your test suite is weak and missing critical assertions.
-Mutation Testing is incredibly CPU-intensive (requiring thousands of compilations), but it is the absolute mathematical gold standard for software quality.
+**Mutant.** A small syntactic change: `>` becomes `>=`, `true` becomes `false`, a statement is deleted. Equivalent mutants (the program is still correct) are the hard case — they cannot be killed.
 
+**Kill, survive, timeout.** A mutant is killed if a test fails. Survivors are either untested behaviour or equivalent code. Timeouts often mean you introduced an infinite loop.
+
+**Where to run.** Mutation is expensive (suite × mutants). Restrict to a package, a PR diff, or a nightly job. PIT and Stryker cache and only mutate covered lines.
+
+**Culture.** A 40 percent score on a new module is a teaching moment, not a shame metric. Do not gate merge on 100 percent.
+
+<Callout icon="info" title="Coverage can be a liar">
+A test that calls a function and asserts true is 100 percent line coverage and 0 percent mutation score. Mutants survive because nothing checked the result.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+The **competent programmer hypothesis** says real bugs are often small syntactic deviations — the same neighbourhood mutants explore. The **coupling effect** claims that tests which kill simple mutants tend to catch more complex faults.
+
+Mutation score = killed / (total − equivalent). Equivalent mutants make the denominator uncertain; in practice teams treat stubborn survivors as review items.
+
+This is a dynamic **adequacy** criterion, stronger than branch coverage, still incomplete (it cannot invent missing requirements).
+
+<ComparisonTable
+  headers={['Metric', 'What it counts', 'Blind spot']}
+  rows={[
+    ['Line coverage', 'Executed lines', 'No oracle'],
+    ['Branch coverage', 'Boolean outcomes', 'Weak asserts'],
+    ['Mutation score', 'Killed faults', 'Equivalent mutants, cost'],
+    ['Production incidents', 'Escaped faults', 'Hindsight only'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```javascript
+// stryker.conf.json
+{
+  "mutate": ["src/pricing/**/*.ts"],
+  "testRunner": "vitest",
+  "thresholds": { "high": 80, "low": 60, "break": 50 }
+}
+```
+
+Start on one directory. Read a surviving mutant: either add an assert or accept that the change is equivalent and ignore it.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Src[Source] --> Mut[Generate mutants]
+    Mut --> Run[Run suite]
+    Run -->|test fails| Kill[Killed]
+    Run -->|all green| Live[Survivor]
+    Live --> Review[Add assert or mark equivalent]
+```
+
+## 5. Interview Prep
+
+**Q: Why is mutation better than coverage?**
+**A:** Coverage says a line ran. Mutation says a fault on that line was observed. Weak tests inflate coverage.
+
+**Q: What is an equivalent mutant?**
+**A:** A change that cannot affect any specified behaviour — for example removing a redundant `+ 0`. You cannot kill it without a vacuous test.
+
+**Q: Can we run mutation on every PR?**
+**A:** On the diff, sometimes. On the whole repo, almost never. Incremental mutation is the practical design.
+
+## 6. Production Use Cases
+
+- **Pricing, tax, and access-control** modules where a silent operator flip is catastrophic.
+- **Coaching** a team that writes tests after the fact and asserts only "no throw."
+- **Nightly quality** reports next to coverage, not instead of it.
+
+<Callout icon="tip" title="Kill the mutant with a behaviour, not a white-box peek">
+If the only way to kill it is to assert a private field, the unit's API is incomplete — or the mutant is equivalent.
+</Callout>

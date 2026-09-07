@@ -1,31 +1,98 @@
 ---
 title: Azure Bicep
-description: A clean, declarative, domain-specific language (DSL) mathematically compiled into native Azure Resource Manager (ARM) JSON, drastically simplifying Infrastructure as Code on Azure.
+description: "A concise DSL that compiles to ARM: modules, typed params, and what-if — Infrastructure as Code without the JSON ceremony."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Bicep"
-  subtitle="Modern Infrastructure as Code"
-  tags={['Azure', 'IaC', 'DevOps', 'Bicep']}
->
-
-Writing raw ARM JSON templates is mathematically tedious and prone to severe syntax errors due to deep bracket nesting. Bicep was invented as a transparent compiler to solve this.
-
-## 1. The Transparent Abstraction
-Unlike Terraform, which maintains its own complex "State File", Bicep is completely stateless.
-You write clean, readable code (resembling TypeScript):
-```bicep
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
-  name: 'mystorageaccount'
-  location: 'eastus'
-  sku: { name: 'Standard_LRS' }
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Bicep">
+      {children}
+    </ConceptTemplate>
+  )
 }
+
+**Bicep** is Microsoft’s domain-specific language for Azure Resource Manager. `az bicep build` emits an ARM template. You get modules, loops, ternary expressions, and a language server — not a new deployer. What ARM cannot do, Bicep cannot do. That is the point: one runtime, nicer authoring.
+
+## 1. Deep Dive and Mechanics
+
+**Modules.** A `.bicep` file becomes a nested deployment. Pass params in, take outputs out. Version modules in a registry (`br:` ) the way you version container images.
+
+**Scopes.** `targetScope` can be resourceGroup, subscription, managementGroup, or tenant. A subscription-scoped file can create RGs and then module into them.
+
+**Existing.** `existing` references a resource you do not own in this deploy. Use it for a shared Key Vault; do not recreate it.
+
+**Compile-time vs deploy-time.** `uniqueString()` and `resourceGroup().id` run at deploy. The linter will not catch a name that is already taken in Azure.
+
+**Lint and what-if.** `az bicep lint` plus `az deployment group what-if`. CI should fail on linter errors and on unexpected deletes.
+
+<Callout icon="warning" title="Bicep is not Terraform">
+There is no state file. Drift that happens outside the template is invisible until you deploy again and incremental mode leaves it. Complete mode will delete it — if you dared.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Bicep is a pure compiler: source → ARM JSON → ARM reconcile. Modules are nested deployments, each an extra ARM hop (timeouts and limits apply). Loops (`for`) unroll at compile or deploy into N resources; huge loops hit template size caps.
+
+Idempotency is ARM’s, not Bicep’s. Two files that omit the same property can “succeed” while Azure keeps an old firewall rule.
+
+<ComparisonTable
+  headers={['Feature', 'Bicep', 'Terraform']}
+  rows={[
+    ['State', 'Azure is the state', 'State file'],
+    ['Graph', 'Azure-only', 'Multi-cloud'],
+    ['Preview', 'what-if', 'plan'],
+    ['Modules', 'ACR / template specs', 'Registry / git'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bicep
+param location string = resourceGroup().location
+
+resource st 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: 'st${uniqueString(resourceGroup().id)}'
+  location: location
+  sku: { name: 'Standard_ZRS' }
+  kind: 'StorageV2'
+  properties: { minimumTlsVersion: 'TLS1_2' }
+}
+
+output blobEndpoint string = st.properties.primaryEndpoints.blob
 ```
-When you deploy this, the Bicep CLI mathematically transpiles it into standard ARM JSON in milliseconds and passes it directly to the Azure API. Azure tracks the state natively. Because Bicep compiles directly to ARM, it supports new Azure features on "Day Zero" (the exact second Microsoft releases them), whereas Terraform often takes weeks to update its providers.
 
-## 2. Modules and Mathematical Reusability
-Bicep allows you to mathematically construct complex architectures using **Modules**.
-A central DevOps team can write a highly secure `SecureDatabase.bicep` file that hardcodes specific firewall rules and encryption standards. Application teams across the enterprise simply import this module into their own Bicep files, passing in parameters. This guarantees that every database deployed mathematically adheres to corporate security policies without the developers needing to understand the underlying networking.
+Use a module per resource family (network, data, app) and a thin orchestrator file per environment.
 
-</TechnologyTemplate>
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Src[main.bicep] --> Comp[bicep build]
+    Comp --> JSON[ARM JSON]
+    JSON --> ARM[Resource Manager]
+    ARM --> Azure[Resources]
+```
+
+## 5. Interview Prep
+
+**Q: Why Bicep over raw ARM?**
+**A:** Same deployer, 70 percent less JSON, modules, and a real type system for params. There is no extra runtime to invent.
+
+**Q: How do you share modules?**
+**A:** Publish to an ACR bicep registry or a template spec. Pin versions in the `br:` reference. Do not copy-paste module folders into every repo.
+
+**Q: Can Bicep create Azure AD / Entra apps?**
+**A:** Only where ARM has a resource provider. Many Entra objects still need Microsoft Graph. Hybrid pipelines (Bicep + a Graph script) are normal.
+
+## 6. Production Use Cases
+
+- Greenfield Azure landing zones with subscription-scoped Bicep.
+- App teams consume versioned network modules they cannot edit.
+- PR pipelines that run what-if against the target RG.
+
+<Callout icon="tip" title="Pin the Bicep CLI in CI">
+Language versions add functions. A laptop on a newer CLI than the pipeline compiles a file the pipeline cannot. Pin both.
+</Callout>

@@ -1,37 +1,86 @@
 ---
 title: Mobile Security
-description: The protection of smartphones, tablets, and wearable devices from threats and data leaks.
+description: "Protecting apps and data on phones and tablets where the OS, store, and user are only partly yours."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Mobile Security">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In the modern enterprise, the smartphone is the new perimeter. Employees check corporate email, access Slack, and authenticate via 2FA apps on devices that easily fit in their pockets—and are easily lost, stolen, or compromised.
+**Mobile security** covers the device (OS updates, MDM), the app (secure storage, ATS/App Transport), and the backend (the same authz rules as web). A phone is a computer with a store, biometrics, and a habit of backing photos up to someone else's cloud. Defense is **assume a lost device** and **do not store crown jewels in plaintext app storage**.
 
-**Mobile Security** deals with the unique mathematical and architectural challenges of securing iOS and Android ecosystems, which are vastly different from traditional Windows/Linux endpoints.
+## 1. Deep Dive and Mechanics
 
+**Platform.** Ship on current iOS/Android. Use the system keystore/Keychain. Certificate pin only with a backup pin and a plan to rotate. Refuse jailbroken/rooted devices for high-assurance apps if your threat model says so.
 
-<Callout icon="info" title="Sandboxing Architecture">
+**App.** No secrets in the binary. Short-lived tokens. Biometric unlock wrapping a key, not "fingerprint means skip auth." Clear clipboard of secrets. Screenshot flags for banking screens.
 
+**MDM / MAM.** Corporate mail and VPN on enrolled devices. Work profile on Android. Remote wipe. BYOD gets a container, not full-disk control you do not have.
 
-  Unlike a Windows PC where an application runs with the user\'s full permissions, iOS and Android employ strict mathematical Sandboxing. Every app runs in its own isolated container. App A cannot read the memory or files of App B unless explicitly permitted by the OS through APIs.
-
-
+<Callout icon="warning" title="The API is still the app">
+A beautiful Keychain does not help if the same token works from curl without device checks you actually enforce.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Enterprise Mobility Management (EMM)
+Mobile threat models mix device possession, OS sandbox, and a hostile network (coffee-shop Wi-Fi). Hardware-backed keys (TEE/Secure Enclave) raise the cost of extraction. Attestation gives the server a signed statement about OS state — useful, spoofable if you only check a boolean on the client.
 
-To secure employee devices, corporations deploy Mobile Device Management (MDM) or EMM solutions:
+<ComparisonTable
+  headers={['Store', 'Use', 'Avoid']}
+  rows={[
+    ['Keychain / Keystore', 'Refresh tokens, keys', 'Backups you did not encrypt'],
+    ['Encrypted file', 'Cached records', 'Long-lived session files'],
+    ['Binary / resource', 'Nothing secret', 'API keys'],
+    ['WebView storage', 'Rarely', 'Session cookies for banking'],
+  ]}
+/>
 
-1. **Remote Wipe:** If a phone is lost on the subway, the IT admin can send a cryptographic kill command to mathematically erase the entire device instantly.
-2. **Containerization:** The MDM creates a secure, encrypted "Work" profile on the phone. The company has absolute control over the Work apps, but zero visibility into the user\'s personal apps or photos.
-3. **App Vetting:** The MDM can forbid the installation of known malicious applications or require the device to be running the latest OS version before allowing access to corporate email.
+## 3. Real-World Implementation
 
+```text
+# Mobile app baseline
+# - TLS 1.2+ only, no cleartext HTTP
+# - Tokens in Keychain/Keystore, not SharedPreferences plaintext
+# - Certificate transparency / pinning with a pinset you can rotate
+# - Server-side device or step-up checks for high-risk actions
+```
+
+Store listings and sideload policy are part of the threat model for Android.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Dev[Device OS] --> App[App sandbox]
+    App --> KS[Hardware keystore]
+    App --> API[Backend authz]
+    MDM[MDM] --> Dev
+```
+
+## 5. Interview Prep
+
+**Q: Why not hide the API key in the APK?**
+**A:** Extraction is routine. Keys belong on the server.
+
+**Q: MDM vs MAM?**
+**A:** MDM manages the device. MAM manages the work app and its data on a device you may not own.
+
+**Q: Is biometric auth enough?**
+**A:** It unlocks a key. The server still needs a real session and step-up for transfers.
+
+## 6. Production Use Cases
+
+- **Banking apps** with hardware-backed keys and step-up.
+- **Enterprise email** on enrolled devices only.
+- **Field-service apps** with remote wipe and offline crypto.
+
+<Callout icon="tip" title="Test on a lost-phone drill">
+Revoke the session, wipe if enrolled, and confirm the backend refuses the old token.
+</Callout>

@@ -1,47 +1,83 @@
 ---
-title: Cryptographic Hashing
-description: The mathematical one-way function that guarantees data integrity, turning infinite data into a fixed-size digital fingerprint.
+title: Hashing
+description: "One-way fixed-length fingerprints used for integrity, commitments, and as building blocks of HMACs and signatures."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Cryptographic Hashing">
+    <ConceptTemplate title="Hashing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A **Cryptographic Hash Function** is an essential mathematical algorithm that takes an input (or 'message') of absolute arbitrary length (from a 1-character password to a 50 Terabyte database) and mathematically squashes it into a fixed-size string of bytes (the 'hash' or 'digest').
+A **cryptographic hash** maps arbitrary bytes to a fixed digest. It should be easy to compute, hard to invert, and hard to find two inputs with the same output. Hashes detect accidental or malicious change. They are not encryption, and they are not a password KDF by themselves.
 
-**Crucially, hashing is NOT encryption.** Encryption is a two-way mathematical function (you can decrypt it). Hashing is a strict **one-way** mathematical function. Once data is hashed, it is mathematically impossible to reverse-engineer the original data from the hash.
+## 1. Deep Dive and Mechanics
 
-## 1. The Core Mathematical Properties
-For a hash function to be considered cryptographically secure, it must mathematically guarantee four properties:
+You feed a stream of bytes into a compression function. Merkle-Damgard designs (SHA-256) pad the message and iterate a block cipher-like function. Sponge designs (SHA-3, SHAKE) absorb then squeeze. The digest is a commitment to those exact bytes.
 
-1. **Deterministic**: The exact same input must always mathematically yield the exact same output hash.
-2. **Quick to Compute**: The hardware must be able to calculate the hash rapidly.
-3. **Pre-image Resistance (One-Way)**: Given a hash, it is mathematically infeasible to determine the original input.
-4. **Collision Resistance**: It must be mathematically infeasible to find two completely different inputs that result in the exact same output hash.
+**What hashing does not do.** It does not hide the input if the input is guessable (passwords, short IDs). It does not bind a key unless you use HMAC or a keyed mode. It does not prove who created the file unless you also sign.
 
-## 2. The Avalanche Effect
-A secure hash function must exhibit the **Avalanche Effect**.
-If you mathematically alter a single bit of a 1 Terabyte file, the resulting hash should be wildly, completely different from the original hash. You cannot use the hash to deduce "how close" two files are.
+**Truncation.** Shortening a digest reduces collision work. Do not truncate below the security level you claim.
 
-## 3. Real-World Applications
-
-
-<ComparisonTable headers={['Application', 'How Hashing is Used']} rows={[ ['Password Storage', 'Databases NEVER store plaintext passwords. They store the Hash of the password. When you log in, the system hashes your input and mathematically compares the two hashes.'], ['Data Integrity', 'When you download a Linux ISO, the website provides a SHA-256 hash. You hash the downloaded file on your CPU. If the hashes match exactly, the file was not corrupted or mathematically altered by a hacker.'], ['Blockchain (Bitcoin)', 'Bitcoin relies entirely on SHA-256. Miners mathematically burn electricity to find a hash output that starts with a specific number of zeroes (Proof of Work).'] ]} />
-
-
-<Callout icon="warning" title="MD5 and SHA-1 are Broken">
-
-
-Historically, developers used MD5 or SHA-1 for hashing. Both are now mathematically broken. Hackers can execute **Collision Attacks**, mathematically engineering a malicious virus file that outputs the exact same MD5 hash as a legitimate software update. Never use them.
-
-
+<Callout icon="warning" title="MD5 and SHA-1 are retired for security">
+Both have practical collisions. Keep them only for talking to fossils, and never for signatures or integrity of untrusted data.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Three classical properties: preimage resistance, second-preimage resistance, and collision resistance. Birthday bound says a 256-bit hash has about 128-bit collision strength. Length extension is an extra Merkle-Damgard foot-gun: given H(m) you may compute H(m || pad || extra) without m. Sponges and HMAC avoid that.
+
+<ComparisonTable
+  headers={['Function', 'Output', 'Status']}
+  rows={[
+    ['MD5', '128 bit', 'Broken collisions'],
+    ['SHA-1', '160 bit', 'Broken collisions'],
+    ['SHA-256', '256 bit', 'Standard workhorse'],
+    ['SHA-3-256 / SHAKE', '256+ bit', 'Sponge alternative'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import hashlib
+
+digest = hashlib.sha256(b'artifact-bytes').hexdigest()
+```
+
+For files, hash in streaming chunks so you do not load the whole blob. Compare published checksums with a constant-time compare if the digest is a secret; for public checksums a normal compare is fine.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    B[Input bytes] --> Pad[Pad / absorb]
+    Pad --> Comp[Compression or sponge]
+    Comp --> D[Fixed digest]
+```
+
+## 5. Interview Prep
+
+**Q: Hash versus encryption?**
+**A:** Encryption is reversible with a key. A hash is one-way and keyless. Different jobs.
+
+**Q: Why do we hash before signing?**
+**A:** Public-key ops are small-input. A collision-resistant hash compresses the document and is part of the EUF-CMA story.
+
+**Q: Can I store passwords as SHA-256?**
+**A:** No. Use Argon2id, scrypt, or bcrypt with a unique salt. Fast hashes lose to GPU guessing.
+
+## 6. Production Use Cases
+
+- **Artifact integrity** (container layers, packages, backups).
+- **Content addressing** (git, IPFS-style stores).
+- **Building block** for HMAC, HKDF, Merkle trees, and signatures.
+
+<Callout icon="tip" title="Always name the algorithm next to the digest">
+A bare hex string ages badly. Store sha256: and the hex so migrators and verifiers do not guess.
+</Callout>

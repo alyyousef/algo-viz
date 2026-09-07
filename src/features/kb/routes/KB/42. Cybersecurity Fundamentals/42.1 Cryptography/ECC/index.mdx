@@ -1,55 +1,89 @@
 ---
-title: ECC (Elliptic Curve Cryptography)
-description: The modern successor to RSA, providing vastly superior cryptographic security using significantly smaller key sizes, making it ideal for mobile devices and modern web servers.
+title: Elliptic Curve Cryptography (ECC)
+description: "Public-key cryptography on elliptic curves that matches RSA strength with much smaller keys, used in TLS, JWT, and mobile devices."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="ECC (Elliptic Curve Cryptography)">
+    <ConceptTemplate title="Elliptic Curve Cryptography (ECC)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-For decades, the internet relied on **RSA** for public-key encryption. RSA derives its security from the mathematical difficulty of factoring massively large prime numbers. However, as computers got faster, RSA keys had to grow exponentially larger (from 1024-bit, to 2048-bit, to 4096-bit) to remain secure, eating up CPU power and bandwidth on mobile devices.
+**ECC** builds public-key schemes on the group of points of an elliptic curve over a finite field. A 256-bit curve roughly matches a 3072-bit RSA modulus for classical security, which is why phones, IoT, and TLS prefer it. You use ECC through ECDH, ECDSA, or Ed25519, not by adding points by hand.
 
-**Elliptic Curve Cryptography (ECC)** is the modern replacement. It derives its security from the algebraic structure of elliptic curves over finite fields, offering massive security with incredibly tiny key sizes.
+## 1. Deep Dive and Mechanics
 
-## 1. The Mathematics (The Point Addition Trapdoor)
+A private key is a scalar. The public key is that scalar times a standard base point. ECDH multiplies your scalar by the peer public point to get a shared point. ECDSA signs a hash with a per-message nonce. Ed25519 (Edwards curve) wraps this in a safer, deterministic API.
 
-An Elliptic Curve is a symmetric, swooping mathematical graph defined by the equation $y^2 = x^3 + ax + b$.
+**Curve choice is a compatibility and safety choice.** P-256 is the FIPS default. X25519 / Ed25519 are preferred in greenfield systems. Brainpool and obscure curves add complexity. Super-singular or tiny curves are a red flag.
 
-ECC relies on a "Trapdoor Function" (easy to do in one direction, practically impossible to reverse).
-1. You pick a starting point on the curve (Point A).
-2. You draw a tangent line, see where it intersects the curve, and reflect it across the X-axis to find Point B.
-3. You repeat this "bouncing" process $n$ times to land at a final Point Z.
+**Implementation hazards.** Invalid-curve attacks, missing point validation, and ECDSA nonce reuse have all produced real breaks. Use a library that refuses off-curve points.
 
-- **Private Key**: The number of bounces ($n$).
-- **Public Key**: The final coordinates (Point Z).
-
-If a hacker intercepts Point Z and Point A, it is mathematically infeasible for them to determine how many times ($n$) you bounced around the curve to get there. Unlike prime factorization, there is no known shortcut algorithm for the Elliptic Curve Discrete Logarithm Problem.
-
-## 2. The Size Advantage
-
-Because the math behind ECC is so much harder to crack than RSA's prime factorization, it requires vastly smaller keys to achieve the exact same level of security.
-
-
-<ComparisonTable headers={['Security Level (Symmetric Equivalent)', 'RSA Key Size', 'ECC Key Size']} rows={[ ['112-bit (Minimum Secure)', '2048-bit', '224-bit'], ['128-bit (Standard)', '3072-bit', '256-bit'], ['192-bit (Top Secret)', '7680-bit', '384-bit'], ['256-bit (Quantum-resistant symmetric)', '15360-bit', '521-bit'] ]} />
-
-
-A 256-bit ECC key offers the same security as a massive 3072-bit RSA key.
-This means ECC requires significantly less CPU power to generate, less battery drain on smartphones, and less network bandwidth to transmit during SSL/TLS handshakes.
-
-
-<Callout icon="success" title="The Bitcoin Standard">
-
-
-  ECC is so efficient that it is the exclusive cryptographic foundation of Bitcoin and Ethereum. Every single cryptocurrency wallet address is mathematically derived from an Elliptic Curve public key using the **secp256k1** curve standard.
-
-
+<Callout icon="warning" title="Validate peer public keys">
+If the API lets you import raw coordinates, the library must check the point is on the curve and not the identity. Skip that and DH secrets become attacker-controlled.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+The group law is geometric chord-and-tangent, implemented with field arithmetic. Security is the elliptic-curve discrete log problem. Not every curve is hard: the order must have a large prime factor, the embedding degree must resist MOV-style transfers, and the twist should be strong. Named curves published by CFRG and NIST already encode those checks.
+
+<ComparisonTable
+  headers={['Curve / API', 'Job', 'Typical bit security']}
+  rows={[
+    ['P-256 + ECDSA/ECDH', 'FIPS TLS, JWT', '128-class'],
+    ['P-384', 'Higher assurance US gov', '192-class'],
+    ['X25519', 'Key agreement', '128-class'],
+    ['Ed25519', 'Signatures', '128-class'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives import hashes
+
+key = ec.generate_private_key(ec.SECP256R1())
+sig = key.sign(b'hello', ec.ECDSA(hashes.SHA256()))
+key.public_key().verify(sig, b'hello', ec.ECDSA(hashes.SHA256()))
+```
+
+Prefer Ed25519 when you control both ends. Use P-256 when a partner or a FIPS module requires it.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    D[Private scalar d] --> Mul[Scalar multiply G]
+    G[Base point G] --> Mul
+    Mul --> Q[Public point Q]
+    Q --> ECDH[ECDH with peer]
+    D --> ECDH
+    ECDH --> K[Shared secret then HKDF]
+```
+
+## 5. Interview Prep
+
+**Q: Why is ECC smaller than RSA?**
+**A:** The best generic attacks on well-chosen curves are close to sqrt of the group order. Factoring has sub-exponential algorithms, so RSA needs much larger numbers for the same classical security level.
+
+**Q: ECDSA nonce reuse — what breaks?**
+**A:** Two signatures with the same nonce leak the private key via algebra. Ed25519 is deterministic to avoid that class of bug.
+
+**Q: Is ECC quantum-safe?**
+**A:** No. Shor's algorithm breaks ECC and RSA. Plan a PQC migration for long-lived confidentiality.
+
+## 6. Production Use Cases
+
+- **TLS 1.3** ECDHE and certificate signatures.
+- **Mobile and smart-card** identity where RSA-4096 is too slow.
+- **Blockchain and COSE/JOSE** signing ecosystems.
+
+<Callout icon="tip" title="Treat curve IDs as part of the protocol">
+A peer that suddenly offers a toy curve is not being clever. Negotiate a small allowlist.
+</Callout>

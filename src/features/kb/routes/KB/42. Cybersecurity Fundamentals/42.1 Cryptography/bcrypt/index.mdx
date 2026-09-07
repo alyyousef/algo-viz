@@ -1,57 +1,85 @@
 ---
 title: bcrypt
-description: The industry-standard, deliberately slow cryptographic hashing algorithm designed exclusively to safely store user passwords and defeat brute-force attacks.
+description: "Battle-tested password hash based on Blowfish with an explicit cost factor and a huge installed base."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="bcrypt">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Standard hashing algorithms like **MD5**, **SHA-1**, and **SHA-256** were designed for speed. They can hash gigabytes of data per second.
-When storing user passwords in a database, speed is a catastrophic vulnerability. A hacker who steals a database of SHA-256 password hashes can rent an array of GPUs and brute-force (guess) billions of passwords per second until they find the matches.
+**bcrypt** is a password KDF derived from the Blowfish cipher. It has been in production since the late 1990s, is widely supported, and is still acceptable for existing stores. New systems should prefer Argon2id, but you will inherit bcrypt for years. Know its cost parameter and its **72-byte password limit**.
 
-**bcrypt** is a cryptographic hashing algorithm designed in 1999 specifically for password storage. Its primary defining feature is that it is **deliberately, computationally slow**.
+## 1. Deep Dive and Mechanics
 
-## 1. The Cost Factor (Work Factor)
+The encoded string looks like `$2b$12$salt....hash...`. The 12 is the cost: 2^12 expensive Blowfish setups. Raise cost as hardware improves. Salt is embedded. Verification uses the same string.
 
-bcrypt relies on the Blowfish cipher and introduces a mathematical parameter called the **Cost Factor** (often denoted as a two-digit number, like `10` or `12`).
+**72-byte cap.** bcrypt silently uses only the first 72 bytes of the password. Long passphrases and some language encodings can truncate. If you must keep bcrypt, pre-hash with SHA-256 only if you understand the double-hash ecosystem — many teams instead migrate to Argon2id.
 
-The Cost Factor dictates how many iterations of the internal hashing loop are executed, scaling logarithmically ($2^{\text{cost}}$ iterations).
-- A cost of 10 requires $2^{10}$ (1,024) iterations.
-- A cost of 12 requires $2^{12}$ (4,096) iterations, taking 4 times longer.
+**Cost 10-12** is a common starting band for interactive login in 2020s hardware; measure on your boxes.
 
-
-<Callout icon="tip" title="Future-Proofing">
-
-
-  As hardware gets faster (Moore's Law), bcrypt remains secure because developers can simply increment the Cost Factor in their code. If GPUs become twice as fast next year, you increase the cost factor by 1, doubling the mathematical work required, perfectly neutralizing the hardware upgrade.
-
-
+<Callout icon="warning" title="Watch the 72-byte truncation">
+Password managers can emit long secrets. Truncation makes two different secrets collide. Test with long inputs.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## 2. Built-in Salting
+bcrypt's expensive key setup is not memory-hard in the Argon2 sense. GPUs still attack it better than they attack Argon2id at high memory. Its strength is the tunable 2^cost loop and the lack of embarrassing implementation history compared with rolling your own SHA loop. Blowfish's 32-bit nature also makes some ASIC stories different from SHA-256.
 
-A fatal flaw of early password storage was the failure to use a **Salt** (random data appended to a password before hashing). Without salts, two users with the password `password123` would have the exact same database hash, and hackers could use pre-computed Rainbow Tables to crack them instantly.
+<ComparisonTable
+  headers={['KDF', 'Memory-hard', 'Max password', 'Recommendation']}
+  rows={[
+    ['bcrypt', 'No', '72 bytes', 'Maintain, do not start new'],
+    ['scrypt', 'Yes', 'Large', 'OK if already in use'],
+    ['Argon2id', 'Yes', 'Large', 'New stores'],
+    ['PBKDF2', 'No', 'Large', 'FIPS constraint only'],
+  ]}
+/>
 
-bcrypt inherently forces the use of salts. The algorithm automatically generates a cryptographically secure 128-bit salt and bakes it directly into the final output string.
+## 3. Real-World Implementation
 
-## 3. Anatomy of a bcrypt Hash
+```python
+import bcrypt
 
-A standard bcrypt hash looks like this:
-`$2b$12$eImiTXuWVxfM37uY4JANjQ==.xyzABC1234567890qwertyuiopasdfg`
+hashed = bcrypt.hashpw(b'secret', bcrypt.gensalt(rounds=12))
+ok = bcrypt.checkpw(b'secret', hashed)
+```
 
-- **`$2b$`**: The algorithm version identifier.
-- **`12$`**: The Cost Factor (2^12 iterations).
-- **`eImiTXuWVxfM37uY4JANjQ==`**: The 22-character randomly generated Salt.
-- **`.xyzABC...`**: The actual 31-character hashed password output.
+On success, if rounds is below your current policy, rehash and store the new string.
 
-Because the algorithm version, cost, and salt are all stored in plain text inside the string, the authentication server has all the information it needs to re-hash the user's login attempt and compare the results, without needing a separate database column for the salt.
+## 4. Visualizations
 
+```mermaid
+flowchart TD
+    PW[Password bytes] --> Cap[First 72 bytes]
+    Cap --> Exp[Expensive Blowfish setup 2^cost]
+    Salt[Embedded salt] --> Exp
+    Exp --> Enc[Encoded 2b string]
+```
+
+## 5. Interview Prep
+
+**Q: Why is bcrypt still everywhere?**
+**A:** It arrived early, is simple, and is "good enough" if cost is kept modern. Inertia plus compatibility.
+
+**Q: bcrypt vs Argon2id in an interview?**
+**A:** Say Argon2id for new work (memory-hard, no 72-byte cap). Say bcrypt is fine to keep with a cost bump and a migration plan.
+
+**Q: What does a cost bump do to attackers?**
+**A:** Each +1 doubles defender and attacker CPU time. Memory-hard KDFs also raise RAM cost.
+
+## 6. Production Use Cases
+
+- **Legacy user tables** in Rails, Django, Node apps.
+- **On-login migration** from bcrypt to Argon2id.
+- **Low-dependency** environments where bcrypt is the only audited binding.
+
+<Callout icon="tip" title="Log the cost you verify, not the password">
+Metrics on hash time and cost distribution tell you when to rotate parameters. Never log the secret.
+</Callout>

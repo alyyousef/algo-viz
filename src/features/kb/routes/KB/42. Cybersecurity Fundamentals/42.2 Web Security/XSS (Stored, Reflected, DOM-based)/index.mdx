@@ -1,35 +1,85 @@
 ---
 title: Cross-Site Scripting (XSS)
-description: A highly prevalent vulnerability where an attacker injects malicious client-side JavaScript into a trusted website.
+description: "Untrusted data treated as HTML or JS so a victim browser runs attacker-controlled script in your origin."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Cross-Site Scripting (XSS)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Normally, browsers rely on the **Same-Origin Policy (SOP)**: JavaScript loaded from `google.com` cannot mathematically access data on `bank.com`.
+**XSS** is injecting script into a page that other users (or you) load. The browser then trusts that script as your origin: it can act as the user, read non-HttpOnly storage, and rewrite the DOM. There are three delivery styles — **stored**, **reflected**, **DOM-based** — and one family of fixes: **encode for the context, use safe APIs, and add CSP**.
 
-**Cross-Site Scripting (XSS)** bypasses this. The attacker tricks the vulnerable website into delivering the malicious JavaScript to the victim's browser. Because the browser mathematically believes the script came from the trusted website, the script is allowed to steal the victim's session cookies or log their keystrokes.
+## 1. Deep Dive and Mechanics
 
+**Stored:** hostile data saved (comment, name) and later rendered. **Reflected:** data from the request bounced into HTML. **DOM-based:** your JavaScript takes a value from location or the DOM and assigns it to a sink such as innerHTML.
 
-<Callout icon="warning" title="The MySpace Samy Worm">
+**Context is everything.** HTML body, HTML attribute, JS string, URL, and CSS each need a different encoder. Frameworks (React text children, auto-escaping templates) close the common sinks if you do not bypass them with dangerouslySetInnerHTML or raw filters.
 
+**Sanitize HTML** only with a maintained library when you truly need rich text. Do not regex-strip tags.
 
-  In 2005, a hacker named Samy exploited a Stored XSS vulnerability in MySpace. Anyone who viewed his profile mathematically executed his hidden JavaScript, which forced their account to add him as a friend and copy the virus to their own profile. It infected over 1 million users in 20 hours.
-
-
+<Callout icon="error" title="Do not write demo attack strings into docs or tests you copy around">
+Test with inert markers and framework unit tests that assert encoding. You do not need a live payload to prove a sink is closed.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Three Types of XSS
+The browser parses a grammar. XSS is a grammar confusion: data crosses into script or markup nonterminals. Contextual encoding is a **homomorphism into the correct terminal alphabet**. CSP adds a second policy (which scripts may run) so a single encoding slip is less likely to become code. Trusted Types make dangerous sinks throw unless a policy created the string.
 
+<ComparisonTable
+  headers={['Kind', 'Where data waits', 'First control']}
+  rows={[
+    ['Stored', 'Database', 'Encode on output'],
+    ['Reflected', 'Request', 'Encode + avoid reflecting into markup'],
+    ['DOM-based', 'Client JS', 'textContent, not innerHTML'],
+    ['Mutated', 'Browser "helpfully" fixes HTML', 'Do not rely on filters'],
+  ]}
+/>
 
-<ComparisonTable headers={['Type', 'Mechanism', 'Danger Level']} rows={[ ['Stored (Persistent)', 'The attacker injects the malicious JS into a database (e.g., a forum comment). When *any* user loads that page, the server mathematically serves the malware from the database to their browser.', 'Extreme. Can infect millions of passive users without any interaction.'], ['Reflected', 'The attacker mathematically embeds the JS into a malicious URL parameter. They must trick the victim into clicking the link. The server reads the URL and immediately reflects the JS back into the HTML response.', 'High. Requires social engineering to trick the victim into clicking the link.'], ['DOM-based', 'The vulnerability exists entirely in the frontend client-side JavaScript. The malicious payload never even reaches the backend server. It mathematically exploits flawed logic in frameworks like jQuery or React.', 'High. Invisible to backend security systems and WAFs.'] ]} />
+## 3. Real-World Implementation
 
+```javascript
+el.textContent = userName; // safe for text
+el.setAttribute('href', safeHttpUrl(userUrl)); // allowlist scheme
 
+// React: default interpolation is text. Avoid raw HTML APIs.
+```
+
+Server templates: use the engine's auto-escape and never mark user input as safe.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Data[Untrusted string] --> Enc[Context encoder]
+    Enc --> Text[HTML text node]
+    Data --> Sink[Raw HTML or JS sink]
+    Sink --> Run[Script in your origin]
+```
+
+## 5. Interview Prep
+
+**Q: Why encode on output, not input?**
+**A:** The same stored value may appear in HTML, JSON, and CSV. Input filtering loses data and misses contexts. Output encoding matches the sink.
+
+**Q: Does CSP make XSS impossible?**
+**A:** No. It raises the bar. Nonce leaks, gadget scripts, and 'unsafe-inline' still fail closed or open depending on the policy.
+
+**Q: DOM XSS vs reflected?**
+**A:** Reflected is server-rendered. DOM XSS can happen with a static HTML file if client JS copies location.hash into innerHTML.
+
+## 6. Production Use Cases
+
+- **Comment and profile** fields.
+- **Search pages** that echo the query.
+- **Markdown / WYSIWYG** with a sanitizer.
+
+<Callout icon="tip" title="Ban innerHTML in lint for app code">
+Allow it only in a sanitizer module. Most DOM XSS is one assignment.
+</Callout>

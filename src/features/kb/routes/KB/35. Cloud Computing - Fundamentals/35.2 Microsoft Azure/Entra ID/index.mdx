@@ -1,24 +1,95 @@
 ---
 title: Microsoft Entra ID
-description: The mathematical evolution of Azure Active Directory, providing a massive, cloud-based Identity and Access Management (IAM) system that secures billions of authentications globally.
+description: "Azure AD under a new name: the identity plane for users, apps, and workloads — tokens, Conditional Access, and PIM, not a replacement for NSGs."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Microsoft Entra ID"
-  subtitle="Cloud Identity and Access Management"
-  tags={['Azure', 'Security', 'Identity', 'Authentication']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Microsoft Entra ID">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Entra ID (formerly Azure AD) is not just for securing Azure virtual machines. It is the identity backbone for Office 365, GitHub, and millions of third-party SaaS applications via OAuth and SAML.
+**Microsoft Entra ID** (formerly Azure Active Directory) is the cloud identity provider for Microsoft 365 and Azure. Users, groups, app registrations, enterprise apps, and workload identities live here. Azure RBAC decides what a token can do to a subscription. Entra decides whether you get a token at all — MFA, device state, risk, and PIM.
 
-## 1. Conditional Access Policies
-A simple username and password (or even MFA) is not mathematically secure enough for enterprise zero-trust architectures.
-Entra ID uses **Conditional Access**. This is a mathematical policy engine that evaluates the *context* of a login attempt in real-time.
-A policy might decree: *"If the user is logging in from an IP address in the Corporate Office, using a laptop mathematically enrolled in Intune (MDM), allow access. If the same user logs in from an unknown IP in a foreign country, mathematically require MFA. If they fail, instantly lock the account."*
+## 1. Deep Dive and Mechanics
 
-## 2. Managed Identities
-Hardcoding database passwords into application code is a massive security risk.
-Entra ID provides **Managed Identities** for Azure resources. You assign a Managed Identity to a Virtual Machine. The VM mathematically asks Entra ID for a temporary, cryptographically signed token. It uses this token to authenticate directly to Azure SQL or Key Vault. There are zero passwords, zero connection strings, and the credential rotation is mathematically handled by Azure invisible to the developer.
+**Apps.** An **app registration** is the identity (client id, keys, federation). An **enterprise app** (service principal) is that app in a tenant. Multi-tenant apps create a principal in each consumer tenant.
 
-</TechnologyTemplate>
+**Tokens.** OIDC/OAuth2: ID tokens for sign-in, access tokens for APIs, refresh tokens for silent renew. Audiences and scopes must match the API you call. “I have a token” is not authorization.
+
+**Workload identity.** Managed identities on Azure resources federate to Entra without a secret. GitHub Actions and Kubernetes use OIDC federation the same way. Client secrets on service principals are the old way.
+
+**Conditional Access.** Policy on user, app, location, device, risk. This is how you require MFA for Azure Portal but not for a break-glass account you store offline.
+
+**PIM.** Privileged Identity Management: eligible roles activate for hours with approval. Standing Global Admin is a finding.
+
+<Callout icon="error" title="Guest users and overbroad Graph consent">
+An app that asks for Directory.ReadWrite.All and is consented tenant-wide is a persistence tool. Review enterprise app permissions and disable user consent in production tenants.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+AuthN produces a signed assertion; AuthZ is a later intersection (CA + RBAC + resource policy). A leaked refresh token is a renewable session — lifetime and CA session controls bound the window.
+
+Federation (SAML/OIDC) is a trust: the RP accepts the IdP’s signature. Misconfigured redirect URIs are the classic token theft primitive.
+
+<ComparisonTable
+  headers={['Identity', 'Secret', 'Use']}
+  rows={[
+    ['User + CA', 'Passwordless / MFA', 'Humans'],
+    ['Managed identity', 'None you hold', 'Azure compute'],
+    ['Federated app', 'OIDC to Entra', 'GitHub / Kubernetes'],
+    ['Client secret SP', 'String in a vault', 'Legacy only'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.resource import ResourceManagementClient
+
+cred = DefaultAzureCredential()
+rm = ResourceManagementClient(cred, subscription_id)
+for g in rm.resource_groups.list():
+    print(g.name)
+```
+
+On an Azure VM or Function, DefaultAzureCredential uses the managed identity. Locally it uses az login. No client secret in the repo.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User[User + CA] --> Entra[Entra ID]
+    WI[Managed identity] --> Entra
+    Entra --> Tok[Access token]
+    Tok --> ARM[Azure RBAC]
+    Tok --> API[Your API scopes]
+```
+
+## 5. Interview Prep
+
+**Q: Entra ID vs Azure RBAC?**
+**A:** Entra authenticates and issues tokens, and holds directory roles (Global Admin). Azure RBAC authorizes ARM actions on a subscription. You need both: a token and a role assignment.
+
+**Q: App registration vs enterprise application?**
+**A:** Registration is the definition (single-tenant or multi). Enterprise app is the instance in a tenant, where you assign users and see consented permissions.
+
+**Q: How do you stop standing Global Admin?**
+**A:** PIM eligible assignments, two break-glass accounts excluded from CA and stored offline, and an alert on any permanent Global Admin.
+
+## 6. Production Use Cases
+
+- Workforce sign-in to Azure Portal with CA + compliant device.
+- Functions calling SQL and Key Vault with a user-assigned identity.
+- External identities (Entra External ID) for customer-facing apps.
+
+<Callout icon="tip" title="Prefer user-assigned identities for fleets">
+System-assigned dies with the resource. User-assigned lets a scale set and a Function share one principal and one set of role assignments.
+</Callout>

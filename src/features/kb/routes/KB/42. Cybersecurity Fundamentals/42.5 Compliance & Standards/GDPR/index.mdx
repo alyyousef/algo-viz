@@ -1,38 +1,87 @@
 ---
-title: GDPR (General Data Protection Regulation)
-description: The comprehensive data privacy law of the European Union that fundamentally changed how global companies handle user data.
+title: GDPR
+description: "The EU General Data Protection Regulation: lawful processing, data-subject rights, and accountability for personal data."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="GDPR (General Data Protection Regulation)">
+    <ConceptTemplate title="GDPR">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Implemented in 2018, the **GDPR** is the toughest privacy and security law in the world. Though it was drafted and passed by the European Union (EU), it imposes obligations onto organizations anywhere in the world, so long as they target or collect data related to people in the EU.
+**GDPR** is the European Union's primary personal-data law. It applies to organizations in the EU and to many outside that offer goods or monitor people in the EU. It is a **lawful-basis and rights** regime, not a firewall checklist. Security is required as "appropriate technical and organisational measures," including breach notice (typically 72 hours to a supervisory authority when required).
 
-GDPR fundamentally shifted the legal landscape: data belongs to the user, not the company.
+## 1. Deep Dive and Mechanics
 
+**Principles.** Lawfulness, fairness, transparency, purpose limitation, data minimisation, accuracy, storage limitation, integrity/confidentiality, and accountability.
 
-<Callout icon="info" title="The Cost of Non-Compliance">
+**Roles.** A controller decides purposes. A processor acts on documented instructions. Both need contracts (DPA) and a path for subject rights.
 
+**Rights and transfers.** Access, delete, restrict, portability, object. Transfers out of the EU need a mechanism (SCCs, adequacy, and a transfer assessment). Cookies and tracking are their own headache (ePrivacy plus GDPR).
 
-  GDPR introduced existential financial threats to tech giants. Fines can reach up to €20 million, or **4% of the firm\'s worldwide annual revenue** from the preceding financial year, whichever is higher. (Amazon was famously fined €746 million under GDPR in 2021).
-
-
+<Callout icon="warning" title="Legitimate interest is not a magic word">
+You still balance, document, and offer an opt-out where required. "We wanted analytics" is not a complete LIA.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Key User Rights
+GDPR risk is often framed as a DPIA: likelihood and severity of impact on people, not only on the company. Minimisation is an information-theory instinct: collect fewer identifying fields. Pseudonymisation and encryption are mitigations, not exemptions from being personal data. Accountability means you can show the record of processing, not only claim you are careful.
 
-GDPR enshrines several mathematically enforceable rights for internet users:
+<ComparisonTable
+  headers={['Concept', 'Means', 'Engineering hook']}
+  rows={[
+    ['Lawful basis', 'Why you may process', 'Flags in the data model'],
+    ['Minimisation', 'Only needed fields', 'Schema and logs'],
+    ['DPO / ROPA', 'Governance artifacts', 'System inventory'],
+    ['72h notice', 'Authority clock', 'IR playbook'],
+  ]}
+/>
 
-1. **Right to be Forgotten (Erasure):** A user can demand that a company mathematically delete every trace of their existence from all databases and backups.
-2. **Right to Access:** Users can request a downloadable copy of all data a company holds on them.
-3. **Right to Data Portability:** Users have the right to transfer their data from one IT environment to another (e.g., easily moving your playlists from Spotify to Apple Music).
-4. **Consent:** Consent to collect data must be freely given, specific, informed, and unambiguous. (This is why every website now has an annoying Cookie Consent banner).
+## 3. Real-World Implementation
 
+```text
+# Product privacy checklist
+# - Named lawful basis per purpose
+# - Retention on every store (including logs and backups)
+# - Export/delete API keyed by user id
+# - Subprocessor list and DPA in the procurement path
+```
+
+Do not keep "just in case" email dumps of EU customers in a personal Drive.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Purpose[Purpose + basis] --> Collect[Collect min data]
+    Collect --> Store[Store with retention]
+    Store --> Rights[Subject rights]
+    Store --> IR[Breach process]
+    Store --> Xfer[Transfer tool]
+```
+
+## 5. Interview Prep
+
+**Q: Controller vs processor?**
+**A:** Controller decides why. Processor follows instructions. A SaaS is often processor for customer content and controller for its own billing.
+
+**Q: Is a hash still personal data?**
+**A:** If it can be linked back to a person, treat it as personal. Salted hashes can still be personal data.
+
+**Q: What is a DPIA?**
+**A:** A documented high-risk processing assessment you do before you scale the risky thing.
+
+## 6. Production Use Cases
+
+- **Global SaaS** with EU tenants.
+- **Marketing stacks** with consent and suppression.
+- **HR systems** for EU employees.
+
+<Callout icon="tip" title="Put retention in the table definition">
+A column without a TTL becomes a forever archive.
+</Callout>

@@ -1,50 +1,84 @@
 ---
 title: The CIA Triad
-description: "The foundational model of information security, representing the three core pillars of a secure system: Confidentiality, Integrity, and Availability."
+description: "Confidentiality, integrity, and availability — the three properties every security control is trying to protect."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="The CIA Triad">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The **CIA Triad** is the bedrock of all cybersecurity policy and system design. Every security control, encryption algorithm, and firewall rule is ultimately designed to enforce one or more of these three pillars.
+The **CIA triad** is the shortest useful model of what "secure" means. **Confidentiality** is who may read. **Integrity** is who may change and whether you can detect change. **Availability** is whether authorized people can use the system. Every control maps to at least one. Trade-offs are normal: a lockout policy helps confidentiality and can hurt availability.
 
-If a system fails to guarantee even one of these pillars, it is considered compromised.
+## 1. Deep Dive and Mechanics
 
-## 1. Confidentiality (The Secret)
-Confidentiality ensures that sensitive information is strictly accessed only by authorized individuals or systems, and kept hidden from everyone else.
-- **Threat**: Data breaches, packet sniffing, unauthorized access.
-- **Controls**: AES-256 Encryption (Data at rest), TLS/SSL (Data in transit), RBAC (Role-Based Access Control), Passwords/MFA.
+**Confidentiality.** Encryption at rest and in transit, access control, and least privilege. A public bucket fails this pillar even if nobody "hacked" a server.
 
-## 2. Integrity (The Truth)
-Integrity ensures that data remains accurate, consistent, and untampered with over its entire lifecycle. If an authorized user sends $100, a hacker cannot alter the packet mid-transit to say $10,000.
-- **Threat**: Man-in-the-Middle (MitM) attacks, malware altering files, unauthorized database updates.
-- **Controls**: Cryptographic Hashing (SHA-256), Digital Signatures, File Integrity Monitoring (FIM), Checksums.
+**Integrity.** Hashes, signatures, backups with immutability, input validation, and change control. Ransomware is an integrity and availability event.
 
-## 3. Availability (The Access)
-Availability ensures that systems, networks, and data are strictly available and accessible to authorized users exactly when they need them. A perfectly encrypted database is useless if the server is offline.
-- **Threat**: Distributed Denial of Service (DDoS) attacks, ransomware, hardware failures, power outages.
-- **Controls**: Load Balancing, Redundancy/Failover (Multi-AZ architecture), Backups/Disaster Recovery plans, Web Application Firewalls (WAF).
+**Availability.** Redundancy, DDoS absorption, patching that does not brick the fleet, and tested restores. A perfectly secret dead system is still a failure.
 
-
-<ComparisonTable headers={['Pillar', 'Primary Goal', 'Classic Attack', 'Classic Defense']} rows={[ ['Confidentiality', 'Prevent unauthorized reading', 'Data Exfiltration / Sniffing', 'Encryption / Access Control'], ['Integrity', 'Prevent unauthorized modification', 'Data Tampering / Injection', 'Hashing / Digital Signatures'], ['Availability', 'Prevent unauthorized withholding', 'DDoS / Ransomware', 'Redundancy / Backups'] ]} />
-
-
-<Callout icon="warning" title="The Trade-off Triangle">
-
-
-In system design, optimizing heavily for one pillar often sacrifices another.
-For example, enforcing extreme **Confidentiality** (requiring 3 forms of MFA, hardware keys, and VPNs just to log in) severely impacts **Availability** (if a user loses their hardware key, they are permanently locked out of their own data).
-
-
+<Callout icon="info" title="Sometimes people add authenticity or non-repudiation">
+Those are useful. Start with CIA; you can always refine.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+CIA is a requirements taxonomy, not a theorem. Confidentiality is closeness to Shannon-style secrecy in practice (keys, access). Integrity is unforgeability and tamper evidence (MAC, signature, hash chain). Availability is a reliability SLO under adversarial load as well as honest failure. You cannot maximize all three without cost.
+
+<ComparisonTable
+  headers={['Pillar', 'Fails when', 'Typical control']}
+  rows={[
+    ['Confidentiality', 'Wrong party reads', 'Encryption, IAM'],
+    ['Integrity', 'Wrong party changes', 'Signatures, FIM'],
+    ['Availability', 'Right party cannot use', 'HA, backups, DDoS'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# Design review prompt
+# - Who may read this field?
+# - How do we detect unauthorized change?
+# - What happens if this region or this key store dies?
+```
+
+Write the answers in the design doc. "We use AWS" is not an answer.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    C[Confidentiality] --> Sys[System]
+    I[Integrity] --> Sys
+    A[Availability] --> Sys
+    Sys --> Trade[Explicit trade-offs]
+```
+
+## 5. Interview Prep
+
+**Q: Give one control per pillar.**
+**A:** TLS (C), signed commits or hashes (I), multi-AZ plus backups (A).
+
+**Q: Where does MFA sit?**
+**A:** Mostly confidentiality and integrity of sessions. Done badly it harms availability.
+
+**Q: Is CIA enough for privacy law?**
+**A:** No. Privacy adds purpose, minimisation, and rights. CIA is still the security core.
+
+## 6. Production Use Cases
+
+- **Architecture reviews** of a new service.
+- **Incident severity** (which pillars were hit).
+- **Control mapping** in GRC.
+
+<Callout icon="tip" title="Name the pillar in the ticket">
+"Fix availability" and "stop the leak" are different owners and different clocks.
+</Callout>

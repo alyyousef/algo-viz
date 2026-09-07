@@ -1,51 +1,113 @@
 ---
 title: Prometheus
-description: "An open-source systems monitoring and alerting toolkit built for highly dynamic containerized environments."
+description: "Pull-based metrics TSDB and PromQL engine — scrape /metrics, store series locally or remotely, evaluate rules, and hand alerts to Alertmanager."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Prometheus">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Originally built at SoundCloud and now a CNCF graduated project, **Prometheus** is the industry standard for gathering and storing **Metrics** in Kubernetes and cloud-native environments.
+**Prometheus** is the default metrics system for Kubernetes. It **pulls** text expositions, stores samples in a local TSDB, and evaluates **PromQL**. It does not page you by itself — **Alertmanager** groups, inhibits, and routes. Long-term storage is someone else's problem (Thanos, Mimir, Cortex, or a vendor remote_write).
 
-## 1. The Pull Model (Scraping)
-Traditional monitoring agents (like New Relic or Datadog) use a *Push* model: the application actively sends its metrics over the network to the central monitoring server.
+## 1. Deep Dive and Mechanics
 
-Prometheus uses a **Pull** model.
-Your application exposes a simple HTTP endpoint (usually `/metrics`) that prints out its current state in plain text. The Prometheus server periodically (e.g., every 15 seconds) makes an HTTP GET request to that endpoint, "scrapes" the data, and saves it to its internal time-series database.
+**Discovery and scrape.** `kubernetes_sd` asks the API for pods, endpoints, or ingresses. Relabeling keeps or drops targets and maps metadata onto labels. A scrape is an HTTP GET; timeouts and overlapping scrapes are how you melt a slow `/metrics`.
 
-```text
-# Example Prometheus Metrics format
-http_requests_total{method="GET", status="200"} 1053
-http_requests_total{method="POST", status="500"} 12
-node_memory_Active_bytes 4.294967296e+09
-```
+**TSDB.** Head block in memory, compacted blocks on disk, WAL for crash safety. Queries that touch high-cardinality series or huge ranges blow memory in the querier, not in the app.
 
-## 2. PromQL (Prometheus Query Language)
-Prometheus stores data in a multidimensional time-series database. You query this data using **PromQL**, a powerful functional query language.
+**PromQL.** Instant vectors versus range vectors. `rate` on counters, `histogram_quantile` on buckets, `increase` for integer-ish events. Recording rules write new series so Grafana does not recompute the same join every 10 s.
 
-Instead of writing SQL, you write mathematical queries to aggregate data over time.
-- **`http_requests_total`**: Returns the raw counter value.
-- **`rate(http_requests_total[5m])`**: Calculates the per-second rate of requests over the last 5 minutes (ignoring server restarts).
+**HA pair.** Two Prometheuses scrape the same targets. Alertmanager dedups. They are not a clustered DB — they are two copies. Remote_write ships a third copy to long-term storage.
 
-## 3. The Alertmanager
-Prometheus itself just stores data and evaluates PromQL rules. If a rule evaluates to true (e.g., `cpu_usage > 90`), it fires an alert to a separate component called the **Alertmanager**. The Alertmanager handles deduplicating the alerts, grouping them together, and routing them to Slack, PagerDuty, or email.
-
-
-<Callout icon="info" title="Why Pull over Push?">
-
-
-The Pull model is perfect for Kubernetes. When 50 new Pods spin up, they don't need to be configured with the IP address of the monitoring server. Prometheus simply asks the Kubernetes API "what Pods exist?", discovers them automatically, and starts scraping them.
-
-
+<Callout icon="error" title="Cardinality is the outage">
+A label that includes pod uid, user id, or a raw path with ids creates millions of series. The process OOMs. Drop or hash at the source; do not “just give it more RAM.”
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+`rate(x[5m])` is the per-second average slope of a counter over the range, accounting for resets. It is not instant QPS. Short spikes shorter than the range are smoothed. For paging, pick a range several times the scrape interval (often 4× to 5×) so one missed scrape does not NaN the alert.
+
+Availability SLI: sum of successful rates over sum of valid rates. Burn-rate alerts compare that ratio to the SLO over short and long windows.
+
+<ComparisonTable
+  headers={['System', 'Collection', 'Query', 'Long-term story']}
+  rows={[
+    ['Prometheus', 'Pull scrape', 'PromQL', 'Local days + remote_write'],
+    ['InfluxDB', 'Push', 'Flux / InfluxQL', 'Built-in retention'],
+    ['Datadog', 'Agent push', 'Datadog query', 'SaaS'],
+    ['Graphite', 'Push carbon', 'Functions', 'Whisper / Victoria'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+scrape_configs:
+  - job_name: kubernetes-pods
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: "true"
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+```
+
+Alert rule:
+
+```yaml
+- alert: CheckoutErrorBudgetBurn
+  expr: |
+    (
+      sum(rate(http_requests_total{app="checkout", status=~"5.."}[5m]))
+      /
+      sum(rate(http_requests_total{app="checkout"}[5m]))
+    ) > 0.01
+  for: 10m
+  labels:
+    severity: page
+```
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    SD[Service discovery] --> Prom[Prometheus]
+    Targets["/metrics targets"] --> Prom
+    Prom --> Rules[Rule evaluator]
+    Rules --> AM[Alertmanager]
+    Prom --> RW[remote_write]
+    RW --> Long[Thanos / Mimir]
+    Prom --> Grafana
+```
+
+## 5. Interview Prep
+
+**Q: Why pull instead of push?**
+**A:** Failed scrapes are a signal. Discovery is central. Targets do not need the Prom VIP. Push still exists (`pushgateway`) for batch jobs that die before a scrape — use it sparingly.
+
+**Q: Prometheus versus Grafana?**
+**A:** Prom stores and alerts. Grafana draws and fans out to Loki and Tempo. Mixing them up in an interview is a tell.
+
+**Q: How do you keep 13 months of metrics?**
+**A:** Do not scale a single Prometheus disk forever. remote_write to an object-storage-backed system and query that for history.
+
+## 6. Production Use Cases
+
+- **Kubernetes** — kube-state-metrics, node-exporter, cAdvisor, and app scrapes on one label scheme.
+- **SLO pages** — multi-window multi-burn alerts into Alertmanager then PagerDuty.
+- **Federation** — edge Proms scrape local jobs; a global Prom or Thanos Query unions them.
+
+<Callout icon="tip" title="Match Loki and Tempo labels">
+`app` and `namespace` should be the same strings everywhere. Explore’s jump-to-logs button is a string compare, not magic.
+</Callout>

@@ -1,24 +1,90 @@
 ---
 title: OCI Subnets
-description: The fundamental mathematical divisions of a Virtual Cloud Network (VCN), defining specific IP address ranges and routing characteristics to isolate different layers of an application architecture.
+description: "Regional CIDR slices of a VCN: public or private, one route table, security lists plus NSGs — prefer regional subnets over AD-local."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Subnets"
-  subtitle="Logical Network Segmentation"
-  tags={['OCI', 'Networking', 'VCN', 'IP Addressing']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Subnets">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-A Virtual Cloud Network (VCN) is a massive block of IP addresses (e.g., `10.0.0.0/16`, which contains 65,536 IPs). You cannot deploy servers directly into a VCN. You must mathematically chop the VCN into smaller, manageable chunks called **Subnets**.
+A **subnet** is a CIDR carved from a VCN. **Regional subnets** span all ADs in the region (the default you want). **AD-specific** subnets are the older model. Public vs private is a flag plus routing: public subnets allow public IPs; private forbid them.
 
-## 1. Regional vs. AD-Specific
-Historically, a Subnet was mathematically bound to a single physical building (an Availability Domain). If AD 1 burned down, the Subnet died.
-Modern OCI uses **Regional Subnets**. You carve out a chunk of IPs (e.g., `10.0.1.0/24`). This Subnet mathematically spans all 3 Availability Domains in the Region simultaneously. You can place Web Server 1 in AD 1, and Web Server 2 in AD 2, and they will both pull IP addresses from the exact same Subnet, massively simplifying routing and firewall management.
+## 1. Deep Dive and Mechanics
 
-## 2. Public vs. Private
-When you create a Subnet, you must make a strict, permanent mathematical declaration: is it Public or Private?
-- **Public Subnet**: Virtual Machines placed here are mathematically allowed to receive Public IP addresses from Oracle. They can talk directly to the internet (if an Internet Gateway is attached).
-- **Private Subnet**: Virtual Machines placed here are mathematically forbidden from ever receiving a Public IP address. Even if an administrator tries to assign one via the API, the OCI Control Plane will mathematically reject the request. This provides a hard, physical security boundary for sensitive databases.
+**Public flag.** `prohibitPublicIpOnVnic=true` (private) stops accidental public IPs. Route tables still need to be correct.
 
-</TechnologyTemplate>
+**IPs.** Each VNIC consumes an address. OKE VCN-native pods may consume many. Reserve space.
+
+**DNS.** VCN resolver plus optional custom DNS. Instance FQDNs depend on subnet DNS label.
+
+**Features.** DHCP options, IPv6 prefixes, and the associated route table + security lists are subnet properties. NSGs are not.
+
+<Callout icon="warning" title="Tiny subnets and OKE">
+A /28 looks tidy and dies when the load balancer and pods arrive. Plan /24 or larger for node/pod subnets unless you measured.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Usable IPs are CIDR size minus Oracle-reserved addresses (a handful per subnet). Spreadsheet that.
+
+Regional subnet: placement of instances still picks an AD, but the CIDR is not AD-locked. That simplifies HA.
+
+<ComparisonTable
+  headers={['Subnet style', 'Scope', 'Use']}
+  rows={[
+    ['Regional', 'All ADs', 'Default'],
+    ['AD-specific', 'One AD', 'Legacy'],
+    ['Public', 'Public IPs allowed', 'LB / bastion'],
+    ['Private', 'No public IPs', 'Apps / data'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci network subnet create --compartment-id $COMP --vcn-id $VCN \
+  --cidr-block 10.10.1.0/24 --display-name private-app \
+  --prohibit-public-ip-on-vnic true \
+  --route-table-id $RT_PRIV --security-list-ids '["'"$SL"'"]'
+```
+
+Attach NSGs at VNIC create time, not as an afterthought.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    VCN[VCN 10.10.0.0/16] --> Pub[Public /24]
+    VCN --> App[Private app /24]
+    VCN --> Data[Private data /24]
+    Pub --> IGW[RT to IGW]
+    App --> NAT[RT to NAT]
+```
+
+## 5. Interview Prep
+
+**Q: Regional vs AD subnet?**
+**A:** Regional is simpler HA. AD-specific is leftover. New VCNs should be regional.
+
+**Q: What makes a subnet private?**
+**A:** No public IPs plus a route table that does not require IGW for instances. The flag enforces the first part.
+
+**Q: How many subnets?**
+**A:** Enough for blast radius (public, app, data) not one per VM.
+
+## 6. Production Use Cases
+
+- Three-tier CIDR plan with room to grow.
+- Separate subnet for mount targets and DB private endpoints.
+- Dedicated public /28 for LBs only.
+
+<Callout icon="tip" title="Draw CIDRs before Terraform">
+Overlapping with on-prem or another VCN you will peer is a migration. IPAM first.
+</Callout>

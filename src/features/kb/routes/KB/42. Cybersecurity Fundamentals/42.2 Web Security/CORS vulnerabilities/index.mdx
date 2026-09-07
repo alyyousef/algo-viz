@@ -1,35 +1,94 @@
 ---
-title: Cross-Origin Resource Sharing (CORS)
-description: An HTTP-header based mechanism that allows a server to indicate any origins (domain, scheme, or port) other than its own from which a browser should permit loading resources.
+title: CORS Vulnerabilities
+description: "Misconfigured Cross-Origin Resource Sharing that lets a hostile page read authenticated API responses from a victim browser."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Cross-Origin Resource Sharing (CORS)">
+    <ConceptTemplate title="CORS Vulnerabilities">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-By default, web browsers strictly enforce the **Same-Origin Policy (SOP)**. If JavaScript running on `frontend.com` tries to make an API `fetch()` call to `api.backend.com`, the browser will mathematically block it because the domains do not match.
+**CORS** is a browser privilege the server opts into. By default, a page on evil.example cannot read the body of a response from api.yourbank.example even if the browser attached cookies. If your API reflects Access-Control-Allow-Origin: the request Origin and sets Allow-Credentials, you have given that page the keys to the user's session.
 
-**CORS** is the mathematical mechanism that allows servers to punch a deliberate hole in the SOP, telling the browser: "It is safe to let `frontend.com` read this data."
+## 1. Deep Dive and Mechanics
 
+Simple requests may be sent cross-origin (the old web). JavaScript may not read the response unless ACAO matches the requesting origin (or is a careful * without credentials). Preflight (OPTIONS) asks permission for custom headers or methods.
 
-<Callout icon="warning" title="The Wildcard Danger">
+**Dangerous patterns.** Reflect any Origin. Allow-Origin: * plus cookies (browsers block this combo; people then "fix" it by reflecting). Trusting null. Trusting a regex that matches evilyourbank.example. CORS is not an access-control list for mobile apps or curl; those do not enforce it.
 
+**CSRF vs CORS.** CORS mistakes leak responses. CSRF makes the browser send a state-changing request. You often need both a strict CORS allowlist and CSRF tokens.
 
-  The most common CORS vulnerability is a lazy configuration. If a developer sets `Access-Control-Allow-Origin: *`, they are mathematically telling the browser that *any website on the internet* is allowed to read data from their API using the victim's session cookies.
-
-
+<Callout icon="warning" title="CORS is a browser rule, not a network firewall">
+A stolen cookie used from a script outside the browser ignores CORS entirely. Still enforce authz on the server.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Preflight Request (OPTIONS)
+The Same-Origin Policy is a tuple match (scheme, host, port). CORS is a structured exception: the server names which other tuples may read. Credentials change the algebra: * is forbidden with credentials, so implementations switch to reflection and accidentally become "any site". Treat the allowlist as an exact set, not a substring search.
 
-Before the browser sends a complex request (like a POST with JSON data) across origins, it first mathematically sends a stealthy `OPTIONS` request, known as a **Preflight**.
+<ComparisonTable
+  headers={['Header combo', 'Browser effect', 'Safe?']}
+  rows={[
+    ['No CORS headers', 'JS cannot read cross-origin body', 'Default-safe'],
+    ['ACAO * , no credentials', 'Public read', 'OK for public APIs'],
+    ['Reflect Origin + credentials', 'That origin can read as the user', 'Only if allowlisted'],
+    ['Allow-Origin null + creds', 'Sandbox / unique origins', 'Usually unsafe'],
+  ]}
+/>
 
-The browser asks the API: "Are you configured to accept a POST request from my origin?" If the API responds with the correct CORS headers, the browser mathematically releases the actual POST request. If not, the browser throws a CORS error in the console.
+## 3. Real-World Implementation
 
+```python
+ALLOWED = {'https://app.example.com', 'https://admin.example.com'}
+
+def cors_headers(origin: str | None) -> dict:
+    if origin in ALLOWED:
+        return {
+            'Access-Control-Allow-Origin': origin,
+            'Access-Control-Allow-Credentials': 'true',
+            'Vary': 'Origin',
+        }
+    return {}
+```
+
+Use an exact set. Do not endswith or contains.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant P as Hostile page
+    participant B as Browser
+    participant A as API
+    P->>B: JS fetch with cookies
+    B->>A: Request + Origin
+    A->>B: ACAO must match allowlist
+    B->>P: Body only if ACAO matches
+```
+
+## 5. Interview Prep
+
+**Q: Does CORS stop CSRF?**
+**A:** No. CSRF does not need to read the response. It needs a cookie to be sent. Use SameSite and tokens.
+
+**Q: Why Vary: Origin?**
+**A:** So caches do not store one user's ACAO and serve it to another origin.
+
+**Q: Is ACAO * fine?**
+**A:** For truly public, cookie-free APIs, yes. Never combine a wildcard mindset with credentialed session APIs.
+
+## 6. Production Use Cases
+
+- **SPA on a different origin** than its API.
+- **Partner widgets** with a tiny explicit allowlist.
+- **Public JSON** APIs that opt into * without cookies.
+
+<Callout icon="tip" title="Prefer same-site deployments">
+Host the SPA and API on one registrable domain with a reverse proxy. No CORS means no CORS bugs.
+</Callout>

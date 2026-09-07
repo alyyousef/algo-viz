@@ -1,24 +1,87 @@
 ---
 title: DigitalOcean
-description: A developer-centric cloud computing platform mathematically optimized for simplicity, offering predictable pricing and rapid provisioning for startups and small-to-medium businesses.
+description: "Simple IaaS: Droplets, VPCs, Spaces, and Managed Kubernetes — predictable pricing, fewer enterprise knobs than the big three."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="DigitalOcean"
-  subtitle="The Developer's Cloud"
-  tags={['Cloud', 'IaaS', 'Developer', 'Startups']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="DigitalOcean">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-AWS is mathematically terrifying for a solo developer. It has 200+ services, complex IAM policies, and unpredictable bandwidth billing. DigitalOcean (DO) sacrifices massive enterprise complexity in exchange for perfect mathematical simplicity.
+**DigitalOcean** sells straightforward cloud: **Droplets** (VMs), volumes, **Spaces** (S3-compatible), Load Balancers, and **DOKS** (managed Kubernetes). The UI and API optimize for indie and SMB speed. You get fewer IAM hierarchies, fewer regions, and a bill you can explain.
 
-## 1. Droplets (Predictable Virtual Machines)
-In DO, Virtual Machines are called **Droplets**.
-When you provision a Droplet, the math is completely transparent: $5 a month gets you 1 CPU, 1GB RAM, a 25GB SSD, and 1 Terabyte of outbound bandwidth. In AWS, calculating bandwidth costs requires a PhD in spreadsheet mathematics. In DO, you know exactly what your bill will be on the 1st of the month, making it the perfect mathematical choice for bootstrapped startups, hobbyists, and independent open-source projects.
+## 1. Deep Dive and Mechanics
 
-## 2. Managed Kubernetes and App Platform
-While famous for basic Droplets, DO has evolved.
-They offer **DigitalOcean Kubernetes (DOKS)**, which provides a managed Control Plane (for free) without the agonizing mathematical complexity of AWS EKS.
-Furthermore, they offer the **App Platform** (a PaaS). A developer simply points DO to their GitHub repository containing a Node.js app. DO automatically mathematically builds the Docker container, provisions the HTTPS certificates, and deploys it globally, abstracting away the entire infrastructure layer.
+**Droplets.** Fixed sizes, images, VPC, optional reserved IP. Snapshots and backups are explicit products. No fifteen-page IAM policy on day one — also fewer guardrails.
 
-</TechnologyTemplate>
+**DOKS.** Managed control plane, node pools, and DO load balancer integration. Fine until you need a hyperscaler-only addon.
+
+**App Platform.** PaaS-like builds from git. Closer to Render/Heroku than to raw Droplets.
+
+**Spaces + CDN.** Object storage with a built-in CDN option. Compatibility is S3-ish.
+
+<Callout icon="warning" title="Team tokens">
+A single API token with write on the account is common and painful when it leaks. Use scoped tokens and SSO if you have it.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Price is mostly linear in Droplet hours and bandwidth overage. The simplicity is the product: you cannot hide spend in 40 line items as easily — or get Reserved Instance math.
+
+HA: regions are fewer. Multi-AZ stories are thinner than AWS. Design DR as a second region or another cloud.
+
+<ComparisonTable
+  headers={['Need', 'DigitalOcean', 'Hyperscaler']}
+  rows={[
+    ['VM', 'Droplet', 'EC2 / GCE'],
+    ['K8s', 'DOKS', 'EKS / GKE'],
+    ['Object', 'Spaces', 'S3'],
+    ['PaaS', 'App Platform', 'Elastic Beanstalk / Run'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+doctl compute droplet create web-1 --region nyc3 --size s-2vcpu-4gb \
+  --image ubuntu-24-04-x64 --vpc-uuid $VPC
+```
+
+Put Droplets in a VPC from the start. Public-only networking is the default trap.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    DNS --> LB[DO Load Balancer]
+    LB --> D1[Droplet]
+    LB --> D2[Droplet]
+    D1 --> Sp[Spaces]
+```
+
+## 5. Interview Prep
+
+**Q: When is DO the right cloud?**
+**A:** Small teams, predictable apps, cost transparency. Not when you need a 200-service landing zone or a specific AWS SKU.
+
+**Q: Droplet vs App Platform?**
+**A:** Droplet if you want SSH and images. App Platform if you want git-push.
+
+**Q: Is Spaces S3?**
+**A:** Compatible enough for many SDKs. IAM and feature flags differ.
+
+## 6. Production Use Cases
+
+- SaaS MVPs and agencies that outgrew a single VPS.
+- DOKS for teams that want Kubernetes without EKS ceremony.
+- Spaces for user uploads with CDN.
+
+<Callout icon="tip" title="Turn on VPC and firewalls immediately">
+A fresh Droplet on 0.0.0.0/0:22 is a scanner target. Cloud Firewalls are not optional hygiene.
+</Callout>

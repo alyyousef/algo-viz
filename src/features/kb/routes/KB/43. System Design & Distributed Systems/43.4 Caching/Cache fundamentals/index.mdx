@@ -1,33 +1,93 @@
 ---
 title: Cache Fundamentals
-description: The architectural strategy of storing expensive database queries in ultra-fast RAM to reduce latency and protect backend infrastructure from traffic spikes.
+description: "A smaller, faster store of computed or fetched data: hit, miss, fill, eviction, and a freshness rule — every other cache page is a variant of this."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Cache Fundamentals">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Querying a relational database requires hitting the physical hard drive and performing complex mathematical `JOIN` operations. It is slow and expensive.
+A **cache** is a small, fast store that remembers the result of a slower lookup. A **hit** returns the remembered value. A **miss** loads from the source of truth, then **fills** the cache. When full, an **eviction policy** drops something. When data changes, **invalidation** or **TTL** stops you from serving a lie forever.
 
-A **Cache** is a temporary storage layer composed entirely of ultra-fast RAM (like Redis or Memcached). By storing the results of expensive queries in RAM, the system can return data to the user in microseconds, completely bypassing the database.
+## 1. Deep Dive and Mechanics
 
-## 1. Cache Strategies
+**Locality.** Caches work because of temporal locality (the same key again) and spatial locality (nearby keys). Random unique keys have a hit ratio near zero.
 
-How do you get data into the cache?
-- **Cache-Aside (Lazy Loading)**: The application asks the cache for a User Profile. If it's missing (a Cache Miss), the application hits the database, gets the profile, sends it to the user, and then saves it in the cache for the *next* time.
-- **Write-Through**: The application writes data directly to the cache, and the cache immediately writes it synchronously to the database. Slower write speeds, but guarantees the cache is never stale.
-- **Write-Back (Write-Behind)**: The application writes data only to the cache and instantly returns success. The cache asynchronously flushes the data to the database later. Extremely fast, but if the cache loses power, data is permanently lost.
+**Layers.** Browser, CDN, app process, Redis, database buffer pool. Each has a different key space and failure mode. A miss at one layer can still hit another.
 
-## 2. Cache Invalidation (The Hardest Problem)
+**Correctness.** The hard part is not the hash map. It is who may see stale data, and for how long. Name the SLA in seconds, not "we cache it."
 
-A famous computer science quote states: *"There are only two hard things in Computer Science: cache invalidation and naming things."*
+**Stampede, thundering herd, dogpile.** Many misses for one expired key. Prevent with locks, jittered TTL, or stale-while-revalidate.
 
-If a user updates their profile picture in the database, the cache still holds the old picture. You must explicitly tell the cache to delete (invalidate) the old data. If the invalidation logic fails, your application will serve stale, corrupted data to users indefinitely.
-Engineers mitigate this using **TTL (Time to Live)**, forcing the cache to automatically delete data after a certain timeframe (e.g., 5 minutes) as a safety net.
+<Callout icon="info" title="A cache is a performance optimization until it is a consistency bug">
+If the business cannot name an acceptable staleness, do not cache that key.
+</Callout>
 
+## 2. Mathematical / Theoretical Foundation
+
+Hit ratio H, miss penalty M, hit time C. Mean time is H times C plus (1-H) times M. Capacity versus working set: if the working set does not fit, H collapses (thrash).
+
+Little's law still applies to in-flight fills. Too many parallel fills can DDoS the database you meant to protect.
+
+<ComparisonTable
+  headers={['Idea', 'Means', 'Knob']}
+  rows={[
+    ['Hit ratio', 'Fraction served from cache', 'Key design, size'],
+    ['TTL', 'Max staleness', 'Seconds'],
+    ['Eviction', 'What drops when full', 'LRU, LFU, TTL'],
+    ['Invalidation', 'Drop on write', 'Pub-sub, delete key'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def get(cache, key, load):
+    hit = cache.get(key)
+    if hit is not None:
+        return hit
+    val = load(key)
+    cache.set(key, val)
+    return val
+```
+
+This is cache-aside. Add TTL and single-flight before production.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    K[Key] --> H{Hit?}
+    H -->|yes| R[Return]
+    H -->|no| L[Load source]
+    L --> F[Fill]
+    F --> R
+```
+
+## 5. Interview Prep
+
+**Q: What do you cache?**
+**A:** Read-heavy, stable or TTL-tolerant keys with a small working set relative to RAM. Not a unique write-once audit row.
+
+**Q: How do you know it works?**
+**A:** Hit ratio, p99 of the path, origin QPS, and error rate on fill. A high hit ratio with stale authz is a failure.
+
+**Q: Cache versus buffer pool?**
+**A:** The DB already caches pages. An app cache is for computed results and to cut parse/network, not a replacement for indexes.
+
+## 6. Production Use Cases
+
+- **Session and feature flags**.
+- **Product catalog** pages.
+- **Idempotency** lookup tables (with care).
+
+<Callout icon="tip" title="State working set and staleness">
+Those two numbers tell you if Redis is the right size and if the product will accept the cache.
+</Callout>

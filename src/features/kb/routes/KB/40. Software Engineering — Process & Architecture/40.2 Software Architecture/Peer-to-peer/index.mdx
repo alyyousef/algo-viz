@@ -1,28 +1,92 @@
 ---
-title: Peer-to-Peer (P2P) Architecture
-description: A decentralized network architecture where mathematical workloads are partitioned among equally privileged, equipotent peers, eliminating the need for a central server to coordinate or store data.
+title: Peer-to-Peer
+description: "Nodes that are both client and server: they share data and work without a single obligatory centre — powerful for scale and resilience, hard for authority and security."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Peer-to-Peer (P2P) Architecture"
-  subtitle="Mathematical Decentralization"
-  tags={['Architecture', 'Networking', 'Distributed Systems', 'Blockchain']}
->
+    <ConceptTemplate title="Peer-to-Peer">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a Client-Server architecture, if the central server is destroyed or goes offline, 100% of the clients instantly lose mathematical functionality. It is a single point of failure.
+**Peer-to-peer (P2P)** systems give nodes similar roles. Each peer can request and serve. There is no required central host for the data plane (though many real systems keep a rendezvous or tracker). BitTorrent, early Skype overlays, and many CRDT collab tools live here.
 
-## 1. The Distributed Mesh
-In a Peer-to-Peer network (like BitTorrent or Bitcoin), there is no central server.
-Every node (laptop, phone) on the network is mathematically both a Client and a Server simultaneously. When Node A wants a file, it does not ask a central server; it asks Node B, Node C, and Node D for mathematical fragments of the file. As Node A downloads the fragments, it instantly begins serving those fragments to Node E.
+## 1. Deep Dive and Mechanics
 
-## 2. Unstoppable Resilience
-P2P mathematically provides absolute resilience and infinite scalability. The more users that join the network, the more Server capacity the network mathematically possesses. To destroy a Client-Server network, you simply unplug the main server. To destroy a true P2P network, you must physically unplug every single participating laptop on Earth simultaneously.
+**Discovery.** How do you find peers? Trackers, DHTs (Kademlia), multicast, or an introduction server. Pure magic discovery on the modern internet is blocked by NAT.
 
+**Data.** Replication and chunking (BitTorrent pieces). Conflict: last-write-wins, CRDTs, or human merge. There is no single SQL primary unless you elect one.
+
+**Trust.** Any peer may be malicious. You need content hashes, signatures, incentives, or a permissioned membership list. Open P2P without authentication is an abuse magnet.
+
+**Hybrids.** Most “P2P” products are hybrid: a cloud for identity and signalling, peers for the heavy bytes (WebRTC).
+
+<Callout icon="warning" title="NAT and reality">
+Home NATs and symmetric firewalls make true connectivity a research project. Budget STUN, TURN, and a signalling channel or your demo dies on hotel Wi-Fi.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Overlay graphs.** Peers form a graph. Routing (DHT) gives expected log n hops under uniform hashing. Churn (join/leave) is the main adversary of the analysis.
+
+**CAP at the edge.** Without a primary, you choose availability and partition tolerance; consistency becomes eventual or mergeable (CRDTs).
+
+**Incentives.** Free riders (BitTorrent tit-for-tat) are a game-theoretic problem, not an afterthought.
+
+<ComparisonTable
+  headers={['Style', 'Authority', 'Typical use']}
+  rows={[
+    ['Client-server', 'The server', 'SaaS'],
+    ['Pure P2P', 'None / protocol', 'File swarms'],
+    ['Hybrid P2P', 'Cloud for control', 'WebRTC calls'],
+    ['Permissioned mesh', 'Membership list', 'Internal fabrics'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# Content addressing: the name is the hash
+piece_id = sha256(chunk)
+# A peer who sends the wrong bytes fails the hash and is dropped
+```
+
+You trust the hash, not the peer’s IP.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    P1[Peer] --- P2[Peer]
+    P1 --- P3[Peer]
+    P2 --- P3
+    P4[Peer] --- P2
+    Tracker[Optional tracker] -.-> P1
+    Tracker -.-> P4
+```
+
+## 5. Interview Prep
+
+**Q: Why not P2P for a bank ledger?**
+**A:** Authority, audit, and regulation want a clearly responsible operator. Permissioned consensus is a different design than open swarms.
+
+**Q: How do you prevent poison data?**
+**A:** Hash-addressed chunks, signatures from a publisher key, and clients that refuse mismatches.
+
+**Q: Is blockchain P2P?**
+**A:** The gossip layer is P2P. Consensus and incentives are extra machinery. Do not equate the two in an interview.
+
+## 6. Production Use Cases
+
+- **Content distribution** where bandwidth from peers beats a CDN bill.
+- **Real-time media** (WebRTC) with a small signalling server.
+- **Local-first apps** that sync via a mesh or a relay when needed.
+
+<Callout icon="tip" title="Design for peers going away">
+Churn is normal. Replication factor and repair, not a wish that laptops stay open, keep the object alive.
+</Callout>

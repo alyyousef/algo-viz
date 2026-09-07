@@ -1,33 +1,101 @@
 ---
 title: Merges
-description: The mathematical operation in version control where two distinct lines of development (branches) are computationally synthesized into a single unified history, resolving conflicting modifications.
+description: "Joining two commit tips through a merge-base: Git records a merge commit with two parents, or fast-forwards when one tip already contains the other."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Merges"
-  subtitle="Synthesizing Parallel Timelines"
-  tags={['Version Control', 'Git', 'Algorithms', 'Engineering']}
->
+    <ConceptTemplate title="Merges">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When a developer finishes working on an isolated feature branch, that code is useless until it is computationally integrated back into the main codebase. A Merge is the algorithm that achieves this.
+A **merge** integrates two lines of history. If your branch is a strict descendant of the target, Git **fast-forwards** the ref — no merge commit. Otherwise Git finds a **merge-base**, performs a three-way merge of the trees, and (on success) writes a commit with two parents. Conflicts are overlapping edits Git will not guess. Merges are how shared branches stay a DAG rather than a single tape.
 
-## 1. Fast-Forward Merges
-The simplest mathematical merge is a **Fast-Forward**.
-If you create a branch from `main`, add 3 commits, and nobody else has touched `main` in the meantime, Git does not actually need to "merge" anything. It mathematically recognizes that your branch is a direct linear continuation of `main`. Git simply moves the `main` pointer forward 3 steps to catch up with your branch. The resulting history is a perfect, straight line.
+## 1. Deep Dive and Mechanics
 
-## 2. The 3-Way Merge Algorithm
-If you branch from `main`, and while you are working, a colleague pushes their own changes to `main`, the timelines have mathematically diverged. A Fast-Forward is impossible.
-Git executes a **3-Way Merge**. It computationally analyzes three specific points in time:
-1. The common ancestor commit (where your branches split).
-2. The tip of your branch.
-3. The tip of `main`.
-Git mathematically compares the diffs. If you edited file A and your colleague edited file B, Git automatically synthesizes a new "Merge Commit" containing both changes. If you both edited the exact same line in file A, Git mathematically halts and throws a **Merge Conflict**, forcing human intervention.
+**Fast-forward.** `main` at A, feature at B, A ancestor of B → moving `main` to B is a pointer update. `--no-ff` forces a merge commit anyway so the feature remains a bubble (GitFlow's default).
 
+**Three-way merge.** Merge-base B, ours L, theirs R. For each path: same change on both sides → take it; change on one side → take that side; change on both to different results → conflict. Delete/modify is a conflict. Rename detection pairs paths by similarity, then merges the content.
+
+**Recursive / ORT.** Multiple merge-bases (criss-cross) are first merged into a virtual base, then that base is used. The ORT strategy is the modern default: same idea, fewer surprises on renames.
+
+**Octopus.** `git merge` of three or more branches writes an n-parent commit when diffs do not overlap. Rare outside topic-integration scripts.
+
+**Abort and continue.** Conflicts write stages 1–3 into the index (`:1:`, `:2:`, `:3:`). `git mergetool` or a manual edit plus `git add` marks resolved. `git merge --abort` restores `HEAD` and the index.
+
+<Callout icon="warning" title="A green merge is not a green product">
+ORT can auto-merge two semantically opposite edits that do not overlap in the file. Tests and review exist because the merge algorithm is textual, not semantic.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+History is a DAG. A merge-base is a **lowest common ancestor** (LCA). In a DAG there may be several; the recursive strategy reduces them. Fast-forward exists iff one tip is reachable from the other.
+
+**Conflict** is not "the lines differ from the base." It is "both sides differ from the base and from each other." Unchanged-versus-changed is resolved automatically.
+
+**Correctness.** Merge is **associative** only in boring cases. (A merge B) merge C can differ from A merge (B merge C) when conflicts or renames appear. That is why integration order on long-lived branches matters.
+
+**Content merge versus history merge.** Squash "merge" produces a single-parent commit that contains the tree of a merge but drops the second parent — useful for linear `main`, fatal for `git merge-base` later if you need to merge the same branch again (Git thinks the work is already in).
+
+<ComparisonTable
+  headers={['Kind', 'Parents', 'History', 'Use']}
+  rows={[
+    ['Fast-forward', 'None new', 'Linear pointer move', 'Already-rebased PR'],
+    ['True merge', 'Two+', 'Preserves DAG', 'Shared long-lived branches'],
+    ['Squash', 'One', 'Hides feature commits', 'Linear main'],
+    ['Octopus', 'Three+', 'Wide join', 'Many non-overlapping topics'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+git switch main
+git pull --ff-only
+git merge --no-ff origin/feature/tax \
+  -m "merge: tax rounding for bundle SKUs"
+# on conflict:
+git status
+git checkout --ours path/with/lockfile
+git add path/with/lockfile
+git merge --continue
+```
+
+Prefer `--ff-only` on `main` when a merge queue already rebased the PR. Use `--no-ff` when you want the merge bubble as the release note boundary. Never `--ours` a whole source file to "just finish" unless you intend to drop their work.
+
+## 4. Visualizations
+
+```mermaid
+flowchart BT
+    B[merge-base B]
+    B --> L[ours L]
+    B --> R[theirs R]
+    L --> M[merge commit M]
+    R --> M
+```
+
+## 5. Interview Prep
+
+**Q: Why not always squash?**
+**A:** Squash loses parent linkage. Re-merging the feature branch later replays already-landed hunks as new conflicts. Fine if the branch is deleted and never merged again.
+
+**Q: What is a criss-cross merge?**
+**A:** Two branches merged in both directions earlier, so there are two LCAs. Git builds a virtual merge-base first. Weird rename conflicts often come from this.
+
+**Q: merge versus rebase to update a feature branch?**
+**A:** Merge creates a merge commit ("merged main into feature"). Rebase replays your commits on new main (new SHAs). Rebase keeps the PR diff clean; merge keeps original SHAs.
+
+## 6. Production Use Cases
+
+- **Protected main** that only advances via merge commits from a queue — each merge SHA is the release unit.
+- **Long-running release branches** that merge `main` forward and cherry-pick back.
+- **Monorepo trains** where an octopus or a sequenced merge bot integrates many green heads.
+
+<Callout icon="tip" title="Resolve with the index stages">
+`git show :1:file`, `:2:`, `:3:` are base, ours, theirs. If your editor "won" the wrong side, the stages are still there until you `git add`.
+</Callout>

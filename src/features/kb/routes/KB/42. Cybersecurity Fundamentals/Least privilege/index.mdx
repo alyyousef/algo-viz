@@ -1,47 +1,85 @@
 ---
-title: Principle of Least Privilege (PoLP)
-description: "The practice of limiting user and system access rights to the absolute minimum permissions necessary to perform their legitimate, required functions."
+title: Least Privilege
+description: "Granting a principal only the access it needs for a job, for only as long as it needs it."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Principle of Least Privilege (PoLP)">
+    <ConceptTemplate title="Least Privilege">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The **Principle of Least Privilege (PoLP)** is arguably the most critical concept in modern IAM (Identity and Access Management).
-If an entity (a user, a microservice, or a script) does not explicitly require access to a resource to do its job, that access must be denied.
+**Least privilege** is a design rule: default deny, then add the smallest permission that still works. It applies to humans, roles, tokens, CI, and database users. Standing Domain Admin and `s3:*` are the opposite. Most incidents become disasters because privilege was already waiting.
 
-## 1. Why PoLP Matters (Blast Radius)
-In cybersecurity, we assume compromise is inevitable. The goal of PoLP is to minimize the **Blast Radius** of a compromise.
+## 1. Deep Dive and Mechanics
 
-If an entry-level marketing employee gets hit by a phishing attack, the attacker gains the employee's credentials.
-- **Without PoLP**: The employee had global "Admin" access. The attacker instantly deletes the entire production database.
-- **With PoLP**: The employee only had "Read" access to the Marketing CRM. The attacker steals some emails, but the core database, financial records, and server infrastructure remain untouched.
+**Humans.** Role bundles, just-in-time elevation, and recertification. Break-glass is short, logged, and paged.
 
-## 2. Implementing PoLP in the Cloud
-Cloud providers (AWS, Azure, GCP) enforce PoLP via Identity and Access Management (IAM) Policies.
-A good IAM policy is granular down to the exact action and resource.
+**Workloads.** One role per task. CI deploys with a deploy role, not the developer's cloud keys. Database users that can only SELECT the tables they need.
 
-Instead of: `Allow: S3:*` (Allow this server to do anything to any S3 bucket)
-You write: `Allow: s3:GetObject` on `arn:aws:s3:::marketing-images-bucket/*` (Allow this server only to READ, and only from this ONE specific bucket).
+**Time and blast radius.** Temporary credentials beat long-lived keys. Separate prod from sandbox accounts so a leaked CI token cannot wipe billing.
 
-## 3. Just-in-Time (JIT) Access
-Even Senior Database Administrators shouldn't have permanent Admin access.
-Modern PoLP utilizes **JIT Access**. By default, the DBA has zero permissions. When an emergency occurs, the DBA requests access, another engineer approves it, and the DBA is granted temporary Admin credentials that automatically self-destruct after 60 minutes.
-
-
-<Callout icon="warning" title="The Developer Friction Problem">
-
-
-Developers hate PoLP because it slows them down. It is much easier to give a microservice global Admin rights so it "just works" rather than spending 3 hours writing a granular 500-line JSON IAM policy. Security engineering is a constant battle between developer velocity and system security.
-
-
+<Callout icon="warning" title="Privilege grows like ivy">
+Nobody opens a ticket to add access and later opens one to remove it. Reviews and JIT are the weeding.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Privilege is the reachable set in an IAM graph. Least privilege is a minimization under the constraint "the job still completes." Over-approximation is the usual engineering fail (copy a powerful role). Formal policy analyzers exist because humans cannot see assume-role chains.
+
+<ComparisonTable
+  headers={['Pattern', 'Privilege', 'Better']}
+  rows={[
+    ['Shared admin', 'Everyone is root', 'Named + JIT'],
+    ['Long-lived key', 'Months', 'Role + short token'],
+    ['Monolithic role', 'All APIs', 'Task roles'],
+    ['Prod = staging IAM', 'Blast radius', 'Separate accounts'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# Access design
+# - New service: write the verbs it needs, start from deny
+# - CI: OIDC to a deploy role, no static keys
+# - Humans: no standing prod write; request a window
+```
+
+If a role has not been used in 90 days, remove it and wait for a ticket. That is a healthy test.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Job[Job to do] --> Min[Minimal verbs]
+    Min --> Time[Time box]
+    Time --> Rev[Review / expire]
+    Rev --> Job
+```
+
+## 5. Interview Prep
+
+**Q: Least privilege vs need to know?**
+**A:** Need to know is usually data classification. Least privilege is the mechanism for actions and data.
+
+**Q: Does it slow teams down?**
+**A:** Standing admin is fast until the incident. JIT with a one-click approve is fast enough.
+
+**Q: How do you find excess?**
+**A:** Access analyzer, unused permission reports, and "who can prod-deploy" as a weekly number.
+
+## 6. Production Use Cases
+
+- **Cloud IAM** permission boundaries.
+- **Kubernetes RBAC** per namespace.
+- **Database** users per microservice.
+
+<Callout icon="tip" title="Count standing prod-write humans">
+Put that number on a wall. Watch it fall.
+</Callout>

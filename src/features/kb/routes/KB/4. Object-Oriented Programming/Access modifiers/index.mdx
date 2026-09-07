@@ -1,42 +1,102 @@
 ---
 title: Access Modifiers
-description: Keywords in Object-Oriented Programming (such as public, private, and protected) that mathematically enforce encapsulation by restricting the visibility and mutability of a class's internal state.
+description: "Language keywords that restrict who may read or write a member, forming the first line of encapsulation."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Access Modifiers"
-  subtitle="Mathematical State Protection"
-  tags={['OOP', 'Encapsulation', 'Java', 'C#']}
->
+    <ConceptTemplate title="Access Modifiers">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a `BankAccount` class has a variable called `balance`, and that variable is universally accessible, any other part of the codebase can mathematically execute `account.balance = 1000000`, instantly destroying the integrity of the financial system.
+**Access modifiers** are compile-time (or module-time) rules about who can name a field, method, or type. They do not encrypt data. They stop ordinary code from depending on internals.
 
-## 1. The Principle of Least Privilege
-Access modifiers prevent this by mathematically locking down the state:
-- **`private`**: The strictest modifier. The variable or method is mathematically invisible to the outside world. It can only be accessed by code written *inside* the exact same class.
-- **`protected`**: The variable is invisible to the outside world, but it *is* visible to any child class that inherits from this class.
-- **`public`**: The variable or method is completely open and accessible from anywhere in the application.
+## 1. Deep Dive and Mechanics
 
-## 2. Enforcing Encapsulation
-By making the `balance` variable `private`, the developer mathematically forces the outside world to use a `public` method to interact with it.
+Common levels:
+
+- **private**: only the declaring type (and sometimes nested types).
+- **protected**: the type plus subclasses. Easy to overuse; subclasses become clients of your layout.
+- **package / internal**: same assembly or package. This is the usual "team" boundary.
+- **public**: anyone who can import the type.
+
+Java's default is package-private. C-sharp's default for members is private. Python uses a leading underscore as convention and name-mangles `__name` to discourage accidents.
+
+Reflection, `unsafe`, and JNI can bypass modifiers. Treat modifiers as architecture, not a security boundary against a hostile process.
+
+<Callout icon="warning" title="Protected is still an API">
+A protected field is a published contract with every future subclass. If you would not document it, do not make it protected.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Visibility is a relation between a use-site and a declaration-site. The type checker rejects a use when the pair is not in the allowed relation. This is a static scoping property, independent of the object's runtime type.
+
+Nested classes widen the relation: an inner class may see private members of the outer, which is why they are useful for iterators and builders.
+
+<ComparisonTable
+  headers={['Modifier', 'Same class', 'Subclass', 'Same package / assembly', 'World']}
+  rows={[
+    ['private', 'Yes', 'No', 'No', 'No'],
+    ['protected', 'Yes', 'Yes', 'Language-specific', 'No'],
+    ['internal / package', 'Yes', 'If same package', 'Yes', 'No'],
+    ['public', 'Yes', 'Yes', 'Yes', 'Yes'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
 ```java
-public class BankAccount {
-    private double balance; // Hidden
+public final class ApiKey {
+    private final String secret;
 
-    public void deposit(double amount) {
-        if (amount > 0) { // Mathematical validation
-            this.balance += amount;
-        }
+    public ApiKey(String secret) {
+        this.secret = secret;
+    }
+
+    public boolean matches(String attempt) {
+        return secret.equals(attempt);
     }
 }
 ```
-The external code cannot modify the balance directly. It must call the `deposit()` method, which mathematically guarantees that negative money cannot be deposited.
 
+Callers can test a guess. They cannot read `secret` without breaking the type's access rules.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    Pub[public API] --> Prot[protected hooks]
+    Prot --> Pkg[package helpers]
+    Pkg --> Priv[private fields]
+    World[Other assemblies] --> Pub
+    World -.->|rejected| Priv
+    Sub[Subclass] --> Prot
+    Sub -.->|rejected| Priv
+```
+
+## 5. Interview Prep
+
+**Q: Why prefer private over protected?**
+**A:** Protected couples you to unknown subclasses. Prefer private fields and protected or public methods that preserve invariants.
+
+**Q: Are access modifiers a security feature?**
+**A:** Not against an attacker who can load code in your process. They are a dependency-management feature. Secrets belong in a vault, not in a private field.
+
+**Q: What does internal buy you in C-sharp?**
+**A:** You can share helpers across a library without making them NuGet-public. InternalsVisibleTo is how test assemblies see them.
+
+## 6. Production Use Cases
+
+- **Library surfaces** that must stay stable while internals churn.
+- **Hexagonal apps** where only the adapter package talks to the database driver.
+- **Value types** that expose operations but hide representation.
+
+<Callout icon="tip" title="Default to the tightest modifier">
+Start private. Widen only when a second type has a real reason to name the member.
+</Callout>

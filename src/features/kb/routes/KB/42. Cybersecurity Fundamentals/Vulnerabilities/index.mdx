@@ -1,49 +1,86 @@
 ---
-title: Vulnerabilities & CVEs
-description: "Weaknesses or flaws in a system's design, implementation, or operation that can be exploited by a threat actor to compromise security."
+title: Vulnerabilities
+description: "Weaknesses in a system that a threat could use — tracked, prioritized, and closed as engineering work."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Vulnerabilities & CVEs">
+    <ConceptTemplate title="Vulnerabilities">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A **Vulnerability** is the actual hole in the armor. It is a bug, a misconfiguration, or a logical flaw that violates the CIA Triad.
-A vulnerability by itself does no damage; it merely sits there, waiting to be exploited.
+A **vulnerability** is a weakness: a missing authz check, an outdated library, a default password, a public bucket. **Vulnerability management** is the factory that finds, ranks, and closes them. A CVE number is one kind. A logic bug with no CVE is still a vulnerability.
 
-## 1. Common Types of Vulnerabilities
-Vulnerabilities stem from a variety of engineering failures:
-- **Software Bugs**: Buffer overflows in C++, logic errors in Authentication code, or improper input sanitization leading to SQL Injection.
-- **Misconfigurations**: Leaving an AWS S3 bucket set to "Public Read/Write," or leaving the default admin password (`admin/admin`) on a database.
-- **Architectural Flaws**: Designing a system that transmits passwords over plain HTTP instead of HTTPS.
+## 1. Deep Dive and Mechanics
 
-## 2. The CVE System (Common Vulnerabilities and Exposures)
-When a security researcher discovers a new vulnerability in a widely used piece of software (like Apache, Windows, or a popular NPM package), it is standardized into the global **CVE Database**.
+**Find.** Scanners, SCA in CI, pentests, bounties, and code review. Coverage matters more than the loudest tool.
 
-Every confirmed vulnerability receives a unique ID (e.g., `CVE-2021-44228`, the infamous Log4Shell vulnerability). This allows global security teams, antivirus scanners, and IT departments to track, discuss, and patch the exact same flaw using a universal identifier.
+**Rank.** CVSS is a starting hint. Add exposure (internet-facing?), data class, and whether a fix exists. A critical on an isolated lab is not today's fire.
 
-## 3. CVSS Scoring (Common Vulnerability Scoring System)
-Not all vulnerabilities are equal. A flaw that allows a remote attacker to execute code without a password is much worse than a flaw that requires physical access to a machine to crash a minor app.
+**Close.** Patch, config change, or compensating control with an expiry. Verify with a version, not a vibe. Exceptions are risk acceptances.
 
-Vulnerabilities are scored from **0.0 to 10.0** based on severity:
-
-
-<ComparisonTable headers={['Score Range', 'Severity', 'Required Action']} rows={[ ['9.0 - 10.0', 'Critical', 'Emergency. Wake up the engineering team at 3 AM. Patch immediately.'], ['7.0 - 8.9', 'High', 'Urgent. Patch within the next 48 hours or next sprint cycle.'], ['4.0 - 6.9', 'Medium', 'Schedule patch during standard weekly/monthly maintenance.'], ['0.1 - 3.9', 'Low', 'Trivial impact. Patch when convenient.'] ]} />
-
-
-<Callout icon="warning" title="Zero-Day Vulnerabilities">
-
-
-A **Zero-Day** is a critical vulnerability that is actively being exploited by hackers *before* the software vendor even knows it exists (meaning the vendor has had "zero days" to release a patch). These are highly prized by intelligence agencies and cybercriminals, often selling for millions of dollars on the dark web.
-
-
+<Callout icon="warning" title="A finding without an owner is decoration">
+Every open item needs a team, a ticket, and a date.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+The backlog is a queue with arrivals (new CVEs, new code) and service rate (patch capacity). SLAs are policy on expected loss. CVSS base score ignores your environment; environmental metrics exist for a reason. Zero-days are arrivals with incomplete information — mitigations and depth matter.
+
+<ComparisonTable
+  headers={['Source', 'Finds', 'Misses']}
+  rows={[
+    ['Infra scan', 'Known host CVEs', 'App logic'],
+    ['SCA', 'Library CVEs', 'Your code'],
+    ['SAST / review', 'Some code bugs', 'Runtime config'],
+    ['Human test', 'Impact / logic', 'Complete coverage'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# SLA sketch
+# Internet-facing critical: 7 days or mitigate
+# Internal high: 30 days
+# No-fix vendor: compensate + monthly review
+# Evidence: version pin in the image or package lock
+```
+
+SCA should fail CI on new criticals in production dependencies, with a documented ignore that expires.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Find[Find] --> Rank[Rank]
+    Rank --> Fix[Fix]
+    Rank --> Exc[Exception + expiry]
+    Fix --> Verify[Verify version]
+```
+
+## 5. Interview Prep
+
+**Q: Vulnerability vs exploit?**
+**A:** Weakness vs a working use. Patch vulns even when no exploit is public.
+
+**Q: How do you handle a storm of CI findings?**
+**A:** Baseline, fix new ones, burn down the old by risk, and do not hide the dashboard.
+
+**Q: Is a misconfiguration a vulnerability?**
+**A:** Yes. CWE and CIS treat many configs as weaknesses.
+
+## 6. Production Use Cases
+
+- **Weekly** vuln review with engineering.
+- **Container** base-image rebuilds.
+- **Customer** questionnaires that ask for SLA, not zero findings.
+
+<Callout icon="tip" title="Ship the patch pipeline before the scanner">
+Finding 4,000 issues on day one is how programs die. Find, then be able to ship.
+</Callout>

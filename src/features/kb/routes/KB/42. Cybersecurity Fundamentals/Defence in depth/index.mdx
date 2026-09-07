@@ -1,48 +1,87 @@
 ---
 title: Defence in Depth
-description: "A cybersecurity strategy that uses multiple, independent layers of security controls to protect information, ensuring that if one layer fails, others will catch the breach."
+description: "Layering independent controls so the failure of one does not equal a full compromise."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Defence in Depth">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Also known as the "Castle Approach," **Defence in Depth** is the principle that no single security control is perfect. Every firewall has a zero-day vulnerability; every encryption protocol eventually breaks; every employee can be phished.
+**Defence in depth** means more than one independent control between a threat and an asset. A WAF without authz is a single pane of glass. Authz without logging is a silent failure. Depth is **heterogeneous layers**: identity, network, host, application, data, and detection.
 
-To secure a system, you must layer independent defenses.
+## 1. Deep Dive and Mechanics
 
-## 1. The Castle Analogy
-Imagine a medieval castle protecting the King (the Data):
-1. **The Moat (Perimeter Security)**: The outer firewall blocking malicious IP addresses.
-2. **The High Walls (Network Security)**: VPC Subnets ensuring only specific servers can talk to each other.
-3. **The Guards (Access Control)**: IAM roles and MFA requiring strict authentication to enter the Keep.
-4. **The Safe (Encryption)**: Even if an assassin reaches the King's room, the King is locked inside an impenetrable titanium safe (AES-256 Data-at-Rest Encryption).
+Pick layers that fail differently. MFA fails phishing (sometimes). Network policy fails a stolen laptop less. EDR fails a novel file less. Immutable backups fail ransomware's encryption. None is enough.
 
-## 2. Layers of Modern IT Security
-A robust enterprise architecture implements controls at every layer of the OSI model:
-- **Physical Layer**: Badge scanners, biometric locks, and security guards at the AWS data center.
-- **Network Layer**: Firewalls, VPNs, and Network Access Control Lists (NACLs).
-- **Application Layer**: Web Application Firewalls (WAF), input validation, and SQL injection prevention.
-- **Endpoint Layer**: Antivirus (EDR), Mobile Device Management (MDM), and restricted USB ports on employee laptops.
-- **Data Layer**: Full disk encryption (BitLocker), database column encryption, and strict database permissions.
+**Anti-pattern.** Six products that all check the same WAF signature, or "we have a firewall" as the entire story. Depth is not a shopping count.
 
-## 3. The Swiss Cheese Model
-In risk management, this is known as the "Swiss Cheese Model." Every layer of security has holes (vulnerabilities). However, if you stack enough slices of cheese together, the holes do not align, and a threat cannot pass all the way through.
+**Measure.** For a crown-jewel path, list the controls a single stolen laptop would still have to pass. If the answer is "none," you have a moat-and-hope design.
 
-
-<Callout icon="tip" title="Zero-Day Mitigation">
-
-
-Defence in Depth is the primary mitigation against zero-day exploits. If a critical vulnerability is discovered in your Web Server software (allowing arbitrary code execution), the attacker still cannot steal the database if the database is in a completely isolated, firewalled private subnet that the web server is physically forbidden from accessing.
-
-
+<Callout icon="warning" title="Duplicate tools are not depth">
+Two AV engines on one host can still miss the same class. Different layers, different failure modes.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+If controls are independent with miss probabilities p_i, the joint miss is the product — independence is the lie you must check. Common-mode failure (one IdP, one CI, one cloud account) collapses the product. Reliability engineering's "redundant diverse systems" is the same idea.
+
+<ComparisonTable
+  headers={['Layer', 'Example', 'Fails when']}
+  rows={[
+    ['Identity', 'SSO + MFA', 'Session theft'],
+    ['Network', 'Segmentation', 'Allowed path'],
+    ['Host', 'EDR + hardening', 'No sensor'],
+    ['Data', 'Encryption + backup', 'Key + live encrypt'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# Crown-jewel path
+# Asset: payroll DB
+# Layers: SSO, JIT admin, private net, IAM role, encryption, audit, immutable backup
+# Exercise: which still hold if a laptop is phished?
+```
+
+If the honest answer is "the phish is enough," add a layer or shrink standing access.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    T[Threat] --> L1[Identity]
+    L1 --> L2[Network]
+    L2 --> L3[Host]
+    L3 --> L4[App authz]
+    L4 --> L5[Data + backup]
+    L5 --> A[Asset]
+```
+
+## 5. Interview Prep
+
+**Q: Depth vs hard perimeter?**
+**A:** Perimeter is one layer. Depth assumes that layer fails.
+
+**Q: Is Zero Trust against depth?**
+**A:** No. Zero Trust is identity-centric depth. You still want detection and backups.
+
+**Q: How many layers?**
+**A:** Enough that one realistic failure does not reach the jewel. Not "all the vendors."
+
+## 6. Production Use Cases
+
+- **Ransomware** programs (prevent + detect + immutable backup).
+- **Payments** (PCI plus app authz plus monitoring).
+- **Admin planes** (PAM + network + logging).
+
+<Callout icon="tip" title="Test a layer by removing it on paper">
+If the story collapses, that layer was your only control.
+</Callout>

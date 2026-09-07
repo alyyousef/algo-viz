@@ -1,24 +1,92 @@
 ---
 title: OCI Block Volumes
-description: High-performance, mathematically durable, persistent block storage networks that act as the physical hard drives for Oracle Cloud Compute instances.
+description: "Network-attached disks for compute: performance SLAs (VPU), backups, clones, and AD placement — detach/attach is a workflow, not a USB stick."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Block Volumes"
-  subtitle="Persistent Network Hard Drives"
-  tags={['OCI', 'Storage', 'Block', 'Compute']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Block Volumes">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-OCI Block Volumes are the exact equivalent of AWS EBS. When you provision a Virtual Machine in Oracle Cloud, its primary "C: Drive" or "/dev/sda" is not physically inside the server; it is a Block Volume attached via a hyper-fast iSCSI network connection.
+**Block Volumes** are iSCSI (or paravirtualized) disks you attach to OCI Compute. Size and **VPUs** (volume performance units) set IOPS and throughput. Volumes live in an AD (or as regional where offered). Boot volumes are the same product with a special role.
 
-## 1. Dynamic Performance Scaling
-In most clouds, if you want a faster hard drive, you have to provision a massively large hard drive (because IOPS are tied to Gigabytes) or pay exorbitant fees for provisioned IOPS.
-OCI Block Volumes offer a unique mathematical advantage: **Dynamic Performance Scaling**.
-Using the OCI Console, you can move a slider to instantly change the Volume Performance Unit (VPU) from "Lower Cost" to "Balanced" to "Higher Performance" (ultra-high IOPS). The mathematical change happens instantly on the fly, with zero downtime. You can crank up the IOPS right before running a massive database batch job, and crank it back down an hour later to save money.
+## 1. Deep Dive and Mechanics
 
-## 2. Volume Groups and Consistent Backups
-If an enterprise application spans multiple disks (e.g., Disk 1 has the database files, Disk 2 has the transaction logs), taking independent backups is dangerous. If the backups are taken 5 seconds apart, the mathematical state of the database is corrupted.
-OCI provides **Volume Groups**. You mathematically group multiple Block Volumes together. When you trigger a backup, OCI executes a **Crash-Consistent** snapshot across all volumes in the group at the exact same mathematical millisecond, guaranteeing the backup is transactionally safe and restorable.
+**Attach types.** Paravirtualized is simpler. iSCSI needs the IQN and sometimes iscsiadm in the guest. Multipath and consistent device names matter for databases.
 
-</TechnologyTemplate>
+**Performance.** Balanced, higher, and ultra tiers map to VPU/GB. Burst is not a plan for a 24/7 OLTP redo disk. Ultra is for the few workloads that can saturate it.
+
+**Data protection.** Point-in-time backups to object storage, clones for refresh, and volume groups for crash-consistent sets (DB + redo). Cross-AD / cross-region backup copy is the DR path.
+
+**Resize.** Online expand is common; shrink is not. Filesystem grow is a separate guest step you will forget once.
+
+<Callout icon="error" title="Delete instance, keep the volume">
+The console checkbox that deletes the boot volume with the instance is how people lose a disk. Terraform `preserve` settings should be explicit.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+IOPS ≈ f(VPU, size). Tiny volumes cannot hit the IOPS you mentally associated with the tier. Size up or raise VPUs; measure with fio, not hope.
+
+Latency is network-attached. A chatty fsync-per-row app on a cheap volume will look like "OCI is slow."
+
+<ComparisonTable
+  headers={['Disk', 'Cloud', 'Notes']}
+  rows={[
+    ['Block Volume', 'OCI', 'VPU + backups'],
+    ['EBS', 'AWS', 'gp3/io2 by IOPS'],
+    ['Persistent Disk', 'GCP', 'pd-ssd / hyperdisk'],
+    ['Azure Disk', 'Azure', 'Premium / Ultra'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci bv volume create --compartment-id $COMP \
+  --availability-domain "$AD" \
+  --display-name data-1 --size-in-gbs 256 \
+  --vpus-per-gb 10
+
+oci compute volume-attachment attach-iscsi \
+  --instance-id $INST --volume-id $VOL
+```
+
+Then run the attach commands in the guest and mount by UUID in fstab.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Inst[Compute instance] --> Att[Volume attachment]
+    Att --> BV[Block volume]
+    BV --> Bak[Backup]
+    Bak --> OSS[Object Storage]
+```
+
+## 5. Interview Prep
+
+**Q: Boot volume vs block volume?**
+**A:** Same service. Boot is the OS disk created from an image. Data volumes you attach extra.
+
+**Q: How do you move a volume to another AD?**
+**A:** Backup/restore or clone into the target AD. You do not hot-plug across ADs like a local drive.
+
+**Q: Volume group vs single backups?**
+**A:** Groups snapshot a set at one consistent moment. Use them for multi-disk databases.
+
+## 6. Production Use Cases
+
+- Database data and redo on separate volumes with matching VPU.
+- Clone a prod volume into a lower compartment for a refresh.
+- Scheduled backups copied to a second region.
+
+<Callout icon="tip" title="Mount by UUID">
+Device names rotate after attach order changes. fstab by UUID survives the next incident.
+</Callout>

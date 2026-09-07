@@ -1,26 +1,98 @@
 ---
-title: Amazon SNS (Simple Notification Service)
-description: A highly scalable, fully managed Pub/Sub (Publish/Subscribe) messaging service used to mathematically broadcast a single event simultaneously to millions of subscribers or microservices.
+title: Amazon Simple Notification Service (SNS)
+description: "Managed pub/sub topics: one publish, many subscriptions — SQS, Lambda, HTTP, email, SMS, and FIFO topics when order and dedupe matter."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Amazon SNS"
-  subtitle="The Pub/Sub Broadcaster"
-  tags={['AWS', 'Messaging', 'PubSub', 'Events']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Amazon SNS">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If an EC2 server crashes, you want to email the admin, trigger an auto-scaling Lambda function, and send a Slack message. Writing a Python script to do all three sequentially is slow and error-prone. SNS mathematically executes them in parallel.
+**SNS** is a topic. Publishers call Publish. Subscribers (SQS queues, Lambda, HTTPS, email, SMS, mobile push) each get a delivery. You do not pull from SNS; you subscribe a target. Fan-out to many SQS queues is the workhorse pattern that keeps producers unaware of consumer count.
 
-## 1. The Pub/Sub Architecture
-SNS relies on a mathematical concept called a **Topic**.
-A microservice (the Publisher) does not know who is listening. It simply publishes a single JSON message to the `ServerCrash` Topic.
-Multiple entities (the Subscribers) mathematically attach themselves to the Topic. A Subscriber can be an SQS Queue, a Lambda Function, an HTTP endpoint, or an SMS phone number.
-When the message hits the Topic, SNS mathematically duplicates the bytes and executes a massive "Fan-Out", pushing the message concurrently to all subscribers in milliseconds.
+## 1. Deep Dive and Mechanics
 
-## 2. Message Filtering
-A subscriber might not want *every* message on a Topic.
-If the Billing Service subscribes to the `AllPurchases` Topic, it might only care about purchases over $1,000.
-Instead of receiving the message, reading it, and throwing it away (wasting compute), the subscriber sets a mathematical **Filter Policy** on the subscription (e.g., `{"amount": [{"numeric": [">=", 1000]}]}`). SNS mathematically evaluates the JSON payload at the network level and only forwards the message if it strictly matches the logic, drastically reducing downstream compute costs.
+**Standard vs FIFO.** Standard is best-effort order, at-least-once, huge throughput. FIFO topics require FIFO queues, preserve order per message group, and support dedupe (5-minute window). Throughput is lower.
 
-</TechnologyTemplate>
+**Filter policies.** Subscription-level JSON on message attributes (or payload). Filtering in SNS is cheaper than waking every Lambda.
+
+**Delivery and retries.** Each protocol has a retry policy. SQS subscription is the reliable one (the queue buffers). HTTP endpoints need a DLQ on the subscription or you lose events after retries.
+
+**Encryption and access.** SSE-KMS, topic policy for cross-account Publish, and `aws:SourceOwner` style conditions. A topic policy with Principal star is a gift.
+
+**Application vs data messaging.** SMS/email are user notifications with spend limits. Application integration should be SQS/Lambda, not email.
+
+<Callout icon="warning" title="Email is not a queue">
+An operator inbox as the only subscriber will drop, delay, and unsub. Put SQS (and a worker) on the topic; email can be a second subscription.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Fan-out cost is O(subscribers) deliveries per publish. Filter policies cut that. Standard SNS does not give global FIFO; if two publishes race, consumers may see them swapped.
+
+Dedupe on FIFO is hashing the body or an id you send. The window is finite — replay after six minutes is a new message.
+
+<ComparisonTable
+  headers={['Service', 'Pattern', 'Buffer']}
+  rows={[
+    ['SNS', 'Pub/sub fan-out', 'No (except via SQS)'],
+    ['SQS', 'Compete consumers', 'Yes'],
+    ['EventBridge', 'Content routing', 'Archive optional'],
+    ['Kinesis', 'Replayable stream', 'Retention hours/days'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import boto3
+
+sns = boto3.client('sns')
+sns.publish(
+    TopicArn='arn:aws:sns:us-east-1:111111111111:orders',
+    Message='{"orderId":"1001"}',
+    MessageAttributes={
+        'event': {'DataType': 'String', 'StringValue': 'placed'}
+    },
+)
+```
+
+Subscribe queues, not functions, when you need a backlog. Lambda can then consume SQS with batching and a DLQ.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Pub[Publisher] --> Topic[SNS topic]
+    Topic --> Q1[SQS billing]
+    Topic --> Q2[SQS inventory]
+    Topic --> Lam[Lambda]
+    Topic --> HTTP[HTTPS webhook]
+```
+
+## 5. Interview Prep
+
+**Q: SNS vs SQS?**
+**A:** SNS pushes to many subscribers. SQS holds messages for one consumer group. Together: SNS → many SQS.
+
+**Q: SNS vs EventBridge?**
+**A:** SNS is simpler topics and notifications (including SMS). EventBridge has richer matching, archives, SaaS partners, and many AWS targets. Overlap is real; pick one house style.
+
+**Q: How do you stop a bad subscriber from hurting others?**
+**A:** Independent subscriptions and retries. A slow HTTP target does not block SQS delivery. Still watch account-level publish limits.
+
+## 6. Production Use Cases
+
+- Fan-out domain events to per-team queues.
+- Alarm actions from CloudWatch to Slack via Lambda or Chatbot.
+- Mobile push and constrained SMS (with spend caps).
+
+<Callout icon="tip" title="Filter on attributes">
+Do not make every consumer parse and drop. A subscription filter policy is cheaper and keeps payloads out of the wrong account.
+</Callout>

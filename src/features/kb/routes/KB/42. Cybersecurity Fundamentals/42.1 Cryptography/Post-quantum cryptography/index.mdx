@@ -1,50 +1,84 @@
 ---
 title: Post-Quantum Cryptography
-description: The next generation of cryptographic algorithms designed to resist the devastating mathematical attacks of future large-scale quantum computers.
+description: "Algorithms designed to survive quantum computers that would break RSA and ECC, now being standardized as ML-KEM and ML-DSA."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Post-Quantum Cryptography (PQC)">
+    <ConceptTemplate title="Post-Quantum Cryptography">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Currently, the entire internet (HTTPS, banking, VPNs, blockchains) is secured by asymmetric algorithms like **RSA** and **ECC**. These algorithms rely on mathematical problems (like prime factorization and elliptic curve logarithms) that are practically impossible for classical supercomputers to solve.
+**Post-quantum cryptography (PQC)** replaces primitives that Shor's algorithm would break (RSA, DH, ECC) with schemes believed hard for both classical and quantum machines. NIST has standardized **ML-KEM** (Kyber) for key encapsulation and **ML-DSA** (Dilithium) for signatures, plus SLH-DSA (SPHINCS+) as a conservative hash-based signature.
 
-However, a sufficiently powerful **Quantum Computer** running **Shor's Algorithm** can mathematically shatter RSA and ECC in hours. **Post-Quantum Cryptography (PQC)** refers to a new class of cryptographic algorithms designed to run on normal, classical computers, but which rely on entirely different mathematical branches that even Quantum Computers cannot efficiently solve.
+## 1. Deep Dive and Mechanics
 
-## 1. The Threat: Shor's and Grover's Algorithms
+Harvest-now-decrypt-later is the urgent threat: an adversary records TLS today and waits for a large quantum computer. Confidentiality must migrate first. Signatures can wait longer unless your artifacts must verify for decades without re-signing.
 
-- **Shor's Algorithm**: A quantum algorithm that solves Prime Factorization and Discrete Logarithms exponentially faster than classical computers. It utterly destroys all currently deployed Asymmetric Encryption (RSA, Diffie-Hellman, ECC).
-- **Grover's Algorithm**: A quantum search algorithm that quadraticly speeds up brute-force attacks against Symmetric Encryption (like AES) and Hash Functions (like SHA-256).
-  - *The Fix for Grover's*: Simply double the key size. AES-128 is vulnerable, but AES-256 is mathematically completely immune to quantum computers.
+**Hybrid handshakes.** TLS deployments often combine X25519 with ML-KEM so the session is safe if either algorithm holds. That hedges against a surprise cryptanalytic break of a new lattice scheme.
 
-## 2. The NIST Standardization
+**Engineering costs.** Public keys and ciphertexts are larger (kilobytes, not 32 bytes). Implementation quality and side channels are still maturing. Do not invent your own Kyber.
 
-Realizing the apocalyptic threat of "Q-Day" (the day a cryptographically relevant quantum computer is turned on), the US National Institute of Standards and Technology (NIST) spent years running a global competition to select the new PQC standards. In 2024, they officially published the winners:
-
-### Lattice-Based Cryptography
-The absolute core of the new PQC era. It relies on the "Learning With Errors" (LWE) problem and the Shortest Vector Problem within multi-dimensional mathematical grids (lattices). Quantum computers cannot easily navigate these lattices.
-- **ML-KEM (formerly CRYSTALS-Kyber)**: The new standard for Key Exchange (replacing Diffie-Hellman/RSA key establishment).
-- **ML-DSA (formerly CRYSTALS-Dilithium)**: The primary new standard for Digital Signatures.
-
-### Hash-Based Signatures
-Relies entirely on the proven security of cryptographic hash functions rather than algebraic math.
-- **SLH-DSA (formerly SPHINCS+)**: A backup Digital Signature standard. It produces massive signature files (kilobytes in size) and is slow, but its mathematical security is ironclad and deeply understood.
-
-
-<Callout icon="warning" title="Harvest Now, Decrypt Later">
-
-
-  Why are tech giants like Apple (iMessage PQ3) and Google (Chrome TLS) deploying PQC *today*, even though quantum computers don't exist yet?
-  Because nation-state intelligence agencies are currently vacuuming up and storing petabytes of encrypted internet traffic. They are simply waiting 10 years until they build a quantum computer to retroactively decrypt all the state secrets they harvested today. You must deploy PQC before the data is intercepted.
-
-
+<Callout icon="info" title="AES-256 and SHA-384 already have a quantum story">
+Grover weakens symmetric primitives by about half the key bits. Double the key / digest if you need margin. The emergency is public-key, not AES.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+ML-KEM security is tied to Module-LWE on lattices. ML-DSA is Module-SIS / Fiat-Shamir with aborts. SPHINCS+ uses only hash functions and huge signatures. Code-based (Classic McEliece) has large public keys and a long history. Security proofs are reductions to average-case lattice problems; parameters are chosen with quantum-aware cost models.
+
+<ComparisonTable
+  headers={['Role', 'Broken by Shor', 'PQC stand-in']}
+  rows={[
+    ['Key agreement', 'ECDHE / RSA KEM', 'ML-KEM, often hybrid'],
+    ['Signatures', 'ECDSA / RSA-PSS', 'ML-DSA or SLH-DSA'],
+    ['Symmetric bulk', 'AES-128 ( Grover )', 'AES-256'],
+    ['Hashing', 'SHA-256 still ok', 'SHA-384 / SHA-512 if paranoid'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Conceptual hybrid encapsulate: classical ECDH plus a PQC KEM, then HKDF-combine.
+def hybrid_shared(ecdh_secret: bytes, mlkem_shared: bytes) -> bytes:
+    return hkdf_sha256(ikm=ecdh_secret + mlkem_shared, info=b'tls13-hybrid')
+```
+
+Use a library that tracks NIST OIDs (OpenSSL 3.5+, boringssl experiments, liboqs). Pin algorithm IDs in protocols so peers cannot silently downgrade.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    C[Client hello] --> H[Hybrid: X25519 + ML-KEM]
+    S[Server] --> H
+    H --> K[HKDF session keys]
+    K --> Rec[AEAD records]
+```
+
+## 5. Interview Prep
+
+**Q: Why hybrid instead of PQC-only?**
+**A:** New schemes may have classical breaks. Hybrid remains safe if either half holds. Cost is extra bytes.
+
+**Q: Does Grover kill AES-128 tomorrow?**
+**A:** A cryptographically relevant quantum computer large enough for Grover on AES is a different (and still speculative) machine than one that runs Shor on RSA. Still, long-lived secrets should use AES-256.
+
+**Q: What should I migrate first?**
+**A:** Recorded confidentiality: VPN, TLS, disk backup wrapping. Then certificates and code signing as ecosystems support it.
+
+## 6. Production Use Cases
+
+- **Browser and CDN** hybrid TLS experiments.
+- **National and financial** systems with decade-long secrecy requirements.
+- **Firmware signing** roadmaps toward ML-DSA or hash-based signatures.
+
+<Callout icon="tip" title="Inventory every place you terminate public-key crypto">
+You cannot migrate what you cannot find: TLS libraries, JWTs, S/MIME, SSH CAs, firmware, and vendor appliances.
+</Callout>

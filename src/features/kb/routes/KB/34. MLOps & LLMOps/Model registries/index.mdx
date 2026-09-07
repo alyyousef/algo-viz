@@ -1,29 +1,90 @@
 ---
 title: Model Registries
-description: The central, version-controlled MLOps repository that mathematically stores, tags, and governs the lifecycle state of trained Machine Learning models as they transition from experimentation to production.
+description: "A governed catalogue of model versions, stages, and lineage — the API between research checkpoints and what production is allowed to load."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Model Registries">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A Model Registry is the Git Repository for compiled Neural Networks. You do not deploy a model by emailing a `.pt` file. You push it to a Registry, which cryptographically secures it and manages its deployment state.
+A folder of `.pt` files is not a platform. A **model registry** (MLflow Model Registry, SageMaker, Vertex, W&B registry) stores an immutable version, metadata, aliases (`champion`, `challenger`), and who approved the stage change.
 
-## 1. Lifecycle Governance
-A Registry (like MLflow Model Registry or AWS SageMaker Registry) defines strict mathematical boundaries for models.
-When a model is uploaded, it is versioned (e.g., `FraudNet-v14`) and placed in a specific **State**:
-- **Staging**: The model is locked in a test environment, undergoing mathematical shadow-testing and security audits.
-- **Production**: The model is actively serving live API traffic.
-- **Archived**: The model is deprecated but cryptographically retained for legal compliance and rollback capability.
-By forcing all models through this lifecycle, the Registry prevents a Data Scientist from accidentally deploying untested experimental weights directly to live servers.
+## 1. Deep Dive and Mechanics
 
-## 2. Dependency and Lineage Tracking
-A raw model file is mathematically dangerous without its lineage.
-The Registry strictly binds the model to its metadata. If you inspect `FraudNet-v14` in the Registry, it will tell you exactly which Git commit trained it, the exact SHA-256 hash of the DVC dataset used, and the exact Python library versions required to run it. This mathematical lineage is legally required in many industries (like finance and healthcare) to prove exactly how and why a model was built.
+**Version.** Increment on every registered artifact. Immutable bytes plus a pointer (`models:/ranker/12`).
 
+**Stages / aliases.** `Archived`, `Staging`, `Production` or floating aliases. Serving reads an alias, not a raw path, so rollback is a pointer flip.
+
+**Lineage.** Link to the training run, dataset id, and eval report. Auditors will ask.
+
+**Webhooks.** Stage transition triggers a deploy pipeline. Humans click; robots roll.
+
+<Callout icon="warning" title="Alias is a footgun">
+If two services pin `Production` and you flip it, both move. Pin a numeric version in high-risk systems and flip aliases only in the deploy job.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+The registry is a map from (name, version) → artifact + metadata, and a map from alias → version. Consistency is just pointer atomicity (compare-and-swap the alias). Governance is RBAC on the transition function, not ML math.
+
+<ComparisonTable
+  headers={['Object', 'Mutable?', 'Example']}
+  rows={[
+    ['Version artifact', 'No', 'ranker v12 bytes'],
+    ['Alias', 'Yes', 'champion -> 12'],
+    ['Stage', 'Yes', 'Staging'],
+    ['Card / tags', 'Mostly append', 'metrics, owner'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import mlflow
+
+client = mlflow.tracking.MlflowClient()
+mv = client.create_model_version(name='ranker', source='runs:/abc/model')
+client.set_registered_model_alias('ranker', 'challenger', mv.version)
+# after canary:
+client.set_registered_model_alias('ranker', 'champion', mv.version)
+```
+
+Serving loads `models:/ranker@champion`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Run[Tracking run] --> Reg[Register vN]
+    Reg --> Stage[Alias champion]
+    Stage --> Svc[Serving]
+    Stage --> Roll[Rollback to vN-1]
+```
+
+## 5. Interview Prep
+
+**Q: Registry vs artifact bucket?**
+**A:** The bucket holds bytes. The registry holds identity, aliases, and approval. You need both.
+
+**Q: How do you rollback?**
+**A:** Point `champion` at the previous version and restart or hot-reload. Keep vN-1 warm if rollback must be instant.
+
+**Q: Who can promote?**
+**A:** A small set of humans or a pipeline that already passed eval gates. Not every data scientist’s laptop.
+
+## 6. Production Use Cases
+
+- Multi-service companies with many models.
+- Regulated promotion with a two-person rule.
+- LLM prompt+weights bundles registered as one unit.
+
+<Callout icon="tip" title="Register the preprocess">
+A model without its tokenizer / feature graph is an incomplete artifact. Version them together.
+</Callout>

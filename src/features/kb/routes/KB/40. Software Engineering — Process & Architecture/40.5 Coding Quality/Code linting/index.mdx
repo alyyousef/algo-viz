@@ -1,30 +1,95 @@
 ---
-title: Code Linting
-description: "The automated mathematical process of running a static analysis tool against source code to flag programming errors, bugs, stylistic violations, and suspicious constructs before the code is compiled or executed."
+title: Code linting
+description: "Mechanical style and bug-pattern checks in the editor and CI — fast feedback that is not a substitute for review."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Code Linting"
-  subtitle="Automated Static Analysis"
-  tags={['Process', 'Clean Code', 'Tooling', 'JavaScript']}
->
+    <ConceptTemplate title="Code linting">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a team of 50 developers, arguments about whether to use spaces or tabs, or whether to put curly braces on a new line, are mathematically a massive waste of expensive engineering time.
+**Linting** runs static rules on source: unused vars, missing awaits, banned APIs, import order. Formatters (`gofmt`, Prettier) fix layout. Linters (`eslint`, `ruff`, `clippy`) judge semantics and house style. Together they remove nits from human review.
 
-## 1. Automated Enforcer
-A Linter (like ESLint for JavaScript or SonarQube for Java) solves this by mathematically enforcing the rules.
-The architectural team defines a configuration file (`.eslintrc`). The Linter parses the source code into an Abstract Syntax Tree (AST) and mathematically checks it against the rules.
-If a developer forgets a semicolon, leaves an unused variable, or uses a dangerous mathematical operator (like `==` instead of `===` in JS), the Linter paints the IDE red and throws an error.
+## 1. Deep Dive and Mechanics
 
-## 2. CI/CD Integration
-Linters are mathematically integrated directly into the CI/CD pipeline (Continuous Integration).
-When a developer opens a Pull Request on GitHub, the CI server runs the Linter. If the code violates the mathematical styling rules, the CI server instantly fails the build and blocks the PR from merging. This automates code formatting, completely eliminating styling arguments during human Code Review.
+**Where it runs.** Editor on save, pre-commit, CI. If CI is the only gate, people waste minutes. If only the editor, style drifts on the machine that skipped the plugin.
 
+**Rulesets.** Start from a popular recommended set. Turn on rules that catch bugs (`no-floating-promises`). Be slow to add taste rules that have no autofix.
+
+**Autofix versus diagnose.** Formatters should be silent and total. Linters should autofix the safe subset and fail the rest. Do not autofix semantics you have not read.
+
+**Suppressions.** `eslint-disable-next-line` with a reason is a documented exception. File-wide disables are a smell.
+
+<Callout icon="tip" title="Format in CI, do not argue in PRs">
+If a machine can settle tabs versus spaces, humans should not. Spend review on behavior and names.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Soundness.** Lints are unsound approximations: they miss bugs and they false-positive. A rule’s precision/recall matters. High-noise rules get disabled and teach people to ignore the tool.
+
+**Incremental.** Lint-on-changed-lines keeps CI cheap. Full-repo lint still runs on main to catch moved files.
+
+**Policy as code.** The ruleset is a contract. Version it. Changing a rule from warn to error is a migration, not a surprise.
+
+<ComparisonTable
+  headers={['Tool', 'Judges', 'Autofix']}
+  rows={[
+    ['Formatter', 'Layout', 'Always'],
+    ['Linter', 'Patterns and style', 'Sometimes'],
+    ['Type checker', 'Types', 'Rarely'],
+    ['SAST', 'Security sinks', 'No'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```json
+{
+  "extends": ["eslint:recommended"],
+  "rules": {
+    "no-unused-vars": "error",
+    "eqeqeq": "error"
+  }
+}
+```
+
+CI runs `eslint . --max-warnings 0` so warnings cannot accumulate.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Edit --> IDE[Editor lint]
+    Edit --> Hook[Pre-commit format]
+    Hook --> CI[CI lint plus types]
+    CI -->|fail| Fix[Author fixes]
+    CI -->|pass| Review[Human review]
+```
+
+## 5. Interview Prep
+
+**Q: Linter versus type checker?**
+**A:** Types prove (within the type system) certain absences of errors. Linters pattern-match. You want both. `any` plus a perfect eslint config is still untyped.
+
+**Q: How do you adopt lint on a dirty repo?**
+**A:** Baseline the current violations, fail on new ones, then burn the baseline down. Flipping every rule to error on day one stalls delivery.
+
+**Q: Should lint block merge?**
+**A:** Yes for the agreed ruleset. If a rule is not worth blocking, it should not be in the ruleset.
+
+## 6. Production Use Cases
+
+- **Monorepos** with one formatter and per-package lint configs.
+- **Banned APIs** (no `datetime.utcnow`, no raw `innerHTML`).
+- **Generated code** excluded via ignore files.
+
+<Callout icon="warning" title="Do not lint generated files">
+You will lose. Ignore the output directory and lint the generator.
+</Callout>

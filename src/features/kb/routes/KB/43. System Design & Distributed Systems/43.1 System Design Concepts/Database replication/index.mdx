@@ -1,39 +1,88 @@
 ---
 title: Database Replication
-description: The frequent electronic copying of data from a database in one computer or server to a database in another so that all users share the same level of information.
+description: "Copying database state to other nodes for reads, failover, and locality, with a chosen lag, conflict, and durability trade-off."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Database Replication">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If your entire application relies on a single database server, you have a mathematical **Single Point of Failure (SPOF)**. If that hard drive fails, your company dies.
+**Database replication** keeps copies of data on more than one node. You do it for high availability (a replica can take over), for read scale (offload SELECTs), and for locality (a replica near a region). The price is lag, conflict, and a failover story you must actually practice.
 
-**Database Replication** solves this by maintaining mathematically identical copies of the database across multiple physical servers.
+## 1. Deep Dive and Mechanics
 
+**Single-primary (leader).** All writes go to one node. Secondaries apply a log (WAL, binlog, Oplog). Reads can go to the leader (safe) or to replicas (stale by lag). Failover promotes a replica; you risk losing unflushed or unreplicated writes.
 
-<Callout icon="success" title="Read Scalability">
+**Multi-primary.** Several nodes accept writes. You need conflict resolution (last-write-wins, CRDTs, or application merge) or a partitioning rule that avoids conflicts.
 
+**Sync versus async.** Synchronous commit waits for N replicas to fsync. That is latency for durability. Asynchronous is fast and can lose the tail of the log on crash.
 
-  While Replication is primarily designed for Fault Tolerance, it also provides massive performance benefits. In most web apps, 95% of queries are Reads, and 5% are Writes. You can mathematically route all Read queries to the Replicas, entirely offloading the Primary DB.
-
-
+<Callout icon="warning" title="Replica lag is a product bug if you hide it">
+A user writes a profile and immediately reads a replica. They see the old bio and retry forever. Sticky primary reads or a version token fix the session.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Master-Slave (Primary-Replica) Architecture
+Durability of a committed write under crash is a function of the ack quorum. If you wait for f replicas of n, you can lose f-1 disks and still have the bytes. CAP shows you cannot stay fully available and linearizable across a partition; replication mode is how you pick the side.
 
-This is the most common mathematical model in the world (used by default in PostgreSQL, MySQL, AWS RDS):
+Lag L is roughly apply_rate deficit integrated over time. Backpressure or throttled replicas bound L; infinite queues do not.
 
-1. **The Primary (Master):** One single node mathematically accepts all `INSERT`, `UPDATE`, and `DELETE` statements. It writes the data to disk.
-2. **The Replicas (Slaves):** Multiple nodes connect to the Primary. They mathematically stream the Primary's Write-Ahead Log (WAL) and replay the changes on their own disks.
-3. **Failover:** If the Primary dies, a mathematical consensus algorithm instantly elects one of the Replicas to become the new Primary.
+<ComparisonTable
+  headers={['Mode', 'Write home', 'Failover', 'Conflict']}
+  rows={[
+    ['Async primary-replica', 'One primary', 'May lose tail', 'None on writes'],
+    ['Quorum sync', 'Primary plus acks', 'Safer promote', 'None on writes'],
+    ['Multi-primary', 'Many', 'Per region', 'Must resolve'],
+    ['Logical CDC', 'Primary log', 'Downstream only', 'Pipeline lag'],
+  ]}
+/>
 
-*Note: Replication can be Synchronous (slow, zero data loss) or Asynchronous (fast, potential data loss if the Primary dies before transmitting).*
+## 3. Real-World Implementation
 
+```
+# PostgreSQL idea: sync replica for durability, async for reporting
+synchronous_standby_names = 'FIRST 1 (standby_az_b)'
+# app: writes and read-your-writes to primary
+# analytics: prefer replica, accept lag
+```
+
+Monitor replay_lag and pause promotion if the candidate is hours behind. Test failover on a cadence, not only in an outage.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    AppW[Writes] --> Pri[Primary]
+    Pri -->|sync WAL| S1[Standby AZ-b]
+    Pri -->|async WAL| S2[Reporting replica]
+    AppR[Session reads] --> Pri
+    Anon[Analytics] --> S2
+```
+
+## 5. Interview Prep
+
+**Q: Does replication replace backups?**
+**A:** No. Replicas happily replicate a DROP TABLE. Backups and PITR are a different failure mode (human and logical error).
+
+**Q: How do you scale reads?**
+**A:** Replicas help until writes or apply lag dominate. Then you shard. Also, not every read can tolerate replica lag.
+
+**Q: What is split-brain?**
+**A:** Two primaries accepting writes after a bad failover. You get divergent rows that no automatic replica can merge safely. Fencing and leases exist to prevent it.
+
+## 6. Production Use Cases
+
+- **OLTP HA** with a sync standby in another AZ.
+- **Read replicas** for heavy reporting off the primary.
+- **Cross-region async** for disaster recovery with a documented RPO.
+
+<Callout icon="tip" title="State RPO in seconds, not in adjectives">
+    "We replicate" is not an RPO. "Async, typical lag 2 s, worst 60 s on saturation" is a design.
+</Callout>

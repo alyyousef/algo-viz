@@ -1,62 +1,114 @@
 ---
 title: Docker Compose
-description: A tool for defining and running multi-container Docker applications using a single YAML file.
+description: "Declarative multi-container runner for laptops and small hosts: one YAML file for services, networks, and volumes."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Docker Compose"
-  category="DevOps & Infrastructure"
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/4/4e/Docker_%28container_engine%29_logo.svg"
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Docker Compose">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-**Docker Compose** is a powerful orchestration tool designed for local development. While the standard \`docker run\` command is great for spinning up a single container, modern applications usually consist of multiple interacting services (e.g., a React frontend, a Node.js API, a PostgreSQL database, and a Redis cache).
+**Docker Compose** turns a pile of `docker run` flags into one file. You declare services, networks, and volumes. `docker compose up` builds or pulls images, creates a project network, starts containers in dependency order, and tails logs. It is an orchestration tool for *one machine* (or a tiny Swarm), not a cluster scheduler.
 
-Running four massive \`docker run\` commands with complex port-mapping and networking flags is tedious. Docker Compose allows you to define this entire multi-container architecture in a single, declarative \`docker-compose.yml\` file.
+## 1. Deep Dive and Mechanics
 
+**Compose Specification.** The modern file is `compose.yaml` (or `compose.yml`). The old `version: "3.8"` header is optional. Keys: `services`, `networks`, `volumes`, `secrets`, `configs`. Profiles hide optional services (debug sidecars, load generators).
 
-<Callout icon="success" title="The Magic of 'docker compose up'">
+**Project isolation.** Compose prefixes resources with a project name (directory name by default). Two checkouts on one host do not collide on container names or the default network.
 
+**DNS.** Every service name is a DNS name on the project network. The API talks to `db:5432`, not a guessed `172.18.0.x`. That is why `depends_on` is about start order, not "database is ready" — add a healthcheck and `depends_on.condition: service_healthy` if you need readiness.
 
-  Once you define your architecture in the YAML file, a developer simply clones the repository and types \`docker compose up\`. Compose will automatically build the images, create an isolated virtual network, boot all four containers in the correct order, and stream their combined logs to the terminal.
+**Watch and bind mounts.** Dev workflows bind-mount source and run a file watcher. Compose does not hot-reload for you; your process does.
 
+**Not Kubernetes.** There is no scheduler, no rolling update across nodes, no CrashLoop backoff that reschedules to another machine. `compose` can emit Kubernetes YAML via other tools, but the runtime model is still local containers.
 
+<Callout icon="warning" title="depends_on is not readiness">
+A Postgres container that has started is not a Postgres that accepts connections. Use healthchecks or an init container pattern, or the API will flap on every cold start.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The \`docker-compose.yml\` File
+**Graph of services.** `depends_on` is a DAG. Compose starts sinks first. Cycles are rejected or ignored depending on engine version — treat them as a spec error.
 
-A standard Compose file defines **Services**, **Networks**, and **Volumes**:
+**Network scope.** A bridge network is a connected component. Service discovery is a local DNS mapping name to VIP or container IPs. Scale (`--scale api=3`) round-robins the service name across replica IPs.
 
-\`\`\`yaml
-version: '3.8'
+<ComparisonTable
+  headers={['Tool', 'Scope', 'State model']}
+  rows={[
+    ['Compose', 'One host', 'File plus running containers'],
+    ['Swarm stack', 'Swarm cluster', 'Same file, replicated services'],
+    ['Kubernetes', 'Many nodes', 'Controllers reconcile forever'],
+    ['Nomad / others', 'Many nodes', 'Jobs, not Compose'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```yaml
+name: shop
 services:
   api:
     build: ./backend
     ports:
       - "8080:8080"
-    depends_on:
-      - db
     environment:
-      - DATABASE_URL=postgres://user:pass@db:5432/mydb
-
+      DATABASE_URL: postgres://shop:shop@db:5432/shop
+    depends_on:
+      db:
+        condition: service_healthy
   db:
-    image: postgres:15
+    image: postgres:16
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=pass
-
+      POSTGRES_PASSWORD: shop
+      POSTGRES_USER: shop
+      POSTGRES_DB: shop
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shop"]
+      interval: 5s
+      retries: 5
 volumes:
   pgdata:
-\`\`\`
+```
 
-## Internal Networking and DNS
+`docker compose up --build` is the onboarding command. Pin image digests in production-like laptops if you care about bit-for-bit replay.
 
-The most powerful feature of Docker Compose is its automatic internal DNS.
-Notice in the YAML above that the \`api\` service connects to the database using the hostname \`@db\`.
+## 4. Visualizations
 
-When Compose spins up the environment, it creates a private bridge network. The Node.js API does not need to know the random IP address assigned to the PostgreSQL container. It simply makes a request to \`http://db:5432\`, and Docker's internal DNS server perfectly resolves it to the correct container.
+```mermaid
+flowchart TD
+    Up[docker compose up] --> Net[Create project bridge]
+    Net --> Vol[Create named volumes]
+    Vol --> Db[Start db and wait healthy]
+    Db --> Api[Start api]
+    Api --> DNS[api resolves db via DNS]
+    DNS --> Logs[Multiplexed logs]
+```
 
-</TechnologyTemplate>
+## 5. Interview Prep
+
+**Q: When do you stop using Compose and start using Kubernetes?**
+**A:** When you need multi-node scheduling, rolling updates, RBAC, and a control plane. Compose is the inner loop; Kubernetes is the outer loop.
+
+**Q: How do services find each other?**
+**A:** Compose DNS on the project network. The hostname is the service key in the YAML file.
+
+**Q: What is the difference between `docker compose` and `docker-compose`?**
+**A:** The hyphen binary is the old Python tool. The space form is the Compose V2 plugin (Go) shipped with Docker. Use V2.
+
+## 6. Production Use Cases
+
+- **Local full-stack** (API, UI, DB, Redis, mail hog) from a README with one command.
+- **Integration test fixtures** in CI on a single runner.
+- **Small single-host deploys** (a VPS) where Kubernetes would be theatre.
+
+<Callout icon="tip" title="Keep Compose out of the image">
+The YAML is an operator document. Do not COPY it into the production image. The image should be one process; Compose wires many processes.
+</Callout>

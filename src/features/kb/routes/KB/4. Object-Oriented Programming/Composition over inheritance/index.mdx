@@ -1,42 +1,103 @@
 ---
 title: Composition Over Inheritance
-description: A fundamental software design principle advocating that polymorphic behavior and code reuse should be achieved by assembling smaller, decoupled objects (Composition) rather than building deep, rigid parent-child class hierarchies (Inheritance).
+description: "Prefer has-a collaborators over is-a hierarchies when you want reuse, variation, or a shallower design."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Composition Over Inheritance"
-  subtitle="The Antidote to the Gorilla-Banana Problem"
-  tags={['OOP', 'Design Patterns', 'Architecture', 'Clean Code']}
->
+    <ConceptTemplate title="Composition Over Inheritance">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In the 1990s, Inheritance was viewed as the ultimate mathematical solution to code reuse. By the 2010s, the industry realized that deep inheritance trees cause catastrophic architectural rigidity.
+**Composition over inheritance** is a design slogan: reuse behavior by holding a collaborator, not by extending a superclass. You can change the collaborator at runtime. You cannot swap a superclass without a new type.
 
-## 1. The Gorilla-Banana Problem
-Inheritance forces you to inherit the *entire* mathematical history of a parent class.
-As Joe Armstrong (creator of Erlang) famously said: *"You wanted a banana but what you got was a gorilla holding the banana and the entire jungle."*
-If you have a `Bird` class with a `fly()` method, and you inherit to make an `Ostrich`, your Ostrich mathematically inherits the ability to fly, which is logically incorrect. You are now forced to override `fly()` and throw an Exception, breaking the Liskov Substitution Principle.
+## 1. Deep Dive and Mechanics
 
-## 2. The Composition Solution
-The principle of "Composition Over Inheritance" solves this by building behavior from Lego blocks.
-Instead of inheriting `Bird`, you compose objects based on what they *do*, not what they *are*.
-```java
-public class Ostrich {
-    private WalkingBehavior walker;
-    // An Ostrich HAS-A WalkingBehavior, it does not HAVE-A FlyingBehavior
-}
+The Gang of Four warned that inheritance is the strongest coupling two classes can have. A `Duck` that extends `FlyingBird` cannot become flightless without a lie. A `Duck` that holds a `Flight` strategy can take `FlyWithWings` or `NoFlight`.
 
-public class Eagle {
-    private WalkingBehavior walker;
-    private FlyingBehavior flyer;
-}
+**What you still inherit.** Framework types (`TestCase`, `Component`) and true behavioral subtypes. The slogan is against using inheritance as a cheap bag of methods.
+
+**Delegation.** The outer object forwards calls to the inner one. That is composition plus a boring bit of glue. Languages with `delegate` keywords just generate the glue.
+
+<Callout icon="info" title="Both can be true">
+A type can extend one small base and compose the rest. The rule is: inherit for subtyping, compose for reuse.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Inheritance fixes a linear (or diamond) layout and a static subtype relation. Composition is a product type: the object is a pair of (own state, collaborator). Products are easier to rearrange than subtype chains.
+
+You also gain runtime strategy replacement, which inheritance only fakes with heavy override graphs.
+
+<ComparisonTable
+  headers={['Need', 'Prefer', 'Why']}
+  rows={[
+    ['True is-a + LSP', 'Inheritance', 'Callers need the parent type'],
+    ['Reusable algorithm', 'Strategy / function', 'Swap without a new subclass'],
+    ['Optional feature', 'Decorator or mixin object', 'Avoids deep trees'],
+    ['Framework hook', 'Inheritance', 'The framework constructs the subtype'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Flight:
+    def move(self):
+        raise NotImplementedError
+
+class FlyWithWings(Flight):
+    def move(self):
+        return "fly"
+
+class NoFlight(Flight):
+    def move(self):
+        return "walk"
+
+class Duck:
+    def __init__(self, flight: Flight):
+        self.flight = flight
+
+    def move(self):
+        return self.flight.move()
+
+duck = Duck(FlyWithWings())
+injured = Duck(NoFlight())
 ```
-By using Composition, you mathematically inject only the exact behaviors required. The architecture remains flat, modular, and highly testable, completely avoiding the rigid biological taxonomies of Inheritance.
 
+No class hierarchy of duck kinds is required to change movement.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Duck --> Flight
+    Flight --> FlyWithWings
+    Flight --> NoFlight
+```
+
+## 5. Interview Prep
+
+**Q: Why is inheritance considered tighter coupling?**
+**A:** The child sees protected members and depends on constructor order and override contracts. A composed collaborator is used only through a small public interface.
+
+**Q: Does this kill polymorphism?**
+**A:** No. The collaborator is usually an interface. You still get subtype polymorphism, just on the strategy, not on a tall domain tree.
+
+**Q: When would you reject the slogan?**
+**A:** When the framework requires a subclass, or when a one-level subtype is the clearest model and LSP holds.
+
+## 6. Production Use Cases
+
+- **Head-first style duck / weapon / payment strategies**.
+- **React-style composition** of components instead of deep widget inheritance.
+- **Go-like design**: structs plus interfaces, almost no class trees.
+
+<Callout icon="tip" title="Extract the varying verb">
+If subclasses only differ in one method, that method wants to be an object or a function you compose.
+</Callout>

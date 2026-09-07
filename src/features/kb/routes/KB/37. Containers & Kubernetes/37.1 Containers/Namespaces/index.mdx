@@ -1,34 +1,101 @@
 ---
-title: Namespaces (Linux)
-description: A core Linux kernel feature that mathematically partitions system resources such that one set of processes sees one set of resources, while another set of processes sees a completely different set.
+title: Linux Namespaces
+description: "Kernel partitions that give a process its own PIDs, mounts, network stack, hostname, and optionally user ids — the isolation half of containers."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Namespaces"
-  subtitle="The Illusion of Isolation"
-  tags={['Linux', 'Kernel', 'Containers', 'Architecture']}
->
+    <ConceptTemplate title="Linux Namespaces">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If cgroups limit *how much* of a resource a container can use, Namespaces limit *what* the container is mathematically allowed to see. Namespaces are the mechanism that tricks a process into believing it is the only process running on a server.
+**Namespaces** change what a process can *see*. cgroups change what it can *use*. Together they are a container. After `clone` or `unshare` with the right flags, `ps` shows only your tree, `/` is a different mount tree, and `eth0` is a veth — even though one kernel is scheduling everyone.
 
-## 1. Process ID (PID) Namespace
-On a standard Linux server, the master process (`systemd`) is always PID 1.
-When you launch a container, the Linux kernel creates a new **PID Namespace**. Inside the container, the application mathematically believes it is PID 1. If it runs the `ps` command, it only sees itself. It is mathematically blind to the thousands of other processes running on the host OS.
+## 1. Deep Dive and Mechanics
 
-## 2. The Six Standard Namespaces
-A true container relies on the mathematical synthesis of six specific namespaces:
-1. **PID**: Isolates the process tree.
-2. **NET**: Isolates the network interfaces (giving the container its own IP).
-3. **MNT**: Isolates the filesystem (giving the container its own root directory `/`).
-4. **IPC**: Isolates inter-process communication.
-5. **UTS**: Isolates the hostname (the container thinks it has its own unique server name).
-6. **USER**: Isolates user privileges (a process can be the omnipotent `root` user *inside* the namespace, but map to a harmless, unprivileged user on the host OS).
+**PID.** The container's init is PID 1 *inside* the namespace. Host `ps` still shows a normal pid. Killing PID 1 in the namespace takes the container down (and zombies need a competent init).
 
+**Mount.** A private mount tree plus `pivot_root` into the image. Host disks are invisible unless bind-mounted. Propagation flags (private, shared, slave) decide whether host remounts leak in.
+
+**Network.** Own interfaces, routes, iptables. This is why `localhost` in a container is not the host.
+
+**UTS.** Hostname and NIS domain. Kubernetes sets the hostname to the pod name.
+
+**IPC.** System V shared memory and POSIX queues. Pods share IPC when you ask; otherwise two containers cannot shmem each other.
+
+**User.** Maps a range of container uids to unprivileged host uids. Container-root becomes something like host uid 100000. This is the backbone of rootless Podman and Buildah.
+
+**cgroup namespace.** Hides the rest of the cgroup tree so the process cannot easily walk siblings' accounting files.
+
+<Callout icon="warning" title="User namespace is the hard one">
+Without user namespaces, container-root is host-root if it can escape to a host mount. Rootless stacks exist because uid 0 inside a mapped namespace is not uid 0 on the host.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Identifier translation.** A pid namespace is a bijection between a local pid and a host pid. Nesting composes maps. Tools like `nsenter` invert the map from the host side.
+
+**Capability + uid.** Effective privilege is the tuple (host uid, capabilities, LSM label, seccomp). Namespaces alone do not drop capabilities; runtimes do that in the spec.
+
+<ComparisonTable
+  headers={['Namespace', 'Hides', 'Container effect']}
+  rows={[
+    ['pid', 'Other processes', 'Own PID 1'],
+    ['mnt', 'Host mounts', 'Own rootfs'],
+    ['net', 'Host interfaces', 'Own IP and localhost'],
+    ['uts', 'Hostname', 'Pod name as hostname'],
+    ['ipc', 'Host IPC objects', 'Private shmem'],
+    ['user', 'Host uids', 'Rootless mapping'],
+    ['cgroup', 'Sibling cgroups', 'Limited /sys/fs/cgroup view'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+# See which namespaces a container's pid uses
+pid=$(docker inspect api | jq .State.Pid)
+ls -l /proc/$pid/ns
+# Enter the network namespace and watch interfaces
+nsenter --target "$pid" --net ip addr
+```
+
+runc's `config.json` lists the namespace set. Kubernetes adds a shared net/ipc/uts namespace across containers in a pod (the sandbox), and a private pid/mnt per container by default.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Host[Host pid 1 systemd] --> Eng[containerd / runc]
+    Eng --> Clone[clone with NEW* flags]
+    Clone --> P1[PID 1 in pid ns]
+    Clone --> Mnt[private /]
+    Clone --> Net[veth in net ns]
+    Clone --> Uid[uid map in user ns]
+```
+
+## 5. Interview Prep
+
+**Q: Namespaces versus cgroups?**
+**A:** Namespaces isolate identity and visibility. cgroups isolate resource amounts. You need both.
+
+**Q: Why is the first process in a container PID 1?**
+**A:** It is PID 1 *in that pid namespace*. It must reap children. A shell that does not handle signals is a bad PID 1.
+
+**Q: What does a pod share?**
+**A:** Network, IPC, and UTS namespaces (and volumes). PID and mount are usually per container, which is why a sidecar can share `localhost` with the app.
+
+## 6. Production Use Cases
+
+- **Every OCI container** — runc always sets a namespace set.
+- **Rootless developer tools** — user namespaces for Podman/Buildah.
+- **Kubernetes pods** — shared netns is the sidecar pattern.
+
+<Callout icon="tip" title="Debug with nsenter">
+When "it works on the host but not in the container," enter the net or mnt namespace before you blame DNS. The view is the bug.
+</Callout>

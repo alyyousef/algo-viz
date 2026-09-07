@@ -1,35 +1,87 @@
 ---
 title: Container Security
-description: The discipline of securing Docker containers, images, and the runtime environment they operate in.
+description: "Hardening images, runtimes, and registries so a packed process cannot quietly become the host."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Container Security">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before Kubernetes orchestrates anything, the fundamental building block is the **Container** (usually Docker). Containers package an application and all its mathematical dependencies into a single, portable image.
+A **container** shares a kernel. It is isolation by namespaces, cgroups, and a root filesystem — not a second computer. **Container security** is supply-chain hygiene (what you ship), runtime least privilege (how it runs), and host hardening (what it could escape into). Treating Docker like a VM is how teams skip patches and run as root.
 
-Because containers share the host machine\'s operating system kernel, a vulnerability in a container can mathematically compromise the entire host if not properly secured.
+## 1. Deep Dive and Mechanics
 
+**Image.** Start FROM a pinned digest, not latest. Run a non-root USER. Drop packages you do not need. Scan for known CVEs and secrets before push. Sign images and admit only signed digests to prod.
 
-<Callout icon="warning" title="The Root Problem">
+**Runtime.** Read-only root filesystem. Drop Linux capabilities. No privileged flag. No hostPath to the Docker socket. Resource limits so one pod cannot starve the node.
 
+**Registry and CI.** Private registries, immutable tags for releases, and a break-the-build gate on critical CVEs in your base.
 
-  The single most common container security failure is running the container process as the `root` user. If an attacker breaches the web app running inside the container, and the app is running as root, the attacker mathematically has root privileges. They can then execute a "container escape" to seize control of the underlying host server.
-
-
+<Callout icon="warning" title="root in a container is still root on a bad day">
+Kernel bugs and mis-mounted sockets collapse the namespace story. Privilege is a defect, not a convenience.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Key Security Practices
+Isolation is a policy on kernel objects: mount, PID, net, user, IPC. The attack surface is the syscall ABI plus whatever you remounted. User namespaces and seccomp shrink that ABI. The security claim is residual risk after those filters, not "containers are safe."
 
+<ComparisonTable
+  headers={['Control', 'Stops', 'Does not stop']}
+  rows={[
+    ['Non-root USER', 'Trivial host writes', 'Kernel 0-days'],
+    ['Read-only FS', 'In-container implants', 'Memory-only payloads'],
+    ['Image scan', 'Known CVE in a layer', 'Logic bugs you wrote'],
+    ['No docker.sock', 'Trivial escape', 'Other host mounts'],
+  ]}
+/>
 
-<ComparisonTable headers={['Practice', 'Description']} rows={[ ['Image Scanning', 'Using tools like Trivy or Clair to mathematically scan the `Dockerfile` and the base image (e.g., Ubuntu, Alpine) for known CVEs before the container is ever deployed.'], ['Minimal Base Images', 'Instead of using a bloated 1GB Ubuntu image, developers should use "Distroless" or Alpine Linux images (5MB). Fewer installed packages mathematically reduces the attack surface.'], ['Immutable Containers', 'A container should be read-only at runtime. If an attacker breaches the app, they cannot mathematically download malware or modify the application files because the filesystem is locked.'] ]} />
+## 3. Real-World Implementation
 
+```dockerfile
+FROM python:3.12-slim@sha256:REPLACE_WITH_DIGEST
+RUN useradd --uid 10001 --create-home app
+WORKDIR /app
+COPY --chown=app:app . .
+USER 10001
+```
 
+In compose or Kubernetes, set readOnlyRootFilesystem and drop ALL capabilities, then add back only what you measured.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    CI[CI build] --> Scan[CVE and secret scan]
+    Scan --> Sign[Sign digest]
+    Sign --> Reg[Registry]
+    Reg --> Run[Runtime: non-root, seccomp]
+    Run --> Host[Hardened host / node]
+```
+
+## 5. Interview Prep
+
+**Q: Container vs VM isolation?**
+**A:** VMs have a hypervisor boundary. Containers share a kernel. Different threat model.
+
+**Q: Why pin by digest?**
+**A:** A tag can move. A digest is the bits you scanned.
+
+**Q: Is Distroless enough?**
+**A:** It shrinks the image. You still need a non-root user, network policy, and a patched base.
+
+## 6. Production Use Cases
+
+- **Microservice images** built in CI with a mandatory scan gate.
+- **Batch jobs** that must not keep a writable root filesystem.
+- **Multi-tenant build** agents that never mount the host runtime socket.
+
+<Callout icon="tip" title="Rebuild on a cadence">
+Unchanged app code still inherits base-image CVEs. Rebuild and redeploy regularly.
+</Callout>

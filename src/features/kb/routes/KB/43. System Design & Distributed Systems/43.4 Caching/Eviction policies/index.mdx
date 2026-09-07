@@ -1,35 +1,88 @@
 ---
 title: Cache Eviction Policies
-description: Mathematical algorithms used by a cache to decide which data to delete when the cache's memory is completely full.
+description: "What the cache drops when it is full: LRU, LFU, FIFO, random, and TTL — the policy decides whether the working set stays hot."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Cache Eviction Policies">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A cache (like Redis) operates entirely in RAM. RAM is mathematically expensive and physically limited. If you have 16GB of RAM, and you try to insert 17GB of data, the system will crash.
+An **eviction policy** picks the victim when the cache is at capacity. **LRU** drops the least recently used. **LFU** drops the least frequent. **FIFO** drops the oldest insert. **Random** is cheap. **TTL** drops expired entries even before capacity pressure. The right policy matches the access distribution.
 
-To prevent this, the cache uses an **Eviction Policy**—an algorithm that mathematically determines which data is the "least valuable" and deletes it to make room for new data.
+## 1. Deep Dive and Mechanics
 
+**LRU.** Scan-resistant? Classic LRU is not: a single full scan evicts the working set. Redis approximated LRU. Caffeine uses W-TinyLFU to resist scans.
 
-<Callout icon="info" title="Eviction vs. Expiration">
+**LFU.** Good for stable popularity (a catalog). Slow to admit a new hot key if counts are stale. Aging counters fix that.
 
+**TTL as eviction.** Expiry is correctness (staleness bound) and capacity (natural drain). Do not rely on TTL alone to keep size down if keys refresh.
 
-  Expiration (TTL) is when a key voluntarily dies because its timer ran out. Eviction is when a key is violently murdered by the system because it ran out of physical space.
+**Victim + sample.** Redis samples a few keys and evicts the best candidate. Exact LRU is too expensive at millions of keys.
 
-
+<Callout icon="warning" title="A scan can flush an LRU">
+A reporting query that walks every key through the cache layer will evict the homepage. Separate caches or use an admission policy.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Primary Mathematical Algorithms
+Under Zipf access, a small cache captures a large hit fraction (heavy head). LRU is competitive for some sequences; there are adversarial sequences where LRU fails (Belady). Belady's MIN (evict the farthest next use) is optimal offline and not implementable online.
 
+<ComparisonTable
+  headers={['Policy', 'Drops', 'Good for', 'Weak against']}
+  rows={[
+    ['LRU', 'Cold recency', 'Temporal locality', 'Scans'],
+    ['LFU', 'Unpopular', 'Stable Zipf', 'Shift in popularity'],
+    ['FIFO', 'Oldest insert', 'Simple', 'Hot old keys'],
+    ['TTL', 'Expired', 'Staleness bound', 'Size if refreshed'],
+    ['Random', 'Anything', 'Cheap', 'Unlucky hot keys'],
+  ]}
+/>
 
-<ComparisonTable headers={['Algorithm', 'How it Works', 'Use Case']} rows={[ ['LRU (Least Recently Used)', 'The system tracks the exact timestamp of the last *Read* operation. It deletes the item that hasn\'t been looked at for the longest time.', 'The default and most mathematically optimal policy for 90% of web applications.'], ['LFU (Least Frequently Used)', 'The system maintains a mathematical counter of how many *total times* an item was read. It deletes the item with the lowest score.', 'Useful for CDN caches protecting viral content. If a video goes viral, its LFU score skyrockets, making it mathematically immune to eviction.'], ['FIFO (First In, First Out)', 'A simple queue. The oldest item inserted into the cache is the first one deleted, regardless of how popular it is.', 'Rarely used in modern systems because it mathematically deletes highly popular data just because it is old.'], ['Random Replacement', 'Selects a completely random key and deletes it.', 'Incredibly low CPU overhead. Useful when the access pattern is completely unpredictable.'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Redis maxmemory-policy
+allkeys-lru
+volatile-ttl
+allkeys-lfu
+```
 
+volatile-* only evicts keys that have an expire. If you forgot TTL, the cache will hit maxmemory and start failing writes.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Set[SET new key] --> Full{At maxmemory?}
+    Full -->|no| Store
+    Full -->|yes| Policy[Pick victim]
+    Policy --> Evict --> Store
+```
+
+## 5. Interview Prep
+
+**Q: LRU versus LFU for a news site?**
+**A:** News shifts: LRU or TinyLFU with aging. Pure LFU keeps yesterday's viral story too long and admits today's slowly.
+
+**Q: What is scan resistance?**
+**A:** Not letting a one-time sequential read evict the hot set. Windowed / admission filters (TinyLFU) help.
+
+**Q: Why did Redis start rejecting writes?**
+**A:** maxmemory hit and policy is noeviction, or only volatile keys exist and none have TTLs. Check the policy.
+
+## 6. Production Use Cases
+
+- **Redis maxmemory-policy** in every cluster that is not a pure store.
+- **CDN** LRU at the POP.
+- **CPU caches** (hardware LRU approximations) as the metaphor.
+
+<Callout icon="tip" title="Pair eviction with a size budget">
+A policy without maxmemory is not a policy. It is a leak.
+</Callout>

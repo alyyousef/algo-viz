@@ -1,25 +1,95 @@
 ---
 title: AWS Secrets Manager
-description: A highly secure, encrypted vault designed to safely store, mathematically rotate, and precisely control access to database passwords, API keys, and sensitive cryptographic credentials.
+description: "Managed secret store with rotation Lambdas and fine-grained IAM — passwords and API keys as versioned blobs, not env files in git."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="AWS Secrets Manager"
-  subtitle="Automated Credential Vault"
-  tags={['AWS', 'Security', 'Encryption', 'Database']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AWS Secrets Manager">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Hardcoding a database password in your Python code or a GitHub repository is a fatal security flaw. Secrets Manager mathematically decouples the code from the credentials.
+**Secrets Manager** holds a secret string or binary under an ARN. Apps call GetSecretValue with IAM, not with a shared file. Versions (`AWSCURRENT`, `AWSPENDING`) make **rotation** a two-step: create new creds, prove they work, then flip the stage. KMS encrypts at rest. CloudTrail records who read.
 
-## 1. Centralized Retrieval
-Instead of a password, your code contains the ARN (Amazon Resource Name) of the Secret.
-When your Lambda function boots up, it makes an API call to Secrets Manager: *"Give me the database password."*
-Secrets Manager intercepts the request, mathematically checks the IAM Policy attached to the Lambda function, and if Authorized, uses KMS to decrypt the string and return it in memory. If a developer accidentally leaks the source code, the code only contains a harmless ARN; the password remains mathematically locked in AWS.
+## 1. Deep Dive and Mechanics
 
-## 2. Automated Rotation
-Database passwords should not last forever. Passwords should rotate every 30 days.
-Secrets Manager handles this mathematically and automatically.
-On day 30, it triggers an invisible Lambda function. This function logs into the live RDS database, generates a complex new mathematical password, updates the database, and updates Secrets Manager. The next time your application requests the password, it receives the new one. This ensures zero-downtime credential rotation without any human intervention.
+**Rotation.** A Lambda (AWS-managed for RDS/Redshift/DocumentDB, or yours) implements a state machine: createSecret, setSecret, testSecret, finishSecret. Multi-user rotation (a clone user) avoids locking yourself out of a DB.
 
-</TechnologyTemplate>
+**Replica secrets.** Cross-region replicas for DR reads. The primary owns rotation.
+
+**Resource policy.** Cross-account GetSecretValue plus KMS key policy — both must allow. A missing kms:Decrypt looks like an access-denied on the secret.
+
+**Caching.** The AWS-provided client cache (or your own with TTL) avoids GetSecretValue on every HTTP request (rate limits and latency). Invalidate on rotation by version id.
+
+**Alternative: SSM Parameter Store.** Cheaper, simpler, standard params. Secrets Manager wins on first-class rotation, random generation, and some compliance stories.
+
+<Callout icon="error" title="A secret in Lambda env is still a secret in the console">
+Inject at runtime via the SDK or a sidecar. Environment variables are visible to anyone with GetFunction and land in every dump.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Rotation period T vs leak window: expected exposure duration is ~T/2 if detection is absent. Shorter T needs consumers that refresh. Cache TTL should be ≪ T and ≥ a few minutes to absorb rate limits.
+
+Authorization is secret resource policy ∩ IAM ∩ KMS. Replica reads need the replica region’s API and the same KMS story (multi-region key or a replica key).
+
+<ComparisonTable
+  headers={['Store', 'Rotation', 'Cost model']}
+  rows={[
+    ['Secrets Manager', 'First-class Lambda', 'Per secret per month + API'],
+    ['SSM SecureString', 'You build it', 'Parameter + KMS'],
+    ['S3 + KMS', 'DIY', 'Do not'],
+    ['Git / AMI', 'Never', 'Incident'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import json
+import boto3
+
+sm = boto3.client('secretsmanager')
+payload = sm.get_secret_value(SecretId='prod/checkout/db')
+creds = json.loads(payload['SecretString'])
+# connect with creds['username'], creds['password']
+```
+
+Cache `creds` in process with a 5-minute TTL. On auth failures against the DB, force a refresh once (rotation race).
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Rot[Rotation Lambda] --> SM[Secrets Manager]
+    SM --> Cur[AWSCURRENT]
+    SM --> Pend[AWSPENDING]
+    App[App cache] --> SM
+    Rot --> DB[Database users]
+```
+
+## 5. Interview Prep
+
+**Q: Secrets Manager vs Parameter Store?**
+**A:** Parameter Store for config and cheap SecureStrings. Secrets Manager when you want managed rotation, generate-password, and replica secrets.
+
+**Q: Why do I need the KMS key policy too?**
+**A:** The secret blob is encrypted with that key. IAM on secretsmanager:GetSecretValue is not a decrypt grant.
+
+**Q: How does RDS rotation not break the app?**
+**A:** Multi-user or a pending password both valid during the window, plus app retry and cache refresh. Single-user rotate can drop connections at flip.
+
+## 6. Production Use Cases
+
+- RDS master and app user passwords with managed rotation.
+- Third-party API keys with a custom rotator.
+- Cross-account reads for a shared vendor credential (tight resource policy).
+
+<Callout icon="tip" title="Name secrets like ARNs">
+`prod/checkout/db` beats `mysecret2`. Policies and least privilege scale with a prefix tree, not folklore names.
+</Callout>

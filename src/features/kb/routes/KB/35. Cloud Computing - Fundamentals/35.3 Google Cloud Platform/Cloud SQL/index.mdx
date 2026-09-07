@@ -1,24 +1,93 @@
 ---
 title: Google Cloud SQL
-description: A fully managed relational database service for MySQL, PostgreSQL, and SQL Server, abstracting away database administration while providing automated mathematical replication and failover.
+description: "Managed MySQL, PostgreSQL, and SQL Server: instances, HA, and private IP — backups you did not cron, still a database you can starve with connections."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud SQL"
-  subtitle="Managed Relational Databases"
-  tags={['GCP', 'Database', 'SQL', 'Managed']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud SQL">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Cloud SQL is GCP's direct answer to AWS RDS. It provides a mathematically sound, fully managed environment for traditional relational databases, handling the grueling OS-level patching, backups, and network security automatically.
+**Cloud SQL** is Google’s hosted relational instances. You pick engine, tier (shared or dedicated vCPU), storage (SSD, optional increase), and HA (regional primary + standby). **Private IP** in a VPC is the default for apps. The Cloud SQL Auth Proxy / connector handles IAM auth and encryption without opening 5432 to the world.
 
-## 1. High Availability (HA) Mathematics
-For production workloads, a single database is a single point of failure.
-When you enable **High Availability** in Cloud SQL, Google provisions a Primary instance in Zone A and a Standby instance in Zone B.
-They use **Synchronous Replication**. When your API executes a SQL `INSERT`, the Primary database mathematically intercepts the storage block and fires it over the fiber network to the Standby. The Primary *will not* return a success message to your API until the Standby has physically confirmed the data is safely written to its own disk, mathematically guaranteeing zero data loss.
+## 1. Deep Dive and Mechanics
 
-## 2. Read Replicas
-If you have a massive reporting dashboard that runs complex `SELECT` queries, it can starve the Primary database of CPU, causing live API inserts to fail.
-Cloud SQL allows you to create **Read Replicas**. These use **Asynchronous Replication**. The Primary sends a stream of changes to the Replica in the background. You mathematically route all the heavy reporting traffic to the Replica, completely offloading the read-stress from the Primary and ensuring your production API remains blisteringly fast.
+**HA.** A regional instance has a standby in another zone. Failover is automatic; you still get a brief outage. Read replicas (same or cross-region) are for read scale and DR, not for zero-RPO writes.
 
-</TechnologyTemplate>
+**Backups and PITR.** Automated backups plus transaction logs for point-in-time. Test restore. On-demand backups before risky migrations.
+
+**Connectivity.** Private IP + private services access (or Private Service Connect). Public IP only with authorized networks is the old pattern. Auth Proxy from Cloud Run/GKE is table stakes.
+
+**Maintenance.** A window you pick. HA reduces the pain; it does not eliminate it. Pin a major version; test upgrades on a clone.
+
+**Flags and extensions.** Postgres extensions are a allow-list. Superuser is not yours in the MySQL/Postgres sense — `cloudsqlsuperuser` is close.
+
+<Callout icon="error" title="Connection storms from serverless">
+Cloud Run and Functions can open more connections than `max_connections`. Use the connector, a pooler, and max instances. The instance will otherwise refuse connections and look “down.”
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+HA RPO for sync replication is ~0 for acknowledged commits; failover RTO is minutes. Replica lag is asynchronous — read-your-writes needs the primary or session sticky.
+
+Storage IOPS scale with size (and SSD). A tiny disk under a large vCPU tier is a self-inflicted bottleneck.
+
+<ComparisonTable
+  headers={['Need', 'Cloud SQL', 'Elsewhere']}
+  rows={[
+    ['Managed MySQL/PG', 'Yes', 'AlloyDB for PG-scale'],
+    ['Global SQL', 'No', 'Spanner'],
+    ['Serverless PG', 'No', 'AlloyDB Omni / others'],
+    ['You want the VM', 'No', 'Compute Engine'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+gcloud sql instances create shop-pg \
+  --database-version=POSTGRES_16 \
+  --tier=db-custom-4-16384 \
+  --availability-type=REGIONAL \
+  --network=projects/shop/global/networks/vpc-prod \
+  --no-assign-ip
+```
+
+Apps use the connector with a service account that has `cloudsql.client`. Rotate passwords out of existence if you can use IAM login.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Run[Cloud Run] --> Conn[Auth connector]
+    Conn --> Pri[Primary zone A]
+    Pri --> Stdby[Standby zone B]
+    Pri --> Rep[Read replica]
+```
+
+## 5. Interview Prep
+
+**Q: Cloud SQL vs AlloyDB vs Spanner?**
+**A:** Cloud SQL is vanilla managed engines. AlloyDB is Google’s PostgreSQL-compatible, more performance/HA features, higher floor price. Spanner is a different global SQL system, not a lift of your stored procedures.
+
+**Q: Private IP vs Auth Proxy?**
+**A:** Private IP is routing. The proxy/connector is auth + TLS + IAM. You usually want both: private path and connector.
+
+**Q: How do you clone for a migration test?**
+**A:** Clone instance (or PITR clone) into a sandbox, run the migration, measure. Do not discover a 4-hour rewrite on the primary.
+
+## 6. Production Use Cases
+
+- Regional HA Postgres for a Cloud Run API.
+- Cross-region replica as a DR target you can promote (with a runbook).
+- SQL Server when a vendor requires it and will not move.
+
+<Callout icon="tip" title="Enable query insights before the incident">
+Query Insights and slow query logs are how you find the missing index. Turning them on during an outage is late.
+</Callout>

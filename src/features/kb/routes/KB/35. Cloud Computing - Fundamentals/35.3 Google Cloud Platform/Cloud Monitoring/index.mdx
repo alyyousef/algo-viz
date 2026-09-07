@@ -1,25 +1,96 @@
 ---
 title: Google Cloud Monitoring
-description: A comprehensive, mathematical observability platform (formerly Stackdriver) that ingests metrics, traces, and events to generate dashboards, alerts, and performance insights across GCP and AWS.
+description: "Metrics, SLOs, and alerting policies: time series first, logs second — uptime checks and dashboards that page on user-facing burn, not on every CPU blip."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud Monitoring"
-  subtitle="Full-Stack Metrics and Alerting"
-  tags={['GCP', 'Monitoring', 'Metrics', 'Alerts']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud Monitoring">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Cloud Logging handles text. Cloud Monitoring handles **Metrics** (pure numerical data mathematically tracked over time, e.g., CPU=80%, Latency=45ms). Combining both gives an SRE (Site Reliability Engineer) total observability.
+**Cloud Monitoring** (formerly Stackdriver Monitoring) stores time series from GCP, GKE, and custom metrics (OpenTelemetry, Monitoring API). You build **dashboards**, **alerting policies**, **uptime checks**, and **SLOs** (error budgets). It is the metrics half of operations; Cloud Logging is the log half. They join on resource labels and trace ids.
 
-## 1. Metrics Explorer and MQL
-Google Cloud automatically tracks thousands of default metrics for every resource you deploy.
-Engineers use the **Metrics Explorer** to visually chart this data. For complex mathematical analysis, they use **MQL (Monitoring Query Language)**.
-MQL allows you to perform advanced time-series math. You can write a query that takes the total number of HTTP 500 errors, mathematically divides it by the total number of HTTP 200 successes over a rolling 10-minute window, and graphs the resulting error-rate percentage, giving you a mathematically perfect view of system health.
+## 1. Deep Dive and Mechanics
 
-## 2. Alerting Policies
-Staring at dashboards is inefficient. SREs rely on mathematical **Alerting Policies**.
-You define a strict rule: *"If the MQL error-rate percentage calculation exceeds 5% for more than 3 consecutive minutes, trigger an Alert."*
-When the threshold is breached, the mathematical state engine fires a notification to an Action Channel (e.g., PagerDuty, Slack, or an SMS to the on-call engineer), ensuring that humans are only woken up at 3:00 AM when a mathematical anomaly physically threatens the platform.
+**Metrics.** Metric type + resource type + labels = a time series. Cardinality explosions (a label per user id) will hurt. PromQL-ish MQL and PromQL queries exist depending on the UI path.
 
-</TechnologyTemplate>
+**Alerting.** Condition + duration + notification channel (email, PagerDuty, Pub/Sub, Slack). Aligners and reducers matter: alerting on raw 1s noise is a flap machine.
+
+**SLOs.** Request-based or windows-based. Burn-rate alerts page when the budget is dying, not when a single 5-minute blip happens.
+
+**Uptime checks.** Synthetic HTTPS from Google regions. They prove the edge is reachable, not that a deep dependency is healthy.
+
+**Managed Service for Prometheus.** PromQL, collectors, and the same backend. GKE often goes this way.
+
+<Callout icon="warning" title="User-id labels">
+A custom metric with `user_id` as a label is millions of series. Aggregate in the app. Monitoring is not a warehouse.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+An SLO of 99.9 percent over 30 days is a budget of 0.1 percent failed (or slow) requests. A 14.4-minute 100 percent outage spends the monthly budget. Burn-rate alerting compares short-window fail rate to that budget.
+
+Alert precision/recall: longer alignment windows raise precision and miss short incidents. Pick based on MTTD vs noise.
+
+<ComparisonTable
+  headers={['Tool', 'Question', 'Not for']}
+  rows={[
+    ['Metrics + SLO', 'Are we burning budget?', 'Full request body'],
+    ['Uptime check', 'Is the URL up from a PoP?', 'Deep SQL health'],
+    ['Logs', 'Which request failed?', 'Cheap CPU paging'],
+    ['Trace', 'Where did time go?', 'Fleet-wide SLO'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+displayName: checkout-5xx
+conditions:
+  - displayName: 5xx ratio
+    conditionThreshold:
+      filter: 'metric.type="loadbalancing.googleapis.com/https/request_count"'
+      comparison: COMPARISON_GT
+      thresholdValue: 0.02
+      duration: 300s
+```
+
+Prefer a ratio of failed/total, not an absolute count that scales with traffic.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    GKE[GKE / Run] --> TS[Time series]
+    LB[HTTPS LB] --> TS
+    TS --> SLO[SLO + budget]
+    SLO --> Alert[Burn-rate alert]
+    Alert --> PD[PagerDuty]
+```
+
+## 5. Interview Prep
+
+**Q: Monitoring vs Logging?**
+**A:** Monitoring is numeric series and SLOs. Logging is events. Alert on metrics; diagnose with logs and traces.
+
+**Q: What is an error budget?**
+**A:** The allowed unreliability in the SLO window. Features freeze or rollbacks when the budget is gone — if you actually run that process.
+
+**Q: Why did my alert flap?**
+**A:** No duration, no aligner, or a threshold in raw units on a bursty metric. Use ratios and 5–15 minute windows for pages.
+
+## 6. Production Use Cases
+
+- LB 5xx and latency SLOs on the customer hostname.
+- GKE HPA still uses metrics; pages go to burn-rate, not HPA events.
+- Uptime checks from three continents on the marketing site.
+
+<Callout icon="tip" title="Page on symptoms">
+Checkout error rate beats “pod CPU > 80 percent.” CPU is a diagnostic chart, not a reason to wake a human at 3 a.m.
+</Callout>

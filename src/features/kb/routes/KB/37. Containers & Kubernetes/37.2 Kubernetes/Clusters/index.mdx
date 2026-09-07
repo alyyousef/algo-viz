@@ -1,30 +1,95 @@
 ---
-title: Clusters (Kubernetes)
-description: The fundamental macroscopic architecture of Kubernetes, consisting of a mathematical aggregate of master control nodes and worker compute nodes unified to operate as a single logical supercomputer.
+title: Kubernetes Clusters
+description: "A control plane plus worker nodes that present many machines as one API: you declare pods, the cluster places and heals them."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Kubernetes Clusters"
-  subtitle="The Logical Supercomputer"
-  tags={['Kubernetes', 'Architecture', 'Infrastructure', 'Distributed Systems']}
->
+    <ConceptTemplate title="Kubernetes Clusters">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A developer does not deploy an application to "Server A" or "Server B." In Kubernetes, the physical hardware is mathematically abstracted away. A developer deploys to the **Cluster**, treating a warehouse of 1,000 servers as a single logical supercomputer.
+A **Kubernetes cluster** is a set of machines that expose one API. You do not SSH to "box 7" to start a process. You POST a Pod or Deployment to the API. The control plane records the desired state; workers run it. The hardware becomes a pool.
 
-## 1. The Master-Worker Architecture
-A Kubernetes Cluster is mathematically divided into two distinct planes:
-- **The Control Plane (Master Nodes)**: The mathematical brain of the cluster. It does not run user applications. It runs the API server, the scheduler, and the etcd database. It makes global decisions (e.g., "We need 5 replicas of Nginx").
-- **The Data Plane (Worker Nodes)**: The physical muscle. These are the servers (EC2 instances, bare metal) that mathematically execute the containerized workloads (Pods). They take orders directly from the Control Plane.
+## 1. Deep Dive and Mechanics
 
-## 2. High Availability (HA)
-For a cluster to be mathematically resilient, it must be highly available.
-A production cluster never has a single Master Node; it typically has 3 or 5 Master Nodes spread across different physical data centers (Availability Zones). They use a mathematical consensus algorithm (Raft) to agree on the cluster state. If an entire data center catches fire and a Master Node is destroyed, the remaining nodes maintain mathematical quorum, and the cluster continues operating without a second of downtime.
+**Control plane.** kube-apiserver, etcd, scheduler, controller-manager (and often a cloud-controller-manager). These decide *what should run where*. They usually do not run your app containers.
 
+**Workers.** kubelet, a CRI runtime (containerd or CRI-O), kube-proxy or an eBPF replacement, and a CNI plugin. kubelet watches assigned pods and makes the node match.
+
+**Addons.** CoreDNS, a CNI, metrics-server, ingress or a gateway, and a CSI driver for disks. A "cluster" people can use is more than kubeadm's two binaries.
+
+**HA.** Production control planes run 3 or 5 API/etcd members across failure domains. etcd needs quorum (majority). Two masters is a split-brain footgun.
+
+**Tenancy.** Namespaces, RBAC, ResourceQuotas, and NetworkPolicies carve the pool. Hard multi-tenant (hostile customers) usually means multiple clusters or strong sandboxing, not one happy namespace.
+
+<Callout icon="warning" title="etcd is the cluster">
+If etcd is gone and you lack a snapshot, the API's memory of Deployments and Secrets is gone. Nodes may keep running stale pods, but you cannot change or recover control. Back up etcd (or use a managed control plane).
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Quorum.** For 2f+1 etcd members, you tolerate f failures. Three members tolerate one lost AZ. Five tolerate two, at higher write latency.
+
+**Bin packing.** The scheduler is an online placement algorithm: filter nodes (fit, taints, affinity), score, bind. Density versus disruption is a constant operations trade.
+
+<ComparisonTable
+  headers={['Plane', 'Examples', 'If it dies']}
+  rows={[
+    ['Control plane', 'API, etcd, scheduler', 'No new decisions; running pods linger'],
+    ['Data plane', 'kubelet, runtime, CNI', 'Workloads on that node fail'],
+    ['Managed CP', 'EKS / GKE / AKS masters', 'Vendor SLAs; you still own nodes'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+# kubeadm-shaped mental model
+kubectl get nodes -o wide
+kubectl get --raw /readyz?verbose
+kubectl -n kube-system get pods
+# Managed: you never SSH to a master; still check node and addon health
+```
+
+Create clusters with kubeadm, kops, Cluster API, or a cloud provider. The API you learn is the same; the boring HA work is what you buy when you choose EKS/GKE/AKS.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    User[kubectl / CI] --> API[kube-apiserver]
+    API --> Etcd[etcd quorum]
+    API --> Sched[scheduler]
+    API --> CM[controller manager]
+    Sched --> N1[worker kubelet]
+    Sched --> N2[worker kubelet]
+    N1 --> P1[pods]
+    N2 --> P2[pods]
+```
+
+## 5. Interview Prep
+
+**Q: What is a cluster, really?**
+**A:** A consistent store (etcd), an API, controllers that reconcile, and agents on nodes that run pods. Everything else is an addon.
+
+**Q: Why odd numbers of control-plane nodes?**
+**A:** etcd quorum. Even counts do not improve tolerance and make majority harder.
+
+**Q: One big cluster or many small?**
+**A:** Blast radius, RBAC complexity, and upgrade risk argue for many. Efficiency and a single mesh argue for few. Most orgs do both: a few prod clusters per region, not one global megacluster.
+
+## 6. Production Use Cases
+
+- **Managed Kubernetes** as the default production compute fabric.
+- **On-prem kubeadm / OpenShift** when data cannot leave the building.
+- **Ephemeral CI clusters** (Kind, k3d) that still teach the same API.
+
+<Callout icon="tip" title="Treat nodes as cattle">
+If replacing a node is scary, you have state on the node. Push state to PVs or external stores so the cluster can shed machines.
+</Callout>

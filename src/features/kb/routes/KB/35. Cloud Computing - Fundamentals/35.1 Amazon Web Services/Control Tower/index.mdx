@@ -1,27 +1,95 @@
 ---
 title: AWS Control Tower
-description: An enterprise governance service that automates the mathematical provisioning of a secure, multi-account AWS environment (a Landing Zone) enforced by strict, un-bypassable compliance guardrails.
+description: "Landing-zone product: Account Factory, mandatory guardrails, and a multi-account baseline so new AWS accounts are born governed, not empty."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="AWS Control Tower"
-  subtitle="Multi-Account Governance"
-  tags={['AWS', 'Security', 'Enterprise', 'Governance']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AWS Control Tower">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If a massive enterprise puts 500 developers in a single AWS account, the Blast Radius of a single mistake is the entire company. The architectural solution is to use AWS Organizations to give every team their own isolated AWS account. Control Tower manages the chaos of hundreds of accounts.
+**Control Tower** is AWS’s opinionated landing zone. It sits on Organizations, IAM Identity Center, CloudTrail, Config, and a set of **controls** (guardrails). You get a management account, a log-archive account, an audit account, and an Account Factory to vend workload accounts into OUs. The point is consistency: the twentieth account looks like the second.
 
-## 1. The Landing Zone
-When you activate Control Tower, it uses CloudFormation to mathematically synthesize a **Landing Zone**.
-It automatically creates a structural hierarchy of AWS Accounts:
-- **Log Archive Account**: A locked-down account where every CloudTrail log from all 500 sub-accounts is immutably stored.
-- **Security Account**: An account for the Infosec team containing cross-account auditing tools (Security Hub, GuardDuty).
-When a new team needs an environment, they use the Account Factory. Control Tower automatically spins up a mathematically pristine, pre-configured AWS account that is instantly wired into the central billing and security architecture.
+## 1. Deep Dive and Mechanics
 
-## 2. Detective and Preventive Guardrails
-Control Tower enforces absolute mathematical rules across all 500 accounts using **Guardrails**.
-- **Preventive Guardrails** (powered by Service Control Policies - SCPs): A mathematical absolute. For example, *"No one, not even the Root User of a sub-account, is allowed to disable CloudTrail or provision servers outside of the US-East-1 region."* The API mathematically blocks the action.
-- **Detective Guardrails** (powered by AWS Config): *"If any developer creates an S3 bucket that is public, instantly flag it as Non-Compliant and trigger an automated Lambda function to mathematically rewrite the bucket policy to Private."*
+**OUs.** Security OU holds log-archive and audit. Sandbox and workload OUs hold the rest. SCPs attach at OU boundaries. Moving an account changes its guardrail set.
 
-</TechnologyTemplate>
+**Controls.** Preventive (SCP, RCPs), detective (Config rules), and proactive (CloudFormation hooks / Control Catalog). Mandatory controls cannot be switched off if you want a registered OU. Strongly recommended and elective controls are how you ratchet a regulated estate.
+
+**Account Factory.** Service Catalog (or AFC with AFT) provisions accounts from a blueprint: VPC-or-not, SSO mappings, baseline stacks.
+
+**AFT.** Account Factory for Terraform is the escape hatch when you want Terraform pipelines to customize each vended account after Control Tower registers it.
+
+**Drift.** If someone detaches a trail or disables Config in a member, Control Tower reports drift. Repair is not always one click.
+
+<Callout icon="warning" title="The management account is radioactive">
+Do not run workloads there. Billing, Organizations, and Control Tower APIs concentrate privilege. A leaked management role is a company-wide incident.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A landing zone is a **policy lattice**: OU path × control set × IAM Identity Center permission sets. Effective permission is the intersection of identity policy, resource policy, SCP, permission boundary, and session policies. Preventive controls work by making the API fail; detective controls work by measuring after the fact. Completeness of detection is Config recorder coverage × rule coverage × delivery health.
+
+<ComparisonTable
+  headers={['Approach', 'Who operates', 'When']}
+  rows={[
+    ['Control Tower', 'AWS + you', 'Standard AWS multi-account'],
+    ['Landing Zone Accelerator', 'You on AWS samples', 'Heavier regulated custom'],
+    ['Home-grown Orgs + SCPs', 'You', 'Small estates, special needs'],
+    ['Single account', 'Nobody', 'Never for a company'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Control Tower is mostly console / CfCT / AFT.
+# After an account is vended, tag and enroll it in your pipeline.
+account_baseline = {
+    'cloudtrail': 'organization-trail',
+    'config': 'all-regions',
+    'sso': 'permission-sets-by-ou',
+    'vpc': 'optional-central-egress',
+}
+```
+
+Decide once whether workload accounts get a VPC by default. Retrofitting networking is harder than vending it.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    Mgmt[Management account] --> CT[Control Tower]
+    CT --> Sec[Security OU]
+    CT --> Work[Workload OUs]
+    Sec --> Logs[Log archive]
+    Sec --> Audit[Audit]
+    Work --> Acc[Member accounts]
+```
+
+## 5. Interview Prep
+
+**Q: What does Control Tower actually create?**
+**A:** Organization structure, shared accounts, Identity Center integration, organization CloudTrail/Config baselines, and a catalog of controls. It is not a substitute for app IAM.
+
+**Q: SCP vs IAM policy?**
+**A:** SCP is a max-permission ceiling on an account or OU. It cannot grant. IAM still must allow.
+
+**Q: Control Tower vs Organizations alone?**
+**A:** Organizations is the primitive. Control Tower is the productized baseline and Account Factory on top.
+
+## 6. Production Use Cases
+
+- Enterprise landing zones with dozens to thousands of accounts.
+- Regulated estates that need evidence of mandatory detective controls.
+- Self-service account vending for product teams.
+
+<Callout icon="tip" title="OU design is the real architecture">
+Put blast-radius and data-classification into OU names. Guardrails follow the tree; a flat OU list makes every exception global.
+</Callout>

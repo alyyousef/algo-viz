@@ -1,25 +1,96 @@
 ---
 title: Azure Subnets
-description: The logical, mathematical segmentation of an Azure Virtual Network (VNet) used to isolate resources, enforce strict security perimeters, and control the flow of IP traffic.
+description: "CIDR slices of a VNet: delegation, service endpoints, and private endpoints — where NICs live, and where Azure services sneak in extra IPs."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Subnets"
-  subtitle="Network Segmentation"
-  tags={['Azure', 'Networking', 'VNet', 'Security']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Subnets">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-You cannot deploy a Virtual Machine directly into a Virtual Network (VNet). You must deploy it into a Subnet—a mathematically defined, smaller slice of the VNet's IP address space.
+An Azure **subnet** is a CIDR inside a VNet. NICs, private endpoints, and some PaaS injections consume addresses. **Delegation** hands a subnet to a service (ACI, Container Apps, NetApp, API Management) so that service can place NICs you do not fully own. Unlike AWS, a subnet is not pinned to one availability zone — the VNet/subnet is regional; zone placement is on the VM or scale set.
 
-## 1. CIDR Slicing
-If your VNet is defined as `10.0.0.0/16` (65,536 IPs), you mathematically carve it into Subnets.
-- Web Subnet: `10.0.1.0/24` (256 IPs)
-- Database Subnet: `10.0.2.0/24` (256 IPs)
-Unlike AWS (where subnets are strictly tied to a single physical Availability Zone), Azure Subnets **span the entire region**. A single Azure Subnet can contain VMs physically located in Zone 1, Zone 2, and Zone 3 simultaneously. This drastically simplifies the mathematical complexity of high-availability network design compared to AWS.
+## 1. Deep Dive and Mechanics
 
-## 2. Subnet Delegation
-Some managed Azure PaaS services (like Azure App Service or Azure PostgreSQL) require strict control over their network environment.
-Azure uses **Subnet Delegation**. You mathematically hand over absolute control of a specific Subnet to the Azure PaaS service. You cannot deploy your own VMs into a delegated subnet; the Azure software hypervisor assumes total control over that IP space, injecting its managed servers directly into your private network while maintaining strict isolation.
+**Reserved IPs.** Azure reserves the first four and the last address in each subnet. A `/27` is small once you add private endpoints.
 
-</TechnologyTemplate>
+**Delegation.** A delegated subnet cannot host arbitrary VMs. Plan dedicated subnets for App Service VNet integration, ACA environments, and firewalls.
+
+**Service endpoints vs private endpoints.** Service endpoints lock a PaaS firewall to your subnet IDs (still a public VIP). Private endpoints put a NIC in the subnet and keep traffic on the Microsoft backbone with private DNS. Prefer private endpoints.
+
+**NSG and route table.** Both attach at subnet scope (UDR). A subnet without an NSG still has no magic deny — add one.
+
+**NAT Gateway.** Attach at subnet for predictable outbound SNAT. One NAT Gateway can serve several subnets in the VNet.
+
+<Callout icon="error" title="Private endpoint sprawl">
+Each private endpoint eats at least one IP plus DNS records. A `/24` of app VMs plus fifty endpoints fills. Give PE a dedicated subnet.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Usable IPv4 ≈ 2^(32-prefix) − 5. Growth is NICs + PE + service injection, not “VM count on day one.”
+
+Zone-redundant VMSS spread across AZs from the same regional subnet. You do not need an AWS-style subnet-per-AZ unless you choose to.
+
+<ComparisonTable
+  headers={['Pattern', 'IPs live in', 'Public VIP']}
+  rows={[
+    ['Service endpoint', 'PaaS public', 'Yes, filtered'],
+    ['Private endpoint', 'Your subnet NIC', 'No'],
+    ['Delegation', 'Service-managed NICs', 'Depends'],
+    ['Plain VM subnet', 'Your NICs', 'If you attach a PIP'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bicep
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-09-01' = {
+  parent: vnet
+  name: 'snet-pe'
+  properties: {
+    addressPrefix: '10.10.16.0/20'
+    privateEndpointNetworkPolicies: 'Disabled'
+  }
+}
+```
+
+Disable private endpoint network policies on PE subnets (classic requirement). Put NSGs on app subnets, not as a way to “secure” a PE you already isolated.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    VNet[VNet 10.10.0.0/16]
+    VNet --> App[snet-app]
+    VNet --> Data[snet-data]
+    VNet --> Pe[snet-pe]
+    VNet --> Aca[snet-aca delegated]
+```
+
+## 5. Interview Prep
+
+**Q: Are Azure subnets zonal like AWS?**
+**A:** No. The subnet is regional. Zone is a property of the compute you place. You can still design zonal isolation with zonal VMs.
+
+**Q: Delegation vs private endpoint?**
+**A:** Delegation lets a service inject many NICs (the service runs in your subnet). A private endpoint is one NIC that fronts a PaaS instance.
+
+**Q: Why did my App Service integration fail?**
+**A:** The integration subnet must be delegated and empty of unexpected NICs, and large enough for scale-out. Read the docs for the SKU’s IP math.
+
+## 6. Production Use Cases
+
+- Hub-spoke: subnets for firewall, shared PE, and gateway in the hub; app/data in spokes.
+- Dedicated `/20` for private endpoints.
+- Delegated subnet for Container Apps consumption environment.
+
+<Callout icon="tip" title="Draw the IP plan before the first VNet">
+Azure IPAM or a spreadsheet with reserved blocks per spoke. Expanding a live subnet is possible but painful; adding a second prefix is cleaner if you planned space.
+</Callout>

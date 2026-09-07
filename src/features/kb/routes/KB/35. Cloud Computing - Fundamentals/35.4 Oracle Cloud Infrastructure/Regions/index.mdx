@@ -1,23 +1,90 @@
 ---
 title: OCI Regions
-description: The highest-level physical and geographical architecture of Oracle Cloud, representing distinct, entirely isolated data center clusters spread across the globe.
+description: "Metros with one or more ADs: subscribe, pick a home region, and design DR across regions — latency and data residency are the real constraints."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Regions"
-  subtitle="Global Geographical Isolation"
-  tags={['OCI', 'Architecture', 'Infrastructure', 'Global']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Regions">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-When you deploy a Virtual Machine in OCI, you must choose a **Region** (e.g., US East - Ashburn, or UK South - London). A Region is a specific geographical area that contains one or more Availability Domains.
+An OCI **region** is a geographic metro with one or more **availability domains**, its own service endpoints, and its own capacity. Your tenancy has a **home region** for IAM. You **subscribe** additional regions before you can launch there. Commercial, government, and dedicated realms are separate.
 
-## 1. Mathematical Isolation
-Regions are mathematically and physically isolated from one another.
-They do not share power grids, network backbones, or regional control planes. If a massive natural disaster completely destroys the Ashburn region, the London region is mathematically unaffected and remains 100% operational. This is the foundation of Disaster Recovery (DR). Cloud architects mathematically duplicate their infrastructure across two Regions so that if one fails entirely, the global DNS can instantly route traffic to the surviving Region.
+## 1. Deep Dive and Mechanics
 
-## 2. Data Sovereignty and Compliance
-Regions enforce strict mathematical **Data Sovereignty**.
-If a German bank stores its customer data in the Frankfurt Region, Oracle mathematically guarantees that the data physically rests on hard drives inside the borders of Germany. It will not be replicated to the US or the UK unless explicitly configured by the customer. This physical architecture is required to comply with strict international privacy laws like GDPR, ensuring the data never mathematically crosses restricted national borders.
+**Subscribe.** Enabling a region is a tenancy operation. After that, VCNs, buckets, and instances are regional objects with regional OCIDs.
 
-</TechnologyTemplate>
+**1-AD vs 3-AD.** Many regions have a single AD. HA inside the region is fault domains. Cross-region is the DR story.
+
+**Endpoints.** SDKs take `region=us-phoenix-1`. Object Storage namespaces are tenancy-global but buckets are regional.
+
+**Paired DR.** Pick a second region with acceptable latency and legal residency. Remote peering and backup copy jobs need both subscribed.
+
+<Callout icon="warning" title="Home region is not your only data region">
+Apps can run in Frankfurt while IAM lives in the home region. Some identity edits must still target home. Know which API.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Latency: speed of light plus the provider backbone. Sync commit across continents is a product decision, not a checkbox.
+
+Failure correlation: two regions in one political jurisdiction can share a legal event. Residency and DR are different axes.
+
+<ComparisonTable
+  headers={['Choice', 'Helps', 'Does not']}
+  rows={[
+    ['Multi-AD region', 'Building loss', 'Region loss'],
+    ['Second region', 'Region loss', 'Bad global IAM'],
+    ['Home region only', 'Simplicity', 'User locality'],
+    ['Every region', 'Coverage', 'Cost and ops'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci iam region-subscription create --region-key FRA
+oci iam region list --all
+```
+
+Terraform provider aliases per region. Do not assume a resource is global because IAM is.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Ten[Tenancy] --> Home[Home region]
+    Ten --> R1[Subscribed region A]
+    Ten --> R2[Subscribed region B]
+    R1 --> AD[ADs / FDs]
+    R2 --> AD2[ADs / FDs]
+    R1 --> RPC[Remote peering]
+    RPC --> R2
+```
+
+## 5. Interview Prep
+
+**Q: Region vs AD?**
+**A:** Region is the metro and API endpoint. AD is an isolated DC inside it (sometimes only one).
+
+**Q: Why subscribe?**
+**A:** Tenancies do not automatically have every region. Subscribe, then apply.
+
+**Q: Where should DR live?**
+**A:** Another region that meets RPO/RTO and law. Another FD is not DR.
+
+## 6. Production Use Cases
+
+- User-facing apps in the closest subscribed region.
+- Backup copy of Object Storage and block backups to a pair region.
+- Sovereignty: stay inside a country realm.
+
+<Callout icon="tip" title="List regions in the landing zone">
+A markdown table of subscribed regions, AD counts, and purpose (prod, DR, sandbox) prevents surprise launches in a random metro.
+</Callout>

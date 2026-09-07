@@ -1,6 +1,6 @@
 ---
 title: Reverse Proxies
-description: "An intermediary server that sits in front of backend application servers, intercepting and routing client requests."
+description: "An edge hop that accepts client traffic, hides origins, and adds TLS, cache, and load balancing — the opposite of a forward proxy that hides clients."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
@@ -10,35 +10,98 @@ export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Reverse Proxies">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In modern web architecture, users rarely connect directly to the server running your actual application code (e.g., your Node.js or Java process). Instead, they connect to a **Reverse Proxy**.
+A **reverse proxy** sits in front of your origin servers. Clients believe they are talking to the site; they are talking to Nginx, HAProxy, Envoy, Caddy, or a cloud ALB. The proxy **forwards** to private apps, and it is where TLS, routing, and coarse caching usually live.
 
-A Reverse Proxy is an intermediary server (like Nginx, HAProxy, or Envoy) that sits at the edge of your network, receives all incoming HTTP requests, and forwards them to the appropriate backend server.
+## 1. Deep Dive and Mechanics
 
-## 1. Forward Proxy vs Reverse Proxy
+**Hop.** Client → proxy (public IP) → origin (RFC1918 or mesh). The origin never needs a public address. The proxy sanitizes headers, sets `X-Forwarded-For` / `Forwarded`, and chooses an upstream.
 
+**Jobs that accumulate at this hop:**
 
-<ComparisonTable headers={['Type', 'Who it protects', 'Use Case']} rows={[ ['Forward Proxy', 'The Client (User).', 'A corporate VPN proxy that hides the employee\'s IP address from the websites they visit.'], ['Reverse Proxy', 'The Server (Backend).', 'Nginx hiding your internal database and application servers from the public internet.'] ]} />
+1. **TLS termination** — decrypt once, speak HTTP inside a trusted network (or re-encrypt).
+2. **Routing** — host, path, header, or cookie to the right service.
+3. **Load balancing** — pick a healthy replica.
+4. **Caching** — store GET responses keyed by URL and vary headers.
+5. **Shielding** — rate limits, WAF, request size caps, HTTP/2 fan-in.
 
+**API gateways** are reverse proxies with a product catalog: keys, quotas, request transform, developer portals. Kong, Apigee, and AWS API Gateway are still proxies underneath.
 
-## 2. Why use a Reverse Proxy?
+**Hop-by-hop headers** (`Connection`, `Keep-Alive`, `Transfer-Encoding`) must not be blindly copied. HTTP/2 to the client and HTTP/1.1 to the origin is normal; the proxy is the protocol translator.
 
-1. **Security & Anonymity**: The public internet only sees the proxy's IP address. Your internal application servers can remain safely hidden on a private subnet.
-2. **TLS/SSL Termination**: HTTPS decryption is CPU-intensive. The proxy handles the decryption, allowing your application servers to focus entirely on running business logic (receiving plain HTTP).
-3. **Caching**: If 100 users request the exact same image or API response, the proxy can cache the first response and serve it to the next 99 users instantly, without even waking up your application server.
-4. **Load Balancing**: The proxy can distribute incoming requests evenly across 5 different backend servers.
-
-
-<Callout icon="info" title="API Gateways">
-
-
-An **API Gateway** (like AWS API Gateway or Kong) is essentially an advanced Reverse Proxy that adds developer-focused features like rate-limiting, API key authentication, and request/response transformation.
-
-
+<Callout icon="warning" title="Trust X-Forwarded-For only from you">
+If the proxy appends the client IP but the app trusts the leftmost value, anyone can spoof an IP. Trust the rightmost address added by your edge, or overwrite the header at the proxy.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+A reverse proxy is a **multiplexer**. Fan-in of C client connections onto U upstreams with keep-alive reuse cuts sockets from C to about U times a small pool. That is why an origin can serve more users than it has threads.
+
+Cache hit rate h reduces origin QPS to (1 − h) of arrivals (for cacheable GETs). Hit rate dies if you `Vary` on too many headers or put cookies on every response.
+
+<ComparisonTable
+  headers={['Kind', 'Who is hidden', 'Typical product', 'Trust direction']}
+  rows={[
+    ['Forward proxy', 'The client', 'Corp egress, Squid', 'Server sees proxy IP'],
+    ['Reverse proxy', 'The origin', 'Nginx, ALB, Envoy', 'Client sees site IP'],
+    ['API gateway', 'The origin plus policy', 'Kong, Apigee', 'Same as reverse + auth'],
+    ['Mesh sidecar', 'Peer identity', 'Envoy sidecar', 'mTLS between hops'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name api.example.com;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://10.0.1.10:8080;
+    }
+}
+```
+
+The app must read the forwarded proto if it generates absolute redirects; otherwise it will emit `http://` links behind a TLS edge.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Users[Users] --> RP[Reverse proxy]
+    RP --> A[App A]
+    RP --> B[App B]
+    RP --> Cache[Optional cache]
+    subgraph private [Private network]
+      A
+      B
+    end
+```
+
+## 5. Interview Prep
+
+**Q: Forward versus reverse proxy in one sentence?**
+**A:** Forward proxies represent clients to the internet; reverse proxies represent servers to clients.
+
+**Q: Why not expose the app port directly?**
+**A:** You lose a choke point for TLS, authn, request limits, and pool changes. You also advertise internal topology and versions.
+
+**Q: When is a gateway not just a proxy?**
+**A:** When you need per-consumer credentials, quotas, and a catalog. If you only need host and path routing, a reverse proxy is enough.
+
+## 6. Production Use Cases
+
+- **Public website edge** terminating TLS and splitting `/` static from `/api`.
+- **Blue-green or canary** by shifting upstream weights on the proxy.
+- **Internal platform** entry (ingress) in Kubernetes.
+
+<Callout icon="tip" title="Make the proxy the only public listener">
+Origins bind to localhost or a private NIC. Security groups then become simple: 443 to the proxy, nothing to the app subnet from 0.0.0.0/0.
+</Callout>

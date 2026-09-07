@@ -1,37 +1,100 @@
 ---
 title: Cache Stampede Prevention
-description: Architectural techniques used to prevent a database from being overwhelmed when a highly popular cached item suddenly expires.
+description: "Stopping a herd of misses on one expired key from DDoSing the origin — single-flight, locks, jitter, and serving stale."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Cache Stampede Prevention">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A **Cache Stampede** (also known as a Thundering Herd) is a catastrophic mathematical failure mode in distributed systems.
+A **cache stampede** (dogpile, thundering herd) is many concurrent misses for the same key after expiry or eviction. Every request hits the database. The database falls over, fills fail, and the cache stays empty. Prevention means **one fill** (or a few) and everyone else **waits or sees stale**.
 
-Imagine a highly popular article on a news site receiving 10,000 requests per second. The article is cached in Redis with a TTL. The instant the TTL mathematically expires, Redis deletes the key.
+## 1. Deep Dive and Mechanics
 
-In that exact millisecond, 10,000 concurrent user requests check Redis. They all experience a Cache Miss simultaneously. All 10,000 requests bypass the cache and mathematically slam the PostgreSQL database at the exact same time. The database instantly OOMs and crashes.
+**Single-flight / request coalescing.** In-process, one goroutine loads; waiters share the result. Works per instance, not cluster-wide.
 
+**Distributed lock.** SET key:lock NX PX 2000 around the fill. Losers wait and reread the cache, or serve stale. Lock expiry must exceed fill time.
 
-<Callout icon="warning" title="The Danger of Simplicity">
+**Probabilistic early expiration.** XFetch / jitter: some requests refresh before TTL hits zero so expiry is smeared.
 
+**Stale-while-revalidate.** Keep serving the old value past TTL while a background refresh runs. Users see slightly old data; origin sees one load.
 
-  Standard Cache-Aside architecture provides absolutely zero mathematical protection against Cache Stampedes. You must actively engineer a prevention mechanism.
-
-
+<Callout icon="error" title="A herd can take the site down in seconds">
+Hot keys (home page, a celebrity profile) are the usual victims. Test expiry under load, not only the happy hit path.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Mathematical Prevention Strategies
+If R requests arrive during a fill of duration F, an unprotected cache issues R origin queries. With a lock, origin queries drop to about 1 plus stragglers. Jittered TTLs turn a Dirac expiry at t into a window of width J.
 
+<ComparisonTable
+  headers={['Tactic', 'Scope', 'User sees', 'Ops note']}
+  rows={[
+    ['Single-flight', 'Process', 'Wait', 'Easy, incomplete'],
+    ['NX lock', 'Cluster', 'Wait or stale', 'Need TTL on lock'],
+    ['Jittered TTL', 'Cluster', 'Mostly hits', 'Smear only'],
+    ['Serve stale', 'Cluster', 'Old value', 'Best UX often'],
+  ]}
+/>
 
-<ComparisonTable headers={['Strategy', 'How it Works', 'Drawback']} rows={[ ['Mutex Locks (Distributed Locking)', 'When the key expires, the first thread to realize it mathematically acquires a Redis Lock. The other 9,999 threads are forced to sleep/wait. The first thread queries the DB, repopulates the cache, and releases the lock. The sleeping threads wake up and safely read the new cache.', 'Creates a mathematical bottleneck. The 9,999 threads consume RAM while sleeping.'], ['Probabilistic Early Expiration (PER)', 'Threads use a mathematical algorithm (involving a random number) to "pretend" the cache has expired slightly *before* it actually does. One lucky thread repopulates the cache while the TTL is still technically alive, so the other 9,999 threads just get the slightly older cached version.', 'Mathematically complex to tune the probability algorithms correctly.'] ]} />
+## 3. Real-World Implementation
 
+```python
+def get_hot(cache, key, load):
+    val, stale = cache.get_with_ttl(key)
+    if val is not None and not stale:
+        return val
+    if cache.set(key + ":lock", "1", nx=True, px=2000):
+        try:
+            fresh = load()
+            cache.set(key, fresh)
+            return fresh
+        finally:
+            cache.delete(key + ":lock")
+    return val if val is not None else load()
+```
 
+The last load() is the fallback if there is no stale value. Keep it rare.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant H as Herd
+    participant C as Cache
+    participant L as Lock
+    participant D as DB
+    H->>C: miss
+    C->>L: NX lock
+    L->>D: one fill
+    D-->>C: set
+    H->>C: waiters reread
+```
+
+## 5. Interview Prep
+
+**Q: Why not just a longer TTL?**
+**A:** That reduces stampede frequency, not severity, and increases staleness. Still add a lock or stale serve for hot keys.
+
+**Q: What if the locker dies?**
+**A:** Lock TTL releases it. Waiters may stampede once. That is better than a stuck lock that never fills.
+
+**Q: Redis versus in-process single-flight?**
+**A:** Use both. In-process cuts local herds. Redis lock cuts cross-instance herds.
+
+## 6. Production Use Cases
+
+- **Homepage assemblies**.
+- **Token validation** dumps.
+- **CDN** stale-while-revalidate at the edge.
+
+<Callout icon="tip" title="Name the hottest ten keys">
+Stampede work is wasted on the long tail. Instrument miss rate per key.
+</Callout>

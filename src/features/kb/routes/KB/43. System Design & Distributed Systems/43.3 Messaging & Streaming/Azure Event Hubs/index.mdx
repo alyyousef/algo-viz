@@ -1,30 +1,89 @@
 ---
 title: Azure Event Hubs
-description: "A highly scalable data streaming platform and event ingestion service in Microsoft Azure, mathematically capable of receiving and processing millions of events per second, designed as Microsoft's equivalent to Apache Kafka."
+description: "Azure managed event ingestion with partitions and consumer groups — Kafka-protocol compatible telemetry at cloud scale."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Azure Event Hubs"
-  subtitle="Massive Scale Event Ingestion"
-  tags={['System Design', 'Azure', 'Streaming', 'Big Data']}
->
+    <ConceptTemplate title="Azure Event Hubs">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you are building an IoT architecture with 10 million smart thermostats sending temperature data every second, a standard message queue (like Azure Service Bus or AWS SQS) will mathematically collapse under the load.
+**Azure Event Hubs** is a managed ingestion log. Producers send events into a namespace and hub. The hub is split into **partitions**. **Consumer groups** each read independently. The Kafka endpoint lets existing Kafka clients talk to Event Hubs with some feature gaps.
 
-## 1. The Append-Only Log
-Event Hubs is not a Message Broker; it is a **Stream Processing Platform** (architecturally identical to Kafka).
-Instead of tracking which specific consumer read which specific message (which requires massive database locks), Event Hubs is a simple, distributed, append-only log.
-When 10 million thermostats send data, Event Hubs mathematically blasts the data onto disk sequentially across multiple partitions. It does not delete the data when read; the data stays on disk for a configured retention period (e.g., 7 days).
+## 1. Deep Dive and Mechanics
 
-## 2. Consumer Checkpointing
-Because the data is not deleted, the mathematical responsibility shifts to the Consumer.
-The Consumer must keep track of its own "Offset" (the index number of the last message it read). If the Consumer crashes at offset 5,000, it restarts, reads its local checkpoint, and mathematically asks Event Hubs: *"Give me everything from offset 5,001."* This allows multiple different analytics teams to mathematically replay the exact same stream of data from the beginning of time.
+**Throughput units / processing units / capacity.** You buy ingress. Throttle is a first-class outage mode. Autoscale exists; it is not instant.
 
+**Partitions.** Choose at create time (can scale out on some SKUs). Partition key affinity keeps order per key, same as Kafka.
+
+**Capture.** Optional archive to Blob or ADLS as a batch dump — good for lake ingestion without a long consumer.
+
+**Checkpoints.** Event processor hosts store offsets in Blob. If you do not checkpoint, restarts replay from the beginning or from retention, depending on config.
+
+<Callout icon="info" title="Event Hubs is not Service Bus">
+Hubs are telemetry streams. Service Bus is queues, sessions, and business messaging. Mixing them in a design review is a common miss.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Same log math as Kafka: order per partition, scale by partition count, retention by time/size. Consumer lag is latest offset minus checkpoint.
+
+Kafka compatibility is a protocol mapping, not a full Apache Kafka cluster. Compacted topics and some admin APIs differ.
+
+<ComparisonTable
+  headers={['Azure piece', 'Model', 'Use']}
+  rows={[
+    ['Event Hubs', 'Log, partitions', 'Telemetry, clickstream'],
+    ['Service Bus queue', 'Competing consumers', 'Commands, jobs'],
+    ['Service Bus topic', 'Pub-sub', 'Fan-out business events'],
+    ['Event Grid', 'Reactive routing', 'Blob created, SaaS events'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```csharp
+// EventHubProducerClient.SendAsync(batch);
+// EventProcessorClient with Blob checkpoint store
+```
+
+Batch sends. Handle PartitionOwnership. Do not checkpoint before the DB write.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Apps --> EH[Event Hub]
+    EH --> P0[Partition]
+    EH --> P1[Partition]
+    P0 --> CG[Consumer group]
+    P1 --> CG
+    EH --> Cap[Capture to ADLS]
+```
+
+## 5. Interview Prep
+
+**Q: Kafka on Event Hubs — any catch?**
+**A:** It works for many produce/consume paths. Test compaction, transactions, and admin tools. Do not assume every Kafka feature exists.
+
+**Q: How many partitions?**
+**A:** Ingress target divided by per-partition limits, plus consumer parallelism. Too few and you throttle; too many and you pay and rebalance more.
+
+**Q: Event Hubs versus Kinesis?**
+**A:** Same niche on different clouds. Checkpoint stores and IAM differ. The design picture is identical.
+
+## 6. Production Use Cases
+
+- **IoT and click** ingestion.
+- **Pipeline into Azure Stream Analytics or Spark**.
+- **Capture** as a cheap lake feed.
+
+<Callout icon="tip" title="Alert on throttled bytes">
+Throttling looks like random timeouts in clients. Watch the metric before you scale the app.
+</Callout>

@@ -1,36 +1,91 @@
 ---
 title: Method Overloading
-description: A mathematical feature in strongly-typed programming languages allowing multiple methods to possess the exact same name within a single class, provided their parameter signatures are distinct.
+description: "Several methods share a name and differ by parameter list; the compiler binds the call before the program runs."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Method Overloading"
-  subtitle="Compile-Time Mathematical Polymorphism"
-  tags={['OOP', 'Polymorphism', 'Java', 'C++']}
->
+    <ConceptTemplate title="Method Overloading">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Method Overloading is a form of mathematical polymorphism resolved entirely at **Compile-Time** (Static Polymorphism).
+**Method overloading** is one name, many signatures. The compiler picks the best match from the argument types it can see. After compilation, the methods are distinct symbols.
 
-## 1. Distinct Mathematical Signatures
-The compiler mathematically identifies a method not just by its name (`print`), but by its **Signature** (Name + Parameter Types + Parameter Order).
+## 1. Deep Dive and Mechanics
+
+Java and C-sharp allow overloading on arity and parameter types, not on return type alone. C++ can also overload operators. Python does not overload in this sense: a second `def` of the same name replaces the first.
+
+**Resolution.** Candidates are collected, inapplicable ones dropped, then the most specific remaining method wins. Ties are compile errors. Varargs, generics, and boxing expand the candidate set.
+
+**Bridge methods.** Generics and covariant returns may cause the compiler to emit extra methods so the JVM can still pick by descriptor.
+
+<Callout icon="warning" title="Overloads plus overrides">
+The static argument types pick the overload. The runtime receiver type picks the override. Debug both steps when a call looks "wrong."
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Overloading is ad-hoc polymorphism. Each signature is a separate function. Name resolution is a partial function from a tuple of static types to a declaration.
+
+Because return types are not inputs to that function in Java, you cannot overload on return type: the input tuple would be identical.
+
+<ComparisonTable
+  headers={['Feature', 'Overloading', 'Overriding']}
+  rows={[
+    ['Same signature', 'No, must differ', 'Yes, must match'],
+    ['When chosen', 'Compile time', 'Run time'],
+    ['Languages', 'Java, C-sharp, C++', 'Any with virtual methods'],
+    ['Python', 'Not supported', 'Supported'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
 ```java
-public class Printer {
-    public void print(String text) { ... }
-    public void print(int number) { ... }
-    public void print(String text, int count) { ... }
+public final class Metrics {
+    public void increment(String name) {
+        increment(name, 1);
+    }
+
+    public void increment(String name, long delta) {
+        // write to the backend
+    }
 }
 ```
-To a human, these are three methods with the same name. To the compiler, these are three mathematically entirely different entities: `print_String`, `print_int`, and `print_String_int`.
 
-## 2. Compile-Time Resolution
-When the developer types `printer.print(5)`, the compiler mathematically analyzes the argument (`5` is an `int`).
-During compilation, it permanently wires that specific line of code to the `print(int number)` implementation. Unlike Method *Overriding* (which requires the CPU to determine which child class to call while the program is actually running), Overloading requires zero runtime overhead, making it mathematically highly efficient.
+The one-argument form is syntax sugar that forwards to the canonical two-argument form.
 
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Src[Source call increment name] --> Binder[Compiler binder]
+    Binder --> M1[increment String]
+    Binder --> M2[increment String long]
+```
+
+## 5. Interview Prep
+
+**Q: Can you overload by return type?**
+**A:** Not in Java or C-sharp. The call site might ignore the return value, so the compiler would not know which method you meant.
+
+**Q: Overloading versus default arguments?**
+**A:** Default arguments (Kotlin, C++, Python) keep one method and fill missing parameters. Overloading creates several methods. Defaults avoid combinatorial explosion.
+
+**Q: Why does `null` break overload resolution?**
+**A:** `null` is a valid value for every reference type. Several overloads may remain applicable, and the most specific type wins — or the compiler gives up.
+
+## 6. Production Use Cases
+
+- **Fluent APIs** with overloads for primitives, arrays, and collections.
+- **JNI / interop layers** that expose both buffer and array forms.
+- **Test helpers** such as `assertEquals` with many type-specific overloads.
+
+<Callout icon="tip" title="Keep a single core method">
+Let thin overloads delegate to one implementation. Otherwise bug fixes land in only one of the twins.
+</Callout>

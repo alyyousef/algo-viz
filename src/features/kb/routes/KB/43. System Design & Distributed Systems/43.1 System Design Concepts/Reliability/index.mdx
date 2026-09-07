@@ -1,37 +1,88 @@
 ---
 title: Reliability
-description: The probability that a system will produce correct outputs up to some given time, under specified operating conditions.
+description: "The probability that a system keeps working correctly over a period, combining quality, operations, and design — broader than raw uptime."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Reliability">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While *Availability* asks "Is the server turned on?", **Reliability** asks "Is the server actually doing the math correctly?"
+**Reliability** is whether the system does the right thing for a stretch of time. Availability is "can I talk to it now." Reliability includes "did it charge twice," "did it lose the upload," and "did the nightly job run." SRE treats reliability as an engineered property with SLIs, not a vibe.
 
-A system can be 100% Highly Available (always returning an HTTP 200 OK status code), but if it mathematically returns the wrong bank account balance to the user, it has zero Reliability.
+## 1. Deep Dive and Mechanics
 
+You measure **SLIs** (success rate, freshness, correctness samples), set **SLOs**, and spend an **error budget**. When the budget is gone, you freeze features and fix toil. That is how reliability competes with feature velocity in the open.
 
-<Callout icon="tip" title="MTBF and MTTR">
+**Correctness SLIs** are hard and necessary. Canary reads against a ledger. Checksums on blobs. Shadow compares on a new ranking model. Uptime alone will not catch a silent wrong multiply.
 
+**Human reliability.** On-call load, runbooks, and deploy friction. A system that pages twice a night will be patched in a hurry and get worse.
 
-  Reliability engineering is heavily driven by two mathematical metrics:
-  1. **MTBF (Mean Time Between Failures):** The average time the system runs perfectly before encountering an error. You want this number to be as high as possible.
-  2. **MTTR (Mean Time To Recovery):** Once a failure occurs, how fast can the automated systems detect and fix it? You want this number to be close to zero.
-
-
+<Callout icon="info" title="Reliability is a user promise">
+The SLO is written in user terms: successful checkouts, fresh reads, jobs finished by 7:00. Internal CPU is a diagnostic.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Building Reliable Systems
+Reliability R(t) is the probability of no failure in [0, t]. MTTF and MTTR combine into availability ~ MTTF / (MTTF + MTTR) for repairable systems. Improving MTTR (fast rollback) often beats chasing MTTF.
 
-1. **Idempotency:** A critical mathematical property. If a user clicks the "Pay Now" button twice due to a network stutter, the system must mathematically guarantee they are only charged once. The operation must be idempotent.
-2. **Chaos Engineering:** Instead of hoping the system doesn't fail, engineers deliberately inject mathematical chaos (e.g., randomly shutting down databases in production using tools like Netflix's Chaos Monkey) to mathematically prove the system recovers correctly.
-3. **Data Integrity Checks:** Using checksums, hashes, and foreign-key constraints to ensure data doesn't silently corrupt on the hard drive over time.
+Error budgets convert SLO to a countable allowance. Burn rate is budget-spend per hour versus the ideal linear spend.
 
+<ComparisonTable
+  headers={['Word', 'Question', 'Typical SLI']}
+  rows={[
+    ['Availability', 'Can I use it now', 'Success ratio'],
+    ['Reliability', 'Does it keep working right', 'Success plus correctness'],
+    ['Durability', 'Is the write still there', 'Loss rate, restore tests'],
+    ['Resilience', 'How ugly is failure', 'MTTR, blast radius'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```
+# Conceptual SLO
+# SLI: proportion of checkout RPCs that finish 2xx in 800 ms
+# SLO: 99.9 percent over 28 days
+# Budget: 0.1 percent of eligible RPCs
+# Fast-burn alert: 2 percent budget in 1 hour
+```
+
+Exclude bad-input 4xx if the user cannot succeed anyway. Do not exclude "our outage."
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    SLI[SLI measurements] --> SLO[SLO]
+    SLO --> Budget[Error budget]
+    Budget --> Go[Ship features]
+    Budget --> Stop[Reliability work]
+```
+
+## 5. Interview Prep
+
+**Q: Reliability versus availability?**
+**A:** Availability is a slice (up now). Reliability is the broader habit of correct service over time, including silent data bugs and batch jobs.
+
+**Q: What if product wants 100 percent?**
+**A:** There is no 100 percent. There is a cost curve. Make them pick a number and a price.
+
+**Q: How do you improve reliability next quarter?**
+**A:** Kill the top budget burners: one flaky deploy, one dependency without a timeout, one missing backup test. Do not start with a rewrite.
+
+## 6. Production Use Cases
+
+- **SRE error-budget policy** between product and platform.
+- **Correctness probes** on billing and permissions.
+- **Game-day programs** that measure MTTR, not just architecture diagrams.
+
+<Callout icon="tip" title="Test restores, not only backups">
+A backup you have never restored is a rumor. Reliability includes the recovery path.
+</Callout>

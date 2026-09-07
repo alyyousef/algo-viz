@@ -1,30 +1,89 @@
 ---
-title: OCI IAM Policies
-description: The strict, human-readable mathematical rules engine that definitively grants or denies access to every single resource within the Oracle Cloud Infrastructure.
+title: OCI Policies
+description: "Allow statements that grant a verb on a resource-type in a compartment — the authorization language of the tenancy."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI IAM Policies"
-  subtitle="The Authorization Engine"
-  tags={['OCI', 'Security', 'IAM', 'Governance']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Policies">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-In OCI, every API request is mathematically denied by default. An IAM Policy is the explicit mathematical override that allows a user or group to perform an action.
+An OCI **policy** is a named document of **allow** statements. Syntax: `allow subject to verb resource-type in location [where conditions]`. Subjects are groups, dynamic groups, or `any-user` (rare and dangerous). Location is a compartment or the tenancy. This is IAM; it is not a packet filter.
 
-## 1. The SQL-Like Syntax
-An OCI Policy is constructed using a very specific, human-readable syntax:
-```sql
-Allow <subject> to <verb> <resource-type> in <location> where <conditions>
+## 1. Deep Dive and Mechanics
+
+**Attachment.** A policy object lives in a compartment. The statements inside name the scope they apply to. Putting all policies in root is common and hard to review.
+
+**Families.** `instance-family`, `volume-family`, `virtual-network-family` bundle types. Read the family table before you grant `manage`.
+
+**Conditions.** `where request.networkSource.name`, `target.bucket.name`, tags. Conditions turn a wide verb into a narrow one.
+
+**Updates.** Policy edits are live. There is no compile step. Git plus a pipeline that applies policies is how you get review.
+
+<Callout icon="error" title="any-user and manage all-resources">
+Together they are the internet as tenancy admin. Never. Even apart they deserve a threat model.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Authorization is the union of matching allows. More documents can only add access unless you use restrictions/conditions carefully. There is no "later deny wins" habit from some firewalls.
+
+Verb inclusion: `manage` ⊃ `use` ⊃ `read` ⊃ `inspect`. Grant the smallest.
+
+<ComparisonTable
+  headers={['Piece', 'Example', 'Avoid']}
+  rows={[
+    ['Subject', 'group Deployers', 'any-user'],
+    ['Verb', 'use', 'manage by habit'],
+    ['Scope', 'compartment prod', 'in tenancy'],
+    ['Condition', 'bucket name', 'none on wide verbs'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+allow group NetOps to manage virtual-network-family in compartment network
+allow group AppOps to manage instance-family in compartment prod
+allow group AppOps to use subnets in compartment network
+allow dynamic-group ci to manage repos in compartment images
 ```
-For example: `Allow group 'Network_Admins' to manage virtual-network-family in compartment 'Production'`.
-The mathematical engine parses this instantly. The verb `manage` grants full CRUD (Create, Read, Update, Delete) permissions. If you change the verb to `read`, the engine mathematically strips the ability to modify or delete the networks, providing strict Principle of Least Privilege.
 
-## 2. Granular Conditions
-Policies can use mathematical **Conditions** to enforce extreme security.
-```sql
-Allow group 'Developers' to manage instances in compartment 'Dev' where request.region = 'us-ashburn-1'
+Store this as `policies/prod.tf` or a raw file the pipeline applies. Console-only policy is drift.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Sub[Group / dynamic group] --> Stmt[Allow statement]
+    Stmt --> Verb[Verb]
+    Stmt --> Type[Resource-type]
+    Stmt --> Loc[Compartment]
 ```
-If a compromised developer account in London attempts to spin up a Virtual Machine in the Frankfurt region, the IAM engine mathematically evaluates the condition. Because the `request.region` does not equal Ashburn, the engine instantly returns a `403 Forbidden` error. This allows security teams to mathematically geofence their entire cloud infrastructure using simple text strings.
 
-</TechnologyTemplate>
+## 5. Interview Prep
+
+**Q: Policy vs NSG?**
+**A:** Policy is who may call the API. NSG is which packets may flow. You need both to launch and to serve traffic.
+
+**Q: How do you grant read on one bucket?**
+**A:** `read objects` in the compartment `where target.bucket.name='x'`. Or put the bucket in its own compartment.
+
+**Q: Can users write policies?**
+**A:** Only if you granted `manage policies`. That is a meta-privilege. Keep it in a platform group.
+
+## 6. Production Use Cases
+
+- Landing-zone policy packs reviewed like code.
+- Break-glass policy in a separate document with expiry process.
+- Dynamic-group statements for instance principals.
+
+<Callout icon="tip" title="One policy document per team boundary">
+A 400-line root policy is unreviewable. Split by compartment purpose so diffs are readable.
+</Callout>

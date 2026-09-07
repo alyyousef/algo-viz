@@ -1,36 +1,87 @@
 ---
 title: CAP Theorem
-description: "A fundamental computer science theorem proving that distributed data stores can only simultaneously guarantee two out of three traits: Consistency, Availability, and Partition Tolerance."
+description: "During a network partition, a replicated store must choose between linearizable consistency and remaining available for both sides of the cut."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="CAP Theorem">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The **CAP Theorem** (formulated by Eric Brewer in 2000) is the absolute foundation of modern distributed system design. It states that any distributed database can only provide two of the following three guarantees simultaneously:
+The **CAP theorem** (Brewer; proved by Gilbert and Lynch) says that a linearizable distributed object cannot also stay available if the network partitions. You do not pick two of three like a menu. Partitions happen. When they do, you either refuse some operations (keep consistency) or serve possibly stale or split state (keep availability).
 
-## 1. The Three Pillars
+## 1. Deep Dive and Mechanics
 
-- **Consistency (C)**: Every read receives the most recent write. If Node A updates a user's password, and a millisecond later a read request hits Node B, Node B must return the *new* password (or return an error if it hasn't synced yet).
-- **Availability (A)**: Every request receives a non-error response, regardless of the state of the individual nodes. The system must always return data, even if it is slightly out of date.
-- **Partition Tolerance (P)**: The system continues to operate despite an arbitrary number of messages being dropped or delayed by the network between nodes.
+**C** here means linearizability: a read sees the latest committed write as if there were one copy. **A** means every request to a non-crashed node returns a response. **P** means the protocol still meets its C or A claim when messages between nodes are dropped.
 
-## 2. The Illusion of Choice
+**CA is not a real WAN product.** If you assume no partitions, you assumed a single reliable network. That is a rack, not a planet. Production systems are CP or AP during a partition, and they still make latency-versus-consistency choices when the network is healthy (see PACELC).
 
-The CAP theorem is often misunderstood as choosing any two (CA, CP, or AP). This is false.
+**Examples.** ZooKeeper and etcd refuse writes without a majority (CP). Dynamo-style stores accept writes on both sides and repair later (AP). Many databases let you pick per call (quorum R + W, tunable).
 
-In the physical world, networks are unreliable. Cables get cut, routers crash, and packets drop. Therefore, **Partition Tolerance (P) is not a choice; it is a physical requirement.** Because network partitions will inevitably happen, a distributed system must fundamentally choose between **CP** and **AP**.
+<Callout icon="warning" title="CAP is about a partition, not about your SLA">
+A CP system can be highly available in the no-partition case. CAP does not say CP is always down. It says what you sacrifice when the cable is cut.
+</Callout>
 
-### Scenario: The Network Breaks
-Node A and Node B are separated by a broken network cable. They cannot talk to each other. A user writes a new password to Node A.
-Another user requests the password from Node B. What does Node B do?
+## 2. Mathematical / Theoretical Foundation
 
-1. **AP (Availability over Consistency)**: Node B returns the *old* password. It remains Available, but sacrifices Consistency. (Examples: Cassandra, DynamoDB).
-2. **CP (Consistency over Availability)**: Node B realizes it cannot contact Node A to verify the latest password. To prevent returning stale data, Node B throws a 500 Error. It remains Consistent, but sacrifices Availability. (Examples: MongoDB, HBase).
+Gilbert and Lynch formalize C as atomic objects and A as termination on every request to a correct node. In an asynchronous partitioned run, a write on one side cannot be visible to a read on the other without communication. If both must return, C is lost. If you wait, A is lost.
 
+PACELC (Abadi) adds: else, when not partitioned, you still choose latency versus consistency (sync replication versus async).
+
+<ComparisonTable
+  headers={['During partition', 'Writes', 'Reads', 'Examples']}
+  rows={[
+    ['CP', 'Need quorum; may fail', 'May fail or stale-forbid', 'etcd, ZooKeeper, Raft DBs'],
+    ['AP', 'Accept locally', 'May be stale or conflicting', 'Dynamo, Cassandra hinted'],
+    ['CA (no P)', 'Single network assumed', 'Single copy feel', 'Single-node DB'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Tunable quorum: W + R > N is a common CP-leaning read
+def is_strong_quorum(n, r, w):
+    return r + w > n
+```
+
+If N=3, R=2, W=2, a partition that isolates one node still lets the majority proceed. A partition that splits 1 and 1 with one down loses writes. That is the CAP choice in numbers.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Cut[Network partition] --> SideA[Partition A]
+    Cut --> SideB[Partition B]
+    SideA --> CP[CP: refuse or wait]
+    SideB --> CP
+    SideA --> AP[AP: accept both sides]
+    SideB --> AP
+```
+
+## 5. Interview Prep
+
+**Q: Can we have all three?**
+**A:** Not for linearizability and availability during a partition. You can have eventual consistency and high availability. You can have linearizability when a majority is reachable. You cannot have both guarantees on both sides of a cut.
+
+**Q: Is MongoDB CP or AP?**
+**A:** It depends on write concern, read concern, and whether a primary is elected. Answer with the settings, not a logo.
+
+**Q: How is this different from ACID C?**
+**A:** ACID consistency is about constraints on a transaction. CAP C is linearizability of a replicated register. Different letters, different theorems.
+
+## 6. Production Use Cases
+
+- **Config and locks** (CP): wrong answers are worse than a brief refusal.
+- **Shopping carts** (often AP): take the add-to-cart, merge later.
+- **Multi-region databases** with explicit failover and RPO, which is CAP plus ops.
+
+<Callout icon="tip" title="Say what you refuse">
+"We are CP" means "writes fail if we lose quorum." Write that in the runbook so on-call does not "fix" it by forcing a minority primary.
+</Callout>

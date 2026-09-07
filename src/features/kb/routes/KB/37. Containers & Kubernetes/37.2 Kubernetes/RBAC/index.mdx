@@ -1,32 +1,118 @@
 ---
-title: RBAC (Kubernetes)
-description: Role-Based Access Control, the mathematical security framework in Kubernetes that dictates exactly which users or service accounts are authorized to perform specific API operations on specific resources.
+title: Kubernetes RBAC
+description: "Authorization after authn: Roles list verbs on resources; RoleBindings attach those lists to users, groups, or ServiceAccounts."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Role-Based Access Control (RBAC)"
-  subtitle="Mathematical Cluster Security"
-  tags={['Kubernetes', 'Security', 'Architecture', 'Authentication']}
->
+    <ConceptTemplate title="Kubernetes RBAC">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Authentication verifies *who* you are. RBAC (Authorization) is the mathematical engine that determines *what you are allowed to do*.
+**RBAC** answers "may this identity perform this verb on this resource in this namespace?" Authentication (OIDC, cert, ServiceAccount token) only establishes who. The apiserver evaluates RoleBindings and ClusterRoleBindings before admission. Deny by default: no bind, no access.
 
-## 1. The Three Pillars
-RBAC is constructed from three distinct mathematical objects:
-1. **The Subject**: The entity trying to act (a human User, a Group, or a machine `ServiceAccount`).
-2. **The Role**: A mathematical list of permissions (e.g., "Allowed to `get` and `delete` only `Pods` and `Deployments`").
-3. **The RoleBinding**: The mathematical glue. It binds a specific Subject to a specific Role.
+## 1. Deep Dive and Mechanics
 
-## 2. Namespaced vs. Global
-RBAC is mathematically partitioned based on scope.
-- **Role / RoleBinding**: These are confined to a single Namespace. If Alice has a `RoleBinding` granting her Admin rights in the `dev` namespace, she mathematically has zero privileges in the `prod` namespace.
-- **ClusterRole / ClusterRoleBinding**: These are global. A `ClusterRoleBinding` granting read access means the Subject can mathematically read every single Pod in the entire cluster, across all namespaces. This is heavily utilized for infrastructure tools like Promtail or Fluentd that must scan the entire system.
+**Role.** Namespaced list of rules: `apiGroups`, `resources`, `verbs` (get, list, watch, create, update, patch, delete). A Role can also name specific resourceNames.
 
+**ClusterRole.** Same shape, cluster-scoped. Used for nodes, PVs, CRDs, and for reusable permission sets that RoleBindings then scope to a namespace (`admin`, `edit`, `view`).
+
+**Binding.** RoleBinding: subject plus Role (or ClusterRole) in one namespace. ClusterRoleBinding: subject plus ClusterRole everywhere. Subjects are User, Group, or ServiceAccount.
+
+**Aggregation.** ClusterRoles can aggregate other ClusterRoles via label selectors (how some distros extend `view`).
+
+**Privilege escalation.** You cannot bind a Role you could not already create. `escalate` and `bind` verbs exist so this stays explicit. A ServiceAccount used by a controller should not be `cluster-admin` unless it truly must be.
+
+<Callout icon="error" title="cluster-admin is not a default">
+Binding `cluster-admin` to a human group or to every Operator SA is how a leaked token becomes the cluster. Use `view` / `edit` / custom Roles. Break-glass a separate group.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Allow-list union.** Authorized if any matching binding's rule covers the request tuple (verb, group, resource, namespace, name). There is no deny rule in RBAC. Narrower access means fewer binds, not a deny object.
+
+**Least privilege.** Minimize the set of rules in the bind graph. Audit regularly; unused binds accumulate. `kubectl auth can-i --list` dumps the effective union.
+
+<ComparisonTable
+  headers={['Object', 'Scope', 'Typical subject']}
+  rows={[
+    ['Role + RoleBinding', 'One namespace', 'Team user, app SA'],
+    ['ClusterRole + RoleBinding', 'Role reused, still one ns', 'edit in shop only'],
+    ['ClusterRole + ClusterRoleBinding', 'Whole cluster', 'Prometheus, node kubelet'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: api-deployer
+  namespace: shop
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: api-deployer
+  namespace: shop
+subjects:
+  - kind: ServiceAccount
+    name: ci
+    namespace: shop
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: api-deployer
+```
+
+```bash
+kubectl auth can-i patch deployments --namespace shop --as=system:serviceaccount:shop:ci
+```
+
+CI should deploy with this SA, not with a human cloud-admin kubeconfig.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+  SA[ServiceAccount ci] --> RB[RoleBinding]
+  RB --> R[Role api-deployer]
+  R --> Rules[verbs on deployments and pods]
+  Req[API request] --> Authn[authn]
+  Authn --> Authz[RBAC match]
+  Authz --> Adm[admission]
+```
+
+## 5. Interview Prep
+
+**Q: Role versus ClusterRole?**
+**A:** Scope of the *definition*. A ClusterRole can still be bound in one namespace. ClusterRoleBinding is what makes it global.
+
+**Q: Why can I not get Secrets after getting edit?**
+**A:** You might not have `edit`; built-in `edit` does include Secrets in many versions — which is why teams replace it with a custom Role that omits secrets and exec.
+
+**Q: How does kubelet authenticate?**
+**A:** Node authorizer + NodeRestriction plus a kubelet identity, not a human Role. Do not confuse that path with user RBAC.
+
+## 6. Production Use Cases
+
+- **CI ServiceAccounts** that can patch Deployments in one namespace.
+- **Read-only** ClusterRoleBindings for dashboards on non-secret resources.
+- **Break-glass** group with time-bounded access reviews.
+
+<Callout icon="tip" title="Prefer impersonation tests">
+`kubectl auth can-i --as=...` in CI after every Role change. YAML that looks tight but binds the wrong ClusterRole is a common miss.
+</Callout>

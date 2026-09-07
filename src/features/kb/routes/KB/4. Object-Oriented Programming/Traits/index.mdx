@@ -1,38 +1,99 @@
 ---
 title: Traits
-description: A structural feature in languages like Scala and Rust that mathematically resolves the multiple inheritance problem by allowing isolated bundles of behavior to be securely composed into a class without traditional inheritance.
+description: "Composable units of behavior with explicit conflict resolution, used as types and as implementation mix-ins."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Traits"
-  subtitle="Safe Mathematical Composition"
-  tags={['OOP', 'Scala', 'Rust', 'Architecture']}
->
+    <ConceptTemplate title="Traits">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Languages like Java outlawed Multiple Inheritance to avoid the Diamond Problem, replacing it with Interfaces. However, Interfaces mathematically cannot contain state (variables), which forces developers to duplicate code across multiple classes. Traits were invented to solve this exact architectural gap.
+A **trait** is a named set of methods that a type can implement or mix in. Unlike a casual mixin, traits usually have rules for conflicts, and they often act as types in the type system.
 
-## 1. Behavior and State
-A Trait is mathematically similar to a Mixin, but with stricter compiler enforcement.
-Unlike a Java Interface, a Trait in Scala or Rust can contain fully implemented methods *and* state variables.
-```scala
-trait Logger {
-  var logCount = 0 // State
-  def log(msg: String): Unit = { // Behavior
-    println(s"[$logCount] $msg")
-    logCount += 1
-  }
+## 1. Deep Dive and Mechanics
+
+**Rust traits** are type classes: you define a trait, then `impl` it for types you own. Coherence (orphan rules) keeps instances unique. **Scala traits** linearize like mixins and may hold fields. **PHP traits** flatten methods into a class and require `insteadof` / `as` when names clash. **Swift protocols** are traits with associated types.
+
+**Default methods.** Traits can supply a body that implementors may override. That is how you grow an API without breaking every type.
+
+**Associated types versus generics.** `Iterator` has `Item`. The implementor picks Item once. A generic trait parameter would let the same type implement the trait many ways.
+
+<Callout icon="info" title="Traits are not inheritance">
+Implementing a trait does not copy fields from a parent class. It proves a type supports a surface — and maybe borrows a default body.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Traits come from the Schärli / Ducasse model: flatten method dictionaries, detect conflicts, require explicit resolution. Type-class traits are a judgment `T : Trait` plus a canonical instance.
+
+Coherence is uniqueness of that instance. Without it, two crates could provide two `Show` impls for the same type and the program would be ambiguous.
+
+<ComparisonTable
+  headers={['Language', 'Trait role', 'Conflict rule']}
+  rows={[
+    ['Rust', 'Type class + methods', 'Orphan / coherence'],
+    ['Scala', 'Mixin + type', 'Linearization'],
+    ['PHP', 'Compile-time copy', 'insteadof / as'],
+    ['Java interface', 'Type + defaults', 'Subclass must pick'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```rust
+trait Summarize {
+    fn summary(&self) -> String;
+}
+
+struct Order {
+    id: u32,
+}
+
+impl Summarize for Order {
+    fn summary(&self) -> String {
+        format!("order {}", self.id)
+    }
+}
+
+fn print_sum(item: &impl Summarize) {
+    println!("{}", item.summary());
 }
 ```
 
-## 2. Linearization (Solving the Diamond Problem)
-If a class mixes in two Traits that both have a `log()` method, how does the compiler mathematically avoid the Diamond Problem?
-Languages that use Traits use an algorithm called **Linearization**. The compiler mathematically analyzes the order in which the Traits were mixed into the class (e.g., `class User extends Entity with Logger with Auditor`) and mathematically flattens them into a strict, linear hierarchy. If a conflict occurs, the compiler deterministically chooses the implementation from the right-most Trait, eliminating ambiguity.
+`print_sum` is parameterized by the trait, not by `Order`.
 
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Trait[Trait Summarize] --> Impl[impl for Order]
+    Trait --> Fn[print_sum bound]
+    Impl --> Fn
+```
+
+## 5. Interview Prep
+
+**Q: Trait versus interface?**
+**A:** In Java, an interface is the closest thing. Traits more often include implementation, associated types, and a story for mixing several traits into one class without a single superclass.
+
+**Q: Trait versus mixin?**
+**A:** Mixins are informal extra bases. Traits add conflict detection and, in Rust, a real type-class semantics. You can treat Python mixins as a poor person's traits.
+
+**Q: What is the orphan rule?**
+**A:** You may implement a trait for a type only if you own the trait or the type. That stops two libraries from shipping colliding impls.
+
+## 6. Production Use Cases
+
+- **Rust** `serde::Serialize`, `Iterator`, and async traits on domain types.
+- **Scala** cake-pattern or mixin layers for services (use sparingly).
+- **PHP** shared controller capabilities without a deep class tree.
+
+<Callout icon="tip" title="Keep traits around verbs">
+`Serialize`, `Draw`, `Authenticate` are good. `Utils` is not a trait, it is a pile.
+</Callout>

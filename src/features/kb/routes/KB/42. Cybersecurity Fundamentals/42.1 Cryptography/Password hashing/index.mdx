@@ -1,46 +1,94 @@
 ---
 title: Password Hashing
-description: Specialized cryptographic hashing designed specifically to protect passwords stored in databases.
+description: "Slow, salted, one-way KDFs that store login secrets so a leaked database is not a plaintext password dump."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="Password Hashing">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Password Hashing">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-When a user creates an account, a secure application never stores their plaintext password (e.g., `password123`) in the database. If the database is breached, the hackers would immediately have everyone's passwords.
+**Password hashing** turns a user secret into a stored verifier that is expensive to guess and useless across sites. You never store plaintext. You never store a fast hash of the password alone. You store a unique salt plus a memory-hard or iterated digest, then compare in constant time at login.
 
-Instead, the application hashes the password and stores only the hash. When the user attempts to log in, the application hashes their input and checks if it matches the stored hash.
+## 1. Deep Dive and Mechanics
 
+At registration: generate a CSPRNG salt, run Argon2id (or bcrypt/scrypt), store the encoded string. At login: load that string, run the same KDF, compare. On success, optionally **rehash** if your parameters have increased.
 
-<Callout icon="error" title="Why standard hashes fail for passwords">
+**Threat model.** Attackers steal the table and run offline guesses. Salts stop rainbow tables and force per-user work. Slow KDFs cap guesses per second. A unique pepper (server-side secret in a KMS) adds a second factor if the DB leaks without the app secret.
 
+**UX still matters.** Rate-limit online guesses. Offer a password manager-friendly long secret. Do not silently truncate.
 
-  Algorithms like **SHA-256** are explicitly designed to be **incredibly fast**. A modern GPU cluster can calculate *billions* of SHA-256 hashes per second. If a hacker steals a database of SHA-256 password hashes, they can simply brute-force them (guess every possible password, hash it, and see if it matches) in a matter of minutes.
-
-
+<Callout icon="error" title="SHA-256 of a password is not password hashing">
+Fast hashes plus a stolen table equal a race the defender loses. Use a password KDF.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Solution: Key Derivation Functions (KDFs)
+A password has maybe 20-40 bits of real entropy. A 256-bit hash does not add entropy; it only hides the exact string. The defense is **work factor**: each guess costs memory-time so the expected cost of searching the password distribution exceeds the value of the account. That is economics, not collision resistance.
 
-To protect passwords, we do not use standard cryptographic hashes. We use specialized algorithms called **Key Derivation Functions (KDFs)** or Password Hashing Algorithms.
+<ComparisonTable
+  headers={['Method', 'Salt', 'Cost knob', 'Use']}
+  rows={[
+    ['Argon2id', 'Yes', 'm, t, p', 'New stores'],
+    ['bcrypt', 'Yes', 'cost 10-14', 'Existing stores'],
+    ['scrypt', 'Yes', 'N, r, p', 'Some wallets'],
+    ['SHA-256(password)', 'Often no', 'None', 'Never'],
+  ]}
+/>
 
-These algorithms are intentionally designed to be **computationally expensive and slow**.
+## 3. Real-World Implementation
 
-If an algorithm is designed to take exactly 0.5 seconds to compute:
-- **For the user**: Logging in takes 0.5 seconds. They won't notice.
-- **For the hacker**: Trying to guess 100 million dictionary words will take 1.5 years instead of 3 seconds. The brute-force attack is neutralized.
+```python
+from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
-## Features of a Password Hashing Algorithm
+ph = PasswordHasher()
 
-Modern password hashing algorithms must include two features:
+def register(pw: str) -> str:
+    return ph.hash(pw)
 
-1. **Salting**: Automatically injecting a massive random string into the password before hashing it. This entirely prevents "Rainbow Table" attacks (pre-computed databases of billions of hashes).
-2. **Work Factor (Cost)**: A configurable setting that determines how many thousands of iterations of math the CPU must do to generate the hash. As computers get faster in the future (Moore's Law), administrators simply increase the Work Factor to ensure the hash always takes 0.5 seconds to compute.
+def login(stored: str, pw: str) -> bool:
+    try:
+        ph.verify(stored, pw)
+        return True
+    except VerifyMismatchError:
+        return False
+```
 
-## Modern Password Algorithms
+## 4. Visualizations
 
+```mermaid
+flowchart TD
+    PW[Password] --> Salt[CSPRNG salt]
+    Salt --> KDF[Argon2id]
+    Pepper[Optional KMS pepper] --> KDF
+    KDF --> Store[Encoded verifier]
+    Store --> Verify[Constant-time verify at login]
+```
 
-<ComparisonTable headers={['Algorithm', 'Description']} rows={[ ['PBKDF2', 'The oldest standard. Simply runs a fast algorithm (like SHA-256) thousands of times in a loop. Secure, but vulnerable to GPU/ASIC hardware acceleration.'], ['bcrypt', 'The industry workhorse since 1999. Incredibly resilient. It demands rapid random access to memory, making it highly resistant to GPU acceleration.'], ['scrypt', 'Designed to be explicitly "memory-hard". It requires massive amounts of RAM to compute, meaning hackers cannot run it efficiently on GPUs.'], ['Argon2', 'The winner of the 2015 Password Hashing Competition. The absolute cutting-edge standard. It allows you to configure CPU time, Memory cost, and Parallelism independently.'] ]} />
+## 5. Interview Prep
 
+**Q: Salt versus pepper?**
+**A:** Salt is unique per user and stored with the hash. Pepper is a global secret stored elsewhere so a DB-only leak is incomplete.
 
-</TechnologyTemplate>
+**Q: Why rehash on login?**
+**A:** You cannot decrypt old verifiers. When you raise cost, you upgrade the hash the next time the user presents the password.
+
+**Q: Can I encrypt passwords so I can email them back?**
+**A:** No. That means you can read them. Reset via a one-time token instead.
+
+## 6. Production Use Cases
+
+- **Human login** for apps and VPNs.
+- **Passphrase wrapping** of local data keys.
+- **Migration** from legacy SHA-1 stores via on-login upgrade.
+
+<Callout icon="tip" title="Fail closed on verifier parse errors">
+A corrupt hash string is not "let them in". Log a security event and force a reset.
+</Callout>

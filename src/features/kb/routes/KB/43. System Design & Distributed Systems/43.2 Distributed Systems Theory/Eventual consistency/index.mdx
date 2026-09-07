@@ -1,43 +1,91 @@
 ---
 title: Eventual Consistency
-description: A high-availability data model where changes made to one node take time to propagate, meaning users might temporarily see stale data before the system converges.
+description: "A liveness promise that replicas converge if writes stop — not a bound on how stale a given read is unless you add extra session guarantees."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Eventual Consistency">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a strictly consistent database, if you update your Twitter bio, the database locks the entire system until that bio is copied to every server globally. This guarantees everyone sees the new bio instantly, but makes the database incredibly slow.
+**Eventual consistency** says that if no new writes arrive, all replicas eventually agree. It does not say when. It does not say a read after a write on another socket will see that write. It is a convergence property, popular in AP stores, DNS, and caches. Treat "eventual" as incomplete until you add a bound or a session model.
 
-**Eventual Consistency** sacrifices immediate perfection for raw speed. It guarantees that if no new updates are made, *eventually* all servers will receive the update and return the same value.
+## 1. Deep Dive and Mechanics
 
-## 1. The User Experience
+Replicas apply writes in different orders or at different times. Anti-entropy (repair, gossip, Merkle trees) and read repair close the gaps. Conflicts use LWW, vector clocks, CRDTs, or application merge.
 
-If you upload a new profile picture to an eventually consistent system:
-1. Server A (in New York) saves the picture instantly.
-2. You refresh the page, hitting Server B (in London). Server B hasn't received the update yet. You see your *old* profile picture.
-3. You panic and refresh again, hitting Server A. You see the *new* picture.
-4. Two seconds later, background synchronization finishes. Server B updates. The system has "converged".
+**Session guarantees** (Terry et al.) make eventual usable: read-your-writes, monotonic reads, monotonic writes, writes-follow-reads. You get them with sticky routing, version tokens, or causal metadata — not from the word "eventual" alone.
 
-## 2. Why Use It?
+**How stale.** Measure replication lag and repair age. If you cannot graph it, you cannot sell it as an SLO.
 
-Eventual consistency is the backbone of massive global systems (like DNS, Cassandra, and Amazon DynamoDB).
-- **Speed**: The write operation returns a success message in 1 millisecond because it doesn't wait for global synchronization.
-- **Availability**: If the underwater cable to London is severed, Server A continues accepting writes. It will simply wait until the cable is fixed to eventually sync with London.
-
-
-<Callout icon="warning" title="Conflict Resolution">
-
-
-  If two users update the exact same row on two disconnected servers simultaneously, an eventually consistent system will have a conflict when the network reconnects. Engineers must implement resolution strategies, like "Last Write Wins" (LWW) based on timestamps, or using complex data structures called CRDTs to merge the data automatically.
-
-
+<Callout icon="warning" title="Eventual plus a user refresh loop is a bug">
+A client that writes and immediately reads another replica will flap or retry forever. Pin the session or wait for a version.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Convergence requires that concurrent updates are somehow joinable (CRDT, LWW, or human). Without a join, "eventual" can be "eventual split brain."
+
+CAP: eventual is the usual AP story during partition. PACELC: even without partition you may choose stale reads for latency (async replicas).
+
+<ComparisonTable
+  headers={['Guarantee', 'Stale read', 'Extra machinery']}
+  rows={[
+    ['Eventual only', 'Yes, unbounded', 'Repair'],
+    ['Bounded staleness', 'Up to T or versions', 'Sync or watermarks'],
+    ['Read-your-writes', 'Not for that client', 'Sticky or token'],
+    ['Linearizable', 'No', 'Quorum / lease'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def read_profile(replicas, user_id, seen_ver=0):
+    row = replicas.any().get(user_id)
+    if row.ver < seen_ver:
+        row = replicas.primary().get(user_id)
+    return row
+```
+
+Store seen_ver in the session. This is not linearizability across devices; it is read-your-writes for one client.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant W as Writer
+    participant A as Replica A
+    participant B as Replica B
+    W->>A: write v2
+    W->>B: read may see v1
+    A->>B: anti-entropy
+    W->>B: later read v2
+```
+
+## 5. Interview Prep
+
+**Q: Is eventual consistency bad?**
+**A:** It is wrong for ledgers and right for view counts, DNS, and many caches. The mistake is using it silently on a workflow that the user thinks is strong.
+
+**Q: How does Dynamo resolve conflicts?**
+**A:** Vector clocks detect concurrent versions; the application or LWW merges. Sibling values are a feature until they surprise a product manager.
+
+**Q: Eventual versus causal?**
+**A:** Causal does not show you a reply before the message it replies to. Eventual might, briefly. Causal is stronger and costs metadata.
+
+## 6. Production Use Cases
+
+- **CDN and DNS** records with TTL-bound staleness.
+- **Social counters and feeds** with repair.
+- **Multi-region caches** that accept a few seconds of lag.
+
+<Callout icon="tip" title="Put a number on eventual">
+"Typically under 2 s, 99th under 30 s, repair job hourly" is a design. The adjective alone is not.
+</Callout>

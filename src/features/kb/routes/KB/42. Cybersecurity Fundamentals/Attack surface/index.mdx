@@ -1,52 +1,87 @@
 ---
 title: Attack Surface
-description: 'The sum total of all different points (the "surface") where an unauthorized user can try to enter data to or extract data from an environment.'
+description: "The set of reachable interfaces, identities, and data stores a hostile party could try to abuse."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Attack Surface">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In cybersecurity, the **Attack Surface** represents every conceivable way a system could potentially be compromised.
-A fundamental goal of secure architecture is **Attack Surface Reduction (ASR)**—shrinking the target so hackers have fewer opportunities to find a vulnerability.
+The **attack surface** is everything an outsider or insider can reach: public IPs, SaaS tenants, employee laptops, vendor VPNs, forgotten subdomains, and the APIs behind your mobile app. You cannot patch what you cannot see. The discipline is **inventory, shrink, and watch**.
 
-## 1. Types of Attack Surfaces
-The total attack surface is typically divided into three categories:
+## 1. Deep Dive and Mechanics
 
-1. **Digital / Network Attack Surface**:
-   - Open server ports (e.g., leaving Port 22 SSH exposed to the public internet).
-   - Public-facing APIs, web forms, and authentication endpoints.
-   - Outdated software dependencies (NPM packages) with known vulnerabilities.
-2. **Physical Attack Surface**:
-   - Unlocked server room doors.
-   - Discarded hard drives in the dumpster.
-   - USB ports on employee laptops (susceptible to malicious "dropped" flash drives).
-3. **Social / Human Attack Surface**:
-   - Employees susceptible to phishing, social engineering, or bribery.
-   - The human element is almost universally the largest and weakest attack surface in any organization.
+**External.** DNS names, certificates, cloud public IPs, object stores, and partner callbacks. Shadow IT and expired marketing sites are regular members.
 
-## 2. Attack Surface Reduction (ASR) Strategies
-Every piece of code you write and every feature you add *increases* the attack surface. ASR aims to reverse this:
+**Identity.** Every account that can mint a session — humans, CI bots, OAuth apps — is surface. A public login box is smaller than a leaked refresh token with no rotation.
 
-- **Disable Unused Features**: If your web server doesn't use FTP, uninstall the FTP daemon. (Every running service is a potential exploit vector).
-- **Network Segmentation**: Move databases into Private Subnets that have no public IP addresses.
-- **Code Minification**: Remove dead code and unused NPM dependencies from your application.
-- **Zero Trust & VPNs**: Hide internal administrative portals (like Grafana or Jenkins) behind strict ZTNA gateways so they are completely invisible to the public internet.
+**Internal.** Flat networks and standing admin make the internal surface almost equal to "any phished laptop." Segmentation and least privilege shrink that.
 
-
-<Callout icon="warning" title="Shadow IT">
-
-
-The most dangerous part of an organization's attack surface is the part the security team doesn't know exists. **Shadow IT** (e.g., a marketing team quietly spinning up an unauthorized WordPress server on AWS without telling IT) creates massive, unmonitored attack vectors that are often the root cause of corporate breaches.
-
-
+<Callout icon="info" title="Surface is not just ports">
+A support inbox that will reset a password from a convincing story is surface. So is an S3 bucket with a guessable name.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Model surface as a set of entry points with reachability to assets. Risk is not |surface| alone; it is the measure of high-value, low-control points. External attack-surface management (EASM) is a discovery process with false positives. The useful derivative is d(unexpected public services)/dt, not a vanity count of IPs.
+
+<ComparisonTable
+  headers={['Slice', 'Examples', 'Shrink by']}
+  rows={[
+    ['Network', 'Public IPs, VPNs', 'SG review, close admin'],
+    ['App', 'Routes, uploads', 'Authz, WAF, less debug'],
+    ['Identity', 'SSO, tokens, keys', 'MFA, rotation, JIT'],
+    ['Supply', 'Vendors, CI', 'BAA, least scope, OIDC'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# Weekly surface review
+# - Dump public IPs, load balancers, and DNS
+# - Diff vs last week
+# - Ticket new listeners and unknown certificates
+# - Confirm object stores block public access
+```
+
+Give someone the job. An unread EASM email is not a control.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    DNS[DNS / certs] --> Inv[Inventory]
+    Cloud[Public cloud IPs] --> Inv
+    IdP[Identities] --> Inv
+    Inv --> Shrink[Close or gate]
+    Shrink --> Watch[Monitor diffs]
+```
+
+## 5. Interview Prep
+
+**Q: Attack surface vs attack vector?**
+**A:** Surface is what exists to touch. A vector is a path through it (phish, stolen key, vuln).
+
+**Q: How do you shrink it?**
+**A:** Remove products, close ports, require SSO, delete unused apps, and segment.
+
+**Q: Why do acquisitions hurt?**
+**A:** You inherit unknown DNS and VPN concentrators on Friday afternoon.
+
+## 6. Production Use Cases
+
+- **Internet-facing** product orgs.
+- **M&A** day-1 inventory.
+- **Bug bounty** scope that matches reality.
+
+<Callout icon="tip" title="Your marketing subdomain is in scope whether you like it or not">
+Attackers do not honor the org chart.
+</Callout>

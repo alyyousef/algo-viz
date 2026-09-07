@@ -1,30 +1,94 @@
 ---
-title: MVC (Model-View-Controller)
-description: A foundational architectural pattern for user interfaces that mathematically divides an application into three interconnected parts, separating internal representations of information from the ways information is presented to the user.
+title: MVC
+description: "Model-View-Controller: split state, presentation, and input handling so a UI change does not rewrite the business rules — and vice versa."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="MVC (Model-View-Controller)"
-  subtitle="The Trinity of UI Architecture"
-  tags={['Architecture', 'Design Patterns', 'UI', 'Web']}
->
+    <ConceptTemplate title="MVC">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Invented in the 1970s for desktop applications, MVC became the mathematically dominant architecture for early web frameworks (Ruby on Rails, Django, ASP.NET MVC).
+**Model-View-Controller** (Reenskaug, Smalltalk) separates the domain state (Model), the rendering (View), and the interpretation of user gestures (Controller). Web frameworks borrowed the names; many “MVC” apps are really Model-Template-Controller with a fat controller.
 
-## 1. The Three Pillars
-MVC strictly separates concerns:
-- **Model**: The pure mathematical data and business rules (e.g., a `User` class that knows how to save itself to SQL). It is completely ignorant of the UI.
-- **View**: The visual representation (e.g., an HTML/CSS template). It is mathematically dumb; it just displays whatever variables it is handed.
-- **Controller**: The brain. It intercepts user input (an HTTP POST request), asks the Model to update its state, and then mathematically passes the new Model to the View to be rendered.
+## 1. Deep Dive and Mechanics
 
-## 2. Preventing Tightly Coupled UI
-Before MVC, developers wrote "Server Pages" (like early PHP or ASP) where raw SQL queries, business logic `if/else` statements, and HTML `<div>` tags were mathematically scrambled together in a single file. MVC mathematically forces the developer to extract the SQL into the Model, the HTML into the View, and the routing into the Controller, allowing designers to edit the HTML without mathematically destroying the database queries.
+**Classic Smalltalk.** The view observes the model. The controller maps input to model commands. Multiple views can share one model. That observer link is the point.
 
+**Web MVC.** An HTTP request hits a controller. The controller loads a model and picks a template. There is often no live observer — the “view” is a one-shot render. Fine, but do not pretend it is Smalltalk.
+
+**Fat controller.** Business rules in the action method. The model is an ORM row. You have a naming convention, not MVC.
+
+**Cousins.** MVP and MVVM re-home the glue for GUI toolkits and data binding. The shared idea is: the model does not draw widgets.
+
+<Callout icon="info" title="MVC is a UI pattern">
+It does not design your services or your database. Nesting MVC inside a messy domain still leaves a messy domain.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Observer.** Views subscribe to model change. Update cost is O(subscribers) per mutation if naive; toolkits batch. Cycles (view updates model updates view) need re-entrancy rules.
+
+**Information hiding.** The model hides invariants. The view hides pixels. The controller hides the input device. Each can change if the interfaces hold.
+
+**Request as command.** In web MVC a request is a command DTO. Idempotence and authz belong in the model or application service, not only in the controller.
+
+<ComparisonTable
+  headers={['Pattern', 'Glue', 'Typical home']}
+  rows={[
+    ['MVC', 'Controller maps input', 'Web, classic GUI'],
+    ['MVP', 'Presenter updates view', 'Humble view, tests'],
+    ['MVVM', 'Bindings + view-model', 'XAML, reactive UI'],
+    ['Fat template', 'Logic in the view', 'Unmaintainable'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```ruby
+# Rails-style: keep the action thin
+class OrdersController < ApplicationController
+  def create
+    order = PlaceOrder.new.call(order_params)
+    redirect_to order
+  end
+end
+```
+
+`PlaceOrder` is the model/application side. The controller only translates HTTP.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User[User] --> Ctrl[Controller]
+    Ctrl --> Model[Model]
+    Model --> View[View]
+    View --> User
+```
+
+## 5. Interview Prep
+
+**Q: Where do you put validation?**
+**A:** Shape checks can sit at the edge. Invariants belong in the model. Duplicating both in the controller is how they drift.
+
+**Q: Is React MVC?**
+**A:** React is a view library. People layer Flux/Redux (unidirectional) or MVC-like containers. Do not force the 1979 triangle onto hooks.
+
+**Q: Why did MVC become “the web default”?**
+**A:** It mapped cleanly to request, domain, template. The mismatch is the missing observer and the temptation to dump rules in controllers.
+
+## 6. Production Use Cases
+
+- **Server-rendered CRUD** with thin controllers.
+- **Desktop GUI** that still uses the original observer split.
+- **Teaching** the first separation of concerns in a UI.
+
+<Callout icon="tip" title="If the controller needs a transaction script novel">
+Extract an application service. MVC names will not save a 400-line action.
+</Callout>

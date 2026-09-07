@@ -1,38 +1,90 @@
 ---
-title: Raft Consensus Algorithm
-description: A consensus algorithm designed to be easy to understand. It is equivalent to Paxos in fault-tolerance and performance.
+title: Raft
+description: "Consensus via an elected leader, a replicated log, and majority votes — designed so operators can follow elections, terms, and commits."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Raft Consensus Algorithm">
+    <ConceptTemplate title="Raft">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-For decades, the Paxos algorithm was the mathematical gold standard for distributed consensus, but it was so notoriously complicated that almost no one could implement it correctly in software.
+**Raft** (Ongaro and Ousterhout) is crash-fault consensus with a strong leader. Clients talk to the leader. The leader appends to its log and commits an entry when a majority of voting members have stored it. Terms increase on each election so stale leaders cannot overwrite committed data.
 
-In 2013, Diego Ongaro and John Ousterhout published **Raft**, an algorithm explicitly designed to be mathematically equivalent to Paxos, but vastly easier to understand. Today, Raft is the engine that mathematically powers modern infrastructure like **etcd** (Kubernetes), **Consul**, and modern **MongoDB**.
+## 1. Deep Dive and Mechanics
 
+**States.** Follower, candidate, leader. Followers grant votes and accept appends. A follower that times out becomes a candidate and starts an election for term T+1.
 
-<Callout icon="success" title="The Dictator Model">
+**Election.** A candidate wins with a majority of votes. A node votes at most once per term, and only if the candidate's log is at least as up to date (higher last term, or same term and longer or equal index).
 
+**Replication.** The leader sends AppendEntries with previous index and term. If they do not match, the follower rejects and the leader walks back. Commit index is the highest entry known to be on a majority in the current term.
 
-  Raft simplifies consensus by relying entirely on strict **Leader Election**. In Raft, the Leader is an absolute dictator. All logs mathematically flow in one direction: from the Leader down to the Followers.
+**Membership.** Joint consensus (old and new configs) avoids a two-majority split during add/remove.
 
-
+<Callout icon="warning" title="A lone leader is not committed">
+An entry on the leader disk is not committed. If that leader dies before a majority stores it, the next leader may not have it. Clients must retry with idempotency.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Raft Election Process
+Safety: at most one leader per term; committed entries in term t persist in all later leaders' logs (Leader Completeness). Election restriction plus majority votes give the proof.
 
-Nodes in Raft exist in one of three mathematical states: Follower, Candidate, or Leader.
+Liveness: under partial synchrony and randomized timeouts, a leader is elected with high probability. Split votes resolve when timeouts differ.
 
-1. **The Timer:** Every Follower has a randomized mathematical countdown timer (e.g., 150ms to 300ms).
-2. **The Heartbeat:** As long as the Leader is alive, it mathematically sends a "Heartbeat" ping every 50ms, resetting all Follower timers.
-3. **The Election:** If the Leader crashes, the Heartbeats stop. The Follower whose randomized timer hits zero first mathematically transitions to a Candidate. It votes for itself and requests votes from the cluster.
-4. **The Quorum:** If the Candidate receives a mathematical majority of votes, it instantly becomes the new dictator (Leader).
+<ComparisonTable
+  headers={['Piece', 'Raft rule', 'Why']}
+  rows={[
+    ['Term', 'Monotonic epoch', 'Fence old leaders'],
+    ['Majority', 'Votes and commits', 'Intersection'],
+    ['Log match', 'Prev index plus term', 'No holes, no forks of committed prefix'],
+    ['Up-to-date vote', 'Last term then length', 'New leader has all commits'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```python
+def log_ok(cand_last_term, cand_last_idx, my_last_term, my_last_idx):
+    if cand_last_term != my_last_term:
+        return cand_last_term > my_last_term
+    return cand_last_idx >= my_last_idx
+```
+
+etcd, Consul, CockroachDB ranges, and RethinkDB use Raft. Keep the voting set small (3 or 5). Learners can receive the log without voting.
+
+## 4. Visualizations
+
+```mermaid
+stateDiagram-v2
+    [*] --> Follower
+    Follower --> Candidate: election timeout
+    Candidate --> Leader: majority votes
+    Candidate --> Follower: higher term seen
+    Leader --> Follower: higher term seen
+```
+
+## 5. Interview Prep
+
+**Q: Why odd replica counts?**
+**A:** 3 nodes tolerate 1 failure; 5 tolerate 2. Even counts waste a vote without extra fault budget. Quorum is still majority, so 4 nodes only tolerate 1.
+
+**Q: Can two leaders exist?**
+**A:** Briefly, a partitioned old leader may still think it is leader until its term is beaten. It cannot commit new entries without a majority. Clients that talk to it may time out.
+
+**Q: Raft versus Multi-Paxos?**
+**A:** Same intersection math. Raft fixes the leader, log, and reconfiguration story so implementations converge. Paxos papers leave more choices.
+
+## 6. Production Use Cases
+
+- **etcd / Kubernetes** control plane.
+- **Consul** catalog and sessions.
+- **Distributed SQL** range groups (Cockroach, TiKV).
+
+<Callout icon="tip" title="Never hide the term in metrics">
+If term is climbing, elections are looping. That is the first graph to page on.
+</Callout>

@@ -1,27 +1,95 @@
 ---
 title: Google Cloud IAM
-description: The unified Identity and Access Management system for GCP, mathematically defining who has what type of access to which specific cloud resources using roles and policies.
+description: "Who can do what on which resource: members, roles, and bindings on the org-folder-project tree — plus service accounts and conditions, not a JSON policy on every object."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud IAM"
-  subtitle="Identity and Access Control"
-  tags={['GCP', 'Security', 'Identity', 'Governance']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud IAM">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-AWS IAM is notoriously complex, requiring developers to write massive, highly verbose JSON documents for every single resource. GCP IAM mathematically simplifies this by focusing on predefined Roles rather than granular JSON actions.
+**GCP IAM** answers three questions: who (member), what (role), where (resource). A **binding** attaches a role to members on a resource. Inheritance walks **Organization to Folder to Project to resource**. Deny policies and IAM Conditions add exceptions without rewriting every role.
 
-## 1. Members, Roles, and Bindings
-GCP IAM operates on a strict mathematical trio:
-- **Member**: Who are you? (e.g., A Google Workspace user, a Service Account).
-- **Role**: What can you do? (e.g., `roles/storage.objectViewer`).
-- **Binding**: Applying the Role to the Member on a specific Resource.
-Instead of writing a custom JSON policy, you simply bind a pre-defined mathematical Role to a User. A "Service Account" acts exactly like an AWS IAM Role; it is a non-human identity that Virtual Machines or Cloud Functions assume to securely interact with other Google services without hardcoded passwords.
+## 1. Deep Dive and Mechanics
 
-## 2. The Resource Hierarchy
-Permissions in GCP flow strictly downward through a mathematical hierarchy:
-**Organization -> Folder -> Project -> Resource**
-If you grant a user the "Compute Admin" role at the **Folder** level, that mathematical permission cascades downwards. They automatically become a Compute Admin for every Project and every VM inside that Folder. This hierarchical inheritance mathematically eliminates the need to manually tag resources or write complex IAM boundaries, making enterprise governance vastly simpler than AWS.
+**Members.** Users, groups, domains, service accounts, and principals from Workforce or Workload Identity Federation. Prefer groups over individual emails so joiners and leavers are an IdP change.
 
-</TechnologyTemplate>
+**Roles.** Basic (Owner, Editor, Viewer) are too wide for prod. Predefined roles are the default. Custom roles are a allowlist of permissions you own forever.
+
+**Service accounts.** Identities for code. A VM or Cloud Function **attaches** a SA; it does not store a key. Workload Identity Federation lets GitHub or AWS assume a SA without a downloaded JSON.
+
+**Conditions.** CEL expressions on time, resource name, or source IP. Use them for break-glass and environment splits, not as a substitute for a tight role.
+
+<Callout icon="error" title="User-managed SA keys">
+A JSON key that left a laptop is a standing credential. Disable key creation with org policy. Use federation or attached SAs.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Effective permission is union of bindings on the resource and all ancestors, minus deny. That is why a Folder-level Editor is a blast radius, not a convenience.
+
+Least privilege is a set-cover problem: smallest role set that still lets the job complete. Custom roles reduce extra permissions but increase maintenance when Google adds APIs.
+
+<ComparisonTable
+  headers={['Piece', 'GCP', 'AWS analog']}
+  rows={[
+    ['Identity for code', 'Service account', 'IAM role'],
+    ['Policy unit', 'Role binding', 'Identity policy + resource policy'],
+    ['Hierarchy', 'Org / folder / project', 'Org / OU / account'],
+    ['No-key CI', 'Workload Identity Federation', 'OIDC to IAM role'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+gcloud projects add-iam-policy-binding PROJECT_ID \
+  --member="serviceAccount:api@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/cloudsql.client"
+
+gcloud iam service-accounts add-iam-policy-binding \
+  api@PROJECT_ID.iam.gserviceaccount.com \
+  --member="serviceAccount:PROJECT_ID.svc.id.goog[prod/api-ksa]" \
+  --role="roles/iam.workloadIdentityUser"
+```
+
+The first line is what the app can do. The second is who may impersonate that SA. Both are required.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Org[Organization] --> Fold[Folder]
+    Fold --> Proj[Project]
+    Proj --> Res[Resource]
+    Bind[IAM binding] --> Proj
+    Bind --> SA[Service account]
+    SA --> Work[Workload]
+```
+
+## 5. Interview Prep
+
+**Q: How is GCP IAM simpler than AWS IAM?**
+**A:** You usually bind a predefined role on a project or resource instead of writing a JSON action list per identity. AWS is more flexible and more verbose. Interviews want both facts.
+
+**Q: Editor vs a predefined role?**
+**A:** Editor is almost everything in the project. A predefined role is a named permission set. Prod bindings should be predefined or custom, never Editor.
+
+**Q: What is impersonation?**
+**A:** Principal A is allowed to mint tokens as SA B. CI and break-glass use this. Audit logs show the impersonator and the SA.
+
+## 6. Production Use Cases
+
+- Folder-level Viewer for a business unit, project-level tighter roles for on-call.
+- GKE Workload Identity so pods never hold keys.
+- GitHub Actions federating to a deploy SA with a Condition on the repo.
+
+<Callout icon="tip" title="Treat groups as the only human members">
+Bind roles to Google Groups. People move. Groups stay. Direct user bindings rot and never get reviewed.
+</Callout>

@@ -1,52 +1,88 @@
 ---
-title: Cryptographic Salting
-description: A fundamental defense mechanism in password security that neutralizes pre-computed Rainbow Table attacks by appending random data to passwords before hashing.
+title: Salting
+description: "Per-secret random prefixes that make identical passwords hash to different verifiers and kill precomputed rainbow tables."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Cryptographic Salting">
+    <ConceptTemplate title="Salting">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A naive authentication system stores user passwords by running them through a hashing algorithm (like SHA-256).
-The fatal flaw is that hashing algorithms are deterministic. If Alice and Bob both use the terrible password `password123`, their database rows will contain the exact same cryptographic hash:
-`ef92b778bafe771e89245b89ea114...`
+A **salt** is a unique, non-secret random value mixed into a password hash. Two users with the same password must not share a verifier. Attackers cannot build one rainbow table that covers your whole database. Salts do not make a weak password strong; they stop bulk precomputation and identical-hash clustering.
 
-## 1. The Threat: Rainbow Tables
+## 1. Deep Dive and Mechanics
 
-Because humans are notoriously predictable, hackers don't waste time trying to crack hashes during a breach. They prepare years in advance.
-A **Rainbow Table** is a massive, multi-terabyte pre-computed database. The hacker runs the top 100 million most common passwords through SHA-256 and stores the mappings.
-When they hack your database, they don't do any math. They just run a simple SQL `JOIN` against their Rainbow Table, instantly decrypting 70% of your users' passwords in a fraction of a second.
+Generate at least 16 bytes from a CSPRNG per registration or password change. Feed salt and password into Argon2id / bcrypt / scrypt. Store both (usually in one encoded string). At verify, read the salt back; never ask the user for it.
 
-## 2. The Solution: The Salt
+**Salt is not a pepper.** Salts live next to the hash. Peppers live in a KMS. Salts must be unique; they need not be secret. Reusing one global salt is a common bug that restores rainbow-table economics.
 
-A **Salt** is a cryptographically secure string of random characters generated uniquely for *each specific user* the moment they register an account.
+**Do not invent encoding.** Library strings already include algorithm, salt, parameters, and digest.
 
-Instead of hashing the password directly:
-1. The server generates a random salt (e.g., `xQ9Lp2!`).
-2. The server concatenates the salt and the password: `password123xQ9Lp2!`.
-3. The server hashes the resulting, highly complex string.
-4. The server stores **both** the Hash and the plaintext Salt in the database row.
-
-
-<Callout icon="success" title="Destroying the Rainbow">
-
-
-  Salting completely neutralizes Rainbow Tables. Even if a user's password is "123456", the resulting hashed string is completely unique to the universe because of the random salt. The hacker's pre-computed tables are entirely useless, forcing them to painfully brute-force every single user account one at a time.
-
-
+<Callout icon="warning" title="Username is a bad salt">
+Usernames repeat across sites and get renamed. Use CSPRNG bytes. Uniqueness matters more than cleverness.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## 3. Salt vs. Pepper
+Without a salt, an attacker precomputes H(p) for a dictionary once and matches every row. With a unique salt s, they must compute H(s, p) per row. Work scales with users times guesses. A salt does not increase password entropy. It multiplies the attacker's per-database cost.
 
-While a **Salt** is unique per user and stored plainly in the database, a **Pepper** is a single, global secret string applied to all passwords, but it is stored in a highly secure environment (like an AWS Key Management Service or a hardcoded environment variable) *completely separate from the database*.
+<ComparisonTable
+  headers={['Ingredient', 'Secret', 'Unique per user', 'Job']}
+  rows={[
+    ['Salt', 'No', 'Yes', 'Kill precomputation'],
+    ['Pepper', 'Yes', 'No', 'Survive DB-only leak'],
+    ['Password', 'Yes', 'n/a', 'Human secret'],
+    ['Work factor', 'No', 'Policy', 'Slow each guess'],
+  ]}
+/>
 
-If a hacker exploits a SQL Injection vulnerability to steal the user table, they get the hashes and the salts, but they cannot crack them because they do not have access to the application server's secret Pepper.
+## 3. Real-World Implementation
 
+```python
+import os
+from hashlib import scrypt
+
+def hash_pw(password: str) -> tuple[bytes, bytes]:
+    salt = os.urandom(16)
+    digest = scrypt(password.encode(), salt=salt, n=2**14, r=8, p=1)
+    return salt, digest
+```
+
+Prefer argon2's PasswordHasher, which generates and encodes the salt for you.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    PW[Same password] --> H1[KDF with salt A]
+    PW --> H2[KDF with salt B]
+    H1 --> V1[Verifier 1]
+    H2 --> V2[Verifier 2]
+```
+
+## 5. Interview Prep
+
+**Q: Should salts be secret?**
+**A:** No. They must be unique and unpredictable at generation time. Secrecy is the pepper's job.
+
+**Q: How long should a salt be?**
+**A:** 16+ bytes of CSPRNG. Birthday collisions among salts should be implausible at your user count.
+
+**Q: Can I salt SHA-256 and call it done?**
+**A:** You stopped rainbow tables, not GPU guessing. You still need a slow memory-hard KDF.
+
+## 6. Production Use Cases
+
+- **Every password column** in a user table.
+- **API key stretching** when you store a hash of the key.
+- **Backup passphrases** with a stored salt in the header.
+
+<Callout icon="tip" title="Rotate salt only when the password changes">
+You cannot resalt without the plaintext. Upgrade parameters on successful login instead.
+</Callout>

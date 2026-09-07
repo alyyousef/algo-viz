@@ -1,32 +1,95 @@
 ---
 title: Technical Debt
-description: A powerful mathematical metaphor describing the implied cost of future refactoring required when a development team chooses a fast, hacky implementation over a rigorous, architecturally sound approach to meet an immediate deadline.
+description: "A metaphor for expedients that speed delivery now and tax every later change — interest you either pay in refactoring or in slower, riskier work."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Technical Debt"
-  subtitle="The Financial Metaphor of Code"
-  tags={['Process', 'Architecture', 'Clean Code', 'Management']}
->
+    <ConceptTemplate title="Technical Debt">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Coined by Ward Cunningham (inventor of the Wiki), Technical Debt borrows a concept from finance to explain a mathematical reality of software engineering to non-technical executives.
+Ward Cunningham’s **technical debt** is a loan: you ship a design you know is incomplete to learn faster, and you repay by aligning the code with what you learned. It is not a slur for “code I dislike.” Reckless mess without a payoff plan is just mess.
 
-## 1. Taking on Debt
-If the marketing team needs a feature launched by Friday, the engineering team has two choices:
-1. Spend 2 weeks building a mathematically perfect, highly scalable microservice. (Miss the deadline).
-2. Spend 2 days writing a hacky, unscalable script directly inside the legacy monolith. (Hit the deadline).
-Option 2 is taking on **Technical Debt**. You gained immediate speed, but you borrowed mathematical stability from the future.
+## 1. Deep Dive and Mechanics
 
-## 2. The Mathematical Interest Rate
-Just like financial debt, Technical Debt accrues **Interest**.
-Because the hacky script is fragile and lacks tests, every time an engineer has to modify that code in the future, it takes them 3 days instead of 3 hours. That lost time is the mathematical interest payment.
-If a company continuously takes on Technical Debt without ever pausing to refactor (pay down the principal), the interest payments mathematically overwhelm the engineering team. Eventually, 100% of the team's capacity is spent fixing bugs and dealing with fragile architecture, reducing feature velocity to zero (Technical Bankruptcy).
+**Quadrant (Fowler).** Reckless versus prudent, deliberate versus inadvertent. Prudent deliberate debt is a conscious trade (“we will dual-write for one quarter”). Reckless inadvertent is incompetence that nobody scheduled to fix.
 
+**Interest.** Extra time on every change, extra incidents, extra hiring ramp. If interest is near zero, it may not be debt worth paying.
+
+**Visibility.** A debt register: item, owner, interest signal (churn, defects), repayment trigger. Invisible debt is how roadmaps lie.
+
+**Repayment.** Refactor in the path of the next feature, scheduled campaigns, or stop-the-line when interest exceeds feature throughput.
+
+<Callout icon="warning" title="Debt as an excuse">
+Calling every cleanup technical debt empties the word. Reserve it for known gaps with a repayment story, not taste arguments.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Interest rate.** Model extra effort as a multiplier m greater than 1 on changes that touch the indebted module. High-churn modules with high m dominate the portfolio — pay those first (hotspot analysis: churn × complexity).
+
+**Option versus loan.** Some “ugly” code is a cheap option that never gets exercised; paying it is wasted. Debt that sits on the critical path is a high-rate loan.
+
+**Principal.** The size of the rewrite. Sometimes you pay interest forever because principal (a full replace) exceeds remaining product life.
+
+<ComparisonTable
+  headers={['Kind', 'Intent', 'Payback']}
+  rows={[
+    ['Prudent deliberate', 'Ship to learn', 'Scheduled refactor'],
+    ['Prudent inadvertent', 'We know better now', 'Redesign when touched'],
+    ['Reckless deliberate', 'Ship without a plan', 'Crisis later'],
+    ['Reckless inadvertent', 'Did not know', 'Training plus cleanup'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```markdown
+# Debt item D-042
+Module: billing/legacy_tax.py
+Loan: hardcoded country table, copied into two services
+Interest: four SEVs this year on rate changes
+Trigger: next tax-year change OR any new country
+Repayment: single rules service + characterisation tests
+Owner: payments squad
+```
+
+Review this list in planning the same way you review features.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Trade[Deliberate shortcut] --> Ship[Faster now]
+    Ship --> Interest[Slower later]
+    Interest --> Pay[Refactor / replace]
+    Pay --> Healthy[Lower multiplier]
+    Interest -->|ignored| Crisis[Incident or halt]
+```
+
+## 5. Interview Prep
+
+**Q: Give an example of good technical debt.**
+**A:** An in-memory store for an MVP with a written date to move to a real database after the first ten customers. Bad: copying production passwords into the repo to “just demo.”
+
+**Q: How do you prioritise debt?**
+**A:** Hotspots (churn × complexity), incident themes, and upcoming features that will pay interest immediately. Not a grand rewrite of the quiet module.
+
+**Q: Is missing tests debt?**
+**A:** Yes — high interest, because every change is unsafe. It is often the first principal to pay via characterisation.
+
+## 6. Production Use Cases
+
+- **Startup MVPs** that document the loan and the due date.
+- **M&A codebases** with an explicit debt inventory before combining platforms.
+- **Platform migrations** (monolith to services) treated as principal payments, not as a side hobby.
+
+<Callout icon="tip" title="Put a date on the loan">
+Undated debt is a gift to the next team. A calendar reminder or a failing TODO with a ticket is the minimum adult behaviour.
+</Callout>

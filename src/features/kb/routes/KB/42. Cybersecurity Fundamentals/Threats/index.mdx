@@ -1,39 +1,85 @@
 ---
 title: Threats
-description: Any circumstance or event with the potential to adversely impact organizational operations through an information system via unauthorized access, destruction, disclosure, or modification of information.
+description: "Actors and situations that can harm assets — the "who and why" half of a risk statement."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Cybersecurity Threats">
+    <ConceptTemplate title="Threats">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In the lexicon of cybersecurity, terms like "Threat," "Vulnerability," and "Risk" are often used interchangeably by laymen, but they have distinct mathematical definitions.
+A **threat** is a potential cause of harm: a criminal gang, a careless admin, a fire, a hostile nation-state, or a dependency that goes bankrupt. Threats are not vulnerabilities (those are weaknesses) and not risks (those include likelihood and impact). You cannot "patch a threat." You can reduce exposure and impact.
 
-A **Threat** is *what* you are defending against. It is the external actor or event that possesses the intent and capability to cause harm. A threat exploits a vulnerability to cause a negative impact.
+## 1. Deep Dive and Mechanics
 
+**Name them.** External criminals (ransomware, fraud), insiders (malicious or merely sloppy), supply chain, physical, and environmental. Be specific enough to design ("commodity ransomware" vs "targeted theft of source").
 
-<Callout icon="warning" title="The Threat Equation">
+**Intent vs capability.** A script kid and an APT are different budgets. Your bank's threat is not a blog's threat. Intel and sector notes keep the list honest.
 
+**Pair with assets.** A threat without an asset is a headline. "Ransomware against our file shares and backups" is a design input.
 
-  Risk = Threat × Vulnerability × Impact
-
-  If there is a massive Threat (a hurricane), but you have zero Vulnerability (your datacenter is in a bunker in Ohio), your Risk is zero. If you have a massive Vulnerability (a zero-day flaw in your web server), but zero Threat (the server is completely disconnected from the internet), your Risk is also zero.
-
-
+<Callout icon="info" title="Honest threats include accidents">
+Most availability losses are bugs, expired certs, and deleted disks — not genius adversaries.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Categorization of Threat Actors
+Threat modeling languages treat a threat as an agent with goals and resources. Capability can be thought of as a budget (time, money, access). Likelihood in the risk equation is P(threat acts and succeeds | controls). Do not assign movie-plot likelihoods without a base rate.
 
-Threat actors are typically categorized by their motivation, funding, and mathematical sophistication:
+<ComparisonTable
+  headers={['Threat class', 'Typical goal', 'Primary control theme']}
+  rows={[
+    ['Commodity crime', 'Cash / ransomware', 'Patch, MFA, backups'],
+    ['Fraud / abuse', 'Money movement', 'Authz, velocity, step-up'],
+    ['Insider', 'Data or sabotage', 'Least priv, audit'],
+    ['Supply chain', 'Trust abuse', 'Pin, sign, isolate CI'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
-<ComparisonTable headers={['Threat Actor', 'Motivation', 'Sophistication Level']} rows={[ ['Script Kiddies', 'Notoriety, boredom, vandalism.', 'Low. They do not write their own code; they mathematically blindly run tools downloaded from the internet (like Low Orbit Ion Cannon).'], ['Hacktivists', 'Political or social change. (e.g., Anonymous).', 'Medium. Usually rely on massive DDoS attacks or website defacement to embarrass a target.'], ['Cybercriminals', 'Financial gain.', 'High. Highly organized syndicates running Ransomware-as-a-Service (RaaS) operations, pulling in billions of dollars.'], ['Advanced Persistent Threats (APTs)', 'Espionage, intellectual property theft, cyberwarfare.', 'Extreme. State-sponsored hackers (e.g., NSA, Fancy Bear). They have unlimited funding, develop their own mathematical zero-days, and can remain hidden in a network for years.'] ]} />
+```text
+# Threat statement
+# Who: commodity ransomware operators
+# What they want: encrypt file shares, pressure via stolen email
+# We care because: 3-day outage + extortion
+# So we: immutable backups, MFA, EDR, segmented shares
+```
 
+Review the list when the business adds a new data class (health, payments, kids).
 
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Threat[Threat] --> Asset[Asset]
+    Vuln[Vulnerability] --> Asset
+    Asset --> Risk[Risk = chance x impact]
+```
+
+## 5. Interview Prep
+
+**Q: Threat vs vulnerability vs risk?**
+**A:** Threat is the source of harm. Vulnerability is the weakness. Risk is the combination with impact.
+
+**Q: Do we need named APT groups?**
+**A:** Only if it changes a control. Sector-generic "capable criminal" is enough for most SaaS.
+
+**Q: Are users a threat?**
+**A:** Users are a source of error and sometimes abuse. Design for that without contempt.
+
+## 6. Production Use Cases
+
+- **Risk register** inputs.
+- **Tabletop** scenarios.
+- **Product** abuse cases (fraud).
+
+<Callout icon="tip" title="Write threats your engineers can design against">
+"Nation-state" is vague. "Someone with a phished admin session" is actionable.
+</Callout>

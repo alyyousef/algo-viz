@@ -1,41 +1,92 @@
 ---
 title: LLVM
-description: A set of compiler and toolchain technologies, which can be used to develop a front end for any programming language and a back end for any instruction set architecture.
+description: "A reusable compiler infrastructure: typed SSA IR, a pass pipeline, and backends that many languages share instead of each writing their own optimiser."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="LLVM"
-  subtitle="The modular heart of modern compilation"
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/LLVM_Logo.svg/512px-LLVM_Logo.svg.png"
-  description="LLVM (originally Low Level Virtual Machine) revolutionized compiler architecture. Instead of a massive monolith like GCC, LLVM is a collection of mathematically strict, independent C++ libraries."
-  yearCreated={2003}
-  creator="Chris Lattner"
-  isOpenSource={true}
-  websiteUrl="https://llvm.org/"
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="LLVM">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-LLVM brought mathematical sanity to compiler development by strictly enforcing the **Three-Phase Architecture**.
+**LLVM** is a toolkit, not a single compiler. Frontends emit **LLVM IR**. The optimiser rewrites that IR. Backends produce machine code for x86, ARM, RISC-V, GPUs, and more. Clang, rustc, Swift, Zig, Julia, and many GPU stacks sit on this shared middle and back end.
 
-1. **Front-Ends:** You write a parser for your new language (Rust, Swift, Zig) and have it output standard mathematical LLVM IR.
-2. **The Optimizer:** LLVM takes your IR and runs it through decades of world-class mathematical optimization passes, completely independent of the source language.
-3. **Back-Ends:** LLVM translates the optimized IR into physical Machine Code for x86, ARM, WebAssembly, or GPUs.
+## 1. Deep Dive and Mechanics
 
+**LLVM IR** is a typed SSA language you can write as text (.ll) or bitcode (.bc). Instructions include add, load, store, phi, call, and getelementptr. The type system used to have a generic pointer; newer IR is **opaque pointers** plus explicit types on the instruction.
 
-<Callout icon="success" title="The Cambrian Explosion of Languages">
+**Pass managers.** The new pass manager runs module, function, and loop passes with analyses (dominators, AA) cached and invalidated. Inlining, InstCombine, GVN, LICM, and vectorization are the usual suspects.
 
+**Codegen.** IR is lowered through SelectionDAG or GlobalISel to MachineIR, then register-allocated and emitted. ORC JIT APIs reuse the same backends in-process.
 
-  Before LLVM, creating a new compiled language like Rust would require an army of engineers 10 years to write optimizations and target different CPUs. Because of LLVM, the Rust team only had to write the Front-End. They mathematically inherited 20 years of Apple and Google's optimization logic and hardware support for free.
-
-
+<Callout icon="info" title="LLVM is not only clang">
+rustc, Swift, Julia, and MLIR-based compilers all produce LLVM IR (or lower to it). Clang is one frontend. Saying "compiled with LLVM" without naming the frontend is incomplete.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Major LLVM Projects
+LLVM IR is an SSA CFG plus a memory model. Optimisations are rewrite rules that must preserve the LangRef semantics of **undefined behavior**, **poison**, and **undef**. That is why "the optimiser is buggy" is often "the frontend promised nsw on an add that C++ said could wrap."
 
-- **Clang:** The C/C++ Front-End for LLVM (built by Apple to replace GCC).
-- **Rustc:** The official Rust compiler.
-- **Swift:** Apple's proprietary language, written by Chris Lattner alongside LLVM.
-- **Julia:** A scientific language that mathematically JIT-compiles via LLVM.
+Alias analysis answers whether two pointers may refer to the same object. It is conservative: "don't know" means "do not reorder." TBAA and scoped noalias add language facts.
 
-</TechnologyTemplate>
+<ComparisonTable
+  headers={['Layer', 'Artifact', 'Who writes it', 'Who consumes it']}
+  rows={[
+    ['Frontend', 'LLVM IR', 'clang, rustc, swiftc', 'opt'],
+    ['Middle end', 'Optimised IR', 'opt passes', 'llc / codegen'],
+    ['Backend', 'Object / asm', 'llc, MC', 'linker'],
+    ['MLIR', 'Dialect IR', 'ML / HPC compilers', 'LLVM or runtime'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+clang -S -emit-llvm -O0 add.c -o add.ll
+opt -O2 add.ll -S -o add.opt.ll
+llc -O2 add.opt.ll -o add.s
+
+# In-process JIT (ORC) is the API behind lli and many embedders
+lli add.opt.ll
+```
+
+Read add.ll. The names, the phi nodes after you add a loop, and the attributes on the function tell you what the optimiser is allowed to do.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    FE[Language frontend] --> IR[LLVM IR]
+    IR --> PM[Pass manager]
+    PM --> OptIR[Optimised IR]
+    OptIR --> GISel[ISel]
+    GISel --> MC[MC emit]
+    MC --> Obj[Object file]
+    OptIR --> ORC[ORC JIT]
+```
+
+## 5. Interview Prep
+
+**Q: LLVM IR versus GCC GIMPLE?**
+**A:** Same job: SSA mid-level IR. Different type systems, plugin APIs, and ecosystems. You cannot feed GIMPLE to llc.
+
+**Q: What is bitcode stability?**
+**A:** LLVM bitcode is **not** a long-term portable ABI. Apple ships a planned subset. Everyone else should treat .bc as a cache for the same LLVM version.
+
+**Q: Why MLIR then?**
+**A:** LLVM IR is a poor place to represent tensor layouts or GPU shared-memory tiles. MLIR keeps domain dialects and lowers toward LLVM IR at the edge.
+
+## 6. Production Use Cases
+
+- **OS and app toolchains** (Apple, Android NDK, Rust release builds).
+- **JIT embedders** (Julia, some database engines, game tools) via ORC.
+- **GPU and ML compilers** that exit through LLVM or a sibling backend.
+
+<Callout icon="warning" title="Link the same LLVM version">
+LTO bitcode from LLVM 17 will not reliably open in LLVM 19. Pin the compiler across the monorepo and CI images.
+</Callout>

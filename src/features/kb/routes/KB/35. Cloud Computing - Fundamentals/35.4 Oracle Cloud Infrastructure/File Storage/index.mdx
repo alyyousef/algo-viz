@@ -1,24 +1,89 @@
 ---
-title: OCI File Storage (FSS)
-description: A fully managed, highly scalable, POSIX-compliant elastic file system in Oracle Cloud that allows thousands of servers to concurrently mount and share data via the NFS protocol.
+title: OCI File Storage
+description: "Managed NFSv3: export sets, mount targets, and snapshots in a VCN — shared POSIX for lift-and-shift, not a POSIX S3."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI File Storage (FSS)"
-  subtitle="Managed Network File System"
-  tags={['OCI', 'Storage', 'File', 'NFS']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI File Storage">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While Block Volumes can only be attached to a single Virtual Machine at a time, OCI File Storage (FSS) is a shared network drive. It mathematically allows 10,000 different Virtual Machines to read and write to the exact same folder simultaneously.
+**File Storage Service (FSS)** is a managed NFSv3 filesystem. You create a **file system**, an **export** (path + options), and a **mount target** (IP in a subnet). Instances mount that IP. Snapshots are cheap and in-place. It is EFS/Azure Files/Filestore class, not Object Storage.
 
-## 1. Elastic Scaling and NFSv3
-FSS uses the standard Network File System (NFSv3) protocol.
-To a Linux Virtual Machine, the FSS volume looks exactly like a local hard drive (e.g., mounted at `/shared/data`).
-The most powerful mathematical feature of FSS is its **Elasticity**. You do not provision a 500GB drive. The drive starts at 0 bytes. As you write files, the underlying hardware mathematically expands up to 8 Exabytes. You are billed purely by the exact byte count resting on the disk at the end of the month, eliminating the mathematical waste of provisioning empty storage space.
+## 1. Deep Dive and Mechanics
 
-## 2. Export Options and Security
-Because FSS is a network drive, security is paramount. If you are not careful, any VM in the network can mount it.
-FSS uses **Export Options** to enforce mathematical security at the IP level. You define strict rules: *"Only Virtual Machines with the IP address `10.0.1.5` are mathematically allowed to mount this drive with Read/Write permissions. All other IPs in the subnet are strictly Read-Only."* This guarantees that a compromised web server cannot maliciously delete files off the shared corporate drive.
+**Mount targets.** A VNIC in your VCN. NSGs or security lists must allow NFS ports from clients. One mount target can export many file systems. Availability is tied to the AD of the mount target unless you use replication patterns.
 
-</TechnologyTemplate>
+**Exports.** `exportOptions` lock which CIDRs can mount and whether root squash applies. Wide 0.0.0.0/0 exports in a flat VCN are a file share for everyone.
+
+**Snapshots and clone.** Snapshots are read-only views. Clone a snapshot to a new file system for refresh. Replication to another AD/region is the DR feature — enable it before you need it.
+
+**Performance.** Throughput and IOPS scale with size and offering (standard vs high-performance SKUs). Metadata-heavy workloads (millions of tiny files) behave worse than large sequential reads.
+
+<Callout icon="warning" title="NFS lock and UID">
+UID/GID on the server are numbers, not your Linux username. Two images with different UIDs will "lose" permissions. Align images or use squash carefully.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+NFS is stateful enough that a hard mount plus a dead mount target hangs processes. Soft mounts fail I/O. Pick based on whether hung hosts or EIO is worse.
+
+Cost is capacity (and sometimes performance units). Snapshot space is incremental but not free if you never expire them.
+
+<ComparisonTable
+  headers={['Service', 'Protocol', 'Good for']}
+  rows={[
+    ['OCI File Storage', 'NFSv3', 'Lift-and-shift shares'],
+    ['EFS', 'NFSv4', 'AWS shared POSIX'],
+    ['Azure Files', 'SMB / NFS', 'Windows + Linux'],
+    ['Object Storage', 'HTTPS API', 'Blobs, not home dirs'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+sudo yum install -y nfs-utils
+sudo mkdir -p /mnt/share
+sudo mount -t nfs -o nfsvers=3,noatime 10.0.2.4:/export/share /mnt/share
+```
+
+Put the mount in fstab with `_netdev` so it waits for the VNIC.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    VM1[Instance] --> MT[Mount target]
+    VM2[Instance] --> MT
+    MT --> Exp[Export]
+    Exp --> FS[File system]
+    FS --> Snap[Snapshots]
+```
+
+## 5. Interview Prep
+
+**Q: File Storage vs Block Volume vs Object?**
+**A:** Block is a disk for one instance (or clustered SCSI). File is concurrent POSIX. Object is an API, not a filesystem.
+
+**Q: How do you lock down exports?**
+**A:** exportOptions source CIDR plus NSG on the mount target. Both. One without the other is a hole.
+
+**Q: Can OKE use it?**
+**A:** Yes, via a CSI/NFS provisioner. Watch GID and storage class reclaim.
+
+## 6. Production Use Cases
+
+- Shared app config or batch drop-boxes for a lift-and-shift.
+- Home directories for a small Linux fleet (with snapshots).
+- Cross-instance working set for HPC-ish jobs that are not ready for object APIs.
+
+<Callout icon="tip" title="Test failover of the mount target AD">
+A single mount target in one AD is a SPOF for the share. Know the replication/DR story before you put the only copy of critical files there.
+</Callout>

@@ -1,38 +1,85 @@
 ---
 title: Authentication
-description: The process of verifying the identity of a user, process, or device, often as a prerequisite to allowing access to resources in an information system.
+description: "The process of verifying that a principal is who or what it claims to be before a session starts."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Authentication">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In the physical world, authentication is showing your passport at the border. In cybersecurity, **Authentication** is the mathematical process of proving that an entity (a human or a machine) is exactly who they claim to be.
+**Authentication (authn)** answers "who is this?" A password, a passkey, a one-time code, or a workload certificate are authenticators. A session cookie or token is the later proof. Authentication is not authorization. A perfect login to the wrong permission set is still a breach.
 
-It is the very first step in Identity and Access Management (IAM), occurring *before* Authorization.
+## 1. Deep Dive and Mechanics
 
+A good login verifies a secret or a hardware-bound key, then **issues a new session identifier** that is random, stored server-side or as a short-lived signed token with rotation, and bound to a cookie with Secure and HttpOnly flags when the client is a browser.
 
-<Callout icon="info" title="The Three Authentication Factors">
+**Factors.** Something you know, have, or are. Phishing-resistant factors (WebAuthn) beat OTPs that can be relayed. Workloads should use cloud roles or SPIFFE-style identities, not a password in an env file.
 
+**Lifecycle.** Disable on leaver. Step-up for sensitive actions. Invalidate sessions on password change.
 
-  Mathematical proof of identity relies on one or more of these three fundamental factors:
-  1. **Knowledge:** Something you know (e.g., a Password, a PIN).
-  2. **Possession:** Something you have (e.g., a Smartphone, a YubiKey hardware token).
-  3. **Inherence:** Something you are (e.g., a Fingerprint, FaceID biometrics).
-
-
+<Callout icon="warning" title="A login API that trusts a client-supplied user id is not authentication">
+That is a costume. The server must verify an authenticator.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Modern Authentication Paradigms
+Authentication protocols need freshness (nonces, timestamps) so replays fail. Session IDs need enough entropy that guessing is worse than other breaks (128+ bits). Password KDFs exist because humans pick low-entropy secrets. WebAuthn is a challenge-response that keeps the private key in an authenticator.
 
+<ComparisonTable
+  headers={['Authenticator', 'Phish resistant?', 'Typical use']}
+  rows={[
+    ['Password', 'No', 'Legacy, plus extras'],
+    ['OTP / SMS', 'No', 'Better than password only'],
+    ['WebAuthn / passkey', 'Yes', 'Workforce and consumer'],
+    ['Workload cert / role', 'N/A (machine)', 'Services'],
+  ]}
+/>
 
-<ComparisonTable headers={['Paradigm', 'Mechanism']} rows={[ ['Single Sign-On (SSO)', 'The user authenticates once against a central mathematical Identity Provider (IdP) like Okta. The IdP then issues trusted cryptographic tokens (SAML/OIDC) to automatically log the user into all other corporate apps.'], ['Passwordless Authentication', 'Replacing passwords entirely with cryptographic possession. The user relies on their device\'s secure enclave (like Apple FaceID or Windows Hello) to mathematically sign challenges from the server (WebAuthn/FIDO2).'], ['Machine-to-Machine (M2M)', 'Servers talking to servers. Uses mathematical mechanisms like Mutual TLS (mTLS) or API Keys rather than human passwords.'] ]} />
+## 3. Real-World Implementation
 
+```python
+import secrets
 
+def new_session_id() -> str:
+    return secrets.token_urlsafe(32)
+```
+
+Rotate the id at login and after step-up. Store reset tokens as hashes with a short TTL.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    U[Authenticator] --> V[Verify]
+    V --> Rot[New session id]
+    Rot --> C[Secure cookie or short token]
+    C --> Later[Later requests]
+```
+
+## 5. Interview Prep
+
+**Q: Authn vs authz?**
+**A:** Authn identifies. Authz permits. Mixing them is how "logged in" becomes "admin."
+
+**Q: Why not JWT in localStorage?**
+**A:** XSS can read it. Prefer HttpOnly cookies or a BFF.
+
+**Q: Is MFA always enough?**
+**A:** Promptable MFA can be phished. Prefer phishing-resistant MFA for admins.
+
+## 6. Production Use Cases
+
+- **Consumer** login with stuffing defenses.
+- **Workforce SSO** to the IdP.
+- **Service-to-service** identities in the mesh.
+
+<Callout icon="tip" title="Log success and failure, never the secret">
+You need the timeline. You do not need the password in the log line.
+</Callout>

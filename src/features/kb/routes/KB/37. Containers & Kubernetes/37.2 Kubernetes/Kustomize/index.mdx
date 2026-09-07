@@ -1,24 +1,118 @@
 ---
 title: Kustomize
-description: A template-free, configuration management tool natively built into Kubernetes that uses mathematical patching and overlays to customize raw YAML files for different deployment environments.
+description: "Template-free overlays: a base of valid YAML plus strategic or JSON patches, built into kubectl apply -k."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Kustomize"
-  subtitle="Patch-Based Configuration"
-  tags={['Kubernetes', 'Tooling', 'DevOps', 'Configuration']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Kustomize">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Helm modifies YAML files by injecting variables via text templating (e.g., `{{ .Values.image }}`), which mathematically destroys the original YAML structure (making it unreadable to standard linters). Kustomize takes a fundamentally different, mathematically pure approach.
+**Kustomize** customizes Kubernetes YAML without a template language. You keep a **base** of real manifests and **overlays** that patch replicas, images, or labels per environment. `kubectl apply -k` (or `kustomize build`) merges them in memory and applies the result. Linters and policy engines can still parse every file as YAML.
 
-## 1. The Overlay Architecture
-Kustomize relies on a **Base and Overlays** structure.
-You create a `base/` directory containing pure, standard, unmodified Kubernetes YAML files (the default architecture).
-You then create `overlays/prod/` and `overlays/dev/`. Inside `prod`, you write a `kustomization.yaml` file containing mathematical patches. For example: *"Take the Base deployment, and mathematically patch the replica count from 1 to 5."*
+## 1. Deep Dive and Mechanics
 
-## 2. Native Kubectl Integration
-Because Kustomize operates via mathematical patching (JSON Patch) rather than text templating, it guarantees that all files remain 100% valid YAML at all times.
-Kustomize was deemed so mathematically elegant that it was merged directly into the core Kubernetes CLI. You do not need to install a separate tool; you can simply run `kubectl apply -k ./overlays/prod`. The CLI will mathematically merge the base and the production patches in memory and apply the final configuration to the cluster instantly.
+**kustomization.yaml.** Lists `resources` (files or remote), `namespace`, `namePrefix`, `commonLabels`, `images` (rewrite a container image), `replicas`, `configMapGenerator`, and `secretGenerator`. Generators hash names so a ConfigMap change forces a pod rollout.
 
-</TechnologyTemplate>
+**Patches.** Strategic merge patch (YAML that looks like the object) or JSON 6902 patch (op/path/value). Overlays reference the base with `resources: - ../../base`.
+
+**No Helm engine.** You cannot `if`/`range` a Deployment into existence. Conditional objects mean another overlay or a component. That constraint is the point: the base always applies.
+
+**Composition.** `components/` reuse a patch set (add a sidecar) across overlays. `helmCharts` can render a chart as a resource, then patch it — a hybrid some platforms use.
+
+**GitOps.** Flux and Argo CD natively kustomize a path. The PR is a patch file, not a values dump.
+
+<Callout icon="info" title="Every file stays valid YAML">
+A reviewer can open `base/deployment.yaml` in a YAML schema-aware editor. Helm templates are strings until render. That is the philosophical split.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Patch algebra.** Strategic merge has typed merge keys (container name, port). Last overlay wins on conflicts unless you use JSON patch replace. The build is a deterministic fold: base ▹ patch1 ▹ patch2.
+
+**ConfigMap name hash.** The generator appends a suffix of the content hash. The Deployment's envFrom reference is rewritten. Equality of hash ⇒ no rollout; inequality ⇒ new object ⇒ rollout. Cache invalidation as a name.
+
+<ComparisonTable
+  headers={['Tool', 'Abstraction', 'Weakness']}
+  rows={[
+    ['Kustomize', 'Patches on YAML', 'Awkward conditionals'],
+    ['Helm', 'Go templates plus values', 'Unreadable until render'],
+    ['Jsonnet / CUE', 'Code that emits YAML', 'Team learning curve'],
+    ['plain dirs', 'Copy-paste', 'Drift'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+# base/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+```
+
+```yaml
+# overlays/prod/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: shop
+resources:
+  - ../../base
+images:
+  - name: registry.example.com/api
+    newTag: "1.4.2"
+replicas:
+  - name: api
+    count: 4
+patches:
+  - path: resources-patch.yaml
+    target:
+      kind: Deployment
+      name: api
+```
+
+```bash
+kubectl apply -k overlays/prod
+kustomize build overlays/prod | kubeconform
+```
+
+CI should build the overlay and validate; never apply an overlay you have not rendered in the pipeline log.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+  Base[base YAML] --> Build[kustomize build]
+  Overlay[overlays/prod patches] --> Build
+  Build --> Out[Final manifests]
+  Out --> API[kubectl apply / GitOps]
+```
+
+## 5. Interview Prep
+
+**Q: Helm or Kustomize?**
+**A:** Helm for third-party versioned packages. Kustomize for first-party services with env overlays. Many shops use both.
+
+**Q: How do you change only the image tag?**
+**A:** `images:` in the overlay, or a CI that edits that field. Avoid a second copy of the whole Deployment.
+
+**Q: Why did my ConfigMap change not restart pods?**
+**A:** You edited a hand-named ConfigMap. Use `configMapGenerator` so the name hash changes and the Deployment reference updates.
+
+## 6. Production Use Cases
+
+- **dev / staging / prod** overlays on one base.
+- **Regional forks**: extra patch for EU storage class or node affinity.
+- **GitOps apps** where the path `clusters/prod/shop` is the contract.
+
+<Callout icon="tip" title="Keep bases deployable">
+If base cannot `kubectl apply` in a kind cluster, overlays become untestable. Base should be a working minimum, not a Swiss-cheese template.
+</Callout>

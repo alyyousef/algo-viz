@@ -1,48 +1,89 @@
 ---
-title: Zero Trust Architecture
-description: 'A modern security framework that completely eliminates the concept of a "trusted internal network," requiring strict identity and device verification for every single request, regardless of origin.'
+title: Zero Trust
+description: "A model that grants access per request from verified identity and device posture, not from being "on the LAN.""
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Zero Trust Architecture">
+    <ConceptTemplate title="Zero Trust">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-For decades, corporate networks operated like an egg: a hard outer shell (the Firewall) and a soft, squishy interior (the Intranet). If an employee was connected to the corporate WiFi, they were "trusted" and could freely access internal servers without a password.
+**Zero Trust** assumes the network is hostile — including the office LAN. Access is decided by **identity, device, and policy** on each request. A VPN that dumps you onto a flat /16 is the old model. Zero Trust is not a product SKU. It is a way to draw trust boundaries around users, services, and data.
 
-**Zero Trust** destroys this model. Its core mantra is: *"Never Trust, Always Verify."*
+## 1. Deep Dive and Mechanics
 
-## 1. The Fall of the Perimeter
-The old perimeter model failed for two reasons:
-1. **Remote Work**: Employees now work from Starbucks on personal laptops, connecting to cloud SaaS apps. There is no physical corporate perimeter anymore.
-2. **Lateral Movement**: If a hacker breaches the outer firewall (e.g., via a compromised VPN account), they find themselves in the "trusted" soft interior, allowing them to freely hop from server to server (lateral movement) completely undetected.
+**Authenticate strongly.** SSO, phishing-resistant MFA, and workload identities.
 
-## 2. The Pillars of Zero Trust
-Under Zero Trust, the network itself is treated as hostile (just like the public internet). Every single request—even if it comes from the CEO's laptop inside the corporate headquarters—must be cryptographically verified.
+**Authorize narrowly.** Per app or per RPC, not "inside equals trusted." Device posture (managed, encrypted, patched) can be an input.
 
-1. **Explicit Authentication**: Every request must carry a valid, short-lived token (e.g., JWT, SAML) proving user identity via MFA.
-2. **Device Posture Check**: The system verifies not just the user, but the *device*. (e.g., "Is this laptop company-issued? Is the antivirus currently running? Is the OS patched?"). If the device is unpatched, access is denied.
-3. **Micro-segmentation**: The network is divided into thousands of tiny, isolated zones. A compromised web server in Zone A physically cannot route packets to the database in Zone B unless explicitly authorized by policy.
+**Observe.** Every decision is logged. Lateral movement has no soft center to wander.
 
-## 3. Traditional VPN vs Zero Trust Network Access (ZTNA)
+**Migrate.** Start with remote access (ZTNA replacing fat VPN), then service-to-service, then admin planes. Do not boil the ocean.
 
-
-<ComparisonTable headers={['Feature', 'Legacy VPN', 'Zero Trust (ZTNA)']} rows={[ ['Access Model', 'Connects the user to the entire corporate network.', 'Connects the user strictly to a specific application.'], ['Trust', 'Implicit. Once authenticated to the VPN, you are trusted.', 'Continuous. Every single HTTP request is cryptographically re-evaluated.'], ['Visibility', 'Network-level IP addresses.', 'Application-level identity and device context.'] ]} />
-
-
-<Callout icon="tip" title="BeyondCorp">
-
-
-Zero Trust was pioneered by Google in 2014 under the project name **BeyondCorp**, after Chinese state-sponsored hackers successfully breached Google's internal network (Operation Aurora). Today, Zero Trust is the mandate for all modern enterprise architectures.
-
-
+<Callout icon="info" title="Zero Trust still needs backups and patching">
+It relocates the perimeter to identity. It does not repeal ransomware or supply-chain risk.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Classic perimeter security is a coarse allow based on network location. Zero Trust is allow(principal, device, action, resource, context) evaluated continuously (session risk can drop). NIST SP 800-207 describes the policy decision and enforcement points. Failure modes: a god-token IdP, or posture checks that are client-side theater.
+
+<ComparisonTable
+  headers={['Old', 'Zero Trust-ish', 'Still required']}
+  rows={[
+    ['Corp LAN trust', 'Per-app ZTNA', 'EDR and patch'],
+    ['Flat VPN', 'SSO + device', 'Logging'],
+    ['Hard shell, soft center', 'Micro-seg + identity', 'Backups'],
+    ['Long VPN cert', 'Short session + step-up', 'IR revoke'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+# First year
+# - SSO everywhere, kill local passwords
+# - ZTNA for a few apps; shrink the VPN
+# - Device posture for admin apps
+# - Service identities; no long-lived keys in CI
+```
+
+Measure standing VPN group membership. Drive it toward zero.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    User[User + device] --> PDP[Policy decision]
+    Work[Workload identity] --> PDP
+    PDP --> PEP[Enforcement point]
+    PEP --> App[App / data]
+    PDP --> Log[Audit]
+```
+
+## 5. Interview Prep
+
+**Q: Is Zero Trust "no VPN"?**
+**A:** Often ZTNA replaces a fat VPN. Some site-to-site links remain. The idea is no implied trust from IP.
+
+**Q: Zero Trust vs least privilege?**
+**A:** Least privilege is the permission rule. Zero Trust is where and how often you evaluate it.
+
+**Q: Why do projects stall?**
+**A:** They buy a gateway and never inventory apps or fix IdP hygiene.
+
+## 6. Production Use Cases
+
+- **Remote workforce** access.
+- **Contractor** access to one app, not the LAN.
+- **Service mesh** identities in the datacenter.
+
+<Callout icon="tip" title="Start with the admin plane">
+If the cloud console and the IdP are not Zero Trust, the rest is decoration.
+</Callout>

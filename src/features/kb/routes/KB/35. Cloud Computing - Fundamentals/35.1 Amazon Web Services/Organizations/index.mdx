@@ -1,25 +1,103 @@
 ---
 title: AWS Organizations
-description: An enterprise management service that mathematically consolidates billing, structural hierarchy, and absolute security governance across hundreds or thousands of disparate AWS Accounts.
+description: "The multi-account primitive: a tree of OUs, SCPs as permission ceilings, consolidated billing, and the API every landing zone is built on."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="AWS Organizations"
-  subtitle="Multi-Account Management"
-  tags={['AWS', 'Enterprise', 'Governance', 'Billing']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="AWS Organizations">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-A startup uses one AWS account. A Fortune 500 company uses 1,000 AWS accounts (one for every team, product, and environment). Without AWS Organizations, managing 1,000 separate credit cards and security audits is mathematically impossible.
+**Organizations** groups AWS accounts under a management account. Member accounts sit in **organizational units (OUs)**. You attach **service control policies (SCPs)** and resource control policies (RCPs) to the root or to OUs. Billing can roll up. CloudTrail, Config, GuardDuty, and RAM all grow a second dimension: “apply to the org.”
 
-## 1. Consolidated Billing
-The most immediate benefit is financial.
-Organizations ties all 1,000 accounts to a single master payer account. This doesn't just simplify accounting; it mathematically triggers massive volume discounts.
-AWS S3 storage gets cheaper the more you store. If Account A stores 40TB and Account B stores 40TB, they both pay standard rates. But under Organizations, AWS mathematically aggregates their usage to 80TB, pushing the entire company into a cheaper pricing tier.
+## 1. Deep Dive and Mechanics
 
-## 2. Service Control Policies (SCPs)
-SCPs are the ultimate mathematical trump card in AWS security.
-An SCP is a JSON policy applied at the Organization level (or Organizational Unit level) that acts as an absolute ceiling on permissions.
-If an SCP states *"Deny Region: eu-west-1"*, it mathematically overrides everything. It does not matter if a developer in a child account is the Root User. It does not matter if their IAM Policy has `AdministratorAccess`. The SCP mathematically amputates that permission before the IAM evaluation even begins, guaranteeing that no one in the company can ever boot a server in Europe.
+**Management account.** Pays the bill (if consolidated), owns the org, and is a high-value target. No workloads. Delegated administrators (Security Hub, GuardDuty, IAM Access Analyzer) move day-to-day security ops out of it.
 
-</TechnologyTemplate>
+**OUs.** Folders, not networks. A workload account’s blast radius and guardrails come from the OU path. Move account = change policy set.
+
+**SCPs.** JSON like IAM but they only restrict. `FullAWSAccess` is the default allow-all ceiling. A deny of `iam:*` on a sandbox OU is how you keep experiments from creating users.
+
+**Account vending.** `CreateAccount` plus a pipeline (AFT, Control Tower, custom). Email uniqueness and quota wait states are real.
+
+**All-features vs consolidated billing.** You want all features. Billing-only is a half org.
+
+<Callout icon="error" title="SCP cannot grant">
+If a role has no IAM allow, an SCP cannot save it. If an SCP denies, no IAM allow can save it. People fail interviews by swapping those.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Effective permission is intersection: identity ∩ resource ∩ boundary ∩ **every SCP on the path from account to root** ∩ session. Adding an OU layer multiplies ceilings; a deny anywhere on the path wins.
+
+Account count N is a blast-radius control. Cost of governance is roughly N × (baseline stacks + detections). Too few accounts (one shared prod) couples blast radius; too many without vending automation is spreadsheet ops.
+
+<ComparisonTable
+  headers={['Layer', 'Job', 'Typical owner']}
+  rows={[
+    ['Organizations', 'Accounts, SCPs, tree', 'Platform / CCoE'],
+    ['Control Tower', 'Opinionated LZ on Orgs', 'Platform'],
+    ['IAM Identity Center', 'Human roles', 'IAM / security'],
+    ['RAM', 'Share subnets / catalogs', 'Network / platform'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": [
+        "cloudtrail:StopLogging",
+        "cloudtrail:DeleteTrail"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+Attach denies like this at the Workloads OU. Leave a break-glass exception only on a tiny Security Tools OU if you must.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    Root[Org root] --> Sec[Security OU]
+    Root --> Sand[Sandbox OU]
+    Root --> Prod[Prod OU]
+    Sec --> Log[Log archive]
+    Sec --> Aud[Audit]
+    Prod --> App1[App account]
+    Prod --> App2[App account]
+```
+
+## 5. Interview Prep
+
+**Q: SCP vs IAM policy?**
+**A:** SCP is a ceiling on an account/OU. IAM grants inside that ceiling. Both must allow (and not deny).
+
+**Q: Why multiple accounts?**
+**A:** Blast radius, billing tags that actually work, different SCP tightness, and quieter IAM. One account with 400 IAM roles is a maze.
+
+**Q: What should never run in the management account?**
+**A:** Applications, CI workers with admin, and day-to-day humans. Use delegated admin and member accounts.
+
+## 6. Production Use Cases
+
+- Corporate landing zones with sandbox / prod / security OUs.
+- Consolidated billing and CUDOS-style cost data.
+- Org-wide CloudTrail and GuardDuty delegated admin.
+
+<Callout icon="tip" title="Name OUs after risk, not teams">
+Teams change. Data classification and environment (prod, sandbox) do not. Attach SCPs to risk, map teams with Identity Center.
+</Callout>

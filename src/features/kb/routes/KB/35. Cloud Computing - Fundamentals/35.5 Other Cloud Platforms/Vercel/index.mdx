@@ -1,23 +1,93 @@
 ---
 title: Vercel
-description: The creator of Next.js and a premier frontend cloud platform, mathematically engineered to provide the fastest possible global deployment for modern React-based web applications.
+description: "Frontend cloud for Next.js: git previews, Edge/Serverless runtimes, and ISR — not a place to hide a monolith forever."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Vercel"
-  subtitle="The Frontend Cloud"
-  tags={['Cloud', 'Hosting', 'React', 'Next.js']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Vercel">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Vercel mathematically abstracted the agonizing complexity of deploying Server-Side Rendered (SSR) React applications. Before Vercel, deploying a Next.js app required managing Node.js servers, PM2 processes, and complex caching layers.
+**Vercel** is the commercial home of **Next.js**: git-connected projects, preview URLs, a global CDN, and **Serverless** or **Edge** runtimes for server code. **ISR** and cache tags make "static" pages refreshable. Fluid compute and newer runtime names evolve; the idea stays: deploy the UI close to users, keep data in a real database elsewhere.
 
-## 1. Zero-Configuration Next.js Deployment
-Because Vercel created Next.js, the integration is mathematically flawless.
-When you connect a Next.js GitHub repository to Vercel, there is zero configuration. Vercel mathematically parses the code. It takes your Static pages and pushes them to their global Edge CDN. It takes your dynamic API routes (`/pages/api`) and mathematically converts them into **Serverless Functions** (AWS Lambdas under the hood). It takes your Edge Middleware and compiles it into V8 Isolates. It optimizes the architecture perfectly without the developer writing a single line of Terraform or YAML.
+## 1. Deep Dive and Mechanics
 
-## 2. Image Optimization and Edge Caching
-Serving massive 4K images mathematically destroys mobile webpage performance scores (Core Web Vitals).
-Vercel integrates native **Image Optimization**. When a user requests an image using the Next.js `<Image>` component, Vercel's Edge network intercepts the request. It mathematically calculates the exact screen size of the user's device, converts the image to the ultra-efficient WebP or AVIF format on the fly, and caches the mathematical result at the edge. The user receives a perfectly sized image in milliseconds, drastically improving SEO rankings.
+**Build.** Next.js (or other frameworks) compile to static assets plus functions. Build minutes and artifact size are quotas.
 
-</TechnologyTemplate>
+**Runtimes.** Node serverless in regions you pick. Edge on isolates with tighter APIs. Choosing Edge does not magically move your Postgres.
+
+**Previews.** Every PR gets a URL. Protect with SSO/password on private products.
+
+**Data cache.** ISR, `revalidate`, and cache tags. Mis-tagged cache serves stale prices. That is a business bug.
+
+<Callout icon="warning" title="Function CPU and payload limits">
+A "serverless API" that resizes video will time out. Push heavy work to a queue and a worker on a real machine.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Cost ≈ seats + fast-data transfer + function GB-hours. A huge image site on the free bandwidth story becomes a finance meeting.
+
+Cold start vs Edge: Edge reduces some cold starts and forbids some Node APIs. Measure TTFB from more than one region.
+
+<ComparisonTable
+  headers={['Need', 'Vercel', 'Netlify']}
+  rows={[
+    ['Next.js', 'First-class', 'Supported'],
+    ['Previews', 'Yes', 'Yes'],
+    ['Edge', 'Yes', 'Yes'],
+    ['Framework lock', 'Strong Next gravity', 'Broader JAMstack'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```javascript
+// app router sketch: cached fetch with a tag
+export default async function Page() {
+  const res = await fetch("https://api.example.com/price", {
+    next: { tags: ["price"] },
+  });
+  const data = await res.json();
+  return data.amount;
+}
+```
+
+Revalidate that tag from a webhook when the price changes. Do not hope.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Git --> Build[Next build]
+    Build --> Edge[CDN / Edge]
+    Build --> Fn[Serverless]
+    Fn --> DB[Neon / PlanetScale / ...]
+```
+
+## 5. Interview Prep
+
+**Q: Is Vercel a cloud?**
+**A:** It is a frontend/application platform on top of hyperscalers. You still need a database and often a second place for workers.
+
+**Q: Edge vs Node runtime?**
+**A:** Edge: isolates, limited APIs, more PoPs. Node: fuller Node, regional. Match the code, not the buzzword.
+
+**Q: Why do teams leave?**
+**A:** Cost at scale, runtime limits, or a need to run the same app in their VPC. Next.js still runs on Docker.
+
+## 6. Production Use Cases
+
+- Marketing and product UIs with PR previews.
+- ISR catalogs with tagged revalidation.
+- Lightweight BFF routes in front of a core API.
+
+<Callout icon="tip" title="Keep a Docker deploy path">
+If the app only builds on Vercel magic, you have lock-in. `next start` in a container is the insurance.
+</Callout>

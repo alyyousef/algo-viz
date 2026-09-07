@@ -1,39 +1,97 @@
 ---
-title: Singleton Pattern
-description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically restricts the instantiation of a class to one "single" instance, providing a global point of access to that instance.
+title: Singleton
+description: "A creational pattern that guarantees one instance and a global access point — useful rarely, harmful as a default."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Singleton Pattern"
-  subtitle="The Global State Object"
-  tags={['Design Patterns', 'Creational', 'GoF', 'Anti-Pattern']}
->
+    <ConceptTemplate title="Singleton">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If an application needs exactly one connection pool to the database, or exactly one file logger, instantiating multiple `DatabasePool` objects will mathematically corrupt the data or crash the server.
+**Singleton** (GoF) restricts a class to one instance and hands it out via `getInstance` (or a module-level object). Config, a process-wide metric registry, or a hardware driver sometimes need this. Most “I need a singleton” cases need a composition root instead.
 
-## 1. The Private Constructor
-The Singleton mathematically prevents multiple instantiations by making the constructor strictly `private`. The outside world literally cannot use the `new` keyword.
-Instead, the class contains a `private static` variable of itself, and a `public static getInstance()` method.
-```java
-public class Logger {
-    private static Logger instance;
-    private Logger() {} // Private!
-    public static Logger getInstance() {
-        if (instance == null) { instance = new Logger(); }
-        return instance;
-    }
-}
+## 1. Deep Dive and Mechanics
+
+**Construction gate.** Private constructor plus a static holder. First call creates; later calls return the same reference.
+
+**Thread safety.** Naive lazy init races. Solutions: class-holder / module import (JVM, Python), `std::call_once`, double-checked locking with a memory barrier, or eager init at startup.
+
+**Test pain.** Hidden global state. Tests leak config across cases unless you add `resetForTests` (which admits the design is a global).
+
+**Subclasses.** GoF discusses a registry of singletons. In practice, inherit-a-singleton is a trap. Prefer interfaces plus one binding.
+
+<Callout icon="error" title="Singleton is a global with a class name">
+If you cannot inject it, you cannot fake it. Prefer passing the dependency. Use a true singleton only for process-lifetime infrastructure.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Cardinality.** The type’s inhabitants in the running process are exactly one (plus maybe a test reset). That is a constraint on the object graph, not a reuse pattern.
+
+**Initialization order.** Static/module init forms a DAG. Cycles become startup deadlocks or partial objects. Eager init at a composed `main` makes the DAG explicit.
+
+**Versus ambient context.** Thread-locals and scoped containers are *per-scope* singletons. Same smell if overused, better than one process global for request data.
+
+<ComparisonTable
+  headers={['Approach', 'How many', 'Testable']}
+  rows={[
+    ['Singleton', 'One per process', 'Painful'],
+    ['DI singleton scope', 'One per container', 'Swap the container'],
+    ['Module object', 'One per interpreter', 'Same as Singleton'],
+    ['Monostate', 'Many instances, shared data', 'Worse'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Metrics:
+    _inst = None
+
+    def __new__(cls):
+        if cls._inst is None:
+            cls._inst = super().__new__(cls)
+            cls._inst._counters = {}
+        return cls._inst
+
+# Prefer this in new code:
+# metrics = Metrics() created in main and passed in.
 ```
 
-## 2. The Anti-Pattern Controversy
-While famous, Singleton is widely considered a dangerous **Anti-Pattern** in modern architecture.
-Because it provides global mathematical access (any file can call `Logger.getInstance()` anywhere), it acts exactly like a Global Variable. This creates hidden dependencies, makes automated Unit Testing extremely difficult (because state carries over between tests), and introduces catastrophic mathematical Race Conditions in multi-threaded environments if not locked perfectly. Modern systems use Dependency Injection instead.
+Python modules are already singletons; a class wrapper rarely adds value.
 
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    A[Caller A] --> GI[getInstance]
+    B[Caller B] --> GI
+    GI --> One[Single instance]
+```
+
+## 5. Interview Prep
+
+**Q: Why is Singleton criticized?**
+**A:** It hides dependencies, complicates tests, and encodes lifetime in the type. Interviews want you to know the pattern *and* to prefer injection.
+
+**Q: Is a logger a singleton?**
+**A:** Often in practice. Better: a factory or DI binding with a well-known default. The instance count is a deployment choice, not the class’s job.
+
+**Q: Double-checked locking?**
+**A:** Lazy init with a local snapshot plus a fence. Easy to get wrong. Prefer language-supported holders or start-up init.
+
+## 6. Production Use Cases
+
+- **Process-wide registries** (metrics, tracer) created once in `main`.
+- **Hardware or connection owners** that cannot exist twice.
+- **Legacy code** where you wrap an existing global behind a type.
+
+<Callout icon="tip" title="Singleton lifetime, injected access">
+Create it once. Pass it. You get the cardinality without the global lookup.
+</Callout>

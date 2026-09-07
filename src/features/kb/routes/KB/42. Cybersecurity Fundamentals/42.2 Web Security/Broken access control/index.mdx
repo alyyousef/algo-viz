@@ -1,35 +1,89 @@
 ---
 title: Broken Access Control
-description: A vulnerability where users are able to access data or perform actions outside of their intended permissions.
+description: "The OWASP number-one class: the server fails to enforce who may touch which object or function."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Broken Access Control">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-According to the OWASP Top 10 (2021), **Broken Access Control** is the single most critical and common vulnerability on the internet.
+**Broken access control** is the most common serious web bug. The UI hides a button; the API still performs the action. A user changes an id in a request and reads someone else's record (IDOR). An anonymous caller hits an admin route that only checked a cookie's presence, not a role. Defense is **server-side enforcement on every request**, deny-by-default.
 
-While *Authentication* proves who you are, *Authorization* (Access Control) dictates what you are allowed to do. If the web server mathematically fails to enforce these boundaries, a standard user might be able to view another user's private data, or worse, execute Administrator-level commands.
+## 1. Deep Dive and Mechanics
 
+Every request names a principal and a resource. The policy must answer: is this principal allowed this verb on this object in this tenant? Enforcement belongs in a shared layer (middleware, gateway, or capability check), not in each React view.
 
-<Callout icon="tip" title="Insecure Direct Object Reference (IDOR)">
+**Object level.** Look up the object, then check ownership or ACL. Do not trust a client-supplied owner id. **Function level.** Admin RPCs need a role or permission bit. **Tenant level.** Cross-tenant ids are a frequent SaaS fail.
 
+**Horizontal vs vertical.** Horizontal: same role, other user's object. Vertical: lesser role reaches a privileged function.
 
-  The most famous form of Broken Access Control is IDOR. Imagine you log into your bank and the URL is `bank.com/account?id=1234`. What happens if you mathematically change the URL to `id=1235`? If the server just blindly serves the data without checking if YOU own account 1235, that is a critical IDOR vulnerability.
-
-
+<Callout icon="error" title="Never trust the client for authorization">
+Hidden fields, disabled buttons, and JWT claims the client sends back are not enforcement. Re-load the user and policy on the server.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Prevention Strategies
+Access control models: ACL, RBAC, ABAC, ReBAC (relationship graphs). Formal safety asks whether a given state can reach an unauthorized grant (Harrison-Ruzzo-Ullman is undecidable in general). In practice you pick a model, centralize the decision, and test it with adversarial ids. Capability tokens (signed, scoped, short-lived) reduce ambient authority.
 
-1. **Deny by Default:** Unless a route is explicitly marked as public, it should mathematically deny access to everyone.
-2. **Server-Side Enforcement:** Never trust the client. Even if you hide the "Delete User" button in the React frontend, an attacker can mathematically craft the API request using Postman. The backend API must verify permissions on every single request.
-3. **Use UUIDs instead of Integers:** If database IDs are sequential integers (1, 2, 3), they are easily guessable. If they are random UUIDs (`550e8400-e29b-41d4-a716-446655440000`), it is mathematically impossible for an attacker to guess another user's ID to attempt an IDOR attack.
+<ComparisonTable
+  headers={['Pattern', 'Question', 'Typical bug']}
+  rows={[
+    ['RBAC', 'Does this role include the verb?', 'Role in an unsigned cookie'],
+    ['ABAC', 'Do attributes satisfy the rule?', 'Attribute supplied by client'],
+    ['ReBAC', 'Is user related to object?', 'Forgot the relation check'],
+    ['Capability', 'Does this token name this object?', 'Over-broad token reuse'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```python
+def get_invoice(db, principal, invoice_id: str):
+    inv = db.invoices.get(invoice_id)
+    if inv is None:
+        raise NotFound()
+    if inv.tenant_id != principal.tenant_id or not principal.can('invoice:read', inv):
+        raise Forbidden()
+    return inv
+```
+
+Return the same 404 for "does not exist" and "exists but not yours" when enumeration is a risk.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Req[Request + session] --> Ident[Resolve principal]
+    Ident --> Load[Load object]
+    Load --> Pol[Policy decision]
+    Pol --> Allow[200]
+    Pol --> Deny[403 or 404]
+```
+
+## 5. Interview Prep
+
+**Q: What is IDOR?**
+**A:** Insecure Direct Object Reference: the API accepts an object id and forgets to check the caller may access it.
+
+**Q: Why is this OWASP number one?**
+**A:** It is easy to miss on every new endpoint, automated scanners are weak at it, and impact is direct data loss.
+
+**Q: Deny by default or allow by default?**
+**A:** Deny. New routes should 403 until a test asserts the grant.
+
+## 6. Production Use Cases
+
+- **Multi-tenant SaaS** object APIs.
+- **Admin consoles** with extra function-level checks.
+- **Export and bulk** endpoints that must re-apply the same filters as the UI.
+
+<Callout icon="tip" title="Write authorization tests with two users">
+For each resource route, call it as Alice on Bob's id and expect failure. One test per handler catches most IDORs.
+</Callout>

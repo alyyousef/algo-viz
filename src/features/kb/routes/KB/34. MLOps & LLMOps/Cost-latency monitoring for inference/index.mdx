@@ -1,27 +1,98 @@
 ---
-title: Cost & Latency Monitoring
-description: The critical operational practice of mathematically tracking the computational time and financial expense of executing LLM inferences to prevent budget overruns and guarantee real-time user experiences.
+title: Cost-Latency Monitoring for Inference
+description: "Treat tokens, GPUs, and p99 as first-class SLOs — the difference between a clever demo and a bill that survives finance review."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Cost & Latency Monitoring">
+    <ConceptTemplate title="Cost-Latency Monitoring for Inference">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In traditional software, calling a function costs fractions of a cent. In Generative AI, calling a 175-Billion parameter LLM can cost 5 cents and take 4 seconds. If you have a million users, poor inference metrics will literally bankrupt the company.
+Accuracy is not the only production metric. **Inference cost and latency** decide whether a model is allowed to stay on the hot path. LLM tokens make this visceral: one verbose system prompt can 3× a monthly bill.
 
-## 1. Latency Metrics (TTFT and TPOT)
-LLM inference is not a single mathematical operation; it is an autoregressive sequence. You must track two distinct metrics:
-- **TTFT (Time To First Token)**: The time it takes for the GPU to mathematically process the entire user prompt and spit out the very first word. Critical for UI responsiveness.
-- **TPOT (Time Per Output Token)**: The time it takes to generate each subsequent word. If TPOT is slower than human reading speed (~50ms/token), the user experience feels broken.
+## 1. Deep Dive and Mechanics
 
-## 2. Token-Based Cost Economics
-Cloud APIs (like OpenAI) charge per mathematical Token.
-A rogue loop or a prompt injection attack that forces the LLM to output 4,000 tokens of garbage costs you real money. MLOps systems mathematically intercept every request, count the exact input/output tokens, multiply by the API pricing, and log the exact micro-dollar cost to an analytics dashboard.
-If an anomalous user suddenly spikes the cost graph (a runaway script), the monitoring system mathematically trips a circuit breaker, instantly blocking their API key to prevent financial hemorrhage.
+**Latency breakdown.** Queue wait, tokenize, prefill, decode (per token), postprocess, network. p50 can look fine while p99 is a timeout.
 
+**Cost drivers.** GPU-seconds, replica count, prompt+completion tokens, cache miss rate, tool-call fanout, retries.
+
+**Budgets.** Per-request token cap, per-tenant QPS, max concurrent generations. Shed load (429, smaller model) before you melt the fleet.
+
+**Attribution.** Tag traces with model id, prompt version, route, and tenant. Finance will ask “who spent this?”
+
+<Callout icon="warning" title="Average tokens hide whales">
+A 1% of requests that emit 8k tokens dominate cost. Histogram tokens and latency; do not stop at means.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Little’s law: L = lambda W. If arrivals lambda grow and each request holds a GPU for W, you need more replicas or you queue. For autoregressive models, W ≈ t_prefill + n_out * t_decode. Batching changes the constant but couples requests.
+
+SLO: P(latency &gt; T) ≤ epsilon. Error budget is 1 - SLO over a window. Burn rate tells you when to page.
+
+<ComparisonTable
+  headers={['Signal', 'Unit', 'Action']}
+  rows={[
+    ['p99 latency', 'ms', 'Scale or shed'],
+    ['Tokens in/out', 'count', 'Cap, cache, shorter prompts'],
+    ['GPU util', 'percent', 'Batch or downsize'],
+    ['Cost per 1k req', 'currency', 'Route to cheaper model'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import time
+
+def timed_generate(fn, prompt: str) -> dict:
+    t0 = time.perf_counter()
+    out = fn(prompt)
+    ms = (time.perf_counter() - t0) * 1000
+    return {
+        'latency_ms': ms,
+        'tokens_in': out.usage.prompt_tokens,
+        'tokens_out': out.usage.completion_tokens,
+        'model': out.model,
+    }
+```
+
+Export those fields to Prometheus/OTel. Alert on p99 and on cost-per-minute, not only 5xx.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Req[Request] --> Q[Queue]
+    Q --> GPU[Prefill plus decode]
+    GPU --> Met[Metrics]
+    Met --> Alert[Burn-rate alert]
+    Alert --> Shed[Shed or scale]
+```
+
+## 5. Interview Prep
+
+**Q: Why is decode p99 so bad?**
+**A:** Output length is heavy-tailed, batching stalls, and KV-cache memory fragments. Cap max tokens and isolate whales.
+
+**Q: Cost vs latency trade?**
+**A:** Bigger batches raise GPU util (cheaper) and often raise p99. Pick the constraint (SLA or budget) first.
+
+**Q: How do you compare two LLM routes?**
+**A:** Same traffic, report $/accepted-task and p99, not just win-rate on a quality rubric.
+
+## 6. Production Use Cases
+
+- LLM gateways with per-tenant budgets.
+- Recsys / CV on GPU with HPA on queue depth.
+- Multi-model routers that send easy queries to small models.
+
+<Callout icon="tip" title="Price the fallback">
+A cheap model that retries three times can cost more than one large-model call. Log **successful** task cost.
+</Callout>

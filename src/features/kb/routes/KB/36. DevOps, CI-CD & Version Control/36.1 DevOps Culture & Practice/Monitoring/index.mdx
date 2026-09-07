@@ -1,34 +1,106 @@
 ---
 title: Monitoring
-description: The continuous, mathematical collection and visualization of system metrics (CPU, memory, request rates) to evaluate the real-time health and performance of an infrastructure.
+description: "Continuously collecting numeric time series about a system and alerting when those series leave a declared healthy region."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Monitoring"
-  subtitle="Real-Time System Health"
-  tags={['DevOps', 'Observability', 'Metrics', 'SRE']}
->
+    <ConceptTemplate title="Monitoring">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Logging tells you *what* specific event happened. Monitoring tells you the mathematical *trend* of what is happening across the entire system.
+**Monitoring** is the closed loop of **measure → visualise → alert → respond**. You scrape or push numeric series (QPS, error ratio, CPU, queue depth), chart them, and page a human when a rule fires. It answers "is it broken?" for **known** failure modes. Observability extends this to questions you did not write a dashboard for.
 
-## 1. Time-Series Metrics
-Monitoring relies on **Time-Series Databases** (like Prometheus).
-Instead of collecting large text strings, a monitoring system collects pure mathematical data points tied to a timestamp:
-- `cpu_usage{server="web-01"}` -> `85%` @ `10:00:01`
-- `http_requests_total{status="500"}` -> `42` @ `10:00:01`
-Because this data is purely numeric, the database can mathematically compress millions of points per second and execute complex aggregations (e.g., *"Calculate the 99th percentile of HTTP latency over the last 5 minutes"*).
+## 1. Deep Dive and Mechanics
 
-## 2. Alerting and Dashboards
-Monitoring data is mathematically useless if humans have to stare at it.
-DevOps teams build visualizations (using Grafana) to see system health at a glance. More importantly, they define mathematical **Alerting Rules**.
-*"If the 5-minute moving average of HTTP 500 errors exceeds 2%, page the on-call engineer."*
-Monitoring shifts the paradigm from reactive (a customer calling to say the site is down) to proactive (the mathematical alert firing 10 minutes before the database runs completely out of memory).
+**Golden signals (Google SRE).** Latency, traffic, errors, saturation. Four well-chosen series beat 400 host plots nobody watches.
 
+**Collection.** Prometheus scrape (pull) versus DogStatsD / OTLP push. Pull makes the monitor the active party and simplifies targets via service discovery. Push fits short-lived jobs (then use a Pushgateway or OTel).
+
+**Labels.** A metric name plus a label set is a time series. `user_id` as a label is a cardinality bomb. Keep labels low-cardinality: env, region, version, endpoint *class*.
+
+**Alerting.** Alert on **symptoms** (user-facing error rate) more than causes (CPU). Causes are for dashboards after the page. Use burn-rate alerts on SLOs (see SRE) instead of naive "CPU greater than 80 percent" pages that cry wolf.
+
+**Staleness.** A missing series is a signal. `absent()` rules catch dead exporters. Dashboards that show the last happy value forever hide outages.
+
+<Callout icon="info" title="Monitoring assumes you knew what to measure">
+A new deadlock in an un-instrumented lock will not appear on the CPU graph until saturation. That gap is why you also want traces and logs.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A metric is a function m(t) sampled at interval Δ. Counters are monotonic; you alert on **rate** (derivative). Histograms approximate a distribution; quantiles from histograms are biased if buckets are wrong.
+
+**Alert quality.** Precision = true pages / all pages. Recall = true pages / all incidents. A threshold that maximises neither is typical. SLO burn-rate uses error budget math to keep precision usable.
+
+**Cardinality.** Series count ≈ product of label value counts. Memory of a TSDB is roughly linear in active series. This is the real quota, not "number of metric names."
+
+<ComparisonTable
+  headers={['Approach', 'Strength', 'Weakness']}
+  rows={[
+    ['Host metrics only', 'Easy to start', 'Misses user pain'],
+    ['Golden signals', 'Pages on symptoms', 'Needs request metrics'],
+    ['SLO burn-rate', 'Ties alerts to budget', 'Needs a real SLO'],
+    ['Check-list ping', 'Simple up/down', 'Blind to brownouts'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+groups:
+  - name: checkout
+    rules:
+      - alert: CheckoutErrorBudgetBurn
+        expr: |
+          (
+            sum(rate(checkout_http_5xx_total[5m]))
+            /
+            sum(rate(checkout_http_requests_total[5m]))
+          ) > 0.02
+        for: 10m
+        labels:
+          severity: page
+        annotations:
+          summary: Checkout 5xx ratio above 2 percent for 10 minutes
+```
+
+Tune the threshold to your SLO, not to a blog post. The `for` clause is hysteresis against blips.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Targets[Service discovery] --> Prom[Prometheus scrape]
+    Prom --> TSDB[TSDB]
+    TSDB --> Graf[Dashboards]
+    TSDB --> Rules[Alert rules]
+    Rules --> AM[Alertmanager]
+    AM --> Page[Pager]
+```
+
+## 5. Interview Prep
+
+**Q: Pull versus push metrics?**
+**A:** Pull (Prometheus) gives a central view of what should exist and easy up/down via scrape fail. Push fits ephemeral workers and some vendor agents. Many shops do both.
+
+**Q: Why not alert on CPU?**
+**A:** CPU is a cause candidate. Users feel latency and errors. High CPU with healthy SLIs is a capacity ticket, not a 3am page.
+
+**Q: What is a cardinality explosion?**
+**A:** Unbounded label values create millions of series, OOMing the TSDB and slowing queries. Never label with raw IDs.
+
+## 6. Production Use Cases
+
+- **24/7 pages** on user-facing SLIs for a checkout API.
+- **Capacity** planning from saturation series (memory headroom, thread pools).
+- **Black-box** probes (synthetic login) as an outside-in complement to in-process metrics.
+
+<Callout icon="tip" title="Page people, ticket graphs">
+If nobody will wake up for it, it is not a page. Put the rest on a ticket or a Slack channel with a daytime SLO.
+</Callout>

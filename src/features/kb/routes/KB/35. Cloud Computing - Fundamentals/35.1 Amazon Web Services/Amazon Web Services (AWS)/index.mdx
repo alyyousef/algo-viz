@@ -1,9 +1,10 @@
 ---
 title: Amazon Web Services (AWS)
-description: The foundational architectural overview of AWS, exploring the mathematical scale, physical infrastructure, and core compute primitives of the world's most ubiquitous cloud computing platform.
+description: "The largest public cloud: regions and AZs, a control-plane API, and a shared-responsibility bargain that turns capex hardware into on-demand primitives."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
@@ -13,115 +14,83 @@ export default function Layout({ children }) {
   )
 }
 
-Launched in 2006, AWS completely mathematically redefined the economics and architecture of software engineering. Before AWS, launching a startup required purchasing physical servers for $100,000, leasing rack space in a data center, and manually wiring Ethernet cables. If your app went viral, the server crashed. If it failed, you were stuck with $100,000 in useless hardware.
+AWS is a globally distributed set of data centers exposed as APIs. You do not buy a rack; you call RunInstances, PutObject, or CreateFunction and pay for seconds, requests, or gigabyte-months. The product catalog is huge, but the mental model is small: **regions**, **availability zones**, **IAM**, **VPC**, then a compute/storage/data service on top.
 
-AWS introduced the concept of **Utility Computing**. By mathematically virtualizing massive pools of physical hardware using Hypervisors, AWS allows developers to rent a supercomputer by the second via an API, scale it infinitely during traffic spikes, and terminate it instantly when traffic drops.
+## 1. Deep Dive and Mechanics
 
-## 1. Deep Dive & Mechanics
+**Region.** A geographic cluster (for example us-east-1) with its own control plane. Most resources do not stretch across regions. Data residency, latency, and blast radius start here.
 
-### Physical Infrastructure (Regions & AZs)
-AWS is not a single magical cloud; it is a massive, mathematically distributed network of physical data centers.
-The foundation of AWS is the **Region** (e.g., `us-east-1` in Northern Virginia). A Region is a geographical area.
-Inside every Region are multiple **Availability Zones (AZs)**. An AZ is a discrete, physical data center with its own independent power grid, cooling system, and physical security. AZs within a Region are physically separated by miles (to prevent a single flood or fire from destroying both) but are connected via ultra-low-latency fiber optics.
+**Availability Zone.** One or more data centers with independent power and networking, linked by private metro fiber. Multi-AZ is the default HA story: a building can die; the region should not.
 
-When you architect a production app, you never deploy a database in a single AZ. You deploy a Primary database in `us-east-1a` and a synchronous Replica in `us-east-1b`. If lightning mathematically strikes AZ-a and destroys the building, AWS instantly fails over to AZ-b, resulting in zero downtime.
+**Control vs data plane.** The API you call (CreateBucket, RunInstances) is the control plane. The packets your users send to an ALB or S3 endpoint are the data plane. Control-plane outages can block scaling even when existing data-plane traffic still works.
+
+**Account.** Isolation and billing boundary. Organizations and Control Tower turn one account into a landing zone of many.
+
+<Callout icon="error" title="Shared responsibility">
+AWS secures the facilities, hypervisor, and managed control planes. You secure IAM, encryption, security groups, and the bits you put on the disk. An open 3306 to the world is your incident, not theirs.
+</Callout>
 
 ## 2. Mathematical / Theoretical Foundation
 
-### The Economics of Elasticity
-The mathematical foundation of the cloud is **Elasticity**.
-Imagine you run a ticketing website. Traffic is zero most days, but spikes to 100,000 requests per second when Taylor Swift tickets go on sale.
-In a traditional data center, you must mathematically provision enough physical servers to handle the absolute peak (100k req/s). For 364 days a year, 99% of those servers sit idle, burning electricity and capital.
-AWS solves this mathematically. You provision a baseline of 2 servers. When the load balancer mathematically detects CPU utilization crossing 70%, it automatically triggers an API call to AWS to boot 500 new servers. Two hours later, when the concert is sold out, it terminates them. You only pay for the exact compute milliseconds you consumed.
+**Elasticity.** Capacity C(t) tracks load L(t) instead of being fixed at max(L). You pay integral of C(t), not a capital peak. The risk flips from idle hardware to **runaway scale** and surprise bills.
+
+**Failure domains.** Independent AZ failure probability p; n AZs with sync replication give residual risk on the order of p^n if failures are independent — they are not fully independent (control plane, fiber cuts), so you still need backups and a region story for the worst days.
+
+**Consistency vs partition.** Cross-region is high latency. AWS services pick a point on CAP: S3 is strongly consistent per object in a region; DynamoDB lets you choose consistent reads; Route 53 is eventually consistent DNS.
+
+<ComparisonTable
+  headers={['Primitive', 'You manage', 'AWS manages']}
+  rows={[
+    ['EC2', 'OS, patches, scaling', 'Host, Nitro, facility'],
+    ['ECS / EKS', 'Task or pod spec', 'Optionally the nodes'],
+    ['Lambda', 'Code and config', 'MicroVM lifecycle'],
+    ['S3 / DynamoDB', 'Keys, IAM, design', 'Disks, replication, fleet'],
+  ]}
+/>
 
 ## 3. Real-World Implementation
 
-Here is an infrastructure-as-code (IaC) implementation using AWS CDK (Cloud Development Kit) to programmatically define an Elastic Web Architecture.
+```python
+import boto3
 
-```typescript
-import * as cdk from 'aws-cdk-lib';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import * as autoscaling from 'aws-cdk-lib/aws-autoscaling';
-import * as elbv2 from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-
-export class ElasticWebStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
-
-    // 1. Create a mathematically isolated Virtual Private Cloud (VPC)
-    // spanning 2 physical Availability Zones for disaster recovery.
-    const vpc = new ec2.Vpc(this, 'WebVPC', { maxAzs: 2 });
-
-    // 2. Define the Virtual Machine (EC2) Template
-    const asg = new autoscaling.AutoScalingGroup(this, 'ASG', {
-      vpc,
-      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
-      machineImage: new ec2.AmazonLinuxImage(),
-      // Mathematically define the elasticity bounds
-      minCapacity: 2,
-      maxCapacity: 100, 
-    });
-
-    // 3. Mathematical Auto-Scaling Rule
-    // If the average CPU across the fleet hits 70%, boot more servers
-    asg.scaleOnCpuUtilization('CpuScaling', {
-      targetUtilizationPercent: 70,
-    });
-
-    // 4. Create an Application Load Balancer to route internet traffic
-    const alb = new elbv2.ApplicationLoadBalancer(this, 'ALB', {
-      vpc,
-      internetFacing: true
-    });
-
-    // 5. Connect the Load Balancer to the Auto-Scaling Group
-    const listener = alb.addListener('Listener', { port: 80 });
-    listener.addTargets('Target', { port: 80, targets: [asg] });
-  }
-}
+ec2 = boto3.client('ec2', region_name='us-east-1')
+azs = ec2.describe_availability_zones(Filters=[
+    {'Name': 'state', 'Values': ['available']},
+])
+print([z['ZoneName'] for z in azs['AvailabilityZones']])
 ```
+
+Treat the region as a hard parameter. Multi-region is a product decision, not a default checkbox.
 
 ## 4. Visualizations
 
 ```mermaid
-graph TD
-    subgraph AWS Region [AWS Region: us-east-1]
-        subgraph AZ_A [Availability Zone A (Physical Data Center 1)]
-            ALB1(Load Balancer Node) --> EC2_1[Web Server 1]
-            EC2_1 --> RDS_Primary[(Database Primary)]
-        end
-        
-        subgraph AZ_B [Availability Zone B (Physical Data Center 2)]
-            ALB2(Load Balancer Node) --> EC2_2[Web Server 2]
-            EC2_2 --> RDS_Standby[(Database Standby)]
-        end
-        
-        RDS_Primary -.->|Synchronous Fiber Replication| RDS_Standby
-    end
-    
-    Internet((Internet)) --> ALB1
-    Internet --> ALB2
-    
-    style AZ_A fill:#1e1e1e,stroke:#00a676,stroke-width:2px
-    style AZ_B fill:#1e1e1e,stroke:#3b82f6,stroke-width:2px
+flowchart TB
+    Internet[Internet] --> Edge[Edge / DNS / CDN]
+    Edge --> R[Region]
+    R --> AZa[AZ a]
+    R --> AZb[AZ b]
+    AZa --> AppA[Compute + data]
+    AZb --> AppB[Compute + replica]
 ```
-
-<Callout icon="danger" title="The Shared Responsibility Model">
-  A critical mathematical concept for security in AWS is the **Shared Responsibility Model**. AWS is responsible for the security *OF* the cloud (physical data centers, hypervisor isolation, network switches). You are responsible for security *IN* the cloud (patching the OS on your EC2 instances, encrypting your data, configuring firewalls). If an attacker hacks your database because you left port 3306 open to the internet, AWS holds zero liability.
-</Callout>
 
 ## 5. Interview Prep
 
-**Q: Differentiate between EC2, ECS, and Lambda.**
-**Answer:** They represent the mathematical spectrum of compute abstraction.
-- **EC2 (Infrastructure as a Service):** You rent a raw Virtual Machine. You must install the OS, manage security patches, and configure networking. Maximum control, maximum operational overhead.
-- **ECS/Fargate (Containers as a Service):** You give AWS a Docker container. AWS handles the underlying VMs. You just say "run 5 copies of this container."
-- **Lambda (Serverless/Function as a Service):** You just upload raw Python/JS code. AWS mathematically provisions the micro-VM, executes the code, and destroys the environment in 200 milliseconds. Zero control over the environment, zero operational overhead.
+**Q: Region vs AZ vs edge location?**
+**A:** Region is the API and data-residency boundary. AZs are isolated buildings inside it. Edge locations (CloudFront, Route 53 anycast) sit closer to users and are not a substitute for multi-AZ compute.
 
-**Q: What is a VPC (Virtual Private Cloud)?**
-**Answer:** A VPC is a mathematically isolated, logically private network carved out of the public AWS cloud. By default, resources inside a VPC have no internet access. You must explicitly configure Subnets, Route Tables, and Internet Gateways to dictate exactly how network packets flow, providing the foundational security layer for all enterprise AWS architectures.
+**Q: Why can the control plane fail while the site still serves?**
+**A:** Existing ENIs, load balancers, and objects keep forwarding. New deploys, scale-outs, and IAM changes need the control plane.
+
+**Q: What is the Well-Architected set of lenses?**
+**A:** Operational excellence, security, reliability, performance, cost, and sustainability. Interviews often want a failure-mode story under reliability plus an IAM least-privilege story under security.
 
 ## 6. Production Use Cases
 
-- **Netflix (Global Content Delivery):** Netflix runs entirely on AWS. They utilize massive fleets of EC2 instances for their microservices. More importantly, they mathematically utilize multiple AWS Regions. If the entire `us-east-1` region goes offline due to a catastrophic failure, Netflix's global traffic routers (Route 53) automatically redirect millions of East Coast viewers to the `us-west-2` region, ensuring zero streaming interruption.
-- **Capital One (Data Lakes):** Capital One uses AWS S3 (Simple Storage Service) as a massive, infinitely scalable Data Lake. They store petabytes of raw financial transaction logs in S3. Because S3 is mathematically designed for $99.999999999\%$ (11 nines) of durability, they are statistically guaranteed to never lose a single byte of financial data, even if multiple physical hard drives in the AWS data center explode.
+- Elastic web fleets that scale on CPU or request count.
+- Multi-account landing zones for regulated enterprises.
+- Global consumer apps that fail over DNS between regions.
+
+<Callout icon="tip" title="Design for AZ loss first">
+If your architecture cannot lose one AZ cleanly, a multi-region runbook will not save you. Get multi-AZ boring before you buy a second region.
+</Callout>

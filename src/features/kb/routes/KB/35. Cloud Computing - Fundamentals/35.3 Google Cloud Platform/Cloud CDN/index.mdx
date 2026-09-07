@@ -1,24 +1,91 @@
 ---
 title: Google Cloud CDN
-description: A low-latency Content Delivery Network that mathematically caches static assets at the global edge of Google's private fiber-optic network to accelerate web performance.
+description: "Cache in front of Cloud Load Balancing: cache keys, TTLs, and signed URLs — not a global load balancer by itself."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud CDN"
-  subtitle="Global Edge Caching"
-  tags={['GCP', 'Networking', 'CDN', 'Performance']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud CDN">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If a user in Paris requests a 5MB image from a server in Tokyo, the speed of light physically enforces a 250-millisecond delay. Cloud CDN mathematically eliminates this by caching the image directly in Paris.
+**Cloud CDN** sits on an external HTTP(S) Application Load Balancer. When enabled on a backend, Google’s edge caches GET/HEAD responses according to cache keys and TTLs. It is a cache, not an origin. Origin is a Cloud Storage bucket, a GCE/GKE NEG, or an internet NEG.
 
-## 1. Global Anycast IP
-Cloud CDN leverages Google's massive Anycast DNS architecture.
-When you set up Cloud CDN (usually attached to an External HTTP(S) Load Balancer), you are given a single, global IP address.
-When the Parisian user requests the image, the Anycast network mathematically routes their packet to the physically closest Google Edge Point of Presence (PoP) in France. The PoP checks its RAM. If the image is there (Cache Hit), it instantly returns it in 5 milliseconds. If not (Cache Miss), the PoP retrieves the image from Tokyo over Google's private, dedicated underwater fiber backbone (bypassing the chaotic public internet), caches it in Paris, and serves it to the user.
+## 1. Deep Dive and Mechanics
 
-## 2. Cache Invalidation and Mathematics
-Managing a CDN requires strict mathematical control over cache expiration (Time-To-Live, TTL).
-If a developer updates a CSS file, but the Parisian PoP still has the old file cached, the website will look broken to French users. Developers use **Cache Invalidation**. They send a command to the Cloud CDN API: *"Mathematically purge `/styles.css` from every edge node globally."* Within seconds, the global network drops the file from RAM, forcing a fresh pull from the origin server on the next request.
+**Enablement.** Toggle on the backend service. Cloud Armor, IAP, and CDN can coexist; order of features matters for auth. Do not cache authenticated personalized HTML.
 
-</TechnologyTemplate>
+**Cache keys.** Host, path, query string include/exclude. A session id in the key explodes cardinality and misses. A missing query param in the key serves the wrong filtered page.
+
+**TTLs.** Client TTL vs CDN TTL vs default. `Cache-Control: private` and `Set-Cookie` usually bypass. Negative caching (404 TTL) stops a missing asset from slamming origin.
+
+**Signed URLs / cookies.** Time-limited access to private content without making the bucket public. Rotation of the signing key is a production task.
+
+**Invalidation.** Path invalidations are eventual and cost money. Prefer versioned object names (`app.a1b2c3.js`) over purge-as-deploy.
+
+<Callout icon="warning" title="Cache the wrong key, serve the wrong user">
+If Authorization or cookie variance is not in the key (or you cache despite private), user A can receive user B’s page. Default to not caching anything with a cookie.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Hit ratio h reduces origin GETs to (1 − h). Byte hit ratio can differ from request hit ratio (large videos vs tiny HTML). Invalidation latency is not zero — versioned URLs are the CAP-friendly approach.
+
+Signed URL validity window T is the leak window if the URL leaks.
+
+<ComparisonTable
+  headers={['Product', 'Role', 'Origin']}
+  rows={[
+    ['Cloud CDN', 'Cache on HTTPS LB', 'GCS / GCE / internet'],
+    ['Cloud Load Balancing', 'Global anycast L7', 'Your backends'],
+    ['Media CDN', 'Video-scale', 'Large objects'],
+    ['Cloud Storage cache headers', 'Origin hints', 'Not an edge'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+gcloud compute backend-services update web-be \
+  --enable-cdn \
+  --cache-mode CACHE_ALL_STATIC \
+  --default-ttl 3600
+```
+
+Set objects in GCS to `Cache-Control: public, max-age=31536000, immutable` when the filename is hashed.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User[User] --> Edge[CDN cache]
+    Edge --> LB[HTTPS LB]
+    LB --> GCS[Cloud Storage]
+    LB --> GKE[GKE NEG]
+```
+
+## 5. Interview Prep
+
+**Q: CDN vs Load Balancer?**
+**A:** The external HTTPS LB is the anycast entry and health-checked origin router. CDN is an optional cache on that path. You can have LB without CDN.
+
+**Q: How do you cache private content?**
+**A:** Signed URLs or signed cookies, short TTL, and an origin that checks the signature. Not a public bucket.
+
+**Q: Cloud CDN vs Cloud Armor?**
+**A:** Armor is WAF/DDoS policy. CDN is cache. Use both on the same LB: Armor first in the mental model, then cache.
+
+## 6. Production Use Cases
+
+- Static SPA and hashed assets from GCS behind a global LB.
+- Image thumbnails with a long TTL and versioned paths.
+- Signed URL downloads for paid media.
+
+<Callout icon="tip" title="Hash the filename">
+`main.js` plus purge is how you race a cache. `main.9f3a1.js` plus long TTL is how CDNs are supposed to work.
+</Callout>

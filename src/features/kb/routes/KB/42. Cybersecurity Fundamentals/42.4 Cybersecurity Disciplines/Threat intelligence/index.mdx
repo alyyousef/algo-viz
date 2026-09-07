@@ -1,35 +1,87 @@
 ---
-title: Cyber Threat Intelligence (CTI)
-description: The analysis of data regarding malicious actors to understand their motives, targets, and attack behaviors.
+title: Threat Intelligence
+description: "Processed information about adversaries and their methods that changes a defensive decision this week."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Cyber Threat Intelligence (CTI)">
+    <ConceptTemplate title="Threat Intelligence">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Defending a network blindly is mathematically impossible; there are infinite ways an attacker could breach a system. **Cyber Threat Intelligence (CTI)** focuses on gathering information about *who* is attacking, *why* they are attacking, and exactly *how* they operate.
+**Threat intelligence (TI)** is not a firehose of IPs. It is a statement such as: this actor targets our sector with this theme, so we prioritize these patches and these detections. If nobody changed a control, you collected trivia.
 
-By understanding the enemy, an organization can proactively configure their firewalls and Endpoint Detection and Response (EDR) systems to block specific attack vectors before the hackers even launch them.
+## 1. Deep Dive and Mechanics
 
+**Levels.** Strategic (who and why, for leadership). Operational (campaigns). Tactical (TTPs). Technical (IOCs with TTLs). Most orgs drown in the last and skip the first.
 
-<Callout icon="success" title="Indicators of Compromise (IoCs)">
+**Lifecycle.** Requirements from IR and product ("do we care about this ransomware family?"), collection from ISACs and vendors, analysis, dissemination in a form a control owner can use, then feedback.
 
+**Quality.** Source, confidence, and expiry. A raw IP from a public list is a maybe. A hash tied to a ticket you already have is gold.
 
-  The most immediate output of CTI is IoCs. These are mathematically concrete artifacts like known malicious IP addresses, MD5 hashes of malware files, or specific domain names. CTI feeds push these IoCs to firewalls to automatically block traffic.
-
-
+<Callout icon="warning" title="IOC-only intel expires yesterday">
+Addresses and filenames rotate. Behaviors and asset priorities last longer.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Levels of Intelligence
+An IOC is a high-precision, low-recall feature. TTP mappings (ATT&CK) are a coarse ontology so you can score coverage. Utility is P(decision change | intel). Bayesian updating is the honest model; traffic-light confidence is the practical one. Sharing communities work when legal lanes (TLP) are respected.
 
+<ComparisonTable
+  headers={['Product', 'Audience', 'Example action']}
+  rows={[
+    ['Strategic brief', 'Exec', 'Budget a control'],
+    ['Campaign note', 'SOC / IR', 'Watch a theme'],
+    ['TTP note', 'Detection eng', 'Write or tune a rule'],
+    ['IOC bundle', 'Controls', 'Block with a TTL'],
+  ]}
+/>
 
-<ComparisonTable headers={['Level', 'Audience', 'Description']} rows={[ ['Tactical', 'SOC Analysts & Firewalls', 'Highly technical, short-lived data. Includes IP addresses, file hashes, and malicious URLs. Used for immediate, automated blocking.'], ['Operational', 'Incident Responders', 'Information on specific attacker methodologies and campaigns. Focuses on the "TTPs" (Tactics, Techniques, and Procedures).'], ['Strategic', 'C-Suite & Board', 'High-level analysis of broad trends, financial impacts, and geopolitical motivations (e.g., "State-sponsored actors are targeting healthcare supply chains").'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Intel requirement
+# Who: payments org
+# Question: which ransomware families hit our sector this quarter?
+# Output: top 3 + the backups and IdP controls they imply
+# Not: 50k IPs in a CSV nobody will expire
+```
 
+Feed IOCs into the SIEM with an expiry and a source field, or do not feed them.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Req[Requirements] --> Col[Collect]
+    Col --> Ana[Analyze]
+    Ana --> Diss[Disseminate]
+    Diss --> Act[Control or hunt]
+    Act --> Req
+```
+
+## 5. Interview Prep
+
+**Q: Intel vs vulnerability management?**
+**A:** VM is your CVE backlog. Intel tells you which threats make some CVEs urgent for you.
+
+**Q: What is TLP?**
+**A:** Traffic Light Protocol: how far a share may travel. Breaking TLP ends trust.
+
+**Q: Do we need a dedicated intel team?**
+**A:** Not at small scale. You need a named consumer and a 30-minute weekly brief.
+
+## 6. Production Use Cases
+
+- **Sector ISAC** membership with a human who reads it.
+- **IR enrichment** during an active incident.
+- **Board papers** that name relevant actors without fanfic.
+
+<Callout icon="tip" title="Write requirements before buying a feed">
+A feed without a question is unread mail.
+</Callout>

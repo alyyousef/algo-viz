@@ -1,23 +1,95 @@
 ---
 title: Azure Kubernetes Service (AKS)
-description: Microsoft Azure's fully managed container orchestration service, deeply integrated with the Microsoft ecosystem and Active Directory for enterprise-grade Kubernetes deployments.
+description: "Managed Kubernetes in Azure: Microsoft runs the control plane, you run node pools, and Entra ID plus Azure CNI decide who can kubectl and how pods get IPs."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Kubernetes Service (AKS)"
-  subtitle="Managed Kubernetes on Azure"
-  tags={['Azure', 'Kubernetes', 'Containers', 'Compute']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Kubernetes Service">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While AWS EKS requires you to manually manage many networking and identity integrations, Azure Kubernetes Service (AKS) was mathematically designed to offer a smoother, more highly automated developer experience for deploying upstream Kubernetes.
+**AKS** is Kubernetes where the API server and etcd are a Microsoft-managed pool. You pay for nodes (and for a paid SLA tier if you want an uptime contract). Identity is the product differentiator: Kubernetes RBAC can bind to Entra ID groups, so a leaver loses kubectl when their account is disabled.
 
-## 1. The Free Control Plane
-In Kubernetes, the Control Plane (the Master Nodes that run the API and etcd database) is notoriously difficult to manage.
-Like AWS EKS, AKS mathematically abstracts the Control Plane away from you. However, historically, Azure offered the AKS Control Plane entirely for **free** (unlike AWS which charged an hourly fee), only charging you for the physical virtual machines (Worker Nodes) your containers actually consumed. (Azure has since introduced paid SLA tiers, but the free tier remains a massive draw).
+## 1. Deep Dive and Mechanics
 
-## 2. Deep Active Directory Integration
-The strongest mathematical advantage of AKS is its native integration with **Azure Active Directory (Entra ID)**.
-If an enterprise already uses Office 365, all their employee identities are in Active Directory. AKS natively links Kubernetes Role-Based Access Control (RBAC) directly to Active Directory Groups. An administrator does not have to create custom Kubernetes service accounts; they simply decree: *"Any human in the 'Developers' AD Group is mathematically allowed to run `kubectl deploy` in the 'Staging' namespace."* When a developer leaves the company and their AD account is disabled, their Kubernetes access is instantly mathematically revoked.
+**Tiers.** Free is fine for labs. Standard adds an SLA and more control-plane headroom. Premium adds long-term support on older Kubernetes versions — useful when an app cannot jump every quarter.
 
-</TechnologyTemplate>
+**Node pools.** System pool for kube-system, user pools for apps. Mix VM SKUs, spot, GPU, and availability zones. The cluster autoscaler adds nodes; KEDA or HPA adds pods. They are not the same knob.
+
+**Networking.** Kubenet (overlay, fewer VNet IPs), Azure CNI (pod IPs from the subnet — plan CIDRs), and Azure CNI Overlay (pods on a separate CIDR, nodes on the VNet). Network policies and Azure CNI Powered by Cilium change how you isolate workloads.
+
+**Add-ons.** AGIC (Application Gateway Ingress), workload identity (pods as Entra apps — prefer this over aad-pod-identity), Key Vault CSI, Azure Policy (Gatekeeper), and Defender for Containers.
+
+**Upgrades.** Surge nodes, drain, and a version skew limit. Pin a version, test in a second cluster, then upgrade. Auto-upgrade channels exist; they are not a substitute for a staging cluster.
+
+<Callout icon="warning" title="CNI IP exhaustion">
+Azure CNI without overlay allocates a pod CIDR from the subnet. A /24 dies under a few large node pools. Count max pods times nodes, then pick overlay or a much larger subnet.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+The control plane is a quorum you do not operate; availability is Azure’s SLO plus your node-pool diversity. A single-AZ node pool makes the “managed masters” story irrelevant — pods still die with the zone.
+
+Authorization is Entra token → API server → RBAC. Effective verbs are the intersection of Azure RBAC on the resource (who can get credentials) and Kubernetes RoleBindings (what they can do after).
+
+<ComparisonTable
+  headers={['Mode', 'Pod IPs', 'When']}
+  rows={[
+    ['Kubenet', 'Overlay NAT', 'Small clusters, tight VNet'],
+    ['Azure CNI', 'VNet IPs', 'Need pods as first-class VNet peers'],
+    ['CNI Overlay', 'Separate CIDR', 'Scale without eating the subnet'],
+    ['Cilium data plane', 'eBPF policy', 'Network policy and observability'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+az aks create -g prod -n shop \
+  --enable-managed-identity \
+  --enable-aad --aad-admin-group-object-ids 11111111-2222-3333-4444-555555555555 \
+  --network-plugin azure --network-plugin-mode overlay \
+  --enable-azure-rbac \
+  --zones 1 2 3
+```
+
+Use `az aks get-credentials` with kubelogin. Workload identity federates a service account to an Entra app — no secrets in pods.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Dev[kubectl + Entra] --> API[Managed API]
+    API --> Sys[System node pool]
+    API --> User[User node pools]
+    User --> Pod[Pods]
+    Pod --> KV[Key Vault CSI]
+    Pod --> WI[Workload identity]
+```
+
+## 5. Interview Prep
+
+**Q: AKS vs App Service vs Container Apps?**
+**A:** AKS when you need Kubernetes APIs, custom controllers, or multi-team platforms. App Service for a web app. Container Apps for scale-to-zero containers without a cluster to own.
+
+**Q: How does a developer lose cluster access on last day?**
+**A:** Remove them from the Entra group bound to the ClusterRole. If you handed out static kubeconfigs with user certs, you did it wrong.
+
+**Q: Why two node pools?**
+**A:** System pool isolation: a runaway app Autoscaler should not evict CoreDNS. User pools can be spot or GPU without risking kube-system.
+
+## 6. Production Use Cases
+
+- Enterprise platforms that already live in Entra and Azure Policy.
+- GPU training pools next to CPU serving pools in one cluster.
+- AGIC fronting internal HTTP with WAF policy from a shared Application Gateway.
+
+<Callout icon="tip" title="Treat add-ons as products">
+Turn on only what you will patch. A forgotten AGIC or Policy addon is a second control plane you forgot you operate.
+</Callout>

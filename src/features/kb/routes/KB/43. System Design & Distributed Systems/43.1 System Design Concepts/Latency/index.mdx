@@ -1,38 +1,96 @@
 ---
 title: Latency
-description: The time delay between the cause and the effect of some physical change in the system being observed.
+description: "The time from request to response, dominated by tails, queues, and network hops, and managed with budgets, not average-case hope."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Latency">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In computing, **Latency** is the mathematically measurable time it takes for a single packet of data to travel from point A to point B. It is typically measured in milliseconds (ms).
+**Latency** is how long one unit of work takes to finish. Users feel p50 a little and p99 a lot. Averages hide the queue. System design is mostly a fight with tails: GC, disk, lock waits, and a slow dependency on the critical path.
 
-If Throughput is the *width* of the highway (how many cars can fit side-by-side), Latency is the *speed limit* (how fast a single car can travel from New York to LA).
+## 1. Deep Dive and Mechanics
 
+Latency adds along a **critical path**. Parallel fan-out is max, not sum, plus merge cost. Sequential hops add. A "microservice refactor" that turns one DB query into eight RPCs often loses even if each RPC is fast.
 
-<Callout icon="warning" title="The Speed of Light">
+**Queues.** When utilization rises, wait time explodes (M/M/1 wait ~ rho / (1-rho)). Running hot is how you buy a latency incident.
 
+**Budgets.** Give the page 800 ms. Spend it: 50 ms edge, 100 ms app, 200 ms DB, rest for JS. Any new hop must steal from someone.
 
-  Latency is strictly bound by physics. The speed of light through a fiber-optic cable means that data traveling from London to Sydney will *always* take at least ~130 milliseconds mathematically, regardless of how much money you spend on the router.
-
-
+<Callout icon="warning" title="p99 is a different system than p50">
+The median may be a cache hit. The tail is a miss, a retry, a slow disk, and a cold JVM. Optimize the tail on purpose.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Latency Numbers Every Programmer Should Know
+Little's law: concurrency L = lambda * W. If you want W low, you cannot run huge L without huge lambda. Tail bounds (Chebyshev, or empirical histograms) beat a single mean.
 
-To architect high-performance systems, engineers must understand the mathematical magnitude of different operations (approximations):
+Retry amplification: a 1 percent timeout with two retries can triple load on an already slow dep, which raises latency further (retry storm).
 
+<ComparisonTable
+  headers={['Metric', 'What it hides', 'Use for']}
+  rows={[
+    ['Average', 'Tails and multi-modes', 'Never as an SLO'],
+    ['p50', 'The unhappy 50 percent', 'Happy-path debug'],
+    ['p95 / p99', 'The last 1 percent', 'User SLOs'],
+    ['p99.9 / max', 'Cost of extremes', 'Hard real-time, or debug'],
+  ]}
+/>
 
-<ComparisonTable headers={['Operation', 'Latency', 'Human Scale Equivalent']} rows={[ ['L1 Cache Reference', '~0.5 nanoseconds', '1 heartbeat (0.5s)'], ['Branch Mispredict', '~5 nanoseconds', '10 heartbeats (5s)'], ['Main Memory (RAM) Reference', '~100 nanoseconds', '3 minutes'], ['Read 1MB sequentially from SSD', '~1,000,000 ns (1 ms)', '1 month'], ['Send a packet CA -> EU -> CA', '~150,000,000 ns (150 ms)', '15 years!'] ]} />
+## 3. Real-World Implementation
 
-*Conclusion:* The most powerful optimization you can make is preventing data from crossing the network if it can be kept in RAM, and preventing it from hitting RAM if it can be kept in the L1 CPU cache.
+```python
+import time
 
+def timed(fn):
+    t0 = time.perf_counter()
+    try:
+        return fn()
+    finally:
+        ms = (time.perf_counter() - t0) * 1000
+        # histogram.observe(ms)  — never just a running mean
+        _ = ms
+```
+
+Export a histogram (Prometheus native, or HDR). Alert on SLO burn, not on a 5-minute average crossing 200 ms after users already left.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Edge[Edge 20 ms] --> App[App 40 ms]
+    App --> Cache[Cache 2 ms]
+    App --> DB[DB 80 ms p50, 800 ms p99]
+    App --> Rec[Reco 120 ms]
+    Cache --> Merge[Merge]
+    DB --> Merge
+    Rec --> Merge
+```
+
+## 5. Interview Prep
+
+**Q: How do you cut latency in a design interview?**
+**A:** Remove hops, cache the hot read, precompute, move work off the request path, and stop synchronizing on a lock. Then talk about p99, not a happy diagram.
+
+**Q: Why is the p99 10x the p50?**
+**A:** Multimodal paths (hit versus miss), GC, noisy neighbors, and queueing. Fix the slow mode; do not micro-optimize the fast one.
+
+**Q: Latency versus bandwidth?**
+**A:** Bandwidth is bytes per second. A fat pipe can still have 80 ms RTT. Streaming and windowing help throughput; they do not shrink speed-of-light.
+
+## 6. Production Use Cases
+
+- **Search and checkout** with explicit hop budgets.
+- **Edge caches** to eat RTT for static and semi-static reads.
+- **Async APIs** that return 202 when the work cannot meet a sync SLO.
+
+<Callout icon="tip" title="Trace the critical path">
+A waterfall trace (OpenTelemetry) shows which span stole the budget. Guessing is how you add another cache and miss the lock.
+</Callout>

@@ -1,42 +1,98 @@
 ---
 title: Snapshot Testing
-description: "A testing technique where the output of a component is captured and compared against a previously stored reference baseline to detect unexpected changes."
+description: "Serialising a value or render tree and failing on unexpected diffs so large, boring output is reviewed as a patch, not hand-asserted field by field."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Snapshot Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Traditional assertions verify specific values (e.g., `expect(title).toBe('Hello')`). **Snapshot Testing** is a much broader technique primarily used in Frontend development (React, Vue) to ensure UI components do not change unexpectedly.
+**Snapshot testing** captures the serialised form of a component, AST, or API payload on first run, then diffs later runs against that file. Jest made this famous for React trees. It is a review tool: the human must accept the new snapshot when the change is intentional.
 
-## 1. How it Works
-1. The first time a test runs, the testing framework renders the UI component (into a string of HTML or JSON) and saves it to a local file called a **Snapshot**.
-2. The developer commits this snapshot file to version control (Git).
-3. On subsequent test runs, the framework renders the component again and compares the new output to the saved snapshot.
-4. If there is a 100% exact match, the test passes. If even a single CSS class or HTML tag differs, the test fails, highlighting a diff.
+## 1. Deep Dive and Mechanics
 
-## 2. Updating Snapshots
-If the test fails, the developer must inspect the diff.
-- If the change was an accident (a regression), the developer fixes the code.
-- If the change was intentional (the designer asked to change the button color from blue to red), the developer runs a command (e.g., `jest -u`) to overwrite the old snapshot with the new baseline.
+**Write once.** First run writes a `.snap` (or inline snapshot). Later runs compare. A mismatch fails with a diff.
 
-## 3. Visual Regression Testing
-While standard snapshot testing compares HTML/JSON strings, **Visual Snapshot Testing** compares actual pixels. Tools like Percy or Cypress take screenshots of a webpage rendered in a headless browser and use image-comparison algorithms to detect if a specific div shifted by 2 pixels to the left.
+**What to snapshot.** Small, stable output: a pure component with fixed props, a formatter, a GraphQL pretty-print. Not live clocks, random ids, or full page HTML from a flaky CMS.
 
+**Review.** A 400-line snapshot that updates in every PR is not a test; it is a permission slip to click "update." Keep snapshots tiny or stop.
 
-<Callout icon="warning" title="Snapshot Fatigue">
+**Inline versus file.** Inline snapshots sit next to the assertion and review well. File snapshots hide in `__snapshots__` and rot.
 
-
-Because snapshots capture *everything*, they are incredibly brittle. Changing a global wrapper component might cause 500 snapshot tests to fail simultaneously. Developers often suffer from "Snapshot Fatigue," where they blindly press "Update Snapshots" without actually reviewing the diff, entirely defeating the purpose of the test.
-
-
+<Callout icon="warning" title="Never update snapshots with a blind flag">
+`--updateSnapshot` on a dirty tree will bless bugs. Update one file at a time and read the diff like production code.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+A snapshot is an **oracle by example**: expected = serialise(f(x0)) stored at time t0. The test is equality of strings (or structured trees) at t1.
+
+It is complete for accidental change of the serialised form and silent on whether that form was ever correct. The first write can encode a bug forever.
+
+Hashing the snapshot (some visual tools) trades readable diffs for collision risk; for text, keep the raw serialisation.
+
+<ComparisonTable
+  headers={['Style', 'Strength', 'Failure mode']}
+  rows={[
+    ['Field asserts', 'Intent is obvious', 'Tedious for trees'],
+    ['File snapshot', 'Cheap for large output', 'Rubber-stamp updates'],
+    ['Inline snapshot', 'Review beside the test', 'Noisy PRs if huge'],
+    ['Visual screenshot', 'Pixels', 'Theme and font flake'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```javascript
+import { render } from '@testing-library/react';
+import { PriceTag } from './PriceTag';
+
+test('price tag markup', () => {
+  const { container } = render(<PriceTag amount={1099} currency="USD" />);
+  expect(container.firstChild).toMatchInlineSnapshot(`
+    <span class="price">
+      $10.99
+    </span>
+  `);
+});
+```
+
+Normalise whitespace and strip unstable attributes (hashes in CSS modules) before compare.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Render[Render or serialise] --> Diff[Diff vs stored]
+    Diff -->|match| Pass[Pass]
+    Diff -->|intentional| Update[Update in PR]
+    Diff -->|accident| Fail[Fail and revert]
+```
+
+## 5. Interview Prep
+
+**Q: When are snapshots a bad idea?**
+**A:** When the output changes for reasons you do not care about (time, ids, store order) or when nobody reads the updates.
+
+**Q: Snapshot versus explicit assert?**
+**A:** Explicit for money, auth, and legal strings. Snapshot for bulky but rarely meaningful markup.
+
+**Q: How do you snapshot an API?**
+**A:** You can, but a contract test or a schema is usually clearer. Snapshots of JSON tend to encode field order and extra noise.
+
+## 6. Production Use Cases
+
+- **Design-system components** with a small, stable DOM.
+- **Codegen and compiler fixtures** (expected IR or SQL).
+- **Error message catalogues** that must not drift unnoticed.
+
+<Callout icon="tip" title="One concept per snapshot">
+A snapshot of an entire page encodes routing, i18n, and a banner experiment. Split until a failure names the component.
+</Callout>

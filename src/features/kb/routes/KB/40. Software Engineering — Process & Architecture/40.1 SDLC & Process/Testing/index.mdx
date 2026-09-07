@@ -1,31 +1,94 @@
 ---
 title: Testing
-description: The rigorous mathematical process of empirically verifying that a software system behaves exactly as designed, utilizing automated code execution to uncover logic flaws, edge cases, and architectural regressions.
+description: "A strategy for asking whether the software is wrong before users do — layered oracles from unit checks to production probes."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Software Testing"
-  subtitle="The Empirical Proof of Logic"
-  tags={['Process', 'Quality Assurance', 'CI/CD', 'TDD']}
->
+    <ConceptTemplate title="Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Writing code without automated tests is mathematically equivalent to building a bridge without calculating the load-bearing capacity of the steel. It might look fine on day one, but it will eventually collapse under pressure.
+**Testing** is designed criticism. You build oracles that can fail. A green bar that cannot fail is decoration. The craft is choosing what to test, at which layer, and how fast the signal returns.
 
-## 1. The Testing Pyramid
-Testing is mathematically structured into a pyramid, based on execution speed and cost:
-- **Unit Tests (The Base)**: Testing a single, isolated function (e.g., `add(2,2)` mathematically must return `4`). You should have thousands of these. They execute in milliseconds.
-- **Integration Tests (The Middle)**: Testing how two mathematical components interact (e.g., does the API successfully write data to the real PostgreSQL database?). You have hundreds of these.
-- **End-to-End / E2E (The Peak)**: Using an automated browser (like Playwright) to mathematically simulate a real user clicking buttons on the UI. These are slow and brittle, so you only write dozens of them to test critical user flows.
+## 1. Deep Dive and Mechanics
 
-## 2. Test Coverage and Regressions
-The primary mathematical value of testing is not finding bugs today; it is preventing **Regressions** tomorrow.
-If an application has 90% Code Coverage, it means 90% of the logical branches in the codebase are mathematically proven to work by an automated script. If a new developer joins the team and accidentally alters a core mathematical algorithm, the CI/CD pipeline will instantly run the tests, mathematically detect the regression, and block the deployment, providing ultimate architectural safety.
+**Layers.** Unit tests pin domain rules in milliseconds. Integration tests pin adapters (DB, queues). Contract tests pin published APIs. End-to-end tests pin a few user journeys. Production tests (synthetics, canaries) pin reality.
 
+**Risk-based.** Test the money path, authz, and migrations harder than the settings tooltip. Coverage percent is a hint, not a goal.
+
+**Determinism.** Flakes train people to ignore red. Isolate time, randomness, and networks. Quarantine is a debt ticket, not a strategy.
+
+**Pyramids and trophies.** Many fast tests, few slow ones. An inverted pyramid of UI clicks is a slow, brittle night watch.
+
+<Callout icon="warning" title="Testing after it works">
+Tests written when the feature is already “done” encode the implementation, not the requirement. Write the failing example first when you can.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Fault versus failure.** A fault is a defect in the artifact; a failure is an incorrect observed behaviour. Tests sample the input space. Exhaustive testing is impossible for any interesting program (input space explosion).
+
+**Partitioning.** Equivalence classes and boundary values raise the chance a sample hits a fault. Property-based tests sample many points from a specification.
+
+**Coverage.** Statement coverage is necessary but weak; a branch can be taken without asserting the thing you care about. Mutation testing estimates whether assertions would catch a fault.
+
+<ComparisonTable
+  headers={['Layer', 'Speed', 'Best signal']}
+  rows={[
+    ['Unit / domain', 'ms', 'Rules and edges'],
+    ['Integration', 'seconds', 'SQL, I/O, wiring'],
+    ['Contract', 'seconds', 'API compatibility'],
+    ['E2E / UI', 'minutes', 'A few golden paths'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def tax_inclusive(net, rate):
+    return round(net * (1 + rate), 2)
+
+def test_de_vat():
+    assert tax_inclusive(100.00, 0.19) == 119.00
+```
+
+One assertion, one rule. Do not hide this behind a 40-step Selenium script.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Fail[Oracle fails] --> Fix[Fix product or test]
+    Fix --> Fast[Unit and contract]
+    Fast --> Slower[Integration]
+    Slower --> Few[E2E journeys]
+    Few --> Prod[Synthetics in prod]
+    Prod --> Learn[New cases into unit layer]
+```
+
+## 5. Interview Prep
+
+**Q: How much coverage is enough?**
+**A:** Enough that you will change the code. Critical modules want high branch coverage plus mutation or properties. Dead UI chrome does not.
+
+**Q: Testing versus QA as a phase?**
+**A:** QA as a late gate cannot save a design without tests. Modern QA designs strategy, charters exploratory work, and owns risk — not a week of clicking after code freeze.
+
+**Q: Why are e2e tests flaky?**
+**A:** Shared environments, timing, and too many moving parts. Keep them few and hermetic; push logic down.
+
+## 6. Production Use Cases
+
+- **Payments and identity** with property tests on invariants.
+- **Public APIs** with consumer-driven contracts.
+- **Continuous delivery** where the suite is the release gate.
+
+<Callout icon="tip" title="Name the invariant">
+If you cannot say what must stay true, you cannot write a good test. Write the sentence, then the assert.
+</Callout>

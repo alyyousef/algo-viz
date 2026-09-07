@@ -1,29 +1,91 @@
 ---
 title: Docker
-description: A set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages called containers.
+description: "The platform that productized Linux containers: images, a daemon, a Hub, and a CLI that became the industry's default vocabulary."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="Docker">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Docker">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Docker is a platform for developers and sysadmins to build, run, and share applications with containers. The use of containers to deploy applications is called containerization. Containers are not new, but their use for easily deploying applications was heavily popularized by Docker.
+**Docker** is the product name people use for three different things: a **CLI**, a **Linux engine**, and a **Desktop VM** that wraps the engine on Mac and Windows. In 2013 it wrapped cgroups and namespaces in docker run and docker build, added a layered image format, and put a public registry in front of it. The "works on my machine" problem became "ship the machine's userspace."
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="info" title="Containers vs Virtual Machines">
+**The bet.** Linux already had LXC. Docker made an image the unit of delivery: a reproducible rootfs plus metadata, cached in layers, pushed to a registry. The unit of execution is a container created from that image.
 
+**The stack today.** CLI to dockerd to containerd to runc to the kernel. Builds go through BuildKit. Images on disk are OCI. Hub is just the default registry hostname.
 
-  A Virtual Machine includes the App, the Binaries, AND a massive 10GB Guest Operating System (Windows/Ubuntu).
+**OCI.** Fear of lock-in produced the Open Container Initiative. A Docker image is an OCI image. Podman, Buildah, nerdctl, and Kubernetes runtimes run the same bytes.
 
-  A Docker Container shares the host machine's OS kernel. It only includes the App and its exact dependencies. It boots in 50 milliseconds and is usually under 100MB.
+**Desktop versus Engine.** Engine is native on Linux. Desktop starts a Linux VM and runs Engine inside it. File shares and networking cross a VM boundary.
 
+**What Docker is not.** It is not a cluster. Swarm exists but the industry cluster is Kubernetes. Docker is the inner loop: build, run, push.
 
+<Callout icon="info" title="Vocabulary split">
+Say Docker Engine when you mean the daemon. Say Docker Desktop when you mean the Mac/Windows app. Say OCI image when the runtime might not be Docker at all.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Key Concepts
+**Reproducibility.** A pinned base digest plus a Dockerfile plus locked dependencies is a function from source to image digest. Unpinned latest tags are a moving input.
 
+**Isolation model.** Docker popularized process isolation, not hardware isolation. The security model is shared kernel plus dropped caps plus seccomp, which is weaker than a hypervisor and cheaper to start.
 
-<ComparisonTable headers={['Concept', 'Description']} rows={[ ['Dockerfile', 'A simple text file containing the instructions to build a Docker Image. (e.g., `FROM node:18`, `COPY . .`)'], ['Image', 'A read-only, frozen snapshot of your application and its dependencies. It is the blueprint.'], ['Container', 'A running instance of an Image. You can run 50 identical containers from 1 Image.'], ['Docker Hub', 'The public registry where developers upload and download pre-built images (like npm, but for entire operating environments).'] ]} />
+<ComparisonTable
+  headers={['Name', 'What it is', 'Where it runs']}
+  rows={[
+    ['Docker Engine', 'Linux daemon plus API', 'Native Linux'],
+    ['Docker Desktop', 'GUI plus Linux VM plus Engine', 'Mac and Windows'],
+    ['Docker Hub', 'Public registry', 'docker.io'],
+    ['OCI runtime', 'runc-class executor', 'Any compliant engine'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
-</TechnologyTemplate>
+```bash
+docker build -t registry.example.com/shop-api:1.4.2 .
+docker push registry.example.com/shop-api:1.4.2
+docker run --rm -p 8080:8080 registry.example.com/shop-api:1.4.2
+```
+
+That three-step loop — build, push, run — is the product thesis. Kubernetes later replaced the third step with a scheduler; it did not replace the image.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    DF[Dockerfile] --> BK[BuildKit]
+    BK --> Img[OCI image]
+    Img --> Hub[Registry]
+    Hub --> Eng[Engine / containerd]
+    Eng --> Ctr[Running container]
+```
+
+## 5. Interview Prep
+
+**Q: Did Docker invent containers?**
+**A:** No. FreeBSD jails, Solaris zones, and LXC came first. Docker invented a UX, a layered image, and a distribution story that reached developers.
+
+**Q: Why did Kubernetes drop Docker as a runtime?**
+**A:** It dropped the Docker API shim. It still runs OCI images, usually via containerd — the same runtime Docker already used.
+
+**Q: Is Docker dead in production?**
+**A:** The image and the Dockerfile are not. The daemon on every node often is; kubelet talks CRI instead.
+
+## 6. Production Use Cases
+
+- Every team that ships a Dockerfile — still the common build language.
+- Local inner loop with Compose and Desktop.
+- Simple hosts that run Engine under systemd without a cluster.
+
+<Callout icon="tip" title="Pin what you ship">
+The Docker skill that survives runtime churn is pinning digests and writing small images. The daemon brand on the node is replaceable.
+</Callout>

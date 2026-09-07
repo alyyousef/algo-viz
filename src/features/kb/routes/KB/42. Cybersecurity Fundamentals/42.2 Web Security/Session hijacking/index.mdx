@@ -1,35 +1,94 @@
 ---
 title: Session Hijacking
-description: The exploitation of a valid computer session—sometimes also called a session key—to gain unauthorized access to information or services in a computer system.
+description: "Stealing or predicting a session identifier so the attacker inherits an authenticated browser session."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Session Hijacking">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Because HTTP is a mathematically stateless protocol, web applications use Session Cookies or JWTs (JSON Web Tokens) to remember who you are after you log in. This token is essentially your temporary digital passport.
+**Session hijacking** is using someone else's session id as your own. The id might leak from a URL, a log, XSS reading a non-HttpOnly cookie, a MITM on HTTP, or a predictable generator. Defense is **unguessable ids, TLS everywhere, cookie flags, rotation, and binding**.
 
-If an attacker can mathematically steal your Session Cookie, they do not need your username, your password, or your 2FA code. They can simply inject the cookie into their own browser and instantly become you.
+## 1. Deep Dive and Mechanics
 
+Issue 128+ bits from a CSPRNG. Put the id in a **Secure; HttpOnly; SameSite** cookie, preferably with the __Host- prefix. Never put it in a query string (Referer leaks). Rotate on login, privilege change, and periodically. Invalidate on logout and password change — including other devices if the user asks.
 
-<Callout icon="tip" title="The Firesheep Era">
+**Detection.** Sudden ASN or country change can trigger step-up, not a silent lockout that creates support DoS. Store a hash of the session id at rest so a stolen DB of sessions is not immediately usable if you also HMAC with a server secret.
 
-
-  In the early 2010s, a browser extension called Firesheep made session hijacking terrifyingly easy. If you were on public WiFi, it would mathematically sniff the unencrypted HTTP traffic, grab the Facebook session cookies of everyone in the coffee shop, and let the attacker click a button to log into their accounts. This forced the entire internet to adopt HTTPS.
-
-
+<Callout icon="warning" title="XSS plus a readable session cookie is game over">
+HttpOnly stops trivial JS reads. It does not stop the script from acting as the user on your origin. Fix XSS too.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How Sessions are Hijacked
+A session id is a bearer capability. Security is entropy plus confidentiality of the channel plus **narrowing** (SameSite, binding, short TTL). Prediction attacks are just low-entropy generators (incrementing ints, time-only seeds). Fixing the generator is information-theoretic: the attacker should need 2^128 guesses, which is not online-feasible.
 
-1. **Cross-Site Scripting (XSS):** If an attacker can inject malicious JavaScript into a page you visit, they can execute `document.cookie` and mathematically send your session token to their server. (Mitigation: Set the `HttpOnly` flag on the cookie).
-2. **Packet Sniffing:** Intercepting unencrypted traffic over HTTP. (Mitigation: Force HTTPS everywhere and use the `Secure` flag on the cookie).
-3. **Session Fixation:** The attacker forces the victim to log in using a specific session ID that the attacker already mathematically knows.
+<ComparisonTable
+  headers={['Leak path', 'Mitigation']}
+  rows={[
+    ['HTTP cookie', 'HTTPS + HSTS + Secure flag'],
+    ['XSS reads document.cookie', 'HttpOnly + CSP + encoding'],
+    ['URL / Referer', 'Never put ids in query strings'],
+    ['Shared computer', 'Short TTL, logout, no persist on kiosks'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```python
+import secrets
+
+def issue_session(resp, store):
+    sid = secrets.token_urlsafe(32)
+    store.save(sid)
+    resp.set_cookie(
+        '__Host-sid',
+        sid,
+        secure=True,
+        httponly=True,
+        samesite='Lax',
+        path='/',
+    )
+```
+
+__Host- requires Secure, no Domain attribute, and Path=/.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Login[Login] --> New[New random sid]
+    New --> Cookie[Secure HttpOnly cookie]
+    Cookie --> Use[Authenticated requests]
+    Use --> Rot[Rotate on step-up]
+    Leak[sid leak] --> Hijack[Attacker replay]
+    TLS[TLS + flags] --> Block[Harder leak]
+```
+
+## 5. Interview Prep
+
+**Q: Session fixation vs hijacking?**
+**A:** Fixation plants an id before login. Hijacking steals a live id. Rotate-at-login kills fixation; TLS and HttpOnly shrink hijacking.
+
+**Q: Should you bind sessions to IP?**
+**A:** Optional signal. Mobile IPs change. Use it for step-up, not hard fail, unless you have a static workforce.
+
+**Q: Server-side session vs JWT?**
+**A:** Server sessions revoke instantly. JWTs need short TTL or a blocklist to revoke. Hijacking math is similar if the token is a bearer.
+
+## 6. Production Use Cases
+
+- **Cookie sessions** for web apps.
+- **Admin consoles** with 15-minute idle timeout and device lists.
+- **Shared-device** modes that skip "remember me".
+
+<Callout icon="tip" title="Offer a session list in account settings">
+Users who can revoke other devices close hijacks you will never see in logs in time.
+</Callout>

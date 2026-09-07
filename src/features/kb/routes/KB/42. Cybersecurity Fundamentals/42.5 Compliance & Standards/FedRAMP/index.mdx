@@ -1,37 +1,86 @@
 ---
-title: FedRAMP (Federal Risk and Authorization Management Program)
-description: The incredibly rigorous, standardized approach to security assessment required for cloud providers selling to the US Federal Government.
+title: FedRAMP
+description: "A U.S. government program that standardizes security assessment of cloud services used by federal agencies."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="FedRAMP (Federal Risk and Authorization Management Program)">
+    <ConceptTemplate title="FedRAMP">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a startup builds an amazing cloud application and wants to sell it to the Pentagon, the Department of Energy, or the IRS, they cannot simply sign a contract. The software must first achieve **FedRAMP Authorization**.
+**FedRAMP** (Federal Risk and Authorization Management Program) is how U.S. federal agencies buy cloud with a repeatable security review. A Cloud Service Provider (CSP) implements NIST 800-53 controls at a baseline (Low, Moderate, High, plus LI-SaaS), gets assessed by a 3PAO, and receives an authorization. It is a **package and a continuous-monitoring job**, not a sticker you print once.
 
-FedRAMP is a government-wide program that provides a standardized approach to security assessment, authorization, and continuous monitoring for cloud products.
+## 1. Deep Dive and Mechanics
 
+**Authorize.** You pick a baseline, write a System Security Plan, implement controls, and sit an assessment. An agency or the JAB issues an ATO. Other agencies can reuse the package (the point of the program).
 
-<Callout icon="warning" title="The Highest Barrier to Entry">
+**Operate.** Monthly/annual deliverables: vulnerability scans, inventory, significant-change reports, and POA&Ms for open items. A quiet "we shipped a new region" can be a significant change.
 
+**Boundary.** What is in the FedRAMP system vs corporate IT must be drawn. Corporate laptops that admin the cloud are in scope whether you like it or not.
 
-  FedRAMP is notoriously the most difficult, expensive, and time-consuming compliance framework in the world. Achieving High Authorization can take a company 12-24 months and cost millions of dollars in engineering and auditing fees, but it unlocks access to billions of dollars in federal contracts.
-
-
+<Callout icon="warning" title="Authorization is a living boundary">
+If prod and the CI that can prod-deploy are different worlds on paper but the same keys in life, the assessor will notice.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Impact Levels
+FedRAMP is a control catalog (800-53) plus an assurance process (assess, authorize, monitor). Residual risk is tracked as POA&Ms with dates. Inheritance (IaaS under PaaS) is a composition of authorizations. The security claim is "meets the baseline as assessed," not "unhackable."
 
-FedRAMP categorizes cloud service offerings into three impact levels, based on the potential impact of a mathematical security breach:
+<ComparisonTable
+  headers={['Baseline', 'Typical use', 'Effort']}
+  rows={[
+    ['LI-SaaS', 'Low-impact SaaS', 'Smallest'],
+    ['Low', 'Limited data', 'Small'],
+    ['Moderate', 'Most civilian SaaS', 'Default large'],
+    ['High', 'Sensitive missions', 'Largest'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
-<ComparisonTable headers={['Impact Level', 'Data Types', 'Security Controls']} rows={[ ['Low', 'Publicly available data. Loss of confidentiality would have a limited adverse effect on the agency.', '~125 Controls. Basic security hygiene.'], ['Moderate', 'Data that is not available to the public, such as PII (Personally Identifiable Information). Loss would have a serious adverse effect.', '~325 Controls. Very strict monitoring, encryption, and access controls.'], ['High', 'Highly sensitive, unclassified data (e.g., law enforcement, financial, health data). Loss would have a severe or catastrophic adverse effect.', '~421 Controls. The absolute maximum level of civilian cybersecurity. Requires FIPS 140-2 validated cryptography.'] ]} />
+```text
+# Continuous monitoring pack (conceptual)
+# - Monthly authenticated vuln scans of the boundary
+# - Inventory diff vs last month
+# - POA&M updates with owners and dates
+# - Incident notifications per the agency SLA
+```
 
+Engineers should see FedRAMP change control as the same pipeline as prod, with extra evidence attached.
 
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    SSP[SSP + controls] --> 3PAO[3PAO assess]
+    3PAO --> ATO[Agency or JAB ATO]
+    ATO --> ConMon[Continuous monitoring]
+    ConMon --> ATO
+```
+
+## 5. Interview Prep
+
+**Q: FedRAMP vs SOC 2?**
+**A:** SOC 2 is a CPA attestation to a customer. FedRAMP is a government authorization against 800-53 with ongoing scans.
+
+**Q: What is a 3PAO?**
+**A:** A Third Party Assessment Organization accredited to test the package.
+
+**Q: Why do people say FedRAMP is hard?**
+**A:** Evidence volume, change control, and the boundary including admin paths.
+
+## 6. Production Use Cases
+
+- **SaaS** sold to U.S. civilian agencies.
+- **IaaS regions** that other CSPs inherit.
+- **Gov cloud** partitions with separate IdP and keys.
+
+<Callout icon="tip" title="Design the boundary on day one">
+Retrofitting logging and admin isolation after the first agency deal is the expensive path.
+</Callout>

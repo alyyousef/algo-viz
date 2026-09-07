@@ -1,34 +1,93 @@
 ---
 title: PACELC Theorem
-description: An extension of the CAP Theorem that addresses what tradeoffs distributed systems make during normal operation when the network is perfectly healthy.
+description: "If partitioned, choose availability or consistency. Else, when the network is healthy, still choose latency or consistency on every write path."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="PACELC Theorem">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The CAP theorem proves that in the event of a network Partition (P), you must choose between Availability (A) or Consistency (C).
-However, network partitions are rare. What happens during normal operation? The **PACELC Theorem** extends CAP to explain the trade-offs systems make when the network is perfectly healthy.
+**PACELC** (Abadi) extends CAP. If there is a Partition, choose Availability or Consistency. Else, even when every replica can talk, choose Latency or Consistency. CAP only talks about the cut. Most of the day there is no cut, and you still pay for sync replication or you serve stale reads.
 
-It is an acronym that reads:
-**If P (Partition), choose A or C. Else (E), choose L or C.**
+## 1. Deep Dive and Mechanics
 
-## 1. The "Else" Clause (Latency vs Consistency)
+**PA/EL.** During a partition, stay up and accept divergent writes. In the healthy case, acknowledge before all replicas catch up. Dynamo-style stores and default Cassandra sit here.
 
-When there is no network failure (Else), a distributed database must still make a fundamental architectural choice every time a user writes data to Node A:
+**PC/EC.** During a partition, refuse writes without a quorum. In the healthy case, wait for a sync majority before success. etcd, ZooKeeper, and Spanner-style systems sit here.
 
-1. **Choose L (Latency over Consistency)**: Node A instantly tells the user "Write Successful", and then quietly copies the data to Node B in the background. The user experiences zero Latency. However, for a few milliseconds, Node A and Node B are Inconsistent. (Example: DynamoDB).
-2. **Choose C (Consistency over Latency)**: Node A tells the user "Please wait". Node A copies the data to Node B, waits for Node B to confirm receipt, and *only then* tells the user "Write Successful". The system is perfectly Consistent, but the user experiences massive Latency. (Example: CockroachDB).
+**Mixed knobs.** Many products are not one letter pair. DynamoDB lets you pick consistent reads. MongoDB can be PC/EC with majority write concern or PA/EL with w=1. The useful interview move is to name the default and the override.
 
-## 2. Real-World Classifications
+<Callout icon="info" title="CAP is the outage; PACELC is the Tuesday">
+A CP database can still be fast when the network is fine if it only waits for a nearby quorum. PACELC is about that wait, not about whether the product is down forever.
+</Callout>
 
-- **Cassandra (PA/EL)**: If partitioned, favors Availability. Normally, favors Latency (speed) over perfect Consistency.
-- **MongoDB (PC/EC)**: If partitioned, favors Consistency (shuts down). Normally, favors Consistency over Latency.
-- **DynamoDB (PA/EL)**: The quintessential highly available, extremely fast, eventually consistent database.
+## 2. Mathematical / Theoretical Foundation
 
+CAP: in an asynchronous partitioned run, a linearizable object cannot also terminate every request at every correct node. PACELC adds the no-partition case: the write's critical path either includes remote acknowledgments (consistency, higher latency) or does not (latency, weaker visibility).
+
+Round-trip cost is the model. Sync replication latency is at least the RTT to the farthest replica you wait for. Async replication latency is local disk plus a later catch-up risk.
+
+<ComparisonTable
+  headers={['Class', 'If partitioned', 'Else (healthy)', 'Typical product']}
+  rows={[
+    ['PA/EL', 'Serve both sides', 'Async / local ack', 'Cassandra default, Dynamo'],
+    ['PC/EC', 'Refuse minority writes', 'Sync quorum', 'etcd, Cockroach, Spanner'],
+    ['PA/EC', 'Available, then sync later', 'Rare combo', 'Unusual; name it if you claim it'],
+    ['PC/EL', 'Refuse, but async when up', 'Odd default', 'Usually a misconfig'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def classify(partition_pref, healthy_pref):
+    # partition_pref: "A" or "C"
+    # healthy_pref: "L" or "C"
+    return f"P{partition_pref}/E{healthy_pref}"
+
+assert classify("A", "L") == "PA/EL"
+assert classify("C", "C") == "PC/EC"
+```
+
+Map each API call: write concern, read concern, and whether the client retries on timeout. Timeouts are how PACELC shows up in SLOs.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    P{Partition?}
+    P -->|yes| AC{Keep A or C?}
+    P -->|no / Else| LC{Keep L or C?}
+    AC -->|A| Split[Accept both sides]
+    AC -->|C| Quorum[Need majority]
+    LC -->|L| Async[Ack before replicas]
+    LC -->|C| Sync[Wait for replicas]
+```
+
+## 5. Interview Prep
+
+**Q: Does PACELC replace CAP?**
+**A:** No. CAP is the partition impossibility. PACELC names the everyday latency-versus-consistency choice that CAP does not mention.
+
+**Q: Is DynamoDB PA/EL?**
+**A:** Default reads can be eventually consistent and writes ack after a small replica set. Strongly consistent reads move a call toward C at extra latency. Say "tunable," then name the default.
+
+**Q: Can a CP system still choose L when healthy?**
+**A:** If it only waits for a local majority and async-replicates elsewhere, healthy-path latency can stay low while partition behavior stays CP. That is PC/EL-ish; be precise per region.
+
+## 6. Production Use Cases
+
+- **Checkout and ledgers** usually want PC/EC on the money path.
+- **Feed counters and presence** often accept PA/EL.
+- **Multi-region SQL** products advertise the PACELC pair in the docs; read that page before you promise RPO zero.
+
+<Callout icon="tip" title="Write the pair on the whiteboard">
+Interviewers want PA/EL versus PC/EC, one product each, and one sentence on what the user sees when a replica is slow.
+</Callout>

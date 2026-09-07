@@ -1,35 +1,86 @@
 ---
 title: Hashcat
-description: The world's fastest and most advanced password recovery utility, leveraging the massive parallel compute power of GPUs.
+description: "A password-recovery engine used in authorized audits of hashes you already own, to prove a policy is weak."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Hashcat">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While *John the Ripper* is excellent for CPU-based cracking, **Hashcat** is the undisputed champion of GPU-accelerated password cracking.
+**Hashcat** is a high-performance password-recovery tool. In a defensive program it exists for one reason: **audit hashes you are allowed to have** (your own dump from a test IdP, a lab) so you can show that a policy or a KDF is insufficient. This page does not include recovery recipes, wordlists, or attack modes.
 
-A modern CPU might have 16 or 32 cores to do math. A modern Nvidia RTX 4090 GPU has over 16,000 compute cores. Hashcat is explicitly designed to leverage OpenCL and CUDA to execute billions of mathematical hash comparisons per second across massive GPU clusters.
+## 1. Deep Dive and Mechanics
 
+Security teams sometimes recover a sample of their own password hashes in a controlled vault to measure guessability. The output is a **policy change** (length, blocklist, MFA, better KDF), not a trophy list of employee passwords in Slack.
 
-<Callout icon="warning" title="The NTLM Vulnerability">
+**What you should do instead most of the time.** Use a memory-hard KDF (Argon2id), unique salts, breach password blocklists at set time, and phishing-resistant MFA. If you never store recoverable passwords, Hashcat has little to say.
 
+**Legal.** Recovering hashes that are not yours is a crime. "Research" is not a defense if you do not own the data.
 
-  Hashcat can crack older, unsalted hashes at terrifying speeds. For example, a single RTX 4090 can calculate over 100 Billion Windows NTLM hashes per second. This means an 8-character complex Windows password can be mathematically brute-forced in less than an hour.
-
-
+<Callout icon="error" title="Do not harvest production hashes for fun">
+If you must audit, use an approved extract, a locked lab, and destroy the material after the metric is recorded.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Advanced Attack Modes
+Password recovery cost is guesses per second times the size of the guess space. KDFs add CPU/memory per guess. Salts stop precomputation across users. The defender's job is to make expected guesses exceed any reasonable budget and to add a second factor so a guessed password is not enough.
 
+<ComparisonTable
+  headers={['Store', 'Recovery cost', 'Do this']}
+  rows={[
+    ['Plain or reversible', 'Trivial', 'Never'],
+    ['Unsalted fast hash', 'Low', 'Migrate now'],
+    ['Salted bcrypt/scrypt/Argon2', 'High', 'Good baseline'],
+    ['KDF + MFA + blocklist', 'Highest practical', 'Workforce default'],
+  ]}
+/>
 
-<ComparisonTable headers={['Mode', 'Description']} rows={[ ['Combinator Attack', 'Takes two dictionaries and mathematically concatenates every word in the first with every word in the second (e.g., `super` + `mario` = `supermario`).'], ['Mask Attack', 'A surgical brute-force. Instead of trying every character, you define a mathematical mask. If you know the password is a name followed by 4 digits, you use the mask `?l?l?l?l?l?d?d?d?d`, reducing the search space by trillions.'], ['Hybrid Attack', 'Combines a dictionary word with a mask. (e.g., Word from dictionary + `?d?d?s` to append two numbers and a symbol).'] ]} />
+## 3. Real-World Implementation
 
+```yaml
+# Password policy (the real control)
+min_length: 15
+blocklist: breached_passwords
+kdf: argon2id
+mfa: required_for_all
+audit: annual_authorized_sample_only
+```
 
+Prefer passkeys or a password manager mandate over teaching people to rotate into seasonal words.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Store[Hashed passwords] --> Policy[KDF + salt + MFA]
+    Audit[Authorized sample] --> Metric[Guessability metric]
+    Metric --> Policy
+```
+
+## 5. Interview Prep
+
+**Q: Why is Hashcat in a security toolkit at all?**
+**A:** To measure your own policy on data you own. Not to "see if we can get in."
+
+**Q: Is a long passphrase enough?**
+**A:** It helps. MFA and a KDF still matter because people reuse and phishing exists.
+
+**Q: Hashcat vs John?**
+**A:** Both are recovery tools. Hashcat is GPU-first. Your policy work is the same.
+
+## 6. Production Use Cases
+
+- **Annual password audit** under legal approval.
+- **IdP migration** proving the old KDF was insufficient.
+- **Education** for leadership on why MFA is not optional.
+
+<Callout icon="tip" title="Publish the metric, not the passwords">
+"12 percent of a sample fell to a modest budget" changes policy. A spreadsheet of names does not.
+</Callout>

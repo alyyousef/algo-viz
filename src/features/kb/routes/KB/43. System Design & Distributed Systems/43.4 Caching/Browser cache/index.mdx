@@ -1,37 +1,90 @@
 ---
 title: Browser Caching
-description: A mechanism where web browsers store copies of static assets locally on the user's hard drive to speed up subsequent page loads.
+description: "HTTP caches in the browser and intermediate proxies, driven by Cache-Control, ETag, and Last-Modified — the cheapest cache you do not host."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Browser Caching">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The fastest mathematical network request is the one that never leaves the user's computer.
+**Browser caching** is the HTTP cache in the user's agent (and sometimes a shared proxy). You control it with **Cache-Control**, **ETag**, **Last-Modified**, and **Vary**. A correct policy makes repeat visits cheap. A wrong policy serves a stale app.js forever or disables caching you already paid for.
 
-**Browser Caching** is the first, and most powerful, layer of defense in System Design. By instructing Google Chrome or Safari to save a 5MB background image to the user's physical hard drive, you mathematically eliminate the bandwidth cost and the 100ms network latency for all future visits to your site.
+## 1. Deep Dive and Mechanics
 
+**Freshness.** max-age and s-maxage set seconds of freshness. During that window the browser may not revalidate. After it, a conditional request (If-None-Match) can get 304.
 
-<Callout icon="tip" title="Cache-Control Headers">
+**Validators.** ETag is a version token. Last-Modified is a date. Prefer ETag for APIs.
 
+**private versus public.** private is browser-only (user-specific). public may be stored by CDNs. Never mark personalized HTML public.
 
-  Browser caching is entirely controlled by mathematical HTTP Headers sent by your web server. The most important is `Cache-Control: max-age=31536000` (which tells the browser to keep the file on disk for exactly 1 year).
+**immutable plus hashed names.** app.9f3c.js with long max-age and immutable. HTML stays short-lived so it can point at new hashes.
 
-
+<Callout icon="warning" title="Cache-Control on APIs is a product decision">
+A private user JSON with max-age=86400 will show yesterday's cart. Default APIs to no-store unless you designed the freshness.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Cache Busting Problem
+Freshness lifetime is an explicit number of seconds from response time (or heuristic if you send only Last-Modified — avoid heuristics). Revalidation cost is a conditional GET; payload cost is zero on 304.
 
-If you tell Chrome to cache `styles.css` for 1 year, and tomorrow you update the background color to blue, the user will mathematically still see the old red background because Chrome will refuse to ask the server for the new file.
+Vary: Cookie turns the cache key into a per-user explosion. That is how you accidentally disable a CDN.
 
-**Cache Busting** is the mathematical solution. Webpack or Vite automatically appends a cryptographic hash of the file's contents to the filename (e.g., `styles.ab12c9.css`).
+<ComparisonTable
+  headers={['Directive', 'Who stores', 'Revalidate']}
+  rows={[
+    ['no-store', 'Nobody', 'Always network'],
+    ['no-cache', 'May store', 'Must revalidate'],
+    ['max-age=N', 'Browser', 'After N seconds'],
+    ['s-maxage=N', 'Shared / CDN', 'After N seconds'],
+  ]}
+/>
 
-When you change the CSS, the hash mathematically changes to `styles.x9z8b1.css`. The browser sees a completely new filename, realizes it isn't in the local cache, and downloads the fresh CSS file perfectly.
+## 3. Real-World Implementation
 
+```http
+Cache-Control: public, max-age=31536000, immutable
+ETag: "9f3c"
+```
+
+HTML: no-cache or a short max-age. Assets: hashed name plus immutable.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant S as Origin
+    B->>S: GET /app.js
+    S-->>B: 200 plus max-age
+    B->>B: reuse while fresh
+    B->>S: GET If-None-Match
+    S-->>B: 304
+```
+
+## 5. Interview Prep
+
+**Q: no-cache versus no-store?**
+**A:** no-cache means store but revalidate. no-store means do not write to disk. Auth pages want no-store.
+
+**Q: How do you ship a new frontend?**
+**A:** Content-hash filenames, long cache on assets, short cache on HTML. A unique query string works but is messier.
+
+**Q: Why is my CDN not caching?**
+**A:** Set-Cookie, Vary: Cookie, Authorization, or Cache-Control: private. Check the response, not the Terraform.
+
+## 6. Production Use Cases
+
+- **Static SPAs** with hashed bundles.
+- **Profile avatars** with ETag.
+- **Avoid** caching bank balances in the browser.
+
+<Callout icon="tip" title="Treat HTML as the pointer">
+If HTML is cached for a week, users cannot see new JS hashes. That is the stuck-old-app incident.
+</Callout>

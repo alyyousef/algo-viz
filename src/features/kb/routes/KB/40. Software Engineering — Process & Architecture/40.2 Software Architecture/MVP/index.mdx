@@ -1,30 +1,100 @@
 ---
-title: MVP (Model-View-Presenter)
-description: A derivative of the MVC architectural pattern used primarily for building heavy desktop or mobile user interfaces, mathematically designed to facilitate automated unit testing of presentation logic.
+title: MVP
+description: "Model-View-Presenter: a presenter owns presentation logic and talks to a passive view, which makes GUI behaviour unit-testable without a widget toolkit."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="MVP (Model-View-Presenter)"
-  subtitle="Testable UI Architecture"
-  tags={['Architecture', 'Design Patterns', 'UI', 'Mobile']}
->
+    <ConceptTemplate title="MVP">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In classic MVC, the View is often tightly coupled to the Controller or the Model, making it mathematically impossible to write automated Unit Tests for the UI logic without spinning up a real, physical screen.
+**Model-View-Presenter** pushes UI behaviour into a Presenter. The View is humble: it shows data and forwards events. The Presenter loads the Model, formats strings, and calls view methods. Tests replace the view with a fake.
 
-## 1. The Passive View
-MVP solves this by making the View mathematically "Passive."
-The View (the physical screen) implements a strict Interface (e.g., `ILoginView` with methods like `showSpinner()` and `showError()`). The View has absolutely zero business logic; it merely listens for physical button clicks and immediately passes them to the **Presenter**.
+## 1. Deep Dive and Mechanics
 
-## 2. The Dominant Presenter
-The Presenter is a pure mathematical class with no dependencies on the Android SDK or Windows GUI libraries.
-When the user clicks "Login", the View tells the Presenter. The Presenter checks the Model. If the password fails, the Presenter executes `view.showError()`.
-Because the Presenter only knows about the `ILoginView` interface, an engineer can mathematically write a Unit Test that passes in a "Mock View" and verifies the Presenter's logic in 2 milliseconds, without ever rendering a real pixel.
+**Passive view.** The view has setters (`setTitle`, `showError`) and emits clicks. Almost no if-statements. The presenter is easy to test.
 
+**Supervising controller.** A milder MVP where the view still binds some simple fields and the presenter handles the rest. Less boilerplate, leakier tests.
+
+**Lifetime.** The presenter is created with the screen and torn down with it. It must not outlive the view without weak refs, or you leak.
+
+**Versus MVC.** The controller in web MVC often owns routing. The presenter owns presentation logic for one screen. Versus MVVM, MVP uses explicit calls instead of a binding engine.
+
+<Callout icon="info" title="Humble Object">
+Fowler’s Humble Object pattern is the same move: put the awkward framework bit in a thin shell and test the presenter.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Test seam.** The view interface is a port. The presenter is a pure-enough function of model state plus events. You shrink the untestable surface to widget wiring.
+
+**Coupling.** Presenter depends on a view interface, not a concrete Window class. That inversion is what makes headless tests possible.
+
+**State machine.** Many screens are explicit states (loading, ready, error). The presenter owns the transitions; the view only renders the current state.
+
+<ComparisonTable
+  headers={['Pattern', 'Who updates the view', 'Test story']}
+  rows={[
+    ['MVP passive', 'Presenter calls methods', 'Fake view, easy'],
+    ['MVVM', 'Bindings', 'Need a binding host'],
+    ['MVC observer', 'View listens to model', 'Toolkit-heavy'],
+    ['Code-behind', 'The form itself', 'UI tests only'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```kotlin
+interface LoginView {
+    fun showError(message: String)
+    fun goHome()
+}
+
+class LoginPresenter(private val view: LoginView, private val auth: Auth) {
+    fun onSubmit(user: String, pass: String) {
+        if (user.isBlank()) {
+            view.showError("user required")
+            return
+        }
+        if (auth.login(user, pass)) view.goHome() else view.showError("denied")
+    }
+}
+```
+
+A unit test implements `LoginView` with recorded calls.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    View[Humble view] -->|events| Pres[Presenter]
+    Pres -->|setters| View
+    Pres --> Model[Model / services]
+```
+
+## 5. Interview Prep
+
+**Q: MVP versus MVVM?**
+**A:** MVP is explicit and toolkit-agnostic. MVVM shines when the platform has rich bindings (WPF, Android data binding). Both beat logic in the Activity or Form.
+
+**Q: Where does navigation live?**
+**A:** Often a router port the presenter calls, so tests can assert “navigated home” without a real navigator.
+
+**Q: Is MVP dead on the web?**
+**A:** The name is rarer; the idea is every “container versus presentational” split and every testable hook-free presenter module.
+
+## 6. Production Use Cases
+
+- **Android / desktop** screens that must be tested on a CI agent without emulators.
+- **Legacy WinForms** rescue: extract presenters, leave the form humble.
+- **Complex wizards** with rules that would rot in code-behind.
+
+<Callout icon="tip" title="Keep the view interface boring">
+If the view interface starts containing business types and rules, the presenter has leaked. Strings, flags, and lists of view models only.
+</Callout>

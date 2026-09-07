@@ -1,29 +1,98 @@
 ---
 title: Azure Load Balancer
-description: A high-performance, ultra-low latency Layer 4 load balancer that mathematically distributes incoming TCP and UDP network traffic across a cluster of backend virtual machines.
+description: "Regional Layer-4 pass-through: frontend IP, rules, and a backend pool — SNAT ports and health probes decide whether scale-out actually works."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Load Balancer"
-  subtitle="Layer 4 Network Routing"
-  tags={['Azure', 'Networking', 'TCP', 'Routing']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Load Balancer">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While Azure Application Gateway operates at Layer 7 (HTTP) and understands URLs, Azure Load Balancer operates purely at **Layer 4 (TCP/UDP)**. It does not know what an HTTP request is; it only understands raw IP addresses and ports, making it mathematically blisteringly fast.
+**Azure Load Balancer (ALB here, not Application Gateway)** is a Layer-4 (TCP/UDP) pass-through. It does not terminate TLS and does not read HTTP paths. A **frontend** IP (public or private), a **backend pool**, and **rules** map ports. Standard SKU is zone-aware and required for production; Basic is legacy.
 
-## 1. The Hash-Based Distribution Algorithm
-When a packet hits the Azure Load Balancer, it must decide which backend Virtual Machine to send it to.
-It uses a **5-tuple mathematical hash** by default:
-1. Source IP
-2. Source Port
-3. Destination IP
-4. Destination Port
-5. Protocol (TCP/UDP)
-The load balancer runs this hash equation instantly in hardware. The mathematical result guarantees that all packets belonging to a specific user's TCP connection will be strictly routed to the exact same backend server for the duration of the session, preventing broken TCP handshakes.
+## 1. Deep Dive and Mechanics
 
-## 2. Internal vs. Public
-- **Public Load Balancer**: Maps a Public IP address to a pool of backend servers (e.g., routing internet traffic to your web servers).
-- **Internal Load Balancer**: Maps a Private IP address to a pool of servers (e.g., routing your web servers' internal traffic to a highly available cluster of database servers). Internal Load Balancers are mathematically isolated from the internet, guaranteeing absolute backend security.
+**Public vs internal.** Public fronts internet traffic. Internal fronts VNet traffic (often the next hop after a gateway or for east-west).
 
-</TechnologyTemplate>
+**HA ports.** A single rule on protocol “all” for NVAs and firewalls. Normal apps use explicit port rules.
+
+**Health probes.** TCP or HTTP. A failed probe removes the NIC from rotation. Probe from the Azure host — NSGs must allow AzureLoadBalancer.
+
+**SNAT.** Outbound connections from the backend use SNAT ports on the frontend (or a NAT Gateway, preferred). Port exhaustion looks like intermittent outbound failures.
+
+**Outbound rules vs NAT Gateway.** Do not rely on default outbound access (it is being retired). Attach a NAT Gateway or explicit outbound rules.
+
+<Callout icon="warning" title="SNAT port exhaustion">
+Each frontend IP has a finite SNAT pool. Many short HTTPS calls to the same destination eat ports. NAT Gateway or more outbound IPs, plus connection reuse, fix it — not “add another VM.”
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+L4 balancing is per-flow (5-tuple). Persistence options pin a tuple; they fight even spread. Throughput is a function of flow count and NIC limits, not HTTP request size.
+
+Probe failure detection time ≈ interval × unhealthy threshold. Set too tight and you flap; too loose and you send traffic to a dead node.
+
+<ComparisonTable
+  headers={['Service', 'Layer', 'TLS']}
+  rows={[
+    ['Load Balancer', 'L4', 'Pass-through'],
+    ['Application Gateway', 'L7', 'Terminates'],
+    ['Front Door', 'L7 global', 'Terminates at edge'],
+    ['Traffic Manager', 'DNS', 'None'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bicep
+resource lb 'Microsoft.Network/loadBalancers@2023-09-01' = {
+  name: 'lb-int-prod'
+  location: location
+  sku: { name: 'Standard' }
+  properties: {
+    frontendIPConfigurations: [
+      { name: 'fe', properties: { subnet: { id: subnetId } } }
+    ]
+  }
+}
+```
+
+Put VMSS NICs in the backend pool. Use an HTTP probe on `/healthz`. Attach a NAT Gateway to the subnet for outbound.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    In[Inbound flow] --> FE[Frontend IP]
+    FE --> Rule[L4 rule]
+    Rule --> VM1[Healthy NIC]
+    Rule --> VM2[Healthy NIC]
+    VM1 --> NAT[NAT Gateway out]
+```
+
+## 5. Interview Prep
+
+**Q: Why Standard SKU?**
+**A:** Zones, HA ports, better diagnostics, and Basic is retired from new designs. Standard is deny-by-default on the public frontend until you add an NSG allow.
+
+**Q: Load Balancer vs Application Gateway?**
+**A:** L4 vs L7. If you need host/path routing or WAF, you are not on Load Balancer.
+
+**Q: What is the AzureLoadBalancer tag?**
+**A:** Probe source. If the NSG blocks it, every backend looks dead.
+
+## 6. Production Use Cases
+
+- Internal LB in front of a VMSS of TCP services.
+- Public LB for a game or SIP workload that is not HTTP.
+- NVA sandwich using HA ports.
+
+<Callout icon="tip" title="Prefer NAT Gateway for outbound">
+Outbound rules work; NAT Gateway scales SNAT without inventing more public frontends. It is the default recommendation for VMSS subnets.
+</Callout>

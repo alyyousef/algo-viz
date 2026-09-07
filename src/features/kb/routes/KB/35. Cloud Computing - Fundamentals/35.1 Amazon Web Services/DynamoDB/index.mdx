@@ -1,26 +1,100 @@
 ---
 title: Amazon DynamoDB
-description: A fully managed, multi-region NoSQL key-value and document database designed by AWS to deliver mathematically guaranteed single-digit millisecond latency at literally any scale.
+description: "Managed wide-column store with single-digit millisecond Get/Put, partition keys as the scaling law, and on-demand or provisioned capacity."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Amazon DynamoDB"
-  subtitle="The Infinite NoSQL Database"
-  tags={['AWS', 'Database', 'NoSQL', 'Serverless']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Amazon DynamoDB">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Relational SQL databases (like Postgres) hit a mathematical physical limit when scaling vertically. DynamoDB is designed for horizontal infinity. Whether your table has 10 rows or 100 billion rows, DynamoDB mathematically guarantees the exact same 5-millisecond read time.
+**DynamoDB** is a partitioned key-value / document store. You pick a partition key (and optional sort key). AWS splits the table into partitions that independently take load. There is no JOIN, no cross-partition transaction without limits, and no hiding a bad key design behind a bigger instance type.
 
-## 1. Consistent Hashing and Partitions
-DynamoDB achieves infinite scale by destroying the concept of a "single server."
-Under the hood, your data is mathematically shredded across thousands of physical storage nodes (Partitions).
-When you write an item, you must provide a **Partition Key** (e.g., `UserID = 123`). DynamoDB runs the Partition Key through a cryptographic Hash Function. The output integer dictates exactly which physical server will store the data.
-When you read `UserID = 123`, the mathematical hash instantly calculates the exact server IP. The database does not need to search; it routes the query directly to the correct SSD, enabling $O(1)$ constant-time lookups regardless of how massive the database grows.
+## 1. Deep Dive and Mechanics
 
-## 2. The Trade-off: Query Flexibility
-The mathematical cost of infinite scale is the loss of SQL `JOIN` operations and flexible querying.
-Because the data for User 123 and User 456 are on physically different servers, you cannot efficiently run a query like *"Find all users who bought red shoes."* (This requires a Full Table Scan, which is financially ruinous in DynamoDB).
-To use DynamoDB correctly, developers must use **Single-Table Design**, pre-calculating and physically co-locating related data into the same Partition, optimizing the physical layout of the bytes for the exact Access Patterns the API requires.
+**Item.** Up to 400 KB. Attributes are typed. Primary key is PK or PK+SK. GSIs and LSIs are extra access paths; a GSI is a new table AWS maintains for you with its own capacity and eventual consistency by default.
 
-</TechnologyTemplate>
+**Capacity.** Provisioned WCU/RCU or on-demand. Adaptive capacity can borrow across partitions, but a single hot key still hits a per-partition ceiling.
+
+**Consistency.** GetItem can be strongly consistent in-region. Queries on GSIs are eventually consistent. Global tables are multi-active with last-writer-wins at item level unless you add your own conflict story.
+
+**Streams and TTL.** Streams feed Lambda for CDC. TTL expires items asynchronously — not a realtime delete SLA.
+
+**Transactions.** TransactWrite up to 100 items, all or nothing, with a capacity premium. Not a replacement for a relational unit of work across unbounded rows.
+
+<Callout icon="error" title="Hot partitions">
+If every write uses PK = GLOBAL or PK = today, you have one partition. On-demand will not save you. Shard the key or redesign the access pattern.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Partition count grows with data size and throughput. A partition has a finite request budget (historically on the order of 3000 RCU / 1000 WCU class limits; treat published limits as evolving). Throughput for a key is not “table capacity / 1” — it is min(table, that partition).
+
+RCU: a strongly consistent 4 KB read is 1 RCU; eventually consistent is half. WCU: 1 KB write is 1 WCU. Transactions consume extra units.
+
+Single-table design is a **denormalized** physical model: you store the query result shape, not 3NF. Write amplification and item size are the cost of cheap reads.
+
+<ComparisonTable
+  headers={['Access', 'API', 'Notes']}
+  rows={[
+    ['Point read', 'GetItem', 'O(1) if you have the key'],
+    ['Range', 'Query', 'PK required, SK condition'],
+    ['Scan', 'Scan', 'Touches every partition — last resort'],
+    ['Secondary', 'GSI / LSI', 'GSI = new projection + lag'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import boto3
+
+table = boto3.resource('dynamodb').Table('orders')
+table.put_item(Item={
+    'pk': 'USER#42',
+    'sk': 'ORDER#1001',
+    'status': 'OPEN',
+    'total_cents': 2599,
+})
+print(table.get_item(Key={'pk': 'USER#42', 'sk': 'ORDER#1001'})['Item'])
+```
+
+Model queries first. If you cannot write the Get/Query for a screen, the table is not designed yet.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    App[App] --> Front[Request router]
+    Front --> P1[Partition A]
+    Front --> P2[Partition B]
+    Front --> P3[Partition C]
+    P1 --> Repl[Multi-AZ replicas]
+```
+
+## 5. Interview Prep
+
+**Q: Why not Scan for the admin page?**
+**A:** Scan is O(table). It pages, burns RCU, and gets worse as you succeed. Build a GSI for the admin access pattern.
+
+**Q: Provisioned vs on-demand?**
+**A:** On-demand for spiky or unknown load. Provisioned plus autoscaling for steady high volume if price wins. Neither fixes a hot key.
+
+**Q: How do you do multi-item consistency?**
+**A:** Transactions for small groups; or a single-item aggregate; or accept eventual consistency with a workflow. Do not pretend DynamoDB is Postgres.
+
+## 6. Production Use Cases
+
+- Session, profile, and shopping-cart stores.
+- High-QPS metadata next to S3 objects.
+- Event-sourced entities with SK = timestamp and GSIs for status.
+
+<Callout icon="tip" title="Write the access patterns table">
+A one-page matrix of PK, SK, and GSI for each screen prevents the “we will add a Scan” meeting six months later.
+</Callout>

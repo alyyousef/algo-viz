@@ -1,23 +1,100 @@
 ---
 title: Google Cloud Dataflow
-description: A fully managed, serverless stream and batch data processing service built on Apache Beam, mathematically engineered to process massive data pipelines without provisioning clusters.
+description: "Managed Apache Beam: batch and streaming pipelines that autoscale workers — you write the graph, Google runs the runner."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud Dataflow"
-  subtitle="Serverless Data Processing"
-  tags={['GCP', 'Data', 'Streaming', 'Apache Beam']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud Dataflow">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If you have a massive firehose of telemetry data coming from Pub/Sub, you need to clean it, mathematically aggregate it, and insert it into BigQuery. Managing a physical Apache Spark cluster to do this is tedious. Dataflow makes it serverless.
+**Dataflow** is Google’s fully managed **Apache Beam** runner. You write a pipeline once (Java, Python, Go) and run it as batch or streaming. Workers autoscale. Shuffle, streaming engine, and snapshots are service features. The same Beam program can run on Flink or Spark elsewhere — in GCP, Dataflow is the native execution.
 
-## 1. Apache Beam (Unified Batch and Stream)
-Historically, developers had to write two entirely different codebases: one for Batch processing (Hadoop/Spark) and one for Streaming processing (Kafka/Flink).
-Dataflow is built on the **Apache Beam** SDK. Beam provides a unified mathematical model. You write your pipeline logic *once* in Python or Java. If you feed it a static CSV file, it mathematically processes it as a Batch. If you feed it a live Pub/Sub stream, it seamlessly processes it as a Stream, completely eliminating code duplication.
+## 1. Deep Dive and Mechanics
 
-## 2. Liquid Sharding (Dynamic Work Rebalancing)
-In a standard cluster, if you chop a dataset into 10 pieces for 10 worker nodes, but one piece is mathematically much harder to process, 9 nodes will finish quickly and sit idle while the 1 node struggles (the Straggler Problem).
-Dataflow solves this with **Liquid Sharding**. It mathematically monitors the CPU load of all worker nodes in real-time. If it detects a straggler, it dynamically slices the remaining work off the struggling node and redistributes it to the idle nodes on the fly, ensuring mathematically perfect cluster utilization and drastically faster execution times.
+**Beam model.** PCollections, ParDo, GroupByKey, windowing, triggers, watermarks. Event time vs processing time is the streaming core. Late data is a watermark problem, not a bug in `GroupByKey`.
 
-</TechnologyTemplate>
+**Runner v2 / streaming engine.** Shuffle and state move off workers so autoscaling is less painful. Enable the recommended flags on new jobs.
+
+**Templates.** Flex templates package a container you launch with parameters — the production way to let others start jobs without your Gradle env.
+
+**SQL and notebooks.** Beam SQL and Dataflow Prime (vertical + horizontal autoscaling, right-fitting) exist. Prime is a SKU/feature set; read current docs for what your region supports.
+
+**Dead letter.** Unprocessable elements should go to a side output (GCS or Pub/Sub), not crash the job.
+
+<Callout icon="warning" title="Hot keys in GroupByKey">
+One key with 5 percent of events becomes one worker’s nightmare. Fan-out with a shard suffix or pre-aggregate. Dataflow cannot invent a better key than you gave it.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Watermark W(t) is an estimate that no event with event-time less than W will arrive. Triggers fire panes; allowed lateness keeps state. Too much lateness is a memory bill.
+
+Autoscaling is a feedback loop on backlog and CPU. A downstream sink with a tiny quota will look like “Dataflow is slow” while workers wait.
+
+<ComparisonTable
+  headers={['Runner', 'Ops', 'Portable Beam']}
+  rows={[
+    ['Dataflow', 'Fully managed', 'Yes'],
+    ['Flink (GKE)', 'You run Flink', 'Yes'],
+    ['Spark (Dataproc)', 'You run Spark', 'Via Beam Spark'],
+    ['Dataform / SQL ETL', 'SQL graph', 'No'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+
+opts = PipelineOptions(["--runner=DataflowRunner", "--project=shop", "--region=us-central1"])
+with beam.Pipeline(options=opts) as p:
+    (
+        p
+        | beam.io.ReadFromPubSub(topic="projects/shop/topics/clicks")
+        | beam.WindowInto(beam.window.FixedWindows(60))
+        | beam.CombinePerKey(sum)
+        | beam.io.WriteToBigQuery("shop.analytics.clicks_1m")
+    )
+```
+
+Set a dead-letter side output on the BigQuery write for schema misses.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    PS[Pub/Sub] --> ParDo[ParDo]
+    ParDo --> Win[Windows + watermark]
+    Win --> GBK[GroupByKey]
+    GBK --> BQ[BigQuery]
+    ParDo --> DLQ[Side output]
+```
+
+## 5. Interview Prep
+
+**Q: Dataflow vs Dataproc?**
+**A:** Dataflow is Beam-as-a-service (batch and stream). Dataproc is managed Hadoop/Spark clusters. If your code is Spark already, Dataproc (or Serverless Spark). If you want one model for stream+batch, Beam + Dataflow.
+
+**Q: What is a watermark?**
+**A:** The runner’s belief about event-time progress. Windows close as the watermark passes. Slow watermarks delay results; fast watermarks drop late data (unless you allow lateness).
+
+**Q: Why Flex templates?**
+**A:** Reproducible launch from Cloud Console or a scheduler without rebuilding the graph on a laptop. Parameters stay data, not code.
+
+## 6. Production Use Cases
+
+- Streaming click → minute aggregates in BigQuery.
+- Nightly GCS → transform → BigQuery batch job.
+- CDC from Datastream into Beam for custom joins.
+
+<Callout icon="tip" title="Test with DirectRunner">
+Unit-test DoFns and a tiny pipeline with the direct runner. Discovering a non-deterministic DoFn on a 200-worker job is expensive.
+</Callout>

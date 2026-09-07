@@ -1,30 +1,96 @@
 ---
 title: Feature Flags
-description: A software engineering technique that mathematically decouples code deployment from feature release by wrapping execution paths in dynamic toggles, enabling dark launches and instant kill switches.
+description: "Runtime toggles that separate deploy from release, enabling dark launches, targeted rollouts, and instant kill switches without a new artifact."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Feature Flags"
-  subtitle="Decoupling Deployment from Release"
-  tags={['DevOps', 'Engineering', 'Agile', 'Continuous Deployment']}
->
+    <ConceptTemplate title="Feature Flags">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before Feature Flags, if a new checkout system was only 50% finished, it could not be merged into the `main` branch. It had to sit on a long-lived feature branch, eventually causing a catastrophic mathematical merge conflict.
+**Feature flags** (feature toggles) wrap a behaviour behind a **decision evaluated at runtime**. You can deploy code that is dark, open it to staff, then to 5 percent of users, then to everyone — or slam it off without rebuilding. Deploy becomes a technical event; release becomes a product event.
 
-## 1. The Dynamic Toggle
-A Feature Flag (or Toggle) is simply a mathematical `if/else` block wrapping a new feature, controlled by an external service (like LaunchDarkly) or a database value.
-You merge the half-finished code into `main` today. You deploy it to Production today. But because the mathematical flag is set to `false`, the code is "dark"—it physically exists on the server but is never executed by a user request.
+## 1. Deep Dive and Mechanics
 
-## 2. Advanced Rollouts and Kill Switches
-Feature Flags provide immense mathematical control over risk:
-- **Canary Launches**: You can configure the flag so it evaluates to `true` only for internal employees, or only for 1% of randomized public traffic.
-- **The Instant Kill Switch**: If the new feature causes a 20% spike in database CPU, you do not need to write a rollback commit, wait for CI/CD, and deploy. You simply click a button in the Feature Flag dashboard to flip it to `false`. The code stops executing instantly, providing a mathematical sub-second rollback.
+**Types (Pete Hodgson).** Release toggles (short-lived, hide WIP). Experiment toggles (A/B). Ops toggles (kill switches, degraded modes). Permission toggles (entitlements). Mixing them in one boolean soup is how you get untestable combinatorics.
 
+**Evaluation.** A flag service (LaunchDarkly, Unleash, ConfigCat, home-grown) takes context — user id, region, app version — and returns a variation. Clients should **cache with streaming updates**, not block a request on a 200ms HTTP call to the flag CDN on every eval.
+
+**Targeting.** Percentage rollouts hash the user key so the same user is sticky. Attribute rules (email domain, plan) enable dogfood. Never use a flag as your only authorisation layer for a paid entitlement unless you treat the flag service as a security control.
+
+**Lifecycle.** Flags are **inventory**. A merged flag without a removal ticket becomes permanent complexity. Age them; archive them; delete dead branches.
+
+**Failure mode.** If the flag service is down, define fail-open versus fail-closed per flag. A checkout flag that defaults to "new unsaved cart" on timeout will page you.
+
+<Callout icon="warning" title="Flags are not free abstractions">
+Every flag doubles paths you should test. Ten independent booleans are 1024 worlds. Prefer short-lived release toggles and delete them.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A flag is a function f: Context → Variation. Percentage rollout uses hash(key) mod 100 compared to a threshold t. Sticky assignment requires a stable key; request-id hashing splits a session.
+
+**Experimentation.** Assignment must be independent of the outcome metric. Interaction effects (two experiments on checkout) violate that unless you use orthogonal layers or a combined design.
+
+**Debt.** Let n be live flags. Worst-case paths are 2^n if they nest independently. In practice they correlate, but QA still cannot cover the hypercube. Budget n aggressively.
+
+<ComparisonTable
+  headers={['Mechanism', 'When it changes', 'Granularity', 'Rollback']}
+  rows={[
+    ['Feature flag', 'Runtime eval', 'User, cohort, region', 'Flip off'],
+    ['Canary deploy', 'Replica or weight', 'Request slice', 'Drop canary'],
+    ['Branch deploy', 'Build of a branch', 'Whole env', 'Redeploy'],
+    ['Config file in image', 'Next deploy', 'Process', 'Redeploy'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def checkout_path(user_id: str, flags) -> str:
+    ctx = dict(key=user_id, plan="pro")
+    if flags.variation("checkout-v2", ctx, default=False):
+        return "v2"
+    return "v1"
+```
+
+Default is the safe old path. The flag name is namespaced. When v2 is 100 percent and soaked, delete the branch and the flag in the same sprint.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Req[Request context] --> SDK[Flag SDK]
+    SDK --> Cache[Local cache]
+    Cache --> Dec{Variation}
+    Dec -->|off| Old[Old path]
+    Dec -->|on| New[New path]
+    Svc[Flag service] -->|stream| Cache
+```
+
+## 5. Interview Prep
+
+**Q: Flag versus canary?**
+**A:** A canary shifts traffic between **revisions**. A flag shifts behaviour **inside** a revision. Use both: canary the binary, flag the risky feature.
+
+**Q: Where should flags not live?**
+**A:** In a JSON file only a senior can edit on a Friday, or as an env var that requires a bounce. Those are config deploys, not flags.
+
+**Q: How do you test flagged code?**
+**A:** Unit-test both sides. Contract-test the default. In CI, run the suite with the new path forced on for the PR that introduces it.
+
+## 6. Production Use Cases
+
+- **Dark launches** of APIs before the mobile client is in the store.
+- **Incident kill switches** that disable a recommendation model or a new cache.
+- **Entitlements** (with a real authz backup) for plan-gated features.
+
+<Callout icon="tip" title="Name flags like you will grep them">
+`checkout-v2` plus an owner and an expiry date in the flag description. `tmp` and `new` are how you get 400 mystery booleans.
+</Callout>

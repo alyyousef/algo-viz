@@ -1,67 +1,97 @@
 ---
 title: Asymmetric Encryption
-description: The foundational cryptography protocol that utilizes mathematically linked public and private key pairs to securely exchange data across untrusted networks.
+description: "Public-key encryption where anyone can seal data to a public key and only the matching private key can open it."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Asymmetric Encryption">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In the early days of cryptography, Alice and Bob had to share the exact same secret key to encrypt and decrypt messages (Symmetric Encryption). The fatal flaw was the **Key Distribution Problem**: how do you securely send the secret key to someone across an unsecured internet without a hacker stealing it?
+**Asymmetric encryption** uses a key pair. The public key can be shared. The private key stays secret. Anyone can encrypt to you; only you can decrypt. Digital signatures flip the direction: only you can sign, anyone can verify. Real systems mix both with symmetric bulk encryption because public-key ops are slow.
 
-**Asymmetric Encryption** (Public-Key Cryptography) solved this by splitting the key into two mathematically linked, but fundamentally distinct parts: a **Public Key** and a **Private Key**.
+## 1. Deep Dive and Mechanics
 
-## 1. The Two Keys
+Classic RSA encryption raises a message to the public exponent modulo n. Modern practice wraps a random AES key with RSA-OAEP or, more often, uses **ECDH to agree a shared secret** and then AES-GCM. Pure encrypt-this-file-with-RSA is a smell except for tiny key-wrapping payloads.
 
-- **Public Key**: Handed out to everyone in the world. It can only **encrypt** data or **verify** signatures.
-- **Private Key**: Kept absolutely secret. It can only **decrypt** data or **create** signatures.
+**Trust is the hard part.** A public key without a binding to an identity is just a number. Certificates, TOFU, and out-of-band fingerprints exist to answer whether this key really belongs to Alice.
 
+**Forward secrecy.** Static RSA key-transport means a stolen private key decrypts old recordings. Ephemeral Diffie-Hellman, as in TLS 1.3, agrees a fresh secret so yesterday's ciphertext stays sealed.
 
-<Callout icon="tip" title="The Padlock Analogy">
-
-
-  Think of the Public Key as an open padlock that you distribute to anyone. Anyone can put their data in a box and snap your padlock shut (encrypt). However, once the padlock is closed, even the person who closed it cannot open it. Only you hold the physical key (the Private Key) that can unlock it (decrypt).
-
-
+<Callout icon="warning" title="Do not encrypt large blobs with RSA">
+RSA message length is bounded by the modulus minus padding. Encrypt a symmetric key, then encrypt the file with AES-GCM.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## 2. Core Workflows
+Security rests on trapdoor functions: easy to compute, hard to invert without a secret. RSA uses factoring and the RSA problem. Diffie-Hellman and ECC use discrete logs in carefully chosen groups. Padding such as OAEP or PSS is not cosmetic; raw RSA is malleable and leaking.
 
-There are two primary ways Asymmetric Encryption is used:
+<ComparisonTable
+  headers={['Job', 'Asymmetric primitive', 'Symmetric partner']}
+  rows={[
+    ['Confidentiality', 'RSA-OAEP or ECDH', 'AES-GCM'],
+    ['Integrity and authorship', 'RSA-PSS or ECDSA', 'Hash of the message'],
+    ['Key agreement', 'ECDHE', 'HKDF then AEAD'],
+    ['Identity binding', 'X.509 or SSH TOFU', 'None by itself'],
+  ]}
+/>
 
-### A. Secure Communication (Encryption)
-If Bob wants to send a secret message to Alice:
-1. Bob fetches Alice's **Public Key**.
-2. Bob encrypts the message using Alice's Public Key.
-3. Bob sends the ciphertext over the internet.
-4. Alice uses her perfectly secret **Private Key** to decrypt the message.
+## 3. Real-World Implementation
 
-### B. Digital Signatures (Authentication)
-If Alice wants to prove she wrote a message:
-1. Alice encrypts a hash of the message using her **Private Key** (creating a signature).
-2. She sends the message and the signature to Bob.
-3. Bob uses Alice's **Public Key** to decrypt the signature. If it decrypts correctly, he knows with 100% mathematical certainty that the person who holds the Private Key (Alice) signed it.
+```python
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes
 
-## 3. Asymmetric vs. Symmetric
+priv = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+pub = priv.public_key()
+wrapped = pub.encrypt(
+    b'session-key-32-bytes-go-here!!',
+    padding.OAEP(mgf=padding.MGF1(hashes.SHA256()), algorithm=hashes.SHA256(), label=None),
+)
+plain = priv.decrypt(
+    wrapped,
+    padding.OAEP(mgf=padding.MGF1(hashes.SHA256()), algorithm=hashes.SHA256(), label=None),
+)
+```
 
+Prefer library high-level hybrid helpers when they exist. Hand-rolled hybrids miss AAD and key-derivation details.
 
-<ComparisonTable headers={['Feature', 'Asymmetric Encryption', 'Symmetric Encryption']} rows={[ ['Keys', 'Two (Public and Private)', 'One (Shared Secret)'], ['Speed', 'Extremely Slow (Heavy Math)', 'Extremely Fast (Bitwise operations)'], ['Primary Use Case', 'Key Exchange, Digital Signatures (RSA, ECC)', 'Bulk Data Encryption (AES, ChaCha20)'], ['Key Exchange Problem', 'Solved (Public keys are public)', 'Fatal (Must securely share the key)'] ]} />
+## 4. Visualizations
 
+```mermaid
+sequenceDiagram
+    participant S as Sender
+    participant R as Recipient
+    S->>R: Request public key or cert
+    S->>S: Generate AES session key
+    S->>R: RSA-OAEP wrap of session key
+    S->>R: AES-GCM ciphertext
+    R->>R: Unwrap then decrypt
+```
 
-<Callout icon="warning" title="The Hybrid Approach (TLS)">
+## 5. Interview Prep
 
+**Q: Why is TLS not just RSA encryption?**
+**A:** TLS agrees keys, authenticates the server, and then uses symmetric AEAD for records. RSA is one possible piece, and TLS 1.3 dropped static RSA key transport.
 
-  Because Asymmetric encryption is incredibly slow, the modern internet (HTTPS/TLS) uses a **Hybrid System**. It uses Asymmetric Encryption (like RSA) purely to securely exchange a temporary Symmetric Key. Once both sides have the Symmetric Key, they switch to Symmetric Encryption (like AES) for the rest of the web session to stream data at high speeds.
+**Q: Public encrypt versus private sign?**
+**A:** Opposite directions and different paddings. Never reuse one RSA key for both jobs.
 
+**Q: What does forward secrecy buy you?**
+**A:** Compromise of today's private key should not decrypt yesterday's recorded sessions.
 
+## 6. Production Use Cases
+
+- **TLS and SSH** session setup.
+- **S/MIME and age-style** file sealing.
+- **Key wrapping** inside KMS and envelope encryption.
+
+<Callout icon="tip" title="Separate encryption keys from signing keys">
+Different algorithms, different paddings, different compromise stories. Issue two keys.
 </Callout>
-
-

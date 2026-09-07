@@ -1,32 +1,101 @@
 ---
 title: Maintenance
-description: The longest and most mathematically expensive phase of the Software Development Life Cycle, involving the continuous modification of a software product after delivery to correct faults, improve performance, or adapt to a changing environment.
+description: "The long middle of a system's life: keep it correct, current, and cheap to change after the launch party ends."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Software Maintenance"
-  subtitle="The Long-Term Cost of Code"
-  tags={['Process', 'SDLC', 'Engineering', 'Architecture']}
->
+    <ConceptTemplate title="Maintenance">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Writing the initial 100,000 lines of code for a new application accounts for roughly 20% of the total mathematical cost of the software. The remaining 80% of the cost is spent on **Maintenance** over the next decade.
+Most of a successful system’s cost is **maintenance**: corrective (bugs), adaptive (new platforms and laws), perfective (better internals), and preventive (hardening before the next incident). Greenfield is a short prologue.
 
-## 1. The Four Categories of Maintenance
-Maintenance is mathematically categorized into four distinct types:
-- **Corrective**: Fixing active mathematical defects (bugs) that users found in production.
-- **Adaptive**: Modifying the system to keep it mathematically compatible with a changing environment (e.g., upgrading from Python 2 to Python 3, or migrating to a new AWS region).
-- **Perfective**: Improving the mathematical performance, maintainability, or UX of the system without changing its core functional requirements (e.g., optimizing a slow SQL query).
-- **Preventive**: Refactoring legacy code to prevent future mathematical failures before they occur (e.g., paying down Technical Debt).
+## 1. Deep Dive and Mechanics
 
-## 2. The Maintenance Burden
-If software is written with poor architecture (e.g., violating SOLID principles, lacking automated tests, or using monolithic state), the mathematical cost of Adaptive and Perfective maintenance skyrockets.
-Eventually, the cost to modify a single line of code becomes so mathematically expensive that the business is forced to declare bankruptcy on the codebase and initiate a complete rewrite, highlighting why upfront architectural cleanliness is a financial imperative.
+**Four types (ISO/IEC 14764).** Corrective fixes failures. Adaptive tracks environment change (OS, browser, regulation). Perfective improves performance or maintainability without a new feature request. Preventive reduces future failure probability.
 
+**Ownership.** An unowned service is already in hospice. On-call, a backlog of debt, and a budgeted capacity (the classic 20 percent) are the mechanism. “We will clean it up after the next launch” is how rot compounds.
+
+**Observe then change.** Characterisation tests, production metrics, and a rollback path before you “just upgrade the framework.”
+
+**End of life.** Maintenance includes saying no: retire, replace, or put behind a strangler. Eternal patches on a dead product line waste the team.
+
+<Callout icon="warning" title="Heroic firefighting is not a strategy">
+If the same class of bug returns every quarter, you are doing corrective work where preventive or perfective work was due. Track repeat incidents.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Lehman’s laws.** Continuing systems grow, complexity rises unless work is done to reduce it, and quality appears to decline unless maintained. These are empirical regularities, not slogans.
+
+**Interest on debt.** Unpaid debt increases the coefficient on every future change. Capacity spent only on features is a high-interest loan against tomorrow’s lead time.
+
+**Reliability.** Preventive maintenance is the software analogue of replacing a worn bearing: you spend now to flatten the hazard rate. Weibull-style “infant mortality then wear-out” shows up as launch bugs then bit-rot.
+
+<ComparisonTable
+  headers={['Type', 'Trigger', 'Example']}
+  rows={[
+    ['Corrective', 'Defect report', 'Null on an empty cart'],
+    ['Adaptive', 'Environment move', 'New TLS policy, new OS'],
+    ['Perfective', 'Cost to change', 'Split a god class'],
+    ['Preventive', 'Risk forecast', 'Upgrade before EOL'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# Capacity policy encoded as a simple check on the sprint mix
+FEATURES, MAINT = 0.7, 0.3
+
+def plan_ok(feature_points, maint_points):
+    total = feature_points + maint_points
+    if total == 0:
+        return False
+    return maint_points / total >= MAINT - 0.05
+```
+
+The numbers are a policy, not physics. The point is that maintenance has a reserved slice.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Prod[Running system] --> Signal[Incidents, tickets, EOL calendars]
+    Signal --> Correct[Corrective]
+    Signal --> Adapt[Adaptive]
+    Signal --> Perfect[Perfective]
+    Signal --> Prevent[Preventive]
+    Correct --> Prod
+    Adapt --> Prod
+    Perfect --> Prod
+    Prevent --> Prod
+    Signal --> Retire[Retire or replace]
+```
+
+## 5. Interview Prep
+
+**Q: How do you justify maintenance to a feature-only roadmap?**
+**A:** Show lead time and incident cost trending up. Put upgrades on the same board as features with risk if slipped (certificate expiry, framework EOL).
+
+**Q: Maintenance versus refactoring?**
+**A:** Refactoring is a technique inside perfective and preventive work. Maintenance is the lifecycle category.
+
+**Q: When do you stop maintaining and rewrite?**
+**A:** When characterisation is cheaper than another year of patches and you can strangler-cut, not when someone is bored. Big-bang rewrites fail often.
+
+## 6. Production Use Cases
+
+- **Enterprise line-of-business** apps that outlive their original team by a decade.
+- **OS and runtime upgrades** as scheduled adaptive work.
+- **SRE error-budget spend** funding preventive hardening.
+
+<Callout icon="tip" title="Calendar the boring work">
+Certificates, dependency EOL, and license renewals are maintenance with a clock. Put them in the same tracker as features.
+</Callout>

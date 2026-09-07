@@ -1,25 +1,96 @@
 ---
 title: Google App Engine
-description: Google's original Platform as a Service (PaaS), providing a fully managed, mathematically abstracted environment for deploying web applications that instantly auto-scale from zero to global traffic.
+description: "GCP's original PaaS: Standard sandboxes that scale to zero, Flexible VMs for Docker — still alive, but Cloud Run is the default for new containers."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google App Engine"
-  subtitle="The Original PaaS"
-  tags={['GCP', 'PaaS', 'Web', 'Serverless']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google App Engine">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-App Engine was released long before Kubernetes or Docker existed. It allows developers to deploy Python, Java, or Node.js code directly to Google's infrastructure without ever seeing or managing a Virtual Machine, load balancer, or operating system.
+**App Engine** is Google’s classic PaaS. **Standard** runs your code in a language sandbox (automatic scaling, often scale-to-zero, request-based). **Flexible** runs a container on Compute Engine VMs (more files, background threads, slower scale). Services, versions, and traffic splitting are the deploy model. New greenfield HTTP containers usually pick **Cloud Run** instead.
 
-## 1. Standard vs. Flexible Environments
-App Engine mathematically partitions its architecture into two distinct paradigms:
-- **Standard Environment**: Your code runs in a highly restrictive, pre-configured sandbox. You cannot write to the local file system or install arbitrary C-libraries. Because of this strict mathematical confinement, Google can boot a new instance of your app in milliseconds. It mathematically scales to exactly zero when there is no traffic, costing $0.
-- **Flexible Environment**: Your code runs inside a Docker container on Google Compute Engine VMs. You have total freedom (you can use any language, any library). However, because it relies on standard Docker/VM architecture, it boots slower (minutes, not milliseconds) and cannot scale to absolute zero; at least one instance must remain running.
+## 1. Deep Dive and Mechanics
 
-## 2. Versioning and Traffic Splitting
-Deploying to App Engine is mathematically elegant.
-Every time you run `gcloud app deploy`, it creates an immutable **Version**. By default, 100% of traffic routes to the new version.
-However, you can mathematically execute **A/B Testing** or **Canary Deployments** directly in the router. You instruct App Engine: *"Route exactly 95% of incoming HTTP requests to V1, and 5% to V2."* The hypervisor mathematically distributes the packets. If V2 generates 500 Server Errors, you instantly shift the slider back to 100% V1, executing a zero-downtime rollback in seconds.
+**Services and versions.** An app has services (microservices). Each deploy creates a version. Split traffic 10/90 for canaries. Migrate traffic when warm.
 
-</TechnologyTemplate>
+**Standard vs Flexible.** Standard: instance classes, request timeouts, no arbitrary background work on the old runtimes. Flexible: SSH-able VM under you, always-on min instances, Dockerfile.
+
+**app.yaml.** Runtime, handlers, scaling (automatic, basic, manual), inbound services. This file is the contract.
+
+**Identity.** App Engine default service account. Prefer a custom SA with least privilege. Connect to VPC via Serverless VPC Access for Standard.
+
+**Datastore/Memcache history.** App Engine’s original data story was Datastore and Memcache. Modern apps use Firestore, Cloud SQL, or Memorystore explicitly.
+
+<Callout icon="warning" title="Flexible is not Standard">
+Teams “just switch to Flexible” for a native lib and inherit VM patching, min instances, and a different bill. If you need a container, Cloud Run is the closer relative.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Automatic scaling is a queueing controller on request rate and latency. Min instances truncate cold start at a fixed cost. Standard instance hours plus outgoing bandwidth are the usual bill; Flexible looks like GCE plus a management tax.
+
+Traffic splitting is weighted at the frontend, not sticky unless you enable session affinity (usually a smell).
+
+<ComparisonTable
+  headers={['Host', 'Unit', 'Scale to zero']}
+  rows={[
+    ['App Engine Standard', 'Runtime sandbox', 'Yes'],
+    ['App Engine Flexible', 'VM + container', 'No'],
+    ['Cloud Run', 'Container revision', 'Yes'],
+    ['GKE', 'Pod', 'With extra work'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+runtime: python312
+service: api
+instance_class: F2
+automatic_scaling:
+  min_instances: 1
+  max_instances: 20
+handlers:
+  - url: /.*
+    script: auto
+```
+
+Deploy with `gcloud app deploy`. Use `gcloud app services set-traffic` to split versions.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    HTTPS[appspot or custom] --> FE[App Engine FE]
+    FE --> V1[Version n]
+    FE --> V2[Version n+1]
+    V1 --> SQL[Cloud SQL via VPC]
+```
+
+## 5. Interview Prep
+
+**Q: App Engine vs Cloud Run?**
+**A:** Cloud Run is the container-native successor: any binary, faster iteration, clearer billing. App Engine Standard still fits some first-party runtimes and existing apps. Do not start a new Flexible app without a reason.
+
+**Q: What is an App Engine service?**
+**A:** A named component with its own versions and scaling. `default` must exist. Split a monolith into services only when you will scale and deploy them separately.
+
+**Q: How do you get a VPC IP?**
+**A:** Serverless VPC Access (Standard) or the Flexible VM’s network. Cloud SQL socket/connector is another path for databases.
+
+## 6. Production Use Cases
+
+- Long-lived Standard apps that still scale well and have no Docker story.
+- Traffic-split migrations off a monolith service by service.
+- Internal tools that already sit on `appspot.com` with IAP.
+
+<Callout icon="tip" title="Turn on min_instances for user-facing Standard">
+Cold starts on F1/F2 are real. One warm instance is cheaper than a support thread about “the first request of the day.”
+</Callout>

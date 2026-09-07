@@ -1,30 +1,106 @@
 ---
 title: Classes
-description: The fundamental building blocks of Object-Oriented Programming; mathematical templates or blueprints that define the initial state (data) and behavior (methods) for creating instantiated objects.
+description: "Blueprints that bind state and behavior into a named type from which objects are instantiated."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Classes"
-  subtitle="The Mathematical Blueprint"
-  tags={['OOP', 'Programming', 'Architecture', 'Fundamentals']}
->
+    <ConceptTemplate title="Classes">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If an **Object** is a physical house you can walk into, the **Class** is the architectural blueprint drawn on paper. You cannot walk into a blueprint, but the blueprint mathematically defines exactly how the house must be built.
+A **class** is a named type that declares what data an instance holds and what operations it may perform. The class itself is a definition. Runtime cost appears when the language allocates an **instance** of that type.
 
-## 1. State and Behavior
-A Class is a mathematical structure that binds two things together into a single cohesive unit:
-- **State (Attributes/Fields)**: The data the object holds. (e.g., a `Car` class has state variables for `color` and `currentSpeed`).
-- **Behavior (Methods/Functions)**: The mathematical operations that can mutate that state. (e.g., the `Car` class has a `accelerate()` method that increases the `currentSpeed`).
+## 1. Deep Dive and Mechanics
 
-## 2. Instantiation
-The Class itself consumes virtually no memory. It is just a definition.
-When a developer uses the `new` keyword (e.g., `Car myHonda = new Car();`), the runtime environment reads the Class blueprint and allocates physical RAM to create an **Instance** (an Object). You can use the single `Car` class blueprint to mathematically instantiate 1,000 completely independent `Car` objects, each possessing its own unique memory space and its own unique `color`.
+A class typically packages three things: **fields** (state), **methods** (behavior), and **constructors** (initialization). Many languages also attach **static** members to the class object rather than to each instance.
 
+**Instantiation** reads the class layout, reserves heap storage, runs constructors in inheritance order, and returns a reference. Two instances of the same class share method code (or vtable entries) but keep separate field storage.
+
+**Identity vs equality.** Two objects can have identical field values and still be distinct identities. Languages expose this as reference equality versus value equality.
+
+**Nested types.** Inner classes, friend classes, and companion objects are extra names that share privileged access. They do not change the fact that the outer class is still the unit of instantiation.
+
+<Callout icon="info" title="Class vs type">
+In Java and C-sharp the class is both a runtime layout and a nominal type. In TypeScript a class also emits a type, but structural typing means extra shapes can satisfy the same surface without sharing that class.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A class C can be modeled as a record type of fields plus a set of function types that take an implicit receiver. Inheritance is a subtype relation: if D extends C, values of D may be used where C is expected, provided Liskov constraints hold.
+
+Method dispatch is a function from (receiver-type, method-name, argument-types) to an implementation. Single dispatch looks only at the receiver. The class vtable is an O(1) array of function pointers indexed by method slot.
+
+<ComparisonTable
+  headers={['Idea', 'Lives on', 'Shared across instances']}
+  rows={[
+    ['Field', 'Each instance', 'No'],
+    ['Instance method', 'Class / vtable', 'Yes, code is shared'],
+    ['Static field', 'Class object', 'Yes'],
+    ['Constructor', 'Class', 'Runs per new instance'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class BankAccount:
+    def __init__(self, owner, opening_balance):
+        self.owner = owner
+        self._balance = opening_balance
+
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError("amount must be positive")
+        self._balance += amount
+
+    def withdraw(self, amount):
+        if amount > self._balance:
+            raise ValueError("insufficient funds")
+        self._balance -= amount
+
+    @property
+    def balance(self):
+        return self._balance
+```
+
+The class is the blueprint. Each `BankAccount(...)` call allocates a distinct object with its own `_balance`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    C[Class BankAccount] --> I1[Instance A]
+    C --> I2[Instance B]
+    C --> M[Shared methods]
+    I1 --> S1[own balance]
+    I2 --> S2[own balance]
+    I1 --> M
+    I2 --> M
+```
+
+## 5. Interview Prep
+
+**Q: Does a class consume heap memory?**
+**A:** The metadata and method code live with the type. Per-object cost starts at instantiation. Some runtimes also keep a class object on the heap.
+
+**Q: Class versus struct?**
+**A:** In C-sharp and similar languages a class is a reference type with identity and heap allocation. A struct is a value type copied by assignment. The design question is identity and lifetime, not just syntax.
+
+**Q: Why hide fields behind methods?**
+**A:** Invariants such as non-negative balance belong in one place. Callers should not be able to write the field directly and skip validation.
+
+## 6. Production Use Cases
+
+- **Domain models** in billing, inventory, and order systems.
+- **Framework extension points** where a base class defines a lifecycle and subclasses fill in hooks.
+- **ORMs** that map a class to a table and instances to rows.
+
+<Callout icon="tip" title="Keep classes small">
+If a class name needs and, plus, or manager to explain itself, it is probably several classes glued together.
+</Callout>

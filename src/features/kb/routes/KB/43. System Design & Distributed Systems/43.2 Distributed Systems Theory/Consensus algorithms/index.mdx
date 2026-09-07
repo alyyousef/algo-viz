@@ -1,31 +1,89 @@
 ---
 title: Consensus Algorithms
-description: The complex mathematical protocols used by distributed systems to agree on a single source of truth when multiple nodes are writing data simultaneously.
+description: "Protocols that make a set of machines agree on one value or log despite crashes, forming the core of etcd, ZooKeeper, and Raft-based databases."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Consensus Algorithms">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you have a database cluster with 5 nodes, and User A sends a command to Node 1 to set `x=10`, while User B sends a command to Node 2 to set `x=20` at the exact same millisecond, what is the final value of `x`?
+**Consensus** is the problem of getting processes to decide the same value, with at most one decision, and with a valid value proposed by someone. Replicated state machines implement consensus on a **log**: first agree the next entry, then apply it. Paxos, Raft, Zab, and Viewstamped Replication are the industrial family for crash faults.
 
-A **Consensus Algorithm** is the protocol the nodes use to talk to each other, elect a leader, and agree on the exact chronological order of events, ensuring the entire cluster maintains a single source of truth.
+## 1. Deep Dive and Mechanics
 
-## 1. The Byzantine Generals Problem
+A round has proposals, votes, and a commit rule that uses a **majority**. Because any two majorities intersect, two different values cannot both commit. Leaders (Raft) or ballots (Paxos) serialize proposals so the common case is one round-trip from the leader to a majority.
 
-Consensus algorithms are designed to solve variations of the Byzantine Generals Problem: How do independent actors coordinate an attack over an unreliable communication network where some actors might be dead, and some actors might actively be lying (Byzantine Fault)?
+**Logs.** Agreement is not one register; it is a sequence. Snapshots truncate the prefix. Membership changes are themselves log entries (joint consensus in Raft) so the set of voters does not split-brain.
 
-In traditional database consensus, we assume nodes might crash, but they don't actively lie (Fail-Stop model). In blockchain consensus, we assume nodes *are* actively lying (Byzantine model).
+**What consensus is not.** Gossip. Primary-backup without quorum. A load balancer. Those can look "agreed" until a partition.
 
-## 2. Prominent Algorithms
+<Callout icon="info" title="Majority is a liveness tax">
+If you need 2 of 3, one node can be down. If two are down, you cannot commit. You bought safety with that refusal.
+</Callout>
 
-1. **Paxos**: Invented in 1989, it is mathematically beautiful but notoriously impossible for humans to understand or implement in code. It requires complex multi-phase voting to agree on a single value.
-2. **Raft**: Invented in 2013 specifically to be understandable. It relies on strict Leader Election. Only one node (the Leader) is allowed to accept writes. If the Leader crashes, the remaining nodes start a randomized timer; the first one to wake up requests votes to become the new Leader. Raft is the engine behind modern systems like **etcd** and **Consul**.
-3. **Proof of Work / Proof of Stake**: The Byzantine fault-tolerant consensus algorithms used by blockchains like Bitcoin and Ethereum to agree on ledgers when nodes are actively malicious.
+## 2. Mathematical / Theoretical Foundation
 
+Safety: agreement and validity. Liveness: eventually decide, under partial synchrony and a bound on faults f with n >= 2f + 1 for crash-stop. FLP: no deterministic algorithm guarantees termination in a fully async model with one crash. Timeouts are not a hack; they are the model.
+
+Paxos is a single-decree core plus Multi-Paxos for a log. Raft specifies leader election, log repair, and snapshotting as one comprehensible package.
+
+<ComparisonTable
+  headers={['Protocol', 'Faults', 'Leader', 'Where you meet it']}
+  rows={[
+    ['Multi-Paxos', 'Crash', 'Stable proposer', 'Chubby, Spanner lineage'],
+    ['Raft', 'Crash', 'Strong leader', 'etcd, Consul, Cockroach'],
+    ['Zab', 'Crash', 'Primary', 'ZooKeeper'],
+    ['PBFT', 'Byzantine', 'Primary + views', 'Permissioned chains'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def majority(n):
+    return n // 2 + 1
+
+def can_commit(acks, n):
+    return len(acks) >= majority(n)
+```
+
+Production code is the log, the term checks, and the disk. Use etcd or the Raft library in your database; do not ship a weekend consensus for money.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    C[Client write] --> L[Leader]
+    L --> Q[Append to majority]
+    Q --> Commit[Commit index advances]
+    Commit --> Apply[Apply to state machine]
+    Apply --> C
+```
+
+## 5. Interview Prep
+
+**Q: Consensus versus replication?**
+**A:** Replication copies bytes. Consensus decides a single order of those bytes under faults. Async replicas replicate without consensus and can diverge on failover.
+
+**Q: Why is Raft more popular in new systems?**
+**A:** Same safety goals as Multi-Paxos, with a more complete spec (elections, log repair, membership) that engineers can implement and test. Not because Paxos is wrong.
+
+**Q: Can you consensus across regions?**
+**A:** Yes, at the cost of a WAN RTT on the commit path. That is a product choice (Spanner-style) versus async DR.
+
+## 6. Production Use Cases
+
+- **Coordination services** (locks, config, leader keys).
+- **Database commit logs** for linearizable SQL.
+- **Service discovery** that must not flap on a split.
+
+<Callout icon="tip" title="Test partition plus old leader">
+The exam question is a paused leader that wakes. If your suite never does that, you have a happy-path log, not consensus.
+</Callout>

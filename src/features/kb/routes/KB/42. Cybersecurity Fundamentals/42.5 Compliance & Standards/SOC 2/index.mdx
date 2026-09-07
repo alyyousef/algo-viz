@@ -1,44 +1,87 @@
 ---
-title: SOC 2 (System and Organization Controls 2)
-description: The industry standard compliance framework for evaluating how effectively a cloud service provider manages customer data.
+title: SOC 2
+description: "An AICPA attestation report on how a service organization meets Trust Services Criteria such as security and availability."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="SOC 2 (System and Organization Controls 2)">
+    <ConceptTemplate title="SOC 2">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If your company uses AWS, Salesforce, or Datadog, you are trusting a third party with your sensitive data. How do you know their internal security isn\'t terrible?
+**SOC 2** is an attestation by a CPA firm against the **Trust Services Criteria** (Security always; Availability, Confidentiality, Processing Integrity, Privacy as you add them). A Type I is a point-in-time design review. A Type II tests operating effectiveness over a period (often 3–12 months). Customers ask for the report under NDA. It is not a product certification and not a pentest.
 
-**SOC 2** is an auditing procedure developed by the American Institute of CPAs (AICPA) specifically to ensure that cloud service providers securely manage data to protect the interests of the organization and the privacy of its clients.
+## 1. Deep Dive and Mechanics
 
+**System description.** You write what the system is, the boundaries, and the controls. The auditor tests a sample: access reviews, change tickets, backup restores, vendor reviews, alerts.
 
-<Callout icon="success" title="The B2B Requirement">
+**Exceptions.** A failed sample becomes a written exception. Honest exceptions plus a fix beat a fake clean report that a customer later disproves.
 
+**Bridge letters.** After the period, a short letter says "nothing material changed" until the next Type II. Do not treat that as a new audit.
 
-  If you are building a B2B SaaS startup, achieving SOC 2 compliance is practically mandatory. Enterprise companies will almost never sign a contract with you until you can hand them your SOC 2 audit report proving you follow basic security hygiene.
-
-
+<Callout icon="warning" title="SOC 2 is sampling">
+Passing does not mean every laptop was encrypted every day. It means the control operated in the sample.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Trust Services Criteria
+Attestation is statistical sampling over a control population (joiners, changes, incidents). Type II speaks to operating effectiveness across time. Criteria are outcome-oriented; you map your controls to them (CC6 access, CC7 detect, and so on). Residual risk and complementary user-entity controls (CUECs) remind the customer they still have work.
 
-A SOC 2 audit is based on five "Trust Services Criteria." Only Security is strictly mandatory; the others are optional based on the business model.
+<ComparisonTable
+  headers={['Report', 'Says', 'Use']}
+  rows={[
+    ['SOC 2 Type I', 'Design at a date', 'Early sales'],
+    ['SOC 2 Type II', 'Operated over a period', 'Enterprise default'],
+    ['SOC 3', 'Public summary', 'Website seal'],
+    ['SOC 1', 'Financial reporting controls', 'Payroll / fintech ledgers'],
+  ]}
+/>
 
-1. **Security:** (Mandatory) The system is protected against unauthorized access (e.g., Firewalls, 2FA, Intrusion Detection).
-2. **Availability:** The system is available for operation and use as committed or agreed (e.g., Disaster recovery, Uptime monitoring).
-3. **Processing Integrity:** System processing is complete, valid, accurate, timely, and authorized.
-4. **Confidentiality:** Information designated as confidential is protected as agreed (e.g., Encryption, Access Controls).
-5. **Privacy:** Personal information is collected, used, retained, disclosed, and disposed of securely.
+## 3. Real-World Implementation
 
-## Type I vs Type II
+```text
+# Evidence you will be asked for
+# - SSO/MFA screenshots + joiner/leaver tickets
+# - Change tickets with review for prod deploys
+# - Backup restore test notes
+# - Risk assessment and vendor list
+# - Incident tickets (yes, having some is healthy)
+```
 
-- **SOC 2 Type I:** Evaluates the *design* of the security processes at a specific point in time (e.g., "Do you have a policy that requires background checks today?").
-- **SOC 2 Type II:** Evaluates the *operating effectiveness* of those processes over a period of time, usually 6–12 months (e.g., "Did you actually run background checks on every employee hired over the last year?").
+Put evidence in the ticket at the time of the work, not in a March panic.
 
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Scope[System description] --> Map[Controls to TSC]
+    Map --> Period[Type II period]
+    Period --> Sample[Auditor sample]
+    Sample --> Rep[Report + exceptions]
+```
+
+## 5. Interview Prep
+
+**Q: Type I vs Type II?**
+**A:** I is design. II is "did it run for months." Serious buyers want II.
+
+**Q: Security criterion only?**
+**A:** Common for a first year. Availability if you sell SLAs. Privacy if you are a processor of personal data at scale.
+
+**Q: Is SOC 2 required by law?**
+**A:** No. It is a market and contract expectation.
+
+## 6. Production Use Cases
+
+- **B2B SaaS** security reviews.
+- **Data processors** that must show change control.
+- **Annual** customer questionnaire replacement (partial).
+
+<Callout icon="tip" title="Write CUECs your customers can actually do">
+If you require them to MFA and you never said so, the report will.
+</Callout>

@@ -1,24 +1,112 @@
 ---
 title: Jenkins
-description: An open-source, Java-based automation server that historically dominated the CI/CD landscape, relying on a massive ecosystem of plugins to mathematically orchestrate complex build processes.
+description: "The extensible Java automation server: controllers, agents, and a plugin ecosystem that still runs a large fraction of enterprise pipelines via Jenkinsfile."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Jenkins"
-  subtitle="The Grandfather of Automation"
-  tags={['DevOps', 'CI/CD', 'Java', 'Legacy']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Jenkins">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Created in 2004 (originally named Hudson), Jenkins is the single most mathematically influential automation tool in software history. It taught the industry how to automate software delivery.
+**Jenkins** is an open-source automation server. A **controller** (formerly master) schedules work; **agents** execute it. Pipelines are Groovy **Jenkinsfiles** (declarative preferred, scripted still everywhere). Two thousand plugins connect it to every SCM, cloud, and ticket system invented since 2004. Flexibility is the reason it won; plugin sprawl and Groovy-as-YAML are the reasons teams leave for Actions, GitLab CI, or Tekton.
 
-## 1. The Plugin Ecosystem
-Jenkins is fundamentally a blank mathematical engine. Its power comes from its **Plugin Ecosystem**.
-There are over 1,800 community-built plugins. If you need to mathematically connect a 20-year-old SVN repository to a modern AWS Kubernetes cluster, there is a Jenkins plugin for it. This immense flexibility made it the default choice for massive enterprises with complex, heterogenous legacy systems.
+## 1. Deep Dive and Mechanics
 
-## 2. The Groovy Nightmare
-Jenkins' greatest strength became its mathematical downfall.
-Modern CI/CD uses declarative YAML (like GitHub Actions). Jenkins relies on **Jenkinsfiles**, written in a Turing-complete programming language called Groovy.
-Developers ended up writing thousands of lines of complex Groovy code just to deploy a website. Furthermore, Jenkins servers mathematically suffer from "Plugin Hell"—updating one plugin often breaks three others, turning the Jenkins server itself into a fragile, legacy application that requires dedicated teams just to keep it alive. The industry is currently in a massive mathematical migration away from Jenkins toward cloud-native solutions.
+**Controller versus agent.** The controller holds job config, credentials, and the UI. It should run almost no builds. Agents (permanent, Kubernetes pods, EC2 spot) do the work. A compromised controller is game over: it has every secret.
 
-</TechnologyTemplate>
+**Jenkinsfile.** Declarative: a `pipeline` block with `agent` and `stages`. Scripted: arbitrary Groovy. Shared Libraries (the Library annotation) are the reuse unit — and a code-exec supply chain.
+
+**Multibranch and org folders.** Jenkins discovers branches and PRs from GitHub/Bitbucket/GitLab and creates jobs. The scan credentials determine what Jenkins can read.
+
+**Credentials.** The credentials plugin stores secrets the controller injects into jobs. Folder-scoped credentials plus "authorize project" reduce the "any job can use the prod key" problem. They do not eliminate it.
+
+**Plugin hell.** Updates are not a matrix-tested monorepo. Pin a Core + plugin BOM (Evergreen / your own) and treat the controller as a product you release.
+
+<Callout icon="warning" title="The controller is a fortress, not a build node">
+Running jobs on the built-in node (`agent any` on the controller) puts untrusted Groovy next to credentials.xml. Disable executors on the controller.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A Declarative pipeline is a constrained DAG of stages; `parallel` is a fork-join. Scripted Groovy is a Turing-complete program that *happens* to call pipeline steps — harder to reason about, easier to deadlock (un-cps, `node` allocations).
+
+**CPS.** Pipeline Groovy is continuation-passed so the controller can serialise state and survive restart. That is why some Java APIs "do not work" in Jenkinsfile without `@NonCPS`.
+
+**Queueing.** Jobs wait for an agent whose labels match. Starvation is a matching problem. Priority sorters and fair-sharing exist because a monorepo can lock the farm.
+
+<ComparisonTable
+  headers={['Aspect', 'Jenkins', 'GitHub Actions', 'Tekton']}
+  rows={[
+    ['Language', 'Groovy + plugins', 'YAML + actions', 'CRDs'],
+    ['Extensibility', 'Highest', 'Marketplace', 'Tasks / catalogs'],
+    ['Ops burden', 'High', 'Low if hosted', 'K8s-native'],
+    ['Legacy connectors', 'Unmatched', 'Growing', 'Limited'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```groovy
+pipeline {
+  agent { label 'linux && docker' }
+  options { timestamps(); disableConcurrentBuilds() }
+  stages {
+    stage('test') {
+      steps {
+        sh 'npm ci && npm test'
+      }
+    }
+    stage('deploy') {
+      when { branch 'main' }
+      environment {
+        CREDS = credentials('pay-prod-deploy')
+      }
+      steps {
+        sh './scripts/deploy.sh'
+      }
+    }
+  }
+}
+```
+
+Keep this Declarative. Put shared deploy logic in a vetted Shared Library version, not copy-pasted `sh` blocks. Bind `pay-prod-deploy` to the folder that owns this job only.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    SCM[Webhook from forge] --> C[Jenkins controller]
+    C --> Q[Queue + labels]
+    Q --> A1[Agent linux]
+    Q --> A2[Agent win]
+    A1 --> Lib[Shared Library]
+    C --> Cred[Credentials store]
+    Cred --> A1
+```
+
+## 5. Interview Prep
+
+**Q: Why are companies still on Jenkins?**
+**A:** Twenty years of jobs, air-gapped plugins, mainframe and SAP connectors, and a platform team that already exists. Migration cost, not affection.
+
+**Q: Declarative versus scripted?**
+**A:** Declarative is reviewable and toolable. Scripted is an escape hatch. New pipelines should be Declarative plus a thin Shared Library.
+
+**Q: How do you secure it?**
+**A:** No builds on controller, SSO + matrix auth, folder credentials, ephemeral Kubernetes agents, and a pinned plugin set with a CVE process. Treat Jenkins like prod, because it is.
+
+## 6. Production Use Cases
+
+- **Heterogeneous estates** that still build from SVN, Perforce, and Git in one farm.
+- **Air-gapped** factories where a controller + agents is easier than SaaS.
+- **Graduation path**: Jenkins builds the image; Argo or Spinnaker deploys it.
+
+<Callout icon="tip" title="Version the controller like an application">
+A JCasC (Configuration as Code) repo plus a container image of Core+plugins is how you stop "snowflake Jenkins." Click-ops on the Update Center is not a release process.
+</Callout>

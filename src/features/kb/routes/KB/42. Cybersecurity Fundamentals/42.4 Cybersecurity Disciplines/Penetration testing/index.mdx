@@ -1,35 +1,88 @@
 ---
-title: Penetration Testing (Pentesting)
-description: The authorized, simulated cyberattack against a computer system to evaluate its security posture.
+title: Penetration Testing
+description: "A time-boxed, authorized assessment that reports how a defined target fails under agreed rules — not a license to attack anything."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Penetration Testing (Pentesting)">
+    <ConceptTemplate title="Penetration Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Automated vulnerability scanners (like Nessus) are excellent at finding outdated software, but they cannot mathematically link vulnerabilities together to achieve a complex goal.
+A **penetration test** is a contracted, scoped review. Testers try to show impact against systems you named, in a window you approved, with a written rules of engagement. It is not a bug bounty, not a red-team covert op, and not a tutorial for breaking into networks. The product is a **prioritized report** your engineers can patch from.
 
-**Penetration Testing**, or ethical hacking, is the practice of hiring human experts to actively attack your networks, applications, and employees in a controlled environment to find vulnerabilities before the real hackers do.
+## 1. Deep Dive and Mechanics
 
+**Scope and rules.** In-scope assets, forbidden techniques (usually destructive testing, phishing unless bought), contacts, and a kill switch. Legal and change-control sign off first.
 
-<Callout icon="success" title="The Proof of Concept">
+**Method at a high level.** Enumerate what the client already exposed, check whether known classes of weakness exist (authz, patch level, defaults), and demonstrate impact only as far as the rules allow. Stop at proof, not at "how far could we go for fun."
 
+**Close-out.** Findings with severity, evidence stored as agreed, and a retest offer. The value is the fix, not the slide with a logo.
 
-  Unlike an automated scanner that outputs a 500-page PDF of theoretical risks, a penetration tester delivers a mathematical "Proof of Concept." They demonstrate exactly how a seemingly low-risk flaw in an obscure web form allowed them to completely extract the CEO\'s emails.
-
-
+<Callout icon="warning" title="Authorization is the whole job">
+Testing without a letter and a scope is just unauthorized access. That is a crime, not a career.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Types of Pentesting
+A pentest samples the vulnerability space under a budget of hours. Coverage is never complete. Severity should track business impact (data, authz, availability), not scanner CVSS alone. Residual risk after the test is "what we did not have time to touch," and an honest report says so.
 
+<ComparisonTable
+  headers={['Activity', 'Goal', 'Covert?']}
+  rows={[
+    ['Vulnerability scan', 'Known CVE inventory', 'No'],
+    ['Pentest', 'Show impact in scope', 'Usually no'],
+    ['Red team', 'Test detection of an objective', 'Yes'],
+    ['Bug bounty', 'Ongoing external reports', 'No'],
+  ]}
+/>
 
-<ComparisonTable headers={['Type', 'Knowledge Level', 'Use Case']} rows={[ ['Black Box', 'Zero knowledge. The testers are given only the company\'s name and must rely entirely on open-source intelligence (OSINT) and external scanning.', 'Simulating an attack from a random, unprivileged internet hacker.'], ['White Box', 'Full knowledge. The testers are given the network diagrams, administrator credentials, and the raw source code of the applications.', 'Deep architectural review to find complex, hidden mathematical logic flaws that a Black Box test would miss.'], ['Gray Box', 'Partial knowledge. The testers are given a standard user account on the application.', 'Simulating an attack from a malicious insider or a customer whose account was compromised.'] ]} />
+## 3. Real-World Implementation
 
+```markdown
+# Rules of engagement sketch
+# Customer: Example Corp
+# Window: 2026-09-08 to 2026-09-19, business hours plus agreed
+# In scope: *.app.example.com, staging VPC x
+# Out of scope: destructive DoS, third-party IdP, physical
+# Contacts: SOC 24/7, legal, engineering lead
+# Deliverable: report + retest of criticals
+```
 
+Give testers accounts that match real roles so they can find broken access control, not just the login page.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    RoE[Rules of engagement] --> Test[Authorized test window]
+    Test --> Find[Findings]
+    Find --> Fix[Engineering fix]
+    Fix --> Retest[Retest]
+```
+
+## 5. Interview Prep
+
+**Q: Pentest vs scan?**
+**A:** A scan lists known issues. A pentest shows whether they chain into impact and whether business logic fails.
+
+**Q: Why not test prod on Friday?**
+**A:** Change risk. Prefer staging plus a thin, agreed prod check.
+
+**Q: How do you pick a vendor?**
+**A:** Scope literacy, safe harbor, and whether they write patchable findings.
+
+## 6. Production Use Cases
+
+- **Annual app and infra** tests for enterprise customers.
+- **PCI** required assessments.
+- **Pre-launch** reviews of a new money-movement flow.
+
+<Callout icon="tip" title="Patch before you buy another test">
+Repeating last year's unfixed criticals is theater.
+</Callout>

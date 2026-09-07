@@ -1,23 +1,90 @@
 ---
 title: Amazon Elastic File System (EFS)
-description: A fully managed, mathematically elastic NFS (Network File System) designed to be mounted concurrently by thousands of EC2 instances, providing shared, infinitely scalable file storage.
+description: "Managed NFSv4 that many AZs can mount at once — shared POSIX storage for EC2, Lambda, and containers without a filer appliance."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Amazon Elastic File System (EFS)"
-  subtitle="Shared Network File Storage"
-  tags={['AWS', 'Storage', 'File', 'Linux']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Amazon EFS">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-An EBS Volume can only be attached to *one* EC2 instance at a time. If you have 50 web servers that all need to read and write to the exact same `/uploads` directory simultaneously, EBS is mathematically impossible. You need EFS.
+**EFS** is a regional, elastic NFS service. You create a filesystem, put **mount targets** in subnets (typically one per AZ), and mount via NFSv4.1. Capacity grows and shrinks with your files. Many instances can write at once. It is not a block device and it is not S3.
 
-## 1. Concurrent NFS Mounting
-EFS uses the standard NFSv4 protocol.
-You can mathematically mount a single EFS file system onto 1,000 different EC2 instances simultaneously. To the Linux operating system, it looks like a standard physical folder (e.g., `/var/www/html`). If Server A writes a file to that folder, Server B can instantly read it. This is the foundational architecture for legacy CMS platforms like WordPress running in a highly available, multi-server cloud environment.
+## 1. Deep Dive and Mechanics
 
-## 2. Mathematical Elasticity
-With EBS, you must provision the size in advance (e.g., 100GB). If you hit 100GB, the disk crashes.
-EFS is mathematically **Elastic**. You do not provision a size. It starts at 0 bytes. As you add files, it physically grows to Petabytes. When you delete files, it shrinks. You are billed exactly for the mathematical byte count you are storing at the end of the month. Furthermore, it automatically replicates all files across three physical Availability Zones, guaranteeing massive durability against data center failures.
+**Performance modes.** General Purpose is the default (low latency). Max I/O is the old scale-out mode for huge parallel workloads; most new designs stay on General Purpose plus the right throughput mode.
 
-</TechnologyTemplate>
+**Throughput.** Elastic throughput scales with load and is the usual choice. Provisioned is a floor you pay for. Bursting (legacy) ties credits to stored GiB — small filesystems starve.
+
+**Storage classes.** Standard vs Infrequent Access vs Archive, with optional Intelligent-Tiering. First-byte latency jumps on IA; do not put a latency-sensitive home directory solely on Archive.
+
+**Access points.** Enforce a root directory, POSIX uid/gid, and optional IAM. This is how you give two apps isolated trees on one filesystem.
+
+**Replication and backup.** Cross-region replication and AWS Backup exist. EFS is regional HA (multi-AZ) but not a substitute for application-consistent backups of databases dumped onto it.
+
+<Callout icon="warning" title="NFS is chatty">
+Thousands of tiny files and metadata-heavy builds will look “slow” compared to local NVMe. Batch, pack, or use instance store for scratch and keep EFS for the shared tree.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+POSIX NFS semantics mean **close-to-open** cache coherence, not a linearizable global memory. Concurrent writers to the same file need application locking (fcntl) or you will corrupt.
+
+Throughput T scales with mode. Elastic aims to follow demand; very high T still needs parallel mounts and large I/O sizes. Small 4 KB sync writes serialize on metadata and will never look like gp3.
+
+<ComparisonTable
+  headers={['Store', 'Share', 'Semantics']}
+  rows={[
+    ['EFS', 'Many AZs, many mounts', 'POSIX NFS'],
+    ['EBS', 'One AZ, one instance*', 'Block'],
+    ['FSx', 'NetApp / Windows / Lustre', 'Vendor protocols'],
+    ['S3', 'Worldwide HTTP', 'Object, no POSIX'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+sudo yum install -y amazon-efs-utils
+sudo mount -t efs -o tls fs-0123456789:/ /mnt/efs
+```
+
+Prefer the EFS mount helper with TLS. Security groups must allow NFS 2049 from the instance SG to the mount-target SG.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    EC2a[EC2 AZ a] --> MTa[Mount target a]
+    EC2b[EC2 AZ b] --> MTb[Mount target b]
+    MTa --> FS[EFS filesystem]
+    MTb --> FS
+    Lambda[Lambda] --> FS
+```
+
+## 5. Interview Prep
+
+**Q: EFS vs EBS vs S3?**
+**A:** EBS is a disk for one instance (or clustered Multi-Attach). EFS is a shared filesystem. S3 is objects over HTTP. Pick by API and sharing, not by “storage.”
+
+**Q: Why is my Lambda plus EFS cold?**
+**A:** The first invoke adds ENI + NFS mount overhead. Provisioned concurrency and a persistent mount help; a huge tree walk on every invoke does not.
+
+**Q: How do you isolate tenants?**
+**A:** Access points plus IAM, not a single root mount with hope.
+
+## 6. Production Use Cases
+
+- Shared upload directories for a web fleet.
+- Home dirs and CMS content for lift-and-shift.
+- Lambda or Fargate jobs that need a POSIX scratch/share.
+
+<Callout icon="tip" title="One mount target per AZ">
+Cross-AZ NFS adds latency and data-transfer charges. Put a mount target in every AZ that runs compute.
+</Callout>

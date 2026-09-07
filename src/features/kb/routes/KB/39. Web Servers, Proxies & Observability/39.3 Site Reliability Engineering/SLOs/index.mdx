@@ -1,31 +1,100 @@
 ---
-title: SLOs (Service Level Objectives)
-description: The specific mathematical target values set for an SLI, representing the optimal balance of reliability that keeps users happy without unnecessarily slowing down the velocity of feature development.
+title: SLOs
+description: "Service Level Objectives — the internal target on an SLI over a window, never 100 percent, that creates an error budget and a shared definition of ‘reliable enough.’"
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="SLOs (Service Level Objectives)"
-  subtitle="The Target of Reliability"
-  tags={['SRE', 'Metrics', 'Goals', 'Management']}
->
+    <ConceptTemplate title="SLOs">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If the SLI is the mathematical speedometer (telling you that you are going 65 mph), the Service Level Objective (SLO) is the speed limit sign (dictating that your target is exactly 65 mph).
+An **SLO (Service Level Objective)** is the agreed target for an SLI: “99.9 percent of valid checkout POSTs succeed in under 300 ms over a rolling 30 days.” The SLI is the speedometer. The SLO is the speed limit. Miss it and you spend the **error budget**. Hit 100 percent as a target and you have forbidden change — hardware and networks will still fail, and you will only discover it as shame.
 
-## 1. Setting the Target
-An SLO is an internal agreement between the Product Manager and the Engineering team.
-They look at the SLI (e.g., Latency: % of requests under 200ms) and establish a mathematical target: *"Our SLO is that 99% of all requests must complete in under 200ms over a rolling 30-day window."*
-This mathematical target defines exactly what "success" looks like for the engineering team.
+## 1. Deep Dive and Mechanics
 
-## 2. The Danger of 100%
-The most critical rule of setting an SLO is that the mathematical target must **never be 100%**.
-If a Product Manager demands 100% uptime, they are demanding the impossible. Hard drives mathematically fail. Networks mathematically drop packets. Setting a 100% SLO guarantees failure and prevents the team from ever deploying new code.
-By setting an SLO of 99.9%, the business mathematically acknowledges that 0.1% failure is perfectly acceptable. This 0.1% delta directly creates the **Error Budget**, giving developers the mathematical freedom to push new code and take risks.
+**Who sets it.** Product plus engineering, not a lone SRE with a favorite nine. Too tight: you never ship. Too loose: users churn while graphs stay green. Start from current measured SLI, user research, and dependency math — not from “four nines because we are serious.”
 
+**Window.** Rolling 28–30 days is common. Calendar month matches some SLAs. Shorter windows twitch; longer windows hide a bad week. Burn-rate alerts exist so you do not wait 29 days to notice.
+
+**Multiple SLOs.** Availability and latency are different promises. A service can meet one and miss the other. Do not average them into a mushy “health score” that nobody can explain.
+
+**Iterate.** If you never burn budget, the SLO is too weak or you are not shipping. If you always freeze, the SLO is too strong or the system is actually bad. Revisit quarterly.
+
+<Callout icon="warning" title="100 percent is not an SLO">
+It is a wish that outlaws deploys and chaos. Pick a number less than one so the leftover is a deliberate budget for change and for reality.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+SLO: P(good | valid) ≥ s over window W. Error budget B = 1 − s. Allowed bad events = B × (valid count in W).
+
+Choosing s: if users complain at 99.5 percent and are silent at 99.9 percent, the useful SLO is near the second number. The cost of moving s toward 1 is superlinear (extra regions, sync replication, review gates).
+
+<ComparisonTable
+  headers={['Target s', 'Budget over 30 days (time heuristic)', 'Typical architecture']}
+  rows={[
+    ['99%', '~7 hours', 'Single site, modest HA'],
+    ['99.9%', '~43 minutes', 'Multi-AZ, fast rollback'],
+    ['99.95%', '~22 minutes', 'Mature automation'],
+    ['99.99%', '~4 minutes', 'Multi-region, expensive'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+# slo.yaml — source of truth consumed by recording rules
+service: checkout
+sli: success_and_fast
+good: 'status!~"5.." AND le="0.3"'
+valid: 'all POSTs /checkout'
+objective: 0.999
+window: 30d
+alerts:
+  - burn: 14x
+    window: 1h
+    page: true
+  - burn: 2x
+    window: 6h
+    page: true
+```
+
+The same file should generate Grafana and Alertmanager. Hand-copied numbers drift.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    SLI[SLI ratio] --> Cmp{ratio vs SLO}
+    Cmp -->|above| Ship[Spend budget on change]
+    Cmp -->|below| Freeze[Reliability work]
+    SLO[Target s] --> Budget[Budget = 1 - s]
+    Budget --> Cmp
+```
+
+## 5. Interview Prep
+
+**Q: SLO versus SLA?**
+**A:** SLO is internal and tighter. SLA is contractual and has credits. You can miss an SLO, freeze deploys, and still meet the SLA — that is the buffer working.
+
+**Q: Why a rolling window?**
+**A:** A calendar month lets you behave badly on day 30 after a perfect month. Rolling keeps the recent past in the number. Finance may still want calendar for invoices.
+
+**Q: How many SLOs per service?**
+**A:** One or two that match the user journey. A zoo of SLOs is how none of them change behavior.
+
+## 6. Production Use Cases
+
+- **Release policy** — ship when remaining budget is healthy; hold the launch when it is not.
+- **Dependency selection** — do not pick a vendor whose published SLA is weaker than your SLO without a mitigation.
+- **Quarterly reviews** — tighten or loosen s with evidence, not with fear.
+
+<Callout icon="tip" title="Publish the SLO next to the service catalog">
+On-call, product, and new hires should see the same sentence. A hidden SLO is a private opinion.
+</Callout>

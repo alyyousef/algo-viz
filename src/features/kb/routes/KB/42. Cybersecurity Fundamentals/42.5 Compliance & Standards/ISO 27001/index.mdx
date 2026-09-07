@@ -1,37 +1,87 @@
 ---
 title: ISO/IEC 27001
-description: The premier international standard for building and maintaining an Information Security Management System (ISMS).
+description: "An international standard for an Information Security Management System you can certify against."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="ISO/IEC 27001">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While SOC 2 is heavily focused on the United States cloud market, **ISO/IEC 27001** is the globally recognized standard for information security. It is published by the International Organization for Standardization (ISO).
+**ISO/IEC 27001** is the standard for an **Information Security Management System (ISMS)**. You define scope, assess risk, pick controls (Annex A, aligned with 27002), run the PDCA loop, and a certification body audits you. The certificate says you have a managed system. It does not say a particular product is bug-free.
 
-Unlike technical frameworks that tell you exactly *how* to configure a firewall, ISO 27001 is a management framework. It dictates that an organization must establish, implement, maintain, and continually improve an **Information Security Management System (ISMS)**.
+## 1. Deep Dive and Mechanics
 
+**Scope.** Legal entities, locations, and systems in the ISMS. A narrow scope is honest if sales does not claim the whole company.
 
-<Callout icon="success" title="The ISMS Concept">
+**Risk and SoA.** Risk assessment leads to a Statement of Applicability: which Annex A controls you use and why some are excluded. Then you operate them: access reviews, supplier reviews, incident process, secure development.
 
+**Audit.** Stage 1 (readiness) and Stage 2 (certification), then surveillance years. Internal audit and management review are not optional theater.
 
-  An ISMS is a systematic approach to managing sensitive company information. It encompasses people, processes, and IT systems. ISO 27001 proves to the world that your company doesn\'t just do security "ad-hoc," but has a formalized, mathematically documented process for identifying and mitigating risk.
-
-
+<Callout icon="info" title="Annex A is a menu, not a shopping list">
+You select controls from risk. Copying 93 controls into a wiki with no owners is not an ISMS.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The PDCA Cycle
+ISO 27001 is a management-system standard (Plan-Do-Check-Act) wrapped around a control catalog. Residual risk after treatment is accepted by a named role. Certification is a sampling assurance process: auditors test a sample of controls and evidence. The security claim is process existence and operation, not exhaustive technical proof.
 
-ISO 27001 operates heavily on the Deming Cycle for continuous improvement:
+<ComparisonTable
+  headers={['Artifact', 'Purpose', 'Owner']}
+  rows={[
+    ['Scope', 'What is certified', 'CISO / exec'],
+    ['Risk register', 'Why controls exist', 'Risk owner'],
+    ['SoA', 'Control selection', 'ISMS lead'],
+    ['Internal audit', 'Check the system', 'Independent of ops'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
-<ComparisonTable headers={['Phase', 'Action']} rows={[ ['Plan', 'Establish the ISMS policy, objectives, processes, and procedures relevant to managing risk. (e.g., Conducting a formal Risk Assessment).'], ['Do', 'Implement and operate the ISMS policy, controls, processes, and procedures. (e.g., Rolling out mandatory Multi-Factor Authentication).'], ['Check', 'Assess and measure process performance against policies, and report the results to management. (e.g., Internal audits).'], ['Act', 'Take corrective and preventive actions based on the results of the internal audit to achieve continual improvement.'] ]} />
+```text
+# Lightweight ISMS loop
+# - Quarterly risk review
+# - Monthly access and vuln metrics
+# - Annual internal audit + management review
+# - Supplier list with security questionnaires on a cadence
+```
 
+Tie tickets to control IDs so evidence is a query, not a scavenger hunt.
 
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Scope[Scope] --> Risk[Risk assessment]
+    Risk --> SoA[Statement of Applicability]
+    SoA --> Ops[Operate controls]
+    Ops --> IA[Internal audit]
+    IA --> CB[Certification body]
+```
+
+## 5. Interview Prep
+
+**Q: 27001 vs 27002?**
+**A:** 27001 is the certifiable ISMS. 27002 is guidance on how controls look.
+
+**Q: 27001 vs SOC 2?**
+**A:** Both are assurance. 27001 is an international management standard. SOC 2 is an AICPA attestation on Trust Services Criteria.
+
+**Q: Can a startup pass?**
+**A:** Yes if scope is honest and evidence is real. Headcount is not the blocker; chaos is.
+
+## 6. Production Use Cases
+
+- **Enterprise sales** that require a certificate.
+- **Multi-country** groups that want one ISMS language.
+- **Suppliers** who must show a certified ISMS to a regulator.
+
+<Callout icon="tip" title="Scope the product you sell first">
+Certifying the cafeteria Wi-Fi and forgetting the SaaS is a common comedy.
+</Callout>

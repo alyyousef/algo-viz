@@ -1,24 +1,103 @@
 ---
 title: Amazon Relational Database Service (RDS)
-description: A managed database service that abstracts away the grueling OS-level administration of running traditional SQL engines, providing automated backups, patching, and mathematically rigorous Multi-AZ high availability.
+description: "Managed MySQL, PostgreSQL, MariaDB, SQL Server, and Oracle: AWS patches the OS and engine, you still design schema, IAM, and failover."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Amazon Relational Database Service (RDS)"
-  subtitle="Managed SQL Databases"
-  tags={['AWS', 'Database', 'SQL', 'Managed']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Amazon RDS">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-You can manually install PostgreSQL on an EC2 server. But if the physical server motherboard fries at 2:00 AM, your database is gone, and the company halts. RDS mathematically automates the disaster recovery process.
+**RDS** is a relational engine as a service. You pick the engine and version, instance class, storage, and subnet group. AWS runs the VM, EBS (or Aurora storage), backups, and optional Multi-AZ standby. You do not get SSH. You do get `psql` and the same SQL foot-guns as on-prem.
 
-## 1. Multi-AZ Deployments (High Availability)
-When you enable **Multi-AZ** on an RDS database, AWS physically provisions two EC2 servers in two entirely separate data centers (Availability Zones).
-One is the Primary; one is the Standby.
-When your application writes a row of SQL data to the Primary, RDS uses **Synchronous Storage Replication**. It mathematically intercepts the storage block and fires a copy over a dedicated fiber line to the Standby. The database does not acknowledge the "Write Success" to your application until *both* data centers have safely committed the bytes to disk.
+## 1. Deep Dive and Mechanics
 
-## 2. Automated Failover
-If a backhoe cuts the fiber optic cable to the Primary data center, the Primary database drops offline.
-The RDS Control Plane detects this mathematical failure. Within 60 seconds, it executes an **Automated Failover**. It mathematically rewires the internal AWS DNS record so that the database endpoint URL instantly points to the Standby database (which has a mathematically perfect, up-to-the-millisecond copy of the data). The application experiences a 60-second hiccup, reconnects, and continues operating without human intervention.
+**Multi-AZ.** A synchronous standby in another AZ. Failover is DNS (or a new primary) — typically tens of seconds to a couple of minutes, not zero. Read replicas are extra and usually asynchronous.
 
-</TechnologyTemplate>
+**Storage.** gp3 or io2 for RDS on EBS. Autoscaling storage grows; it does not shrink. Aurora is a different storage architecture (see the Aurora page).
+
+**Maintenance.** You pick a window. Engine upgrades can be minor (usually in-place) or major (planning, replica promote, or blue/green).
+
+**Auth.** Password in Secrets Manager, IAM database auth for MySQL/Postgres, Kerberos on some engines. Security group should allow only the app SG, never `0.0.0.0/0`.
+
+**Proxies.** RDS Proxy pools connections so Lambda and bursty apps do not exhaust `max_connections`.
+
+<Callout icon="warning" title="Multi-AZ is not a read replica">
+The standby does not take your read traffic. Send reads to explicit replicas or you will be surprised in the outage you thought you were ready for.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+RPO for automated backups is up to the backup window plus 5-minute incrementals (engine-dependent). Multi-AZ RPO is near-zero for committed sync writes. RTO is failover time + cache warm (buffer pool empty ⇒ p99 spike).
+
+Connection count ≈ workers × pool_size. Serverless app patterns without a proxy create O(concurrency) connections and hit the engine ceiling.
+
+<ComparisonTable
+  headers={['Option', 'HA', 'Reads']}
+  rows={[
+    ['Single-AZ RDS', 'Backup restore', 'Primary only'],
+    ['Multi-AZ', 'Sync standby', 'Still primary'],
+    ['Read replicas', 'Async, promote-able', 'Scale reads'],
+    ['Aurora', 'Shared storage', 'Replicas attach fast'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import boto3
+
+rds = boto3.client('rds')
+rds.create_db_instance(
+    DBInstanceIdentifier='app-pg',
+    DBInstanceClass='db.r6g.large',
+    Engine='postgres',
+    AllocatedStorage=100,
+    StorageType='gp3',
+    StorageEncrypted=True,
+    MultiAZ=True,
+    VpcSecurityGroupIds=['sg-db'],
+    DBSubnetGroupName='private-db',
+    MasterUsername='dba',
+    ManageMasterUserPassword=True,
+)
+```
+
+Subnet group must span at least two AZs for Multi-AZ. PubliclyAccessible should stay false.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    App[App] --> DNS[RDS endpoint]
+    DNS --> Pri[Primary AZ a]
+    Pri --> Stb[Standby AZ b]
+    App --> RR[Read replica]
+```
+
+## 5. Interview Prep
+
+**Q: RDS vs Aurora vs running Postgres on EC2?**
+**A:** EC2 if you need exotic extensions or OS access. RDS for standard engines with less ops. Aurora when you want shared storage and many replicas.
+
+**Q: What happens on Multi-AZ failover?**
+**A:** Standby is promoted, endpoint CNAME flips, TCP connections drop. The app must reconnect. In-flight transactions abort.
+
+**Q: How do you minimize upgrade risk?**
+**A:** Blue/green deployments (RDS feature), replica-first major upgrades, and a tested parameter group. Never discover `max_connections` on a Monday.
+
+## 6. Production Use Cases
+
+- Classic three-tier apps that need SQL.
+- Multi-AZ OLTP with nightly snapshots to another region.
+- IAM-auth from ECS tasks without embedding passwords.
+
+<Callout icon="tip" title="Restore the snapshot in anger-drills">
+A backup you have never restored is a rumor. Time the restore to a new instance in another AZ quarterly.
+</Callout>

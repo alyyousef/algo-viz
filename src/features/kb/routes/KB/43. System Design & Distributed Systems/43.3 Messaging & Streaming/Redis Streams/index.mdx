@@ -1,36 +1,91 @@
 ---
 title: Redis Streams
-description: A data type that models a log data structure in Redis, providing a way to store multiple fields and string values with an automatically generated, time-based sequence.
+description: "A Redis log type with IDs, consumer groups, and XACK — handy when you already run Redis and the stream volume fits in that cluster."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Redis Streams"
-  subtitle="The lightweight alternative to Apache Kafka"
-  logoUrl="https://upload.wikimedia.org/wikipedia/en/6/6b/Redis_Logo.svg"
-  description="Introduced in Redis 5.0, Redis Streams is an append-only log data structure. It brings the mathematical persistence and replayability of Apache Kafka directly into the lightning-fast, in-memory world of Redis."
-  yearCreated={2018}
-  creator="Salvatore Sanfilippo"
-  isOpenSource={true}
-  websiteUrl="https://redis.io/docs/data-types/streams/"
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Redis Streams">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If you are already using Redis for caching, and you need an Event Stream, deploying a massive Java-based Apache Kafka cluster is often severe overkill. Redis Streams provides 80% of Kafka's functionality with 1% of the operational complexity.
+**Redis Streams** (XADD, XREADGROUP, XACK) are an append-only log inside Redis. Entries have ids (time-seq). **Consumer groups** share the stream like a Kafka group, with a **pending entries list** (PEL) for unacked messages.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="tip" title="In-Memory Speed">
+**XADD.** Append with optional MAXLEN ~ to cap memory. Redis is memory-first; an unbounded stream is an OOM.
 
+**Groups.** XGROUP CREATE. XREADGROUP delivers new entries and tracks them in the PEL until XACK. Crashed consumers leave PEL items; XCLAIM or XAUTOCLAIM steals them after a min idle time.
 
-  Because Redis Streams lives entirely in RAM (though it can be persisted to disk via RDB/AOF), it is mathematically faster than Kafka for small-to-medium datasets, routinely achieving sub-millisecond read/write latency.
+**Versus Kafka.** No multi-week cheap disk log, no multi-AZ ISR story unless you build it with Redis replication/Cluster. Excellent for modest rates next to a cache.
 
+**Versus Redis pub/sub.** Pub/sub is fire-and-forget. Streams persist (until trimmed).
 
+<Callout icon="warning" title="MAXLEN is not a warehouse">
+Approximate trim drops old entries. If you need audit, ship out to S3 or Kafka.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Core Features
+A stream is a radix-tree of ids. Group lag is last-id minus last-delivered. PEL size is in-flight risk: crash cost equals PEL entries for that consumer.
 
-- **Consumer Groups:** Borrowed directly from Kafka's architecture. It allows a mathematical group of worker nodes to cooperate, ensuring that each event in the stream is delivered to exactly one worker in the group.
-- **XADD / XREAD:** The core commands. `XADD` appends an event to the stream and mathematically generates a unique timestamp-based ID (e.g., `1518951480106-0`). `XREAD` allows consumers to block and listen for new events.
-- **Memory Limits:** Unlike Kafka (which stores terabytes on cheap HDDs), Redis Streams uses expensive RAM. You must mathematically cap the stream length using `MAXLEN` (e.g., `XADD mystream MAXLEN 100000 *`) to prevent OOM crashes.
+Replication is Redis async by default (PACELC EL). A failover can lose the tail of the stream.
 
-</TechnologyTemplate>
+<ComparisonTable
+  headers={['Redis feature', 'Durable log', 'Groups', 'Use']}
+  rows={[
+    ['Pub/Sub', 'No', 'No', 'Live signals'],
+    ['Lists / BRPOP', 'Yes', 'No (steal risk)', 'Simple queues'],
+    ['Streams', 'Yes until trim', 'Yes', 'Jobs + light events'],
+    ['Kafka', 'Disk retention', 'Yes', 'Platform backbone'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# r.xadd("orders", {"json": body}, maxlen=100000, approximate=True)
+# r.xreadgroup("cg", "w1", streams={"orders": ">"}, count=10)
+# r.xack("orders", "cg", msg_id)
+```
+
+AClaim idle pending after a timeout. Monitor PEL length.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant P as Producer
+    participant S as Stream
+    participant G as Group PEL
+    P->>S: XADD
+    S->>G: XREADGROUP
+    G->>G: process
+    G->>S: XACK
+```
+
+## 5. Interview Prep
+
+**Q: When do you pick Streams over SQS or Kafka?**
+**A:** You already operate Redis, volume fits in memory plus trim, and you want one fewer vendor. Not for company-wide event history.
+
+**Q: What is the PEL?**
+**A:** The list of delivered-but-unacked ids. It is how Redis knows what to redeliver. If you never XACK, the PEL grows until Redis hurts.
+
+**Q: At-least-once?**
+**A:** Yes. XACK after the DB write. Same idempotency story as SQS.
+
+## 6. Production Use Cases
+
+- **Per-service job lists** next to cache.
+- **Light fan-in** of device events before a flush to a lake.
+- **Notifications** that must survive a brief subscriber restart.
+
+<Callout icon="tip" title="Cap the stream and page on PEL">
+Those two metrics decide whether Redis Streams stays boring.
+</Callout>

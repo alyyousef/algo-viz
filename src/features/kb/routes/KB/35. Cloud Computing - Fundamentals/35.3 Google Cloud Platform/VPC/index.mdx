@@ -1,26 +1,96 @@
 ---
 title: Google Virtual Private Cloud (VPC)
-description: The global, software-defined networking foundation of GCP, uniquely designed to span the entire planet without requiring the complex mathematical peering connections needed in AWS or Azure.
+description: "A global private network: regional subnets, project-level firewalls, Shared VPC, and Private Service Connect — one VPC can span regions without a mesh of peering you invent."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Virtual Private Cloud (VPC)"
-  subtitle="The Global Cloud Network"
-  tags={['GCP', 'Networking', 'VPC', 'Global']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Virtual Private Cloud (VPC)">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-In AWS and Azure, a VPC/VNet is mathematically bound to a single physical Region (e.g., US-East). If you want a server in London to talk to a server in Tokyo privately, you must create a complex VPC Peering connection. Google VPCs fundamentally alter this math.
+A **GCP VPC** is a global software-defined network. **Subnets are regional** (and can span zones in that region). VMs in `us-central1` and `europe-west1` in the same VPC talk over Google's backbone using private IPs — no VPN between those subnets unless you want one.
 
-## 1. Global by Default
-A Google Cloud VPC is **Global**.
-When you create a VPC (e.g., `my-global-network`), it mathematically spans every single Google data center on Earth simultaneously.
-You can create a Subnet in Tokyo (`10.1.0.0/24`) and a Subnet in London (`10.2.0.0/24`) *inside the exact same VPC*.
-A Virtual Machine in Tokyo can ping a Virtual Machine in London using purely its internal Private IP address. The traffic routes instantly across Google's private, encrypted underwater fiber-optic backbone without a single VPN, Peering Connection, or Transit Gateway required.
+## 1. Deep Dive and Mechanics
 
-## 2. Premium vs. Standard Network Tiers
-GCP allows you to mathematically choose your routing physics:
-- **Premium Tier**: The default. A user's packet in Australia enters Google's private fiber network at the closest Edge Node in Sydney. It travels across the ocean on Google's private, uncongested cables to your server in New York, guaranteeing ultra-low latency.
-- **Standard Tier**: The packet travels across the chaotic, public internet (bouncing across dozens of third-party ISPs) and only enters Google's network in New York. It is mathematically slower and less reliable, but significantly cheaper for outbound bandwidth.
+**Addressing.** You create subnets with primary CIDRs and optional secondary ranges (GKE alias IPs, alias services). Expanding a subnet is possible if the adjacent space is free; shrinking is not a casual op.
 
-</TechnologyTemplate>
+**Firewalls.** VPC firewall rules are stateful and project-scoped (plus hierarchical rules at folder/org). Direction, protocol, and tags or service accounts select targets. Implied deny ingress / allow egress exist; do not rely on folklore — read the implied rules.
+
+**Sharing.** Shared VPC: a host project owns the network; service projects attach. VPC Network Peering is non-transitive. **Private Service Connect** publishes and consumes services without peering spaghetti.
+
+**Egress.** Cloud NAT for private VMs. Cloud Router plus HA VPN or Interconnect for hybrid. Private Google Access lets private VMs reach Google APIs without a public IP.
+
+<Callout icon="warning" title="Peering is not transitive">
+A peers B, B peers C does not give A a path to C. Hub-and-spoke needs a network virtual appliance, NCC, or PSC — not hope.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A global VPC removes the "one VPC per region" tax AWS historically taught. Your blast radius is also global: a bad firewall rule or a wide 0.0.0.0/0 egress applies everywhere that rule matches.
+
+IP planning is a packing problem. GKE secondary ranges are large. Exhaustion shows up as "cannot schedule pods," not as a friendly IPAM ticket.
+
+<ComparisonTable
+  headers={['Concept', 'GCP', 'AWS']}
+  rows={[
+    ['VPC scope', 'Global', 'Regional'],
+    ['Subnet scope', 'Regional', 'AZ'],
+    ['Private Google APIs', 'Private Google Access / PSC', 'VPC endpoints / PrivateLink'],
+    ['Share network', 'Shared VPC', 'RAM / shared subnets'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+gcloud compute networks create corp --subnet-mode=custom
+
+gcloud compute networks subnets create us-app \
+  --network=corp --region=us-central1 --range=10.1.0.0/20 \
+  --secondary-range=pods=10.8.0.0/16,services=10.9.0.0/20
+
+gcloud compute firewall-rules create allow-hc \
+  --network=corp --allow=tcp:8080 \
+  --source-ranges=130.211.0.0/22,35.191.0.0/16
+```
+
+Custom mode only. Auto-mode subnets in every region look convenient and wreck IPAM.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    VPC[Global VPC] --> SubUS[Subnet us-central1]
+    VPC --> SubEU[Subnet europe-west1]
+    SubUS --> GCE[GCE / GKE]
+    SubEU --> Run[Private Cloud Run]
+    Host[Shared VPC host] --> VPC
+    PSC[Private Service Connect] --> VPC
+```
+
+## 5. Interview Prep
+
+**Q: What is special about a GCP VPC?**
+**A:** It is global. Subnets are regional. Cross-region private traffic stays on Google's network. AWS VPCs are regional; you connect them.
+
+**Q: Shared VPC vs peering?**
+**A:** Shared VPC is one network, many projects, central firewall and IPAM. Peering joins two VPCs and is non-transitive. Use Shared VPC for a company hub.
+
+**Q: How do private GKE nodes reach googleapis.com?**
+**A:** Private Google Access or PSC to the restricted/private VIP. Do not give every node a public IP for that.
+
+## 6. Production Use Cases
+
+- Host project Shared VPC with service projects per team.
+- GKE alias ranges planned so clusters can grow without a rebuild.
+- Hybrid: HA VPN or Interconnect plus Cloud Router advertisements.
+
+<Callout icon="tip" title="Firewall on service accounts, not only tags">
+Network tags are mutable and easy to copy. Service-account-based firewall rules track the identity you already use for IAM.
+</Callout>

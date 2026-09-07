@@ -1,24 +1,96 @@
 ---
 title: Google BigQuery
-description: Google's flagship, serverless, highly scalable enterprise data warehouse, mathematically engineered to execute SQL queries across petabytes of data in mere seconds.
+description: "Serverless warehouse: columnar storage, Dremel execution, and slots — you pay for bytes scanned or for reserved compute, not for a box you resize."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google BigQuery"
-  subtitle="The Petabyte SQL Engine"
-  tags={['GCP', 'Database', 'Big Data', 'Serverless']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google BigQuery">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-BigQuery is not a standard relational database; it is a massively parallel, serverless analytics engine (OLAP). You do not provision servers, clusters, or memory. You simply throw a 5-Petabyte dataset at it, write a standard SQL query, and Google handles the underlying distributed mathematics.
+**BigQuery** is a separated-storage-and-compute warehouse. Tables live in datasets (region-bound). Queries compile to a Dremel tree of execution slots. **On-demand** bills bytes processed; **editions / reservations** bill slot-hours. There is no index you tune like OLTP — clustering, partitioning, and column pruning are the physical design.
 
-## 1. Dremel and Colossus
-BigQuery mathematically separates Compute from Storage to achieve its speed.
-- **Colossus (Storage)**: The data is stored in Google's global distributed file system in a highly compressed, columnar format (Capacitor).
-- **Dremel (Compute)**: When you hit "Run Query", the Dremel engine mathematically compiles your SQL into a massive execution tree. It instantly spins up thousands of hidden worker nodes. Each node scans a tiny, specific slice of the Colossus storage, performs the mathematical aggregation (e.g., `SUM()`), and passes the result back up the tree. You get the answer to a Petabyte query in 5 seconds.
+## 1. Deep Dive and Mechanics
 
-## 2. Serverless Economics
-With traditional Data Warehouses (like early AWS Redshift or on-premise Hadoop), you pay a massive hourly fee for the cluster to sit idle.
-BigQuery is purely **Serverless**. You pay exactly $0 for idle compute. You are billed purely on a mathematical metric: **Bytes Scanned**. If your query scans 1 Terabyte of data, you pay exactly $5.00. This forces data engineers to write mathematically efficient SQL (e.g., heavily utilizing partitioned tables to prevent accidental full-table scans that could cost hundreds of dollars).
+**Storage.** Capacitor columnar format, optional time-travel and fail-safe. Partition by time or integer range; cluster by a few high-cardinality filters. Streaming inserts vs batch load vs BigLake external tables.
 
-</TechnologyTemplate>
+**Slots.** A slot is a unit of compute. On-demand shares a pool; reservations isolate. A query that explodes a join can consume a reservation and stall neighbors.
+
+**SQL.** Standard SQL, scripting, materialized views, BI Engine for Tableau/Looker caches. UDFs and remote functions exist; they are easy to make expensive.
+
+**Governance.** Column-level security, row filters, authorized views, and policy tags (DLP). The dataset is the IAM boundary most teams start with — usually too coarse.
+
+**Jobs.** Every query is a job with a cache (24h, same text + same data). Cache hits are free-ish; they are not a correctness tool if data changed.
+
+<Callout icon="error" title="SELECT star on a 40-column event table">
+On-demand price tracks columns and rows scanned. Partition + select the columns you need. A dashboard that scans raw events hourly is a finance incident.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Bytes billed ≈ sum of columns read × rows after partition prune. Clustering helps when filters match cluster keys; it is not a guarantee.
+
+Cost comparison: on-demand favors rare, selective queries. Reservations win at high, steady concurrency. Slot contention is a scheduling problem: queue time vs fairness.
+
+<ComparisonTable
+  headers={['Mode', 'You buy', 'Risk']}
+  rows={[
+    ['On-demand', 'TB scanned', 'One bad SQL'],
+    ['Reservation', 'Slot-hours', 'Idle slots'],
+    ['Editions', 'Bundled features + slots', 'Contract shape'],
+    ['BI Engine', 'Memory cache', 'Wrong if stale is OK'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```sql
+CREATE TABLE shop.sales
+PARTITION BY DATE(sold_at)
+CLUSTER BY customer_id
+AS SELECT * FROM shop.sales_stage;
+
+SELECT customer_id, SUM(amount)
+FROM shop.sales
+WHERE sold_at >= '2026-01-01'
+GROUP BY 1;
+```
+
+The `WHERE` on `sold_at` is what makes the partition prune. Without it you read every day.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    SQL[Query job] --> Opt[Optimizer]
+    Opt --> Slots[Slot tree]
+    Slots --> Col[Column chunks]
+    Col --> Out[Result / cache]
+```
+
+## 5. Interview Prep
+
+**Q: Partition vs cluster?**
+**A:** Partition is a coarse prune (day, month, integer bucket). Cluster sorts within partitions for a few filter/join keys. You often want both.
+
+**Q: BigQuery vs Snowflake vs Synapse?**
+**A:** All separate storage/compute. BigQuery’s default is fully serverless on-demand. Snowflake warehouses are explicit. Synapse dedicated pools are MPP you pause. Interviews want this distinction, not a brand war.
+
+**Q: How do you cap spend?**
+**A:** Custom quotas, maximum bytes billed per query, reservations, and authorized views so analysts cannot touch raw.
+
+## 6. Production Use Cases
+
+- Event lake queried in place via BigLake plus curated warehouse tables.
+- Streaming inserts for operational analytics with a  minutes-level SLA.
+- Authorized views for PII: analysts see aggregates, not emails.
+
+<Callout icon="tip" title="Require a partition filter">
+Table options can require a partition filter in the `WHERE` clause. Turn that on for large tables so a junior SQL cannot unpartition the bill.
+</Callout>

@@ -1,23 +1,93 @@
 ---
 title: Azure Log Analytics
-description: The massive, centralized mathematical data engine powering Azure Monitor, capable of ingesting terabytes of unstructured log data and executing blazing-fast columnar queries.
+description: "The KQL workspace behind Azure Monitor: tables, retention, and a bill driven by ingested GB — query anything, pay for everything you keep."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Log Analytics"
-  subtitle="The Big Data Log Engine"
-  tags={['Azure', 'Monitoring', 'Logs', 'KQL']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Log Analytics">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If you have 100 Virtual Machines, they generate massive text files containing Windows Event Logs or Linux Syslogs. SSHing into 100 machines to grep for an error is impossible. Log Analytics provides a single, mathematically unified database for all logs.
+A **Log Analytics workspace** is a columnar-ish log database. Diagnostic settings, agents, and Application Insights write tables (`Heartbeat`, `AzureDiagnostics`, `requests`). You query with **KQL**. Commitment tiers, basic vs analytics tables, and retention days are the cost knobs. Sentinel sits on top of a workspace when you want SIEM.
 
-## 1. The Log Analytics Workspace
-A Workspace is the physical boundary of your log data.
-You install a tiny agent on your Virtual Machines (or configure diagnostic settings on your PaaS services like SQL Database). These resources continuously stream their JSON and text logs directly into the central Workspace. The Workspace mathematically indexes the text fields, transforming unstructured chaos into a highly organized, queryable schema.
+## 1. Deep Dive and Mechanics
 
-## 2. Machine Learning and Anomaly Detection
-Because Log Analytics uses the Kusto Query Language (KQL), it can do more than just search text; it can execute complex math.
-Using the `series_decompose_anomalies()` KQL function, you can mathematically analyze 30 days of API response times. The query engine instantly applies machine learning algorithms to the dataset, identifying baseline patterns, and returns a visual chart highlighting the exact 5-minute window where response times mathematically deviated from the historical norm, allowing for proactive, AI-driven troubleshooting.
+**Tables.** Analytics (interactive KQL, pricier), Basic (cheap ingest, limited query), Auxiliary (archive-style). Pick per table. Not every log needs 90-day interactive.
 
-</TechnologyTemplate>
+**Ingestion.** DCRs and diagnostic settings. Transformations at ingest can drop fields or rows. Once ingested, you pay.
+
+**Access.** Workspace RBAC plus table-level RBAC. Resource-context queries let an app owner see logs for their resource without workspace-wide read.
+
+**Saved searches and functions.** Reuse KQL. Alerts are scheduled queries. A bad join at 2 AM is a surprise bill and a timeout.
+
+**Linked storage / archive.** Long retention can move to archive. Restore or search jobs cost extra when you actually need the year-old incident.
+
+<Callout icon="warning" title="Verbose verbose verbose">
+Container Insights and verbose App Insights can dominate the invoice. Sample, filter namespaces, and set a daily cap on non-prod workspaces.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Cost ≈ ingest_GB × price + retention_GB-months + query/scan on cheap tiers. A 10× cardinality explosion in a custom field is a 10× ingest tax.
+
+KQL is a pipe of relational operators. High-cardinality joins (`union` of everything) time out. Time filters first is not style — it is the only way the engine prunes.
+
+<ComparisonTable
+  headers={['Table plan', 'Query', 'Use']}
+  rows={[
+    ['Analytics', 'Full KQL', 'Hot ops, alerts'],
+    ['Basic', 'Limited', 'High-volume debug'],
+    ['Auxiliary / archive', 'Search jobs', 'Compliance years'],
+    ['Metrics', 'Not KQL', 'Cheap CPU/RAM series'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```kusto
+AppRequests
+| where TimeGenerated > ago(1h)
+| where Success == false
+| summarize failures=count() by ResultCode, Name
+| order by failures desc
+```
+
+Pin that to a workbook. Alert when failures exceed a baseline, not when any row exists.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Src[Agents / diagnostics] --> DCR[DCR / transform]
+    DCR --> WS[Workspace]
+    WS --> Hot[Analytics tables]
+    WS --> Arch[Archive]
+    Hot --> Alert[Scheduled KQL]
+```
+
+## 5. Interview Prep
+
+**Q: Workspace vs Application Insights resource?**
+**A:** Workspace-based App Insights writes to the workspace. The AI resource is the APM UX and ikey/connection string. Queries can join `AppRequests` with VM logs in one place.
+
+**Q: How do you stop a runaway ingest?**
+**A:** Daily cap (blunt), DCR transforms, table plan changes, and turning off categories you do not read. Caps drop data — pair with an alert on the cap.
+
+**Q: Sentinel needs what?**
+**A:** A workspace plus the Sentinel solution. Security tables and analytics rules live there. Do not casually grant workspace-wide write.
+
+## 6. Production Use Cases
+
+- Central ops workspace per environment with table-level RBAC.
+- Security workspace for Sentinel, isolated from app debug noise.
+- Join AKS Container Insights with App Insights on `operation_Id` for a single incident.
+
+<Callout icon="tip" title="TimeGenerated first">
+Every production query should constrain time before a join. The engine is fast; unbounded scans are how you learn about query pricing.
+</Callout>

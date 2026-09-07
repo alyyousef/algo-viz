@@ -1,34 +1,97 @@
 ---
 title: High Availability (HA) & Fault Tolerance
-description: The architectural principles of designing systems that remain continuously operational for a specific percentage of time, eliminating single points of failure.
+description: "Staying up when parts die: nines, redundancy, blast radius, and failover that you tested — not a single VM with a hopeful SLA."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="High Availability (HA) & Fault Tolerance">
+    <ConceptTemplate title="High Availability">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Hardware fails. Hard drives corrupt, power supplies explode, and fiber optic cables get cut by construction workers.
-If your application runs on a single server, and that server dies, your application goes offline. **High Availability (HA)** is the architectural practice of ensuring your app stays online even when the underlying hardware inevitably burns down.
+**High availability** is the practice of keeping a service within its error budget when components fail. **Fault tolerance** is continuing correctly (or safely degraded) through those failures. Cloud vendors sell regions and zones; you still have to place replicas, remove single points of failure, and rehearse failover.
 
-## 1. The Nines (Service Level Agreements)
+## 1. Deep Dive and Mechanics
 
-Availability is measured in "Nines", representing the percentage of time a system is guaranteed to be online per year:
-- **99% (Two Nines)**: 3.65 days of allowable downtime per year.
-- **99.9% (Three Nines)**: 8.77 hours of downtime.
-- **99.99% (Four Nines)**: 52.6 minutes of downtime.
-- **99.999% (Five Nines)**: 5.26 *minutes* of downtime per year. (Considered the gold standard for telecom and financial systems).
+**Nines.** Availability A = uptime / (uptime + downtime). Three nines is about 8.8 hours/year; five nines is minutes. Maintenance you planned still counts unless the SLO says otherwise.
 
-## 2. Eliminating Single Points of Failure (SPOF)
+**SPOF removal.** Two app instances behind a load balancer, disks that replicate, a database with a standby in another zone. If both instances share one subnet, one NAT, or one IAM key, you still have a SPOF.
 
-To achieve HA, you must remove every Single Point of Failure in your architecture through **Redundancy**.
+**Zones and regions.** An AZ is a failure domain (power, flood, building). A region is a set of AZs plus a control plane. Multi-AZ survives a building. Multi-region survives a region — and creates split-brain and latency problems you must design.
 
-1. **Load Balancing**: Instead of 1 web server, you run 3 web servers behind a Load Balancer. If Server A crashes, the Load Balancer instantly detects it and routes all traffic to Servers B and C.
-2. **Availability Zones (AZs)**: If all 3 servers are in the same physical data center, a massive power outage takes them all down. Cloud providers split Regions into multiple Availability Zones (physically separated data centers 50 miles apart on different power grids). You must deploy Server A in AZ-1, Server B in AZ-2, and Server C in AZ-3.
-3. **Database Replication**: A single database is a massive SPOF. You must configure Primary-Replica replication, preferably spanning across multiple Availability Zones, so if the Primary datacenter floods, the Replica instantly takes over.
+**Failover.** Active-active (all replicas serve) vs active-passive (standby promotes). RPO and RTO are the numbers; "we have a replica" is not.
 
+<Callout icon="error" title="Untested failover is fiction">
+A replica that never received a promote drill will fail DNS, auth, or disk encryption on the day you need it. Game-day the cutover.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Independent failures: if each replica fails with probability p, n replicas all-down is p^n only if failures are independent. Shared fate (one region, one bad config push) makes p^n optimistic.
+
+Error budgets: SLO of 99.9% means 0.1% downtime is allowed. Burn the budget on deploys or on incidents; you cannot spend it twice.
+
+<ComparisonTable
+  headers={['Pattern', 'Survives', 'Does not survive']}
+  rows={[
+    ['Multi-instance one AZ', 'One VM death', 'AZ loss'],
+    ['Multi-AZ', 'AZ loss', 'Region loss'],
+    ['Multi-region active-active', 'Region loss', 'Global bad deploy'],
+    ['Backups only', 'Data loss window', 'Immediate uptime'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+# Sketch: 3 replicas, anti-affinity, PDB so deploys cannot evict all
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: api
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: api
+```
+
+Pair this with a regional load balancer and a database that has a standby in another zone. Kubernetes replicas in one node pool in one zone are still one fate.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Users --> LB[Load balancer]
+    LB --> AZ1[App AZ a]
+    LB --> AZ2[App AZ b]
+    AZ1 --> DBp[DB primary]
+    AZ2 --> DBs[DB standby]
+    DBp -->|async or sync| DBs
+```
+
+## 5. Interview Prep
+
+**Q: HA vs FT vs DR?**
+**A:** HA keeps the service up through expected failures. Fault tolerance is correct behavior during faults. DR is recovering from a disaster with stated RPO/RTO. Overlap exists; the interview wants the intent.
+
+**Q: Why is 99.999% expensive?**
+**A:** You pay in replicas, multi-region, people, and slower deploys. Most products cannot honestly claim five nines end-to-end including the client ISP.
+
+**Q: What kills HA in the cloud?**
+**A:** Control-plane misconfig, IAM, and data stores that were left single-AZ. Compute is the easy part.
+
+## 6. Production Use Cases
+
+- Payments API: multi-AZ stateless compute, multi-AZ datastore, runbooks for region evacuate.
+- Internal tools: two nines may be enough; do not buy five nines of Kafka for a wiki.
+- Telecom-style control loops that fail closed and never fail silent.
+
+<Callout icon="tip" title="Write the SLO before the architecture">
+If the business accepts four hours of downtime, a second region is theater. If it does not accept five minutes, a single-AZ RDS is theater.
+</Callout>

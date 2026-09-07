@@ -1,24 +1,102 @@
 ---
 title: Azure App Service
-description: A fully managed Platform as a Service (PaaS) that allows developers to deploy web applications and REST APIs without managing any underlying Linux or Windows infrastructure.
+description: "PaaS for HTTP apps: you bring code or a container, Azure brings the plan, slots, TLS, Easy Auth, and a scale unit you do not SSH into."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure App Service"
-  subtitle="Managed Web Hosting"
-  tags={['Azure', 'PaaS', 'Web', 'Compute']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure App Service">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If you want to host a .NET or Node.js web API, you could rent a Virtual Machine, install the OS, install the runtime, configure Nginx, and manage SSL certificates. Azure App Service mathematically automates all of this, reducing deployment to a single Git push.
+**App Service** runs web apps, APIs, and WebJobs on a shared or dedicated **App Service plan** (a VM scale unit). You deploy via zip, Git, GitHub Actions, or a container. You do not manage the guest OS patching story the way you do on a VM. The unit of isolation and bill is the plan, not the individual site — several apps can share one plan and one set of instances.
 
-## 1. Platform as a Service (PaaS)
-App Service handles the mathematical drudgery of infrastructure.
-You simply provide your source code (or a Docker container). Azure automatically provisions the underlying compute, injects your code, binds the SSL certificates, and exposes a secure HTTPS endpoint. It natively supports Windows and Linux environments. If the underlying OS requires a critical security patch, Azure mathematically executes a zero-downtime rolling update in the background; you never even know it happened.
+## 1. Deep Dive and Mechanics
 
-## 2. Deployment Slots
-Updating a live production server is dangerous. App Service solves this with **Deployment Slots**.
-A Slot is a mathematically identical clone of your production environment running on a hidden URL. You deploy V2 of your app to the "Staging Slot." You test it thoroughly. When ready, you click "Swap."
-Azure mathematically reroutes the internal load balancer. The Staging Slot instantly becomes Production, and Production becomes Staging. If V2 immediately crashes, you click "Swap" again, mathematically executing a 1-second rollback.
+**Plans.** Free/Shared are for toys. Basic/Standard/Premium are dedicated VMs. Isolated (ASE) puts the plan in your VNet for private inbound. SKU picks cores, RAM, stamp features (slots, autoscale, VNet integration).
 
-</TechnologyTemplate>
+**Deployment slots.** A staging slot is a second app with its own hostname and settings. Swap is a routing change plus setting swap rules. Warm the slot or the first requests after swap are cold.
+
+**Networking.** VNet integration (outbound to private resources), private endpoints (inbound private), hybrid connections (to on-prem without a full VPN). Public inbound plus a private database is the usual shape.
+
+**Auth and TLS.** Easy Auth sits in front of the app process (Entra, Google, etc.). Custom domains and managed certificates live on the site. ARR affinity is optional and usually a mistake for scale-out.
+
+**Kudu / scm.** The Kudu site is a management sidecar. Lock it down; it can deploy and browse files.
+
+<Callout icon="warning" title="The plan is the blast radius">
+One noisy neighbor app on a shared plan starves the others. Isolate prod apps on their own Premium plan. Do not “save money” by stacking production and a crawler on the same instances.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Scale-out is N instances behind a load balancer; session state must be external (Redis, SQL) unless you pin affinity — which wrecks even load. Autoscale rules are threshold automata on CPU, HTTP queue, or custom metrics; they lag.
+
+Slot swap is not a new VM image in the Kubernetes sense; it is hostname and setting remapping. In-flight requests and leftover background threads still exist.
+
+<ComparisonTable
+  headers={['Host', 'You manage', 'Fit']}
+  rows={[
+    ['App Service', 'App + plan SKU', 'HTTP APIs and sites'],
+    ['Functions', 'Triggers + plan', 'Event-driven pieces'],
+    ['Container Apps', 'Revisions + scale rules', 'Containers, scale to zero'],
+    ['AKS', 'Cluster + charts', 'Platform teams'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bicep
+resource plan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: 'plan-web-prod'
+  location: location
+  sku: { name: 'P1v3', tier: 'PremiumV3' }
+}
+
+resource web 'Microsoft.Web/sites@2022-09-01' = {
+  name: 'app-checkout-prod'
+  location: location
+  properties: {
+    serverFarmId: plan.id
+    httpsOnly: true
+  }
+}
+```
+
+Use app settings from Key Vault references, not pasted secrets. Run from package so the wwwroot is immutable per deploy.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User[HTTPS] --> Front[App Service front-end]
+    Front --> SlotA[Production slot]
+    Front --> SlotB[Staging slot]
+    SlotA --> VNet[VNet integration]
+    VNet --> SQL[Azure SQL]
+```
+
+## 5. Interview Prep
+
+**Q: What is an App Service plan?**
+**A:** The VM scale set that hosts one or more apps. CPU, RAM, and features are plan-level. Apps on the same plan share those instances.
+
+**Q: How do you get zero-downtime deploys?**
+**A:** Deploy to a slot, warm it, swap. Database migrations still need to be backward compatible across the swap window.
+
+**Q: App Service vs a VM scale set?**
+**A:** Choose App Service when the workload is HTTP and you want patches, TLS, and slots. Choose VMs when you need a custom kernel, UDP, or a sidecar story App Service will not run.
+
+## 6. Production Use Cases
+
+- Customer-facing APIs with Easy Auth and a private SQL backend.
+- Internal line-of-business sites on Isolated/ASE.
+- Slot-based nightlies that swap after smoke tests in the pipeline.
+
+<Callout icon="tip" title="Always On for the first request">
+On non-Free plans, turn Always On or a warmup ping. Otherwise the first customer after idle pays the process start.
+</Callout>

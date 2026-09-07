@@ -1,39 +1,96 @@
 ---
 title: JUnit
-description: "The foundational Unit Testing framework for the Java programming language, heavily utilizing mathematical annotations and reflection to automate the execution and validation of isolated code blocks."
+description: "The standard JVM test framework — JUnit 5 Jupiter, a console launcher, and an extension model that replaced the JUnit 4 runner zoo."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="JUnit"
-  subtitle="The Father of xUnit"
-  tags={['Testing', 'Unit Testing', 'Java', 'Tooling']}
->
+    <ConceptTemplate title="JUnit">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by Kent Beck and Erich Gamma, JUnit is the mathematical blueprint for almost every testing framework in existence today (the "xUnit" family, which inspired NUnit, PyTest, and PHPUnit).
+**JUnit** is how the JVM says "test." JUnit 5 is a platform (the launcher) plus **Jupiter** (the programming model: `@Test`, `@ParameterizedTest`, `@ExtendWith`). JUnit 4 still exists in legacy modules; new code should be Jupiter.
 
-## 1. Annotation-Driven Execution
-Before JUnit 4, developers had to name their methods with specific prefixes (e.g., `testCalculate`) so the framework could find them via reflection.
-JUnit revolutionized this by introducing mathematical **Annotations**.
+## 1. Deep Dive and Mechanics
+
+**Platform.** IDEs and Maven/Gradle talk to the JUnit Platform, which can run Jupiter, Vintage (JUnit 4), and third-party engines (Spock, Kotest).
+
+**Lifecycle.** `@BeforeEach` / `@AfterEach` per method; `@BeforeAll` on static methods unless you use `@TestInstance(PER_CLASS)`.
+
+**Extensions.** `@ExtendWith` replaces JUnit 4 `@Rule` and `@RunWith`. Spring's `SpringExtension`, Testcontainers, and Mockito all plug in here.
+
+**Assertions.** Jupiter's `Assertions` plus AssertJ in most codebases for fluent lists and exceptions.
+
+<Callout icon="info" title="Vintage is a bridge, not a destination">
+The Vintage engine lets JUnit 4 tests run on the platform. Migrate package by package; do not add new `@RunWith`.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+The platform is a **service provider** architecture: engines discover tests, execute, and report events. Isolation is typically per-class classloader in some runners, but static mutable state still leaks — treat statics as shared memory.
+
+Parameterized tests are a Cartesian or explicit product of arguments, same explosion risk as pytest.
+
+<ComparisonTable
+  headers={['Generation', 'Model', 'Extension']}
+  rows={[
+    ['JUnit 3', 'Naming conventions', 'Subclass TestCase'],
+    ['JUnit 4', 'Annotations', 'Runners and Rules'],
+    ['JUnit 5 Jupiter', 'Annotations', 'Extensions'],
+    ['TestNG', 'More config', 'Still seen in some orgs'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
 ```java
 @Test
-@DisplayName("Addition should work mathematically")
-public void shouldAddNumbers() {
-    assertEquals(4, calculator.add(2, 2));
+void totalIncludesTax() {
+    var cart = new Cart();
+    cart.add(new Line(100, 1));
+    assertEquals(110, cart.total(new FixedTax(0.10)));
+}
+
+@ParameterizedTest
+@ValueSource(ints = {-1, -5})
+void rejectsNegativeQty(int qty) {
+    assertThrows(IllegalArgumentException.class, () -> new Line(10, qty));
 }
 ```
-The JUnit runner scans the compiled bytecode for the `@Test` annotation and executes them in a mathematically isolated environment.
 
-## 2. Assertions and Lifecycle
-JUnit mathematically defines the test lifecycle:
-- `@BeforeEach` / `@AfterEach`: Mathematically guarantees a clean fixture state before every single test.
-- `@BeforeAll` / `@AfterAll`: Executes exactly once per class (useful for spinning up a heavy Docker container).
-- **Assertions**: The mathematical core of the test (`assertTrue`, `assertThrows`). If the assertion fails, JUnit intercepts the exception and marks the test as red in the IDE.
+## 4. Visualizations
 
+```mermaid
+flowchart TD
+    Gradle[Gradle / Maven] --> Platform[JUnit Platform]
+    Platform --> Jupiter[Jupiter engine]
+    Platform --> Vintage[Vintage JUnit 4]
+    Jupiter --> Ext[Extensions]
+    Ext --> Tests[Test methods]
+```
+
+## 5. Interview Prep
+
+**Q: JUnit 4 versus 5?**
+**A:** 5 is modular: platform + Jupiter. Extensions beat runners. Vintage runs old tests. New modules should be Jupiter.
+
+**Q: How do you inject a Spring context?**
+**A:** `@ExtendWith(SpringExtension.class)` or `@SpringBootTest`. Slice tests (`@WebMvcTest`) keep the context small.
+
+**Q: Why is `@BeforeAll` static?**
+**A:** Default instance lifecycle is per-method. `@TestInstance(Lifecycle.PER_CLASS)` allows instance `@BeforeAll`.
+
+## 6. Production Use Cases
+
+- **Spring Boot** slice and integration tests.
+- **Plain domain** modules with no Spring in sight — keep them fast.
+- **Architecture tests** (ArchUnit) running as Jupiter tests in CI.
+
+<Callout icon="tip" title="Name tests as predicates">
+`totalIncludesTax` reads in the failure report. `test1` does not. Jupiter allows spaces in `@DisplayName` if you want prose.
+</Callout>

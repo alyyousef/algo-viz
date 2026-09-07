@@ -1,24 +1,90 @@
 ---
 title: Azure SQL Database
-description: Microsoft's flagship, fully managed Platform as a Service (PaaS) relational database engine, providing up-to-the-minute mathematically perfect backups and autonomous performance tuning for SQL Server.
+description: "PaaS SQL Server: single databases, elastic pools, and Managed Instance — vCore math, backups you do not script, and a firewall that is not a substitute for Private Link."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure SQL Database"
-  subtitle="Managed SQL Server"
-  tags={['Azure', 'Database', 'SQL', 'PaaS']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure SQL">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Running Microsoft SQL Server on a physical machine requires expensive licensing, OS patching, and grueling manual backup configurations. Azure SQL mathematically abstracts the entire server away; you simply purchase a logical Database.
+**Azure SQL** is Microsoft’s hosted SQL Server family. **SQL Database** is a database (or pool) you cannot RDP into. **Managed Instance** is near-full SQL Server in a VNet (SQL Agent, cross-db, linked servers). **SQL on a VM** is IaaS — you patch it. Pick the highest abstraction that still runs your features.
 
-## 1. The DTU vs. vCore Models
-Azure mathematically prices database performance in two ways:
-- **DTU (Database Transaction Unit)**: A blended, mathematical abstraction combining CPU, RAM, and IOPS into a single number. A 100-DTU database is guaranteed to be exactly twice as fast as a 50-DTU database, completely hiding the underlying hardware from the developer.
-- **vCore**: For enterprises migrating massive workloads, you mathematically specify exactly how many CPUs and how much RAM you want, giving you granular control over hardware scaling.
+## 1. Deep Dive and Mechanics
 
-## 2. Point-in-Time Restore
-Azure SQL continuously takes mathematically rigorous backups of your transaction logs every 5 to 10 minutes.
-If a developer accidentally runs `DELETE FROM Users;` at exactly 2:14 PM and 32 seconds, ruining the production database, you do not restore from a generic nightly backup. You click a button in the Azure Portal and type `2:14:31 PM`. Azure mathematically replays the transaction logs and resurrects the database to the exact mathematical millisecond *before* the deletion occurred.
+**Purchasing models.** DTU (bundled, older) vs vCore (compute + storage + I/O unbundled). Provisioned vs serverless (auto-pause). Hyperscale for very large DBs and fast scale-out of replicas.
 
-</TechnologyTemplate>
+**Elastic pools.** Many small DBs share a pool of eDTUs or vCores. The noisy neighbor is the design trade: average utilization should be well below 100%.
+
+**HA.** Zone-redundant replicas, failover groups for cross-region connection strings, and geo-replication. RPO/RTO are SKU and configuration, not slogans.
+
+**Security.** Entra auth (prefer), TDE on by default, firewall rules plus **private endpoints**. Disable public access. Auditing to a storage account or Log Analytics.
+
+**Compatibility.** Managed Instance is the lift target when you need Agent jobs or CLR. Database is cheaper and simpler when you are a single-DB app.
+
+<Callout icon="error" title="Serverless pause drops connections">
+Auto-pause is great for nights and brutal for a connection pool that expects the DB to always exist. Either disable pause in prod or make the app retry through a cold start of minutes.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+vCore SKUs cap CPU, memory, and log/IOPS. Hitting IOPS looks like “SQL is slow” while CPU is idle. Hyperscale separates page servers from compute so size and compute scale independently.
+
+Elastic pool sizing is a statistical multiplexing problem: provision for P95 of the sum, not the sum of P95s, or you overpay; provision too tight and one tenant wrecks the pool.
+
+<ComparisonTable
+  headers={['Offering', 'Surface', 'Lift fit']}
+  rows={[
+    ['SQL Database', 'One DB / pool', 'New cloud apps'],
+    ['Elastic pool', 'Shared compute', 'SaaS per-tenant DBs'],
+    ['Managed Instance', 'Near-full instance', 'Agent, cross-db'],
+    ['SQL on VM', 'You own the OS', 'Unsupported features, strange collations'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+az sql db create -g prod -s sql-prod -n checkout \
+  --edition GeneralPurpose --capacity 4 --family Gen5 \
+  --zone-redundant true
+```
+
+Point the app at the listener FQDN with Entra managed identity (`Active Directory Default` in the connection string). Skip SQL passwords.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    App[App + Entra MI] --> PE[Private endpoint]
+    PE --> DB[SQL Database]
+    DB --> Geo[Geo-replica]
+    DB --> Bak[Automated backups]
+```
+
+## 5. Interview Prep
+
+**Q: Database vs Managed Instance?**
+**A:** Database if you can live with a single DB and Azure features. MI if you need instance-level SQL Server behavior inside a VNet. VMs if a vendor requires the full OS.
+
+**Q: What does zone-redundant actually protect?**
+**A:** An AZ outage in-region. It is not geo-DR. Failover groups cover region loss with a different RPO.
+
+**Q: Why is my serverless bill high at idle?**
+**A:** Minimum vCores, storage, and backup still bill. Pause only helps if it actually pauses — connection pings from health checks can keep it awake.
+
+## 6. Production Use Cases
+
+- Multi-tenant SaaS on an elastic pool with per-tenant DBs.
+- Hyperscale for a large OLTP DB that outgrew General Purpose storage.
+- MI as a landing zone for a factory of SQL Agent jobs.
+
+<Callout icon="tip" title="Failover group in the connection string">
+Apps should use the failover-group hostname, not the region server name. Otherwise “we failed over” is a code change.
+</Callout>

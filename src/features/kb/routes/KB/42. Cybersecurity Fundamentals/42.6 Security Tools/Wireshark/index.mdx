@@ -1,33 +1,86 @@
 ---
 title: Wireshark
-description: The world's most widely-used network protocol analyzer, capable of inspecting data at a microscopic packet level.
+description: "A GUI packet analyzer for troubleshooting and incident work on captures you are allowed to take."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Wireshark">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Wireshark is the undisputed king of network protocol analyzers. It captures live network traffic passing through your computer\'s network interface card (NIC) and allows you to mathematically inspect every single byte of every single packet across hundreds of different protocols.
+**Wireshark** (and CLI tshark) decodes packet captures so you can see why a handshake failed or whether a host spoke to an unexpected name. It is a **microscope for authorized captures**. Capturing on a shared LAN without a charter can be illegal wiretapping. This page does not cover interception tricks or credential harvesting.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="warning" title="Promiscuous Mode">
+**Capture.** On a span, a tap, or the local host you own. Write to pcap with a size limit. Stop. Analyze the file, not a forever live click-fest on a busy link.
 
+**Analyze.** Display filters (tls, dns, ip.addr) to shrink the view. Follow a TCP stream for a cleartext protocol you are allowed to see. For TLS you will mostly see metadata unless you have a lab key you are allowed to load.
 
-  By default, a network card ignores packets that aren\'t addressed specifically to its MAC address. Wireshark places the card into **Promiscuous Mode**, forcing it to capture ALL packets traveling across the local network segment.
+**Privacy.** Pcaps contain everything: tokens, health data, home addresses in DNS. Treat them as restricted evidence. Do not email them.
 
-
+<Callout icon="warning" title="A pcap is a full recording">
+If you would not put the payload in a ticket, do not put the pcap on a shared drive.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Primary Use Cases
+Packet analysis is reconstructing streams from a capture with possible loss. Wireshark's dissectors implement protocol state machines. Completeness requires you were on path. Encrypted payloads reduce the tool to timing, sizes, and cleartext headers (SNI depending on TLS version and settings).
 
+<ComparisonTable
+  headers={['Job', 'Wireshark', 'Better tool']}
+  rows={[
+    ['One broken handshake', 'Excellent', 'Sometimes just ssl_error logs'],
+    ['Fleet malware', 'Too small', 'EDR + DNS'],
+    ['Legal evidence', 'If hashed pcap', 'Full IR process'],
+    ['Perf in the cloud', 'Hard to span', 'VPC flow, service mesh'],
+  ]}
+/>
 
-<ComparisonTable headers={['Use Case', 'Description']} rows={[ ['Malware Analysis', 'Security researchers use Wireshark to watch exactly what servers a virus attempts to contact (Command and Control) after infecting a machine.'], ['Troubleshooting', 'If a web application is randomly dropping connections, engineers use Wireshark to mathematically analyze the TCP handshake to see if the server is sending RST (Reset) packets.'], ['Protocol Reverse Engineering', 'Hackers use Wireshark to capture the traffic between a mobile game and its server, allowing them to decipher the undocumented API and write custom bots.'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Capture card
+# Reason, approver, host or tap
+# Max size / time, SHA-256 of the file
+# Retention and who may read
+# Delete when the ticket closes
+```
 
+On endpoints, prefer a short capture during a repro over a weekend-long sniff.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Auth[Authorization] --> Cap[Limited capture]
+    Cap --> Hash[Hash + store]
+    Hash --> Analyze[Analyze copy]
+    Analyze --> Delete[Delete on close]
+```
+
+## 5. Interview Prep
+
+**Q: Wireshark vs tcpdump?**
+**A:** tcpdump captures. Wireshark is the richer decoder GUI. Same legal rules.
+
+**Q: Can you read HTTPS?**
+**A:** Not the body, unless you have a permitted lab key or a TLS break you already operate.
+
+**Q: Why is my capture empty in the cloud?**
+**A:** You are not on path. Use flow logs or a service mesh tap the platform provides.
+
+## 6. Production Use Cases
+
+- **IR** on a single host's odd connections.
+- **TLS** troubleshooting in a staging lab.
+- **OT** protocol debugging on a tap you own.
+
+<Callout icon="tip" title="Filter at capture time when you can">
+A 40 GB pcap of the wrong VLAN helps no one and endangers everyone in it.
+</Callout>

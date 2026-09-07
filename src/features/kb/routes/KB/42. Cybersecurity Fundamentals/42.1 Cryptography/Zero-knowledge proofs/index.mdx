@@ -1,45 +1,88 @@
 ---
-title: Zero-Knowledge Proofs (ZKP)
-description: A mind-bending cryptographic protocol that allows a prover to mathematically prove to a verifier that a statement is true, without revealing any actual information about the statement itself.
+title: Zero-Knowledge Proofs
+description: "Protocols that prove a statement is true without revealing the secret witness behind it."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Zero-Knowledge Proofs (ZKP)">
+    <ConceptTemplate title="Zero-Knowledge Proofs">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-One of the most profound paradoxes in cybersecurity: How do you prove to a bouncer that you are over 21 years old, without showing them your ID, your birthdate, your name, or your address?
+A **zero-knowledge proof (ZKP)** lets a prover convince a verifier that a statement is true without handing over the witness. Classic example: prove you know a discrete log, or that a transaction is well-formed, without revealing the key or the amounts. SNARKs and STARKs made this practical enough for blockchains and some identity products.
 
-A **Zero-Knowledge Proof (ZKP)** is a cryptographic method that allows one party (the Prover) to mathematically guarantee to another party (the Verifier) that a specific statement is true, while conveying absolutely **zero additional information**.
+## 1. Deep Dive and Mechanics
 
-## 1. The Ali Baba Cave Analogy
+Properties: **completeness** (honest prover wins), **soundness** (cheater fails except with tiny probability), **zero knowledge** (the transcript could have been simulated without the witness). Interactive proofs use challenges. Fiat-Shamir turns them non-interactive with a hash.
 
-To intuitively understand how this is possible without math, cryptographers use the classic Ali Baba Cave analogy:
+**SNARK vs STARK.** SNARKs are small and fast to verify; many need a trusted setup. STARKs are larger, hash-based, and transparent. Both compile a program into a circuit or AIR and prove satisfiability.
 
-Imagine a circular cave with a locked magic door at the back. Alice (the Prover) claims she knows the secret password to open the door. Bob (the Verifier) wants proof, but Alice refuses to say the password out loud.
-1. Bob waits outside. Alice walks into the cave and randomly chooses Path A or Path B to walk down, eventually stopping at the locked door.
-2. Bob walks to the entrance and shouts a command: "Come out of Path B!"
-3. If Alice actually knows the password, she can easily open the magic door and walk out of Path B, regardless of which path she originally entered.
-4. If Alice is lying, she has a 50% chance of being trapped and exposed.
+**Not magic privacy.** The statement itself can leak (prove I am over 18 still reveals that fact). Public inputs are public. Side channels around proving time still exist.
 
-They repeat this process 40 times. The mathematical probability of a liar getting lucky 40 times in a row is $0.5^{40}$ (practically zero). By the end, Bob is 100% convinced Alice knows the password, yet Alice never revealed the password to Bob.
+<Callout icon="info" title="ZK proves a circuit, not your English claim">
+If the circuit is wrong, the proof is a precise lie. Audit the gadget, not only the proving system brand.
+</Callout>
 
-## 2. Interactive vs. Non-Interactive (zk-SNARKs)
+## 2. Mathematical / Theoretical Foundation
 
-- **Interactive ZKPs**: Like the cave, require the Verifier to constantly challenge the Prover in real-time. This is slow and requires both parties to be online.
-- **Non-Interactive ZKPs (zk-SNARKs / zk-STARKs)**: Through complex elliptic curve cryptography, the Prover can generate a single, tiny, mathematical "certificate of truth". The Verifier can instantly verify this certificate at any time without communicating with the Prover.
+Interactive ZK is a 1980s complexity-theory object (GMR). Modern succinct proofs use polynomial commitments (KZG, FRI), pairings or hashes, and argument systems that are computationally sound rather than statistically sound. Knowledge soundness (extraction) is what you want for "prover knows a witness", not just "statement is true".
 
-## 3. Real-World Applications
+<ComparisonTable
+  headers={['Family', 'Trusted setup', 'Proof size', 'Typical use']}
+  rows={[
+    ['Sigma protocols', 'No', 'Small', 'Auth, identity'],
+    ['Groth16 SNARK', 'Yes per circuit', 'Tiny', 'Many L2s'],
+    ['PLONK / Halo-style', 'Universal or none', 'Small', 'General circuits'],
+    ['STARKs', 'No', 'Larger', 'Scalable rollups'],
+  ]}
+/>
 
-ZKPs are currently revolutionizing privacy and scalability in the Web3 and financial sectors.
+## 3. Real-World Implementation
 
-- **Privacy Coins (Zcash)**: You can prove to the blockchain that you have enough money to send a transaction, without the blockchain actually knowing your account balance or who you are sending the money to.
-- **Ethereum zk-Rollups**: A Layer 2 network processes 10,000 transactions off-chain, and uses a single zk-SNARK proof to mathematically guarantee to the main Ethereum chain that all 10,000 transactions were valid, saving massive amounts of gas fees and processing time.
-- **Identity Verification**: In the future, you could generate a ZKP from your digital passport that proves your citizenship to a website, without giving the website your actual passport number or name.
+```python
+# Conceptual API: prove that age >= 18 given a signed credential, without sending the birthday.
+def prove_over_18(credential, circuit) -> bytes:
+    witness = {'dob': credential.dob, 'sig': credential.issuer_sig}
+    public = {'issuer_pk': credential.issuer_pk, 'today': today()}
+    return circuit.prove(witness, public)
+```
 
+Production systems use audited circuits (circom, Noir, Leo, Cairo) and carefully version the verifying key.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant P as Prover
+    participant V as Verifier
+    P->>P: Witness + public statement
+    P->>V: Succinct proof
+    V->>V: Check proof against public inputs
+    V->>V: Accept or reject
+```
+
+## 5. Interview Prep
+
+**Q: ZK vs homomorphic encryption?**
+**A:** HE lets a server compute on secrets. ZK lets you prove a property of secrets. Sometimes you combine them.
+
+**Q: Why does trusted setup scare people?**
+**A:** Toxic waste from the ceremony could forge proofs if not destroyed. Multi-party ceremonies reduce that risk. Transparent schemes avoid it.
+
+**Q: Are ZK logins a replacement for passwords?**
+**A:** They can prove possession of a credential. You still need issuance, revocation, and device binding.
+
+## 6. Production Use Cases
+
+- **Rollups** proving correct state transitions.
+- **Anonymous credentials** and age checks.
+- **Private solvency** or compliance attestations.
+
+<Callout icon="tip" title="Keep public inputs minimal">
+Every public input is a leak and a coupling. Put only what the verifier must bind.
+</Callout>

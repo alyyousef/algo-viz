@@ -1,29 +1,92 @@
 ---
 title: Cross-Site Request Forgery (CSRF)
-description: An attack that forces an end user to execute unwanted actions on a web application in which they're currently authenticated.
+description: "Tricks a victim browser into sending an authenticated state-changing request the user did not intend."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate title="Cross-Site Request Forgery (CSRF)">
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Cross-Site Request Forgery (CSRF)">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Cross-Site Request Forgery (CSRF) is a vulnerability that occurs when a malicious web site, email, blog, instant message, or program causes a user's web browser to perform an unwanted action on a trusted site for which the user is currently authenticated.
+**CSRF** abuses the browser's habit of attaching cookies to a request the user did not mean to make. A hostile page can trigger a POST to your origin. If session cookies are enough to change email or transfer funds, the action runs as the victim. Defense is a **secret the hostile page cannot read**: a synchronizer token, or SameSite cookies plus careful method use.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="warning" title="The Mechanism">
+Conditions: a session cookie (or other ambient credential) is sent cross-site; the request changes state; there is no unguessable request token. GET that mutates state makes CSRF trivial via images and prefetch. JSON APIs with custom headers often require a preflight, which helps, but cookie-authenticated form posts do not.
 
+**Synchronizer token.** Server stores a random value in the session, embeds it in forms, and rejects POSTs that omit it. **Double-submit** cookies are weaker if you lack SameSite and prefix cookies. **SameSite=Lax/Strict** stops many cross-site cookie sends; still use tokens for sensitive actions and for older browsers you claim to support.
 
-  If you are logged into your bank, your browser stores a Session Cookie. If you open a new tab and visit `evil-hacker.com`, that site can execute a hidden HTTP POST to `bank.com/transfer?amount=1000&to=hacker`.
-
-  Because your browser automatically attaches your Bank Cookie to the request, the Bank thinks *you* made the request intentionally!
-
-
+<Callout icon="info" title="CORS will not save you from CSRF">
+CSRF does not need to read the response. It only needs the side effect. Tokens and SameSite do the work.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Prevention Methods
+CSRF is a confused-deputy problem: the browser is the deputy with the user's cookie jar. A capability (the CSRF token) should be unguessable and bound to the session. SameSite changes the cookie-sending rule from "every request to this host" to "same-site requests", which shrinks the deputy's automatic authority.
 
+<ComparisonTable
+  headers={['Defense', 'Stops classic form CSRF', 'Notes']}
+  rows={[
+    ['Synchronizer token', 'Yes', 'Best for cookie sessions'],
+    ['SameSite=Lax', 'Most GET/POST from other sites', 'Not enough alone for all cases'],
+    ['SameSite=Strict', 'Stronger', 'Breaks some inbound links'],
+    ['Origin / Referer check', 'Helps', 'Combine, do not rely alone'],
+  ]}
+/>
 
-<ComparisonTable headers={['Method', 'How it Works']} rows={[ ['SameSite Cookies', 'Setting the cookie attribute `SameSite=Lax` or `Strict` prevents the browser from sending the cookie if the request originated from a different domain. (Modern Default).'], ['Anti-CSRF Tokens', 'The server generates a unique, cryptographically strong token for the user\'s session and embeds it in HTML forms. The attacker cannot guess this token.'], ['Double Submit Cookie', 'Send the token both in a cookie and as a request parameter. The server verifies they match.'] ]} />
+## 3. Real-World Implementation
 
+```python
+import secrets
 
-</TechnologyTemplate>
+def issue_csrf(session: dict) -> str:
+    token = secrets.token_urlsafe(32)
+    session['csrf'] = token
+    return token
+
+def require_csrf(session: dict, posted: str) -> None:
+    if not posted or posted != session.get('csrf'):
+        raise Forbidden('csrf')
+```
+
+Embed the token as a hidden field or a custom header your own JS reads from a cookie that is not the session cookie.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant H as Hostile page
+    participant B as Browser
+    participant A as App
+    H->>B: Auto POST to app origin
+    B->>A: Cookies attached
+    A->>A: CSRF token missing or wrong
+    A->>B: 403
+```
+
+## 5. Interview Prep
+
+**Q: Why are GET mutations dangerous?**
+**A:** Images, prefetch, and link prefetch become write operations. Use GET for reads only.
+
+**Q: Does JWT in a header need CSRF tokens?**
+**A:** If the browser does not auto-attach the JWT, CSRF is largely gone. If you put the JWT in a cookie, you are back in cookie-CSRF land.
+
+**Q: SameSite=Lax vs Strict?**
+**A:** Lax sends cookies on top-level GETs. Strict does not send them on any cross-site request, including clicks from email.
+
+## 6. Production Use Cases
+
+- **Cookie-session web apps** with forms.
+- **Banking and settings** POSTs with extra re-auth.
+- **Legacy** apps getting SameSite plus tokens as a retrofit.
+
+<Callout icon="tip" title="Change-email and payout routes need step-up">
+CSRF tokens stop forged clicks. They do not stop a stolen session. Re-auth for irreversible actions.
+</Callout>

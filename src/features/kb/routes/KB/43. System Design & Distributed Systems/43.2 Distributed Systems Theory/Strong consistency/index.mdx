@@ -1,51 +1,89 @@
 ---
 title: Strong Consistency
-description: A consistency model guaranteeing that any read operation will always return the value of the most recently completed write operation.
+description: "Reads that behave as if there were one copy: linearizability or a named sequential model, not just a primary you hope is up to date."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Strong Consistency">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Strong Consistency** (often referred to as Linearizability in theoretical computer science) is the most intuitive and strict data consistency model. It provides a simple guarantee: once a write operation is successfully acknowledged to the user, any subsequent read operation, from anywhere in the world, will return that updated value.
+**Strong consistency** in interviews usually means **linearizability**: a read returns the latest completed write, and the real-time order of non-overlapping operations is respected. Weaker "strong" slogans (read-your-writes, monotonic reads) are session guarantees, not one-copy linearizability.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="success" title="The Illusion of a Single Server">
+**Linearizability** (Herlihy and Wing) places each operation at a single point between invoke and response. Once a write returns, every later read in real time sees it (or a later write).
 
+**Sequential consistency** (Lamport) preserves each process's order but may reorder concurrent clients relative to real time. CPUs often give this; geo-databases often do not.
 
-  The goal of Strong Consistency is to make a massive, globally distributed cluster of 100 database servers behave exactly as if it were just one single machine sitting on your desk. There are no "stale reads," no "propagation delays," and no "conflict resolutions."
+**How stores implement it.** Single leader plus sync quorum; or consensus on every write (Raft, Paxos); or TrueTime-bounded commit waits (Spanner). Reads may go to the leader or to a replica that has applied the commit index.
 
-
+<Callout icon="info" title="Majority write is not enough if reads skip the quorum">
+W=majority and R=1 can miss the write. Strong reads need a quorum that intersects, or a lease that pins a leader you always read from.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How is it achieved? (Synchronous Replication)
+A history is linearizable if it is equivalent to a legal sequential history that respects real-time precedence. CAP says you cannot keep this and stay available on both sides of a partition.
 
-To guarantee that no user ever reads stale data, the database must use **Synchronous Replication** or **Consensus Algorithms** (like Raft or Paxos).
+Session guarantees (Terry et al.) sit below linearizability: read-your-writes, monotonic reads, causal. PACELC: keeping linearizability when healthy costs the sync RTT.
 
-When a user updates a bank balance on the Primary Node:
-1. The Primary Node locks the row.
-2. The Primary Node sends the new balance to all Replica Nodes.
-3. The Primary Node **halts and waits**.
-4. The Replica Nodes write the data and send an acknowledgement back.
-5. Only after a majority (quorum) of replicas have confirmed the write does the Primary Node tell the user "Success" and unlock the row.
+<ComparisonTable
+  headers={['Model', 'Real-time order', 'Session order', 'Typical API']}
+  rows={[
+    ['Linearizable', 'Yes', 'Yes', 'etcd, Spanner, ZooKeeper'],
+    ['Sequential', 'No', 'Per client', 'Some multiprocessor specs'],
+    ['Causal', 'Causal only', 'Yes', 'COPS, some mobile stores'],
+    ['Eventual', 'No', 'No', 'DNS, async replicas'],
+  ]}
+/>
 
-## The Cost of Strong Consistency
+## 3. Real-World Implementation
 
-According to the PACELC theorem, Strong Consistency comes with severe architectural penalties:
+```python
+def read_linearizable(leader, key):
+    # must see commit index that includes all completed writes
+    return leader.get(key)
+```
 
-1. **Massive Latency**: Because the Primary Node must wait for network acknowledgements from other servers (potentially across oceans), write operations are inherently slow. You cannot beat the speed of light.
-2. **Reduced Availability**: If a network cable is cut and the Primary Node cannot reach the Replicas to form a quorum, it mathematically cannot guarantee consistency. Therefore, it must refuse all write requests and go offline (favoring Consistency over Availability).
+Postgres with sync replicas and reads on the primary is a common approximation. Replica reads are not linearizable unless you wait for apply.
 
-## Use Cases
+## 4. Visualizations
 
-Strong consistency is mandatory when data correctness is critical and human lives, money, or inventory are at stake:
-- **Banking & Finance**: You cannot have an eventually consistent bank ledger where an ATM reads a stale balance and dispenses cash you don't have.
-- **E-Commerce Inventory**: If there is only 1 concert ticket left, 10,000 people clicking "Buy" simultaneously must be strictly serialized to ensure only one person gets it.
+```mermaid
+sequenceDiagram
+    participant C1 as Client A
+    participant S as Linearizable store
+    participant C2 as Client B
+    C1->>S: write x=1
+    S-->>C1: ok
+    C2->>S: read x
+    S-->>C2: 1
+```
 
+## 5. Interview Prep
+
+**Q: Is primary-reads strong consistency?**
+**A:** Yes only if all writes completed on that primary and no stale failover. A client that still talks to a deposed primary is not linearizable.
+
+**Q: Linearizable versus serializable?**
+**A:** Serializability is about transactions as a unit. Linearizability is about single-object real-time order. You can have one without the other. Strict serializability is both.
+
+**Q: Why do people pay for this?**
+**A:** Unique constraints, leader election, config, money. "Try again" is cheaper than two accepted primary keys.
+
+## 6. Production Use Cases
+
+- **Metadata and locks** (etcd, ZooKeeper).
+- **Banking ledgers** and inventory reservations.
+- **Feature-flag truth** that must not flap across regions.
+
+<Callout icon="tip" title="Ask what the read is allowed to miss">
+If the answer is "nothing after a successful write," you are in linearizability land. Price the quorum.
+</Callout>

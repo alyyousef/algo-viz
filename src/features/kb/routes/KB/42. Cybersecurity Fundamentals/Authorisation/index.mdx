@@ -1,35 +1,86 @@
 ---
-title: Authorization (Access Control)
-description: The function of specifying access rights/privileges to resources related to information security and computer security in general.
+title: Authorisation
+description: "The decision of what an already-authenticated principal may do to a given resource."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Authorization (Access Control)">
+    <ConceptTemplate title="Authorisation">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If *Authentication* is verifying your identity at the front door of the building, **Authorization** is the mathematical process of determining which specific rooms inside the building your keycard can open.
+**Authorisation (authz)** answers "may they do this?" after authentication. It is the check on every request: this user, this verb, this object, this tenant. Hidden buttons are not authz. The server must deny by default.
 
-Once a system knows exactly who you are, it must enforce strict mathematical rules to ensure you can only perform actions (Read, Write, Delete) on resources you are explicitly permitted to access.
+## 1. Deep Dive and Mechanics
 
+Put the decision in a shared layer (policy engine, middleware, or capability tokens you mint). Look up the object, then test ownership, role, or relationship. Do not trust a client-supplied owner id.
 
-<Callout icon="warning" title="The Golden Rule">
+**Models.** RBAC for job bundles. ABAC for attributes (clearance, geo). ReBAC for document sharing. Hybrid is normal.
 
+**Failures.** IDOR (change the id), missing function-level checks, and cross-tenant leaks in SaaS. Tests should call the API as user A against user B's objects.
 
-  The core tenet of Authorization is the **Principle of Least Privilege**. A user or system should mathematically be granted the absolute minimum level of access necessary to perform their job functions, and nothing more.
-
-
+<Callout icon="error" title="UI hiding is not a control">
+If the API performs the action, the API must refuse it.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Common Authorization Models
+Authz is a function allow(principal, action, resource, context) to boolean. Confused-deputy bugs happen when a powerful service uses its own identity to act on a caller-supplied target. Formal policy languages (Rego, Cedar, Zanzibar-style graphs) exist so the function is reviewable and testable.
 
+<ComparisonTable
+  headers={['Model', 'Grant', 'Typical fail']}
+  rows={[
+    ['RBAC', 'Role contains verbs', 'Role explosion / stale admin'],
+    ['ABAC', 'Policy on attributes', 'Attribute lying / drift'],
+    ['ReBAC', 'Walk relationships', 'Missing edge checks'],
+    ['ACL', 'Per-object list', 'Does not scale'],
+  ]}
+/>
 
-<ComparisonTable headers={['Model', 'Acronym', 'Description']} rows={[ ['Role-Based Access Control', 'RBAC', 'Access is mathematically granted based on the user\'s job role (e.g., "Managers" can approve expenses, "Engineers" cannot). This is the most common model in enterprise software.'], ['Attribute-Based Access Control', 'ABAC', 'A much finer-grained model. Access is mathematically calculated dynamically based on attributes (e.g., "Allow access IF user=Manager AND time=BusinessHours AND location=Office").'], ['Discretionary Access Control', 'DAC', 'The owner of the data mathematically decides who gets access (e.g., Google Drive, where you can click "Share" and type a friend\'s email).'], ['Mandatory Access Control', 'MAC', 'Used by the military. The system strictly enforces mathematical clearance levels (e.g., Top Secret). Even the owner of a document cannot override the system to share it with an unauthorized person.'] ]} />
+## 3. Real-World Implementation
 
+```python
+def can_read(user, doc) -> bool:
+    if user.role == "admin" and user.tenant == doc.tenant:
+        return True
+    return doc.owner_id == user.id and user.tenant == doc.tenant
+```
 
+Always compare tenant. Always load the doc server-side. Never take owner_id from the body as truth.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Req[Request] --> Authn[Authenticated principal]
+    Authn --> Load[Load resource]
+    Load --> Pol[Policy decide]
+    Pol --> Allow[Allow]
+    Pol --> Deny[Deny + log]
+```
+
+## 5. Interview Prep
+
+**Q: Why is broken access control OWASP number one?**
+**A:** Every feature adds an object id. People forget the check. Impact is direct data.
+
+**Q: RBAC vs ABAC?**
+**A:** RBAC is simple until it is not. ABAC fits messy tenancy and risk, at the cost of policy complexity.
+
+**Q: Can the gateway do all authz?**
+**A:** Coarse yes (is this user in the app). Object-level usually needs the service that owns the object.
+
+## 6. Production Use Cases
+
+- **Multi-tenant SaaS** object APIs.
+- **Admin consoles** with step-up plus role checks.
+- **Internal tools** that must not be "VPN equals admin."
+
+<Callout icon="tip" title="Write the negative test first">
+User A must get 404 or 403 on user B's invoice. If you did not write that test, you do not have authz.
+</Callout>

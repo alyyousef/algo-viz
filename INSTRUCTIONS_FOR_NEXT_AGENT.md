@@ -2,35 +2,39 @@
 
 You are continuing **deep-dive upgrades** of the AlgoViz knowledge base (`src/features/kb/routes/KB/`). Do not start a new MEGA-scaffold pass. Most pages already exist as short stubs; the job is to rewrite them to the deep-dive template and tick the tracker.
 
-**The user paused on 2026-09-05.** Resume when they ask to continue filling pages.
+Resume when the user asks to continue filling pages.
 
-## Where we stand (2026-09-05)
+## Where we stand (2026-09-07, continued)
 
 |                      |                              Count |
 | -------------------- | ---------------------------------: |
-| Completed deep dives |                            **929** |
-| Still pending        |                           **1694** |
+| Completed deep dives |                           **1715** |
+| Still pending        |                            **907** |
 | Source of truth      | `scripts/deep-dives/progress.json` |
 
-**Last completed section:** 32. Computer Vision (all 24 pages).
+**User instruction:** keep filling pending pages recursively; do not pause after one section.
 
-**Next section:** 33. Reinforcement Learning.
+**Last completed blocks:** 4 OOP, 33–44 (RL through Compilers/ToC), plus 34–41 platform/process/testing/security/design.
+
+**Next section:** 45. Parallel & Concurrent Computing.
 
 **First pending path:**
 
 ```
-src/features/kb/routes/KB/33. Reinforcement Learning/Actions/index.mdx
+src/features/kb/routes/KB/45. Parallel & Concurrent Computing/
 ```
 
 Work through `pending` in order (or by whole numbered section). After each batch, move those paths from `pending` to `completed`. Do not invent a second tracker.
 
-This session already deep-dived:
+Recent deep-dive batches:
 
 - 3.1 Programming Paradigms (10)
 - 3.2 Language Design & Theory (15)
 - 30. RAG & Retrieval (15)
 - 31. AI Agent Systems (19)
 - 32. Computer Vision (24)
+- 33. Reinforcement Learning (21) — 2026-09-07
+- 34 MLOps, 35 Cloud, 36 DevOps, 37 K8s, 38 IaC, 39 Observability, 4 OOP, 40 SE, 41 Testing — 2026-09-07 continue
 
 Earlier work (other agents) already completed large stretches of sections 1–14 and other domains; those paths are already in `completed`.
 

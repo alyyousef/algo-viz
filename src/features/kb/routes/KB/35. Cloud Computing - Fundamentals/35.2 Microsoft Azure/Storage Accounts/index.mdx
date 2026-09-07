@@ -1,29 +1,94 @@
 ---
 title: Azure Storage Accounts
-description: The foundational mathematical container in Azure that groups together Blob, File, Queue, and Table storage under a single unified API endpoint and billing structure.
+description: "The shared control plane for Blob, Files, Queues, and Tables: SKU, redundancy, endpoints, and keys — one account, four data services, one blast radius."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Azure Storage Accounts"
-  subtitle="The Unified Data Container"
-  tags={['Azure', 'Storage', 'Infrastructure']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Azure Storage Accounts">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-In AWS, S3 and EFS are completely separate services. In Azure, a **Storage Account** is a single, unified mathematical namespace that houses four distinct storage paradigms simultaneously.
+A **storage account** is the ARM resource that hosts Blob, Azure Files, Queues, and Tables (and the DFS endpoint when HNS is on). Kind and SKU (Standard_LRS, ZRS, GRS, GZRS, Premium) apply to the account. The name is a global DNS label. Keys and the connection string are root credentials for every service inside.
 
-## 1. The Four Storage Pillars
-When you create a Storage Account (e.g., `mystorage`), Azure generates four unique API endpoints:
-- **Blob** (`mystorage.blob.core.windows.net`): Massive unstructured object storage (like AWS S3).
-- **File** (`mystorage.file.core.windows.net`): SMB network shares for mounting drives to Windows/Linux.
-- **Queue** (`mystorage.queue.core.windows.net`): Simple, lightweight messaging queues.
-- **Table** (`mystorage.table.core.windows.net`): A massive, schema-less NoSQL Key/Value store (the predecessor to Cosmos DB).
-By grouping these together, an administrator can apply a single IAM policy or network firewall rule mathematically across all four services at once.
+## 1. Deep Dive and Mechanics
 
-## 2. Redundancy Mathematics
-Storage Accounts provide strict mathematical guarantees against physical hardware failure:
-- **LRS (Locally Redundant Storage)**: 3 exact copies of your data within a single data center.
-- **ZRS (Zone-Redundant Storage)**: 3 copies spread across 3 entirely different data centers in the same city.
-- **GRS (Geo-Redundant Storage)**: 3 copies in your primary region, and another 3 copies asynchronously replicated to a secondary region 500 miles away (e.g., East US and West US). If a hurricane destroys the entire East Coast, your data survives mathematically on the West Coast.
+**Redundancy.** LRS (three copies, one region, one zone). ZRS (zones). GRS/GZRS add a paired region. RA-GRS lets you read the secondary. Failover is not a client retry — it is an account operation with data-loss risk if GRS lag is behind.
 
-</TechnologyTemplate>
+**Endpoints.** `account.blob.core.windows.net`, `file`, `queue`, `table`, `dfs`. Private endpoints are per sub-resource. Disable public network access when they exist.
+
+**Identity.** Shared key, SAS, Entra RBAC. Disable shared key after migration. “Allow storage account key access” should be off in prod.
+
+**Kinds.** StorageV2 is the default. BlockBlobStorage premium for low-latency blobs. FileStorage premium for Files. Do not create legacy v1.
+
+**Management plane vs data plane.** Contributor on the account can list keys. Data-plane Blob Contributor cannot. Confusing those two is a common over-grant.
+
+<Callout icon="error" title="One account key opens everything">
+A leaked key reads blobs, files, queues, and tables. Rotate keys, disable key auth, and use user-delegation SAS or Entra. Never check in a connection string.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Durability targets differ by SKU; none of them replace versioning and soft delete against accidental delete. GRS RPO is async — design for minutes of missing data on a regional failover.
+
+Name + region + SKU are hard to change. Migration is copy + cutover. Pick ZRS in regions that support it if you care about AZ loss.
+
+<ComparisonTable
+  headers={['SKU', 'AZ', 'Paired region']}
+  rows={[
+    ['LRS', 'No', 'No'],
+    ['ZRS', 'Yes', 'No'],
+    ['GRS / RA-GRS', 'No', 'Yes'],
+    ['GZRS / RA-GZRS', 'Yes', 'Yes'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+az storage account create -g prod -n stshopprod001 \
+  --sku Standard_ZRS --kind StorageV2 \
+  --min-tls-version TLS1_2 \
+  --allow-blob-public-access false \
+  --allow-shared-key-access false
+```
+
+Then assign `Storage Blob Data Contributor` to the app identity. Create private endpoints for `blob` and `dfs` if HNS is on.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TB
+    Acct[Storage account]
+    Acct --> Blob[Blob / DFS]
+    Acct --> Files[Files]
+    Acct --> Q[Queues]
+    Acct --> T[Tables]
+    Acct --> Keys[Shared keys - disable]
+```
+
+## 5. Interview Prep
+
+**Q: Why not one giant account for the company?**
+**A:** Blast radius, throttling (account-level limits), and lifecycle. Split by env and by workload (lake vs app vs logs).
+
+**Q: LRS or ZRS?**
+**A:** ZRS if the region supports it and you cannot tolerate an AZ outage. LRS is cheaper and is one building’s fire.
+
+**Q: Storage account vs Blob only?**
+**A:** There is no free-floating Blob resource. Blob is a service on an account. The account choices (HNS, SKU, network) constrain Blob.
+
+## 6. Production Use Cases
+
+- App account: private, no public blobs, Entra-only, ZRS.
+- Lake account: HNS on, GZRS if DR requires it, lifecycle on containers.
+- Logs account: cheap LRS, short retention, locked from app identities.
+
+<Callout icon="tip" title="Name is forever">
+`st` + app + env + region + a digit stays inside the 24-char global namespace. Cute names collide. Rename is a new account.
+</Callout>

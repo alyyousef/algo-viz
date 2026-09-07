@@ -1,35 +1,86 @@
 ---
-title: OpenVAS (Open Vulnerability Assessment System)
-description: A comprehensive open-source vulnerability scanner and manager.
+title: OpenVAS
+description: "An open-source vulnerability scanner (Greenbone) for authorized inventories of known issues on your hosts."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="OpenVAS (Open Vulnerability Assessment System)">
+    <ConceptTemplate title="OpenVAS">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-When you have a network of 5,000 computers, it is impossible to manually check if every machine has the latest Windows patches or is running an outdated, vulnerable version of Apache.
+**OpenVAS** (the Greenbone Vulnerability Management stack) is an open-source cousin of commercial vuln scanners. It checks systems you authorize for known CVEs and weak configs. Use it as a **hygiene loop**, not as a pentest and not as a license to scan strangers.
 
-**OpenVAS** is a full-featured vulnerability scanner. It scans the network, identifies the software running on every machine, and cross-references it against a massive database of known Common Vulnerabilities and Exposures (CVEs).
+## 1. Deep Dive and Mechanics
 
+You deploy a manager plus sensors, feed them an allow-listed address space, and prefer **authenticated** checks. Feed quality and update cadence matter; a stale feed is a false sense of safety.
 
-<Callout icon="info" title="The Nessus Fork">
+**Ops.** Same rules as Nessus: change windows, fragile OT, least-privilege scan creds, and tickets with SLAs. Deduplicate by image.
 
+**Fit.** Budget-conscious orgs and labs. Enterprises may still buy a commercial feed and UI. The process is the product.
 
-  OpenVAS originally began as a fork of the famous "Nessus" scanner after Nessus transitioned from open-source to a closed-source commercial product in 2005. Today, OpenVAS is maintained by Greenbone Networks.
-
-
+<Callout icon="warning" title="Open source does not mean unscoped">
+Your legal boundary is the same as with a paid scanner.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How it Works
+Plugin hits are version and config predicates. Error bars are unscanned assets and lying banners. Track coverage and age of criticals. Do not average CVSS into a single "security score" for the board.
 
-1. **Port Scanning:** It first acts like Nmap, discovering which IP addresses are alive and what ports are open.
-2. **NVT Execution:** It executes thousands of Network Vulnerability Tests (NVTs). These are small scripts that interact with the open ports, attempting safe, mathematical checks to confirm if a specific vulnerability exists.
-3. **Reporting:** It generates a comprehensive PDF/HTML report, scoring vulnerabilities using the CVSS (Common Vulnerability Scoring System) so admins know what to patch first.
+<ComparisonTable
+  headers={['Scanner', 'Cost model', 'You still need']}
+  rows={[
+    ['OpenVAS / Greenbone', 'Software + people', 'Creds, SLAs, owners'],
+    ['Nessus / Qualys / InsightVM', 'License + people', 'Same process'],
+    ['Cloud posture', 'CSPM', 'IAM and data, not packages'],
+    ['Agent inventory', 'EDR / MDM', 'Patch pipeline'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```text
+# Program checklist
+# - Feed updates on a calendar
+# - Authenticated scans for servers you own
+# - Ticket SLA by severity and exposure
+# - Exception register with expiry
+```
+
+If nobody owns the OpenVAS VM, it will become an unpatched scanner — irony you cannot afford.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Feed[Updated feed] --> Sens[Sensor]
+    Sens --> Findings[Findings]
+    Findings --> Owners[Asset owners]
+    Owners --> Fix[Patch]
+```
+
+## 5. Interview Prep
+
+**Q: OpenVAS vs Nessus?**
+**A:** Same category. Licensing, feed, and UI differ. Ask about coverage and process.
+
+**Q: Why do findings disagree across scanners?**
+**A:** Different plugins and auth. Reconcile on package version, not on who yelled first.
+
+**Q: Can I scan the internet "for research"?**
+**A:** Not with this KB's blessing. Scan what you own or what a contract names.
+
+## 6. Production Use Cases
+
+- **Internal server** hygiene in cost-sensitive orgs.
+- **Lab** networks for training.
+- **Second opinion** next to a commercial scanner.
+
+<Callout icon="tip" title="Patch the scanner too">
+A vuln scanner with a stale OS is a free foothold on the management network.
+</Callout>

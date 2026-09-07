@@ -1,32 +1,103 @@
 ---
-title: Strategy Pattern
-description: A Behavioral Design Pattern from the Gang of Four (GoF) that mathematically defines a family of algorithms, encapsulates each one, and makes them interchangeable at runtime.
+title: Strategy
+description: "A behavioral pattern that extracts an algorithm onto an object you can swap — same context, different policy."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Strategy Pattern"
-  subtitle="Interchangeable Mathematical Algorithms"
-  tags={['Design Patterns', 'Behavioral', 'GoF', 'Architecture']}
->
+    <ConceptTemplate title="Strategy">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If an e-commerce checkout system needs to process payments, it might need to support Credit Cards, PayPal, and Bitcoin.
-If the `CheckoutService` uses a massive `if (type == "paypal") { ... } else if (type == "bitcoin") { ... }` block, it violates the Open-Closed Principle. Adding Apple Pay requires modifying the core file.
+**Strategy** (GoF) turns a family of algorithms into interchangeable objects. The context calls `strategy.execute(...)` and does not know whether it is using FedEx rates, pickup, or a stub. Sorting comparators and payment processors are the usual examples.
 
-## 1. Encapsulating the Algorithm
-The Strategy pattern solves this by extracting each algorithm into its own file.
-You create an `IPaymentStrategy` interface with a `pay(amount)` method.
-You create three completely separate classes: `PayPalStrategy`, `BitcoinStrategy`, and `CreditCardStrategy`.
+## 1. Deep Dive and Mechanics
 
-## 2. Runtime Injection
-The `CheckoutService` simply holds a reference to an `IPaymentStrategy` object.
-At runtime, when the user clicks the PayPal radio button on the UI, the system mathematically injects the `PayPalStrategy` object into the CheckoutService.
-The service blindly executes `this.strategy.pay(100)`. It has absolutely zero mathematical knowledge of *how* the payment is being processed. To add Apple Pay next year, you simply write a new Strategy class; the core CheckoutService file is never mathematically touched again.
+**Context.** Owns the workflow around the algorithm (collect cart, then `price`). It holds a `PricingStrategy` reference, often injected.
 
+**Strategy interface.** One method or a small set. Keep it stable. If every strategy needs different inputs, the interface is wrong (or you wanted a richer policy object).
+
+**Selection.** Composition root, user preference, or a simple factory keyed by type. Do not hide a giant switch *and* call it Strategy unless the switch only picks the object.
+
+**Closures.** In languages with first-class functions, a function *is* a strategy. The pattern does not require a class hierarchy.
+
+<Callout icon="tip" title="Inject, do not new, the strategy">
+If the context constructs `FedExStrategy()` internally, you cannot test or swap. Pass it in.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Higher-order behavior.** Strategy is a first-class function with a name. The context is parameterized by that function — the same idea as passing a comparator to sort.
+
+**Open-closed.** New algorithms are new types (or new functions). The context file does not grow a branch per carrier.
+
+**Versus Template Method.** Template Method uses inheritance and a fixed skeleton. Strategy uses composition and replaces the whole algorithm (or the whole hot part).
+
+<ComparisonTable
+  headers={['Pattern', 'Variation axis', 'Binding']}
+  rows={[
+    ['Strategy', 'Whole algorithm', 'Composition'],
+    ['Template Method', 'Steps in a skeleton', 'Inheritance'],
+    ['State', 'Behavior per FSM node', 'Self-replacing'],
+    ['Command', 'An action to store/queue', 'Object as request'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Cart:
+    def __init__(self, pricing):
+        self.pricing = pricing
+        self.lines = []
+
+    def total(self):
+        return self.pricing.quote(self.lines)
+
+class FlatRate:
+    def quote(self, lines):
+        return 5.00
+
+class FreeOver50:
+    def quote(self, lines):
+        goods = sum(l.price for l in lines)
+        return 0.00 if goods >= 50 else 5.00
+```
+
+`Cart.total` never names a carrier.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Ctx[Context] --> S[Strategy interface]
+    S --> A[Concrete A]
+    S --> B[Concrete B]
+    S --> C[Test stub]
+```
+
+## 5. Interview Prep
+
+**Q: Strategy versus Template Method?**
+**A:** Strategy composes algorithms. Template Method inherits and fills in steps. Prefer Strategy unless the skeleton is the product and subclasses are the plugin.
+
+**Q: Is a lambda a Strategy?**
+**A:** Yes. Interviews accept “function as strategy.” Classes help when the policy has state or several methods.
+
+**Q: How do you pick the strategy at runtime?**
+**A:** Map from a key (shipping method id) to an instance, or ask a factory. Keep the map in the composition root.
+
+## 6. Production Use Cases
+
+- **Payment, tax, and shipping** calculators.
+- **Sort and compression** policies.
+- **A/B experiment arms** as alternate strategies behind one port.
+
+<Callout icon="info" title="One interface, many data needs">
+If half the strategies ignore half the arguments, split the interface or pass a context object. Do not grow a god-signature.
+</Callout>

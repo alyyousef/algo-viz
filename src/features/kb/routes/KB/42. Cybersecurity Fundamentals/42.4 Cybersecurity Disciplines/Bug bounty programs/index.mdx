@@ -1,36 +1,87 @@
 ---
 title: Bug Bounty Programs
-description: Crowdsourced security initiatives where organizations financially reward ethical hackers for discovering and reporting vulnerabilities.
+description: "An invitation for outside researchers to report vulnerabilities in a defined scope for rewards and safe-harbor terms."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Bug Bounty Programs">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A company can only hire a limited number of penetration testers. **Bug Bounty Programs** democratize security testing by inviting the entire global community of ethical hackers to mathematically attack the company\'s public assets in exchange for cash rewards.
+A **bug bounty** pays independent researchers for valid vulnerabilities in a published scope. It is not a pentest (time-boxed, contracted) and not a vulnerability disclosure inbox alone (that may pay nothing). A good program has **clear scope, a safe harbor, SLAs, and a triage team**. A bad program is "send us holes" with no lawyer-approved rules and no one to read the mail.
 
-Platforms like HackerOne and Bugcrowd facilitate these programs, providing a safe legal framework for researchers to operate within.
+## 1. Deep Dive and Mechanics
 
+Publish in-scope assets and **out-of-scope** items (DoS, social engineering, third-party SaaS you do not own). State the allowed techniques. Promise not to sue researchers who stay in bounds (safe harbor). Pay on a severity table. Triage duplicates quickly and do not argue severity for weeks.
 
-<Callout icon="success" title="The Economics of Bounties">
+**When to start.** After you can patch. A bounty on an unmaintained app is a press release. Many orgs start with a private program, then go public.
 
+**Relationship to SDLC.** Bounties find leftovers. They do not replace AppSec or access-control tests.
 
-  Bug bounties are incredibly cost-effective. A company might pay $10,000 for a critical SQL Injection report. However, if a malicious hacker found that same vulnerability on the black market, it could cost the company $10 million in GDPR fines and lost customer trust.
-
-
+<Callout icon="warning" title="Scope is a safety control">
+If you do not exclude destructive testing, someone will. Write the rules like you want them followed on a Friday night.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How it Works
+A bounty is a market: you price external search time. Researchers maximize expected payout over their skill and your asset value. Underpaying criticals sends talent to competitors. Overpaying dupes of a known class (reflected XSS on a marketing site) wastes budget. Severity should track impact (data, authz, RCE), not how clever the write-up is.
 
-1. **Scope Definition:** The company explicitly defines the mathematical boundaries. (e.g., `*.example.com` is allowed, but the physical office WiFi and employee phishing are strictly forbidden).
-2. **Discovery & Reporting:** A researcher finds a vulnerability, writes a detailed proof-of-concept, and submits it privately through the bounty platform.
-3. **Triage:** The company\'s internal security team verifies the mathematical validity of the bug and ensures it is not a duplicate.
-4. **Reward:** Based on the severity (using CVSS scoring), the researcher is paid. (Minor bugs might pay $50; critical remote code execution bugs can pay over $100,000).
+<ComparisonTable
+  headers={['Program', 'Who hunts', 'Best for']}
+  rows={[
+    ['VDP no pay', 'Altruists / duty', 'Minimum responsible disclosure'],
+    ['Private bounty', 'Invited researchers', 'Learning to triage'],
+    ['Public bounty', 'Anyone in scope', 'Mature targets'],
+    ['Pentest', 'Hired team', 'Time-boxed depth'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```markdown
+# Policy sketch
+# Scope: *.app.example.com, official iOS/Android apps
+# Out of scope: DoS, physical, third-party IdP bugs, social engineering
+# Safe harbor: good-faith research in scope will not be legal threats
+# SLA: first response 2 business days
+```
+
+Route reports into the same tracker as internal vulns so they get owners.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Res[Researcher] --> Plat[Platform / inbox]
+    Plat --> Tri[Triage]
+    Tri --> Dup[Duplicate]
+    Tri --> Fix[Engineer fix]
+    Fix --> Pay[Reward + disclosure]
+```
+
+## 5. Interview Prep
+
+**Q: Bounty vs pentest?**
+**A:** Pentest is scheduled depth with a report. Bounty is continuous, variable quality, and public signaling. Use both.
+
+**Q: Why private first?**
+**A:** You learn volume, duplicate rate, and whether you can patch before the internet arrives.
+
+**Q: Do you pay for out-of-scope reports?**
+**A:** Usually no. Be kind, be clear, and fix them if they are real anyway.
+
+## 6. Production Use Cases
+
+- **Public SaaS** with a mature AppSec team.
+- **Consumer apps** where researchers will look anyway.
+- **Open-source** projects using a platform for triage.
+
+<Callout icon="tip" title="Publish a security.txt pointer">
+If researchers cannot find the program, they will dump issues on Twitter. Make the inbox obvious.
+</Callout>

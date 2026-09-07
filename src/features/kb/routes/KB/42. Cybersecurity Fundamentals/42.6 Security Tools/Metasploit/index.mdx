@@ -1,35 +1,86 @@
 ---
 title: Metasploit Framework
-description: The world's most used penetration testing framework, containing thousands of weaponized exploits.
+description: "A Rapid7-maintained framework of modules used in authorized labs to verify that known issues are actually fixed."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Metasploit Framework">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Owned by Rapid7, the Metasploit Framework is a massive, open-source Ruby project that provides information about security vulnerabilities and aids in penetration testing and IDS signature development.
+The **Metasploit Framework** is a large, open toolkit used in **authorized** tests and in training labs to replay **known** vulnerability classes against systems you own. Defenders also study it to write detections. This page does not describe modules, payloads, or how to "pop a shell."
 
-It essentially standardizes exploitation. Instead of a hacker having to write a custom Python script for every new vulnerability, Metasploit provides a unified interface to point, click, and fire weaponized code.
+## 1. Deep Dive and Mechanics
 
+**Legitimate use.** Confirm that last year's CVE is not still open on a lab clone, or that an IPS signature fires. That work happens on images you built, with a ticket, on a network that cannot reach customers.
 
-<Callout icon="warning" title="The Meterpreter Payload">
+**Defender use.** Know that commodity kits exist so you prioritize patching and EDR. Hunt for post-compromise behaviors in general (unexpected services, odd outbound) rather than memorizing a product.
 
+**Risk.** Pointing a framework at the wrong CIDR is a change-control incident. Untrusted module source is a supply-chain incident.
 
-  The true power of Metasploit is **Meterpreter**. When you successfully exploit a machine, instead of getting a dumb command shell, Metasploit injects Meterpreter entirely into the victim\'s RAM. It provides advanced commands to dump passwords, take screenshots, pivot into other networks, and completely evade hard-drive anti-virus scans.
-
-
+<Callout icon="error" title="No scope, no framework">
+If you do not have written authorization and a target list, you do not have a test. You have a policy violation.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Core Terminology
+Metasploit is a catalog that maps public vulnerability identifiers to reusable test code. Coverage of "the internet" is irrelevant; coverage of **your** unpatched surface is the metric. Detection engineering treats framework defaults as a labeled dataset for purple-team days — still without publishing those defaults here.
 
+<ComparisonTable
+  headers={['Use', 'Outcome', 'Forbidden']}
+  rows={[
+    ['Lab CVE verify', 'Patch proof', 'Customer networks'],
+    ['Purple-team detect', 'New SIEM rule', 'Unannounced prod'],
+    ['Training VM', 'Skill', 'Shared creds on the VM'],
+    ['Internet "research"', 'None', 'Always'],
+  ]}
+/>
 
-<ComparisonTable headers={['Term', 'Description']} rows={[ ['Exploit', 'The actual code that takes advantage of a mathematical flaw in the target system (e.g., a buffer overflow in an old Windows SMB service).'], ['Payload', 'The code that the exploit delivers and executes on the target machine (e.g., "Connect back to my IP address and give me a command shell").'], ['Auxiliary', 'Modules that don\'t execute payloads, but perform useful tasks like port scanning, brute-forcing FTP passwords, or sniffing network traffic.'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Lab verification record
+# CVE, lab host name, snapshot id
+# Expected: patched service refuses the old condition
+# Evidence: ticket + screenshot of version / config
+# No module output pasted into Slack
+```
 
+Prefer vendor patches and version evidence over "we ran a kit and it failed" as the only proof.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    CVE[Known CVE] --> Patch[Patch in lab]
+    Patch --> Verify[Authorized verify]
+    Verify --> Prod[Promote patch]
+    Kit[Unscoped use] --> IR[Treat as incident]
+```
+
+## 5. Interview Prep
+
+**Q: Is Metasploit required to be a pentester?**
+**A:** No. Many assessments are authz and logic. A framework is optional and dangerous if sloppy.
+
+**Q: Why do SOCs mention Meterpreter?**
+**A:** It is a well-known post-compromise agent family. Detect the behaviors; do not practice them on corp.
+
+**Q: Framework vs exploit PoC from the internet?**
+**A:** Both are dual-use. Your job in this KB is to patch and detect, not to collect kits.
+
+## 6. Production Use Cases
+
+- **Patch verification** on isolated clones.
+- **IPS/EDR** regression after a signature change.
+- **IR awareness** training that stays conceptual.
+
+<Callout icon="tip" title="Version pins beat kits">
+A configuration-management report that nothing runs the vulnerable version is the control you want.
+</Callout>

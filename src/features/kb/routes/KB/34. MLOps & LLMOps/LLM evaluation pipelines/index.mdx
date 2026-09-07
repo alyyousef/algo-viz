@@ -1,28 +1,92 @@
 ---
 title: LLM Evaluation Pipelines
-description: The rigorous LLMOps methodology of mathematically scoring the subjective, generative text outputs of Large Language Models against standardized datasets to measure alignment, accuracy, and hallucination rates.
+description: "Versioned suites of prompts, graders, and gates that run on every prompt or model change — quality as CI, not as a slide."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="LLM Evaluation Pipelines">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In traditional ML, evaluating a model is easy: if it predicts 1 and the answer is 1, the math is correct. In LLMs, the model predicts a paragraph of text. Mathematically scoring a paragraph is incredibly difficult.
+LLM quality is not a single accuracy. An **eval pipeline** is a CI job: frozen prompt sets, automatic graders (exact match, rubric LLM-as-judge, code tests), human spot checks, and a go/no-go threshold per suite.
 
-## 1. Static Benchmarks vs. Golden Datasets
-To know if an LLM update broke the system, you must run it through a Pipeline.
-- **Static Benchmarks (MMLU, HumanEval)**: Standardized academic tests. Useful for foundational models, but useless for business applications.
-- **Golden Datasets**: MLOps teams curate 1,000 highly specific, perfect Q&A pairs (e.g., 1,000 exact legal questions and their perfect legal answers). Every time the Prompt or the LLM is updated, the Pipeline mathematically forces the LLM to answer all 1,000 questions.
+## 1. Deep Dive and Mechanics
 
-## 2. LLM-as-a-Judge
-How do you grade the 1,000 answers? Human grading takes weeks.
-The industry standard is **LLM-as-a-Judge**. The Pipeline takes the Model's Answer, the Golden Answer, and feeds both into a massive, highly capable model (like GPT-4).
-GPT-4 is mathematically instructed: *"Score the Model's Answer from 1 to 5 based on its factual alignment with the Golden Answer. Ignore stylistic differences."*
-This automated mathematical scoring allows engineers to rapidly iterate on prompts and RAG architectures, getting a quantified score of the system's accuracy in minutes instead of months.
+**Suites.** Capability (GSM-style), product (your tickets), safety (red-team), and regression (bugs you already fixed). Each has an owner and a floor.
 
+**Graders.** Deterministic first (JSON schema, unit tests for tools). LLM-as-judge second, with a written rubric and a known bias. Humans on a sample.
+
+**Versioning.** Eval set id, prompt version, model id, judge id. Changing the judge is a new experiment.
+
+**Gating.** Block merge if safety suite drops. Warn if a capability suite drops inside noise.
+
+<Callout icon="warning" title="Judge-model incest">
+If the same family judges itself, scores inflate. Use a different judge vendor or a human-calibrated slice.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Each case i has score s_i in [0,1]. Report mean, bootstrap CI, and pairwise win-rate vs the last shipped prompt. Multiple suites are multiple hypotheses — do not average safety with poetry.
+
+LLM-as-judge agreement with humans is a kappa / correlation you should publish internally. If kappa is 0.3, you are measuring the judge.
+
+<ComparisonTable
+  headers={['Grader', 'Cheap?', 'Trust']}
+  rows={[
+    ['Exact / regex / schema', 'Yes', 'High for structured tasks'],
+    ['Unit tests on tools', 'Yes', 'High'],
+    ['LLM-as-judge', 'Medium', 'Needs calibration'],
+    ['Human raters', 'No', 'Gold, small n'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+def grade_json(output: str, required_keys: list[str]) -> float:
+    import json
+    try:
+        obj = json.loads(output)
+    except json.JSONDecodeError:
+        return 0.0
+    return float(all(k in obj for k in required_keys))
+```
+
+Put cases in `evals/product_v4.jsonl`. CI runs `eval run --suite product_v4 --prompt $SHA`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Change[Prompt or model PR] --> Suites[Eval suites]
+    Suites --> Gate{Thresholds}
+    Gate -->|pass| Merge[Merge / deploy]
+    Gate -->|fail| Block[Block plus traces]
+```
+
+## 5. Interview Prep
+
+**Q: Why not only production A/B?**
+**A:** A/B is slow and user-visible. Offline suites catch obvious regressions in minutes. You still A/B the ones that pass.
+
+**Q: How big should a suite be?**
+**A:** Large enough that a 3-point drop is not noise; small enough to run on every PR. Split: fast smoke + nightly wide.
+
+**Q: Can you eval agents the same way?**
+**A:** Yes, but grade trajectories (tool args, termination) not only final text.
+
+## 6. Production Use Cases
+
+- Prompt PRs on a support bot.
+- Model-router changes (small vs large).
+- RAG: retrieval hit-rate suite plus answer-grounding suite.
+
+<Callout icon="tip" title="Keep the failing traces">
+A red suite without stored outputs is not actionable. Save prompt, output, grader rationale.
+</Callout>

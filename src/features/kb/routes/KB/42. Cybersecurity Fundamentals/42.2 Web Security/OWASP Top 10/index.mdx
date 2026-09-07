@@ -1,42 +1,88 @@
 ---
 title: OWASP Top 10
-description: The industry-standard awareness document outlining the most critical security risks to web applications.
+description: "A consensus risk list of the most critical web application security classes, used as a training and coverage map — not a complete standard."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="OWASP Top 10">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-The Open Worldwide Application Security Project (OWASP) is a nonprofit foundation dedicated to software security. Their flagship publication, the **OWASP Top 10**, is universally recognized as the canonical list of the most dangerous and prevalent web application vulnerabilities.
+The **OWASP Top 10** is a periodically updated list of the most important web risk categories. The 2021 edition leads with **Broken Access Control**, then crypto failures, injection, insecure design, misconfiguration, vulnerable components, identification failures, software and data integrity, logging failures, and SSRF. Use it as a **coverage checklist**, not as the only thing you test.
 
-It is updated every few years (most recently in 2021) based on massive amounts of data collected from cybersecurity firms worldwide.
+## 1. Deep Dive and Mechanics
 
+OWASP aggregates CVE data, survey input, and incident themes. Each item is a **class**, not a single CVE. Injection covers SQL, command, and template injection. Cryptographic failures cover TLS, hashing, and random numbers. Insecure design covers missing threat models, not just missing patches.
 
-<Callout icon="warning" title="The Regulatory Standard">
+**How teams use it.** Map each product surface to the ten. Require at least one automated and one manual control per class. Pair with ASVS or a threat model for depth. Do not write "we are OWASP Top 10 compliant" as if it were ISO 27001.
 
+**2021 shifts.** Access control rose to #1. SSRF became its own item. XSS folded into injection. Integrity (CI/CD, unsigned updates) arrived as its own theme.
 
-  The OWASP Top 10 is not just advice; it is a regulatory benchmark. Frameworks like PCI-DSS explicitly mandate that developers be trained on the OWASP Top 10 and that applications are mathematically tested against these specific vulnerabilities before going to production.
-
-
+<Callout icon="info" title="Top 10 is not a pentest scope">
+A real review still includes business-logic abuse, race conditions, and your specific protocols. The list is the floor.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The 2021 Top 10 List
+The Top 10 is a risk ranking: roughly frequency times impact, filtered by what the community can measure. It is not a formal taxonomy (CWE is closer). Treat it as a prior over where to spend verification effort. Coverage metrics (percent of routes with authz tests) beat "we trained on the slide deck".
 
-1. **A01: Broken Access Control:** Users acting outside of their intended mathematical permissions.
-2. **A02: Cryptographic Failures:** Storing passwords in plaintext, or using deprecated algorithms like MD5.
-3. **A03: Injection:** Malicious data being sent to an interpreter (like SQLi or XSS).
-4. **A04: Insecure Design:** Missing security controls at the architectural level.
-5. **A05: Security Misconfiguration:** Default passwords left unchanged, verbose error messages.
-6. **A06: Vulnerable and Outdated Components:** Using old npm packages with known CVEs.
-7. **A07: Identification and Authentication Failures:** Weak password policies, lack of MFA.
-8. **A08: Software and Data Integrity Failures:** Deserialization flaws, CI/CD pipeline compromise.
-9. **A09: Security Logging and Monitoring Failures:** Not logging critical events, allowing attackers to remain hidden.
-10. **A10: Server-Side Request Forgery (SSRF):** Forcing the server to make arbitrary HTTP requests on the attacker's behalf.
+<ComparisonTable
+  headers={['2021 item', 'Example control', 'Common miss']}
+  rows={[
+    ['A01 Access control', 'Server-side policy tests', 'UI-only hiding'],
+    ['A02 Crypto', 'TLS 1.3 + Argon2id', 'Home-rolled tokens'],
+    ['A03 Injection', 'Parameterized APIs', 'String-built SQL'],
+    ['A10 SSRF', 'Egress allowlist', 'Open URL fetch'],
+  ]}
+/>
 
+## 3. Real-World Implementation
+
+```python
+# Tiny mapping used in a security review checklist
+CONTROLS = {
+    'A01': 'authz tests for every object route',
+    'A02': 'TLS min version + KMS envelopes',
+    'A03': 'no string-built SQL or shell',
+    'A07': 'session rotation + MFA for admin',
+}
+```
+
+Turn each line into a CI check or a quarterly audit question with an owner.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Data[CVE + survey] --> Rank[OWASP ranking]
+    Rank --> Train[Training]
+    Rank --> Tests[Test coverage map]
+    Tests --> ASVS[Deeper ASVS / threat model]
+```
+
+## 5. Interview Prep
+
+**Q: Why is access control number one?**
+**A:** High incidence, high impact, weak automation. Almost every new endpoint can get it wrong.
+
+**Q: Top 10 vs SANS Top 25 vs CWE?**
+**A:** Top 10 is outreach and coverage. CWE is the dictionary. SANS Top 25 is weakness types often seen in code.
+
+**Q: Does passing a scanner mean you passed the Top 10?**
+**A:** No. Scanners miss design and access control. You need tests and review.
+
+## 6. Production Use Cases
+
+- **Onboarding** engineers to AppSec.
+- **Vendor questionnaires** as a shared vocabulary.
+- **Quarterly** gap analysis against your actual bugs.
+
+<Callout icon="tip" title="Track your own top 10">
+Your last two years of tickets beat a global list. Use OWASP to notice blind spots, then prioritize local data.
+</Callout>

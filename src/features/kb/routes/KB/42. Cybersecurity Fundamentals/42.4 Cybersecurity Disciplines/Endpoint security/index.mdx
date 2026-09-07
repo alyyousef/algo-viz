@@ -1,35 +1,87 @@
 ---
 title: Endpoint Security
-description: The practice of securing end-user devices such as desktops, laptops, and mobile devices from being exploited by malicious actors.
+description: "Controls on laptops, servers, and phones that detect, contain, and recover from host-level abuse."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Endpoint Security">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-An **Endpoint** is any physical device that connects to the corporate network. It is almost always the weakest link in the mathematical security chain because it is operated by a human who might click on a phishing email.
+**Endpoint security** is the stack on the device: disk encryption, patching, application control, EDR telemetry, and a path to wipe or reimage. The network perimeter no longer sees most work. If the laptop is the office, the laptop is the control point.
 
-Historically, Endpoint Security just meant installing basic Antivirus software. Today, because malware mutates so rapidly, signature-based Antivirus is largely obsolete. It has been replaced by Endpoint Detection and Response (EDR).
+## 1. Deep Dive and Mechanics
 
+**Prevent.** Full-disk encryption, secure boot, screen lock, and a current OS. Remove local admin for standard users. Allow-list what you can; do not depend on users to "not click."
 
-<Callout icon="info" title="EDR vs Antivirus">
+**Detect.** EDR records process trees, unsigned loaders, and odd network beacons. It is telemetry plus response (kill process, isolate host), not a 2009 antivirus signature file alone.
 
+**Recover.** You must be able to revoke the device certificate, wipe, and restore from a known-good image. Isolation without a rebuild plan just parks malware.
 
-  Traditional Antivirus relies on mathematical signatures (comparing a file\'s hash to a list of known bad hashes). **EDR** (like CrowdStrike or SentinelOne) relies on behavioral analysis. Even if a file has never been seen before in history, the EDR will block it if it behaves maliciously (e.g., trying to silently encrypt the "My Documents" folder).
-
-
+<Callout icon="info" title="EDR is not a substitute for patching">
+A current kernel and browser kill more commodity worms than any dashboard.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Core Capabilities of EDR
+Detection is a classifier over host events with a false-positive cost (helpdesk) and a false-negative cost (dwell time). Isolation is a graph cut: remove the node from the corporate identity and network overlays. Disk encryption makes confidentiality of a stolen laptop a key-management problem (escrow, TPM) rather than a hope.
 
+<ComparisonTable
+  headers={['Control', 'Primary CIA', 'Failure mode']}
+  rows={[
+    ['Disk encryption', 'Confidentiality', 'Unlocked and logged in'],
+    ['Patch + hardening', 'Integrity', 'Unmaintained golden image'],
+    ['EDR isolate', 'Availability trade', 'No offline rebuild path'],
+    ['MDM wipe', 'Confidentiality', 'Device never enrolled'],
+  ]}
+/>
 
-<ComparisonTable headers={['Capability', 'Description']} rows={[ ['Continuous Monitoring', 'The EDR agent mathematically records every process spawned, every registry key changed, and every network connection made by the endpoint.'], ['Automated Mitigation', 'If malicious behavior is detected, the EDR can automatically kill the process, quarantine the file, and mathematically isolate the laptop from the rest of the network.'], ['Threat Hunting', 'Allows SOC analysts to remotely query the mathematical state of thousands of endpoints simultaneously (e.g., "Show me every laptop that currently has a process named `mimikatz.exe` running").'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Baseline for a corporate laptop
+# - FileVault / BitLocker with escrowed recovery
+# - MDM enrollment required for mail and SSO
+# - EDR sensor, tamper protection on
+# - Local admin removed; just-in-time elevation
+```
 
+Servers need the same idea: gold images, no standing admin, and a sensor that cannot be quietly uninstalled.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Dev[Device] --> Enc[Disk encryption]
+    Dev --> MDM[MDM policy]
+    Dev --> EDR[EDR sensor]
+    EDR --> SOC[SOC]
+    SOC --> Iso[Isolate / wipe]
+```
+
+## 5. Interview Prep
+
+**Q: AV vs EDR?**
+**A:** AV is mostly known-bad files. EDR keeps a process and network timeline and can contain the host.
+
+**Q: Why remove local admin?**
+**A:** Most commodity malware wants a write to Program Files or a driver. Standard users shrink that.
+
+**Q: BYOD?**
+**A:** Then you need containerization or a VDI. You cannot EDR a personal phone you do not own.
+
+## 6. Production Use Cases
+
+- **Workforce laptops** with MDM + EDR + disk encryption.
+- **Jump boxes** with extra logging and no email client.
+- **Kiosks** that reimage on a timer.
+
+<Callout icon="tip" title="Test isolate on a canary host">
+A button you have never pressed will fail during the incident.
+</Callout>

@@ -1,29 +1,95 @@
 ---
 title: Subtype Polymorphism
-description: The most common form of mathematical polymorphism in Object-Oriented Programming, allowing code written to operate on a parent type to seamlessly and safely operate on any inherited child type.
+description: "Using a value of a more specific type where a more general type is expected, with runtime dispatch to the receiver's methods."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Subtype Polymorphism"
-  subtitle="The Power of the Parent Interface"
-  tags={['OOP', 'Polymorphism', 'Type Theory', 'Design Patterns']}
->
+    <ConceptTemplate title="Subtype Polymorphism">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Subtype polymorphism (often simply called "Polymorphism" in Java/C#) is the mathematical mechanism that makes the Dependency Inversion Principle (DIP) and the Open-Closed Principle (OCP) physically possible.
+**Subtype polymorphism** is the OOP classic: a variable of type `Shape` may hold a `Circle` or a `Square`, and `draw` runs the version that belongs to the actual object.
 
-## 1. The Mathematical Guarantee
-If you write a function `public void drawShape(Shape s)`, the compiler mathematically guarantees that whatever object is passed in will possess the methods defined in the `Shape` interface.
-Because a `Circle` is a mathematical subtype of `Shape`, you can pass a `Circle` into this function. The function is completely ignorant of the fact that it is interacting with a Circle. It only knows it is holding a Shape.
+## 1. Deep Dive and Mechanics
 
-## 2. Late Binding (Dynamic Dispatch)
-When the function executes `s.draw()`, the CPU performs **Late Binding**.
-It mathematically pauses, looks at the actual object sitting in RAM (the Circle), looks up the Circle's specific `draw()` method in the virtual method table (vtable), and executes it. This allows the architect to write rigid, type-safe code (`drawShape(Shape s)`) while allowing the program to exhibit highly dynamic, flexible behavior at runtime.
+The compiler checks that the static type has the method. The runtime looks at the object's class (or prototype) and jumps to the override. That lookup is **dynamic dispatch** / **virtual call**.
 
+**Inclusion.** Every Circle is a Shape in the type system if Circle is declared a subtype. The set of Circle values is treated as a subset of Shape values. LSP is the behavioral half of that claim.
+
+**Open addition.** You can add `Triangle` later without editing the loop that calls `draw`. That is the Open-Closed Principle in the small.
+
+<Callout icon="info" title="The static type still matters">
+Dispatch uses the receiver's runtime class. Overload resolution does not. Mixing both on the same API is how people conclude "Java is broken."
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A type S is a subtype of T (S <: T) when every context that expects T remains safe with an S. For function types, arguments are contravariant and returns are covariant.
+
+Virtual dispatch is a map from concrete class to method body. A vtable makes that map an array load plus an indirect jump, amortized O(1).
+
+<ComparisonTable
+  headers={['Mechanism', 'What varies', 'Bound statically']}
+  rows={[
+    ['Subtype / virtual', 'Receiver implementation', 'Method exists on static type'],
+    ['Overload', 'Compile-time signature', 'Exact argument types'],
+    ['Generic method', 'Type argument', 'Bounds on T'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Shape:
+    def draw(self):
+        raise NotImplementedError
+
+class Circle(Shape):
+    def draw(self):
+        return "circle"
+
+class Square(Shape):
+    def draw(self):
+        return "square"
+
+def render_all(shapes):
+    return [s.draw() for s in shapes]
+```
+
+`render_all` never mentions Circle or Square. New shapes plug in as long as they honor `draw`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Var[Static type Shape] --> Obj[Runtime Circle]
+    Obj --> VT[Circle vtable]
+    VT --> Impl[Circle.draw]
+```
+
+## 5. Interview Prep
+
+**Q: Is inheritance required for subtype polymorphism?**
+**A:** Nominally, you need a declared subtype relation (class or interface). Structurally, matching methods are enough. Either way the runtime still dispatches on the actual object.
+
+**Q: What breaks subtyping?**
+**A:** A subclass that throws new unchecked errors, weakens postconditions, or strengthens preconditions. That is an LSP failure: the extra type is not a true subtype.
+
+**Q: Virtual versus static methods?**
+**A:** Static methods are namespaced functions. They do not dispatch on the receiver. Calling a static through a subclass name is not polymorphism.
+
+## 6. Production Use Cases
+
+- **Payment methods**, shipping carriers, and tax engines behind one interface.
+- **UI widgets** drawn through a shared `paint` on a heterogeneous list.
+- **Plugin handlers** registered by interface and invoked without a switch on type names.
+
+<Callout icon="tip" title="Design the parent for the callers you have">
+If every caller immediately casts to the child, you do not have subtype polymorphism. You have a tagged union in denial.
+</Callout>

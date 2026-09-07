@@ -26,30 +26,29 @@ Each upgraded `.mdx` file will strictly adhere to the following structure:
 3. **Hydration**: The script writes the new content directly into the `.mdx` files, overwriting the old, shallow content.
 4. **Tracker Update**: The script automatically moves the processed paths from the `pending` array to the `completed` array in `progress.json`.
 
-## Current status (2026-09-05)
+## Current status (2026-09-07, continued)
 
-**Paused here.** Resume next session from the top of `pending` in `scripts/deep-dives/progress.json`.
+The user asked to keep filling pages without stopping. Resume from the top of `pending`.
 
 |                          | Count |
 | ------------------------ | ----: |
-| Deep-dived (`completed`) |   929 |
-| Still pending            |  1694 |
+| Deep-dived (`completed`) |  1715 |
+| Still pending            |   907 |
 | Tracked total            |  2623 |
 
-**Last finished section:** **32. Computer Vision** (all 24 topic pages).
+**Resume at:** **45. Parallel & Concurrent Computing** — first pending file:
 
-**Resume at:** **33. Reinforcement Learning** — first pending file:
+`src/features/kb/routes/KB/45. Parallel & Concurrent Computing/Actor model/index.mdx`
 
-`src/features/kb/routes/KB/33. Reinforcement Learning/Actions/index.mdx`
-
-This session (2026-09-05) upgraded these sections in order:
+Batches through 2026-09-07:
 
 1. **3.1 Paradigms** (10 pages)
 2. **3.2 Language Design & Theory** (15 pages)
 3. **30. RAG & Retrieval** (15 pages)
 4. **31. AI Agent Systems** (19 pages)
 5. **32. Computer Vision** (24 pages)
+6. **33. Reinforcement Learning** (21 pages)
 
 Tracker has no duplicates and no completed/pending overlap. Keep moving `pending` → `completed` after each batch.
 
-We will continue pulling from the `pending` list (next: **Reinforcement Learning**) until the entire Knowledge Base is deeply hydrated.
+We will continue pulling from the `pending` list until the entire Knowledge Base is deeply hydrated. Do not stop after one section if the user asked to continue recursively.

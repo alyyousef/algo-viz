@@ -1,23 +1,89 @@
 ---
-title: Oracle Cloud Database Services
-description: The premier, mathematically optimized hosting environment for traditional Oracle Databases (like RAC and Exadata) in the cloud, offering unparalleled performance over on-premise deployments.
+title: Oracle Database on OCI
+description: "BaseDB, Exadata, RAC, and Autonomous: the same SQL engine with different ops contracts — pick the isolation and patching you can staff."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Oracle Cloud Database Services"
-  subtitle="Enterprise Database Hosting"
-  tags={['OCI', 'Database', 'Oracle', 'Exadata']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Oracle Database on OCI">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-While the Autonomous Database is fully self-driving, many enterprises have massive, complex legacy Oracle Databases (like 11g or 12c) that cannot be instantly modernized. OCI provides specialized infrastructure to host these legacy systems.
+**Oracle Database** on OCI ranges from a VM **BaseDB** you patch, to **Exadata Cloud** (dedicated or infrastructure-as-service), to **RAC**, to **Autonomous**. The engine is Oracle SQL, redo, and RMAN-shaped backups. The product choice is who owns the OS, the Grid, and the patching window.
 
-## 1. Exadata Cloud Service (ExaCS)
-In the on-premise world, Oracle Exadata is a massive, multi-million dollar physical rack of servers mathematically engineered purely to run Oracle Databases at blistering speeds.
-In OCI, you can rent an **Exadata Cloud Service**. You are mathematically renting a dedicated fraction (or the entirety) of a physical Exadata rack sitting in the Oracle Cloud data center. It provides the exact same hyper-fast RDMA network and NVMe flash cache as an on-premise Exadata, allowing you to lift-and-shift massive, mission-critical financial databases to the cloud with zero mathematical performance degradation.
+## 1. Deep Dive and Mechanics
 
-## 2. Real Application Clusters (RAC)
-Oracle RAC mathematically clusters multiple physical servers into a single logical database. If Node 1 physically explodes, Node 2 continues serving transactions instantly.
-Running Oracle RAC on AWS or Azure is mathematically and architecturally very difficult (and often unsupported) due to the lack of shared block storage and multicast networking. OCI mathematically supports RAC natively on both Virtual Machines and Bare Metal servers, providing the only truly native cloud environment for high-availability legacy Oracle workloads.
+**BaseDB.** A managed VM (or BM) with Oracle installed. You get more parameter control and more homework. Data Guard for HA/DR.
 
-</TechnologyTemplate>
+**Exadata.** Smart Scan and storage offload for the warehouse/OLTP mixes that justified Exadata on-prem. Cloud@Customer exists when data cannot leave the building.
+
+**RAC.** Multiple instances, one database, shared storage. Needs the network and fencing story. Not a casual checkbox.
+
+**Licensing.** BYOL vs included. This is often the real architecture constraint.
+
+<Callout icon="warning" title="Autonomous is still Oracle">
+Hints, plans, and concurrency math did not vanish. Autonomy removes patch panic, not a bad data model.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Redo apply lag is the DR number. Async Data Guard has RPO greater than zero. Sync has a latency tax on commit.
+
+RAC cache fusion: extra instances are not linear TPS. Interconnect latency shows up as cluster waits.
+
+<ComparisonTable
+  headers={['Offer', 'You patch', 'When']}
+  rows={[
+    ['Autonomous', 'Little', 'Default new OLTP/WH'],
+    ['BaseDB', 'More', 'Custom agents / versions'],
+    ['Exadata', 'Infra split', 'Exadata features / scale'],
+    ['On-prem C@C', 'Shared', 'Residency'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```sql
+SELECT name, open_mode, database_role FROM v$database;
+-- Data Guard / RAC health belongs in OEM or OCI Database Management
+```
+
+Backup policy and Data Guard membership should be Terraform plus a runbook, not a verbal "we have RMAN."
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    App --> Scan[SCAN / service]
+    Scan --> I1[Instance 1]
+    Scan --> I2[Instance 2]
+    I1 --> Stor[Shared / Exadata storage]
+    I2 --> Stor
+    I1 --> DG[Data Guard standby]
+```
+
+## 5. Interview Prep
+
+**Q: Why OCI for Oracle?**
+**A:** Licensing, RAC/Exadata availability, and Autonomous. Other clouds run Oracle too; OCI is where Oracle invests the most metal.
+
+**Q: RAC vs Autonomous HA?**
+**A:** RAC is multiple instances you understand. Autonomous HA is Oracle-operated. Interviews want RPO/RTO, not brand loyalty.
+
+**Q: BaseDB vs Autonomous?**
+**A:** BaseDB if you need old versions or exotic agents. Autonomous if you want to stop owning patch Tuesday.
+
+## 6. Production Use Cases
+
+- ERP that is certified on a specific Oracle version (BaseDB or Exa).
+- Exadata Cloud for a lift of an on-prem Exa workload.
+- Autonomous for a new internal OLTP that must stay Oracle SQL.
+
+<Callout icon="tip" title="Write RPO before you pick RAC">
+People buy RAC for 'HA' when Data Guard to another AD was the actual requirement. Different problem.
+</Callout>

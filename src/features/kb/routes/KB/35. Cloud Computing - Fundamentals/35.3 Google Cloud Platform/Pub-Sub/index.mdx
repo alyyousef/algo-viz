@@ -1,26 +1,100 @@
 ---
 title: Google Cloud Pub/Sub
-description: A globally distributed, mathematically durable messaging bus designed for asynchronous microservice decoupling and real-time streaming analytics at massive scale.
+description: "Global topics and subscriptions: publish once, fan out to many consumers with ack deadlines, ordering keys, and dead-letter topics — at-least-once unless you opt into exactly-once."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Cloud Pub/Sub"
-  subtitle="Global Message Brokering"
-  tags={['GCP', 'Messaging', 'Events', 'Streaming']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Cloud Pub/Sub">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Pub/Sub is Google's answer to both AWS SNS (broadcasting) and AWS SQS (queuing). It unifies these paradigms into a single, massively scalable mathematical architecture that requires zero provisioning.
+**Pub/Sub** is a managed messaging bus. Producers publish to a **topic**. Each **subscription** gets its own copy of the stream. Pull consumers lease messages until they **ack**. Push subscriptions HTTP POST to an endpoint. Lite is a cheaper zonal variant with different durability math.
 
-## 1. Topics and Subscriptions
-The architecture is mathematically elegant:
-- **Publishers** send messages to a **Topic**.
-- **Subscribers** receive messages from a **Subscription** attached to that Topic.
-If an IoT device publishes a temperature reading to the `SensorTopic`, Pub/Sub mathematically duplicates that message to every Subscription attached to the topic. The "Alerting Subscription" pushes the message instantly to a Cloud Function. The "Analytics Subscription" safely queues the message until a Dataflow batch job wakes up and pulls it. This completely decouples the producers from the consumers.
+## 1. Deep Dive and Mechanics
 
-## 2. At-Least-Once Delivery
-Pub/Sub mathematically guarantees **At-Least-Once Delivery**.
-When a Subscriber receives a message, the message is not deleted; it is temporarily hidden. The Subscriber must process the message and mathematically send an **Acknowledgement (ACK)** back to Pub/Sub.
-If the Subscriber crashes and fails to send the ACK before the deadline, Pub/Sub mathematically assumes the message was not processed and redelivers it. Because of distributed system realities, Pub/Sub might occasionally deliver the exact same message twice; therefore, downstream microservices *must* be mathematically idempotent (handling duplicates safely).
+**Fan-out.** One topic, N subscriptions, N independent progress cursors. A slow analytics subscriber does not block the paging subscriber.
 
-</TechnologyTemplate>
+**Delivery.** Default is at-least-once. Unacked messages redeliver after the ack deadline. Exactly-once delivery is an opt-in on the subscription with stricter APIs and regional limits. Ordering keys serialize messages that share a key; they also create hot keys if you pick a low-cardinality field.
+
+**Retention and seek.** Topics retain for a configured window. Seek rewinds a subscription to a time or snapshot. Dead-letter topics catch poison messages after max delivery attempts.
+
+**Filters.** Subscription filters drop unmatched messages server-side so you do not pay to pull junk. Schema and SMTs (where enabled) catch bad producers early.
+
+<Callout icon="warning" title="Idempotency is not optional">
+Redelivery is normal. A payment handler that charges on every delivery is a duplicate-charge bug. Dedup on message id plus your own event id.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Ack deadline is a lease. Too short: redelivery while still working. Too long: poison sits invisible. Exponential backoff on nack is a retry policy, not a fairness guarantee.
+
+Throughput per ordering key is bounded. Global topic throughput is high; a single key is a queue. That is the same hotspot math as a sharded log.
+
+<ComparisonTable
+  headers={['Need', 'Pub/Sub', 'Elsewhere']}
+  rows={[
+    ['Fan-out + queue', 'Topic + subscriptions', 'SNS + SQS'],
+    ['Replay', 'Seek / snapshot', 'Kafka consumer offset'],
+    ['Cheap zonal', 'Pub/Sub Lite', 'MSK / self-managed'],
+    ['Exactly-once', 'Opt-in subscription', 'Transactional outbox'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```javascript
+const { PubSub } = require("@google-cloud/pubsub");
+const pubsub = new PubSub();
+
+await pubsub.topic("orders").publishMessage({
+  json: { orderId: "o-9", total: 42 },
+  orderingKey: "customer-17",
+});
+
+const sub = pubsub.subscription("orders-fulfillment");
+sub.on("message", async (msg) => {
+  await fulfill(msg.json);
+  msg.ack();
+});
+```
+
+Ack only after side effects succeed. On failure, nack or let the lease expire.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Pub[Publisher] --> Topic[Topic]
+    Topic --> SubA[Push subscription]
+    Topic --> SubB[Pull subscription]
+    SubA --> Fn[Cloud Function]
+    SubB --> Df[Dataflow]
+    SubB --> DLQ[Dead-letter topic]
+```
+
+## 5. Interview Prep
+
+**Q: SNS vs SQS vs Pub/Sub?**
+**A:** Pub/Sub is both fan-out (many subscriptions) and a durable queue (unacked pull). AWS splits that into SNS and SQS. Same design: one produce path, independent consumers.
+
+**Q: When do you use ordering keys?**
+**A:** Per-entity FIFO (one user, one device). Never use a constant key or you serialize the world.
+
+**Q: Push or pull?**
+**A:** Push for serverless endpoints with IAM auth. Pull for workers that control concurrency and batching.
+
+## 6. Production Use Cases
+
+- Order events: fulfillment pull, analytics Dataflow, audit log — three subscriptions.
+- IoT ingest at global scale with filters per device type.
+- Event-driven Cloud Functions on push subscriptions with OIDC audience checks.
+
+<Callout icon="tip" title="Create the subscription before the traffic">
+Messages published with zero subscriptions are dropped. Provision topics and subscriptions in the same Terraform apply.
+</Callout>

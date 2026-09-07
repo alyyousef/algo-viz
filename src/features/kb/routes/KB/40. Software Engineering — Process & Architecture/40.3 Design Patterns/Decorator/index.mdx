@@ -1,29 +1,96 @@
 ---
-title: Decorator Pattern
-description: A Structural Design Pattern from the Gang of Four (GoF) that mathematically allows behavior to be added to an individual object, dynamically at runtime, without affecting the behavior of other objects from the same class.
+title: Decorator
+description: "A structural pattern that wraps an object to add behaviour while keeping the same interface — stacking wrappers instead of exploding subclasses."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Decorator Pattern"
-  subtitle="Dynamic Mathematical Wrapping"
-  tags={['Design Patterns', 'Structural', 'GoF', 'Architecture']}
->
+    <ConceptTemplate title="Decorator">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If you have a `Coffee` class and you want to add Milk, Sugar, or Vanilla, using mathematical inheritance requires creating `CoffeeWithMilk`, `CoffeeWithMilkAndSugar`, etc. This causes a mathematical explosion of subclasses.
+**Decorator** (GoF) attaches additional responsibilities to an object dynamically. A `Stream` can be wrapped by `Buffered`, then `Gzip`, then `Cipher`, each implementing the same `Stream` interface and delegating to the inner one.
 
-## 1. The Wrapper
-The Decorator pattern solves this using Composition. You create a `CoffeeDecorator` class that mathematically implements the exact same `ICoffee` interface as the base `Coffee` class, but it *also* takes an `ICoffee` object in its constructor (wrapping it).
+## 1. Deep Dive and Mechanics
 
-## 2. Runtime Stacking
-If you create a `MilkDecorator`, its `getCost()` method mathematically executes `return this.wrappedCoffee.getCost() + 0.50;`.
-At runtime, you can instantiate a base `Coffee`, wrap it in a `MilkDecorator`, and then wrap *that* in a `SugarDecorator`.
-The client simply calls `getCost()` on the outermost wrapper. The call mathematically drills down through the layers like a Matryoshka doll, returning the dynamically calculated total, completely bypassing the need for static inheritance. (This is the architectural basis of Java's `InputStream` libraries).
+**Same interface.** The wrapper is substitutable for the wrappee. Clients hold the outer reference and never know how many layers exist.
 
+**Stacking.** Order matters (compress then encrypt is not encrypt then compress). Construction is usually at the composition root.
+
+**Versus inheritance.** `BufferedEncryptedFileStream` as a subclass explosion dies the moment you need another combination. Decorators compose linearly.
+
+**Language sugar.** Python decorators and JS HOFs are related: they wrap callables. The GoF object decorator wraps instances with a shared interface.
+
+<Callout icon="warning" title="Identity and equality">
+Wrapping breaks object identity. If something must be `==` to the core instance, a decorator will surprise you. Prefer wrapping at the port, not around entities with identity.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Function composition.** Each decorator is a function f: T → T on the behaviour of the interface. Stacking is f ∘ g ∘ h. Associative, not commutative.
+
+**Open-closed.** You add behaviour by new wrappers, not by editing the core class. The core stays closed.
+
+**Overhead.** Each layer is a virtual call. Deep stacks (twenty AOP wrappers) cost and confuse traces. Keep the stack intentional.
+
+<ComparisonTable
+  headers={['Pattern', 'Structure', 'Intent']}
+  rows={[
+    ['Decorator', 'Chain of same type', 'Add behaviour'],
+    ['Adapter', 'New type', 'Change interface'],
+    ['Proxy', 'Same type', 'Control access'],
+    ['Composite', 'Tree', 'Part-whole'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Stream:
+    def write(self, data):
+        raise NotImplementedError
+
+class GzipStream(Stream):
+    def __init__(self, inner):
+        self.inner = inner
+
+    def write(self, data):
+        self.inner.write(gzip_bytes(data))
+```
+
+`CipherStream(GzipStream(FileStream(path)))` is a stack, not a new subclass.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Client[Client] --> D1[Cipher decorator]
+    D1 --> D2[Gzip decorator]
+    D2 --> Core[File stream]
+```
+
+## 5. Interview Prep
+
+**Q: Decorator versus Proxy?**
+**A:** Both wrap and implement the same interface. Proxy controls access (lazy load, remote, auth). Decorator adds features the client wants. A caching proxy sits on the line.
+
+**Q: Decorator versus subclassing?**
+**A:** Subclassing is compile-time and single-axis. Decorators are runtime and combinable. Use subclassing for true is-a variation, not for optional features.
+
+**Q: Where do you see it in Java I/O?**
+**A:** `InputStream` wrappers (`BufferedInputStream`, `GZIPInputStream`) are the textbook library.
+
+## 6. Production Use Cases
+
+- **I/O and middleware** (metrics, retries, auth around a port).
+- **UI** (scroll, border, theme around a widget).
+- **Feature flags** that wrap an implementation with a no-op or a canary.
+
+<Callout icon="tip" title="Decorate interfaces, not concrete bags">
+If the type has fifty methods, a honest decorator is a lot of forwarding. Keep the interface small or generate the forwarder.
+</Callout>

@@ -1,40 +1,85 @@
 ---
-title: ARP Spoofing (ARP Poisoning)
-description: A Man-in-the-Middle attack where a malicious actor sends falsified ARP (Address Resolution Protocol) messages over a local area network.
+title: ARP Spoofing
+description: "Forged ARP replies that steal a LAN IPv4-to-MAC mapping so traffic detours through an attacker host."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="ARP Spoofing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-On a local network (like office WiFi), computers do not communicate using IP addresses; they mathematically use hardware MAC addresses.
+**ARP spoofing** (ARP cache poisoning) targets IPv4 Ethernet LANs. Hosts cache IP-to-MAC mappings from Address Resolution Protocol replies and often accept unsolicited updates. A host that lies about a gateway IP can become a path for traffic. Defense is **do not trust open L2**: dynamic ARP inspection, static mappings for gateways, 802.1X, and encrypt above L2 with TLS.
 
-The **Address Resolution Protocol (ARP)** is how a computer asks the network: "Who has IP address 192.168.1.1? Please reply with your MAC address."
+## 1. Deep Dive and Mechanics
 
-Because ARP was designed in the 1980s, it has absolutely zero mathematical authentication. Anyone can lie.
+When A wants to reach 192.0.2.1, it asks who has that IP. Anyone on the broadcast domain can answer. Many stacks overwrite the cache. After a false MAC is installed, frames for that IP go to the liar. Combined with IP forwarding, this is a classic on-path position on a flat LAN.
 
+**Where it works.** Shared L2 (cafe Wi-Fi, poorly segmented offices, some cloud "classic" networks). **Where it dies.** L2 isolation (private VLANs, wireless client isolation), DHCP snooping + DAI on campus switches, and overlays that do not use ARP the same way.
 
-<Callout icon="error" title="The Poisoning Process">
+**You cannot "ARP-secure the internet".** This is a local-link problem. Users on hostile LANs need TLS and VPNs, not a hope that ARP is honest.
 
-
-  In an **ARP Spoofing** attack, the hacker's computer constantly shouts false ARP replies into the network:
-  1. It tells the Victim: "I am the Router" (so the victim sends their web traffic to the hacker).
-  2. It tells the Router: "I am the Victim" (so the router sends the web replies to the hacker).
-  The hacker is now a perfect Man-in-the-Middle.
-
-
+<Callout icon="info" title="IPv6 uses NDP, not ARP">
+Neighbor Discovery has its own spoofing story. SEND exists; in practice you still isolate L2 and encrypt.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Mitigation Strategies
+ARP is an unauthenticated broadcast mapping. There is no signature and no nonce binding a reply to a request in the original protocol. Security is therefore **environmental**: shrink the broadcast domain and police who may originate ARP. Encryption at L3/L7 does not stop diversion; it stops reading and changing plaintext.
 
+<ComparisonTable
+  headers={['Control', 'Layer', 'Effect']}
+  rows={[
+    ['Dynamic ARP inspection', 'L2 switch', 'Drops forged ARP vs DHCP binding'],
+    ['Static ARP for gateway', 'Host / switch', 'Stops casual gateway theft'],
+    ['Client isolation', 'Wi-Fi AP', 'Stations cannot ARP each other'],
+    ['TLS / SSH / VPN', 'L5-L7', 'Diverted traffic stays unreadable'],
+  ]}
+/>
 
-<ComparisonTable headers={['Strategy', 'Description']} rows={[ ['Dynamic ARP Inspection (DAI)', 'A security feature built into enterprise network switches. The switch mathematically maintains a secure database of valid IP-to-MAC bindings and instantly drops any spoofed ARP packets.'], ['Static ARP Entries', 'Hardcoding the router\'s MAC address into the operating system\'s ARP cache. Mathematically secure, but impossible to manage at scale.'], ['VPN / TLS', 'While it doesn\'t stop the spoofing itself, enforcing end-to-end encryption mathematically ensures that even if the attacker intercepts the traffic, they cannot read or alter it.'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Operator checklist (campus access switch)
+# 1. Enable DHCP snooping and trust only the real DHCP uplink
+# 2. Turn on DAI for user VLANs
+# 3. Disable unused switch ports and require 802.1X
+```
 
+On endpoints, prefer always-on TLS and a corporate VPN when the LAN is not yours.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    H[Host] --> SW[Switch L2]
+    GW[Real gateway] --> SW
+    Bad[Forged ARP: gateway is my MAC] --> H
+    H --> Bad
+```
+
+## 5. Interview Prep
+
+**Q: Does HTTPS stop ARP spoofing?**
+**A:** It stops the attacker from reading or modifying HTTP. It does not stop them from being on path, dropping packets, or attacking other cleartext protocols.
+
+**Q: Why is this rare in well-built clouds?**
+**A:** Hypervisors and SDN program MAC tables and isolate tenant L2. You do not share a promiscuous broadcast domain with strangers.
+
+**Q: ARP spoofing vs MITM?**
+**A:** Spoofing is one way to become MITM on a LAN. MITM is the broader on-path role.
+
+## 6. Production Use Cases
+
+- **Campus access** networks with DAI.
+- **Guest Wi-Fi** with client isolation.
+- **Incident response** when a NIC is in promiscuous mode on a flat VLAN.
+
+<Callout icon="tip" title="Encrypt first, segment second">
+You will not DAI every cafe. Assume hostile L2 for laptops and require TLS plus a VPN for corp apps.
+</Callout>

@@ -1,23 +1,91 @@
 ---
-title: Oracle Kubernetes Engine (OKE)
-description: Oracle's fully managed, highly available Kubernetes container orchestration service mathematically designed to run enterprise-grade microservices on OCI's high-performance compute infrastructure.
+title: OCI Container Engine for Kubernetes (OKE)
+description: "Managed Kubernetes: control plane Oracle runs, node pools you size, VCN-native pods — plus IAM for the kube API."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Oracle Kubernetes Engine (OKE)"
-  subtitle="Managed Kubernetes on OCI"
-  tags={['OCI', 'Kubernetes', 'Containers', 'Compute']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Container Engine for Kubernetes">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Managing a Kubernetes Control Plane (the API server, etcd database, and scheduler) is mathematically complex and failure-prone. OKE abstracts this entirely, providing a production-ready Kubernetes cluster in minutes.
+**OKE** is managed Kubernetes on OCI. Oracle runs the control plane. You create **node pools** (or virtual nodes) in your VCN, plus CNI (native VNIC-per-pod or flannel-style). kubectl auth is OCI IAM or a kubeconfig token flow. It is EKS/GKE/AKS for this cloud.
 
-## 1. The Free Control Plane
-Unlike AWS EKS (which historically charged an hourly fee just for the Control Plane), OCI provides the OKE Control Plane mathematically **for free**.
-Oracle manages the high-availability Master Nodes completely invisibly. You are only billed for the raw OCI Compute instances (the Worker Nodes) that physically run your Docker containers. This makes OKE highly cost-effective for enterprises running dozens of small, isolated Kubernetes clusters.
+## 1. Deep Dive and Mechanics
 
-## 2. Virtual Nodes (Serverless Kubernetes)
-Historically, you had to manually provision OCI Virtual Machines to act as Worker Nodes. If you provisioned too many, you wasted money.
-OKE now supports **Virtual Nodes**. This mathematically eliminates the underlying Virtual Machines. You simply submit a standard Kubernetes Pod definition to the OKE API. The OCI Control Plane mathematically intercepts it and spins up a hyper-isolated, serverless micro-VM for that exact Pod. The Pod receives a native IP address from the VCN, but there are no physical servers for you to SSH into, patch, or manage, drastically reducing operational overhead.
+**Cluster types.** Basic vs enhanced, public or private API endpoint. Private API needs a bastion or VPN to talk to the control plane.
 
-</TechnologyTemplate>
+**Networking.** VCN-native pods consume IPs from a subnet — plan CIDRs like GKE alias IPs. NSGs on node and pod VNICs replace a lot of kube-proxy folklore.
+
+**Add-ons.** CCM talks to OCI LB and block volumes. CSI for disks and FSS. Cluster autoscaler as a deployment you still watch.
+
+**Identity.** Instance principals on nodes for OCI APIs. Workload identity options exist so pods are not the node.
+
+<Callout icon="warning" title="Pod CIDR exhaustion">
+VCN-native clusters die with "failed to assign IP" when the pod subnet is /24 and you scheduled 300 pods. Size the subnet first.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Control plane SLA is Oracle's; worker capacity is yours. A regional cluster still needs node pools in more than one AD/FD.
+
+LB integration: each Service type LoadBalancer can mint an OCI LB. Quota on LBs becomes a Kubernetes outage.
+
+<ComparisonTable
+  headers={['Service', 'Pod IP model', 'API auth']}
+  rows={[
+    ['OKE', 'VCN-native or overlay', 'OCI IAM'],
+    ['GKE', 'Alias IPs', 'Google IAM'],
+    ['EKS', 'VPC CNI', 'IAM authenticator'],
+    ['AKS', 'Azure CNI / overlay', 'Entra'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci ce cluster create-kubeconfig --cluster-id $OKE \
+  --file $HOME/.kube/config --region us-phoenix-1 \
+  --token-version 2.0.0
+
+kubectl get nodes
+```
+
+Prefer a private endpoint and a jump path. Public kube-apiserver on 0.0.0.0/0 is a finding.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    You[kubectl] --> IAM[OCI IAM]
+    IAM --> CP[Managed control plane]
+    CP --> NP[Node pool]
+    NP --> Pod[Pod VNIC]
+    Pod --> NSG[NSGs]
+```
+
+## 5. Interview Prep
+
+**Q: OKE vs Container Instances?**
+**A:** OKE when you need Kubernetes. Container Instances when you need a box for a few containers.
+
+**Q: How do pods get OCI IAM?**
+**A:** Do not use the node principal for app roles. Use workload identity or a dedicated pattern so a hijacked pod is not the node.
+
+**Q: Public vs private cluster?**
+**A:** Private API for prod. Public only if you have a strong IP allow list and a reason.
+
+## 6. Production Use Cases
+
+- Multi-pool clusters: system, general, GPU.
+- Ingress via OCI LB annotations.
+- Shared cluster with namespaces and network policies plus NSGs.
+
+<Callout icon="tip" title="Treat node images like golden VMs">
+Rotate node pool images. An unpatched worker is still a Linux host on the internet path of your pods.
+</Callout>

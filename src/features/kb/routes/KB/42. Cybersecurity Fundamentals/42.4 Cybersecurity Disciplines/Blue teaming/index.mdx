@@ -1,35 +1,87 @@
 ---
 title: Blue Teaming
-description: The proactive and reactive defense of an organization's digital assets against cyberattacks.
+description: "The defensive practice of detecting, responding to, and hardening against attacks — the counterpart to red team operations."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Blue Teaming">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If the Red Team are the ethical hackers simulating the attack, the **Blue Team** are the internal security professionals tasked with detecting, mitigating, and stopping them.
+**Blue teaming** is defense as a craft: telemetry, detection engineering, incident response, and hardening. If red teams emulate adversaries, blue teams make that emulation noisy and short-lived. A healthy blue team owns **coverage** (can we see it?), **response** (can we evict it?), and **feedback** (did we close the hole?).
 
-Blue Teaming is a broad discipline that encompasses almost all defensive cybersecurity operations, from configuring firewalls and managing the SOC, to conducting forensic investigations after a breach.
+## 1. Deep Dive and Mechanics
 
+Daily work: tune SIEM/EDR detections, hunt from intel, run tabletop and purple-team exercises, and fix the control that failed. During an incident: identify, contain, eradicate, recover, and write the post-incident review.
 
-<Callout icon="info" title="The Blue Team Disadvantage">
+**People and tooling.** SOC analysts, detection engineers, IR, threat intel, and platform folks who can change logging. Tools without playbooks are dashboards.
 
+**Success looks like.** Dwell time down, false-positive rate survivable, and engineering teams taking detection gaps as backlog items.
 
-  The Blue Team plays an inherently asymmetrical game. The defender must perfectly secure thousands of servers, laptops, and employees every single day. The attacker only needs to find one single mathematical vulnerability, or trick one single employee into clicking a link, to win.
-
-
+<Callout icon="info" title="Blue is not 'the people who say no'">
+The job is to make the productive path the safe path, then prove you would see the other path.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Core Blue Team Responsibilities
+Detection is classification under imbalance: almost all telemetry is benign. You optimize precision at a recall the SOC can staff. MITRE ATT&CK is a coverage map (techniques → detections), not a scoreboard. IR is a state machine with clocks (SLA to contain). Purple teaming is closed-loop testing of that map.
 
+<ComparisonTable
+  headers={['Function', 'Question', 'Artifact']}
+  rows={[
+    ['Detection eng', 'Would we alert?', 'Rule + test fixture'],
+    ['SOC', 'What is this alert?', 'Ticket + runbook'],
+    ['IR', 'How do we evict?', 'Timeline + containment'],
+    ['Hardening', 'How does it not recur?', 'Control change'],
+  ]}
+/>
 
-<ComparisonTable headers={['Responsibility', 'Description']} rows={[ ['Log Analysis & SIEM', 'Constantly tuning the SIEM to aggregate logs from across the enterprise, creating mathematical alerts that flag anomalous behavior without drowning analysts in false positives.'], ['Vulnerability Management', 'Running automated scanners (like Nessus) to find unpatched software, and coordinating with the IT department to deploy patches before hackers can exploit them.'], ['Incident Response', 'When the alarms go off, the Blue Team executes the containment and eradication strategies to mathematically eject the attackers from the network.'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Detection-as-code sketch
+# - rule YAML in git
+# - unit test: replay a sanitized log fixture, expect a hit
+# - deploy via pipeline to the SIEM
+# - ATT&CK tag on the rule for coverage reports
+```
 
+Never ship a blocking or paging rule without a fixture and an owner.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Tel[Telemetry] --> Det[Detections]
+    Det --> SOC[SOC triage]
+    SOC --> IR[Incident response]
+    IR --> Fix[Hardening]
+    Red[Red / purple test] --> Det
+```
+
+## 5. Interview Prep
+
+**Q: Blue vs SOC vs IR?**
+**A:** SOC is the operations floor. IR is the major-incident track. Blue team is the broader defensive practice that includes both plus engineering.
+
+**Q: How do you measure a blue team?**
+**A:** MTTD, MTTR, percent of ATT&CK techniques you actually test, and repeat-incident rate — not ticket volume.
+
+**Q: What is purple teaming?**
+**A:** Red and blue run the same scenario and immediately fix detections. It is a drill, not a surprise exam.
+
+## 6. Production Use Cases
+
+- **Enterprise SOC** with detection-as-code.
+- **Cloud** teams watching IAM anomalies and egress.
+- **Tabletop** exercises with executives.
+
+<Callout icon="tip" title="Store detections in git">
+If a rule exists only in a GUI, it will vanish and nobody will know what coverage you lost.
+</Callout>

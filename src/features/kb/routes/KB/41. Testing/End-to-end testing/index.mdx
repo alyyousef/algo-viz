@@ -1,48 +1,103 @@
 ---
-title: End-to-End (E2E) Testing
-description: "A testing methodology that validates the entire software application from start to finish, simulating real user scenarios in a production-like environment."
+title: End-to-End Testing
+description: "Driving the real product through its public surface so a user journey survives the assembled stack, not just each isolated piece."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="End-to-End (E2E) Testing">
+    <ConceptTemplate title="End-to-End Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**End-to-End (E2E) Testing** sits at the very top of the testing pyramid. It verifies that the entire system—the frontend UI, the backend API, the database, and third-party integrations—all work together to deliver a successful user journey.
+**End-to-end (E2E) testing** exercises a complete path: browser or client, gateway, services, and data stores. It answers a different question than a unit test: can a person finish the job in the assembled system?
 
-In web development, E2E testing involves a robot (like Cypress, Playwright, or Selenium) physically opening a real web browser, clicking buttons, typing in forms, and asserting that the correct text appears on the screen.
+## 1. Deep Dive and Mechanics
 
-## 1. The Value of E2E
-A system can have 100% passing unit tests and 100% passing integration tests, but if a CSS class accidentally sets the "Submit Order" button to `display: none`, the business makes no money. E2E tests are the ultimate safety net because they test exactly what the user experiences.
+**The journey.** Pick a few revenue or safety paths: sign-in, checkout, provision, refund. Each test is a scripted actor with waits, retries, and explicit assertions on user-visible state.
 
-## 2. Example E2E Scenario (E-commerce)
-1. Robot opens Chrome and navigates to `/login`.
-2. Enters valid username and password, clicks "Login".
-3. Navigates to a product page.
-4. Clicks "Add to Cart".
-5. Navigates to checkout.
-6. Enters dummy credit card info.
-7. Asserts that the "Order Successful" confirmation page is rendered.
+**Why they hurt.** E2E tests see every flake in the stack: animations, feature flags, eventual consistency, third-party captchas. They are also the only tests that see CSS that covers a button or a CORS header that blocks the SPA.
 
-## 3. The Testing Pyramid Trade-offs
+**Stabilisers.** Auto-waiting (Playwright), network interception, seed data APIs, and test-only accounts. Never sleep for a magic 5 seconds if you can wait for a role or a response.
 
+**Pyramid placement.** Few E2E, many units. A 400-case E2E suite becomes an unowned product.
 
-<ComparisonTable headers={['Metric', 'Unit Tests', 'E2E Tests']} rows={[ ['Execution Speed', 'Milliseconds (extremely fast).', 'Minutes (very slow).'], ['Cost to Write/Maintain', 'Low.', 'High (UI changes frequently break tests).'], ['Confidence Level', 'Low (doesn\'t prove the app works).', 'High (proves the user can use the app).'], ['Debugging', 'Easy (points exactly to the broken line of code).', 'Hard (did the network fail? Did the DB time out?).'] ]} />
-
-
-<Callout icon="tip" title="The E2E Rule of Thumb">
-
-
-Because E2E tests are slow and brittle, you should not use them to test edge cases (like testing 15 different invalid email formats). Use Unit Tests for exhaustive edge cases. Reserve E2E tests for your core "Happy Paths" (Login, Signup, Checkout, Core Workflows).
-
-
+<Callout icon="warning" title="E2E is a scarce budget">
+Each extra journey multiplies CI minutes and flake surface. Add a path when a bug class cannot be caught lower, not because a ticket said 100 percent E2E.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+Model the UI as a state machine. An E2E test is a path through that machine plus the backend machines it triggers. The number of paths is the product of independent choices — combinatorial explosion.
+
+**Flake probability.** If each of k independent wait points has failure probability p, P(test flakes) ≈ 1 − (1 − p)^k. Long journeys lose. Shorter journeys and deterministic seeds shrink k and p.
+
+**Cost.** Wall time is serialised user time unless you shard browsers. Optimal suite size balances residual risk against engineer hours spent debugging red CI that is not a product bug.
+
+<ComparisonTable
+  headers={['Layer', 'What it proves', 'Typical cost']}
+  rows={[
+    ['Unit', 'Local logic', 'Milliseconds'],
+    ['Integration', 'A real seam', 'Seconds'],
+    ['E2E', 'A user journey on the stack', 'Tens of seconds to minutes'],
+    ['Manual UAT', 'Judgement and exploration', 'Hours'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```javascript
+import { test, expect } from '@playwright/test';
+
+test('buyer completes checkout', async ({ page }) => {
+  await page.goto('/catalog');
+  await page.getByRole('button', { name: 'Add to cart' }).click();
+  await page.getByRole('link', { name: 'Checkout' }).click();
+  await page.getByLabel('Card').fill('4242424242424242');
+  await page.getByRole('button', { name: 'Pay' }).click();
+  await expect(page.getByText('Order confirmed')).toBeVisible();
+});
+```
+
+Seed the catalog and a test customer in beforeEach via an internal API, not by clicking through admin.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant T as E2E runner
+    participant B as Browser
+    participant A as App
+    participant D as Data store
+    T->>B: Launch and goto
+    B->>A: User actions
+    A->>D: Commands
+    D-->>A: State
+    A-->>B: Rendered UI
+    B-->>T: Assertions
+```
+
+## 5. Interview Prep
+
+**Q: Why not replace the pyramid with E2E only?**
+**A:** Signal-to-noise and feedback time. A failed E2E does not say which layer broke. Units localise; E2E confirms assembly.
+
+**Q: How do you handle third-party SSO in E2E?**
+**A:** Stub the IdP in the test environment or use a documented test tenant. Do not automate a real production login page.
+
+**Q: What is a flake budget?**
+**A:** A measured rate of false reds. Above a small threshold the suite is ignored. Quarantine or delete; do not retry forever.
+
+## 6. Production Use Cases
+
+- **Checkout and billing** on every deploy candidate.
+- **Admin kill-switches** and entitlement gates that must not lock customers out.
+- **Smoke E2E against staging** after Terraform apply, before traffic shift.
+
+<Callout icon="tip" title="Trace or it did not happen">
+On failure, keep a video, a trace, and network log. Without artefacts, E2E failures become folklore.
+</Callout>

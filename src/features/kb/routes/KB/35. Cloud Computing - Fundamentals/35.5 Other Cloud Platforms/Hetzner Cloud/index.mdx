@@ -1,24 +1,87 @@
 ---
 title: Hetzner Cloud
-description: A German-based cloud provider famous for providing extreme, mathematically unprecedented compute-to-cost ratios for Bare Metal servers and Virtual Machines.
+description: "European price-performance VMs: CX/CPX, private networks, and dedicated roots — IaaS without a 200-service catalog."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Hetzner Cloud"
-  subtitle="Extreme Cost Efficiency"
-  tags={['Cloud', 'IaaS', 'Bare Metal', 'Europe']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Hetzner Cloud">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-If a massive big-data rendering job requires 64 CPU cores and 256GB of RAM, AWS will charge thousands of dollars a month. Hetzner Cloud provides the exact same mathematical hardware for a fraction of the cost.
+**Hetzner Cloud** is a German IaaS provider known for **low EUR prices** and solid VMs (CX shared, CPX dedicated AMD, CCX dedicated). You get locations (Falkenstein, Nuremberg, Helsinki, Ashburn, Hillsboro, Singapore, and growing), private networks, load balancers, and object storage — not a clone of AWS's SKU encyclopedia.
 
-## 1. The Economics of Compute
-Hetzner is mathematically famous for its pricing model. They operate highly efficient, low-overhead data centers primarily in Germany and Finland.
-They do not offer 200+ managed services like AWS (no managed Kafka, no serverless functions). They provide raw, unadulterated Linux Virtual Machines and massive Bare Metal servers. Because they strip away the massive R&D overhead of building PaaS services, they can sell raw mathematical compute power (CPUs and RAM) at prices that heavily funded Silicon Valley startups often use to bootstrap their intensive backend processing.
+## 1. Deep Dive and Mechanics
 
-## 2. Dedicated vs. Shared vCPUs
-Hetzner offers a mathematical distinction in its Virtual Machines:
-- **Shared vCPU**: The cheapest option. You share the physical CPU thread with other customers. If "noisy neighbors" spike their CPU, your performance might slightly degrade.
-- **Dedicated vCPU**: You pay a slight premium, but the hypervisor mathematically locks the physical CPU thread exclusively to your VM. You receive 100% sustained, uncompromised mathematical performance, crucial for high-throughput databases or game servers.
+**Servers.** Cloud-init, images, snapshots, rescue. Dedicated vCPU SKUs matter for noisy-neighbor-sensitive apps.
 
-</TechnologyTemplate>
+**Network.** Public IPv4 is scarce and priced. Private networks plus vSwitch-style isolation. Cloud Firewalls are stateful groups.
+
+**Load balancer and volumes.** Enough for a small HA pair. Do not expect 15 flavors of L7 policy.
+
+**Robot vs Cloud.** Classic dedicated Robot servers are a different product. People mix the names.
+
+<Callout icon="warning" title="You are the platform team">
+No managed IAM folders, no org-wide SCP analog. A leaked API token is the project. Design your own bastion, backup, and IdP.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Price/performance is the reason to be here. The trade is ops: Kubernetes, IAM, and compliance frameworks are yours (or k3s on three boxes).
+
+Egress and IPv4 cost still exist. "Cheap VMs" plus huge egress to users can surprise.
+
+<ComparisonTable
+  headers={['Need', 'Hetzner', 'DO / AWS']}
+  rows={[
+    ['VM', 'CX / CPX / CCX', 'Droplet / EC2'],
+    ['K8s', 'You or partners', 'DOKS / EKS'],
+    ['Object', 'Object Storage', 'Spaces / S3'],
+    ['Price story', 'Aggressive EUR', 'More SKUs'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+hcloud server create --name web-1 --type cpx31 --image ubuntu-24.04 \
+  --location fsn1 --network $NET --firewall $FW
+```
+
+Terraform `hcloud` provider should own servers, networks, and firewalls.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    LB[Cloud LB] --> S1[CPX]
+    LB --> S2[CPX]
+    S1 --> Vol[Volume]
+    S1 --> Priv[Private network]
+```
+
+## 5. Interview Prep
+
+**Q: Why Hetzner in interviews?**
+**A:** Cost, EU locations, and "we run our own platform." Contrast with shared-responsibility on AWS.
+
+**Q: Cloud vs dedicated?**
+**A:** Cloud is API VMs. Dedicated Robot is rented hardware. Different SLA and provisioning.
+
+**Q: Is it 'the cloud'?**
+**A:** Yes, IaaS. It is not a full PaaS/IAM/analytics suite.
+
+## 6. Production Use Cases
+
+- EU-hosted SaaS that wants predictable compute cost.
+- GitLab / CI runners that burn CPU.
+- Homelab-grade HA that grew into production (with backups this time).
+
+<Callout icon="tip" title="Snapshots are not offsite backups">
+Copy images or dumps to another location or provider. One DC plus snapshots in the same account is one invoice incident away.
+</Callout>

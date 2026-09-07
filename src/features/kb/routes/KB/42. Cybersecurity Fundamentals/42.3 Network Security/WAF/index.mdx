@@ -1,36 +1,83 @@
 ---
 title: Web Application Firewall (WAF)
-description: A specialized firewall that filters, monitors, and blocks HTTP traffic to and from a web application.
+description: "An HTTP-aware reverse proxy that blocks or challenges requests matching known attack patterns or custom rules."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Web Application Firewall (WAF)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A traditional network firewall operates at Layer 3 or 4 of the OSI model; it looks at IP addresses and Port numbers. It has no idea what the actual data is. If you host a website, you *must* open Port 443 (HTTPS) to the world. A traditional firewall will let a hacker right through on that port.
+A **WAF** sits in front of an HTTP app and inspects methods, paths, headers, and bodies. It can block common injection strings, enforce size limits, add bot challenges, and virtual-patch a CVE until you ship code. It is **not** a substitute for parameterized queries or access control. Treat it as a seatbelt.
 
-A **Web Application Firewall (WAF)** operates at Layer 7. It mathematically parses the actual HTTP requests (the URLs, the headers, the JSON body) and looks for malicious payloads like SQL Injection or Cross-Site Scripting.
+## 1. Deep Dive and Mechanics
 
+Modes: detect (log), block, or challenge (CAPTCHA/JS). Rule sets (OWASP CRS) match regular expressions and protocol anomalies. Custom rules encode your business (block /admin from the internet, rate-limit /login). Positioning is usually a CDN or reverse proxy so you also get DDoS absorption.
 
-<Callout icon="tip" title="WAF Deployment Models">
+**Tuning.** Default CRS in block mode will break real apps. Start in detect, add exceptions with owners, then block high-confidence rules. Bypass paths (old origin IP, leftover .git) make the WAF theater.
 
-
-  Historically, WAFs were hardware appliances installed in the datacenter. Today, almost all modern WAFs (like Cloudflare or AWS WAF) are cloud-based reverse proxies. The user's traffic mathematically hits the Cloudflare server first, gets scrubbed clean, and then the safe traffic is forwarded to your actual web server.
-
-
+<Callout icon="warning" title="Hide the origin">
+If attackers can hit the app IP directly, they walk around the WAF. Allowlist the WAF egress to the origin.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How a WAF Works
+A WAF is a classifier over HTTP messages. Regex rules have high false-positive rates on unusual-but-legal input (O'Reilly in a name). They have false negatives on novel encodings. Defense-in-depth says: WAF raises cost for commodity scans; correct application code is the invariant. Formal language theory again: you cannot regex a context-free SQL grammar into safety.
 
-WAFs primarily operate using a set of mathematical rules, often based on the OWASP ModSecurity Core Rule Set (CRS):
+<ComparisonTable
+  headers={['Control', 'Catches', 'Misses']}
+  rows={[
+    ['WAF signatures', 'Commodity scans', 'Logic bugs, new encodings'],
+    ['Parameterized SQL', 'Injection class', 'Need to actually use it'],
+    ['Authz tests', 'IDOR', 'WAF almost never sees this'],
+    ['Rate limits', 'Credential stuffing', 'Slow distributed stuffing'],
+  ]}
+/>
 
-1. **Negative Security Model (Blacklisting):** The WAF allows all traffic by default, but drops anything that matches a known malicious signature (e.g., if the URL contains `SELECT * FROM`).
-2. **Positive Security Model (Whitelisting):** The WAF blocks all traffic by default, and only allows requests that perfectly match a strict mathematical schema (e.g., "The API only accepts a JSON object with a `userId` that is an integer").
+## 3. Real-World Implementation
 
+```text
+# Origin lock
+# - Public DNS points only at the WAF
+# - Origin SG: inbound 443 from WAF CIDRs only
+# - WAF: block /admin*, rate-limit /login, CRS paranoia level 1
+```
+
+Keep an emergency bypass with MFA and a ticket, not a standing hole.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Client[Client] --> WAF[WAF / CDN]
+    WAF --> Block[Block or challenge]
+    WAF --> Origin[Origin app]
+    Direct[Direct-to-origin] --> SG[SG deny]
+```
+
+## 5. Interview Prep
+
+**Q: WAF vs IPS?**
+**A:** WAF understands HTTP. IPS understands packets and generic exploits. Use both in different places.
+
+**Q: Can a WAF make a vulnerable app safe?**
+**A:** It can buy time. Assume a motivated attacker will find a bypass. Fix the code.
+
+**Q: Positive vs negative security?**
+**A:** Negative: block known bad. Positive: allow only known schemas. Positive is stricter and more work.
+
+## 6. Production Use Cases
+
+- **Public internet** apps on a CDN WAF.
+- **Virtual patch** windows after a framework CVE.
+- **Bot management** on login and checkout.
+
+<Callout icon="tip" title="Measure blocked vs false-positive tickets">
+If support volume spikes after a rule, you will turn the WAF off. Tune, do not disable.
+</Callout>

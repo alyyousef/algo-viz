@@ -1,36 +1,92 @@
 ---
 title: GNU Compiler Collection (GCC)
-description: An open-source optimizing compiler produced by the GNU Project supporting various programming languages, hardware architectures and operating systems.
+description: "The classic free AOT toolchain for C, C++, Ada, Fortran, and more: a private IR (GIMPLE, RTL) and first-class support on a huge set of targets."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="GNU Compiler Collection (GCC)"
-  subtitle="The compiler that built the open-source world"
-  logoUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/GNU_Compiler_Collection_logo.svg/512px-GNU_Compiler_Collection_logo.svg.png"
-  description="GCC is arguably one of the most important pieces of software ever written. Released by Richard Stallman in 1987, it was the first free compiler, and it became the mathematical foundation upon which the entire Linux kernel and open-source ecosystem was built."
-  yearCreated={1987}
-  creator="Richard Stallman (GNU Project)"
-  isOpenSource={true}
-  websiteUrl="https://gcc.gnu.org/"
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="GNU Compiler Collection (GCC)">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-GCC is a behemoth. It is mathematically capable of compiling C, C++, Objective-C, Fortran, Ada, Go, and D, and generating highly optimized machine code for almost every CPU architecture on Earth.
+**GCC** is the GNU Compiler Collection: a family of frontends sharing a middle end and many machine backends. It is still the system compiler on most Linux distributions, the compiler that builds the Linux kernel on many architectures, and the reference for a long list of GNU language extensions.
 
+## 1. Deep Dive and Mechanics
 
-<Callout icon="info" title="The Monolithic Architecture">
+Each frontend (C, C++, Ada, Fortran, D, Go historically, and others) produces **GENERIC**, then **GIMPLE**. GIMPLE is a three-address IR. The middle end runs SSA-based passes: inlining, constant propagation, vectorization, loop opts. The backend lowers to **RTL** (Register Transfer Language), a lisp-like representation close to the machine, then allocates registers and emits assembly.
 
+**Driver.** gcc and g++ are drivers. They expand -march, call cc1 or cc1plus, then as and ld (or the gold/lld you configured). Spec files describe that pipeline.
 
-  For decades, GCC was intentionally designed as a mathematically monolithic block of code. Richard Stallman did this on purpose to prevent proprietary tech companies from using GCC's internal parsers in closed-source software. While politically successful, it made the GCC codebase notoriously difficult to maintain or use as a library.
+**Extensions.** Nested functions, statement expressions, and many attributes are GNU-isms. Code that compiles only with GCC is a portability risk; code that uses __builtin_* often has a Clang twin.
 
-
+<Callout icon="info" title="GCC and LLVM are peers, not clones">
+They implement the same languages and similar opts, but the IRs, pass managers, and plugin APIs differ. A GCC plugin will not load into Clang.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Challenge from LLVM
+GIMPLE-SSA is a sparse SSA form. Classic dataflow (reaching definitions, liveness) becomes almost constant-time on SSA. RTL is closer to a machine-level rewriting system: each insn is a pattern with constraints that the register allocator and reload pass must satisfy.
 
-Because GCC was mathematically monolithic, it was impossible for companies like Apple to extract just the C++ Parser to build IDE tools (like code completion or syntax highlighting).
+Link-time optimisation (LTO) serializes GIMPLE into object files so the middle end can see the whole program at link time — the same idea as LLVM ThinLTO, different file format.
 
-This architectural decision is what ultimately caused Apple and Google to heavily fund **LLVM and Clang**, a highly modular modern compiler infrastructure, which has since overtaken GCC in many modern toolchains.
+<ComparisonTable
+  headers={['IR', 'Level', 'Used for', 'Audience']}
+  rows={[
+    ['GENERIC', 'AST-like', 'Frontend lowering', 'GCC internals'],
+    ['GIMPLE', 'Three-address SSA', 'Most opts', 'Middle end'],
+    ['RTL', 'Machine-ish', 'ISel, regalloc, emit', 'Backends'],
+    ['LLVM IR', 'SSA, typed', 'clang/rustc/swift', 'LLVM world'],
+  ]}
+/>
 
-</TechnologyTemplate>
+## 3. Real-World Implementation
+
+```bash
+gcc -O2 -march=native -c app.c -o app.o
+gcc -O2 -flto -o app app.o util.o
+g++ -std=c++20 -Wall -Wextra -Werror main.cpp
+
+# Ask GCC what it would do
+gcc -Q --help=optimizers
+gcc -S -O2 -fverbose-asm app.c
+```
+
+Kernel builds pass a carefully pinned set of -fno-* flags; do not casually raise -O3 on the kernel.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    FE[gcc frontend] --> Generic[GENERIC]
+    Generic --> Gimple[GIMPLE SSA]
+    Gimple --> Mid[Middle-end passes]
+    Mid --> Rtl[RTL]
+    Rtl --> Asm[Assembler]
+    Asm --> Ld[Linker]
+```
+
+## 5. Interview Prep
+
+**Q: When would you pick GCC over Clang?**
+**A:** Targets Clang does not support well, a distro that standardizes on GCC, kernel or firmware trees that assume GNU extensions, or a measured codegen win on that CPU.
+
+**Q: What is RTL?**
+**A:** GCC's last IR before assembly: insn patterns with predicates and constraints. Backend authors spend most of their time on RTL machine descriptions.
+
+**Q: GCC LTO versus fat LTO objects?**
+**A:** Slim LTO objects hold bytecode-like GIMPLE. Fat objects hold both GIMPLE and normal code so non-LTO links still work, at a size cost.
+
+## 6. Production Use Cases
+
+- **Linux distro package builds** and the kernel on x86, ARM, Power, RISC-V, s390.
+- **Embedded and cross toolchains** (arm-none-eabi-gcc) where GCC has decades of target coverage.
+- **HPC Fortran** stacks that still treat gfortran as the default.
+
+<Callout icon="warning" title="Do not mix -fPIC and unusual TLS models casually">
+ABI flags (-fPIC, -fno-plt, -mregparm, TLS models) must match across every object in the link, including static libraries you did not compile today.
+</Callout>

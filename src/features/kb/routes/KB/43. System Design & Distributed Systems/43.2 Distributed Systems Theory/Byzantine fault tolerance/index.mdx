@@ -1,43 +1,89 @@
 ---
-title: Byzantine Fault Tolerance (BFT)
-description: The dependability of a fault-tolerant computer system where components may fail and there is imperfect information on whether a component has failed.
+title: Byzantine Fault Tolerance
+description: "Agreement that survives nodes which crash, lie, or send conflicting messages — the hostile-fault model behind PBFT, Tendermint, and many blockchains."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Byzantine Fault Tolerance (BFT)">
+    <ConceptTemplate title="Byzantine Fault Tolerance">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Traditional distributed systems (like databases using Raft or Paxos) are designed to survive **Fail-Stop** errors. They mathematically assume a server might explode or lose power, but they assume the server *is not actively trying to lie or sabotage the network*.
+**Byzantine fault tolerance (BFT)** is agreement when some nodes misbehave arbitrarily: crash, equivocate, or send different votes to different peers. The name comes from the Byzantine Generals problem. Crash-fault protocols (Raft) assume a node is either correct or silent. BFT assumes a node may be an adversary.
 
-**Byzantine Fault Tolerance (BFT)** is the infinitely more difficult mathematical discipline of achieving consensus when nodes might be actively malicious, sending fake data, or conspiring to destroy the system.
+## 1. Deep Dive and Mechanics
 
+A correct BFT protocol guarantees **safety** (honest nodes never decide different values) if fewer than one third of nodes are Byzantine, and **liveness** under partial synchrony (timeouts eventually work). Classic PBFT uses three phases: pre-prepare, prepare, commit, plus view changes when the leader is suspected.
 
-<Callout icon="warning" title="The Byzantine Generals Problem">
+**Quorums.** With n = 3f + 1, any two quorums of 2f + 1 intersect in at least one honest node. That intersection is why two decisions cannot diverge.
 
+**Cost.** Extra rounds, signatures or MACs, and O(n^2) all-to-all chatter in naive PBFT. Modern chains batch, rotate leaders, and use threshold signatures to shrink messages.
 
-  The mathematical thought experiment: Several generals are surrounding a city. They must agree to attack simultaneously, or they will lose. They communicate via messengers. However, one or more generals are traitors actively sending forged messages to confuse the loyal generals. How do the loyal generals mathematically reach a consensus to attack?
-
-
+<Callout icon="info" title="Most business systems are not Byzantine">
+Your own data center replicas fail by crash and bad deploys, not by secretly forking the log. Use Raft unless the participants do not trust each other.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The BFT Threshold
+Lamport, Shostak, and Pease showed that with unauthenticated messages you need more than 3f nodes to tolerate f traitors. With signatures, the bound can relax in some models, but practical state-machine BFT still uses n = 3f + 1 for the usual partial-synchrony setting.
 
-Mathematical proofs demonstrate that a network can only survive Byzantine failures if the number of malicious nodes (`f`) is strictly less than one-third of the total nodes (`n`).
+FLP still applies: you cannot guarantee progress in a fully asynchronous network. BFT protocols add timers and view changes.
 
-**Formula: `n >= 3f + 1`**
+<ComparisonTable
+  headers={['Model', 'Bad node does', 'Typical quorum', 'Example']}
+  rows={[
+    ['Crash-stop', 'Silent', 'Majority n=2f+1', 'Raft, Paxos'],
+    ['Byzantine', 'Anything', '2f+1 of 3f+1', 'PBFT, Tendermint'],
+    ['Authenticated crash', 'Silent or lost', 'Varies', 'Some WAN Paxos'],
+  ]}
+/>
 
-If you have 4 nodes, you can survive 1 malicious node. If you have 2 malicious nodes, consensus is mathematically impossible.
+## 3. Real-World Implementation
 
-## Blockchain and Proof of Work
+```python
+# Conceptual: accept a value only after 2f+1 matching prepares
+def can_commit(prepares, n, f):
+    need = 2 * f + 1
+    if n < 3 * f + 1:
+        return False
+    return len(prepares) >= need
+```
 
-For decades, BFT was mostly a theoretical curiosity used in aerospace (where radiation might cause a sensor to actively output malicious values).
+Real implementations add view-change logs, signed messages, and replay protection. Do not invent a BFT coin in an application repo.
 
-In 2008, Satoshi Nakamoto invented **Bitcoin**, which utilized **Proof-of-Work (PoW)**. PoW is essentially a massive, global BFT consensus algorithm that allows thousands of mutually distrustful computers to mathematically agree on a financial ledger without a central bank.
+## 4. Visualizations
 
+```mermaid
+flowchart TD
+    L[Leader pre-prepare] --> A[Replicas prepare]
+    A --> B[Replicas commit]
+    B --> D[Decide if 2f+1]
+    L --> V[View change if silent]
+    V --> L2[New leader]
+```
+
+## 5. Interview Prep
+
+**Q: Why 3f + 1, not 2f + 1?**
+**A:** A Byzantine node can vote both ways. Majority-of-crash math is not enough. You need enough honest overlap after subtracting f liars.
+
+**Q: Is Bitcoin BFT?**
+**A:** Nakamoto consensus is a probabilistic, incentive-based protocol with a different model (eventual common prefix, energy or stake). It is not PBFT. Do not equate "blockchain" with "BFT quorum."
+
+**Q: When do you need BFT in a company?**
+**A:** Multi-party settlement, consortium ledgers, or components that must survive a compromised replica that still has keys. Internal microservice A talking to B does not need BFT.
+
+## 6. Production Use Cases
+
+- **Permissioned ledgers** (Fabric, Tendermint-based chains) among institutions.
+- **Certificate and timestamp authorities** that vote on inclusion.
+- **Hostile-WAN control planes** where a vendor node is not fully trusted.
+
+<Callout icon="tip" title="Measure f you can actually run">
+n = 4 tolerates one liar and is already chatty. n = 22 is a research ops problem. Size from trust boundaries, not from hype.
+</Callout>

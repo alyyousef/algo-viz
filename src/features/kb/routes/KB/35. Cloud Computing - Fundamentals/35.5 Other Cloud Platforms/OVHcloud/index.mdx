@@ -1,23 +1,88 @@
 ---
 title: OVHcloud
-description: Europe's leading cloud provider, mathematically famous for its massive global scale, extreme cost efficiency, and pioneering approach to eco-friendly water-cooled data centers.
+description: "European hyperscaler-adjacent: Public Cloud VMs, dedicated bare metal, and Kubernetes — sovereignty and price, plus you operate more."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OVHcloud"
-  subtitle="The European Cloud Alternative"
-  tags={['Cloud', 'Europe', 'IaaS', 'Bare Metal']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OVHcloud">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-OVHcloud is a massive French cloud provider. While AWS dominates the US market, OVH is deeply embedded in European infrastructure, providing raw, unadulterated compute power with strict adherence to European data sovereignty laws.
+**OVHcloud** is a large European provider: **Public Cloud** (OpenStack-based instances, block, object), **dedicated servers**, **Hosted Private Cloud** (VMware), and **Managed Kubernetes**. Regions are EU-heavy with some global. The pitch is data sovereignty, predictable pricing, and bare metal. The cost is a smaller managed-service catalog.
 
-## 1. Unmetered Bandwidth Economics
-The mathematical pricing model of AWS (charging massive fees for outbound bandwidth) bankrupts many video streaming and file-hosting startups.
-OVHcloud mathematically disrupts this by offering **Unmetered Bandwidth** on most of its Bare Metal and Virtual Private Server (VPS) offerings. If you rent a server for $50 a month with a 1 Gbps port, you can mathematically push traffic at maximum capacity 24/7 for the entire month, and the bill will remain exactly $50. This economic predictability is critical for high-throughput network applications.
+## 1. Deep Dive and Mechanics
 
-## 2. Proprietary Water Cooling
-Data centers consume massive amounts of electricity just to power the air conditioning systems required to cool the CPUs.
-OVH mathematically engineered their own proprietary **Liquid Cooling System**. They do not use standard data center racks; they build their own custom servers and pipe water directly over the CPU and GPU heat sinks. This mathematical efficiency allows them to operate data centers without massive industrial air conditioners, drastically lowering their electricity costs and allowing them to pass those massive savings directly to the consumer.
+**Public Cloud.** OpenStack APIs (Nova, Neutron, Swift/S3-compat). Terraform `ovh` and OpenStack providers both appear. Learn which resource lives where.
 
-</TechnologyTemplate>
+**Bare metal.** A core OVH product. Hourly/monthly dedicated, not just VMs.
+
+**Networking.** vRacks connect dedicated and public cloud. Anti-DDoS is a historic OVH feature; still configure your own app WAF.
+
+**IAM and projects.** Cloud projects inside an NIC account. Less polished than AWS Organizations; still isolate projects.
+
+<Callout icon="warning" title="OpenStack plus OVH extras">
+Some features are OVH APIs, not vanilla OpenStack. Copy-pasting generic OpenStack Terraform can miss vRack or fail on regions.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Sovereignty: keeping data in an EU legal entity is a procurement constraint. It does not replace encryption or IAM.
+
+Bare metal vs VM: you buy isolation and NUMA, you own more of the stack (or pay for Private Cloud).
+
+<ComparisonTable
+  headers={['Need', 'OVH', 'AWS']}
+  rows={[
+    ['VM', 'Public Cloud instance', 'EC2'],
+    ['Bare metal', 'Dedicated', 'i / metal'],
+    ['K8s', 'MKS', 'EKS'],
+    ['Object', 'Object Storage', 'S3'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+openstack server list
+# or ovh-cli / terraform ovh_cloud_project_kube
+```
+
+Document whether the app is on Public Cloud, dedicated, or vRack-spanning both.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Inet --> DDoS[OVH anti-DDoS]
+    DDoS --> LB[LB / K8s]
+    LB --> VM[Public Cloud]
+    VM --> vRack[vRack]
+    Ded[Dedicated] --> vRack
+```
+
+## 5. Interview Prep
+
+**Q: Why OVH?**
+**A:** EU residency, price, dedicated hardware, or existing French/EU ops. Not feature-parity with AWS.
+
+**Q: Public Cloud vs dedicated?**
+**A:** Public Cloud is API VMs. Dedicated is servers. vRack can join them.
+
+**Q: Is OpenStack the product?**
+**A:** Public Cloud is OpenStack-shaped. Other SKUs are not.
+
+## 6. Production Use Cases
+
+- EU SaaS that must name an EU operator.
+- Game/voice workloads on dedicated.
+- Kubernetes on MKS with object backups in an EU region.
+
+<Callout icon="tip" title="Test restore across the vRack story">
+Backups that cannot restore onto the other side of vRack are theater. Drill it.
+</Callout>

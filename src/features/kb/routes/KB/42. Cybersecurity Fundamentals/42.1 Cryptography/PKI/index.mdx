@@ -1,53 +1,84 @@
 ---
-title: PKI (Public Key Infrastructure)
-description: The global hierarchical system of Certificate Authorities, digital certificates, and protocols that establishes cryptographic trust on the internet.
+title: Public Key Infrastructure (PKI)
+description: "The issuers, policies, and revocation machinery that bind names to public keys at internet or enterprise scale."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="PKI (Public Key Infrastructure)">
+    <ConceptTemplate title="Public Key Infrastructure (PKI)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Asymmetric encryption solves the problem of securely sending a secret over the internet. But it introduces a terrifying new vulnerability: **The Trust Problem**.
-If you download a public key that claims to belong to "Bank of America", how do you mathematically know a hacker sitting in a coffee shop didn't just generate that key five minutes ago and put the Bank's name on it?
+**PKI** is the operational system around public keys: who is allowed to issue, how identity is checked, how clients find trust anchors, and how a leaked key is retired. X.509 certificates are the usual artifact. The hard parts are registration authority processes, revocation, and surviving a compromised intermediate.
 
-**PKI (Public Key Infrastructure)** is the global administrative and cryptographic framework that binds Public Keys to actual, legally verified human identities and corporations using Digital Certificates.
+## 1. Deep Dive and Mechanics
 
-## 1. The Components of PKI
+Roles: **root CA** (offline, trust anchor), **intermediate CA** (online issuer), **registration authority** (identity checks), **leaf** (server, client, or code). Clients ship a trust store. They build a path from leaf to a trusted root, check names, usages, and policy OIDs.
 
-- **Digital Certificate (X.509)**: An electronic passport. It is a text file containing an entity's name, their Public Key, the expiration date, and a Digital Signature from a Certificate Authority.
-- **Certificate Authority (CA)**: A massive, highly secure, globally trusted corporation (like DigiCert, Let's Encrypt, or GlobalSign) whose sole job is to verify legal identities and issue signed Certificates.
-- **Root Store**: A hardcoded list of pre-trusted CA Root Certificates physically baked into your Operating System (Windows, macOS) and web browser (Chrome, Firefox).
+**Public web PKI** adds Certificate Transparency logs, CAA DNS records, and CABF rules. **Private PKI** (your company CA, SPIFFE) uses the same math with your own roots and automated issuers (cert-manager, AWS PCA, Venafi).
 
-## 2. The Chain of Trust (Hierarchical Trust)
+**Revocation.** CRLs scale poorly. OCSP stapling pushes status onto the server. Short-lived certificates (hours) make revocation less critical because the leaf dies soon anyway.
 
-PKI relies on a top-down hierarchy of trust, heavily utilizing Digital Signatures.
-
-1. **The Root CA**: The ultimate authority. The Root CA creates a Root Certificate and signs it *using its own private key* (Self-Signed). Microsoft and Apple review the CA's security practices, and if approved, inject this Root Certificate into the OS Root Store.
-2. **The Intermediate CA**: The Root CA's private key is too valuable to use daily (if hacked, the internet collapses). Instead, the Root CA signs an "Intermediate Certificate" to do the daily work.
-3. **The Leaf Certificate (End-Entity)**: When "Bank of America" wants a secure website, they pay a CA. The CA legally verifies the bank's incorporation papers. The CA then uses the Intermediate Private Key to digitally sign the Bank's Leaf Certificate.
-
-## 3. The TLS Handshake (How your Browser Uses PKI)
-
-When you type `https://bank.com`:
-1. The server sends your browser its Leaf Certificate and the Intermediate Certificate.
-2. Your browser checks the signature on the Leaf Certificate using the Intermediate's Public Key.
-3. Your browser checks the signature on the Intermediate Certificate using the Root CA's Public Key (which is hardcoded in your computer).
-4. Because the math holds up perfectly down the entire chain, the green padlock appears, proving you are not talking to a hacker.
-
-
-<Callout icon="error" title="Certificate Revocation">
-
-
-  If a company's server is hacked and their Private Key is stolen, the Certificate is instantly compromised. PKI uses **CRLs (Certificate Revocation Lists)** and **OCSP (Online Certificate Status Protocol)** to broadcast to all browsers globally that the certificate is void, destroying the chain of trust before users are phished.
-
-
+<Callout icon="warning" title="A private root in every developer trust store is a fleet problem">
+Treat internal roots like production secrets. Distribute them with device management, not wiki attachments.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+PKI is a tree (sometimes a forest) of signature verifications plus a name constraint policy. Path validation is specified in RFC 5280 and is famously easy to implement wrong (missing CA bit checks, accepting v1 intermediates, ignoring name constraints). That is why you use the platform verifier.
+
+<ComparisonTable
+  headers={['Model', 'Trust anchors', 'Revocation story']}
+  rows={[
+    ['Web PKI', 'Browser / OS roots', 'CT + OCSP + short life'],
+    ['Enterprise CA', 'Company root', 'CRL / OCSP / MDM wipe'],
+    ['mTLS mesh', 'Mesh issuer', 'Workload SVID rotation'],
+    ['TOFU / pin', 'First key seen', 'Manual rotation'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+openssl crl2pkcs7 -nocrl -certfile chain.pem | openssl pkcs7 -print_certs -noout
+# Issue via ACME or your internal API; do not keep the root key on the CA VM.
+```
+
+In Kubernetes, cert-manager plus an external issuer keeps private keys in a CSI driver or HSM, not in a Secret that every pod can read.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Policy[RA identity checks] --> Issue[Intermediate signs leaf]
+    Root[Offline root] --> Issue
+    Issue --> Leaf[Leaf cert]
+    Leaf --> Client[Path validate + name check]
+    Status[OCSP / short TTL] --> Client
+```
+
+## 5. Interview Prep
+
+**Q: Why not one self-signed cert per service forever?**
+**A:** No scalable identity, no revocation, no rotation story, and every client must pin every peer. PKI amortizes trust into a small set of anchors.
+
+**Q: What does Certificate Transparency add?**
+**A:** Public append-only logs of issued certs so domain owners can spot unauthorized issuance.
+
+**Q: How does mTLS PKI differ from public HTTPS?**
+**A:** Both ends present certs. Names are SPIFFE IDs or internal DNS. Roots are yours. Rotation is frequent and automated.
+
+## 6. Production Use Cases
+
+- **Public HTTPS** via Let's Encrypt or a commercial CA.
+- **Internal HTTPS and VPN** device certs.
+- **Service mesh** workload identities.
+
+<Callout icon="tip" title="Keep the root air-gapped">
+Ceremony-sign a few intermediates, then power the root down. If the online intermediate burns, you can replace it without replacing every client trust store.
+</Callout>

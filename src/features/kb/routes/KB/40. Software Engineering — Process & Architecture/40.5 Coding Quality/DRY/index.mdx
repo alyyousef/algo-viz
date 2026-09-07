@@ -1,30 +1,93 @@
 ---
-title: DRY (Don't Repeat Yourself)
-description: "A foundational principle of software development mathematically dictating that every piece of knowledge or logic must have a single, unambiguous, authoritative representation within a system."
+title: DRY
+description: "Don't Repeat Yourself — one authoritative representation of each knowledge, not a war on every similar-looking line."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="DRY (Don't Repeat Yourself)"
-  subtitle="The Single Source of Truth"
-  tags={['Process', 'Clean Code', 'Design Principles', 'Architecture']}
->
+    <ConceptTemplate title="DRY">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If the mathematical logic to calculate Sales Tax exists in both the `ShoppingCart` class and the `InvoiceGenerator` class, the codebase has mathematically violated DRY.
+**DRY** (Hunt and Thomas) says every piece of *knowledge* should have a single authoritative representation. Two functions that look alike but mean different business rules are not duplication. Two copies of the same tax rule that will diverge are. The enemy is duplicated *meaning*, not duplicated syntax.
 
-## 1. The Maintenance Nightmare
-When the government changes the Sales Tax rate from 5% to 6%, the developer will search the codebase, find the `ShoppingCart` file, and update the math.
-Because the developer mathematically does not know the `InvoiceGenerator` also contains a copy of the logic, they will fail to update it. Tomorrow, the company will mathematically overcharge the customer on the UI, but generate an invoice with a different number, causing an accounting disaster.
+## 1. Deep Dive and Mechanics
 
-## 2. WET (Write Everything Twice)
-The opposite of DRY is WET (Write Everything Twice, or We Enjoy Typing).
-To fix a DRY violation, the engineer must mathematically extract the duplicated logic into a single, authoritative location (e.g., a `TaxCalculator` service) and inject it into both the Cart and the Invoice.
-However, engineers must be careful of **Premature Abstraction**. If two pieces of code look identical today, but serve fundamentally different business domains, merging them mathematically couples two unrelated domains (a violation of Bounded Contexts). As the rule goes: *"A little duplication is cheaper than the wrong abstraction."*
+**Knowledge versus coincidence.** Three loops that happen to be `for item in items` are not a framework. Three implementations of “premium if spend > 500” are.
 
+**The wrong abstraction.** Extracting too early produces a helper with flags (`kind`, `mode`) that is harder than the copies. Wait for the third copy, or for a second change that already drifted.
+
+**Generated duplication.** OpenAPI clients and proto stubs look repetitive. Do not hand-merge them. DRY the *source* (the spec), not the output.
+
+**Cross-context copies.** Two bounded contexts may both have `Address`. Sharing one type can couple deploys. Duplication across contexts can be the correct isolation.
+
+<Callout icon="warning" title="DRY is not 'delete all copies'">
+A shared `Utils.calc` that both billing and marketing import is how a marketing tweak breaks invoices. Repeat the formula or share a *published* domain service on purpose.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Single source of truth.** A knowledge item is a function from inputs to a rule. Two stored copies are two functions that should stay equal — they will not. That is configuration drift in code form.
+
+**Rule of Three.** Sample size: one instance is nothing; two is a smell; three plus a shared change history is an abstraction.
+
+**WET / AHA.** Write Everything Twice and Avoid Hasty Abstractions are slogans that correct DRY zealotry. Same idea: delay the extract.
+
+<ComparisonTable
+  headers={['Situation', 'DRY move', 'Leave copies']}
+  rows={[
+    ['Same business rule', 'One function or table', 'No'],
+    ['Same shape, different meaning', 'Do not extract', 'Yes'],
+    ['Generated code', 'DRY the spec', 'Yes in output'],
+    ['Two bounded contexts', 'Maybe a shared kernel', 'Often yes'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+PREMIUM_MIN = 500
+
+def is_premium(spend_cents):
+    return spend_cents >= PREMIUM_MIN
+```
+
+Call this from billing and from the badge on the profile *if* they must stay identical. If marketing wants a different threshold, they do not import this.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    K[One knowledge] --> S[Single function or config]
+    S --> A[Caller A]
+    S --> B[Caller B]
+    C[Lookalike code] --> Q{Same meaning}
+    Q -->|yes| S
+    Q -->|no| Leave[Keep separate]
+```
+
+## 5. Interview Prep
+
+**Q: What does DRY actually mean?**
+**A:** One authoritative representation of each *knowledge*. Not “I saw two for-loops.” Hunt and Thomas were explicit about this.
+
+**Q: When is duplication cheaper?**
+**A:** When the copies will change for different reasons, or when a shared module would create the wrong dependency.
+
+**Q: DRY versus YAGNI?**
+**A:** YAGNI stops you from building the abstraction before the knowledge is real. DRY applies once the knowledge exists in two places that must not drift.
+
+## 6. Production Use Cases
+
+- **Tax and pricing rules** used by checkout and by invoices.
+- **Feature flags** as the one switch, not copied booleans.
+- **Schema** as the one contract (OpenAPI, proto), generating the rest.
+
+<Callout icon="tip" title="Ask what must stay in sync">
+If the answer is “nothing,” you do not have a DRY problem. You have similar text.
+</Callout>

@@ -1,25 +1,91 @@
 ---
 title: OCI Internet Gateway
-description: A highly available, software-defined virtual router that mathematically bridges the gap between an isolated Oracle Virtual Cloud Network (VCN) and the public internet.
+description: "VCN door to the public internet for resources with public IPs — route 0.0.0.0/0 here, lock NSGs, and prefer NAT for private egress."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Internet Gateway"
-  subtitle="The Bridge to the Public Web"
-  tags={['OCI', 'Networking', 'Routing', 'Internet']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Internet Gateway">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-When you create a Virtual Cloud Network (VCN) in OCI, it is completely mathematically isolated. It has no physical or logical connection to the outside world. An Internet Gateway provides the doorway to the public web.
+An **Internet Gateway (IGW)** is a regional, highly available hop that connects a VCN to the public internet. Traffic uses the IGW only if a **route table** sends `0.0.0.0/0` (or a public prefix) to it **and** the VNIC has a public IP. Private instances do not sneak out through the IGW.
 
-## 1. Network Address Translation (NAT)
-A Web Server running inside your VCN has a Private IP address (e.g., `10.0.0.5`). The global internet does not know how to route packets to a Private IP.
-When you assign a Public IP address to that Web Server, the server itself still only knows about `10.0.0.5`.
-The Internet Gateway sits at the edge of the VCN. When a packet leaves the Web Server destined for Google, the Gateway mathematically performs 1-to-1 NAT. It strips off the Private IP header, applies the Public IP header, and fires the packet onto the internet. When the response comes back, it mathematically reverses the process.
+## 1. Deep Dive and Mechanics
 
-## 2. Route Table Enforcement
-Simply attaching an Internet Gateway to a VCN does not give your servers internet access.
-You must mathematically authorize the traffic using a **Route Table**. You create a Route Table for the Web Server's Subnet and add a rule: *"If a packet is destined for `0.0.0.0/0` (anywhere on the internet), forward it to the Internet Gateway."*
-If a Subnet does *not* have this Route Table rule, it is mathematically defined as a **Private Subnet**. Even if you attach an Internet Gateway to the VCN, it is physically impossible for internet traffic to reach servers in that specific Private Subnet, guaranteeing deep architectural security.
+**Attachment.** One IGW per VCN is the usual pattern. It is not a VM you patch. Enable/disable is a blunt switch.
 
-</TechnologyTemplate>
+**Public IP.** Ephemeral or reserved public IPs live on the VNIC. Without one, IGW routes do nothing for that instance.
+
+**Ingress.** IGW allows inbound to public IPs if NSGs/security lists allow. The IGW is not a WAF. Pair with a load balancer and NSGs.
+
+**IPv6.** VCNs can carry IPv6; IGW handles those routes too when enabled. Do not forget NSGs for ::/0.
+
+<Callout icon="error" title="SSH from the world">
+22 open to 0.0.0.0/0 plus an IGW is a scanner magnet. Bastion service, VPN, or at least a tight CIDR.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Default route specificity: a more specific RFC1918 route to a DRG beats 0.0.0.0/0 to the IGW. Mis-ordered mental models cause "why does this VM use the internet for 10/8."
+
+Egress billing: public egress through IGW has a price. Architect to keep east-west private.
+
+<ComparisonTable
+  headers={['Door', 'Who uses it', 'Direction']}
+  rows={[
+    ['Internet Gateway', 'Public IP resources', 'In and out'],
+    ['NAT Gateway', 'Private resources', 'Out only'],
+    ['Service Gateway', 'Private to OCI services', 'Out to services'],
+    ['DRG', 'Hybrid / other VCNs', 'Private WAN'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+oci network internet-gateway create --compartment-id $COMP \
+  --vcn-id $VCN --is-enabled true --display-name igw
+
+oci network route-table update --rt-id $PUBLIC_RT \
+  --route-rules '[{"cidrBlock":"0.0.0.0/0","networkEntityId":"'"$IGW"'"}]'
+```
+
+Only the public subnet route table should point at the IGW.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Internet --> IGW[Internet Gateway]
+    IGW --> PubSub[Public subnet]
+    PubSub --> LB[Public LB]
+    PrivSub[Private subnet] --> NAT[NAT Gateway]
+    NAT --> IGW
+```
+
+## 5. Interview Prep
+
+**Q: Why can't my private VM reach the internet via IGW?**
+**A:** No public IP. Use NAT Gateway for egress. That is by design.
+
+**Q: IGW vs NAT?**
+**A:** IGW is bidirectional for public IPs. NAT is outbound only for private IPs.
+
+**Q: How many IGWs?**
+**A:** Typically one per VCN. More is unusual and confusing.
+
+## 6. Production Use Cases
+
+- Public load balancer subnet route to IGW.
+- Bastion in a tiny public subnet, apps private.
+- IPv6 dual-stack edge.
+
+<Callout icon="tip" title="Split route tables">
+Public and private subnets must not share a 0.0.0.0/0 to the IGW. That is how private instances get accidental public IPs and a path.
+</Callout>

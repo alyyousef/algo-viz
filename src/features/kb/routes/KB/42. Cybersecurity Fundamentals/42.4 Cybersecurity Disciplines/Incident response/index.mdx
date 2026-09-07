@@ -1,40 +1,89 @@
 ---
-title: Incident Response (IR)
-description: The structured, rapid-response methodology used by organizations to handle a data breach or cyberattack.
+title: Incident Response
+description: "A rehearsed process to detect, contain, eradicate, and learn from a security event without making it worse."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Incident Response (IR)">
+    <ConceptTemplate title="Incident Response">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Despite the best firewalls and encryption, a determined attacker will eventually breach the network. When the alarms go off, the organization cannot afford panic.
+**Incident response (IR)** is the playbook you run when confidentiality, integrity, or availability is in doubt. The goal is to limit damage and restore trust, not to look busy in a chat channel. Good IR is boring: roles, comms, evidence, containment criteria, and a written timeline.
 
-**Incident Response (IR)** is the highly structured, almost militaristic execution of predefined plans to minimize damage, mathematically contain the threat, and restore normal business operations as quickly as possible.
+## 1. Deep Dive and Mechanics
 
+A common loop is **NIST 800-61**: prepare, detect and analyze, contain, eradicate, recover, then lessons learned. Preparation is most of the work (logs, contacts, legal, backups you have restored once).
 
-<Callout icon="success" title="The Golden Rule of IR">
+**Containment** is a product decision: isolate a host, revoke a token, disable a rule, or take a service offline. Do not wipe the only evidence. **Comms** need a single voice for customers, regulators, and staff.
 
+Declare severity with a rubric (data type, blast radius, attacker presence), not whoever yells first.
 
-  The primary goal of Incident Response is not to catch the hacker or perfectly preserve forensic evidence for the FBI. The primary goal is **Business Continuity**—getting the company\'s servers back online and generating revenue safely.
-
-
+<Callout icon="error" title="Do not freelance on the live box">
+Unplanned kills, restores, and "just reboot it" destroy timelines and can re-trigger malware.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The SANS Incident Response Lifecycle
+IR is decision-making under uncertainty with an expanding evidence set. Mean time to detect and mean time to contain are operational metrics; they are not the same as "we feel done." Residual risk after recovery (rotated secrets, remaining sessions) should be listed. Tabletop exercises test the decision graph before the real clock starts.
 
-The SANS Institute defines a universally adopted 6-step lifecycle (PICERL):
+<ComparisonTable
+  headers={['Phase', 'Question', 'Example action']}
+  rows={[
+    ['Detect', 'Is this real?', 'Triage alert, scope users'],
+    ['Contain', 'Can it spread?', 'Isolate host, revoke token'],
+    ['Eradicate', 'Root cause gone?', 'Patch, rebuild, rotate'],
+    ['Recover', 'Safe to serve?', 'Restore, watch, communicate'],
+  ]}
+/>
 
-1. **Preparation:** Having the tools, policies, and communication plans ready before an attack happens.
-2. **Identification:** Mathematically determining whether an anomalous event is a false alarm or a true security incident.
-3. **Containment:** Stopping the bleeding. (e.g., Unplugging the infected server from the network so the ransomware cannot spread).
-4. **Eradication:** Removing the root cause of the incident. (e.g., Deleting the malware, patching the vulnerability, resetting all passwords).
-5. **Recovery:** Restoring systems to normal operation from clean backups, and mathematically verifying they are secure.
-6. **Lessons Learned:** A post-mortem meeting to update the defenses so the exact same attack never succeeds twice.
+## 3. Real-World Implementation
 
+```text
+# Incident header
+# Sev / commander / scribe / comms / legal
+# Suspected systems and data classes
+# Containment taken and time (UTC)
+# Evidence locations and hashes
+```
+
+Keep a war-room doc that is append-only. Chat is fine; the doc is the record.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Prep[Prepare] --> Det[Detect]
+    Det --> Ana[Analyze]
+    Ana --> Con[Contain]
+    Con --> Era[Eradicate]
+    Era --> Rec[Recover]
+    Rec --> LL[Lessons learned]
+    LL --> Prep
+```
+
+## 5. Interview Prep
+
+**Q: Incident vs event?**
+**A:** An event is a logged occurrence. An incident is a declared violation or imminent threat to CIA that needs the process.
+
+**Q: Who is in charge?**
+**A:** A named incident commander. Engineers advise; they do not all drive.
+
+**Q: When do you notify?**
+**A:** Follow statute and contract clocks (often days, sometimes hours). Legal owns the wording; IR owns the facts.
+
+## 6. Production Use Cases
+
+- **Stolen laptop** with disk encryption plus remote wipe.
+- **Leaked CI token** with immediate rotation and repo audit.
+- **Ransomware** with isolation and restore from offline backups.
+
+<Callout icon="tip" title="Restore a backup on a Tuesday">
+A backup that has never been restored is a rumor.
+</Callout>

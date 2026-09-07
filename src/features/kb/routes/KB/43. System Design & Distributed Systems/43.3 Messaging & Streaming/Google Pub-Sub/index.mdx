@@ -1,30 +1,86 @@
 ---
 title: Google Cloud Pub/Sub
-description: "A fully-managed, highly scalable real-time messaging service provided by Google Cloud, mathematically designed to ingest and distribute massive streams of data with extremely low latency and high durability."
+description: "GCP global pub-sub with topics and subscriptions, ack deadlines, and optional exactly-once plus ordering keys."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Google Cloud Pub/Sub"
-  subtitle="Global-Scale Messaging"
-  tags={['System Design', 'GCP', 'Messaging', 'Cloud']}
->
+    <ConceptTemplate title="Google Cloud Pub/Sub">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Google Cloud Pub/Sub is mathematically designed to combine the "Push" fan-out capabilities of AWS SNS with the "Pull" queueing durability of AWS SQS into a single, globally scalable service.
+**Google Cloud Pub/Sub** is a managed pub-sub. Publishers send to a **topic**. Each **subscription** gets its own backlog (push or pull). Ack **deadlines** work like a visibility timeout. Regional or global topics change latency and failure domains.
 
-## 1. Global by Default
-Unlike AWS (which strictly ties SQS queues to a specific geographic Region like `us-east-1`), Google Pub/Sub is mathematically global.
-You publish an event to a single Topic, and Google's internal fiber-optic network automatically routes that message to subscribers sitting in data centers in Tokyo, London, and New York. The architecture mathematically abstracts away regional boundaries.
+## 1. Deep Dive and Mechanics
 
-## 2. Push and Pull Subscriptions
-When a Topic receives a message, it distributes it to Subscriptions. Google Pub/Sub mathematically supports both modes:
-- **Pull Subscriptions**: Your microservices actively poll the subscription (like AWS SQS). Excellent for throttling heavy workloads.
-- **Push Subscriptions**: Google Pub/Sub actively fires an HTTP POST request to your microservice's web server (like AWS SNS or Webhooks). Excellent for serverless architectures (like Google Cloud Functions), because the HTTP request mathematically wakes up the serverless function instantly without requiring a background polling daemon.
+**Pull versus push.** Pull: workers request messages. Push: Pub/Sub POSTs to your URL. Push needs auth and a handler that acks by HTTP status.
 
+**Ack deadline.** Extend for long work. Expiry redelivers. Exactly-once subscriptions (where enabled) reduce duplicates on the ack path; your DB still needs a key.
+
+**Ordering keys.** Same key, same ordering in a subscription, at a throughput cost. No key means no order.
+
+**Seek and snapshots.** Replay a subscription to a time or snapshot. This is closer to a stream cursor than classic SQS.
+
+<Callout icon="info" title="A topic with no subscription drops publishes">
+Messages need a subscription at publish time (or they are discarded). Create the sub before you produce, or use a catch-all.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Each subscription is an independent cursor over the topic. At-least-once is the base. Ordering is per key, not global. Flow control limits outstanding messages so memory stays bounded (backpressure).
+
+<ComparisonTable
+  headers={['Cloud pub-sub', 'Backlog per subscriber', 'Order', 'Notes']}
+  rows={[
+    ['GCP Pub/Sub', 'Yes', 'Optional keys', 'Seek/snapshots'],
+    ['AWS SNS', 'No (use SQS)', 'FIFO pair', 'Fan-out primitive'],
+    ['AWS SQS', 'Yes (queue)', 'FIFO groups', 'Not pub-sub alone'],
+    ['Azure Service Bus', 'Yes', 'Sessions', 'AMQP business msgs'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# subscriber.subscribe(sub, callback=handler)
+# message.ack() after durable write
+```
+
+Use flow-control max outstanding. Nack or extend instead of sleeping past the deadline.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Pub --> Topic
+    Topic --> SubA[Subscription A]
+    Topic --> SubB[Subscription B]
+    SubA --> Pull[Pull workers]
+    SubB --> Push[Push HTTPS]
+```
+
+## 5. Interview Prep
+
+**Q: Pub/Sub versus Kafka on GCP?**
+**A:** Pub/Sub is fully managed and global-first. Kafka (or Managed Kafka / Pub/Sub Lite / Dataflow) fits when you need partitions you control and a Kafka ecosystem. Lite is a cheaper, zonal option.
+
+**Q: Why duplicates with exactly-once on?**
+**A:** Publisher retries, handler crashes after side effect, or a feature gap on the API you used. Still write idempotent handlers.
+
+**Q: Push or pull?**
+**A:** Pull for workers you scale. Push for simple endpoints and Cloud Functions, with care for retry storms.
+
+## 6. Production Use Cases
+
+- **GCP-native microservices** fan-out.
+- **Dataflow** pipelines as a subscriber.
+- **Push to Cloud Run** for small event handlers.
+
+<Callout icon="tip" title="Alert on oldest unacked">
+Subscription oldest age is the business lag metric. Depth alone hides a stuck key.
+</Callout>

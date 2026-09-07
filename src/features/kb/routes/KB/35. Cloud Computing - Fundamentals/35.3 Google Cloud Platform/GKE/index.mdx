@@ -1,23 +1,111 @@
 ---
 title: Google Kubernetes Engine (GKE)
-description: The industry's premier, fully managed Kubernetes orchestration platform, mathematically engineered by the original creators of Kubernetes to provide unparalleled automation and scale.
+description: "Managed Kubernetes on GCP: Standard node pools or Autopilot, alias-IP VPC networking, Workload Identity, and release channels — not a control plane you SSH into."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Google Kubernetes Engine (GKE)"
-  subtitle="The Premier Kubernetes Platform"
-  tags={['GCP', 'Kubernetes', 'Containers', 'Compute']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Google Kubernetes Engine (GKE)">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Google invented Kubernetes (originally Borg). Consequently, GKE is widely considered the most advanced, stable, and deeply integrated managed Kubernetes service on the market, vastly outperforming AWS EKS in native automation.
+**GKE** is Google's managed Kubernetes. You get a control plane Google patches and a data plane you either run as **node pools** (Standard) or hand to Google (**Autopilot**). Pods get VPC-native IPs via alias ranges. Identity for workloads is **Workload Identity**, not a JSON key file in a Secret.
 
-## 1. Autopilot Mode
-Managing the underlying Virtual Machines (Worker Nodes) of a Kubernetes cluster requires deep mathematical capacity planning. If you provision too many, you waste money. If you provision too few, pods fail to schedule.
-GKE introduced **Autopilot**. In Autopilot mode, you completely surrender the Worker Nodes to Google. You do not see them, and you cannot SSH into them. You simply submit a standard Kubernetes `Deployment.yaml` to the API. Google mathematically provisions the exact compute capacity required for those specific pods in real-time, completely eliminating node management and providing a true serverless Kubernetes experience.
+## 1. Deep Dive and Mechanics
 
-## 2. Native VPC Integration
-In AWS EKS, configuring the networking (CNI) to ensure Pods can talk to the VPC requires installing complex third-party add-ons.
-In GKE, Kubernetes is mathematically fused into the Google Cloud Software Defined Network (SDN). Every Pod automatically receives a native IP address directly from the GCP VPC Subnet. A Virtual Machine outside the cluster can ping a Pod directly by its IP address without traversing complex NAT translations, drastically reducing mathematical network latency and simplifying firewall architectures.
+**Modes.** Standard: you pick machine types, taints, and autoscaler min/max. Autopilot: you submit Deployments; Google sizes nodes and bills at the pod-request grain. Autopilot rejects some hostPath and privileged patterns on purpose.
 
-</TechnologyTemplate>
+**Networking.** VPC-native (alias IPs) is the default. Each pod is a routable VPC address. A VM outside the cluster can reach a pod without a second overlay. Dataplane V2 (eBPF) replaces kube-proxy for NetworkPolicy at scale.
+
+**Identity.** Bind a Kubernetes ServiceAccount to a Google service account. The metadata server mints tokens. Node SA should be nearly empty; the workload SA holds the real roles.
+
+**Lifecycle.** Release channels (Rapid, Regular, Stable) plus maintenance windows. Cluster autoscaler adds nodes; HPA/VPA change pod replicas and requests. They solve different equations.
+
+<Callout icon="warning" title="Autopilot is not Standard with extra glue">
+If you need DaemonSets that touch the node kernel, custom CNI, or GPU scheduling you fully own, stay on Standard. Autopilot trades those knobs for a smaller ops surface.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Scheduling is bin-packing under resource requests. Waste is `sum(requests) - used`. Autopilot prices the request, so over-request is a bill. Under-request is an OOMKill.
+
+Availability: a regional cluster runs a multi-zone control plane and spreads nodes. A zonal cluster is cheaper and dies with that zone.
+
+<ComparisonTable
+  headers={['Mode', 'You manage', 'Bill grain']}
+  rows={[
+    ['Standard', 'Node pools + cluster', 'VMs + control plane'],
+    ['Autopilot', 'Workloads + policy', 'Pod requests'],
+    ['EKS', 'Nodes or Fargate + addons', 'Control plane + compute'],
+    ['AKS', 'Node pools + addons', 'VMs + control plane'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      serviceAccountName: api-ksa
+      containers:
+        - name: api
+          image: us-docker.pkg.dev/proj/api:1.4
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              memory: "512Mi"
+```
+
+Bind `api-ksa` to a Google SA with least-privilege roles. Never mount a service-account JSON.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    User[Client] --> LB[GCLB / Ingress]
+    LB --> Svc[Service]
+    Svc --> PodA[Pod]
+    Svc --> PodB[Pod]
+    PodA --> WI[Workload Identity]
+    WI --> GCP[Cloud APIs]
+```
+
+## 5. Interview Prep
+
+**Q: Autopilot vs Standard?**
+**A:** Autopilot if you want Kubernetes API without node babysitting and can live with its security constraints. Standard if you need node-level control, special hardware, or cheaper bin-packing you tune yourself.
+
+**Q: Why VPC-native?**
+**A:** Pods are first-class VPC IPs. Firewall and Private Service Connect rules apply without a second NAT hop. It is the GKE default for a reason.
+
+**Q: How do pods call GCP APIs safely?**
+**A:** Workload Identity. Node SA stays locked down. Keys in Secrets are a finding.
+
+## 6. Production Use Cases
+
+- Multi-service HTTP APIs with Ingress, HPA on CPU or custom metrics, and regional clusters.
+- Batch / GPU training jobs on Standard node pools with taints.
+- Shared platform clusters using namespaces, NetworkPolicy, and Binary Authorization.
+
+<Callout icon="tip" title="Requests are the contract">
+Set requests to what the process needs at p95, not the limit copypasta. Autopilot and the cluster autoscaler both plan from requests, not from hope.
+</Callout>

@@ -1,35 +1,88 @@
 ---
 title: Network Security
-description: The foundational discipline of protecting the underlying networking infrastructure from unauthorized access, misuse, or theft.
+description: "The discipline of controlling traffic, segmenting trust, and watching packets so the wire is not an open hallway."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Network Security">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Before you can secure the applications or the data, you must secure the digital highways they travel on. **Network Security** is the practice of implementing hardware and software controls to protect the usability and integrity of your network.
+**Network security** is policy on paths: who may speak to whom, with which protocols, and what you log when they do. Firewalls, segmentation, VPN, DNS filtering, and IDS/IPS are tools. The discipline is **deny by default**, **encrypt in transit**, and **assume a hostile LAN** for anything that leaves the building.
 
-It relies on a layered, mathematical approach called "Defense in Depth." If an attacker bypasses the perimeter firewall, they should immediately hit a secondary internal firewall, an Intrusion Prevention System, and strict VLAN routing rules.
+## 1. Deep Dive and Mechanics
 
+**Segment.** Users, servers, PCI, guests, and management planes do not share a flat L2. East-west allow-lists beat a hard shell and a soft chewy center.
 
-<Callout icon="warning" title="The Death of the Perimeter">
+**Filter.** Stateful firewalls and security groups at chokepoints. WAF and DDoS controls at the edge for public apps. No admin protocols on the public internet.
 
+**Observe.** Flow logs, DNS logs, and IDS on the spans you can still see (after TLS, that is metadata plus a few inspected edges).
 
-  Historically, networks were built like castles: a hard outer shell (the firewall) and a soft, trusted inside. With the rise of cloud computing and remote work, this model is mathematically broken. An employee\'s laptop at a coffee shop is inside the "perimeter." This necessitated the shift to Zero Trust Architecture.
-
-
+<Callout icon="info" title="Encryption moves the fight to identity">
+TLS stops casual sniffing. It does not stop a stolen session or a permitted path to an admin API.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Core Network Security Technologies
+A network policy is a set of allow tuples (src, dst, port, proto, identity). The default is deny. Reachability analysis asks whether an unintended path exists after NAT, peering, and overlapping CIDRs. Zero Trust adds a principal and device posture to the tuple so IP alone is not enough.
 
+<ComparisonTable
+  headers={['Control', 'Question it answers', 'Limit']}
+  rows={[
+    ['Firewall / SG', 'May these IPs talk?', 'Stolen host inside the set'],
+    ['Segmentation', 'How far can a breach walk?', 'Mis-peered VPCs'],
+    ['VPN / ZTNA', 'Is the user on a trusted path?', 'Endpoint malware'],
+    ['IDS', 'Does this look hostile?', 'Encrypted payload'],
+  ]}
+/>
 
-<ComparisonTable headers={['Technology', 'Function']} rows={[ ['Next-Generation Firewalls (NGFW)', 'Unlike old firewalls that just blocked IP addresses and ports, NGFWs perform Deep Packet Inspection (DPI) to mathematically analyze the application-level data (e.g., blocking Facebook traffic while allowing Salesforce traffic).'], ['Intrusion Prevention Systems (IPS)', 'Actively scans network traffic for known malware signatures and instantly drops the packets before they reach the target server.'], ['Network Access Control (NAC)', 'Mathematically verifies the security posture of a device before letting it join the network. (e.g., "This laptop doesn\'t have antivirus installed; put it in the Quarantine VLAN").'] ]} />
+## 3. Real-World Implementation
 
+```text
+# Reachability review
+# - Management plane only from PAM / break-glass
+# - No 0.0.0.0/0 on SSH or RDP
+# - Flow logs on every VPC / VNet
+# - Guest Wi-Fi cannot reach corp RFC1918
+```
 
+Draw the intended paths once a quarter. The diagram decays faster than the tickets.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Inet[Internet] --> Edge[Edge: DDoS / WAF]
+    Edge --> Pub[Public tier]
+    Pub --> App[App tier]
+    App --> Data[Data tier]
+    Users[Users] --> ZT[ZTNA / VPN]
+    ZT --> App
+```
+
+## 5. Interview Prep
+
+**Q: Firewall vs segmentation?**
+**A:** A firewall is a checkpoint. Segmentation is the design that makes most paths not exist.
+
+**Q: Why still do network security under Zero Trust?**
+**A:** Identity-aware access still rides packets. You still need DDoS, egress control, and a place to put sensors.
+
+**Q: East-west?**
+**A:** Traffic between servers. That is where ransomware walks.
+
+## 6. Production Use Cases
+
+- **PCI and OT** enclaves with documented conduits.
+- **Cloud VPCs** with private endpoints and no public RDS.
+- **Campus** networks with 802.1X and guest isolation.
+
+<Callout icon="tip" title="Log deny as well as allow">
+The packet you dropped is often the first IOC.
+</Callout>

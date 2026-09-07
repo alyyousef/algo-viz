@@ -1,39 +1,99 @@
 ---
 title: Dependency Injection (DI)
-description: A software design pattern where an object receives its dependencies (other objects it requires to function) from an external framework or constructor, rather than creating them internally, ensuring mathematical decoupling.
+description: "Supplying a type's collaborators from the outside — usually through the constructor — instead of constructing them internally."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Dependency Injection (DI)"
-  subtitle="Mathematical Decoupling of State"
-  tags={['OOP', 'Design Patterns', 'Architecture', 'Testing']}
->
+    <ConceptTemplate title="Dependency Injection (DI)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-If a `Car` class mathematically instantiates an `Engine` class inside its own constructor (`this.engine = new Engine()`), the `Car` is permanently, rigidly coupled to that specific `Engine`. You can never test the `Car` with a fake `MockEngine`.
+**Dependency injection** means an object does not `new` its collaborators. The caller (or a container) passes them in. That is how you swap a real mailer for a fake without editing the use case.
 
-## 1. Passing Dependencies In
-Dependency Injection (DI) mathematically reverses this control. The `Car` does not create the engine; the engine is *injected* into it from the outside.
-```java
-public class Car {
-    private Engine engine;
+## 1. Deep Dive and Mechanics
 
-    // Dependency Injection via Constructor
-    public Car(Engine externalEngine) {
-        this.engine = externalEngine;
-    }
-}
+**Constructor injection** is the default: required collaborators appear as constructor parameters. The object is complete after `new`. **Setter injection** allows optional or late collaborators and makes it possible to observe a half-wired object. **Method injection** passes a helper into a single call.
+
+**Containers** (Spring, Dagger, Guice, .NET DI) automate the graph. They are optional. A 20-line `main` that constructs objects in order is still DI.
+
+**Service locator** is the opposite smell: the object asks a global registry for a type. Dependencies become invisible.
+
+<Callout icon="warning" title="A container is not the point">
+If you cannot construct the object in a test with three fakes, the design is wrong — no amount of XML or annotations will save it.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+An object is a function of its dependencies: `UseCase(store, clock)`. Injection is applying that function at the composition root. The object graph should be a DAG. Cycles need lazy holders or a redesign.
+
+Lifetime: singletons, scoped (per request), and transient instances are different ways to instantiate the same type in that DAG.
+
+<ComparisonTable
+  headers={['Style', 'Required deps visible', 'Partial construction']}
+  rows={[
+    ['Constructor injection', 'Yes', 'No'],
+    ['Setter injection', 'No', 'Yes'],
+    ['Service locator', 'No', 'Yes'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class Mailer:
+    def send(self, to, body):
+        raise NotImplementedError
+
+class Signup:
+    def __init__(self, mailer: Mailer):
+        self._mailer = mailer
+
+    def register(self, email):
+        self._mailer.send(email, "welcome")
+        return email
+
+class RecordingMailer(Mailer):
+    def __init__(self):
+        self.sent = []
+
+    def send(self, to, body):
+        self.sent.append((to, body))
 ```
-Because the dependency is injected, the `Car` no longer cares *how* the engine is created. During production, you inject a `V8Engine`. During automated testing, you inject a `MockEngine` that mathematically always returns "running = true" without actually burning CPU cycles.
 
-## 2. DI Frameworks (IoC Containers)
-In large enterprise applications (like Java Spring or Angular), manually injecting dependencies across 1,000 classes is a mathematical nightmare.
-These ecosystems use **Inversion of Control (IoC) Containers**. You simply annotate the class (e.g., `@Inject`). When the application starts, the DI Framework mathematically analyzes the entire graph of dependencies, instantiates the `Engine`, and automatically injects it into the `Car`, abstracting away the mathematical complexity of object creation.
+Tests construct `Signup(RecordingMailer())`. Production constructs `Signup(SmtpMailer(...))`.
 
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Main[Composition root] --> Signup
+    Main --> Smtp[SmtpMailer]
+    Smtp --> Signup
+```
+
+## 5. Interview Prep
+
+**Q: DI versus DIP?**
+**A:** DIP says depend on abstractions. DI says pass the implementors in. You usually want both. You can inject a concrete class (DI without inversion) and still have painful tests.
+
+**Q: Why prefer constructors over setters?**
+**A:** Required dependencies cannot be forgotten. The object never exists in an unusable state. Immutability is easier.
+
+**Q: When is a DI container worth it?**
+**A:** When the graph is large, lifetimes differ per request, and many teams would otherwise copy-paste wiring. For a small service, `main` is clearer.
+
+## 6. Production Use Cases
+
+- **Web request scopes**: one Db session per request, injected into handlers.
+- **Background jobs** that receive a clock, queue, and metrics client.
+- **Mobile / desktop apps** with a composition root at startup.
+
+<Callout icon="tip" title="Inject interfaces at boundaries">
+Inject `Clock` and `OrderStore`, not every tiny helper. Over-injection is how constructors grow to fifteen parameters — a sign the class needs a split.
+</Callout>

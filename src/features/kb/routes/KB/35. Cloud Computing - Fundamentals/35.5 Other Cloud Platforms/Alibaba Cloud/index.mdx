@@ -1,23 +1,87 @@
 ---
 title: Alibaba Cloud
-description: The dominant cloud computing platform in Asia, providing massive scale, extreme eCommerce performance optimizations, and deep integration with the Chinese digital ecosystem.
+description: "China and APAC hyperscaler: ECS, OSS, ACK, and ICP-aware networking — not a drop-in AWS region with different logos."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Alibaba Cloud"
-  subtitle="The Asian Cloud Giant"
-  tags={['Cloud', 'Alibaba', 'Enterprise', 'Global']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Alibaba Cloud">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Alibaba Cloud (Aliyun) is the backbone of the Alibaba eCommerce empire. It is mathematically engineered to handle the most extreme traffic spikes on Earth (such as "Singles' Day", which dwarfs Western Black Friday traffic).
+**Alibaba Cloud** (Aliyun) is a hyperscaler with deepest capacity in **China** and strong APAC coverage. The product map rhymes with AWS: **ECS** (VMs), **OSS** (objects), **VPC**, **ACK** (Kubernetes), **SLB**, **RDS**, **Function Compute**. Compliance, ICP filings, and account residency are first-class constraints, not footnotes.
 
-## 1. PolarDB
-Alibaba's direct answer to AWS Aurora is **PolarDB**.
-Standard MySQL databases struggle mathematically when 100 million users try to checkout simultaneously. PolarDB separates the SQL compute nodes from the underlying storage layer. The storage layer uses an ultra-fast mathematical RDMA network, allowing the database to scale up to 100 Terabytes and process millions of transactions per second, providing the extreme OLTP performance required for massive Asian eCommerce platforms.
+## 1. Deep Dive and Mechanics
 
-## 2. The Great Firewall and Compliance
-For Western companies expanding into China, Alibaba Cloud is often a mathematical necessity.
-Deploying an AWS server in New York to serve users in Beijing mathematically results in horrific network latency and packet loss due to the Great Firewall of China. Furthermore, Chinese cybersecurity laws demand strict data localization. Alibaba Cloud provides native data centers in mainland China, mathematically bypassing the latency of the firewall and ensuring strict compliance with local data sovereignty regulations.
+**China vs international.** Mainland regions sit behind different connectivity and regulatory rules. A Singapore account is not a Shanghai account. Cross-border links have latency and legal cost.
 
-</TechnologyTemplate>
+**RAM.** Resource Access Management is the IAM analog: users, roles, policies. STS tokens for workloads. RAM and STS mistakes are the usual breach.
+
+**Networking.** VPC + vSwitch (AZ-scoped). CEN for multi-region. Express Connect for hybrid. Public IPs and EIP quotas are tight in some regions.
+
+**Data.** OSS classes, PolarDB, MaxCompute, and DataWorks show up in enterprise stacks. Do not assume S3 SDK defaults without the OSS endpoint.
+
+<Callout icon="warning" title="ICP and public HTTP">
+A public website on a mainland region generally needs an ICP filing. Ignoring this is not a DNS problem; it is a compliance block.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Multi-cloud active-active between AWS and Aliyun is a latency plus consistency problem, not a Terraform provider problem. Usually you pick a primary cloud per user geo.
+
+Egress and cross-border bandwidth dominate bills when you treat China as "another AZ."
+
+<ComparisonTable
+  headers={['Need', 'Alibaba', 'AWS analog']}
+  rows={[
+    ['VM', 'ECS', 'EC2'],
+    ['Object', 'OSS', 'S3'],
+    ['K8s', 'ACK', 'EKS'],
+    ['IAM', 'RAM', 'IAM'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+aliyun ecs DescribeInstances --RegionId cn-hangzhou
+# Terraform: alicloud provider, ram roles, vpc + vswitch per AZ
+```
+
+Pin region ids (`cn-hangzhou` vs `ap-southeast-1`). They are not interchangeable.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    UserCN[Users in China] --> SLB[SLB]
+    SLB --> ECS[ECS / ACK]
+    ECS --> OSS[OSS]
+    UserINT[International] --> INT[International region]
+```
+
+## 5. Interview Prep
+
+**Q: Why Aliyun instead of AWS Beijing?**
+**A:** Local ops, product coverage, and sometimes procurement. AWS also has China (operated with partners). Pick from data residency and team skill, not brand.
+
+**Q: What is RAM?**
+**A:** Aliyun IAM. Roles for ECS, policies on OSS. Same least-privilege story.
+
+**Q: Can I use one global control plane?**
+**A:** Not honestly. Mainland is a different operational domain.
+
+## 6. Production Use Cases
+
+- Consumer apps whose users are in mainland China.
+- APAC enterprises already on Alibaba Group ecosystem.
+- Hybrid with on-prem China DCs via Express Connect.
+
+<Callout icon="tip" title="Separate accounts per realm">
+Do not mix mainland production and international sandbox identity. Billing and RAM blast radius stay cleaner.
+</Callout>

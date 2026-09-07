@@ -1,32 +1,96 @@
 ---
-title: Code Smells
-description: "Mathematical and structural indicators in a codebase that suggest a deeper architectural flaw, serving as warning signs that refactoring is necessary before the system becomes unmaintainable."
+title: Code smells
+description: "Surface hints that design is rotting — long methods, feature envy, shotgun surgery — not proof of a bug, but a prompt to look."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Code Smells"
-  subtitle="Detecting Architectural Decay"
-  tags={['Process', 'Clean Code', 'Architecture', 'Refactoring']}
->
+    <ConceptTemplate title="Code smells">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A "Code Smell" is not a bug; the code mathematically compiles and works perfectly. However, the *structure* of the code emits a "smell" that indicates it is highly susceptible to future bugs.
+**Code smells** (Fowler) are recurring structures that often hide a deeper design problem. A long method might need Extract Function — or it might be a straight-line script that is already clear. Smells are heuristics for review, not automatic delete rules.
 
-## 1. Bloaters
-These are smells representing code that has mathematically grown so large it cannot be effectively managed.
-- **Long Method**: A function that spans 500 lines. The mathematical probability of introducing a regression when modifying it approaches 100%.
-- **Large Class (God Class)**: A single file containing 5,000 lines and 50 methods, violating the Single Responsibility Principle.
-- **Primitive Obsession**: Using raw mathematical primitives (`String`, `int`) instead of small Objects for domain concepts (e.g., using a `String` for a Zip Code instead of a `ZipCode` class that guarantees 5 digits).
+## 1. Deep Dive and Mechanics
 
-## 2. Object-Orientation Abusers
-These smells indicate that the developer did not understand mathematical polymorphism.
-- **Switch Statements**: Having massive `switch` or `if/else` chains scattered across the codebase based on an object's "type". This violates the Open-Closed Principle (solved by the State or Strategy pattern).
-- **Refused Bequest**: A child class inherits from a parent, but mathematically only uses 10% of the parent's methods, throwing `NotImplementedException` for the rest. This indicates inheritance was the wrong mathematical choice (favor Composition).
+**Bloaters.** Long method, large class, long parameter list, data clumps. Something wants to be a type or a function.
 
+**Couplers.** Feature envy (a method that uses another object more than itself), inappropriate intimacy, shotgun surgery (one change edits twelve files), divergent change (one file edits for twelve reasons).
+
+**Change preventers.** Parallel inheritance hierarchies, divergent change. The next feature will hurt.
+
+**Dispensables.** Dead code, speculative generality, comments that replace bad names, duplicate code.
+
+<Callout icon="info" title="A smell is a question">
+Ask “is this pulling its weight?” Do not “fix” a data class that is a DTO at the HTTP edge. Context decides.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Change fan-out.** Shotgun surgery is high fan-out of a requirement onto files. Divergent change is high fan-in of requirements onto one file. Both are coupling/cohesion metrics in English.
+
+**Duplication.** The Rule of Three: the first copy may be coincidence; the third is a missing abstraction. Premature DRY is also a smell (speculative generality).
+
+**Refactor catalog.** Each smell has a usual move (Extract Function, Move Method, Introduce Parameter Object). The catalog is the other half of the skill.
+
+<ComparisonTable
+  headers={['Smell', 'You notice', 'Typical move']}
+  rows={[
+    ['Long method', 'Scroll fatigue', 'Extract Function'],
+    ['Feature envy', 'Other.x other.y', 'Move Method'],
+    ['Shotgun surgery', '12-file feature', 'Move toward one module'],
+    ['Speculative generality', 'Unused hooks', 'Delete'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+# feature envy: totals live on Order, not here
+def print_invoice(order):
+    tax = order.subtotal * order.tax_rate
+    total = order.subtotal + tax
+    print(total)
+
+# after Move Method
+def print_invoice(order):
+    print(order.grand_total())
+```
+
+The tax policy belongs with `Order` (or a pricing service), not the printer.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Smell[Smell in review] --> Ask[Is it harming change]
+    Ask -->|no| Leave[Leave it]
+    Ask -->|yes| Test[Cover behavior]
+    Test --> Refactor[Apply catalog move]
+```
+
+## 5. Interview Prep
+
+**Q: Name three smells and a refactor for each.**
+**A:** Long method / Extract Function. Feature envy / Move Method. Long parameter list / Introduce Parameter Object. Have a fourth (shotgun surgery) ready.
+
+**Q: Is duplication always a smell?**
+**A:** Three similar blocks that change together: yes. Two similar blocks in different bounded contexts: maybe not — a shared module can couple the wrong things.
+
+**Q: How do smells differ from bugs?**
+**A:** Bugs are incorrect behavior. Smells are maintainability risks. They become bugs when the next edit misses one of the twelve sites.
+
+## 6. Production Use Cases
+
+- **PR checklists** that name smells instead of “looks messy.”
+- **Legacy stranglers** that pick the smell blocking the next feature.
+- **Static tools** (complexity, duplication clones) as smell detectors, not judges.
+
+<Callout icon="tip" title="Refactor the path you are on">
+The smell in a file you are not shipping this week can wait. The smell that makes *this* bug hard to fix cannot.
+</Callout>

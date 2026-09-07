@@ -1,36 +1,102 @@
 ---
-title: Builder Pattern
-description: A Creational Design Pattern from the Gang of Four (GoF) that mathematically separates the construction of a complex object from its representation, allowing the same construction process to create different representations.
+title: Builder
+description: "A creational pattern that constructs a complex object step by step so the caller never sees a telescoping constructor or a half-baked product."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Builder Pattern"
-  subtitle="Constructing Complex Objects"
-  tags={['Design Patterns', 'Creational', 'GoF', 'Clean Code']}
->
+    <ConceptTemplate title="Builder">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Creating an object using the `new` keyword is easy, unless the object mathematically requires 15 different configuration parameters to be properly initialized.
+**Builder** (GoF) moves construction out of the product. A Director (optional) calls builder steps (`setCrust`, `addTopping`). The Builder assembles and returns the Product. Telescoping constructors and boolean piles go away.
 
-## 1. The Telescoping Constructor Anti-Pattern
-If a `House` class requires parameters for walls, doors, windows, roof, and pool, developers often mathematically create a massive constructor: `new House(4, 2, 8, true, false, null, null)`. This is mathematically unreadable. What does `true` mean?
+## 1. Deep Dive and Mechanics
 
-## 2. The Fluent Builder
-The Builder pattern solves this by extracting the object construction code out of its own class and into a separate `HouseBuilder` object.
-The Builder provides a mathematically "fluent" API (methods that return `this`) allowing for step-by-step configuration:
-```java
-House myHouse = new HouseBuilder()
-    .setWalls(4)
-    .setDoors(2)
-    .addPool()
-    .build();
+**Fluent builders.** `new RequestBuilder().url(...).header(...).build()` is the Java/JS idiom. `build()` validates required fields and returns an immutable product.
+
+**GoF builder.** An abstract builder plus concrete builders (HTML versus text documents) and a director that knows the recipe. Same pattern, more types.
+
+**When.** Many optional parts, invariants that only hold at the end, or several representations of the same construction process.
+
+**Not a factory.** Factories decide a type in one shot. Builders accumulate a recipe. You can combine them (a factory returns a builder).
+
+<Callout icon="warning" title="Mutable product leaking from build">
+If `build()` returns an object whose fields the builder still holds and mutates, callers get aliasing bugs. Copy or freeze on build.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Partial objects.** Construction is a path through a space of incomplete states. The builder is a state machine; `build()` is defined only on accepting states (required fields present, invariants true).
+
+**Telescoping constructors.** n optional parameters create 2^n constructor overloads if you try to be type-safe that way. A builder is linear in the number of steps.
+
+**Immutability.** Prefer products that are immutable after `build()`. The builder absorbs mutation during assembly.
+
+<ComparisonTable
+  headers={['Approach', 'Readability', 'Invariant check']}
+  rows={[
+    ['Telescoping ctor', 'Poor', 'At each overload'],
+    ['Builder', 'Good', 'At build'],
+    ['Factory method', 'Good for few args', 'At create'],
+    ['Optional bags / maps', 'Loose', 'Easy to miss keys'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+class PizzaBuilder:
+    def __init__(self):
+        self._toppings = []
+        self._crust = None
+
+    def crust(self, name):
+        self._crust = name
+        return self
+
+    def topping(self, name):
+        self._toppings.append(name)
+        return self
+
+    def build(self):
+        if not self._crust:
+            raise ValueError("crust required")
+        return Pizza(self._crust, tuple(self._toppings))
 ```
-This mathematically eliminates the telescoping constructor, makes the code perfectly readable, and allows the Builder to enforce strict validation logic before mathematically allocating the final `House` object via the `build()` method.
 
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Client[Client] --> Dir[Director optional]
+    Dir --> B[Builder]
+    Client --> B
+    B --> P[Product]
+```
+
+## 5. Interview Prep
+
+**Q: Builder versus Factory Method?**
+**A:** Factory: one call, one product, little configuration. Builder: many steps, optional parts, or several representations.
+
+**Q: Do you need a Director?**
+**A:** Only when several clients share a construction recipe. Fluent builders often skip it.
+
+**Q: How do you handle required fields in a type-safe way?**
+**A:** Staged builders (each step returns a new type) or a final `build` that type-checkers cannot skip. Runtime checks are the common compromise.
+
+## 6. Production Use Cases
+
+- **HTTP clients and query builders.**
+- **Test data** (object mothers / fluent fixtures).
+- **Document or SQL generation** with multiple output formats.
+
+<Callout icon="tip" title="Validate once at build">
+Scattered setters that each try to keep the product legal will fight. Allow a messy builder; make a strict product.
+</Callout>

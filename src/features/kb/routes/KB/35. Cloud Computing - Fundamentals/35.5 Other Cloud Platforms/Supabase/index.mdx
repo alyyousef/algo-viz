@@ -1,25 +1,92 @@
 ---
 title: Supabase
-description: An open-source, mathematically robust alternative to Firebase, built entirely on a dedicated PostgreSQL database, providing real-time subscriptions, authentication, and edge functions.
+description: "Open-source Firebase alternative: Postgres, Auth, Storage, Realtime, and Edge Functions — with Row Level Security as the real product."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Supabase"
-  subtitle="The Open Source Firebase Alternative"
-  tags={['Cloud', 'BaaS', 'PostgreSQL', 'Open Source']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Supabase">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-Firebase is incredible, but it uses a proprietary NoSQL database (Firestore) that locks you into the Google ecosystem. Supabase provides the exact same BaaS (Backend-as-a-Service) developer experience, but is mathematically anchored by standard, open-source PostgreSQL.
+**Supabase** wraps **Postgres** with **Auth**, **Storage** (S3-compatible), **Realtime** (WAL → websocket), and **Edge Functions**. Clients can hit PostgREST with a JWT. **Row Level Security (RLS)** is what makes that safe. Self-host is possible; Supabase Cloud is the hosted path.
 
-## 1. Native PostgreSQL at the Core
-When you create a Supabase project, you are not given a black-box proprietary data store; you are given a full, unadulterated PostgreSQL database.
-Because it is standard Postgres, you can mathematically execute complex `JOIN`s, create Views, and write custom SQL Functions. If you decide to leave Supabase, you simply take a standard `pg_dump` backup and move it to AWS RDS. The mathematical lock-in is zero.
-Supabase then layers a REST/GraphQL API (via PostgREST) instantly over your database, allowing front-end frameworks (React/Vue) to query the database directly from the browser.
+## 1. Deep Dive and Mechanics
 
-## 2. Row Level Security (RLS)
-Allowing a React app to query a database directly is mathematically dangerous unless secured.
-Supabase relies on PostgreSQL's native **Row Level Security (RLS)**. Instead of writing application-level security logic, you write SQL policies directly into the database: *"Mathematically allow a user to `SELECT` a row in the `users` table ONLY IF the `auth.uid()` matches the row's `id`."*
-Because the security is mathematically enforced at the lowest possible layer (the database engine), it is physically impossible for a frontend bug to accidentally leak another user's data.
+**API.** PostgREST exposes tables and RPCs. Generated types from schema are the DX. Wide tables without RLS are a public SQL endpoint.
 
-</TechnologyTemplate>
+**Auth.** GoTrue-style JWT. `auth.uid()` in policies. Service role key bypasses RLS — that key is root.
+
+**Realtime.** Replication slots stream changes. Publication design matters; do not publish every table to every client.
+
+**Storage.** Buckets with policies that also use SQL. Same RLS mindset.
+
+<Callout icon="error" title="Service role in the browser">
+The `service_role` secret must never ship to a client. Anon key plus RLS only. Leaking service role is a full database compromise.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+RLS is a predicate executed per row. A policy that does a slow subquery per row will melt p95. Index the columns policies filter.
+
+Connection count: PostgREST pools, but Edge Functions plus direct Prisma can exhaust Postgres. Use poolers (Supavisor) for serverless.
+
+<ComparisonTable
+  headers={['Need', 'Supabase', 'Firebase']}
+  rows={[
+    ['DB', 'Postgres + RLS', 'Firestore rules'],
+    ['Auth', 'GoTrue / JWT', 'Firebase Auth'],
+    ['Realtime', 'WAL replication', 'Listeners'],
+    ['Escape', 'Any Postgres tool', 'Vendor APIs'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```sql
+ALTER TABLE public.todos ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "own rows" ON public.todos
+  FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+```
+
+Enable RLS **before** you point the anon key at the table.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Client --> Auth[Auth JWT]
+    Client --> REST[PostgREST]
+    REST --> RLS[RLS]
+    RLS --> PG[Postgres]
+    PG --> RT[Realtime]
+```
+
+## 5. Interview Prep
+
+**Q: Supabase vs Firebase?**
+**A:** SQL vs documents. Supabase wins if you want Postgres and SQL tooling. Firebase wins on some mobile offline stories.
+
+**Q: Supabase vs Neon?**
+**A:** Neon is Postgres hosting (branches). Supabase is Postgres plus BaaS. You can use both in spirit; usually you pick one DX.
+
+**Q: Is PostgREST safe?**
+**A:** Only with RLS and a sane grant to `anon` / `authenticated`. Grants to public without RLS are the incident.
+
+## 6. Production Use Cases
+
+- CRUD SaaS with client-side access and SQL policies.
+- Self-hosted stack for teams that want the UX without SaaS.
+- Storage + Auth for a small product without rolling custom.
+
+<Callout icon="tip" title="Write policies in migrations">
+Console-only RLS will drift. Treat policies like schema: reviewed, versioned, tested.
+</Callout>

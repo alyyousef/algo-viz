@@ -1,37 +1,86 @@
 ---
-title: DMZ (Demilitarized Zone)
-description: A physical or logical subnetwork that contains and exposes an organization's external-facing services to an untrusted network.
+title: DMZ
+description: "A perimeter network segment that hosts internet-facing systems so a breach there is not a free hop into the intranet."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="DMZ (Demilitarized Zone)">
+    <ConceptTemplate title="DMZ">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In military terms, a demilitarized zone is a neutral area between two hostile nations. In cybersecurity, the **DMZ** is a highly controlled network subnet sitting between the dangerous public internet and the highly secure internal corporate network.
+A **DMZ** (demilitarized zone) is a network segment for systems that must talk to the untrusted internet (load balancers, reverse proxies, email edge). Firewalls allow only specific flows: internet to DMZ services, DMZ to a few internal apps, and almost nothing from DMZ to workstation VLANs. The idea is **containment**, not magic safety.
 
-Any server that *must* be accessible to the public (like a company's web server or email server) is placed in the DMZ.
+## 1. Deep Dive and Mechanics
 
+Classic three-legged firewall: outside, DMZ, inside. Public VIPs live in the DMZ. Application servers and databases live inside. The DMZ host authenticates and proxies; it does not store the crown-jewel database.
 
-<Callout icon="success" title="The Dual-Firewall Architecture">
+**Modern translations.** Cloud public subnets plus private subnets, or a WAF/CDN in front of private origins, are the same pattern. "We put the database in the DMZ so it is easier" is the anti-pattern.
 
+**Jump hosts.** Admin access to DMZ boxes should come from a jump/PAM segment, not from the open internet and not from every laptop VLAN.
 
-  The most secure DMZ design uses two firewalls. The External Firewall allows traffic from the internet into the DMZ. The Internal Firewall completely blocks traffic originating from the DMZ from entering the internal corporate network.
-
-
+<Callout icon="warning" title="A flat 'DMZ VLAN' with 200 apps is not a DMZ">
+If every edge box can reach every other edge box and a /16 of internals, you built a staging area for lateral movement.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Mathematical Containment
+A DMZ is a **cut** in the reachability graph. Security is the size of that cut: few allowed edges, each with a protocol and identity. Compromise of a DMZ node should not increase reachability into the internal set except along those edges. Zero Trust continues the idea by removing implicit trust even after the cut.
 
-The entire purpose of a DMZ is mathematical containment.
+<ComparisonTable
+  headers={['Placement', 'Internet ingress', 'Data store']}
+  rows={[
+    ['DMZ proxy / LB', 'Yes', 'No'],
+    ['App in private subnet', 'Via proxy only', 'Talks to DB'],
+    ['DB in private subnet', 'No', 'Yes'],
+    ['DB in DMZ', 'Often accidentally', 'Worst case'],
+  ]}
+/>
 
-Web servers are inherently risky because they accept input from strangers. If a hacker exploits a vulnerability in the web server, they take control of the server. Because the server is trapped in the DMZ, the Internal Firewall mathematically prevents the hacker from pivoting deeper into the network to steal the HR database.
+## 3. Real-World Implementation
 
-The compromised web server is a loss, but the crown jewels remain safe.
+```text
+# Example security-group sketch
+# sg-dmz-lb: inbound 443 from 0.0.0.0/0; outbound 443 to sg-app
+# sg-app: inbound 443 from sg-dmz-lb; outbound 5432 to sg-db
+# sg-db: inbound 5432 from sg-app only
+```
 
+Document each allow as a ticketed exception with an owner.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Inet[Internet] --> FW1[Edge firewall]
+    FW1 --> DMZ[DMZ proxies]
+    DMZ --> FW2[Internal firewall]
+    FW2 --> App[App tier]
+    App --> DB[Database]
+```
+
+## 5. Interview Prep
+
+**Q: Is a DMZ obsolete in Zero Trust?**
+**A:** The name is old; the isolation is not. You still do not put data stores on public IPs. Zero Trust adds identity to every hop.
+
+**Q: DMZ vs reverse proxy?**
+**A:** A reverse proxy is often the DMZ workload. The DMZ is the network placement and policy around it.
+
+**Q: What should never live in a DMZ?**
+**A:** Authoritative directories, CAs, backup vaults, and primary databases.
+
+## 6. Production Use Cases
+
+- **On-prem** mail and web edges.
+- **Cloud** public ALB subnet vs private ECS/GKE.
+- **Partner** file-drop zones with no path to AD.
+
+<Callout icon="tip" title="Draw the allowed flows, then delete the rest">
+If you cannot list the edges, you do not have a DMZ. You have a second LAN.
+</Callout>

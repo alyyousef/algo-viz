@@ -1,62 +1,103 @@
 ---
 title: Unit Testing
-description: "The practice of testing the smallest testable parts of an application, typically individual functions or classes, in complete isolation."
+description: "Isolated checks of the smallest deterministic units of code so regressions in logic surface in milliseconds, not in production."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Unit Testing">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-**Unit Testing** forms the foundation of the testing pyramid. The goal is to validate that each individual, isolated "unit" of code (usually a function or a method) performs exactly as expected under various conditions.
+**Unit testing** is the base of the test pyramid: exercise one function, method, or class with collaborators replaced by doubles. A good unit test is fast, deterministic, and names a single behavioural claim. Thousands can run on every save; that is the point.
 
-Because unit tests isolate the code from databases, file systems, and external APIs (using mocks and stubs), they run incredibly fast—often executing thousands of tests per second.
+## 1. Deep Dive and Mechanics
 
-## 1. Anatomy of a Unit Test
-Most unit tests follow the **AAA Pattern** (Arrange, Act, Assert):
-1. **Arrange**: Set up the initial state, instantiate objects, and define the input data.
-2. **Act**: Execute the specific function or method being tested.
-3. **Assert**: Verify that the actual output matches the expected outcome.
+**The unit.** In OO code the unit is usually a class method plus its private helpers. In functional code it is a pure function. If the test must start a database, it is no longer a unit test.
+
+**AAA.** Arrange state and inputs, Act by calling the unit, Assert one observable outcome. Extra asserts are allowed when they describe the same claim, not when they smuggle in a second scenario.
+
+**Isolation.** Replace I/O, clocks, and other teams' services with stubs, fakes, or mocks. Isolation buys speed and determinism. It also means passing unit tests say nothing about wiring.
+
+**Granularity.** Test behaviour through the public API. Reaching into private fields couples the suite to incidental structure and makes refactoring expensive.
+
+<Callout icon="tip" title="Coverage is a flashlight, not a score">
+Line coverage near 80 percent on domain logic is useful. Chasing 100 percent on getters and generated code produces tests that never fail for the right reason.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+A unit with n independent boolean flags has 2^n interesting combinations. Exhaustive testing is impossible; you sample the specification: happy path, boundary, and a few error cases.
+
+**Coverage metrics** are projections of that space:
+
+- Statement coverage: each statement executed at least once.
+- Branch coverage: each boolean outcome taken.
+- Path coverage: each control-flow path — exponential, rarely required.
+
+Passing tests are a **soundness** claim only for the sampled points. They never prove the program for all inputs. Mutation testing (a sibling topic) estimates whether the sample would notice a fault.
+
+<ComparisonTable
+  headers={['Property', 'Unit test', 'Not a unit test']}
+  rows={[
+    ['Scope', 'One unit, doubles for I/O', 'Real database or HTTP'],
+    ['Runtime', 'Milliseconds', 'Seconds to minutes'],
+    ['Failure meaning', 'Logic or contract of that unit', 'Environment, data, or wiring'],
+    ['Good signal', 'Edge cases and domain rules', 'Pixel-perfect UI or SQL syntax'],
+  ]}
+/>
+
+## 3. Real-World Implementation
 
 ```javascript
-// Example using Jest
-test('calculates total with tax', () => {
-  // Arrange
+function calculateTotal(subtotal, taxRate) {
+  if (subtotal < 0) throw new Error('subtotal');
+  return Math.round((subtotal * (1 + taxRate)) * 100) / 100;
+}
+
+test('applies tax and rounds to cents', () => {
   const subtotal = 100;
   const taxRate = 0.1;
-
-  // Act
   const total = calculateTotal(subtotal, taxRate);
-
-  // Assert
   expect(total).toBe(110);
 });
 ```
 
-## 2. Benefits of Unit Testing
-- **Immediate Feedback**: Developers know instantly if their recent code change broke existing logic.
-- **Living Documentation**: Well-written unit tests serve as executable documentation showing exactly how a function is intended to be used.
-- **Refactoring Confidence**: You can aggressively refactor the internal implementation of a class, knowing the tests will catch any regressions in behavior.
+Keep the arrange block local. Shared mutable fixtures across unit tests are how order dependence sneaks in.
 
-## 3. Limitations
+## 4. Visualizations
 
+```mermaid
+flowchart TD
+    Dev[Edit unit] --> Run[Run suite]
+    Run --> Fast[Millisecond results]
+    Fast -->|red| Fix[Fix the unit]
+    Fast -->|green| Commit[Commit]
+    Commit --> CI[CI repeats isolation]
+```
 
-<ComparisonTable headers={['What Unit Tests Do Well', 'What Unit Tests CANNOT Do']} rows={[ ['Catch off-by-one errors in logic.', 'Catch integration issues between two different microservices.'], ['Verify edge cases (e.g., passing null or negative numbers).', 'Verify that a database query is syntactically valid.'], ['Run in milliseconds in a CI pipeline.', 'Ensure the UI looks correct in a browser.'] ]} />
+## 5. Interview Prep
 
+**Q: What makes a test a unit test?**
+**A:** It fails only when that unit is wrong, runs without the network or a real datastore, and finishes fast enough to sit on a save hook.
 
-<Callout icon="tip" title="Test Coverage">
+**Q: Why not mock everything?**
+**A:** Mocks encode a guessed protocol. Over-mocking asserts the implementation, not the outcome, and the suite goes green while the real collaborator changed.
 
+**Q: How do you unit-test a function that calls a clock or UUID generator?**
+**A:** Inject those as parameters or ports so the test can pass a fixed instant and a deterministic id.
 
-While achieving 100% Code Coverage is a noble goal, it often leads to writing low-value tests just to satisfy a metric. Aim for 80% coverage, focusing strictly on complex business logic and domain rules, while ignoring trivial getters/setters.
+## 6. Production Use Cases
 
+- **Domain services** in billing, pricing, and entitlement — the rules that must not drift.
+- **Pure parsers and mappers** sitting between APIs and the model.
+- **CI required checks** that must finish in minutes on every pull request.
 
+<Callout icon="warning" title="Green units, broken product">
+A suite of isolated greens can still ship a system that cannot talk to its database. Pair units with a thin integration layer; do not treat the pyramid as unit-only.
 </Callout>
-
-

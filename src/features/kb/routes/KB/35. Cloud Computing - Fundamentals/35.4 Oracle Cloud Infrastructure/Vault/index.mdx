@@ -1,26 +1,91 @@
 ---
-title: OCI Vault (Key Management Service)
-description: A highly secure, mathematically impenetrable cryptographic appliance powered by physical Hardware Security Modules (HSMs) used to manage encryption keys and sensitive secrets in Oracle Cloud.
+title: OCI Vault
+description: "Keys, secrets, and certificates: HSM-backed KMS plus secret versions — instance principals fetch, humans do not copy PEMs."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Vault"
-  subtitle="Cryptographic Key Management"
-  tags={['OCI', 'Security', 'Encryption', 'KMS']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Vault">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-By default, every Block Volume and Object Storage Bucket in OCI is encrypted using keys managed by Oracle. However, strict government and financial compliance laws demand that the customer, not Oracle, mathematically controls the encryption keys.
+**OCI Vault** (KMS) holds **encryption keys**, **secrets**, and optionally **certificates**. Virtual private vaults offer dedicated HSM partitions; default vaults are multi-tenant HSM-backed. Apps decrypt or fetch secret versions via IAM, not by reading a file from Object Storage you called "secure."
 
-## 1. Hardware Security Modules (HSMs)
-OCI Vault allows you to create **Master Encryption Keys (MEKs)**.
-These keys are not stored on standard hard drives. They are mathematically generated and permanently trapped inside physical, tamper-evident Hardware Security Modules (HSMs) meeting FIPS 140-2 Level 3 certification.
-If an Oracle employee physically walks into the data center and attempts to pry open the HSM server to steal your key, the hardware mathematically detects the physical intrusion and instantly zeroes out (destroys) the silicon, guaranteeing absolute cryptographic security.
+## 1. Deep Dive and Mechanics
 
-## 2. Envelope Encryption
-OCI Vault uses mathematical **Envelope Encryption**.
-When you encrypt a 10TB database, OCI does not send 10TB of data to the Vault.
-The database generates a small Data Encryption Key (DEK). It mathematically encrypts the 10TB of data with the DEK.
-The database then sends the DEK to the OCI Vault. The HSM encrypts the DEK using your Master Encryption Key, and sends the encrypted DEK back to the database to be stored on disk. To read the data, the database must mathematically reverse this entire process. If you delete your Master Key in OCI Vault, the entire 10TB database is mathematically instantly permanently destroyed (Crypto-shredding), because the DEK can never be decrypted again.
+**Keys.** AES/RSA keys with versions. Soft delete has a waiting period. Services (Object Storage, Block, ADB) can use CMEK by pointing at a key OCID.
 
-</TechnologyTemplate>
+**Secrets.** Base64 payloads with versions. Rotation is a new version plus consumers that pin or follow latest on purpose.
+
+**Access.** Policies on `key-family` and `secret-family` in the vault's compartment. Dynamic groups for compute. Management vs use are different verbs.
+
+**Replication.** Cross-region key/secret replication exists for DR. Test decrypt in the DR region before the outage.
+
+<Callout icon="error" title="Secrets in userdata">
+cloud-init that echoes a password is world-readable on the instance metadata path you forgot. Fetch from Vault at boot.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Key use vs manage: a compromised app should `use` keys (encrypt/decrypt) not `manage` (schedule deletion). Split policies.
+
+FIPS/HSM story is why regulated shops pick a private vault. It costs more; it is not faster crypto for a blog app.
+
+<ComparisonTable
+  headers={['Store', 'Holds', 'Cloud analog']}
+  rows={[
+    ['Vault keys', 'CMEK / crypto', 'KMS / Cloud KMS'],
+    ['Vault secrets', 'Payload versions', 'Secrets Manager'],
+    ['Certificates', 'TLS material', 'ACM / Cert Manager'],
+    ['Config files', 'Non-secrets', 'Not Vault'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import oci
+signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
+client = oci.secrets.SecretsClient(config={}, signer=signer)
+bundle = client.get_secret_bundle(secret_id="ocid1.vaultsecret...")
+# decode bundle.secret_bundle_content
+```
+
+Grant `read secret-family` (or the tighter secret-specific statement) to the dynamic group only.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    App --> IAM[IAM use]
+    IAM --> Vault[Vault]
+    Vault --> Key[Key version]
+    Vault --> Sec[Secret version]
+    OSS[Object Storage CMEK] --> Key
+```
+
+## 5. Interview Prep
+
+**Q: Vault vs writing secrets in Object Storage?**
+**A:** Vault has versions, IAM verbs for use vs manage, and audit. A "private" bucket is still a bucket.
+
+**Q: What is CMEK?**
+**A:** You supply the wrapping key. Oracle still stores the data. Deleting the key is how you cryptoshred (after the waiting period).
+
+**Q: Virtual private vault?**
+**A:** Dedicated HSM partition for isolation/compliance. Default vault is fine for many workloads.
+
+## 6. Production Use Cases
+
+- CMEK on backup buckets and block volumes.
+- DB passwords fetched by instance principals at start.
+- TLS certs issued or stored for the load balancer.
+
+<Callout icon="tip" title="Pin secret versions in prod">
+`latest` during a rotation can mix old and new mid-fleet. Pin, roll, then move latest.
+</Callout>

@@ -1,23 +1,95 @@
 ---
 title: Podman
-description: A powerful, daemonless, open-source container engine developed by Red Hat that is mathematically compatible with the Docker CLI but uniquely supports running containers without root privileges.
+description: "Daemonless, Docker-compatible CLI from Red Hat that runs containers and pods as user processes, with strong rootless support."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="Podman"
-  subtitle="The Daemonless Docker Alternative"
-  tags={['Containers', 'Red Hat', 'Security', 'Tooling']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="Podman">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-For years, the phrase "alias docker=podman" has been a battle cry for security-conscious DevOps engineers. Podman was engineered by Red Hat specifically to solve the mathematical security flaws inherent in Docker's architecture.
+**Podman** is a container engine without a privileged background daemon. `podman run` is a process that talks to the kernel (via runc/crun) and to containers/storage. The CLI aims to accept the same flags as Docker. The security story is **rootless**: your containers run as you.
 
-## 1. The Daemonless Advantage
-Docker requires the `dockerd` daemon, a massive background process running as root, to manage all containers. If a hacker exploits a vulnerability in a Docker container, they can mathematically escalate privileges to gain root access to the host machine.
-Podman is mathematically daemonless. When you type `podman run`, it acts as a standard, standalone Linux executable that directly interacts with the kernel (via `runc`). If you run Podman as a standard user (e.g., `alice`), the container processes run entirely within Alice's mathematical permissions. If the container is compromised, the hacker only gains Alice's limited access, protecting the host system.
+## 1. Deep Dive and Mechanics
 
-## 2. Native Pod Support
-While Docker manages single containers, Podman (as the name implies) can mathematically manage **Pods**—groups of containers that share the same network, IPC, and PID namespaces.
-Podman can generate Kubernetes YAML (`podman generate kube`) from a running local Pod, allowing developers to mathematically test multi-container architectures on their laptops and deploy them directly to a massive Kubernetes cluster with zero translation overhead.
+**No dockerd.** There is no all-powerful socket. Fork/exec creates the container. A local REST API can be started on demand (`podman system service`) for Compose compatibility, but it is not required and it does not have to be root.
 
-</TechnologyTemplate>
+**Rootless.** User namespaces map container uid 0 to your subordinate uid range (`/etc/subuid`). slirp4netns or pasta provides outbound networking without CAP_NET_ADMIN. fuse-overlayfs or kernel overlay with idmap provides the union fs.
+
+**Pods.** A Podman pod is a shared network/uts/ipc group — the same idea as a Kubernetes pod. `podman generate kube` emits YAML you can apply to a cluster. `podman play kube` does the reverse for local tests.
+
+**systemd.** `podman generate systemd` (and Quadlet `.container` units) make a container a first-class service on a Linux host — closer to how Fedora/RHEL want you to run things than a forever-on daemon.
+
+**Build.** `podman build` is Buildah. Same store, same image.
+
+<Callout icon="info" title="alias docker=podman">
+It works for a surprising fraction of scripts. It fails where software assumes a root daemon, the default bridge IP, or Docker-specific Swarm APIs. Test, do not wish.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Privilege reduction.** Docker's socket is equivalent to root. Podman rootless bounds compromise by the user namespace map: breakout still lands in an unprivileged host uid (plus whatever that user can write). Residual risk is the kernel and the uid map setup.
+
+**Fork/exec versus client-server.** Lifecycle is a process tree, not a reconnectable daemon. systemd reaping replaces shim-after-daemon-restart semantics.
+
+<ComparisonTable
+  headers={['Concern', 'Docker Engine', 'Podman']}
+  rows={[
+    ['Daemon', 'dockerd as root', 'None required'],
+    ['Rootless', 'Possible, secondary', 'Default story'],
+    ['Pods', 'Compose groups', 'Native pod object'],
+    ['Kubernetes YAML', 'Indirect', 'generate / play kube'],
+    ['Build', 'BuildKit', 'Buildah'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+podman pull alpine:3.20
+podman run --rm -it alpine:3.20 uname -a
+podman pod create --name web -p 8080:8080
+podman run -d --pod web --name api myorg/api:1.4
+podman generate kube web > web-pod.yaml
+```
+
+On RHEL, enable lingering so user services survive logout: `loginctl enable-linger $USER`.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    CLI[podman CLI] --> Store[containers/storage]
+    CLI --> Run[crun / runc]
+    CLI --> Net[pasta / slirp4netns]
+    Run --> US[user namespace]
+    US --> Kernel[Linux kernel]
+    CLI --> Kube[generate kube YAML]
+```
+
+## 5. Interview Prep
+
+**Q: Why is daemonless considered safer?**
+**A:** No always-on root process and no world-root socket. A compromised build or container is not automatically host root if you stayed rootless.
+
+**Q: Can Kubernetes use Podman as the node runtime?**
+**A:** Not as the CRI. Nodes use CRI-O or containerd. Podman is the laptop/server CLI that speaks the same image format and can emulate pods.
+
+**Q: How do you replace Docker Compose?**
+**A:** `podman compose` (Compose spec) or `podman play kube` if you already live in Kubernetes YAML.
+
+## 6. Production Use Cases
+
+- **RHEL / Fedora hosts** running Quadlet units instead of Docker.
+- **Developer laptops** in organizations that ban Docker Desktop licensing or root daemons.
+- **CI** alongside Buildah on unprivileged runners.
+
+<Callout icon="tip" title="Check subuid">
+Rootless fails in mysterious ways when `/etc/subuid` and `/etc/subgid` lack a range for the user. That file is the first thing to open.
+</Callout>

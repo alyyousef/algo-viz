@@ -1,37 +1,85 @@
 ---
 title: Splunk
-description: The industry-leading SIEM platform that turns massive amounts of machine data into actionable security intelligence.
+description: "A commercial log platform used as a SIEM: ingest, search, alert, and retain security telemetry."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Splunk">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In a modern enterprise, you have thousands of servers, firewalls, and applications generating gigabytes of log files every minute. If a hacker breaches your network, the evidence is in those logs, but finding it manually is impossible.
+**Splunk** is a widely deployed log and SIEM platform. Security teams use it to **search and alert** on auth, EDR, proxy, and cloud audit data. It is not magic visibility. If you did not collect the log, Splunk cannot invent it. Cost is usually ingest volume, so the architecture problem is **what to keep hot**.
 
-**Splunk** is a Security Information and Event Management (SIEM) system. It ingests massive amounts of raw, unstructured machine data, indexes it mathematically, and makes it instantly searchable.
+## 1. Deep Dive and Mechanics
 
+**Ingest.** Forwarders or APIs land events. Parse enough fields to alert (user, src, dest, action). Normalize with a CIM-like model so a failed login looks the same from Okta and from VPN.
 
-<Callout icon="info" title="The Search Processing Language (SPL)">
+**Detect.** Saved searches and risk-based alerting. Each notable needs a runbook and an owner. Correlation is "these two facts together," not a 40-join novel.
 
+**Retain.** Hot/warm/cold and an archive. IR will ask for 90 days the first time you kept 7.
 
-  Splunk uses its own proprietary query language called SPL. It allows security analysts to pipe commands together mathematically, similar to Unix bash. (e.g., `index=firewall action=blocked | stats count by src_ip | sort - count`)
-
-
+<Callout icon="warning" title="License pressure deletes your best evidence">
+If finance caps ingest, cut debug logs before you cut IdP and EDR.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Splunk in the SOC
+A SIEM is an index plus a query language plus a scheduler. Detection quality is precision/recall under an ingest budget. Cardinality of fields (user, dest) drives storage. Risk scores are weighted sums — be honest that the weights are policy, not physics.
 
-In a Security Operations Center (SOC), Splunk is the central nervous system.
+<ComparisonTable
+  headers={['Data', 'Keep hot?', 'Why']}
+  rows={[
+    ['IdP / VPN / EDR', 'Yes', 'IR always asks'],
+    ['Cloud audit', 'Yes', 'Key theft'],
+    ['App debug', 'Sample', 'Cost'],
+    ['Packet PCAP', 'On demand', 'Storage'],
+  ]}
+/>
 
-1. **Ingestion:** Universal Forwarders installed on endpoints constantly stream logs to the Splunk Indexers.
-2. **Correlation:** Splunk Enterprise Security mathematically correlates events. (e.g., "User Bob failed login 50 times from Russia, and 2 seconds later successfully logged in from New York.")
-3. **Alerting:** It generates automated alerts for the incident response team to investigate the anomalous behavior.
+## 3. Real-World Implementation
 
+```text
+# Use-case: repeated SSO failures then a success from a new country
+# Data: IdP + VPN
+# Action: revoke sessions, page identity on-call
+# Tune: known travel, break-glass accounts
+```
+
+Require a named owner on every enabled notable. Ownerless alerts are noise.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Src[Log sources] --> Fwd[Forwarders]
+    Fwd --> Idx[Indexers]
+    Idx --> SH[Search head]
+    SH --> SOC[SOC notable]
+```
+
+## 5. Interview Prep
+
+**Q: Splunk vs "the cloud SIEM"?**
+**A:** Same job. Ask about ingest cost, detection-as-code, and who writes the searches.
+
+**Q: What is a notable?**
+**A:** An alert instance the SOC is meant to work. If they cannot work it, it should not exist.
+
+**Q: How long to retain?**
+**A:** Threat and legal (often 90–365 days for security logs). Decide on purpose, not default.
+
+## 6. Production Use Cases
+
+- **Enterprise SOC** correlation.
+- **Compliance** evidence searches.
+- **Threat hunts** with a saved hypothesis.
+
+<Callout icon="tip" title="Detection as code">
+Reviews for searches should look like reviews for application code.
+</Callout>

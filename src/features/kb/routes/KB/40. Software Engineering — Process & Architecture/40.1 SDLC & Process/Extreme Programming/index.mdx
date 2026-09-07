@@ -1,31 +1,97 @@
 ---
-title: Extreme Programming (XP)
-description: A highly disciplined, mathematically rigorous subset of Agile development that pushes traditional software engineering practices (like testing, code review, and customer integration) to their absolute logical extremes.
+title: Extreme Programming
+description: "An Agile method that takes engineering practices to the extreme: tiny releases, pair programming, TDD, and relentless refactoring so change stays cheap."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Extreme Programming (XP)"
-  subtitle="Agile Taken to the Mathematical Limit"
-  tags={['Process', 'Agile', 'Development', 'Kent Beck']}
->
+    <ConceptTemplate title="Extreme Programming">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Created by Kent Beck in the 1990s, Extreme Programming (XP) looked at the things that made software successful and mathematically pushed them to their absolute maximum limits.
+**Extreme Programming (XP)** is Kent Beck’s answer to late, brittle projects: if a practice helps, do it all the time. Pairing, test-first, continuous integration, and simple design are not optional garnish. They are the method.
 
-## 1. The Mathematical Extremes
-XP is defined by taking standard practices and turning the dial to 10:
-- If **Code Review** is good, we should do it 100% of the time. The result: **Pair Programming** (two engineers mathematically share one keyboard and screen, continuously reviewing every single line of code as it is typed).
-- If **Testing** is good, we should do it before we even write the code. The result: **Test-Driven Development (TDD)** (mathematically forcing the engineer to write the failing test first).
-- If **Integration** is good, we should do it constantly. The result: **Continuous Integration** (merging code into the main branch dozens of times a day).
+## 1. Deep Dive and Mechanics
 
-## 2. The Cost of Change Curve
-Traditional engineering believed that the cost to change software mathematically exploded exponentially over time. XP challenged this.
-By enforcing TDD, Pair Programming, and continuous Refactoring, XP mathematically flattens the "Cost of Change" curve. It guarantees that the codebase remains so mathematically clean and highly covered by automated tests that modifying the architecture in Year 5 is just as cheap and safe as modifying it in Year 1.
+**Customer on-site.** A real stakeholder ranks stories and answers questions in hours, not quarters. The team implements the next most valuable slice.
 
+**Small releases.** Weekly or daily deployable increments. The planning game splits stories to fit the iteration.
+
+**Pair programming.** Two people, one machine (or a shared editor). Knowledge spreads; review happens while typing. Rotate pairs to avoid silos.
+
+**TDD and refactoring.** Red, green, refactor. The test suite is the design’s safety net so courage to change stays high. Simple design: enough for today, names that tell the truth.
+
+**Sustainable pace.** Overtime as a process is a defect. Tired pairs ship defects.
+
+<Callout icon="info" title="XP is not cowboy coding">
+“Extreme” means extremely disciplined feedback, not extremely no process. Skipping tests and calling it XP is just haste.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Cost of change curve.** Classic waterfall claimed cost rises exponentially with lifecycle phase. XP’s thesis: with tests, pairing, and simple design, the curve flattens — late change stays O(size of change), not O(system age).
+
+**Defect insertion.** Two brains reduce certain classes of error (the pair is a real-time inspection). TDD increases assertion density, which raises the probability a regression fails CI instead of production.
+
+**WIP.** Stories small enough to finish in days keep L (work in progress) low and W (lead time) short — Little’s law again.
+
+<ComparisonTable
+  headers={['Practice', 'XP emphasis', 'Common substitute']}
+  rows={[
+    ['Integration', 'Many times a day', 'Weekly merge train'],
+    ['Review', 'Pair while writing', 'Async PR only'],
+    ['Tests', 'TDD, high coverage of behaviour', 'Tests after, if time'],
+    ['Design', 'Simple, incremental', 'Big design up front'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```text
+XP iteration board (physical or digital)
+- Customer-ranked stories in a short queue
+- Pair list posted; rotate mid-week
+- CI green required to start a new story
+- Refactoring is scheduled work, not leftover minutes
+- Ten-minute build or the build is the bug
+```
+
+The ten-minute build rule is a forcing function: slow builds kill the feedback XP depends on.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Story[Ranked story] --> Pair[Pair + TDD]
+    Pair --> CI[Integrate to main]
+    CI --> Customer[Customer sees increment]
+    Customer --> Story
+    Pair --> Refactor[Refactor under tests]
+    Refactor --> CI
+```
+
+## 5. Interview Prep
+
+**Q: XP versus Scrum?**
+**A:** Scrum specifies roles and events; it is silent on TDD and pairing. Many teams run Scrum events with XP engineering. XP without a customer voice degrades into busy iteration.
+
+**Q: Is pairing twice the cost?**
+**A:** Wall-clock people-hours rise; cycle time, defect escape, and bus factor often fall. Measure those, not just two salaries on one keyboard.
+
+**Q: What do you drop first when XP feels heavy?**
+**A:** Do not drop the test suite or CI. Drop ceremonial extras. If pairing is culturally impossible, compensate with tight review and mob sessions on hard paths.
+
+## 6. Production Use Cases
+
+- **Greenfield product teams** that can sit with a customer and ship daily.
+- **Legacy rescue** where characterisation tests plus pairing rebuild courage.
+- **High-defect modules** (billing, auth) that need XP practices even if the rest of the org is Scrum-only.
+
+<Callout icon="tip" title="Protect the build">
+If CI is red, the pair’s job is the build. XP collapses the moment people work around a broken main.
+</Callout>

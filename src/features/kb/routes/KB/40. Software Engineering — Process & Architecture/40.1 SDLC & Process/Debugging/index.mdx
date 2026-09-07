@@ -1,32 +1,95 @@
 ---
 title: Debugging
-description: The rigorous, empirical, and mathematical process of identifying, isolating, and resolving defects (bugs) within a software system, transforming unexpected behavior back into predictable mathematical logic.
+description: "A systematic hunt for the mismatch between what you believe the program does and what the machine actually does — evidence first, theories second."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Debugging"
-  subtitle="The Empirical Resolution of Failure"
-  tags={['Process', 'Development', 'Troubleshooting', 'Logic']}
->
+    <ConceptTemplate title="Debugging">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Brian Kernighan famously said: *"Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it."*
+**Debugging** is scientific method under time pressure. The bug is a fact. Your story about the bug is a hypothesis. You win by shrinking the search space with observations, not by staring at the function you already distrust.
 
-## 1. The Scientific Method
-Debugging is not random guessing; it is the strict application of the scientific method.
-1. **Observe**: The application crashes with a `NullPointerException` on line 42.
-2. **Hypothesize**: The `User` object returned from the database on line 40 must mathematically be null.
-3. **Experiment**: The developer attaches a step-through debugger to the runtime, sets a **Breakpoint** on line 40, and intentionally triggers the crash.
-4. **Analyze**: The debugger pauses the CPU. The developer mathematically inspects the memory state. They see the database query returned null because the SQL variable was malformed.
+## 1. Deep Dive and Mechanics
 
-## 2. The Binary Search (Git Bisect)
-When a bug exists in production but the developer has no idea which code commit caused it, they use mathematical reduction via **Git Bisect**.
-If commit v1.0 is mathematically known to be good, and commit v2.0 is known to be bad, there might be 1,000 commits between them. Git Bisect uses a Binary Search algorithm (O(log N)) to jump to commit 500. The developer tests it. If it's bad, the bug is between 1 and 500. It jumps to 250. This mathematically locates the exact line of code that caused the bug in exactly 10 steps, saving days of manual searching.
+**Reproduce.** If you cannot turn it on, you cannot know you turned it off. Capture inputs, versions, clocks, and feature flags. Flaky bugs need isolation (same seed, same shard, same race window).
 
+**Observe.** Logs, traces, metrics, debugger, heap dumps, `git bisect`. Prefer one new fact per experiment. Changing five things at once is not a method.
+
+**Localise.** Binary search the timeline (bisect), the call stack, the data path, or the feature-flag matrix. “It worked yesterday” is a bisect invitation.
+
+**Fix and prove.** Change the smallest cause. Add a test that failed before the fix. Watch the nearby invariants; many “fixes” move the corpse.
+
+<Callout icon="error" title="Print-and-pray">
+Sprinkling logs without a question wastes the incident clock. Write the question: which branch ran, which id was missing, which lock was held?
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+**Search.** A defect lives in a space of program states. Each observation is a constraint. Binary search over commits is log2 of the window; over a pipeline of N stages, one probe can discard half if you pick a midpoint with a clear oracle.
+
+**Heisenbugs.** Instrumentation changes timing (probe effect). Races vanish under a debugger. Prefer record-and-replay, thread sanitizers, and stress at the original concurrency.
+
+**Bayes.** Prior: recent diffs and new deps are likelier than a five-year-old helper. Update with evidence; do not let the prior become superstition if the bisect points elsewhere.
+
+<ComparisonTable
+  headers={['Technique', 'Best for', 'Trap']}
+  rows={[
+    ['git bisect', 'Regressions with an oracle', 'Flaky oracle'],
+    ['Debugger', 'Deterministic local state', 'Heisenbugs, prod-only'],
+    ['Distributed trace', 'Cross-service latency', 'Missing spans'],
+    ['Core dump / profiler', 'Crashes, hot loops', 'Need symbols'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+# Regression window with a clear pass/fail command
+git bisect start
+git bisect bad HEAD
+git bisect good v2.14.0
+git bisect run ./scripts/repro-bug.sh
+```
+
+The script must exit 0 on good, 1 on bad, 125 to skip unbuildable commits.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Report[Symptom] --> Repro[Reproduce]
+    Repro --> Fact[Collect one fact]
+    Fact --> Hyp[Update hypothesis]
+    Hyp --> Narrow[Narrow locus]
+    Narrow -->|still open| Fact
+    Narrow -->|found| Fix[Minimal fix plus test]
+    Fix --> Verify[Re-run repro and nearby tests]
+```
+
+## 5. Interview Prep
+
+**Q: How do you debug a production-only failure?**
+**A:** Preserve artifacts (logs, traces, core, request id). Recreate with captured traffic or a shadow. Avoid attaching an interactive debugger to a dying box unless you have a playbook.
+
+**Q: What is the first question you ask?**
+**A:** What is the last known-good and what changed? Version, config, traffic shape, dependency.
+
+**Q: Debugging versus logging strategy?**
+**A:** Structured logs with request ids and error budgets make debugging a query. Unstructured stdout makes it archaeology.
+
+## 6. Production Use Cases
+
+- **Incident response** with a single incident commander and a timeline of hypotheses.
+- **Flaky CI** isolated by seed, shard, and timing.
+- **Performance regressions** found by profiling the delta, not rewriting the hot file by folklore.
+
+<Callout icon="tip" title="Write the timeline">
+A shared doc of time, fact, and next experiment stops five people from repeating the same curl. That is debugging as a team sport.
+</Callout>

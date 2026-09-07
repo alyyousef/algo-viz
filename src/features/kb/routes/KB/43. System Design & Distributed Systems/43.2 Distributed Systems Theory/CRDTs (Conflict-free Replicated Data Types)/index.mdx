@@ -1,37 +1,97 @@
 ---
-title: Conflict-Free Replicated Data Types (CRDTs)
-description: A data structure that can be replicated across multiple computers in a network, where replicas can be updated independently and concurrently without coordination.
+title: CRDTs
+description: "Data types that merge concurrent replica updates with a mathematically convergent join, so AP systems can accept writes without a central lock."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Conflict-Free Replicated Data Types (CRDTs)">
+    <ConceptTemplate title="CRDTs">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In distributed databases (like DynamoDB), if two users edit the exact same document simultaneously, the system uses Vector Clocks to mathematically detect a "Conflict," and then forces the application engineer to write custom code to resolve it.
+**CRDTs** (conflict-free replicated data types) are structures whose concurrent updates always merge to the same result. Replicas can accept writes while partitioned. When they gossip state or operations, a join (or a commutative apply) converges. You give up arbitrary invariants (the last remaining seat) unless you encode them in the type.
 
-**Conflict-Free Replicated Data Types (CRDTs)** are mathematically magical data structures that automatically resolve conflicts without any human intervention. They guarantee that no matter what order the concurrent edits arrive, all nodes will mathematically converge to the exact same final state.
+## 1. Deep Dive and Mechanics
 
+**State-based (CvRDT).** Each replica stores a payload that is a join-semilattice. Merge is least-upper-bound: max of clocks, union of sets, etc. Merge is associative, commutative, and idempotent — gossip can be sloppy.
 
-<Callout icon="tip" title="Collaborative Editing">
+**Op-based (CmRDT).** Replicas ship operations that must be delivered reliably and, for some types, without duplication. Ops commute by construction.
 
+**Useful types.** G-Counter (grow-only). PN-Counter (plus and minus via two G-Counters). G-Set and 2P-Set. OR-Set (add-wins with unique tags). LWW-Register (timestamp, needs careful clocks). RGA / WOOT for text.
 
-  CRDTs are the mathematical foundation of modern collaborative software. When 10 people are typing in a Google Doc or Figma canvas simultaneously, CRDTs mathematically ensure that everyone sees the exact same document without locking the system.
-
-
+<Callout icon="warning" title="Convergence is not your business rule">
+Two replicas can both sell the last item if the type is a counter. A CRDT converges to "sold twice." Inventory still needs reservations or a CP path.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## The Mathematics of Commutativity
+A state CRDT is a join-semilattice: partial order and a least upper bound for every pair. Idempotent commutative monoids (Shapiro et al.) classify the op side. Causal delivery can be required for some op-based types; state-based merges are tolerant of reorder and replay.
 
-CRDTs work because they rely on mathematical operations that are **Commutative** (meaning the order of operations doesn't matter: A + B = B + A).
+Tombstones and unique ids are how deletes stay safe. Without them, a late add can resurrect a removed element (the classic set bug).
 
+<ComparisonTable
+  headers={['Type', 'Merge idea', 'Deletes', 'Fit']}
+  rows={[
+    ['G-Counter', 'Per-replica max then sum', 'No', 'Impressions'],
+    ['OR-Set', 'Tagged adds, remove tags', 'Yes', 'Tags, ACLs'],
+    ['LWW-Register', 'Highest timestamp wins', 'Overwrite', 'Profile fields'],
+    ['RGA', 'Position ids', 'Tombstones', 'Collaborative text'],
+  ]}
+/>
 
-<ComparisonTable headers={['CRDT Type', 'How it Works', 'Example']} rows={[ ['Grow-Only Counter (G-Counter)', 'A distributed counter where nodes can only ADD, never subtract. Every node mathematically tracks its own count, and the total is the MAX of all nodes.', 'A YouTube Video View Counter.'], ['Positive-Negative Counter (PN-Counter)', 'A combination of two G-Counters (one for Adds, one for Subtracts). The final value is the mathematical difference between the two.', 'A Reddit Upvote/Downvote system.'], ['Observed-Remove Set (OR-Set)', 'A set where items can be added and removed. Every element is tagged with a mathematically unique UUID upon insertion to avoid deletion conflicts.', 'A distributed Shopping Cart.'] ]} />
+## 3. Real-World Implementation
 
+```python
+# G-Counter: each replica only increments its own slot
+class GCounter:
+    def __init__(self, replica, slots=None):
+        self.replica = replica
+        self.slots = dict(slots or {})
 
+    def inc(self):
+        self.slots[self.replica] = self.slots.get(self.replica, 0) + 1
+
+    def merge(self, other):
+        keys = set(self.slots) | set(other.slots)
+        self.slots = {k: max(self.slots.get(k, 0), other.slots.get(k, 0)) for k in keys}
+
+    def value(self):
+        return sum(self.slots.values())
+```
+
+In application code, use a library (Automerge, Yjs, Redis CRDTs) rather than a hand-rolled set.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    A[Replica A +1] --> M[Merge max per slot]
+    B[Replica B +1] --> M
+    M --> V[Value 2 everywhere]
+```
+
+## 5. Interview Prep
+
+**Q: CRDT versus operational transform?**
+**A:** OT transforms incoming ops against concurrent ops (Google Docs history). CRDTs converge by type laws and are easier to reason about offline. Both can edit text; the engineering cultures differ.
+
+**Q: Do CRDTs need vector clocks?**
+**A:** Many use dots or version vectors to identify ops. You need enough causal metadata to not drop a concurrent add. A wall clock LWW is a CRDT only if you accept clock-skew losers.
+
+**Q: When not to use one?**
+**A:** Unique inventory, money movement, or any invariant that is not preserved by the join. Also huge tombstone growth if you delete a lot.
+
+## 6. Production Use Cases
+
+- **Collaborative editors** (Yjs, Automerge) in the browser.
+- **Edge counters and presence** in AP stores (Riak, Redis CRDT types).
+- **Shopping-cart sets** that merge on reconnect, with a CP checkout at the end.
+
+<Callout icon="tip" title="Pick the type from the invariant">
+If add-wins is wrong, an OR-Set will make you sad. Write the conflict example on the whiteboard before you pick a library.
+</Callout>

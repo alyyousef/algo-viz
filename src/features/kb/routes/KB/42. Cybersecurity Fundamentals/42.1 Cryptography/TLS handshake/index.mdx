@@ -1,37 +1,94 @@
 ---
-title: The TLS Handshake
-description: The complex cryptographic protocol that secures every HTTPS connection on the internet.
+title: TLS Handshake
+description: "How TLS 1.3 agrees authenticated session keys in one round trip and then protects application bytes with AEAD."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="The TLS Handshake">
+    <ConceptTemplate title="TLS Handshake">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Whenever you navigate to an `https://` website, your browser and the server must securely agree on an encryption key before sending any actual data. Because the internet is fundamentally public, they must agree on this secret key while sending messages across open, unencrypted channels that anyone can read.
+The **TLS handshake** authenticates the server (and optionally the client), negotiates algorithms, and derives AEAD keys so the rest of the connection is confidential and tamper-evident. **TLS 1.3** is the version you should deploy: fewer messages, mandatory forward secrecy, old ciphers gone.
 
-This mathematical negotiation is called the **Transport Layer Security (TLS) Handshake**.
+## 1. Deep Dive and Mechanics
 
+ClientHello carries supported cipher suites, key shares (X25519 / P-256 / ML-KEM hybrids), and SNI. ServerHello picks the group, returns its key share, and sends the certificate plus a signature over the transcript. Both sides run HKDF to get handshake and application traffic secrets. Application data can start after that one round trip (1-RTT). Optional 0-RTT replayable early data exists and should stay off unless you understand idempotency.
 
-<Callout icon="success" title="The Hybrid Approach">
+**What the handshake must prevent.** Downgrade to weak suites, impersonation without a valid cert, and silent stripping of authentication. Finished messages MAC the transcript so an on-path attacker cannot tweak offers after keys are in play.
 
+**Certificates.** The client validates the chain, time, hostname, and usage. Pinning and CT are extra policy.
 
-  The TLS handshake solves the core problem of cryptography by using **Asymmetric Encryption** (RSA or Elliptic Curves) to securely verify identity and exchange a shared secret, and then instantly switches to **Symmetric Encryption** (AES) using that shared secret for the rest of the connection because AES is thousands of times faster.
-
-
+<Callout icon="warning" title="TLS in front of HTTP is not optional seasoning">
+Without a verified handshake you have no server identity. A cleartext or blindly accepted cert is a MITM waiting to happen.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## TLS 1.3 Handshake Steps
+TLS 1.3's key schedule is a sequence of HKDF-Extract/Expand steps bound to the transcript hash. Security proofs (in the computational model) argue that if the DH group, signatures, HKDF, and AEAD are sound, the record keys are secret from a network adversary. 0-RTT is outside that guarantee because those keys are replayable.
 
-TLS 1.3 revolutionized the protocol by cutting the handshake from two round-trips down to just one.
+<ComparisonTable
+  headers={['Version', 'Forward secrecy', 'Handshake RTTs', 'Deploy']}
+  rows={[
+    ['TLS 1.0 / 1.1', 'Optional', '2', 'Disable'],
+    ['TLS 1.2', 'If DHE/ECDHE', '2', 'Only if 1.3 impossible'],
+    ['TLS 1.3', 'Yes', '1', 'Default'],
+    ['QUIC / HTTP3', 'Yes (TLS 1.3 crypto)', '0-1', 'Modern edge'],
+  ]}
+/>
 
-1. **Client Hello:** The browser sends supported cipher suites, a random byte string, and immediately mathematically guesses the key exchange protocol (e.g., sending an Elliptic Curve Diffie-Hellman public share).
-2. **Server Hello & Certificate:** The server receives the client\'s public share. It calculates the final shared secret, chooses the cipher suite, and sends its public share back, along with its digital certificate (to prove it is actually `google.com`).
-3. **Secure Connection Established:** The browser verifies the certificate against its trusted Root CAs, calculates the same shared secret, and both parties begin encrypting HTTP traffic with AES.
+## 3. Real-World Implementation
 
+```python
+import ssl
+import socket
+
+ctx = ssl.create_default_context()
+ctx.minimum_version = ssl.TLSVersion.TLSv1_3
+with socket.create_connection(('example.com', 443)) as sock:
+    with ctx.wrap_socket(sock, server_hostname='example.com') as tls:
+        cert = tls.getpeercert()
+        tls.sendall(b'GET / HTTP/1.1\r\nHost: example.com\r\n\r\n')
+```
+
+Never set CERT_NONE in production. Always pass the hostname you intend.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C->>S: ClientHello + key share
+    S->>C: ServerHello + key share
+    S->>C: Certificate + CertificateVerify
+    S->>C: Finished
+    C->>S: Finished
+    C->>S: AEAD application data
+```
+
+## 5. Interview Prep
+
+**Q: What does SNI leak?**
+**A:** The target hostname in the first ClientHello is often still cleartext unless Encrypted Client Hello is deployed. Certs after ServerHello are encrypted in 1.3.
+
+**Q: Why disable TLS 1.0?**
+**A:** Old ciphers, BEAST-class history, no modern AEAD mandate, compliance requirements.
+
+**Q: mTLS versus TLS?**
+**A:** mTLS adds a client certificate so the server authenticates the caller with PKI, not only a password or bearer token.
+
+## 6. Production Use Cases
+
+- **HTTPS** for browsers and APIs.
+- **Database and mesh** connections (don't run Postgres in cleartext across a VPC you do not fully trust).
+- **Mail (STARTTLS)** with strict verification, not opportunistic.
+
+<Callout icon="tip" title="Terminate TLS in one well-tested library">
+Language defaults plus a modern version floor beat a custom handshake. Keep openssl / boringssl patched.
+</Callout>

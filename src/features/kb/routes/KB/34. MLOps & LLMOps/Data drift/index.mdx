@@ -1,26 +1,90 @@
 ---
-title: Data Drift (Covariate Shift)
-description: A silent MLOps failure where the statistical distribution of the live data being fed into a production model physically deviates from the distribution of the data it was originally trained on.
+title: Data Drift
+description: "When the live feature distribution leaves the training support — covariate shift that makes a calibrated model quietly uncalibrated."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate title="Data Drift (Covariate Shift)">
+    <ConceptTemplate title="Data Drift">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-While *Concept Drift* means the rules of the world changed, **Data Drift** means the *inputs* of the world changed. The neural network's mathematical assumptions about the data are no longer valid.
+**Data drift** (covariate shift) is P_serve(x) ≠ P_train(x). A new country, a holiday, a broken tracker that sends zeros, a client that upgraded the camera. The model still emits numbers; they just stopped meaning what they meant in the notebook.
 
-## 1. The Mathematical Shift ($P(X)$)
-In Data Drift, the distribution of the input features $P(X)$ changes.
-*Example*: You train a facial recognition model on high-resolution DSLR photos ($X$). You deploy it to production, but the client installs cheap, blurry 480p security cameras.
-The mathematical definition of a "face" hasn't changed (no Concept Drift), but the mathematical distribution of the pixel values ($X$) is radically different. The model, having never seen blurry pixels, outputs complete garbage.
+## 1. Deep Dive and Mechanics
 
-## 2. Statistical Detection (KL Divergence)
-You detect Data Drift before it destroys your business by continuously mathematically comparing the live data against the training dataset.
-MLOps tools use algorithms like the **Kolmogorov-Smirnov (K-S) Test** or **Kullback-Leibler (KL) Divergence** to calculate the distance between the two statistical distributions. If the live data's distribution drifts too far from the training baseline (e.g., the average age of users shifts from 25 to 65), the system fires a high-priority alert. The engineers must then gather the new data (the 480p images) and retrain the model to mathematically adapt to the new reality.
+**Where to measure.** Raw logs, post-transform features (what the model actually saw), and model scores. Score shift is a cheap catch-all; feature PSI tells you which column moved.
 
+**Univariate vs joint.** PSI per column misses a rotation in a 2-D subspace. For embeddings, use a reference nearest-neighbour distance or a classifier that tries to tell train vs serve.
+
+**Pipeline bugs look like drift.** A unit change (cents vs dollars) is not “the world changed.” Diff schemas and hashes first.
+
+**Action.** Page on sudden PSI; ticket on slow seasonal drift. Retrain only if the new mass is *real* and labelled.
+
+<Callout icon="warning" title="Monitor the served vector">
+Training-time pandas and serve-time Flink will diverge. Hash the feature names and dtypes in the model package and reject mismatches.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Population Stability Index between expected e_i and actual a_i bins: PSI = sum (a_i - e_i) ln(a_i / e_i). Rules of thumb (0.1 / 0.25) are not laws. JS divergence and KS tests are alternatives. Importance weighting w(x) = P_serve(x)/P_train(x) can correct some estimators if you can model the density ratio.
+
+<ComparisonTable
+  headers={['Method', 'Input', 'Good for']}
+  rows={[
+    ['PSI / JS', 'Binned scalars', 'Tabular, cheap'],
+    ['KS / Anderson-Darling', '1-D continuous', 'Small feature sets'],
+    ['Domain classifier', 'x as train vs serve', 'High-d embeddings'],
+    ['Score histogram', 'p-hat', 'Fast smoke alarm'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+import numpy as np
+
+def psi(expected: np.ndarray, actual: np.ndarray, eps=1e-6) -> float:
+    e = expected / expected.sum()
+    a = actual / actual.sum()
+    return float(np.sum((a - e) * np.log((a + eps) / (e + eps))))
+```
+
+Fit bins on the training window and freeze them. Re-binning on serve data hides the drift.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Train[Train P(x)] --> Ref[Reference bins]
+    Serve[Serve x] --> Act[Actual bins]
+    Ref --> PSI[PSI / JS]
+    Act --> PSI
+    PSI --> Alert[Alert plus column]
+```
+
+## 5. Interview Prep
+
+**Q: Data drift vs concept drift?**
+**A:** Data: who arrives. Concept: what y means given x. Both can fire at once.
+
+**Q: Why freeze bins?**
+**A:** Adaptive bins on the live window make PSI compare two moving targets. You want “distance from the training snapshot.”
+
+**Q: Is drift always a retrain?**
+**A:** No. A tracker outage is a fix, not a new model. Confirm with engineering before you spend a GPU week.
+
+## 6. Production Use Cases
+
+- Credit and insurance models (regulators ask for PSI).
+- Recsys after a catalog or app rewrite.
+- Vision models after a camera firmware change.
+
+<Callout icon="tip" title="Pair PSI with volume">
+A PSI spike on 200 rows is noise. Require a minimum N in the window.
+</Callout>

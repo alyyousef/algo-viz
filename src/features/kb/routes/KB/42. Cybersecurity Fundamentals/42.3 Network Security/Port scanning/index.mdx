@@ -1,37 +1,83 @@
 ---
 title: Port Scanning
-description: The mathematical process of probing a server or host for open ports to determine what services are running.
+description: "Enumerating which transport ports accept connections — used by operators for inventory and by attackers for reconnaissance."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Port Scanning">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-Every computer on a network has an IP address (its street address) and 65,535 possible "Ports" (the doors to the house). To hack a server, you first have to find out which doors are unlocked and what software is listening behind them.
+A **port scan** asks which TCP/UDP ports on a host respond. Defenders scan their own estate to find unexpected listeners. Attackers scan to map attack surface. This page is about **what a scan is, what it leaks, and how you detect and shrink it** — not how to run an offensive campaign.
 
-**Port Scanning** is the mathematical technique of sending network packets to specific ports and analyzing the responses. The industry-standard tool for this is **Nmap**.
+## 1. Deep Dive and Mechanics
 
+A TCP connect to a closed port usually gets a RST; an open port completes a handshake; a filtered port is silent or ICMP-blocked. Operators use inventory scanners inside a change window with written authorization. Exposed management ports (SSH, RDP, WinRM, databases) on the public internet are the usual finding.
 
-<Callout icon="warning" title="Stealth is Difficult">
+**Defense.** Do not listen on public IPs unless you must. Put admin ports on VPN or ZTNA. Detect scan patterns at the edge (many ports, few packets each) and rate-limit. Banner-free services leak less, but a closed port is better than a stealthy open one.
 
-
-  Scanning all 65,535 ports on a server is incredibly noisy. Modern Intrusion Detection Systems (IDS) will instantly flag the mathematical anomaly of thousands of connections from a single IP and block the scanner. Attackers use "stealth scans" (like a SYN scan) and heavily rate-limit their packets to evade detection.
-
-
+<Callout icon="info" title="Only scan systems you are allowed to test">
+Unauthorized scanning can violate law and policy. Inventory is a defensive control with a ticket and a scope.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Types of Port States
+A scan is a sampling of the function that maps each port to open, closed, or filtered. Information theoretically, each distinct response bit-reduces the unknown configuration. Evasion (slow scans, idle scans) is just a lower sample rate to stay under IDS thresholds. Detection is hypothesis testing on request rates and fan-out.
 
-When a port is scanned, it mathematically responds in one of three ways:
+<ComparisonTable
+  headers={['Control', 'Effect']}
+  rows={[
+    ['No public listener', 'Nothing to find'],
+    ['SG / firewall default deny', 'Filtered from the internet'],
+    ['ZTNA / VPN admin', 'Ports not on the public map'],
+    ['Scan detection', 'SOC signal, not a wall'],
+  ]}
+/>
 
+## 3. Real-World Implementation
 
-<ComparisonTable headers={['State', 'Meaning', 'Hacker Interpretation']} rows={[ ['Open', 'The server responded with an ACK. An application is actively listening on this port.', 'This is the target. I must figure out if the application listening here has a vulnerability.'], ['Closed', 'The server responded with an RST (Reset). No application is listening.', 'Move on, nothing to hack here.'], ['Filtered', 'The server did not respond at all. The packet was dropped into a black hole.', 'There is a firewall blocking my scan. I cannot mathematically determine if the port is open or closed.'] ]} />
+```text
+# Defensive posture
+# - Inventory listeners with your approved scanner on RFC1918
+# - Alert when a new public port appears in cloud config
+# - Close RDP/SSH to 0.0.0.0/0
+```
 
+Cloud config rules (no 22/3389 from the world) catch more risk than arguing about SYN vs ACK scan types.
 
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Inv[Authorized inventory] --> Map[Expected listeners]
+    Inet[Internet] --> Edge[Default deny]
+    Edge --> Pub[Only 443 on the LB]
+    Unexpected[New public port] --> Alert[SOC alert]
+```
+
+## 5. Interview Prep
+
+**Q: Why do companies scan themselves?**
+**A:** Drift. Someone opened 5432 "for a minute". Inventory is how you notice.
+
+**Q: Does hiding port numbers equal security?**
+**A:** No. Security through obscurity fails against a thorough scan. Close and authenticate.
+
+**Q: UDP vs TCP scanning?**
+**A:** UDP is slower and noisier to interpret (no handshake). Still inventory DNS, VPN, and QUIC listeners.
+
+## 6. Production Use Cases
+
+- **Attack-surface** management for public cloud.
+- **Compliance** evidence of closed admin ports.
+- **SOC detections** for wide fan-out from a workstation (worm-like).
+
+<Callout icon="tip" title="Alert on new public listeners, not on every SYN">
+Config drift is the signal. The internet scans you all day; paging on that is noise.
+</Callout>

@@ -1,23 +1,88 @@
 ---
 title: OCI Functions
-description: Oracle's serverless, event-driven compute platform, built on the open-source Fn Project, allowing developers to execute stateless code mathematically scaled by the cloud infrastructure.
+description: "Fn Project-compatible FaaS: container images, apps, and triggers from API Gateway or events — billed for execution, capped by timeout."
 ---
-import { TechnologyTemplate } from '@/features/kb/components/templates/TechnologyTemplate'
+import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
-<TechnologyTemplate
-  title="OCI Functions"
-  subtitle="Serverless Event-Driven Compute"
-  tags={['OCI', 'Serverless', 'Compute', 'Functions']}
->
+export default function Layout({ children }) {
+  return (
+    <ConceptTemplate title="OCI Functions">
+      {children}
+    </ConceptTemplate>
+  )
+}
 
-OCI Functions is Oracle's equivalent to AWS Lambda. It allows developers to deploy discrete blocks of code (Java, Python, Node.js) and pay exactly $0 until the code is actually triggered by a cloud event.
+**OCI Functions** is a managed FaaS built on the **Fn Project**. You deploy a container image into an **application** (which sits on a VCN subnet). Invocations come from the CLI, signed HTTP, API Gateway, or Events. Memory and timeout are the knobs. Cold starts include image pull.
 
-## 1. The Fn Project Architecture
-Unlike AWS Lambda (which uses proprietary, closed-source hypervisors), OCI Functions is built entirely on the **open-source Fn Project**.
-Every OCI Function is mathematically just a Docker container under the hood. When you deploy a function, the OCI CLI packages your Python code into a Docker image and pushes it to the OCI Container Registry. When the function is triggered, OCI simply pulls the Docker image, boots it in a hyper-isolated micro-VM, executes it, and destroys it. Because it is standard Docker, you can run the exact same serverless function locally on your laptop for testing, completely preventing vendor lock-in.
+## 1. Deep Dive and Mechanics
 
-## 2. Event Integration and Triggers
-A Function requires a mathematical trigger.
-It natively integrates with OCI Events. You can define a rule: *"When a new CSV file is uploaded to an Object Storage Bucket, intercept the Event, route it to this specific Function, and mathematically parse the CSV into an Autonomous Database."* If 1,000 CSV files are uploaded in the same second, OCI Functions mathematically boots 1,000 parallel Docker containers, processes the files instantly, and scales back to zero, maximizing throughput and minimizing cost.
+**App + function.** An application is the network and IAM boundary (subnet, config). Functions inside share that VCN path. Config vars are per app or per function.
 
-</TechnologyTemplate>
+**Images.** You build with Fn or Docker and push to OCIR. The platform pulls on a cold worker. Fat images are slow.
+
+**Auth.** Resource principals let the function call OCI APIs. Invoke is IAM-controlled; a public Function without a gateway is rarely what you want.
+
+**Concurrency.** One request per instance is the mental model unless you opted into features that change it. A chatty downstream will serialize.
+
+<Callout icon="warning" title="Subnet and NAT">
+A function in a private subnet needs a NAT or service gateway to reach public APIs and OCIR. Missing NAT looks like a mysterious deploy or invoke failure.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Cost ≈ GB-seconds + invocations. A 30-second sleep is a bill. Timeouts hide runaway work but still charge until cut.
+
+Cold start ≈ pull + runtime init + your import graph. Provisioned concurrency is not as famous as Lambda's; design for jitter or keep a ping.
+
+<ComparisonTable
+  headers={['FaaS', 'Packaging', 'Front door']}
+  rows={[
+    ['OCI Functions', 'Container / Fn', 'API Gateway'],
+    ['Lambda', 'Zip / image', 'APIGW / URL'],
+    ['Cloud Functions', 'Source / build', 'HTTP / events'],
+    ['Azure Functions', 'Plan + host', 'APIM / HTTP'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```bash
+fn create app orders --annotation oracle.com/oci/subnet=ocid1.subnet...
+fn deploy --app orders --local
+oci fn function invoke --function-id $FN --file payload.json
+```
+
+The subnet annotation is not optional for VCN-attached apps.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Ev[API Gateway / Events] --> Fn[Function]
+    Fn --> RP[Resource principal]
+    RP --> Vault[Vault / Object]
+    Fn --> OCIR[Image pull]
+```
+
+## 5. Interview Prep
+
+**Q: Functions vs Container Instances?**
+**A:** Functions are event-invoked and time-bounded. Container Instances run until you stop them.
+
+**Q: Why Fn Project?**
+**A:** Portable function contract and Docker images. You are less locked to a proprietary zip layout. You are still locked to OCI invoke and IAM.
+
+**Q: How do you expose HTTP?**
+**A:** API Gateway in front. Direct invoke is for jobs and trusted callers.
+
+## 6. Production Use Cases
+
+- Lightweight webhooks with IAM and a gateway.
+- Event reactions: object created, write a row, notify.
+- Glue that should cost near zero at night.
+
+<Callout icon="tip" title="Keep the image tiny">
+Distroless or slim base, one binary. The first invoke after idle is your SLO, not the warm p50.
+</Callout>

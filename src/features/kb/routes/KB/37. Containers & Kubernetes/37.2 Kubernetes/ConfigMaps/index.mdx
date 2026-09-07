@@ -1,52 +1,118 @@
 ---
 title: ConfigMaps
-description: An API object used to store non-confidential data in key-value pairs, decoupling environment configuration from container images.
+description: "Non-secret key-value objects injected as env vars or files so the same image can run in every environment."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="ConfigMaps">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-A core tenet of modern software engineering (The Twelve-Factor App) is that you should separate configuration from code. You should not hardcode environment variables, URLs, or database connection strings into your Docker image.
+A **ConfigMap** stores non-confidential configuration: log levels, feature flags, nginx snippets, the hostname of an in-cluster Service. The Twelve-Factor rule is "config in the environment." Kubernetes' version of that is an API object you mount or explode into env vars, so the *image* stays the same from staging to prod.
 
-In Kubernetes, **ConfigMaps** are the mechanism for injecting this configuration data into your Pods at runtime.
+## 1. Deep Dive and Mechanics
 
+**Object.** `data` holds UTF-8 keys; `binaryData` holds base64. Max size is about 1 MiB per object (etcd object size). Split or use a volume from git/CI if you are stuffing huge files.
 
-<Callout icon="info" title="The Power of Portability">
+**Env injection.** `envFrom.configMapRef` dumps every key into the process environment. `valueFrom.configMapKeyRef` picks one key. Env vars are fixed at container *start*. Editing the ConfigMap does not change a running process's environ.
 
+**Volume mount.** Each key becomes a file. kubelet keeps the files updated (best effort, eventually). Apps that `inotify` their config can reload. Apps that only read at boot still need a rollout.
 
-  By keeping the configuration outside the image, you can build a single Docker Image for your application (\`myapp:v1\`). You can deploy that exact same image to the Staging cluster (injecting a Staging ConfigMap) and the Production cluster (injecting a Production ConfigMap), ensuring perfect parity between environments.
+**Immutable ConfigMaps.** `immutable: true` skips kubelet watches — useful for large, static blobs and for reducing API load.
 
+**Not Secrets.** ConfigMaps are not encrypted at rest by default in a way that makes them safe for passwords. Anyone who can `get configmaps` can read them. Tokens go in Secrets (and then still need encryption and tight RBAC).
 
+<Callout icon="warning" title="Env vars do not hot-reload">
+Teams edit a ConfigMap, see the volume file change, and wonder why the JVM still has the old LOG_LEVEL. That value was copied into the process at start. Roll the Deployment (or hash the ConfigMap into an annotation) to pick it up.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## How to use a ConfigMap
+**Decoupling.** Image digest I is a function of code. Config C is a function of environment. The running process is interpret(I, C). Promoting I without rebuilding when C changes is the point.
 
-A ConfigMap is a simple YAML object containing key-value pairs or entire configuration files:
+**Update propagation.** Volume projection is an eventually consistent cache on the node. There is no transactional "all pods saw v2." Rolling updates plus a checksum annotation give you a controlled cutover.
 
-\`\`\`yaml
+<ComparisonTable
+  headers={['Mechanism', 'Hot reload', 'Use when']}
+  rows={[
+    ['env / envFrom', 'No', 'Simple flags, 12-factor apps'],
+    ['Volume mount', 'If the app watches files', 'nginx.conf, agent YAML'],
+    ['Immutable ConfigMap', 'N/A — replace object', 'Large static files'],
+    ['Secret', 'Same mount/env rules', 'Credentials only'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: my-app-config
+  name: api-config
+  namespace: shop
 data:
-  LOG_LEVEL: "debug"
-  CACHE_ENDPOINT: "redis-service:6379"
-\`\`\`
+  LOG_LEVEL: info
+  CACHE_ENDPOINT: redis.shop.svc.cluster.local:6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          image: registry.example.com/api:1.4.2
+          envFrom:
+            - configMapRef:
+                name: api-config
+          volumeMounts:
+            - name: nginx
+              mountPath: /etc/nginx/conf.d
+      volumes:
+        - name: nginx
+          configMap:
+            name: api-nginx
+```
 
-You can inject this data into a Pod in two ways:
+A common pattern is to annotate the pod template with a hash of the ConfigMap so `kubectl apply` of a new config triggers a rollout.
 
-1. **Environment Variables**: You can configure the Pod's Deployment YAML to map the \`LOG_LEVEL\` key directly into an environment variable inside the container. The Node.js app can then access it via \`process.env.LOG_LEVEL\`.
-2. **Volume Mounts**: You can mount the entire ConfigMap as a physical file inside the container's file system. (e.g., mounting an \`nginx.conf\` text file directly into \`/etc/nginx/conf.d/\`). If you update the ConfigMap in Kubernetes, the physical file inside the running container is automatically updated!
+## 4. Visualizations
 
-## Limitations
+```mermaid
+flowchart LR
+    CM[ConfigMap in etcd] --> API[apiserver]
+    API --> Kubelet[kubelet on node]
+    Kubelet --> Env[env at start]
+    Kubelet --> Files[projected files]
+    Env --> Proc[app process]
+    Files --> Proc
+```
 
-ConfigMaps are stored as pure, unencrypted plaintext inside the Kubernetes \`etcd\` database. **You must never store passwords, API keys, or database credentials in a ConfigMap.** For sensitive data, you must use Kubernetes **Secrets**.
+## 5. Interview Prep
 
+**Q: Why not bake config into the image?**
+**A:** You would rebuild and retag for every environment. That breaks "same digest everywhere" and slows CD.
+
+**Q: ConfigMap versus Secret?**
+**A:** Sensitivity and extra knobs (tmpfs, encryption at rest, avoid logs). Same injection mechanics. Never put a password in a ConfigMap.
+
+**Q: Will changing a ConfigMap restart pods?**
+**A:** Not by itself. Volumes update; env does not. Use a checksum annotation or a controller (Reloader) if you want an automatic rollout.
+
+## 6. Production Use Cases
+
+- **Per-env endpoints** (staging Redis versus prod Redis) with one image digest.
+- **Config files** for sidecars (logging agents, nginx).
+- **Feature flags** that are not secret and can live in git as YAML.
+
+<Callout icon="tip" title="Keep ConfigMaps in git">
+Apply them from the same repo as the Deployment. Drift between a clicky UI edit and git is how staging lies to you.
+</Callout>

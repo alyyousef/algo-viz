@@ -1,39 +1,97 @@
 ---
 title: Decidability
-description: The property of a formal system or logical problem wherein there exists an effective method for determining whether a given formula is a theorem of the system or whether the problem has a solution.
+description: "A language is decidable when some algorithm always halts with yes or no — the practical line between a checker you can ship and a problem you can only semi-solve."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Decidability">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In Computability Theory, a problem is mathematically considered **Decidable** if it is possible to construct a Turing Machine that will always halt and return a correct YES or NO answer for every single possible input.
+A language L is **decidable** (recursive) when there is a Turing machine that, on every input, halts and correctly answers membership. If the machine may loop on no-instances, L is only **semi-decidable**. Decidability is the question: can I ship a checker that always returns?
 
-If a problem might cause the Turing Machine to loop forever without ever finding the answer, the problem is mathematically **Undecidable**.
+## 1. Deep Dive and Mechanics
 
+**How we prove decidable.** Exhibit an algorithm that tries finitely many things. Emptiness of a DFA: search the reachable-state graph. Equivalence of DFAs: minimise both, compare.
 
-<Callout icon="info" title="The Subset Relationship">
+**How we prove undecidable.** Reduce from a known undecidable language, usually HALT or A_TM. Rice's theorem gives a factory of undecidable "does this program's language have property P?" results.
 
+**Borderline.** CFG emptiness is decidable; CFG universality is not. True regular expressions are decidable for almost every property you want; adding backreferences blows that up.
 
-  The Halting Problem is the most famous example of an Undecidable problem. Alan Turing proved that no algorithm can reliably output YES or NO for every possible input program.
-
-
+<Callout icon="info" title="Decidable does not mean cheap">
+Presburger arithmetic is decidable and not primitive recursive in the worst case. There is a procedure is a very low bar for a product feature.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
-## Semi-Decidability
+The decidable languages are closed under complement, union, and intersection: run both machines, they halt, combine the answers. Recognisable languages are not closed under complement.
 
-There is a mathematical grey area called **Semi-Decidability** (or Turing-Recognizability).
+If L and its complement are both recognisable, then L is decidable: dovetail both recognisers; one will halt.
 
-For a Semi-Decidable problem:
-- If the true answer is YES, the computer will mathematically find it and halt.
-- If the true answer is NO, the computer might mathematically loop forever, fruitlessly searching for a YES that doesn't exist. You will never know if the answer is actually NO, or if the computer just needs more time.
+<ComparisonTable
+  headers={['Problem', 'Model', 'Decidable?', 'Why']}
+  rows={[
+    ['Emptiness', 'DFA', 'Yes', 'Graph reachability'],
+    ['Equivalence', 'DFA', 'Yes', 'Minimise and compare'],
+    ['Emptiness', 'CFG', 'Yes', 'Reachable productive vars'],
+    ['Equivalence', 'CFG', 'No', 'Reduce from universality'],
+    ['Halting', 'TM', 'No', 'Diagonal or reduction'],
+  ]}
+/>
 
-*Example: "Does the number 7 exist in the digits of Pi?" We can write a program to search Pi. If it finds a 7, it halts (YES). If Pi didn't contain a 7, our program would loop until the universe died.*
+## 3. Real-World Implementation
 
+```python
+# Decidable: DFA emptiness via BFS on the state graph
+def dfa_empty(start, accept, delta):
+    seen = set([start])
+    queue = [start]
+    while queue:
+        s = queue.pop(0)
+        if s in accept:
+            return False
+        for t in delta.get(s, {}).values():
+            if t not in seen:
+                seen.add(t)
+                queue.append(t)
+    return True
+```
+
+No TM simulation is required. The state set is finite, so BFS always finishes.
+
+## 4. Visualizations
+
+```mermaid
+flowchart TD
+    Q[Decision problem] --> Alg[Always-halting algorithm?]
+    Alg -->|yes| Dec[Decidable]
+    Alg -->|accept-only TM| Rec[Recognisable]
+    Alg -->|reduction from HALT| Und[Undecidable]
+```
+
+## 5. Interview Prep
+
+**Q: Decidable versus recognisable?**
+**A:** Decidable: always halt, yes or no. Recognisable: halt on yes, may loop on no. Complements of recognisable sets need not be recognisable.
+
+**Q: Give one decidable and one undecidable compiler problem.**
+**A:** Decidable: is this regex empty? Undecidable: do these two C programs compute the same function? (Rice).
+
+**Q: Why is CFG equivalence undecidable but DFA equivalence easy?**
+**A:** Two-stack or "two independent counts" phenomena appear in CFGs. Finite-state machines can be canonicalised; CFGs cannot.
+
+## 6. Production Use Cases
+
+- **Linters and type checkers** are designed to stay on the decidable side, even if that means incomplete.
+- **Protocol validators** decide regular or simple CFG properties of messages.
+- **CI policies** treat "will this job halt?" as undecidable and install a timeout.
+
+<Callout icon="tip" title="Dovetailing is a real technique">
+When you have a semi-decider for L and one for not-L, run them in round-robin. That is how some theorem provers search for a proof and a counter-model together.
+</Callout>

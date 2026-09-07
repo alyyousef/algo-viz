@@ -1,31 +1,114 @@
 ---
 title: Platform Engineering
-description: The discipline of designing and building mathematical Internal Developer Platforms (IDPs) to reduce cognitive load on developers, allowing them to self-serve infrastructure without needing deep DevOps expertise.
+description: "Building an internal developer platform so product teams self-serve infrastructure on a paved road instead of each inventing a cloud snowflake."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Platform Engineering"
-  subtitle="DevOps as a Product"
-  tags={['DevOps', 'Platform', 'Architecture', 'Developer Experience']}
->
+    <ConceptTemplate title="Platform Engineering">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-As Kubernetes, Terraform, and Cloud Networking became mathematically complex, a new problem emerged: "You build it, you run it" forced standard developers to spend 40% of their time writing YAML configuration files instead of Java business logic.
+**Platform engineering** treats the internal cloud path as a **product**. The users are other engineers. The artefact is an Internal Developer Platform (IDP): golden templates, a service catalogue, CI/CD defaults, observability baked in, and a support channel with an SLO. The goal is lower **cognitive load**, not a new ticket queue branded as "enablement."
 
-## 1. The Internal Developer Platform (IDP)
-Platform Engineering aims to solve this by treating developers as "Customers."
-Instead of filing a Jira ticket to ask the Ops team for a database (which takes 3 days), or forcing the Java developer to write 500 lines of Terraform (which causes mathematical anxiety), the Platform Engineering team builds a self-service portal (an IDP, like Backstage).
-The developer clicks a button: *"Give me a Postgres database."* The IDP mathematically abstracts the complexity, automatically generating the Terraform, provisioning the AWS resource, injecting the secrets into Vault, and wiring it to the developer's application in 3 minutes.
+## 1. Deep Dive and Mechanics
 
-## 2. Paved Roads (Golden Paths)
-Platform Engineering defines **"Golden Paths."**
-If a developer chooses to use the company's standardized IDP pipeline, everything is mathematically handled for them: automatic CI/CD, automatic Grafana dashboards, automatic security scanning. They stay on the paved road.
-They are mathematically allowed to go off-road (e.g., manually deploying a weird esoteric database), but if they do, they lose the platform team's support and must manage the infrastructure entirely themselves. This mathematically incentivizes standardization across massive enterprises.
+**Paved road.** The happy path (one language, one deploy shape, one metric stack) is boring and fast. Desire paths (special snowflakes) are allowed but cost the product team the maintenance. Tax evasion should be harder than paying.
 
+**Self-service.** A portal (Backstage) or a CLI that spins a repo, a pipeline, a namespace, and a dashboard from a template. If the first deploy still needs a 45-minute Zoom with the platform team, you built a concierge, not a platform.
+
+**Thin platform.** You do not wrap every AWS API. You pick the 20 percent of capabilities 80 percent of services need. Escape hatches (raw IAM with review) prevent shadow IT.
+
+**Team API.** The platform team has customers, a roadmap, and satisfaction scores. "No" is a product decision with an alternative, not a power trip.
+
+**Toil.** If the platform team is the bottleneck for every DNS record, the product failed. Automate the request or give teams a safe primitive.
+
+<Callout icon="warning" title="A portal without a road is a directory of pain">
+Backstage that only lists 200 half-broken services is a wiki. The value is the templates and the guarantees behind the buttons.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Cognitive load (Sweller) is the scarce resource. Every extra choice — which ingress, which mesh, which secret store — is germane or extraneous load. The platform maximises **germane** load (the domain) by collapsing extraneous load (the cloud).
+
+**Economy of scale.** Cost of a capability (CI cache, SSO, vuln gate) amortised over n teams is O(1/n) per team if the platform owns it, versus O(1) if each team rebuilds it.
+
+**Queueing.** A central Ops queue is an M/M/1 with terrible wait. Self-service is infinite-server for the common case. The platform's own support queue should only see the tail.
+
+<ComparisonTable
+  headers={['Model', 'Who provisions', 'Failure mode']}
+  rows={[
+    ['Ticket Ops', 'Central team by hand', 'Weeks of wait, heroics'],
+    ['DevOps in each team', 'Every team learns AWS', 'N snowflakes, N pages'],
+    ['Platform + paved road', 'Self-serve templates', 'Over-abstracted leaky wrappers'],
+    ['Public PaaS only', 'Heroku-style', 'Escape hatch missing'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```yaml
+# Backstage software template skeleton (parameters only)
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: service-golden-path
+spec:
+  parameters:
+    - title: New service
+      properties:
+        name:
+          type: string
+        owner:
+          type: string
+  steps:
+    - id: fetch
+      name: Fetch golden repo
+      action: fetch:template
+    - id: publish
+      name: Publish and open PR
+      action: publish:github
+```
+
+The template's real value is what it includes: Dockerfile, CI workflow, SLO dashboard, and a CODEOWNERS file — not the wizard chrome.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    Dev[Product team] --> Portal[IDP portal or CLI]
+    Portal --> Tpl[Golden templates]
+    Tpl --> Git[New repo + pipeline]
+    Tpl --> Clus[Namespace + IAM]
+    Git --> Run[Running service]
+    Clus --> Run
+    Run --> Obs[Shared observability]
+    Plat[Platform team] --> Tpl
+    Plat --> Obs
+```
+
+## 5. Interview Prep
+
+**Q: Platform engineering versus SRE versus DevOps?**
+**A:** DevOps is the culture. SRE is reliability as engineering, often with SLOs and error budgets. Platform engineering **sells a product** (the IDP) that makes the DevOps path the default.
+
+**Q: How do you measure a platform?**
+**A:** Time-to-first-deploy, percent of services on the golden path, ticket volume per service, and developer satisfaction. Vanity (number of plugins) is not a metric.
+
+**Q: When is a platform premature?**
+**A:** Five engineers on one monolith do not need Backstage. They need a working pipeline. Start a platform when copy-paste of infra is already hurting.
+
+## 6. Production Use Cases
+
+- **Scale-ups** crossing 15–20 services where every team reinvented CI.
+- **Enterprises** replacing a 6-week environment request with a 15-minute template.
+- **Multi-cloud** companies that still want one mental model for deploy and observe.
+
+<Callout icon="tip" title="Dogfood the road">
+The platform team should ship their own tools on the same templates. Pain they do not feel will not get fixed.
+</Callout>

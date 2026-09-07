@@ -1,48 +1,91 @@
 ---
 title: Advanced Encryption Standard (AES)
-description: The mathematical breakdown of the gold-standard symmetric block cipher that secures the entire global internet.
+description: "NIST block cipher that encrypts 128-bit blocks with 128, 192, or 256-bit keys and underpins TLS, disk encryption, and most modern AEAD modes."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
-
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
     <ConceptTemplate title="Advanced Encryption Standard (AES)">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In 2001, the U.S. National Institute of Standards and Technology (NIST) adopted the Rijndael algorithm as the **Advanced Encryption Standard (AES)**. Today, it mathematically secures almost every encrypted byte on Earth, from TLS connections to classified military hard drives.
+**AES** is a symmetric block cipher: the same secret key encrypts and decrypts. It won the NIST contest in 2001 as Rijndael and replaced aging 56-bit DES. You almost never call the raw block function yourself. You use an authenticated mode such as GCM through a reviewed library.
 
-## 1. The Mathematical Engine
-AES is a **Symmetric Block Cipher**. It ingests exactly 128 bits (16 bytes) of plaintext at a time and mathematically scrambles it across multiple "Rounds".
+## 1. Deep Dive and Mechanics
 
-Depending on the key size, AES executes a specific number of rounds:
-- **AES-128**: 10 rounds.
-- **AES-192**: 12 rounds.
-- **AES-256**: 14 rounds.
+AES works on a 4-by-4 byte state. A key schedule expands the master key into round keys. Each round except the last applies SubBytes, ShiftRows, MixColumns, and AddRoundKey. Round counts are 10, 12, or 14 for 128, 192, and 256-bit keys.
 
-In each round, four complex mathematical transformations are applied to the 4x4 matrix of bytes:
-1. **SubBytes**: A non-linear substitution step that swaps every byte using a strict mathematical lookup table (S-box), destroying linearity.
-2. **ShiftRows**: Shifts the rows of the matrix, mathematically ensuring that data is diffused across columns.
-3. **MixColumns**: A highly complex matrix multiplication step over a Galois Field, mathematically mixing the data vertically.
-4. **AddRoundKey**: A bitwise XOR between the data matrix and the specific mathematical sub-key for that round.
+**Modes matter more than the S-box.** Electronic Codebook repeats identical ciphertext for identical blocks. CBC hides patterns but needs a random IV and padding. GCM turns AES into a counter stream and adds a GHASH authentication tag so tampering is detected.
 
-## 2. Block Cipher Modes of Operation
-Because AES mathematically only encrypts 128 bits at a time, you cannot just run it sequentially on a 10MB file without a "Mode of Operation."
+**Implementation traps.** Reuse of a GCM nonce with the same key is catastrophic. ECB is never acceptable for data at rest. Home-grown padding oracles appear when you decrypt then check integrity in the wrong order.
 
-
-<ComparisonTable headers={['Mode', 'Mechanism', 'Security Assessment']} rows={[ ['ECB (Electronic Codebook)', 'Encrypts each 128-bit block completely independently.', 'CATASTROPHICALLY INSECURE. Identical plaintext blocks produce identical ciphertext blocks, leaving visual patterns (The famous "ECB Penguin"). Never use.'], ['CBC (Cipher Block Chaining)', 'XORs each plaintext block with the ciphertext of the previous block before encrypting.', 'Secure, but strictly sequential. Cannot be mathematically parallelized across CPU cores.'], ['GCM (Galois/Counter Mode)', 'Turns AES into a Stream Cipher using a counter. Mathematically includes an authentication tag (AEAD).', 'THE INDUSTRY STANDARD. Massively parallelizable and guarantees data has not been tampered with.'] ]} />
-
-
-<Callout icon="warning" title="Quantum Threat">
-
-
-While RSA and ECC are mathematically destroyed by Quantum Computers, AES is remarkably resistant. Grover's Algorithm halves the effective key space of symmetric ciphers. Therefore, AES-128 is theoretically vulnerable to quantum attacks, but **AES-256 remains mathematically impenetrable even against theoretical quantum supercomputers**.
-
-
+<Callout icon="warning" title="Never roll your own AES">
+Call a maintained library and an AEAD mode. The hard bugs are nonce reuse, padding oracles, and side channels, not the S-box math.
 </Callout>
 
+## 2. Mathematical / Theoretical Foundation
 
+AES is a substitution-permutation network over GF(2^8). Confusion comes from the nonlinear S-box. Diffusion comes from ShiftRows and MixColumns. Security claims are empirical: no practical break of full AES-128 is known. Grover search would square-root the key space, which is why long-lived systems prefer AES-256.
+
+<ComparisonTable
+  headers={['Mode', 'Auth tag', 'Parallel encrypt', 'Use today']}
+  rows={[
+    ['ECB', 'No', 'Yes', 'Never for real data'],
+    ['CBC', 'No', 'Decrypt only', 'Legacy only'],
+    ['CTR', 'No', 'Yes', 'Only inside AEAD'],
+    ['GCM', 'Yes', 'Yes', 'Default for TLS and disks'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
+```python
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import os
+
+key = AESGCM.generate_key(bit_length=256)
+aes = AESGCM(key)
+nonce = os.urandom(12)
+token = aes.encrypt(nonce, b'secret payload', b'aad-context')
+plain = aes.decrypt(nonce, token, b'aad-context')
+```
+
+Store the nonce beside the ciphertext. Never increment a counter in an ad-hoc way across processes without a uniqueness scheme.
+
+## 4. Visualizations
+
+```mermaid
+flowchart LR
+    P[Plaintext block] --> SB[SubBytes]
+    SB --> SR[ShiftRows]
+    SR --> MC[MixColumns]
+    MC --> ARK[AddRoundKey]
+    K[Round key] --> ARK
+    ARK --> C[Ciphertext block]
+```
+
+## 5. Interview Prep
+
+**Q: Why is ECB unsafe even with AES-256?**
+**A:** Identical blocks encrypt to identical ciphertext, so structure leaks. Key length does not fix that.
+
+**Q: AES-GCM vs AES-CBC-then-HMAC?**
+**A:** GCM is one-pass AEAD and parallel. Encrypt-then-MAC with CBC is older, sequential, and easy to get in the wrong order.
+
+**Q: What happens if a GCM nonce repeats?**
+**A:** The keystream repeats and GHASH can leak the authentication key. Treat nonce uniqueness as a hard invariant.
+
+## 6. Production Use Cases
+
+- **TLS 1.3** record protection with AES-GCM or AES-CCM.
+- **Full-disk and volume encryption** (BitLocker, FileVault, LUKS).
+- **Application envelopes** for tokens and field-level encryption in databases.
+
+<Callout icon="tip" title="Prefer 256-bit keys for long-lived archives">
+AES-128 is still strong against classical attacks. AES-256 is the conservative choice when data must stay secret for decades.
+</Callout>

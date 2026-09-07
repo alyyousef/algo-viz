@@ -1,42 +1,107 @@
 ---
 title: Virtual Hosts
-description: A fundamental web server technique that mathematically enables a single physical server with a single IP address to host and route traffic for hundreds of completely different domain names.
+description: "One IP, many sites: the HTTP Host header (and TLS SNI) selects which server block or VirtualHost handles the request."
 ---
 import { ConceptTemplate } from '@/features/kb/components/templates/ConceptTemplate'
+import { Callout } from '@/features/kb/components/mdx/Callout'
+import { ComparisonTable } from '@/features/kb/components/mdx/ComparisonTable'
 
 export default function Layout({ children }) {
   return (
-    <ConceptTemplate
-  title="Virtual Hosts (Server Blocks)"
-  subtitle="Mathematical Domain Routing"
-  tags={['Web Servers', 'Networking', 'HTTP', 'Architecture']}
->
+    <ConceptTemplate title="Virtual Hosts">
       {children}
-    
-  </ConceptTemplate>
+    </ConceptTemplate>
   )
 }
 
-In the early internet, hosting 10 different websites required 10 physical servers and 10 expensive, mathematically distinct public IP addresses. Virtual Hosting (known as `VirtualHost` in Apache and `server` blocks in Nginx) solved this limitation.
+**Virtual hosts** let one process and one public IP serve `cats.example` and `dogs.example`. DNS A/AAAA records collide on purpose. The server reads the **Host** header (HTTP) or **SNI** (TLS) and picks a vhost: document root, proxy upstream, cert, and logs.
 
-## 1. The HTTP Host Header
-Virtual Hosting relies on a specific mathematical feature of the HTTP/1.1 protocol: the **Host header**.
-When a user types `cats.com` into their browser, the DNS mathematically resolves to IP `203.0.113.5`. The user types `dogs.com`, and DNS resolves to the exact same IP `203.0.113.5`.
-The TCP connection hits the web server. How does the server know which website to return? The browser mathematically injects a header into the request: `Host: cats.com`.
+## 1. Deep Dive and Mechanics
 
-## 2. Server-Side Evaluation
-The web server (e.g., Nginx) reads the HTTP request. It mathematically evaluates the `Host` header against its internal configuration.
+**Name-based vhosts.** HTTP/1.1 made Host mandatory. The browser sends `Host: cats.example`. Nginx `server_name`, Apache `ServerName` / `ServerAlias`, IIS host-header bindings all match that string. First or default vhost wins if nothing matches — that default is how you leak the wrong site.
+
+**IP-based vhosts.** Old model: one dedicated address per site. Still used when a client cannot send Host (broken HTTP/1.0) or when a compliance rule wants a unique IP.
+
+**TLS and SNI.** HTTPS encrypts the HTTP Host header. The client puts the hostname in **Server Name Indication** during the handshake so the edge can select a certificate **before** HTTP exists. Without SNI, one IP could only hold one cert (or a giant SAN/wildcard).
+
+**HTTP/2 and HTTP/3.** Connection coalescing may reuse a TLS session across hostnames that share a cert and IP. Misaligned vhost and cert SAN lists cause surprising cross-site routing bugs.
+
+<Callout icon="warning" title="Always define an explicit default">
+The first `listen` / `VirtualHost` is the dumpster for unknown Host values and empty headers. Point it at a 444 or a static “no site” page, not at production.
+</Callout>
+
+## 2. Mathematical / Theoretical Foundation
+
+Selection is a **map** from hostname to config, plus a default. Match cost is a few string compares or a hash lookup — not your bottleneck. The interesting math is **certificate coverage**: a wildcard `*.example.com` covers one label, not `a.b.example.com`. A SAN list is a finite set; every vhost name must sit in that set or have its own cert (SNI).
+
+Coalescing: if two names share IP and cert, HTTP/2 may send both on one connection. The server must still honor per-request Host, not “whatever SNI was.”
+
+<ComparisonTable
+  headers={['Style', 'Discriminator', 'Cert selection', 'Use today']}
+  rows={[
+    ['Name-based', 'Host header', 'SNI then Host', 'Default'],
+    ['IP-based', 'Destination IP', 'Per-IP cert', 'Rare, compliance'],
+    ['Port-based', 'TCP port', 'Per-port cert', 'Dev and admin UIs'],
+    ['Wildcard / SAN', 'One cert, many names', 'One handshake', 'Shared hosting, SaaS'],
+  ]}
+/>
+
+## 3. Real-World Implementation
+
 ```nginx
 server {
-    listen 80;
-    server_name cats.com;
-    root /var/www/cats;
+    listen 80 default_server;
+    server_name _;
+    return 444;
 }
+
 server {
     listen 80;
-    server_name dogs.com;
+    server_name cats.example;
+    root /var/www/cats;
+}
+
+server {
+    listen 80;
+    server_name dogs.example;
     root /var/www/dogs;
 }
 ```
-If the header matches `cats.com`, Nginx mathematically routes the request to the `/var/www/cats` directory. This simple mathematical string-matching algorithm allows massive shared-hosting providers to host thousands of websites on a single physical machine.
 
+Add `listen 443 ssl` plus `ssl_certificate` per name, or one wildcard cert on both server blocks.
+
+## 4. Visualizations
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant D as DNS
+    participant S as Web server
+    C->>D: cats.example A?
+    D->>C: 203.0.113.5
+    C->>S: TLS SNI cats.example
+    S->>C: cert for cats.example
+    C->>S: GET / Host cats.example
+    S->>S: pick cats vhost
+```
+
+## 5. Interview Prep
+
+**Q: How can two domains share one IP?**
+**A:** DNS points both at the IP. HTTP Host or TLS SNI names the site. The server’s vhost table maps that name to files or an upstream.
+
+**Q: What breaks if SNI is missing?**
+**A:** The server presents the default certificate. Browsers show a name mismatch. Old enterprise middleboxes and some Java 6-era clients did this; they are why IP-per-tenant still exists in pockets.
+
+**Q: Host header versus SNI mismatch?**
+**A:** A client can SNI to A and send Host B (or an IP). Treat that as hostile: reject, or require them to match. Host header attacks depend on your default vhost being sloppy.
+
+## 6. Production Use Cases
+
+- **Shared hosting** with thousands of customer names on one fleet.
+- **SaaS vanity domains** that all terminate on one ingress with SNI.
+- **Staging plus prod** on one box, split only by `server_name`.
+
+<Callout icon="tip" title="Log the Host and the SNI">
+When users report “the wrong site,” compare SNI, Host, and the vhost that actually ran. Those three strings diagnose 90 percent of virtual-host incidents.
+</Callout>
